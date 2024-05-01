@@ -19,7 +19,6 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
-	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
@@ -43,15 +42,10 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 		SetLastName("Racoon").
 		SaveX(ctx)
 
-	ec, err := auth.NewTestContextWithValidUser(requestor.ID)
+	reqCtx, err := auth.NewTestContextWithValidUser(requestor.ID)
 	require.NoError(t, err)
 
-	newCtx := ec.Request().Context()
-	newCtx = privacy.DecisionContext(newCtx, privacy.Allow)
-
-	reqCtx := context.WithValue(newCtx, echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
 
 	org := suite.db.Organization.Create().
 		SetName("avengers").
@@ -67,10 +61,8 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 		SetAuthProvider(enums.AuthProviderGoogle).
 		SaveX(ctx)
 
-	rc, err := auth.NewTestContextWithValidUser(recipient.ID)
+	userCtx, err := auth.NewTestContextWithOrgID(recipient.ID, org.ID)
 	require.NoError(t, err)
-
-	userCtx := context.WithValue(rc.Request().Context(), echocontext.EchoContextKey, rc)
 
 	testCases := []struct {
 		name          string

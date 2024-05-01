@@ -216,6 +216,8 @@ func (u *UserBuilder) MustNew(ctx context.Context, t *testing.T) *ent.User {
 		SetSetting(userSetting).
 		SaveX(ctx)
 
+	user.Edges.Setting.DefaultOrg(ctx)
+
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(u.client.fga)
 
@@ -303,12 +305,12 @@ func (g *GroupBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Group {
 	owner := g.Owner
 
 	if g.Owner == "" {
-		org := (&OrganizationBuilder{client: g.client}).MustNew(ctx, t)
-		owner = org.ID
+		owner = testPersonalOrgID
 	}
 
 	// mock writes
 	mock_fga.WriteAny(t, g.client.fga)
+
 	mock_fga.ListAny(t, g.client.fga, []string{fmt.Sprintf("group:%s", owner)})
 
 	group := g.client.db.Group.Create().SetName(g.Name).SetOwnerID(owner).SaveX(ctx)
@@ -437,9 +439,8 @@ func (gm *GroupMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Gr
 	}
 
 	// mock writes
+	mock_fga.ListAny(t, gm.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
 	mock_fga.WriteOnce(t, gm.client.fga)
-	// dummy check to org
-	mock_fga.ListAny(t, gm.client.fga, []string{fmt.Sprintf("organization:%s", "org1")})
 
 	groupMember := gm.client.db.GroupMembership.Create().
 		SetUserID(gm.UserID).

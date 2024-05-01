@@ -309,7 +309,7 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 			require.Len(t, orgs, 1)
 
 			// setup valid user context
-			ec, err := auth.NewTestContextWithValidUser(resp.CreateUser.User.ID)
+			ec, err := auth.NewTestEchoContextWithValidUser(resp.CreateUser.User.ID)
 			if err != nil {
 				t.Fatal()
 			}
@@ -800,7 +800,7 @@ func (suite *GraphTestSuite) TestMutationSoftDeleteUniqueIndex() {
 	assert.ErrorContains(t, err, "constraint failed")
 
 	// setup valid user context
-	userCtx, err := auth.NewTestContextWithValidUser(resp.CreateUser.User.ID)
+	userCtx, err := auth.NewTestEchoContextWithValidUser(resp.CreateUser.User.ID)
 	if err != nil {
 		t.Fatal()
 	}

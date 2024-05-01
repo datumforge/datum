@@ -170,7 +170,9 @@ func init() {
 	entitlement.Hooks[0] = entitlementMixinHooks0[0]
 	entitlement.Hooks[1] = entitlementMixinHooks2[0]
 	entitlementMixinInters2 := entitlementMixin[2].Interceptors()
+	entitlementMixinInters3 := entitlementMixin[3].Interceptors()
 	entitlement.Interceptors[0] = entitlementMixinInters2[0]
+	entitlement.Interceptors[1] = entitlementMixinInters3[0]
 	entitlementMixinFields0 := entitlementMixin[0].Fields()
 	_ = entitlementMixinFields0
 	entitlementMixinFields1 := entitlementMixin[1].Fields()
@@ -247,9 +249,11 @@ func init() {
 
 	group.Hooks[4] = groupHooks[1]
 	groupMixinInters1 := groupMixin[1].Interceptors()
+	groupMixinInters3 := groupMixin[3].Interceptors()
 	groupInters := schema.Group{}.Interceptors()
 	group.Interceptors[0] = groupMixinInters1[0]
-	group.Interceptors[1] = groupInters[0]
+	group.Interceptors[1] = groupMixinInters3[0]
+	group.Interceptors[2] = groupInters[0]
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0
 	groupMixinFields2 := groupMixin[2].Fields()
@@ -511,7 +515,9 @@ func init() {
 
 	integration.Hooks[2] = integrationMixinHooks2[0]
 	integrationMixinInters2 := integrationMixin[2].Interceptors()
+	integrationMixinInters3 := integrationMixin[3].Interceptors()
 	integration.Interceptors[0] = integrationMixinInters2[0]
+	integration.Interceptors[1] = integrationMixinInters3[0]
 	integrationMixinFields0 := integrationMixin[0].Fields()
 	_ = integrationMixinFields0
 	integrationMixinFields1 := integrationMixin[1].Fields()
@@ -576,7 +582,9 @@ func init() {
 
 	invite.Hooks[4] = inviteHooks[1]
 	inviteMixinInters2 := inviteMixin[2].Interceptors()
+	inviteMixinInters3 := inviteMixin[3].Interceptors()
 	invite.Interceptors[0] = inviteMixinInters2[0]
+	invite.Interceptors[1] = inviteMixinInters3[0]
 	inviteMixinFields0 := inviteMixin[0].Fields()
 	_ = inviteMixinFields0
 	inviteMixinFields1 := inviteMixin[1].Fields()
@@ -1213,7 +1221,9 @@ func init() {
 	template.Hooks[0] = templateMixinHooks0[0]
 	template.Hooks[1] = templateMixinHooks1[0]
 	templateMixinInters1 := templateMixin[1].Interceptors()
+	templateMixinInters3 := templateMixin[3].Interceptors()
 	template.Interceptors[0] = templateMixinInters1[0]
+	template.Interceptors[1] = templateMixinInters3[0]
 	templateMixinFields0 := templateMixin[0].Fields()
 	_ = templateMixinFields0
 	templateMixinFields2 := templateMixin[2].Fields()

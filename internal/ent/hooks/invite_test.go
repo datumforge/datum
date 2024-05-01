@@ -17,7 +17,7 @@ import (
 func TestSetRequestor(t *testing.T) {
 	// setup valid user
 	userID := ulids.New().String()
-	userCtx, err := auth.NewTestContextWithValidUser(userID)
+	userCtx, err := auth.NewTestEchoContextWithValidUser(userID)
 	require.NoError(t, err)
 
 	// create parent context

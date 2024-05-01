@@ -31,7 +31,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	// add handler
 	suite.e.GET("subscribe/verify", suite.h.VerifySubscriptionHandler)
 
-	ec, err := auth.NewTestContextWithValidUser(ulids.New().String())
+	ec, err := auth.NewTestEchoContextWithValidUser(ulids.New().String())
 	require.NoError(t, err)
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)

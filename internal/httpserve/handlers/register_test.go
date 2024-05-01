@@ -136,7 +136,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 				assert.NotEmpty(t, out.ID)
 
 				// setup context to get the data back
-				ec, err := auth.NewTestContextWithValidUser(out.ID)
+				ec, err := auth.NewTestEchoContextWithValidUser(out.ID)
 				require.NoError(t, err)
 
 				ctx := ec.Request().Context()

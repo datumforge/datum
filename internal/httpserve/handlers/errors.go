@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 var (
@@ -67,6 +68,15 @@ var (
 
 	// ErrUnauthorized is returned when the user is not authorized to make the request
 	ErrUnauthorized = errors.New("not authorized")
+)
+
+var (
+	// DeviceRegisteredErrCode is returned when the device is already registered
+	DeviceRegisteredErrCode rout.ErrorCode = "DEVICE_REGISTERED"
+	// UserExistsErrCode is returned when the user already exists
+	UserExistsErrCode rout.ErrorCode = "USER_EXISTS"
+	// InvalidInputErrCode is returned when the input is invalid
+	InvalidInputErrCode rout.ErrorCode = "INVALID_INPUT"
 )
 
 // IsConstraintError returns true if the error resulted from a database constraint violation.

@@ -14,7 +14,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/pkg/tokens"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 func (suite *HandlerTestSuite) TestOauthRegister() {
@@ -33,12 +33,13 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 	}
 
 	tests := []struct {
-		name           string
-		args           args
-		writes         bool
-		expectedStatus int
-		expectedErr    string
-		wantErr        bool
+		name            string
+		args            args
+		writes          bool
+		expectedStatus  int
+		expectedErr     string
+		expectedErrCode rout.ErrorCode
+		wantErr         bool
 	}{
 		{
 			name: "happy path, github",
@@ -76,8 +77,9 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 				userID:   "123456",
 				token:    "gh_thistokenisvalid",
 			},
-			expectedStatus: http.StatusBadRequest,
-			writes:         false,
+			expectedStatus:  http.StatusBadRequest,
+			expectedErrCode: handlers.InvalidInputErrCode,
+			writes:          false,
 		},
 	}
 	for _, tt := range tests {
@@ -119,7 +121,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *tokens.TokenResponse
+			var out *handlers.LoginReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
@@ -127,6 +129,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			}
 
 			assert.Equal(t, tt.expectedStatus, recorder.Code)
+			assert.Equal(t, tt.expectedErrCode, out.ErrorCode)
 
 			if tt.expectedStatus == http.StatusOK {
 				assert.NotNil(t, out.AccessToken)

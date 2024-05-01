@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
@@ -41,6 +42,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 		password           string
 		emailExpected      bool
 		expectedErrMessage string
+		expectedErrorCode  rout.ErrorCode
 		expectedStatus     int
 		from               string
 	}{
@@ -62,6 +64,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 			emailExpected:      false,
 			expectedErrMessage: "email was invalid",
 			expectedStatus:     http.StatusBadRequest,
+			expectedErrorCode:  handlers.InvalidInputErrCode,
 		},
 		{
 			name:               "missing email",
@@ -71,6 +74,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 			emailExpected:      false,
 			expectedErrMessage: "missing required field: email",
 			expectedStatus:     http.StatusBadRequest,
+			expectedErrorCode:  handlers.InvalidInputErrCode,
 		},
 		{
 			name:               "bad password",
@@ -81,6 +85,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 			emailExpected:      false,
 			expectedErrMessage: "password is too weak",
 			expectedStatus:     http.StatusBadRequest,
+			expectedErrorCode:  handlers.InvalidInputErrCode,
 		},
 	}
 
@@ -129,6 +134,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 			}
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
+			assert.Equal(t, tc.expectedErrorCode, out.ErrorCode)
 
 			if tc.expectedStatus == http.StatusCreated {
 				assert.Equal(t, out.Email, tc.email)

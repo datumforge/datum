@@ -70,7 +70,7 @@ type WebauthnLoginResponse struct {
 func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	var r WebauthnRegistrationRequest
 	if err := ctx.Bind(&r); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	ctxWithToken := token.NewContextWithOauthTooToken(ctx.Request().Context(), r.Email)
@@ -205,7 +205,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	// save the credential to the database
 	if err := h.addCredentialToUser(userCtx, entUser, *credential); err != nil {
 		if IsConstraintError(err) {
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrDeviceAlreadyRegistered))
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(ErrDeviceAlreadyRegistered, DeviceRegisteredErrCode))
 		}
 
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))

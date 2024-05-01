@@ -59,11 +59,15 @@ type Invite struct {
 type InviteEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *Organization `json:"owner,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
+
+	namedEvents map[string][]*Event
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -75,6 +79,15 @@ func (e InviteEdges) OwnerOrErr() (*Organization, error) {
 		return nil, &NotFoundError{label: organization.Label}
 	}
 	return nil, &NotLoadedError{edge: "owner"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e InviteEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[1] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -220,6 +233,11 @@ func (i *Invite) QueryOwner() *OrganizationQuery {
 	return NewInviteClient(i.config).QueryOwner(i)
 }
 
+// QueryEvents queries the "events" edge of the Invite entity.
+func (i *Invite) QueryEvents() *EventQuery {
+	return NewInviteClient(i.config).QueryEvents(i)
+}
+
 // Update returns a builder for updating this Invite.
 // Note that you need to call Invite.Unwrap() before calling this method if this Invite
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -289,6 +307,30 @@ func (i *Invite) String() string {
 	builder.WriteString("secret=<sensitive>")
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (i *Invite) NamedEvents(name string) ([]*Event, error) {
+	if i.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := i.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (i *Invite) appendNamedEvents(name string, edges ...*Event) {
+	if i.Edges.namedEvents == nil {
+		i.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		i.Edges.namedEvents[name] = []*Event{}
+	} else {
+		i.Edges.namedEvents[name] = append(i.Edges.namedEvents[name], edges...)
+	}
 }
 
 // Invites is a parsable slice of Invite.

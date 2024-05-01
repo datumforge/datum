@@ -41,8 +41,45 @@ type OhAuthTooToken struct {
 	// ConnectorData holds the value of the "connector_data" field.
 	ConnectorData []string `json:"connector_data,omitempty"`
 	// LastUsed holds the value of the "last_used" field.
-	LastUsed     time.Time `json:"last_used,omitempty"`
+	LastUsed time.Time `json:"last_used,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the OhAuthTooTokenQuery when eager-loading is set.
+	Edges        OhAuthTooTokenEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// OhAuthTooTokenEdges holds the relations/edges for other nodes in the graph.
+type OhAuthTooTokenEdges struct {
+	// Integration holds the value of the integration edge.
+	Integration []*Integration `json:"integration,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
+
+	namedIntegration map[string][]*Integration
+	namedEvents      map[string][]*Event
+}
+
+// IntegrationOrErr returns the Integration value or an error if the edge
+// was not loaded in eager-loading.
+func (e OhAuthTooTokenEdges) IntegrationOrErr() ([]*Integration, error) {
+	if e.loadedTypes[0] {
+		return e.Integration, nil
+	}
+	return nil, &NotLoadedError{edge: "integration"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e OhAuthTooTokenEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[1] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -170,6 +207,16 @@ func (oatt *OhAuthTooToken) Value(name string) (ent.Value, error) {
 	return oatt.selectValues.Get(name)
 }
 
+// QueryIntegration queries the "integration" edge of the OhAuthTooToken entity.
+func (oatt *OhAuthTooToken) QueryIntegration() *IntegrationQuery {
+	return NewOhAuthTooTokenClient(oatt.config).QueryIntegration(oatt)
+}
+
+// QueryEvents queries the "events" edge of the OhAuthTooToken entity.
+func (oatt *OhAuthTooToken) QueryEvents() *EventQuery {
+	return NewOhAuthTooTokenClient(oatt.config).QueryEvents(oatt)
+}
+
 // Update returns a builder for updating this OhAuthTooToken.
 // Note that you need to call OhAuthTooToken.Unwrap() before calling this method if this OhAuthTooToken
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -230,6 +277,54 @@ func (oatt *OhAuthTooToken) String() string {
 	builder.WriteString(oatt.LastUsed.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedIntegration returns the Integration named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (oatt *OhAuthTooToken) NamedIntegration(name string) ([]*Integration, error) {
+	if oatt.Edges.namedIntegration == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := oatt.Edges.namedIntegration[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (oatt *OhAuthTooToken) appendNamedIntegration(name string, edges ...*Integration) {
+	if oatt.Edges.namedIntegration == nil {
+		oatt.Edges.namedIntegration = make(map[string][]*Integration)
+	}
+	if len(edges) == 0 {
+		oatt.Edges.namedIntegration[name] = []*Integration{}
+	} else {
+		oatt.Edges.namedIntegration[name] = append(oatt.Edges.namedIntegration[name], edges...)
+	}
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (oatt *OhAuthTooToken) NamedEvents(name string) ([]*Event, error) {
+	if oatt.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := oatt.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (oatt *OhAuthTooToken) appendNamedEvents(name string, edges ...*Event) {
+	if oatt.Edges.namedEvents == nil {
+		oatt.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		oatt.Edges.namedEvents[name] = []*Event{}
+	} else {
+		oatt.Edges.namedEvents[name] = append(oatt.Edges.namedEvents[name], edges...)
+	}
 }
 
 // OhAuthTooTokens is a parsable slice of OhAuthTooToken.

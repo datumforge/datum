@@ -10,8 +10,10 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
 // HushCreate is the builder for creating a Hush entity.
@@ -196,6 +198,36 @@ func (hc *HushCreate) AddIntegrations(i ...*Integration) *HushCreate {
 	return hc.AddIntegrationIDs(ids...)
 }
 
+// AddOrganizationIDs adds the "organization" edge to the Organization entity by IDs.
+func (hc *HushCreate) AddOrganizationIDs(ids ...string) *HushCreate {
+	hc.mutation.AddOrganizationIDs(ids...)
+	return hc
+}
+
+// AddOrganization adds the "organization" edges to the Organization entity.
+func (hc *HushCreate) AddOrganization(o ...*Organization) *HushCreate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return hc.AddOrganizationIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (hc *HushCreate) AddEventIDs(ids ...string) *HushCreate {
+	hc.mutation.AddEventIDs(ids...)
+	return hc
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (hc *HushCreate) AddEvents(e ...*Event) *HushCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return hc.AddEventIDs(ids...)
+}
+
 // Mutation returns the HushMutation object of the builder.
 func (hc *HushCreate) Mutation() *HushMutation {
 	return hc.mutation
@@ -359,6 +391,40 @@ func (hc *HushCreate) createSpec() (*Hush, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = hc.schemaConfig.IntegrationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := hc.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   hush.OrganizationTable,
+			Columns: hush.OrganizationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = hc.schemaConfig.OrganizationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := hc.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   hush.EventsTable,
+			Columns: hush.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = hc.schemaConfig.HushEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

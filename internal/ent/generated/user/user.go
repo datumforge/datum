@@ -70,6 +70,12 @@ const (
 	EdgeOrganizations = "organizations"
 	// EdgeWebauthn holds the string denoting the webauthn edge name in mutations.
 	EdgeWebauthn = "webauthn"
+	// EdgeFiles holds the string denoting the files edge name in mutations.
+	EdgeFiles = "files"
+	// EdgeEvents holds the string denoting the events edge name in mutations.
+	EdgeEvents = "events"
+	// EdgeFeatures holds the string denoting the features edge name in mutations.
+	EdgeFeatures = "features"
 	// EdgeGroupMemberships holds the string denoting the group_memberships edge name in mutations.
 	EdgeGroupMemberships = "group_memberships"
 	// EdgeOrgMemberships holds the string denoting the org_memberships edge name in mutations.
@@ -128,6 +134,23 @@ const (
 	WebauthnInverseTable = "webauthns"
 	// WebauthnColumn is the table column denoting the webauthn relation/edge.
 	WebauthnColumn = "owner_id"
+	// FilesTable is the table that holds the files relation/edge.
+	FilesTable = "files"
+	// FilesInverseTable is the table name for the File entity.
+	// It exists in this package in order to avoid circular dependency with the "file" package.
+	FilesInverseTable = "files"
+	// FilesColumn is the table column denoting the files relation/edge.
+	FilesColumn = "user_files"
+	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
+	EventsTable = "user_events"
+	// EventsInverseTable is the table name for the Event entity.
+	// It exists in this package in order to avoid circular dependency with the "event" package.
+	EventsInverseTable = "events"
+	// FeaturesTable is the table that holds the features relation/edge. The primary key declared below.
+	FeaturesTable = "user_features"
+	// FeaturesInverseTable is the table name for the Feature entity.
+	// It exists in this package in order to avoid circular dependency with the "feature" package.
+	FeaturesInverseTable = "features"
 	// GroupMembershipsTable is the table that holds the group_memberships relation/edge.
 	GroupMembershipsTable = "group_memberships"
 	// GroupMembershipsInverseTable is the table name for the GroupMembership entity.
@@ -174,6 +197,12 @@ var (
 	// OrganizationsPrimaryKey and OrganizationsColumn2 are the table columns denoting the
 	// primary key for the organizations relation (M2M).
 	OrganizationsPrimaryKey = []string{"user_id", "organization_id"}
+	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
+	// primary key for the events relation (M2M).
+	EventsPrimaryKey = []string{"user_id", "event_id"}
+	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
+	// primary key for the features relation (M2M).
+	FeaturesPrimaryKey = []string{"user_id", "feature_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -448,6 +477,48 @@ func ByWebauthn(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByFilesCount orders the results by files count.
+func ByFilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFilesStep(), opts...)
+	}
+}
+
+// ByFiles orders the results by files terms.
+func ByFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEventsCount orders the results by events count.
+func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEventsStep(), opts...)
+	}
+}
+
+// ByEvents orders the results by events terms.
+func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByFeaturesCount orders the results by features count.
+func ByFeaturesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFeaturesStep(), opts...)
+	}
+}
+
+// ByFeatures orders the results by features terms.
+func ByFeatures(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFeaturesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByGroupMembershipsCount orders the results by group_memberships count.
 func ByGroupMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -529,6 +600,27 @@ func newWebauthnStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(WebauthnInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, WebauthnTable, WebauthnColumn),
+	)
+}
+func newFilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FilesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, FilesTable, FilesColumn),
+	)
+}
+func newEventsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EventsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+	)
+}
+func newFeaturesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FeaturesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
 	)
 }
 func newGroupMembershipsStep() *sqlgraph.Step {

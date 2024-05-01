@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -22,14 +24,16 @@ import (
 // GroupMembershipQuery is the builder for querying GroupMembership entities.
 type GroupMembershipQuery struct {
 	config
-	ctx        *QueryContext
-	order      []groupmembership.OrderOption
-	inters     []Interceptor
-	predicates []predicate.GroupMembership
-	withGroup  *GroupQuery
-	withUser   *UserQuery
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*GroupMembership) error
+	ctx             *QueryContext
+	order           []groupmembership.OrderOption
+	inters          []Interceptor
+	predicates      []predicate.GroupMembership
+	withGroup       *GroupQuery
+	withUser        *UserQuery
+	withEvents      *EventQuery
+	modifiers       []func(*sql.Selector)
+	loadTotal       []func(context.Context, []*GroupMembership) error
+	withNamedEvents map[string]*EventQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -110,6 +114,31 @@ func (gmq *GroupMembershipQuery) QueryUser() *UserQuery {
 		schemaConfig := gmq.schemaConfig
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.GroupMembership
+		fromU = sqlgraph.SetNeighbors(gmq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEvents chains the current query on the "events" edge.
+func (gmq *GroupMembershipQuery) QueryEvents() *EventQuery {
+	query := (&EventClient{config: gmq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gmq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gmq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(groupmembership.Table, groupmembership.FieldID, selector),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, groupmembership.EventsTable, groupmembership.EventsPrimaryKey...),
+		)
+		schemaConfig := gmq.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.GroupMembershipEvents
 		fromU = sqlgraph.SetNeighbors(gmq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -310,6 +339,7 @@ func (gmq *GroupMembershipQuery) Clone() *GroupMembershipQuery {
 		predicates: append([]predicate.GroupMembership{}, gmq.predicates...),
 		withGroup:  gmq.withGroup.Clone(),
 		withUser:   gmq.withUser.Clone(),
+		withEvents: gmq.withEvents.Clone(),
 		// clone intermediate query.
 		sql:  gmq.sql.Clone(),
 		path: gmq.path,
@@ -335,6 +365,17 @@ func (gmq *GroupMembershipQuery) WithUser(opts ...func(*UserQuery)) *GroupMember
 		opt(query)
 	}
 	gmq.withUser = query
+	return gmq
+}
+
+// WithEvents tells the query-builder to eager-load the nodes that are connected to
+// the "events" edge. The optional arguments are used to configure the query builder of the edge.
+func (gmq *GroupMembershipQuery) WithEvents(opts ...func(*EventQuery)) *GroupMembershipQuery {
+	query := (&EventClient{config: gmq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gmq.withEvents = query
 	return gmq
 }
 
@@ -422,9 +463,10 @@ func (gmq *GroupMembershipQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	var (
 		nodes       = []*GroupMembership{}
 		_spec       = gmq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			gmq.withGroup != nil,
 			gmq.withUser != nil,
+			gmq.withEvents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -459,6 +501,20 @@ func (gmq *GroupMembershipQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if query := gmq.withUser; query != nil {
 		if err := gmq.loadUser(ctx, query, nodes, nil,
 			func(n *GroupMembership, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := gmq.withEvents; query != nil {
+		if err := gmq.loadEvents(ctx, query, nodes,
+			func(n *GroupMembership) { n.Edges.Events = []*Event{} },
+			func(n *GroupMembership, e *Event) { n.Edges.Events = append(n.Edges.Events, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range gmq.withNamedEvents {
+		if err := gmq.loadEvents(ctx, query, nodes,
+			func(n *GroupMembership) { n.appendNamedEvents(name) },
+			func(n *GroupMembership, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -524,6 +580,68 @@ func (gmq *GroupMembershipQuery) loadUser(ctx context.Context, query *UserQuery,
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (gmq *GroupMembershipQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*GroupMembership, init func(*GroupMembership), assign func(*GroupMembership, *Event)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*GroupMembership)
+	nids := make(map[string]map[*GroupMembership]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(groupmembership.EventsTable)
+		joinT.Schema(gmq.schemaConfig.GroupMembershipEvents)
+		s.Join(joinT).On(s.C(event.FieldID), joinT.C(groupmembership.EventsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(groupmembership.EventsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(groupmembership.EventsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*GroupMembership]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Event](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -622,6 +740,20 @@ func (gmq *GroupMembershipQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (gmq *GroupMembershipQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *GroupMembershipQuery {
+	query := (&EventClient{config: gmq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if gmq.withNamedEvents == nil {
+		gmq.withNamedEvents = make(map[string]*EventQuery)
+	}
+	gmq.withNamedEvents[name] = query
+	return gmq
 }
 
 // GroupMembershipGroupBy is the group-by builder for GroupMembership entities.

@@ -12,6 +12,9 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -379,6 +382,51 @@ func (uc *UserCreate) AddWebauthn(w ...*Webauthn) *UserCreate {
 		ids[i] = w[i].ID
 	}
 	return uc.AddWebauthnIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (uc *UserCreate) AddFileIDs(ids ...string) *UserCreate {
+	uc.mutation.AddFileIDs(ids...)
+	return uc
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (uc *UserCreate) AddFiles(f ...*File) *UserCreate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddFileIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (uc *UserCreate) AddEventIDs(ids ...string) *UserCreate {
+	uc.mutation.AddEventIDs(ids...)
+	return uc
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (uc *UserCreate) AddEvents(e ...*Event) *UserCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uc.AddEventIDs(ids...)
+}
+
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (uc *UserCreate) AddFeatureIDs(ids ...string) *UserCreate {
+	uc.mutation.AddFeatureIDs(ids...)
+	return uc
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (uc *UserCreate) AddFeatures(f ...*Feature) *UserCreate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddFeatureIDs(ids...)
 }
 
 // AddGroupMembershipIDs adds the "group_memberships" edge to the GroupMembership entity by IDs.
@@ -793,6 +841,57 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.Webauthn
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.File
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: user.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.UserEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.UserFeatures
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

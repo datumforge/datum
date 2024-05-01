@@ -57,13 +57,16 @@ type PersonalAccessTokenEdges struct {
 	Owner *User `json:"owner,omitempty"`
 	// the organization(s) the token is associated with
 	Organizations []*Organization `json:"organizations,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
 
 	namedOrganizations map[string][]*Organization
+	namedEvents        map[string][]*Event
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -84,6 +87,15 @@ func (e PersonalAccessTokenEdges) OrganizationsOrErr() ([]*Organization, error) 
 		return e.Organizations, nil
 	}
 	return nil, &NotLoadedError{edge: "organizations"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e PersonalAccessTokenEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[2] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -224,6 +236,11 @@ func (pat *PersonalAccessToken) QueryOrganizations() *OrganizationQuery {
 	return NewPersonalAccessTokenClient(pat.config).QueryOrganizations(pat)
 }
 
+// QueryEvents queries the "events" edge of the PersonalAccessToken entity.
+func (pat *PersonalAccessToken) QueryEvents() *EventQuery {
+	return NewPersonalAccessTokenClient(pat.config).QueryEvents(pat)
+}
+
 // Update returns a builder for updating this PersonalAccessToken.
 // Note that you need to call PersonalAccessToken.Unwrap() before calling this method if this PersonalAccessToken
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -316,6 +333,30 @@ func (pat *PersonalAccessToken) appendNamedOrganizations(name string, edges ...*
 		pat.Edges.namedOrganizations[name] = []*Organization{}
 	} else {
 		pat.Edges.namedOrganizations[name] = append(pat.Edges.namedOrganizations[name], edges...)
+	}
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (pat *PersonalAccessToken) NamedEvents(name string) ([]*Event, error) {
+	if pat.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := pat.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (pat *PersonalAccessToken) appendNamedEvents(name string, edges ...*Event) {
+	if pat.Edges.namedEvents == nil {
+		pat.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		pat.Edges.namedEvents[name] = []*Event{}
+	} else {
+		pat.Edges.namedEvents[name] = append(pat.Edges.namedEvents[name], edges...)
 	}
 }
 

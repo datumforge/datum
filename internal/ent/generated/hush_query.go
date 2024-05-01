@@ -11,8 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -26,9 +28,13 @@ type HushQuery struct {
 	inters                []Interceptor
 	predicates            []predicate.Hush
 	withIntegrations      *IntegrationQuery
+	withOrganization      *OrganizationQuery
+	withEvents            *EventQuery
 	modifiers             []func(*sql.Selector)
 	loadTotal             []func(context.Context, []*Hush) error
 	withNamedIntegrations map[string]*IntegrationQuery
+	withNamedOrganization map[string]*OrganizationQuery
+	withNamedEvents       map[string]*EventQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -84,6 +90,56 @@ func (hq *HushQuery) QueryIntegrations() *IntegrationQuery {
 		schemaConfig := hq.schemaConfig
 		step.To.Schema = schemaConfig.Integration
 		step.Edge.Schema = schemaConfig.IntegrationSecrets
+		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOrganization chains the current query on the "organization" edge.
+func (hq *HushQuery) QueryOrganization() *OrganizationQuery {
+	query := (&OrganizationClient{config: hq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := hq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := hq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(hush.Table, hush.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, hush.OrganizationTable, hush.OrganizationPrimaryKey...),
+		)
+		schemaConfig := hq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationSecrets
+		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEvents chains the current query on the "events" edge.
+func (hq *HushQuery) QueryEvents() *EventQuery {
+	query := (&EventClient{config: hq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := hq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := hq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(hush.Table, hush.FieldID, selector),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, hush.EventsTable, hush.EventsPrimaryKey...),
+		)
+		schemaConfig := hq.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.HushEvents
 		fromU = sqlgraph.SetNeighbors(hq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -283,6 +339,8 @@ func (hq *HushQuery) Clone() *HushQuery {
 		inters:           append([]Interceptor{}, hq.inters...),
 		predicates:       append([]predicate.Hush{}, hq.predicates...),
 		withIntegrations: hq.withIntegrations.Clone(),
+		withOrganization: hq.withOrganization.Clone(),
+		withEvents:       hq.withEvents.Clone(),
 		// clone intermediate query.
 		sql:  hq.sql.Clone(),
 		path: hq.path,
@@ -297,6 +355,28 @@ func (hq *HushQuery) WithIntegrations(opts ...func(*IntegrationQuery)) *HushQuer
 		opt(query)
 	}
 	hq.withIntegrations = query
+	return hq
+}
+
+// WithOrganization tells the query-builder to eager-load the nodes that are connected to
+// the "organization" edge. The optional arguments are used to configure the query builder of the edge.
+func (hq *HushQuery) WithOrganization(opts ...func(*OrganizationQuery)) *HushQuery {
+	query := (&OrganizationClient{config: hq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	hq.withOrganization = query
+	return hq
+}
+
+// WithEvents tells the query-builder to eager-load the nodes that are connected to
+// the "events" edge. The optional arguments are used to configure the query builder of the edge.
+func (hq *HushQuery) WithEvents(opts ...func(*EventQuery)) *HushQuery {
+	query := (&EventClient{config: hq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	hq.withEvents = query
 	return hq
 }
 
@@ -378,8 +458,10 @@ func (hq *HushQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Hush, e
 	var (
 		nodes       = []*Hush{}
 		_spec       = hq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [3]bool{
 			hq.withIntegrations != nil,
+			hq.withOrganization != nil,
+			hq.withEvents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -412,10 +494,38 @@ func (hq *HushQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Hush, e
 			return nil, err
 		}
 	}
+	if query := hq.withOrganization; query != nil {
+		if err := hq.loadOrganization(ctx, query, nodes,
+			func(n *Hush) { n.Edges.Organization = []*Organization{} },
+			func(n *Hush, e *Organization) { n.Edges.Organization = append(n.Edges.Organization, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := hq.withEvents; query != nil {
+		if err := hq.loadEvents(ctx, query, nodes,
+			func(n *Hush) { n.Edges.Events = []*Event{} },
+			func(n *Hush, e *Event) { n.Edges.Events = append(n.Edges.Events, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range hq.withNamedIntegrations {
 		if err := hq.loadIntegrations(ctx, query, nodes,
 			func(n *Hush) { n.appendNamedIntegrations(name) },
 			func(n *Hush, e *Integration) { n.appendNamedIntegrations(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range hq.withNamedOrganization {
+		if err := hq.loadOrganization(ctx, query, nodes,
+			func(n *Hush) { n.appendNamedOrganization(name) },
+			func(n *Hush, e *Organization) { n.appendNamedOrganization(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range hq.withNamedEvents {
+		if err := hq.loadEvents(ctx, query, nodes,
+			func(n *Hush) { n.appendNamedEvents(name) },
+			func(n *Hush, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -482,6 +592,130 @@ func (hq *HushQuery) loadIntegrations(ctx context.Context, query *IntegrationQue
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "integrations" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (hq *HushQuery) loadOrganization(ctx context.Context, query *OrganizationQuery, nodes []*Hush, init func(*Hush), assign func(*Hush, *Organization)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Hush)
+	nids := make(map[string]map[*Hush]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(hush.OrganizationTable)
+		joinT.Schema(hq.schemaConfig.OrganizationSecrets)
+		s.Join(joinT).On(s.C(organization.FieldID), joinT.C(hush.OrganizationPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(hush.OrganizationPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(hush.OrganizationPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Hush]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Organization](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "organization" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (hq *HushQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*Hush, init func(*Hush), assign func(*Hush, *Event)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Hush)
+	nids := make(map[string]map[*Hush]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(hush.EventsTable)
+		joinT.Schema(hq.schemaConfig.HushEvents)
+		s.Join(joinT).On(s.C(event.FieldID), joinT.C(hush.EventsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(hush.EventsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(hush.EventsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Hush]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Event](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
@@ -590,6 +824,34 @@ func (hq *HushQuery) WithNamedIntegrations(name string, opts ...func(*Integratio
 		hq.withNamedIntegrations = make(map[string]*IntegrationQuery)
 	}
 	hq.withNamedIntegrations[name] = query
+	return hq
+}
+
+// WithNamedOrganization tells the query-builder to eager-load the nodes that are connected to the "organization"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (hq *HushQuery) WithNamedOrganization(name string, opts ...func(*OrganizationQuery)) *HushQuery {
+	query := (&OrganizationClient{config: hq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if hq.withNamedOrganization == nil {
+		hq.withNamedOrganization = make(map[string]*OrganizationQuery)
+	}
+	hq.withNamedOrganization[name] = query
+	return hq
+}
+
+// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (hq *HushQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *HushQuery {
+	query := (&EventClient{config: hq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if hq.withNamedEvents == nil {
+		hq.withNamedEvents = make(map[string]*EventQuery)
+	}
+	hq.withNamedEvents[name] = query
 	return hq
 }
 

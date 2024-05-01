@@ -1269,6 +1269,122 @@ func HasSubscribersWith(preds ...predicate.Subscriber) predicate.Organization {
 	})
 }
 
+// HasWebhooks applies the HasEdge predicate on the "webhooks" edge.
+func HasWebhooks() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, WebhooksTable, WebhooksColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Webhook
+		step.Edge.Schema = schemaConfig.Webhook
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasWebhooksWith applies the HasEdge predicate on the "webhooks" edge with a given conditions (other predicates).
+func HasWebhooksWith(preds ...predicate.Webhook) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newWebhooksStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Webhook
+		step.Edge.Schema = schemaConfig.Webhook
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasEvents applies the HasEdge predicate on the "events" edge.
+func HasEvents() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.OrganizationEvents
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEventsWith applies the HasEdge predicate on the "events" edge with a given conditions (other predicates).
+func HasEventsWith(preds ...predicate.Event) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newEventsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.OrganizationEvents
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSecrets applies the HasEdge predicate on the "secrets" edge.
+func HasSecrets() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, SecretsTable, SecretsPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Hush
+		step.Edge.Schema = schemaConfig.OrganizationSecrets
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSecretsWith applies the HasEdge predicate on the "secrets" edge with a given conditions (other predicates).
+func HasSecretsWith(preds ...predicate.Hush) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newSecretsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Hush
+		step.Edge.Schema = schemaConfig.OrganizationSecrets
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasFiles applies the HasEdge predicate on the "files" edge.
+func HasFiles() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FilesTable, FilesPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.OrganizationFiles
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFilesWith applies the HasEdge predicate on the "files" edge with a given conditions (other predicates).
+func HasFilesWith(preds ...predicate.File) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newFilesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.OrganizationFiles
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMembers applies the HasEdge predicate on the "members" edge.
 func HasMembers() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

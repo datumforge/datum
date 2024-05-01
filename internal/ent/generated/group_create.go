@@ -10,9 +10,13 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
@@ -219,6 +223,66 @@ func (gc *GroupCreate) AddUsers(u ...*User) *GroupCreate {
 		ids[i] = u[i].ID
 	}
 	return gc.AddUserIDs(ids...)
+}
+
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (gc *GroupCreate) AddFeatureIDs(ids ...string) *GroupCreate {
+	gc.mutation.AddFeatureIDs(ids...)
+	return gc
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (gc *GroupCreate) AddFeatures(f ...*Feature) *GroupCreate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return gc.AddFeatureIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (gc *GroupCreate) AddEventIDs(ids ...string) *GroupCreate {
+	gc.mutation.AddEventIDs(ids...)
+	return gc
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (gc *GroupCreate) AddEvents(e ...*Event) *GroupCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gc.AddEventIDs(ids...)
+}
+
+// AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
+func (gc *GroupCreate) AddIntegrationIDs(ids ...string) *GroupCreate {
+	gc.mutation.AddIntegrationIDs(ids...)
+	return gc
+}
+
+// AddIntegrations adds the "integrations" edges to the Integration entity.
+func (gc *GroupCreate) AddIntegrations(i ...*Integration) *GroupCreate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return gc.AddIntegrationIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (gc *GroupCreate) AddFileIDs(ids ...string) *GroupCreate {
+	gc.mutation.AddFileIDs(ids...)
+	return gc
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (gc *GroupCreate) AddFiles(f ...*File) *GroupCreate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return gc.AddFileIDs(ids...)
 }
 
 // AddMemberIDs adds the "members" edge to the GroupMembership entity by IDs.
@@ -464,6 +528,74 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FeaturesTable,
+			Columns: group.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gc.schemaConfig.GroupFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.EventsTable,
+			Columns: group.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gc.schemaConfig.GroupEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.IntegrationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.IntegrationsTable,
+			Columns: []string{group.IntegrationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gc.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FilesTable,
+			Columns: group.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gc.schemaConfig.GroupFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}

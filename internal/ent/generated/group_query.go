@@ -12,9 +12,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -25,18 +29,26 @@ import (
 // GroupQuery is the builder for querying Group entities.
 type GroupQuery struct {
 	config
-	ctx              *QueryContext
-	order            []group.OrderOption
-	inters           []Interceptor
-	predicates       []predicate.Group
-	withOwner        *OrganizationQuery
-	withSetting      *GroupSettingQuery
-	withUsers        *UserQuery
-	withMembers      *GroupMembershipQuery
-	modifiers        []func(*sql.Selector)
-	loadTotal        []func(context.Context, []*Group) error
-	withNamedUsers   map[string]*UserQuery
-	withNamedMembers map[string]*GroupMembershipQuery
+	ctx                   *QueryContext
+	order                 []group.OrderOption
+	inters                []Interceptor
+	predicates            []predicate.Group
+	withOwner             *OrganizationQuery
+	withSetting           *GroupSettingQuery
+	withUsers             *UserQuery
+	withFeatures          *FeatureQuery
+	withEvents            *EventQuery
+	withIntegrations      *IntegrationQuery
+	withFiles             *FileQuery
+	withMembers           *GroupMembershipQuery
+	modifiers             []func(*sql.Selector)
+	loadTotal             []func(context.Context, []*Group) error
+	withNamedUsers        map[string]*UserQuery
+	withNamedFeatures     map[string]*FeatureQuery
+	withNamedEvents       map[string]*EventQuery
+	withNamedIntegrations map[string]*IntegrationQuery
+	withNamedFiles        map[string]*FileQuery
+	withNamedMembers      map[string]*GroupMembershipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -142,6 +154,106 @@ func (gq *GroupQuery) QueryUsers() *UserQuery {
 		schemaConfig := gq.schemaConfig
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.GroupMembership
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFeatures chains the current query on the "features" edge.
+func (gq *GroupQuery) QueryFeatures() *FeatureQuery {
+	query := (&FeatureClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(feature.Table, feature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, group.FeaturesTable, group.FeaturesPrimaryKey...),
+		)
+		schemaConfig := gq.schemaConfig
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.GroupFeatures
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEvents chains the current query on the "events" edge.
+func (gq *GroupQuery) QueryEvents() *EventQuery {
+	query := (&EventClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, group.EventsTable, group.EventsPrimaryKey...),
+		)
+		schemaConfig := gq.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.GroupEvents
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryIntegrations chains the current query on the "integrations" edge.
+func (gq *GroupQuery) QueryIntegrations() *IntegrationQuery {
+	query := (&IntegrationClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(integration.Table, integration.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.IntegrationsTable, group.IntegrationsColumn),
+		)
+		schemaConfig := gq.schemaConfig
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.Integration
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFiles chains the current query on the "files" edge.
+func (gq *GroupQuery) QueryFiles() *FileQuery {
+	query := (&FileClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, group.FilesTable, group.FilesPrimaryKey...),
+		)
+		schemaConfig := gq.schemaConfig
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.GroupFiles
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -360,15 +472,19 @@ func (gq *GroupQuery) Clone() *GroupQuery {
 		return nil
 	}
 	return &GroupQuery{
-		config:      gq.config,
-		ctx:         gq.ctx.Clone(),
-		order:       append([]group.OrderOption{}, gq.order...),
-		inters:      append([]Interceptor{}, gq.inters...),
-		predicates:  append([]predicate.Group{}, gq.predicates...),
-		withOwner:   gq.withOwner.Clone(),
-		withSetting: gq.withSetting.Clone(),
-		withUsers:   gq.withUsers.Clone(),
-		withMembers: gq.withMembers.Clone(),
+		config:           gq.config,
+		ctx:              gq.ctx.Clone(),
+		order:            append([]group.OrderOption{}, gq.order...),
+		inters:           append([]Interceptor{}, gq.inters...),
+		predicates:       append([]predicate.Group{}, gq.predicates...),
+		withOwner:        gq.withOwner.Clone(),
+		withSetting:      gq.withSetting.Clone(),
+		withUsers:        gq.withUsers.Clone(),
+		withFeatures:     gq.withFeatures.Clone(),
+		withEvents:       gq.withEvents.Clone(),
+		withIntegrations: gq.withIntegrations.Clone(),
+		withFiles:        gq.withFiles.Clone(),
+		withMembers:      gq.withMembers.Clone(),
 		// clone intermediate query.
 		sql:  gq.sql.Clone(),
 		path: gq.path,
@@ -405,6 +521,50 @@ func (gq *GroupQuery) WithUsers(opts ...func(*UserQuery)) *GroupQuery {
 		opt(query)
 	}
 	gq.withUsers = query
+	return gq
+}
+
+// WithFeatures tells the query-builder to eager-load the nodes that are connected to
+// the "features" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithFeatures(opts ...func(*FeatureQuery)) *GroupQuery {
+	query := (&FeatureClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withFeatures = query
+	return gq
+}
+
+// WithEvents tells the query-builder to eager-load the nodes that are connected to
+// the "events" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithEvents(opts ...func(*EventQuery)) *GroupQuery {
+	query := (&EventClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withEvents = query
+	return gq
+}
+
+// WithIntegrations tells the query-builder to eager-load the nodes that are connected to
+// the "integrations" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithIntegrations(opts ...func(*IntegrationQuery)) *GroupQuery {
+	query := (&IntegrationClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withIntegrations = query
+	return gq
+}
+
+// WithFiles tells the query-builder to eager-load the nodes that are connected to
+// the "files" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithFiles(opts ...func(*FileQuery)) *GroupQuery {
+	query := (&FileClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withFiles = query
 	return gq
 }
 
@@ -503,10 +663,14 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = gq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [8]bool{
 			gq.withOwner != nil,
 			gq.withSetting != nil,
 			gq.withUsers != nil,
+			gq.withFeatures != nil,
+			gq.withEvents != nil,
+			gq.withIntegrations != nil,
+			gq.withFiles != nil,
 			gq.withMembers != nil,
 		}
 	)
@@ -552,6 +716,34 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			return nil, err
 		}
 	}
+	if query := gq.withFeatures; query != nil {
+		if err := gq.loadFeatures(ctx, query, nodes,
+			func(n *Group) { n.Edges.Features = []*Feature{} },
+			func(n *Group, e *Feature) { n.Edges.Features = append(n.Edges.Features, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := gq.withEvents; query != nil {
+		if err := gq.loadEvents(ctx, query, nodes,
+			func(n *Group) { n.Edges.Events = []*Event{} },
+			func(n *Group, e *Event) { n.Edges.Events = append(n.Edges.Events, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := gq.withIntegrations; query != nil {
+		if err := gq.loadIntegrations(ctx, query, nodes,
+			func(n *Group) { n.Edges.Integrations = []*Integration{} },
+			func(n *Group, e *Integration) { n.Edges.Integrations = append(n.Edges.Integrations, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := gq.withFiles; query != nil {
+		if err := gq.loadFiles(ctx, query, nodes,
+			func(n *Group) { n.Edges.Files = []*File{} },
+			func(n *Group, e *File) { n.Edges.Files = append(n.Edges.Files, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := gq.withMembers; query != nil {
 		if err := gq.loadMembers(ctx, query, nodes,
 			func(n *Group) { n.Edges.Members = []*GroupMembership{} },
@@ -563,6 +755,34 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := gq.loadUsers(ctx, query, nodes,
 			func(n *Group) { n.appendNamedUsers(name) },
 			func(n *Group, e *User) { n.appendNamedUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range gq.withNamedFeatures {
+		if err := gq.loadFeatures(ctx, query, nodes,
+			func(n *Group) { n.appendNamedFeatures(name) },
+			func(n *Group, e *Feature) { n.appendNamedFeatures(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range gq.withNamedEvents {
+		if err := gq.loadEvents(ctx, query, nodes,
+			func(n *Group) { n.appendNamedEvents(name) },
+			func(n *Group, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range gq.withNamedIntegrations {
+		if err := gq.loadIntegrations(ctx, query, nodes,
+			func(n *Group) { n.appendNamedIntegrations(name) },
+			func(n *Group, e *Integration) { n.appendNamedIntegrations(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range gq.withNamedFiles {
+		if err := gq.loadFiles(ctx, query, nodes,
+			func(n *Group) { n.appendNamedFiles(name) },
+			func(n *Group, e *File) { n.appendNamedFiles(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -692,6 +912,223 @@ func (gq *GroupQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "users" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (gq *GroupQuery) loadFeatures(ctx context.Context, query *FeatureQuery, nodes []*Group, init func(*Group), assign func(*Group, *Feature)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Group)
+	nids := make(map[string]map[*Group]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(group.FeaturesTable)
+		joinT.Schema(gq.schemaConfig.GroupFeatures)
+		s.Join(joinT).On(s.C(feature.FieldID), joinT.C(group.FeaturesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(group.FeaturesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(group.FeaturesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Group]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Feature](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "features" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (gq *GroupQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*Group, init func(*Group), assign func(*Group, *Event)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Group)
+	nids := make(map[string]map[*Group]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(group.EventsTable)
+		joinT.Schema(gq.schemaConfig.GroupEvents)
+		s.Join(joinT).On(s.C(event.FieldID), joinT.C(group.EventsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(group.EventsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(group.EventsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Group]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Event](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (gq *GroupQuery) loadIntegrations(ctx context.Context, query *IntegrationQuery, nodes []*Group, init func(*Group), assign func(*Group, *Integration)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Integration(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.IntegrationsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.group_integrations
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "group_integrations" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_integrations" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (gq *GroupQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []*Group, init func(*Group), assign func(*Group, *File)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Group)
+	nids := make(map[string]map[*Group]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(group.FilesTable)
+		joinT.Schema(gq.schemaConfig.GroupFiles)
+		s.Join(joinT).On(s.C(file.FieldID), joinT.C(group.FilesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(group.FilesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(group.FilesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Group]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*File](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "files" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
@@ -833,6 +1270,62 @@ func (gq *GroupQuery) WithNamedUsers(name string, opts ...func(*UserQuery)) *Gro
 		gq.withNamedUsers = make(map[string]*UserQuery)
 	}
 	gq.withNamedUsers[name] = query
+	return gq
+}
+
+// WithNamedFeatures tells the query-builder to eager-load the nodes that are connected to the "features"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithNamedFeatures(name string, opts ...func(*FeatureQuery)) *GroupQuery {
+	query := (&FeatureClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if gq.withNamedFeatures == nil {
+		gq.withNamedFeatures = make(map[string]*FeatureQuery)
+	}
+	gq.withNamedFeatures[name] = query
+	return gq
+}
+
+// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *GroupQuery {
+	query := (&EventClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if gq.withNamedEvents == nil {
+		gq.withNamedEvents = make(map[string]*EventQuery)
+	}
+	gq.withNamedEvents[name] = query
+	return gq
+}
+
+// WithNamedIntegrations tells the query-builder to eager-load the nodes that are connected to the "integrations"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithNamedIntegrations(name string, opts ...func(*IntegrationQuery)) *GroupQuery {
+	query := (&IntegrationClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if gq.withNamedIntegrations == nil {
+		gq.withNamedIntegrations = make(map[string]*IntegrationQuery)
+	}
+	gq.withNamedIntegrations[name] = query
+	return gq
+}
+
+// WithNamedFiles tells the query-builder to eager-load the nodes that are connected to the "files"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithNamedFiles(name string, opts ...func(*FileQuery)) *GroupQuery {
+	query := (&FileClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if gq.withNamedFiles == nil {
+		gq.withNamedFiles = make(map[string]*FileQuery)
+	}
+	gq.withNamedFiles[name] = query
 	return gq
 }
 

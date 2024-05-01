@@ -11,9 +11,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -239,6 +243,66 @@ func (gu *GroupUpdate) AddUsers(u ...*User) *GroupUpdate {
 	return gu.AddUserIDs(ids...)
 }
 
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (gu *GroupUpdate) AddFeatureIDs(ids ...string) *GroupUpdate {
+	gu.mutation.AddFeatureIDs(ids...)
+	return gu
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (gu *GroupUpdate) AddFeatures(f ...*Feature) *GroupUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return gu.AddFeatureIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (gu *GroupUpdate) AddEventIDs(ids ...string) *GroupUpdate {
+	gu.mutation.AddEventIDs(ids...)
+	return gu
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (gu *GroupUpdate) AddEvents(e ...*Event) *GroupUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gu.AddEventIDs(ids...)
+}
+
+// AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
+func (gu *GroupUpdate) AddIntegrationIDs(ids ...string) *GroupUpdate {
+	gu.mutation.AddIntegrationIDs(ids...)
+	return gu
+}
+
+// AddIntegrations adds the "integrations" edges to the Integration entity.
+func (gu *GroupUpdate) AddIntegrations(i ...*Integration) *GroupUpdate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return gu.AddIntegrationIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (gu *GroupUpdate) AddFileIDs(ids ...string) *GroupUpdate {
+	gu.mutation.AddFileIDs(ids...)
+	return gu
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (gu *GroupUpdate) AddFiles(f ...*File) *GroupUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return gu.AddFileIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the GroupMembership entity by IDs.
 func (gu *GroupUpdate) AddMemberIDs(ids ...string) *GroupUpdate {
 	gu.mutation.AddMemberIDs(ids...)
@@ -290,6 +354,90 @@ func (gu *GroupUpdate) RemoveUsers(u ...*User) *GroupUpdate {
 		ids[i] = u[i].ID
 	}
 	return gu.RemoveUserIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to the Feature entity.
+func (gu *GroupUpdate) ClearFeatures() *GroupUpdate {
+	gu.mutation.ClearFeatures()
+	return gu
+}
+
+// RemoveFeatureIDs removes the "features" edge to Feature entities by IDs.
+func (gu *GroupUpdate) RemoveFeatureIDs(ids ...string) *GroupUpdate {
+	gu.mutation.RemoveFeatureIDs(ids...)
+	return gu
+}
+
+// RemoveFeatures removes "features" edges to Feature entities.
+func (gu *GroupUpdate) RemoveFeatures(f ...*Feature) *GroupUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return gu.RemoveFeatureIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (gu *GroupUpdate) ClearEvents() *GroupUpdate {
+	gu.mutation.ClearEvents()
+	return gu
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (gu *GroupUpdate) RemoveEventIDs(ids ...string) *GroupUpdate {
+	gu.mutation.RemoveEventIDs(ids...)
+	return gu
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (gu *GroupUpdate) RemoveEvents(e ...*Event) *GroupUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gu.RemoveEventIDs(ids...)
+}
+
+// ClearIntegrations clears all "integrations" edges to the Integration entity.
+func (gu *GroupUpdate) ClearIntegrations() *GroupUpdate {
+	gu.mutation.ClearIntegrations()
+	return gu
+}
+
+// RemoveIntegrationIDs removes the "integrations" edge to Integration entities by IDs.
+func (gu *GroupUpdate) RemoveIntegrationIDs(ids ...string) *GroupUpdate {
+	gu.mutation.RemoveIntegrationIDs(ids...)
+	return gu
+}
+
+// RemoveIntegrations removes "integrations" edges to Integration entities.
+func (gu *GroupUpdate) RemoveIntegrations(i ...*Integration) *GroupUpdate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return gu.RemoveIntegrationIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (gu *GroupUpdate) ClearFiles() *GroupUpdate {
+	gu.mutation.ClearFiles()
+	return gu
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (gu *GroupUpdate) RemoveFileIDs(ids ...string) *GroupUpdate {
+	gu.mutation.RemoveFileIDs(ids...)
+	return gu
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (gu *GroupUpdate) RemoveFiles(f ...*File) *GroupUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return gu.RemoveFileIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the GroupMembership entity.
@@ -573,6 +721,198 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if gu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FeaturesTable,
+			Columns: group.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupFeatures
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !gu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FeaturesTable,
+			Columns: group.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FeaturesTable,
+			Columns: group.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if gu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.EventsTable,
+			Columns: group.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.RemovedEventsIDs(); len(nodes) > 0 && !gu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.EventsTable,
+			Columns: group.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.EventsTable,
+			Columns: group.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if gu.mutation.IntegrationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.IntegrationsTable,
+			Columns: []string{group.IntegrationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.Integration
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.RemovedIntegrationsIDs(); len(nodes) > 0 && !gu.mutation.IntegrationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.IntegrationsTable,
+			Columns: []string{group.IntegrationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.IntegrationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.IntegrationsTable,
+			Columns: []string{group.IntegrationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if gu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FilesTable,
+			Columns: group.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupFiles
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !gu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FilesTable,
+			Columns: group.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FilesTable,
+			Columns: group.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gu.schemaConfig.GroupFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if gu.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -848,6 +1188,66 @@ func (guo *GroupUpdateOne) AddUsers(u ...*User) *GroupUpdateOne {
 	return guo.AddUserIDs(ids...)
 }
 
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (guo *GroupUpdateOne) AddFeatureIDs(ids ...string) *GroupUpdateOne {
+	guo.mutation.AddFeatureIDs(ids...)
+	return guo
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (guo *GroupUpdateOne) AddFeatures(f ...*Feature) *GroupUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return guo.AddFeatureIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (guo *GroupUpdateOne) AddEventIDs(ids ...string) *GroupUpdateOne {
+	guo.mutation.AddEventIDs(ids...)
+	return guo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (guo *GroupUpdateOne) AddEvents(e ...*Event) *GroupUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return guo.AddEventIDs(ids...)
+}
+
+// AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
+func (guo *GroupUpdateOne) AddIntegrationIDs(ids ...string) *GroupUpdateOne {
+	guo.mutation.AddIntegrationIDs(ids...)
+	return guo
+}
+
+// AddIntegrations adds the "integrations" edges to the Integration entity.
+func (guo *GroupUpdateOne) AddIntegrations(i ...*Integration) *GroupUpdateOne {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return guo.AddIntegrationIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (guo *GroupUpdateOne) AddFileIDs(ids ...string) *GroupUpdateOne {
+	guo.mutation.AddFileIDs(ids...)
+	return guo
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (guo *GroupUpdateOne) AddFiles(f ...*File) *GroupUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return guo.AddFileIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the GroupMembership entity by IDs.
 func (guo *GroupUpdateOne) AddMemberIDs(ids ...string) *GroupUpdateOne {
 	guo.mutation.AddMemberIDs(ids...)
@@ -899,6 +1299,90 @@ func (guo *GroupUpdateOne) RemoveUsers(u ...*User) *GroupUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return guo.RemoveUserIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to the Feature entity.
+func (guo *GroupUpdateOne) ClearFeatures() *GroupUpdateOne {
+	guo.mutation.ClearFeatures()
+	return guo
+}
+
+// RemoveFeatureIDs removes the "features" edge to Feature entities by IDs.
+func (guo *GroupUpdateOne) RemoveFeatureIDs(ids ...string) *GroupUpdateOne {
+	guo.mutation.RemoveFeatureIDs(ids...)
+	return guo
+}
+
+// RemoveFeatures removes "features" edges to Feature entities.
+func (guo *GroupUpdateOne) RemoveFeatures(f ...*Feature) *GroupUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return guo.RemoveFeatureIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (guo *GroupUpdateOne) ClearEvents() *GroupUpdateOne {
+	guo.mutation.ClearEvents()
+	return guo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (guo *GroupUpdateOne) RemoveEventIDs(ids ...string) *GroupUpdateOne {
+	guo.mutation.RemoveEventIDs(ids...)
+	return guo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (guo *GroupUpdateOne) RemoveEvents(e ...*Event) *GroupUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return guo.RemoveEventIDs(ids...)
+}
+
+// ClearIntegrations clears all "integrations" edges to the Integration entity.
+func (guo *GroupUpdateOne) ClearIntegrations() *GroupUpdateOne {
+	guo.mutation.ClearIntegrations()
+	return guo
+}
+
+// RemoveIntegrationIDs removes the "integrations" edge to Integration entities by IDs.
+func (guo *GroupUpdateOne) RemoveIntegrationIDs(ids ...string) *GroupUpdateOne {
+	guo.mutation.RemoveIntegrationIDs(ids...)
+	return guo
+}
+
+// RemoveIntegrations removes "integrations" edges to Integration entities.
+func (guo *GroupUpdateOne) RemoveIntegrations(i ...*Integration) *GroupUpdateOne {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return guo.RemoveIntegrationIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (guo *GroupUpdateOne) ClearFiles() *GroupUpdateOne {
+	guo.mutation.ClearFiles()
+	return guo
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (guo *GroupUpdateOne) RemoveFileIDs(ids ...string) *GroupUpdateOne {
+	guo.mutation.RemoveFileIDs(ids...)
+	return guo
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (guo *GroupUpdateOne) RemoveFiles(f ...*File) *GroupUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return guo.RemoveFileIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the GroupMembership entity.
@@ -1209,6 +1693,198 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FeaturesTable,
+			Columns: group.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupFeatures
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !guo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FeaturesTable,
+			Columns: group.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FeaturesTable,
+			Columns: group.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.EventsTable,
+			Columns: group.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !guo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.EventsTable,
+			Columns: group.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.EventsTable,
+			Columns: group.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.IntegrationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.IntegrationsTable,
+			Columns: []string{group.IntegrationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.Integration
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.RemovedIntegrationsIDs(); len(nodes) > 0 && !guo.mutation.IntegrationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.IntegrationsTable,
+			Columns: []string{group.IntegrationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.IntegrationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.IntegrationsTable,
+			Columns: []string{group.IntegrationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FilesTable,
+			Columns: group.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupFiles
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !guo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FilesTable,
+			Columns: group.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   group.FilesTable,
+			Columns: group.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = guo.schemaConfig.GroupFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}

@@ -14,6 +14,15 @@ func (c *Client) WithHistory() {
 	for _, hook := range enthistory.HistoryHooks[*EntitlementMutation]() {
 		c.Entitlement.Use(hook)
 	}
+	for _, hook := range enthistory.HistoryHooks[*EventMutation]() {
+		c.Event.Use(hook)
+	}
+	for _, hook := range enthistory.HistoryHooks[*FeatureMutation]() {
+		c.Feature.Use(hook)
+	}
+	for _, hook := range enthistory.HistoryHooks[*FileMutation]() {
+		c.File.Use(hook)
+	}
 	for _, hook := range enthistory.HistoryHooks[*GroupMutation]() {
 		c.Group.Use(hook)
 	}
@@ -49,5 +58,8 @@ func (c *Client) WithHistory() {
 	}
 	for _, hook := range enthistory.HistoryHooks[*UserSettingMutation]() {
 		c.UserSetting.Use(hook)
+	}
+	for _, hook := range enthistory.HistoryHooks[*WebhookMutation]() {
+		c.Webhook.Use(hook)
 	}
 }

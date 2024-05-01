@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
@@ -211,9 +213,81 @@ func (oattu *OhAuthTooTokenUpdate) SetNillableLastUsed(t *time.Time) *OhAuthTooT
 	return oattu
 }
 
+// AddIntegrationIDs adds the "integration" edge to the Integration entity by IDs.
+func (oattu *OhAuthTooTokenUpdate) AddIntegrationIDs(ids ...string) *OhAuthTooTokenUpdate {
+	oattu.mutation.AddIntegrationIDs(ids...)
+	return oattu
+}
+
+// AddIntegration adds the "integration" edges to the Integration entity.
+func (oattu *OhAuthTooTokenUpdate) AddIntegration(i ...*Integration) *OhAuthTooTokenUpdate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return oattu.AddIntegrationIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (oattu *OhAuthTooTokenUpdate) AddEventIDs(ids ...string) *OhAuthTooTokenUpdate {
+	oattu.mutation.AddEventIDs(ids...)
+	return oattu
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (oattu *OhAuthTooTokenUpdate) AddEvents(e ...*Event) *OhAuthTooTokenUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oattu.AddEventIDs(ids...)
+}
+
 // Mutation returns the OhAuthTooTokenMutation object of the builder.
 func (oattu *OhAuthTooTokenUpdate) Mutation() *OhAuthTooTokenMutation {
 	return oattu.mutation
+}
+
+// ClearIntegration clears all "integration" edges to the Integration entity.
+func (oattu *OhAuthTooTokenUpdate) ClearIntegration() *OhAuthTooTokenUpdate {
+	oattu.mutation.ClearIntegration()
+	return oattu
+}
+
+// RemoveIntegrationIDs removes the "integration" edge to Integration entities by IDs.
+func (oattu *OhAuthTooTokenUpdate) RemoveIntegrationIDs(ids ...string) *OhAuthTooTokenUpdate {
+	oattu.mutation.RemoveIntegrationIDs(ids...)
+	return oattu
+}
+
+// RemoveIntegration removes "integration" edges to Integration entities.
+func (oattu *OhAuthTooTokenUpdate) RemoveIntegration(i ...*Integration) *OhAuthTooTokenUpdate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return oattu.RemoveIntegrationIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (oattu *OhAuthTooTokenUpdate) ClearEvents() *OhAuthTooTokenUpdate {
+	oattu.mutation.ClearEvents()
+	return oattu
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (oattu *OhAuthTooTokenUpdate) RemoveEventIDs(ids ...string) *OhAuthTooTokenUpdate {
+	oattu.mutation.RemoveEventIDs(ids...)
+	return oattu
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (oattu *OhAuthTooTokenUpdate) RemoveEvents(e ...*Event) *OhAuthTooTokenUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oattu.RemoveEventIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -349,6 +423,102 @@ func (oattu *OhAuthTooTokenUpdate) sqlSave(ctx context.Context) (n int, err erro
 	}
 	if value, ok := oattu.mutation.LastUsed(); ok {
 		_spec.SetField(ohauthtootoken.FieldLastUsed, field.TypeTime, value)
+	}
+	if oattu.mutation.IntegrationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   ohauthtootoken.IntegrationTable,
+			Columns: ohauthtootoken.IntegrationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattu.schemaConfig.IntegrationOauth2tokens
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := oattu.mutation.RemovedIntegrationIDs(); len(nodes) > 0 && !oattu.mutation.IntegrationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   ohauthtootoken.IntegrationTable,
+			Columns: ohauthtootoken.IntegrationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattu.schemaConfig.IntegrationOauth2tokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := oattu.mutation.IntegrationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   ohauthtootoken.IntegrationTable,
+			Columns: ohauthtootoken.IntegrationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattu.schemaConfig.IntegrationOauth2tokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if oattu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   ohauthtootoken.EventsTable,
+			Columns: ohauthtootoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattu.schemaConfig.OhAuthTooTokenEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := oattu.mutation.RemovedEventsIDs(); len(nodes) > 0 && !oattu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   ohauthtootoken.EventsTable,
+			Columns: ohauthtootoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattu.schemaConfig.OhAuthTooTokenEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := oattu.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   ohauthtootoken.EventsTable,
+			Columns: ohauthtootoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattu.schemaConfig.OhAuthTooTokenEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = oattu.schemaConfig.OhAuthTooToken
 	ctx = internal.NewSchemaConfigContext(ctx, oattu.schemaConfig)
@@ -552,9 +722,81 @@ func (oattuo *OhAuthTooTokenUpdateOne) SetNillableLastUsed(t *time.Time) *OhAuth
 	return oattuo
 }
 
+// AddIntegrationIDs adds the "integration" edge to the Integration entity by IDs.
+func (oattuo *OhAuthTooTokenUpdateOne) AddIntegrationIDs(ids ...string) *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.AddIntegrationIDs(ids...)
+	return oattuo
+}
+
+// AddIntegration adds the "integration" edges to the Integration entity.
+func (oattuo *OhAuthTooTokenUpdateOne) AddIntegration(i ...*Integration) *OhAuthTooTokenUpdateOne {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return oattuo.AddIntegrationIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (oattuo *OhAuthTooTokenUpdateOne) AddEventIDs(ids ...string) *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.AddEventIDs(ids...)
+	return oattuo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (oattuo *OhAuthTooTokenUpdateOne) AddEvents(e ...*Event) *OhAuthTooTokenUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oattuo.AddEventIDs(ids...)
+}
+
 // Mutation returns the OhAuthTooTokenMutation object of the builder.
 func (oattuo *OhAuthTooTokenUpdateOne) Mutation() *OhAuthTooTokenMutation {
 	return oattuo.mutation
+}
+
+// ClearIntegration clears all "integration" edges to the Integration entity.
+func (oattuo *OhAuthTooTokenUpdateOne) ClearIntegration() *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.ClearIntegration()
+	return oattuo
+}
+
+// RemoveIntegrationIDs removes the "integration" edge to Integration entities by IDs.
+func (oattuo *OhAuthTooTokenUpdateOne) RemoveIntegrationIDs(ids ...string) *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.RemoveIntegrationIDs(ids...)
+	return oattuo
+}
+
+// RemoveIntegration removes "integration" edges to Integration entities.
+func (oattuo *OhAuthTooTokenUpdateOne) RemoveIntegration(i ...*Integration) *OhAuthTooTokenUpdateOne {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return oattuo.RemoveIntegrationIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (oattuo *OhAuthTooTokenUpdateOne) ClearEvents() *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.ClearEvents()
+	return oattuo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (oattuo *OhAuthTooTokenUpdateOne) RemoveEventIDs(ids ...string) *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.RemoveEventIDs(ids...)
+	return oattuo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (oattuo *OhAuthTooTokenUpdateOne) RemoveEvents(e ...*Event) *OhAuthTooTokenUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oattuo.RemoveEventIDs(ids...)
 }
 
 // Where appends a list predicates to the OhAuthTooTokenUpdate builder.
@@ -720,6 +962,102 @@ func (oattuo *OhAuthTooTokenUpdateOne) sqlSave(ctx context.Context) (_node *OhAu
 	}
 	if value, ok := oattuo.mutation.LastUsed(); ok {
 		_spec.SetField(ohauthtootoken.FieldLastUsed, field.TypeTime, value)
+	}
+	if oattuo.mutation.IntegrationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   ohauthtootoken.IntegrationTable,
+			Columns: ohauthtootoken.IntegrationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattuo.schemaConfig.IntegrationOauth2tokens
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := oattuo.mutation.RemovedIntegrationIDs(); len(nodes) > 0 && !oattuo.mutation.IntegrationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   ohauthtootoken.IntegrationTable,
+			Columns: ohauthtootoken.IntegrationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattuo.schemaConfig.IntegrationOauth2tokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := oattuo.mutation.IntegrationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   ohauthtootoken.IntegrationTable,
+			Columns: ohauthtootoken.IntegrationPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattuo.schemaConfig.IntegrationOauth2tokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if oattuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   ohauthtootoken.EventsTable,
+			Columns: ohauthtootoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattuo.schemaConfig.OhAuthTooTokenEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := oattuo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !oattuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   ohauthtootoken.EventsTable,
+			Columns: ohauthtootoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattuo.schemaConfig.OhAuthTooTokenEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := oattuo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   ohauthtootoken.EventsTable,
+			Columns: ohauthtootoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oattuo.schemaConfig.OhAuthTooTokenEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = oattuo.schemaConfig.OhAuthTooToken
 	ctx = internal.NewSchemaConfigContext(ctx, oattuo.schemaConfig)

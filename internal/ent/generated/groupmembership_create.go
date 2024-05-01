@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -155,6 +156,21 @@ func (gmc *GroupMembershipCreate) SetGroup(g *Group) *GroupMembershipCreate {
 // SetUser sets the "user" edge to the User entity.
 func (gmc *GroupMembershipCreate) SetUser(u *User) *GroupMembershipCreate {
 	return gmc.SetUserID(u.ID)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (gmc *GroupMembershipCreate) AddEventIDs(ids ...string) *GroupMembershipCreate {
+	gmc.mutation.AddEventIDs(ids...)
+	return gmc
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (gmc *GroupMembershipCreate) AddEvents(e ...*Event) *GroupMembershipCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gmc.AddEventIDs(ids...)
 }
 
 // Mutation returns the GroupMembershipMutation object of the builder.
@@ -342,6 +358,23 @@ func (gmc *GroupMembershipCreate) createSpec() (*GroupMembership, *sqlgraph.Crea
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gmc.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   groupmembership.EventsTable,
+			Columns: groupmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gmc.schemaConfig.GroupMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

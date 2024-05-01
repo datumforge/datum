@@ -13,7 +13,10 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
@@ -25,6 +28,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -380,6 +384,66 @@ func (ou *OrganizationUpdate) AddSubscribers(s ...*Subscriber) *OrganizationUpda
 	return ou.AddSubscriberIDs(ids...)
 }
 
+// AddWebhookIDs adds the "webhooks" edge to the Webhook entity by IDs.
+func (ou *OrganizationUpdate) AddWebhookIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddWebhookIDs(ids...)
+	return ou
+}
+
+// AddWebhooks adds the "webhooks" edges to the Webhook entity.
+func (ou *OrganizationUpdate) AddWebhooks(w ...*Webhook) *OrganizationUpdate {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return ou.AddWebhookIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (ou *OrganizationUpdate) AddEventIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddEventIDs(ids...)
+	return ou
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (ou *OrganizationUpdate) AddEvents(e ...*Event) *OrganizationUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ou.AddEventIDs(ids...)
+}
+
+// AddSecretIDs adds the "secrets" edge to the Hush entity by IDs.
+func (ou *OrganizationUpdate) AddSecretIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddSecretIDs(ids...)
+	return ou
+}
+
+// AddSecrets adds the "secrets" edges to the Hush entity.
+func (ou *OrganizationUpdate) AddSecrets(h ...*Hush) *OrganizationUpdate {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return ou.AddSecretIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (ou *OrganizationUpdate) AddFileIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddFileIDs(ids...)
+	return ou
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (ou *OrganizationUpdate) AddFiles(f ...*File) *OrganizationUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ou.AddFileIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
 func (ou *OrganizationUpdate) AddMemberIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddMemberIDs(ids...)
@@ -635,6 +699,90 @@ func (ou *OrganizationUpdate) RemoveSubscribers(s ...*Subscriber) *OrganizationU
 		ids[i] = s[i].ID
 	}
 	return ou.RemoveSubscriberIDs(ids...)
+}
+
+// ClearWebhooks clears all "webhooks" edges to the Webhook entity.
+func (ou *OrganizationUpdate) ClearWebhooks() *OrganizationUpdate {
+	ou.mutation.ClearWebhooks()
+	return ou
+}
+
+// RemoveWebhookIDs removes the "webhooks" edge to Webhook entities by IDs.
+func (ou *OrganizationUpdate) RemoveWebhookIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveWebhookIDs(ids...)
+	return ou
+}
+
+// RemoveWebhooks removes "webhooks" edges to Webhook entities.
+func (ou *OrganizationUpdate) RemoveWebhooks(w ...*Webhook) *OrganizationUpdate {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return ou.RemoveWebhookIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (ou *OrganizationUpdate) ClearEvents() *OrganizationUpdate {
+	ou.mutation.ClearEvents()
+	return ou
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (ou *OrganizationUpdate) RemoveEventIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveEventIDs(ids...)
+	return ou
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (ou *OrganizationUpdate) RemoveEvents(e ...*Event) *OrganizationUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ou.RemoveEventIDs(ids...)
+}
+
+// ClearSecrets clears all "secrets" edges to the Hush entity.
+func (ou *OrganizationUpdate) ClearSecrets() *OrganizationUpdate {
+	ou.mutation.ClearSecrets()
+	return ou
+}
+
+// RemoveSecretIDs removes the "secrets" edge to Hush entities by IDs.
+func (ou *OrganizationUpdate) RemoveSecretIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveSecretIDs(ids...)
+	return ou
+}
+
+// RemoveSecrets removes "secrets" edges to Hush entities.
+func (ou *OrganizationUpdate) RemoveSecrets(h ...*Hush) *OrganizationUpdate {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return ou.RemoveSecretIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (ou *OrganizationUpdate) ClearFiles() *OrganizationUpdate {
+	ou.mutation.ClearFiles()
+	return ou
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (ou *OrganizationUpdate) RemoveFileIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveFileIDs(ids...)
+	return ou
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (ou *OrganizationUpdate) RemoveFiles(f ...*File) *OrganizationUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ou.RemoveFileIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the OrgMembership entity.
@@ -1366,6 +1514,198 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.WebhooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.WebhooksTable,
+			Columns: []string{organization.WebhooksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Webhook
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedWebhooksIDs(); len(nodes) > 0 && !ou.mutation.WebhooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.WebhooksTable,
+			Columns: []string{organization.WebhooksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Webhook
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.WebhooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.WebhooksTable,
+			Columns: []string{organization.WebhooksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Webhook
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ou.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.EventsTable,
+			Columns: organization.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedEventsIDs(); len(nodes) > 0 && !ou.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.EventsTable,
+			Columns: organization.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.EventsTable,
+			Columns: organization.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ou.mutation.SecretsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.SecretsTable,
+			Columns: organization.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationSecrets
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedSecretsIDs(); len(nodes) > 0 && !ou.mutation.SecretsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.SecretsTable,
+			Columns: organization.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.SecretsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.SecretsTable,
+			Columns: organization.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ou.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FilesTable,
+			Columns: organization.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationFiles
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedFilesIDs(); len(nodes) > 0 && !ou.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FilesTable,
+			Columns: organization.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FilesTable,
+			Columns: organization.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ou.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1774,6 +2114,66 @@ func (ouo *OrganizationUpdateOne) AddSubscribers(s ...*Subscriber) *Organization
 	return ouo.AddSubscriberIDs(ids...)
 }
 
+// AddWebhookIDs adds the "webhooks" edge to the Webhook entity by IDs.
+func (ouo *OrganizationUpdateOne) AddWebhookIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddWebhookIDs(ids...)
+	return ouo
+}
+
+// AddWebhooks adds the "webhooks" edges to the Webhook entity.
+func (ouo *OrganizationUpdateOne) AddWebhooks(w ...*Webhook) *OrganizationUpdateOne {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return ouo.AddWebhookIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (ouo *OrganizationUpdateOne) AddEventIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddEventIDs(ids...)
+	return ouo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (ouo *OrganizationUpdateOne) AddEvents(e ...*Event) *OrganizationUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ouo.AddEventIDs(ids...)
+}
+
+// AddSecretIDs adds the "secrets" edge to the Hush entity by IDs.
+func (ouo *OrganizationUpdateOne) AddSecretIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddSecretIDs(ids...)
+	return ouo
+}
+
+// AddSecrets adds the "secrets" edges to the Hush entity.
+func (ouo *OrganizationUpdateOne) AddSecrets(h ...*Hush) *OrganizationUpdateOne {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return ouo.AddSecretIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (ouo *OrganizationUpdateOne) AddFileIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddFileIDs(ids...)
+	return ouo
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (ouo *OrganizationUpdateOne) AddFiles(f ...*File) *OrganizationUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ouo.AddFileIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
 func (ouo *OrganizationUpdateOne) AddMemberIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddMemberIDs(ids...)
@@ -2029,6 +2429,90 @@ func (ouo *OrganizationUpdateOne) RemoveSubscribers(s ...*Subscriber) *Organizat
 		ids[i] = s[i].ID
 	}
 	return ouo.RemoveSubscriberIDs(ids...)
+}
+
+// ClearWebhooks clears all "webhooks" edges to the Webhook entity.
+func (ouo *OrganizationUpdateOne) ClearWebhooks() *OrganizationUpdateOne {
+	ouo.mutation.ClearWebhooks()
+	return ouo
+}
+
+// RemoveWebhookIDs removes the "webhooks" edge to Webhook entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveWebhookIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveWebhookIDs(ids...)
+	return ouo
+}
+
+// RemoveWebhooks removes "webhooks" edges to Webhook entities.
+func (ouo *OrganizationUpdateOne) RemoveWebhooks(w ...*Webhook) *OrganizationUpdateOne {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return ouo.RemoveWebhookIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (ouo *OrganizationUpdateOne) ClearEvents() *OrganizationUpdateOne {
+	ouo.mutation.ClearEvents()
+	return ouo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveEventIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveEventIDs(ids...)
+	return ouo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (ouo *OrganizationUpdateOne) RemoveEvents(e ...*Event) *OrganizationUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ouo.RemoveEventIDs(ids...)
+}
+
+// ClearSecrets clears all "secrets" edges to the Hush entity.
+func (ouo *OrganizationUpdateOne) ClearSecrets() *OrganizationUpdateOne {
+	ouo.mutation.ClearSecrets()
+	return ouo
+}
+
+// RemoveSecretIDs removes the "secrets" edge to Hush entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveSecretIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveSecretIDs(ids...)
+	return ouo
+}
+
+// RemoveSecrets removes "secrets" edges to Hush entities.
+func (ouo *OrganizationUpdateOne) RemoveSecrets(h ...*Hush) *OrganizationUpdateOne {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return ouo.RemoveSecretIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (ouo *OrganizationUpdateOne) ClearFiles() *OrganizationUpdateOne {
+	ouo.mutation.ClearFiles()
+	return ouo
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveFileIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveFileIDs(ids...)
+	return ouo
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (ouo *OrganizationUpdateOne) RemoveFiles(f ...*File) *OrganizationUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ouo.RemoveFileIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the OrgMembership entity.
@@ -2785,6 +3269,198 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Subscriber
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.WebhooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.WebhooksTable,
+			Columns: []string{organization.WebhooksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Webhook
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedWebhooksIDs(); len(nodes) > 0 && !ouo.mutation.WebhooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.WebhooksTable,
+			Columns: []string{organization.WebhooksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Webhook
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.WebhooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.WebhooksTable,
+			Columns: []string{organization.WebhooksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Webhook
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.EventsTable,
+			Columns: organization.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !ouo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.EventsTable,
+			Columns: organization.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.EventsTable,
+			Columns: organization.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.SecretsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.SecretsTable,
+			Columns: organization.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationSecrets
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedSecretsIDs(); len(nodes) > 0 && !ouo.mutation.SecretsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.SecretsTable,
+			Columns: organization.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.SecretsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.SecretsTable,
+			Columns: organization.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FilesTable,
+			Columns: organization.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationFiles
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !ouo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FilesTable,
+			Columns: organization.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FilesTable,
+			Columns: organization.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationFiles
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

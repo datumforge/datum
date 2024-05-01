@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
@@ -215,6 +217,36 @@ func (ec *EntitlementCreate) SetOwner(o *Organization) *EntitlementCreate {
 	return ec.SetOwnerID(o.ID)
 }
 
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (ec *EntitlementCreate) AddFeatureIDs(ids ...string) *EntitlementCreate {
+	ec.mutation.AddFeatureIDs(ids...)
+	return ec
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (ec *EntitlementCreate) AddFeatures(f ...*Feature) *EntitlementCreate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ec.AddFeatureIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (ec *EntitlementCreate) AddEventIDs(ids ...string) *EntitlementCreate {
+	ec.mutation.AddEventIDs(ids...)
+	return ec
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (ec *EntitlementCreate) AddEvents(e ...*Event) *EntitlementCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ec.AddEventIDs(ids...)
+}
+
 // Mutation returns the EntitlementMutation object of the builder.
 func (ec *EntitlementCreate) Mutation() *EntitlementMutation {
 	return ec.mutation
@@ -410,6 +442,40 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entitlement.FeaturesTable,
+			Columns: entitlement.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ec.schemaConfig.EntitlementFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entitlement.EventsTable,
+			Columns: entitlement.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ec.schemaConfig.EntitlementEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

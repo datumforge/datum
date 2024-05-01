@@ -39,6 +39,10 @@ const (
 	FieldSecretValue = "secret_value"
 	// EdgeIntegrations holds the string denoting the integrations edge name in mutations.
 	EdgeIntegrations = "integrations"
+	// EdgeOrganization holds the string denoting the organization edge name in mutations.
+	EdgeOrganization = "organization"
+	// EdgeEvents holds the string denoting the events edge name in mutations.
+	EdgeEvents = "events"
 	// Table holds the table name of the hush in the database.
 	Table = "hushes"
 	// IntegrationsTable is the table that holds the integrations relation/edge. The primary key declared below.
@@ -46,6 +50,16 @@ const (
 	// IntegrationsInverseTable is the table name for the Integration entity.
 	// It exists in this package in order to avoid circular dependency with the "integration" package.
 	IntegrationsInverseTable = "integrations"
+	// OrganizationTable is the table that holds the organization relation/edge. The primary key declared below.
+	OrganizationTable = "organization_secrets"
+	// OrganizationInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationInverseTable = "organizations"
+	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
+	EventsTable = "hush_events"
+	// EventsInverseTable is the table name for the Event entity.
+	// It exists in this package in order to avoid circular dependency with the "event" package.
+	EventsInverseTable = "events"
 )
 
 // Columns holds all SQL columns for hush fields.
@@ -68,6 +82,12 @@ var (
 	// IntegrationsPrimaryKey and IntegrationsColumn2 are the table columns denoting the
 	// primary key for the integrations relation (M2M).
 	IntegrationsPrimaryKey = []string{"integration_id", "hush_id"}
+	// OrganizationPrimaryKey and OrganizationColumn2 are the table columns denoting the
+	// primary key for the organization relation (M2M).
+	OrganizationPrimaryKey = []string{"organization_id", "hush_id"}
+	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
+	// primary key for the events relation (M2M).
+	EventsPrimaryKey = []string{"hush_id", "event_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -176,10 +196,52 @@ func ByIntegrations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newIntegrationsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByOrganizationCount orders the results by organization count.
+func ByOrganizationCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOrganizationStep(), opts...)
+	}
+}
+
+// ByOrganization orders the results by organization terms.
+func ByOrganization(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOrganizationStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEventsCount orders the results by events count.
+func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEventsStep(), opts...)
+	}
+}
+
+// ByEvents orders the results by events terms.
+func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newIntegrationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(IntegrationsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, IntegrationsTable, IntegrationsPrimaryKey...),
+	)
+}
+func newOrganizationStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OrganizationInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, OrganizationTable, OrganizationPrimaryKey...),
+	)
+}
+func newEventsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EventsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
 	)
 }

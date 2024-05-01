@@ -14,7 +14,10 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
@@ -26,6 +29,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -50,6 +54,10 @@ type OrganizationQuery struct {
 	withUsers                     *UserQuery
 	withInvites                   *InviteQuery
 	withSubscribers               *SubscriberQuery
+	withWebhooks                  *WebhookQuery
+	withEvents                    *EventQuery
+	withSecrets                   *HushQuery
+	withFiles                     *FileQuery
 	withMembers                   *OrgMembershipQuery
 	modifiers                     []func(*sql.Selector)
 	loadTotal                     []func(context.Context, []*Organization) error
@@ -64,6 +72,10 @@ type OrganizationQuery struct {
 	withNamedUsers                map[string]*UserQuery
 	withNamedInvites              map[string]*InviteQuery
 	withNamedSubscribers          map[string]*SubscriberQuery
+	withNamedWebhooks             map[string]*WebhookQuery
+	withNamedEvents               map[string]*EventQuery
+	withNamedSecrets              map[string]*HushQuery
+	withNamedFiles                map[string]*FileQuery
 	withNamedMembers              map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -426,6 +438,106 @@ func (oq *OrganizationQuery) QuerySubscribers() *SubscriberQuery {
 	return query
 }
 
+// QueryWebhooks chains the current query on the "webhooks" edge.
+func (oq *OrganizationQuery) QueryWebhooks() *WebhookQuery {
+	query := (&WebhookClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(webhook.Table, webhook.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.WebhooksTable, organization.WebhooksColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Webhook
+		step.Edge.Schema = schemaConfig.Webhook
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEvents chains the current query on the "events" edge.
+func (oq *OrganizationQuery) QueryEvents() *EventQuery {
+	query := (&EventClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.EventsTable, organization.EventsPrimaryKey...),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.OrganizationEvents
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySecrets chains the current query on the "secrets" edge.
+func (oq *OrganizationQuery) QuerySecrets() *HushQuery {
+	query := (&HushClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(hush.Table, hush.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.SecretsTable, organization.SecretsPrimaryKey...),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Hush
+		step.Edge.Schema = schemaConfig.OrganizationSecrets
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFiles chains the current query on the "files" edge.
+func (oq *OrganizationQuery) QueryFiles() *FileQuery {
+	query := (&FileClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.FilesTable, organization.FilesPrimaryKey...),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.OrganizationFiles
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryMembers chains the current query on the "members" edge.
 func (oq *OrganizationQuery) QueryMembers() *OrgMembershipQuery {
 	query := (&OrgMembershipClient{config: oq.config}).Query()
@@ -656,6 +768,10 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withUsers:                oq.withUsers.Clone(),
 		withInvites:              oq.withInvites.Clone(),
 		withSubscribers:          oq.withSubscribers.Clone(),
+		withWebhooks:             oq.withWebhooks.Clone(),
+		withEvents:               oq.withEvents.Clone(),
+		withSecrets:              oq.withSecrets.Clone(),
+		withFiles:                oq.withFiles.Clone(),
 		withMembers:              oq.withMembers.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
@@ -806,6 +922,50 @@ func (oq *OrganizationQuery) WithSubscribers(opts ...func(*SubscriberQuery)) *Or
 	return oq
 }
 
+// WithWebhooks tells the query-builder to eager-load the nodes that are connected to
+// the "webhooks" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithWebhooks(opts ...func(*WebhookQuery)) *OrganizationQuery {
+	query := (&WebhookClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withWebhooks = query
+	return oq
+}
+
+// WithEvents tells the query-builder to eager-load the nodes that are connected to
+// the "events" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithEvents(opts ...func(*EventQuery)) *OrganizationQuery {
+	query := (&EventClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withEvents = query
+	return oq
+}
+
+// WithSecrets tells the query-builder to eager-load the nodes that are connected to
+// the "secrets" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithSecrets(opts ...func(*HushQuery)) *OrganizationQuery {
+	query := (&HushClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withSecrets = query
+	return oq
+}
+
+// WithFiles tells the query-builder to eager-load the nodes that are connected to
+// the "files" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithFiles(opts ...func(*FileQuery)) *OrganizationQuery {
+	query := (&FileClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withFiles = query
+	return oq
+}
+
 // WithMembers tells the query-builder to eager-load the nodes that are connected to
 // the "members" edge. The optional arguments are used to configure the query builder of the edge.
 func (oq *OrganizationQuery) WithMembers(opts ...func(*OrgMembershipQuery)) *OrganizationQuery {
@@ -901,7 +1061,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [14]bool{
+		loadedTypes = [18]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
@@ -915,6 +1075,10 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withUsers != nil,
 			oq.withInvites != nil,
 			oq.withSubscribers != nil,
+			oq.withWebhooks != nil,
+			oq.withEvents != nil,
+			oq.withSecrets != nil,
+			oq.withFiles != nil,
 			oq.withMembers != nil,
 		}
 	)
@@ -1032,6 +1196,34 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withWebhooks; query != nil {
+		if err := oq.loadWebhooks(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Webhooks = []*Webhook{} },
+			func(n *Organization, e *Webhook) { n.Edges.Webhooks = append(n.Edges.Webhooks, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withEvents; query != nil {
+		if err := oq.loadEvents(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Events = []*Event{} },
+			func(n *Organization, e *Event) { n.Edges.Events = append(n.Edges.Events, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withSecrets; query != nil {
+		if err := oq.loadSecrets(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Secrets = []*Hush{} },
+			func(n *Organization, e *Hush) { n.Edges.Secrets = append(n.Edges.Secrets, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withFiles; query != nil {
+		if err := oq.loadFiles(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Files = []*File{} },
+			func(n *Organization, e *File) { n.Edges.Files = append(n.Edges.Files, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := oq.withMembers; query != nil {
 		if err := oq.loadMembers(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Members = []*OrgMembership{} },
@@ -1113,6 +1305,34 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadSubscribers(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedSubscribers(name) },
 			func(n *Organization, e *Subscriber) { n.appendNamedSubscribers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedWebhooks {
+		if err := oq.loadWebhooks(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedWebhooks(name) },
+			func(n *Organization, e *Webhook) { n.appendNamedWebhooks(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedEvents {
+		if err := oq.loadEvents(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedEvents(name) },
+			func(n *Organization, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedSecrets {
+		if err := oq.loadSecrets(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedSecrets(name) },
+			func(n *Organization, e *Hush) { n.appendNamedSecrets(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedFiles {
+		if err := oq.loadFiles(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedFiles(name) },
+			func(n *Organization, e *File) { n.appendNamedFiles(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1260,6 +1480,7 @@ func (oq *OrganizationQuery) loadIntegrations(ctx context.Context, query *Integr
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(integration.FieldOwnerID)
 	}
@@ -1582,6 +1803,222 @@ func (oq *OrganizationQuery) loadSubscribers(ctx context.Context, query *Subscri
 	}
 	return nil
 }
+func (oq *OrganizationQuery) loadWebhooks(ctx context.Context, query *WebhookQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Webhook)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(webhook.FieldOwnerID)
+	}
+	query.Where(predicate.Webhook(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.WebhooksColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Event)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Organization)
+	nids := make(map[string]map[*Organization]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(organization.EventsTable)
+		joinT.Schema(oq.schemaConfig.OrganizationEvents)
+		s.Join(joinT).On(s.C(event.FieldID), joinT.C(organization.EventsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(organization.EventsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(organization.EventsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Organization]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Event](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadSecrets(ctx context.Context, query *HushQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Hush)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Organization)
+	nids := make(map[string]map[*Organization]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(organization.SecretsTable)
+		joinT.Schema(oq.schemaConfig.OrganizationSecrets)
+		s.Join(joinT).On(s.C(hush.FieldID), joinT.C(organization.SecretsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(organization.SecretsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(organization.SecretsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Organization]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Hush](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "secrets" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *File)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Organization)
+	nids := make(map[string]map[*Organization]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(organization.FilesTable)
+		joinT.Schema(oq.schemaConfig.OrganizationFiles)
+		s.Join(joinT).On(s.C(file.FieldID), joinT.C(organization.FilesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(organization.FilesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(organization.FilesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Organization]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*File](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "files" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
 func (oq *OrganizationQuery) loadMembers(ctx context.Context, query *OrgMembershipQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OrgMembership)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Organization)
@@ -1856,6 +2293,62 @@ func (oq *OrganizationQuery) WithNamedSubscribers(name string, opts ...func(*Sub
 		oq.withNamedSubscribers = make(map[string]*SubscriberQuery)
 	}
 	oq.withNamedSubscribers[name] = query
+	return oq
+}
+
+// WithNamedWebhooks tells the query-builder to eager-load the nodes that are connected to the "webhooks"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedWebhooks(name string, opts ...func(*WebhookQuery)) *OrganizationQuery {
+	query := (&WebhookClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedWebhooks == nil {
+		oq.withNamedWebhooks = make(map[string]*WebhookQuery)
+	}
+	oq.withNamedWebhooks[name] = query
+	return oq
+}
+
+// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *OrganizationQuery {
+	query := (&EventClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedEvents == nil {
+		oq.withNamedEvents = make(map[string]*EventQuery)
+	}
+	oq.withNamedEvents[name] = query
+	return oq
+}
+
+// WithNamedSecrets tells the query-builder to eager-load the nodes that are connected to the "secrets"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedSecrets(name string, opts ...func(*HushQuery)) *OrganizationQuery {
+	query := (&HushClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedSecrets == nil {
+		oq.withNamedSecrets = make(map[string]*HushQuery)
+	}
+	oq.withNamedSecrets[name] = query
+	return oq
+}
+
+// WithNamedFiles tells the query-builder to eager-load the nodes that are connected to the "files"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedFiles(name string, opts ...func(*FileQuery)) *OrganizationQuery {
+	query := (&FileClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedFiles == nil {
+		oq.withNamedFiles = make(map[string]*FileQuery)
+	}
+	oq.withNamedFiles[name] = query
 	return oq
 }
 

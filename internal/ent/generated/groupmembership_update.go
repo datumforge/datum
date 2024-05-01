@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
@@ -117,9 +118,45 @@ func (gmu *GroupMembershipUpdate) SetNillableRole(e *enums.Role) *GroupMembershi
 	return gmu
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (gmu *GroupMembershipUpdate) AddEventIDs(ids ...string) *GroupMembershipUpdate {
+	gmu.mutation.AddEventIDs(ids...)
+	return gmu
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (gmu *GroupMembershipUpdate) AddEvents(e ...*Event) *GroupMembershipUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gmu.AddEventIDs(ids...)
+}
+
 // Mutation returns the GroupMembershipMutation object of the builder.
 func (gmu *GroupMembershipUpdate) Mutation() *GroupMembershipMutation {
 	return gmu.mutation
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (gmu *GroupMembershipUpdate) ClearEvents() *GroupMembershipUpdate {
+	gmu.mutation.ClearEvents()
+	return gmu
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (gmu *GroupMembershipUpdate) RemoveEventIDs(ids ...string) *GroupMembershipUpdate {
+	gmu.mutation.RemoveEventIDs(ids...)
+	return gmu
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (gmu *GroupMembershipUpdate) RemoveEvents(e ...*Event) *GroupMembershipUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gmu.RemoveEventIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -224,6 +261,54 @@ func (gmu *GroupMembershipUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if value, ok := gmu.mutation.Role(); ok {
 		_spec.SetField(groupmembership.FieldRole, field.TypeEnum, value)
+	}
+	if gmu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   groupmembership.EventsTable,
+			Columns: groupmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gmu.schemaConfig.GroupMembershipEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gmu.mutation.RemovedEventsIDs(); len(nodes) > 0 && !gmu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   groupmembership.EventsTable,
+			Columns: groupmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gmu.schemaConfig.GroupMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gmu.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   groupmembership.EventsTable,
+			Columns: groupmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gmu.schemaConfig.GroupMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = gmu.schemaConfig.GroupMembership
 	ctx = internal.NewSchemaConfigContext(ctx, gmu.schemaConfig)
@@ -333,9 +418,45 @@ func (gmuo *GroupMembershipUpdateOne) SetNillableRole(e *enums.Role) *GroupMembe
 	return gmuo
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (gmuo *GroupMembershipUpdateOne) AddEventIDs(ids ...string) *GroupMembershipUpdateOne {
+	gmuo.mutation.AddEventIDs(ids...)
+	return gmuo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (gmuo *GroupMembershipUpdateOne) AddEvents(e ...*Event) *GroupMembershipUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gmuo.AddEventIDs(ids...)
+}
+
 // Mutation returns the GroupMembershipMutation object of the builder.
 func (gmuo *GroupMembershipUpdateOne) Mutation() *GroupMembershipMutation {
 	return gmuo.mutation
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (gmuo *GroupMembershipUpdateOne) ClearEvents() *GroupMembershipUpdateOne {
+	gmuo.mutation.ClearEvents()
+	return gmuo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (gmuo *GroupMembershipUpdateOne) RemoveEventIDs(ids ...string) *GroupMembershipUpdateOne {
+	gmuo.mutation.RemoveEventIDs(ids...)
+	return gmuo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (gmuo *GroupMembershipUpdateOne) RemoveEvents(e ...*Event) *GroupMembershipUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gmuo.RemoveEventIDs(ids...)
 }
 
 // Where appends a list predicates to the GroupMembershipUpdate builder.
@@ -470,6 +591,54 @@ func (gmuo *GroupMembershipUpdateOne) sqlSave(ctx context.Context) (_node *Group
 	}
 	if value, ok := gmuo.mutation.Role(); ok {
 		_spec.SetField(groupmembership.FieldRole, field.TypeEnum, value)
+	}
+	if gmuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   groupmembership.EventsTable,
+			Columns: groupmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gmuo.schemaConfig.GroupMembershipEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gmuo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !gmuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   groupmembership.EventsTable,
+			Columns: groupmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gmuo.schemaConfig.GroupMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gmuo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   groupmembership.EventsTable,
+			Columns: groupmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gmuo.schemaConfig.GroupMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = gmuo.schemaConfig.GroupMembership
 	ctx = internal.NewSchemaConfigContext(ctx, gmuo.schemaConfig)

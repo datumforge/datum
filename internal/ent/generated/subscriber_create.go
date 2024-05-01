@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 )
@@ -216,6 +217,21 @@ func (sc *SubscriberCreate) SetNillableID(s *string) *SubscriberCreate {
 // SetOwner sets the "owner" edge to the Organization entity.
 func (sc *SubscriberCreate) SetOwner(o *Organization) *SubscriberCreate {
 	return sc.SetOwnerID(o.ID)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (sc *SubscriberCreate) AddEventIDs(ids ...string) *SubscriberCreate {
+	sc.mutation.AddEventIDs(ids...)
+	return sc
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (sc *SubscriberCreate) AddEvents(e ...*Event) *SubscriberCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return sc.AddEventIDs(ids...)
 }
 
 // Mutation returns the SubscriberMutation object of the builder.
@@ -442,6 +458,23 @@ func (sc *SubscriberCreate) createSpec() (*Subscriber, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   subscriber.EventsTable,
+			Columns: subscriber.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = sc.schemaConfig.SubscriberEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

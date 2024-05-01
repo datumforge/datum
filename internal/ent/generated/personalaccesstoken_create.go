@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -204,6 +205,21 @@ func (patc *PersonalAccessTokenCreate) AddOrganizations(o ...*Organization) *Per
 		ids[i] = o[i].ID
 	}
 	return patc.AddOrganizationIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (patc *PersonalAccessTokenCreate) AddEventIDs(ids ...string) *PersonalAccessTokenCreate {
+	patc.mutation.AddEventIDs(ids...)
+	return patc
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (patc *PersonalAccessTokenCreate) AddEvents(e ...*Event) *PersonalAccessTokenCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return patc.AddEventIDs(ids...)
 }
 
 // Mutation returns the PersonalAccessTokenMutation object of the builder.
@@ -410,6 +426,23 @@ func (patc *PersonalAccessTokenCreate) createSpec() (*PersonalAccessToken, *sqlg
 			},
 		}
 		edge.Schema = patc.schemaConfig.OrganizationPersonalAccessTokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := patc.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   personalaccesstoken.EventsTable,
+			Columns: personalaccesstoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = patc.schemaConfig.PersonalAccessTokenEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

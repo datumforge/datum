@@ -45,6 +45,14 @@ const (
 	EdgeSetting = "setting"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
+	// EdgeFeatures holds the string denoting the features edge name in mutations.
+	EdgeFeatures = "features"
+	// EdgeEvents holds the string denoting the events edge name in mutations.
+	EdgeEvents = "events"
+	// EdgeIntegrations holds the string denoting the integrations edge name in mutations.
+	EdgeIntegrations = "integrations"
+	// EdgeFiles holds the string denoting the files edge name in mutations.
+	EdgeFiles = "files"
 	// EdgeMembers holds the string denoting the members edge name in mutations.
 	EdgeMembers = "members"
 	// Table holds the table name of the group in the database.
@@ -68,6 +76,28 @@ const (
 	// UsersInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UsersInverseTable = "users"
+	// FeaturesTable is the table that holds the features relation/edge. The primary key declared below.
+	FeaturesTable = "group_features"
+	// FeaturesInverseTable is the table name for the Feature entity.
+	// It exists in this package in order to avoid circular dependency with the "feature" package.
+	FeaturesInverseTable = "features"
+	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
+	EventsTable = "group_events"
+	// EventsInverseTable is the table name for the Event entity.
+	// It exists in this package in order to avoid circular dependency with the "event" package.
+	EventsInverseTable = "events"
+	// IntegrationsTable is the table that holds the integrations relation/edge.
+	IntegrationsTable = "integrations"
+	// IntegrationsInverseTable is the table name for the Integration entity.
+	// It exists in this package in order to avoid circular dependency with the "integration" package.
+	IntegrationsInverseTable = "integrations"
+	// IntegrationsColumn is the table column denoting the integrations relation/edge.
+	IntegrationsColumn = "group_integrations"
+	// FilesTable is the table that holds the files relation/edge. The primary key declared below.
+	FilesTable = "group_files"
+	// FilesInverseTable is the table name for the File entity.
+	// It exists in this package in order to avoid circular dependency with the "file" package.
+	FilesInverseTable = "files"
 	// MembersTable is the table that holds the members relation/edge.
 	MembersTable = "group_memberships"
 	// MembersInverseTable is the table name for the GroupMembership entity.
@@ -98,6 +128,15 @@ var (
 	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
 	// primary key for the users relation (M2M).
 	UsersPrimaryKey = []string{"user_id", "group_id"}
+	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
+	// primary key for the features relation (M2M).
+	FeaturesPrimaryKey = []string{"group_id", "feature_id"}
+	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
+	// primary key for the events relation (M2M).
+	EventsPrimaryKey = []string{"group_id", "event_id"}
+	// FilesPrimaryKey and FilesColumn2 are the table columns denoting the
+	// primary key for the files relation (M2M).
+	FilesPrimaryKey = []string{"group_id", "file_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -231,6 +270,62 @@ func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByFeaturesCount orders the results by features count.
+func ByFeaturesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFeaturesStep(), opts...)
+	}
+}
+
+// ByFeatures orders the results by features terms.
+func ByFeatures(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFeaturesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEventsCount orders the results by events count.
+func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEventsStep(), opts...)
+	}
+}
+
+// ByEvents orders the results by events terms.
+func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByIntegrationsCount orders the results by integrations count.
+func ByIntegrationsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIntegrationsStep(), opts...)
+	}
+}
+
+// ByIntegrations orders the results by integrations terms.
+func ByIntegrations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIntegrationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByFilesCount orders the results by files count.
+func ByFilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFilesStep(), opts...)
+	}
+}
+
+// ByFiles orders the results by files terms.
+func ByFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByMembersCount orders the results by members count.
 func ByMembersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -263,6 +358,34 @@ func newUsersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UsersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
+	)
+}
+func newFeaturesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FeaturesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+	)
+}
+func newEventsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EventsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+	)
+}
+func newIntegrationsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IntegrationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, IntegrationsTable, IntegrationsColumn),
+	)
+}
+func newFilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FilesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, FilesTable, FilesPrimaryKey...),
 	)
 }
 func newMembersStep() *sqlgraph.Step {

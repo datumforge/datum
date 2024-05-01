@@ -58,11 +58,15 @@ type Subscriber struct {
 type SubscriberEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *Organization `json:"owner,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
+
+	namedEvents map[string][]*Event
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -74,6 +78,15 @@ func (e SubscriberEdges) OwnerOrErr() (*Organization, error) {
 		return nil, &NotFoundError{label: organization.Label}
 	}
 	return nil, &NotLoadedError{edge: "owner"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e SubscriberEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[1] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -219,6 +232,11 @@ func (s *Subscriber) QueryOwner() *OrganizationQuery {
 	return NewSubscriberClient(s.config).QueryOwner(s)
 }
 
+// QueryEvents queries the "events" edge of the Subscriber entity.
+func (s *Subscriber) QueryEvents() *EventQuery {
+	return NewSubscriberClient(s.config).QueryEvents(s)
+}
+
 // Update returns a builder for updating this Subscriber.
 // Note that you need to call Subscriber.Unwrap() before calling this method if this Subscriber
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -292,6 +310,30 @@ func (s *Subscriber) String() string {
 	}
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (s *Subscriber) NamedEvents(name string) ([]*Event, error) {
+	if s.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := s.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (s *Subscriber) appendNamedEvents(name string, edges ...*Event) {
+	if s.Edges.namedEvents == nil {
+		s.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		s.Edges.namedEvents[name] = []*Event{}
+	} else {
+		s.Edges.namedEvents[name] = append(s.Edges.namedEvents[name], edges...)
+	}
 }
 
 // Subscribers is a parsable slice of Subscriber.

@@ -24,6 +24,24 @@ type Entitlement func(*sql.Selector)
 // EntitlementHistory is the predicate function for entitlementhistory builders.
 type EntitlementHistory func(*sql.Selector)
 
+// Event is the predicate function for event builders.
+type Event func(*sql.Selector)
+
+// EventHistory is the predicate function for eventhistory builders.
+type EventHistory func(*sql.Selector)
+
+// Feature is the predicate function for feature builders.
+type Feature func(*sql.Selector)
+
+// FeatureHistory is the predicate function for featurehistory builders.
+type FeatureHistory func(*sql.Selector)
+
+// File is the predicate function for file builders.
+type File func(*sql.Selector)
+
+// FileHistory is the predicate function for filehistory builders.
+type FileHistory func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
@@ -116,3 +134,9 @@ type UserSettingHistory func(*sql.Selector)
 
 // Webauthn is the predicate function for webauthn builders.
 type Webauthn func(*sql.Selector)
+
+// Webhook is the predicate function for webhook builders.
+type Webhook func(*sql.Selector)
+
+// WebhookHistory is the predicate function for webhookhistory builders.
+type WebhookHistory func(*sql.Selector)

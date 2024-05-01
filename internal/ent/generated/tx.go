@@ -24,6 +24,18 @@ type Tx struct {
 	Entitlement *EntitlementClient
 	// EntitlementHistory is the client for interacting with the EntitlementHistory builders.
 	EntitlementHistory *EntitlementHistoryClient
+	// Event is the client for interacting with the Event builders.
+	Event *EventClient
+	// EventHistory is the client for interacting with the EventHistory builders.
+	EventHistory *EventHistoryClient
+	// Feature is the client for interacting with the Feature builders.
+	Feature *FeatureClient
+	// FeatureHistory is the client for interacting with the FeatureHistory builders.
+	FeatureHistory *FeatureHistoryClient
+	// File is the client for interacting with the File builders.
+	File *FileClient
+	// FileHistory is the client for interacting with the FileHistory builders.
+	FileHistory *FileHistoryClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupHistory is the client for interacting with the GroupHistory builders.
@@ -86,6 +98,10 @@ type Tx struct {
 	UserSettingHistory *UserSettingHistoryClient
 	// Webauthn is the client for interacting with the Webauthn builders.
 	Webauthn *WebauthnClient
+	// Webhook is the client for interacting with the Webhook builders.
+	Webhook *WebhookClient
+	// WebhookHistory is the client for interacting with the WebhookHistory builders.
+	WebhookHistory *WebhookHistoryClient
 
 	// lazily loaded.
 	client     *Client
@@ -223,6 +239,12 @@ func (tx *Tx) init() {
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
 	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.EntitlementHistory = NewEntitlementHistoryClient(tx.config)
+	tx.Event = NewEventClient(tx.config)
+	tx.EventHistory = NewEventHistoryClient(tx.config)
+	tx.Feature = NewFeatureClient(tx.config)
+	tx.FeatureHistory = NewFeatureHistoryClient(tx.config)
+	tx.File = NewFileClient(tx.config)
+	tx.FileHistory = NewFileHistoryClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupHistory = NewGroupHistoryClient(tx.config)
 	tx.GroupMembership = NewGroupMembershipClient(tx.config)
@@ -254,6 +276,8 @@ func (tx *Tx) init() {
 	tx.UserSetting = NewUserSettingClient(tx.config)
 	tx.UserSettingHistory = NewUserSettingHistoryClient(tx.config)
 	tx.Webauthn = NewWebauthnClient(tx.config)
+	tx.Webhook = NewWebhookClient(tx.config)
+	tx.WebhookHistory = NewWebhookHistoryClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

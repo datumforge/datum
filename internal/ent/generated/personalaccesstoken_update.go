@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -225,6 +226,21 @@ func (patu *PersonalAccessTokenUpdate) AddOrganizations(o ...*Organization) *Per
 	return patu.AddOrganizationIDs(ids...)
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (patu *PersonalAccessTokenUpdate) AddEventIDs(ids ...string) *PersonalAccessTokenUpdate {
+	patu.mutation.AddEventIDs(ids...)
+	return patu
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (patu *PersonalAccessTokenUpdate) AddEvents(e ...*Event) *PersonalAccessTokenUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return patu.AddEventIDs(ids...)
+}
+
 // Mutation returns the PersonalAccessTokenMutation object of the builder.
 func (patu *PersonalAccessTokenUpdate) Mutation() *PersonalAccessTokenMutation {
 	return patu.mutation
@@ -255,6 +271,27 @@ func (patu *PersonalAccessTokenUpdate) RemoveOrganizations(o ...*Organization) *
 		ids[i] = o[i].ID
 	}
 	return patu.RemoveOrganizationIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (patu *PersonalAccessTokenUpdate) ClearEvents() *PersonalAccessTokenUpdate {
+	patu.mutation.ClearEvents()
+	return patu
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (patu *PersonalAccessTokenUpdate) RemoveEventIDs(ids ...string) *PersonalAccessTokenUpdate {
+	patu.mutation.RemoveEventIDs(ids...)
+	return patu
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (patu *PersonalAccessTokenUpdate) RemoveEvents(e ...*Event) *PersonalAccessTokenUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return patu.RemoveEventIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -457,6 +494,54 @@ func (patu *PersonalAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err 
 			},
 		}
 		edge.Schema = patu.schemaConfig.OrganizationPersonalAccessTokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if patu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   personalaccesstoken.EventsTable,
+			Columns: personalaccesstoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = patu.schemaConfig.PersonalAccessTokenEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := patu.mutation.RemovedEventsIDs(); len(nodes) > 0 && !patu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   personalaccesstoken.EventsTable,
+			Columns: personalaccesstoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = patu.schemaConfig.PersonalAccessTokenEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := patu.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   personalaccesstoken.EventsTable,
+			Columns: personalaccesstoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = patu.schemaConfig.PersonalAccessTokenEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -676,6 +761,21 @@ func (patuo *PersonalAccessTokenUpdateOne) AddOrganizations(o ...*Organization) 
 	return patuo.AddOrganizationIDs(ids...)
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (patuo *PersonalAccessTokenUpdateOne) AddEventIDs(ids ...string) *PersonalAccessTokenUpdateOne {
+	patuo.mutation.AddEventIDs(ids...)
+	return patuo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (patuo *PersonalAccessTokenUpdateOne) AddEvents(e ...*Event) *PersonalAccessTokenUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return patuo.AddEventIDs(ids...)
+}
+
 // Mutation returns the PersonalAccessTokenMutation object of the builder.
 func (patuo *PersonalAccessTokenUpdateOne) Mutation() *PersonalAccessTokenMutation {
 	return patuo.mutation
@@ -706,6 +806,27 @@ func (patuo *PersonalAccessTokenUpdateOne) RemoveOrganizations(o ...*Organizatio
 		ids[i] = o[i].ID
 	}
 	return patuo.RemoveOrganizationIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (patuo *PersonalAccessTokenUpdateOne) ClearEvents() *PersonalAccessTokenUpdateOne {
+	patuo.mutation.ClearEvents()
+	return patuo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (patuo *PersonalAccessTokenUpdateOne) RemoveEventIDs(ids ...string) *PersonalAccessTokenUpdateOne {
+	patuo.mutation.RemoveEventIDs(ids...)
+	return patuo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (patuo *PersonalAccessTokenUpdateOne) RemoveEvents(e ...*Event) *PersonalAccessTokenUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return patuo.RemoveEventIDs(ids...)
 }
 
 // Where appends a list predicates to the PersonalAccessTokenUpdate builder.
@@ -938,6 +1059,54 @@ func (patuo *PersonalAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *
 			},
 		}
 		edge.Schema = patuo.schemaConfig.OrganizationPersonalAccessTokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if patuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   personalaccesstoken.EventsTable,
+			Columns: personalaccesstoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = patuo.schemaConfig.PersonalAccessTokenEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := patuo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !patuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   personalaccesstoken.EventsTable,
+			Columns: personalaccesstoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = patuo.schemaConfig.PersonalAccessTokenEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := patuo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   personalaccesstoken.EventsTable,
+			Columns: personalaccesstoken.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = patuo.schemaConfig.PersonalAccessTokenEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

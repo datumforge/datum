@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -220,6 +221,21 @@ func (iu *InviteUpdate) SetOwner(o *Organization) *InviteUpdate {
 	return iu.SetOwnerID(o.ID)
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (iu *InviteUpdate) AddEventIDs(ids ...string) *InviteUpdate {
+	iu.mutation.AddEventIDs(ids...)
+	return iu
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (iu *InviteUpdate) AddEvents(e ...*Event) *InviteUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return iu.AddEventIDs(ids...)
+}
+
 // Mutation returns the InviteMutation object of the builder.
 func (iu *InviteUpdate) Mutation() *InviteMutation {
 	return iu.mutation
@@ -229,6 +245,27 @@ func (iu *InviteUpdate) Mutation() *InviteMutation {
 func (iu *InviteUpdate) ClearOwner() *InviteUpdate {
 	iu.mutation.ClearOwner()
 	return iu
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (iu *InviteUpdate) ClearEvents() *InviteUpdate {
+	iu.mutation.ClearEvents()
+	return iu
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (iu *InviteUpdate) RemoveEventIDs(ids ...string) *InviteUpdate {
+	iu.mutation.RemoveEventIDs(ids...)
+	return iu
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (iu *InviteUpdate) RemoveEvents(e ...*Event) *InviteUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return iu.RemoveEventIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -398,6 +435,54 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = iu.schemaConfig.Invite
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   invite.EventsTable,
+			Columns: invite.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.InviteEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.RemovedEventsIDs(); len(nodes) > 0 && !iu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   invite.EventsTable,
+			Columns: invite.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.InviteEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   invite.EventsTable,
+			Columns: invite.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.InviteEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -613,6 +698,21 @@ func (iuo *InviteUpdateOne) SetOwner(o *Organization) *InviteUpdateOne {
 	return iuo.SetOwnerID(o.ID)
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (iuo *InviteUpdateOne) AddEventIDs(ids ...string) *InviteUpdateOne {
+	iuo.mutation.AddEventIDs(ids...)
+	return iuo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (iuo *InviteUpdateOne) AddEvents(e ...*Event) *InviteUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return iuo.AddEventIDs(ids...)
+}
+
 // Mutation returns the InviteMutation object of the builder.
 func (iuo *InviteUpdateOne) Mutation() *InviteMutation {
 	return iuo.mutation
@@ -622,6 +722,27 @@ func (iuo *InviteUpdateOne) Mutation() *InviteMutation {
 func (iuo *InviteUpdateOne) ClearOwner() *InviteUpdateOne {
 	iuo.mutation.ClearOwner()
 	return iuo
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (iuo *InviteUpdateOne) ClearEvents() *InviteUpdateOne {
+	iuo.mutation.ClearEvents()
+	return iuo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (iuo *InviteUpdateOne) RemoveEventIDs(ids ...string) *InviteUpdateOne {
+	iuo.mutation.RemoveEventIDs(ids...)
+	return iuo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (iuo *InviteUpdateOne) RemoveEvents(e ...*Event) *InviteUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return iuo.RemoveEventIDs(ids...)
 }
 
 // Where appends a list predicates to the InviteUpdate builder.
@@ -821,6 +942,54 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 			},
 		}
 		edge.Schema = iuo.schemaConfig.Invite
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   invite.EventsTable,
+			Columns: invite.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.InviteEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !iuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   invite.EventsTable,
+			Columns: invite.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.InviteEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   invite.EventsTable,
+			Columns: invite.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.InviteEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

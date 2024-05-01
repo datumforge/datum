@@ -48,6 +48,21 @@ func (r *queryResolver) EntitlementHistories(ctx context.Context, after *entgql.
 	return withTransactionalMutation(ctx).EntitlementHistory.Query().Paginate(ctx, after, first, before, last, generated.WithEntitlementHistoryFilter(where.Filter))
 }
 
+// Events is the resolver for the events field.
+func (r *queryResolver) Events(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EventWhereInput) (*generated.EventConnection, error) {
+	panic(fmt.Errorf("not implemented: Events - events"))
+}
+
+// Features is the resolver for the features field.
+func (r *queryResolver) Features(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.FeatureWhereInput) (*generated.FeatureConnection, error) {
+	panic(fmt.Errorf("not implemented: Features - features"))
+}
+
+// Files is the resolver for the files field.
+func (r *queryResolver) Files(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.FileWhereInput) (*generated.FileConnection, error) {
+	panic(fmt.Errorf("not implemented: Files - files"))
+}
+
 // Groups is the resolver for the groups field.
 func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error) {
 	return withTransactionalMutation(ctx).Group.Query().Paginate(ctx, after, first, before, last, generated.WithGroupOrder(orderBy), generated.WithGroupFilter(where.Filter))
@@ -203,6 +218,11 @@ func (r *queryResolver) UserSettings(ctx context.Context, after *entgql.Cursor[s
 // UserSettingHistories is the resolver for the userSettingHistories field.
 func (r *queryResolver) UserSettingHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingHistoryWhereInput) (*generated.UserSettingHistoryConnection, error) {
 	return withTransactionalMutation(ctx).UserSettingHistory.Query().Paginate(ctx, after, first, before, last, generated.WithUserSettingHistoryFilter(where.Filter))
+}
+
+// Webhooks is the resolver for the webhooks field.
+func (r *queryResolver) Webhooks(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.WebhookOrder, where *generated.WebhookWhereInput) (*generated.WebhookConnection, error) {
+	panic(fmt.Errorf("not implemented: Webhooks - webhooks"))
 }
 
 // Query returns QueryResolver implementation.

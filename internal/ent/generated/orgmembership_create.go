@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -155,6 +156,21 @@ func (omc *OrgMembershipCreate) SetOrganization(o *Organization) *OrgMembershipC
 // SetUser sets the "user" edge to the User entity.
 func (omc *OrgMembershipCreate) SetUser(u *User) *OrgMembershipCreate {
 	return omc.SetUserID(u.ID)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (omc *OrgMembershipCreate) AddEventIDs(ids ...string) *OrgMembershipCreate {
+	omc.mutation.AddEventIDs(ids...)
+	return omc
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (omc *OrgMembershipCreate) AddEvents(e ...*Event) *OrgMembershipCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return omc.AddEventIDs(ids...)
 }
 
 // Mutation returns the OrgMembershipMutation object of the builder.
@@ -342,6 +358,23 @@ func (omc *OrgMembershipCreate) createSpec() (*OrgMembership, *sqlgraph.CreateSp
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := omc.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   orgmembership.EventsTable,
+			Columns: orgmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = omc.schemaConfig.OrgMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

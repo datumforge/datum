@@ -49,13 +49,19 @@ type Hush struct {
 type HushEdges struct {
 	// the integration associated with the secret
 	Integrations []*Integration `json:"integrations,omitempty"`
+	// Organization holds the value of the organization edge.
+	Organization []*Organization `json:"organization,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [3]map[string]int
 
 	namedIntegrations map[string][]*Integration
+	namedOrganization map[string][]*Organization
+	namedEvents       map[string][]*Event
 }
 
 // IntegrationsOrErr returns the Integrations value or an error if the edge
@@ -65,6 +71,24 @@ func (e HushEdges) IntegrationsOrErr() ([]*Integration, error) {
 		return e.Integrations, nil
 	}
 	return nil, &NotLoadedError{edge: "integrations"}
+}
+
+// OrganizationOrErr returns the Organization value or an error if the edge
+// was not loaded in eager-loading.
+func (e HushEdges) OrganizationOrErr() ([]*Organization, error) {
+	if e.loadedTypes[1] {
+		return e.Organization, nil
+	}
+	return nil, &NotLoadedError{edge: "organization"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e HushEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[2] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -181,6 +205,16 @@ func (h *Hush) QueryIntegrations() *IntegrationQuery {
 	return NewHushClient(h.config).QueryIntegrations(h)
 }
 
+// QueryOrganization queries the "organization" edge of the Hush entity.
+func (h *Hush) QueryOrganization() *OrganizationQuery {
+	return NewHushClient(h.config).QueryOrganization(h)
+}
+
+// QueryEvents queries the "events" edge of the Hush entity.
+func (h *Hush) QueryEvents() *EventQuery {
+	return NewHushClient(h.config).QueryEvents(h)
+}
+
 // Update returns a builder for updating this Hush.
 // Note that you need to call Hush.Unwrap() before calling this method if this Hush
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -260,6 +294,54 @@ func (h *Hush) appendNamedIntegrations(name string, edges ...*Integration) {
 		h.Edges.namedIntegrations[name] = []*Integration{}
 	} else {
 		h.Edges.namedIntegrations[name] = append(h.Edges.namedIntegrations[name], edges...)
+	}
+}
+
+// NamedOrganization returns the Organization named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (h *Hush) NamedOrganization(name string) ([]*Organization, error) {
+	if h.Edges.namedOrganization == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := h.Edges.namedOrganization[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (h *Hush) appendNamedOrganization(name string, edges ...*Organization) {
+	if h.Edges.namedOrganization == nil {
+		h.Edges.namedOrganization = make(map[string][]*Organization)
+	}
+	if len(edges) == 0 {
+		h.Edges.namedOrganization[name] = []*Organization{}
+	} else {
+		h.Edges.namedOrganization[name] = append(h.Edges.namedOrganization[name], edges...)
+	}
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (h *Hush) NamedEvents(name string) ([]*Event, error) {
+	if h.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := h.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (h *Hush) appendNamedEvents(name string, edges ...*Event) {
+	if h.Edges.namedEvents == nil {
+		h.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		h.Edges.namedEvents[name] = []*Event{}
+	} else {
+		h.Edges.namedEvents[name] = append(h.Edges.namedEvents[name], edges...)
 	}
 }
 

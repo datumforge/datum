@@ -1485,6 +1485,93 @@ func HasWebauthnWith(preds ...predicate.Webauthn) predicate.User {
 	})
 }
 
+// HasFiles applies the HasEdge predicate on the "files" edge.
+func HasFiles() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, FilesTable, FilesColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.File
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFilesWith applies the HasEdge predicate on the "files" edge with a given conditions (other predicates).
+func HasFilesWith(preds ...predicate.File) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newFilesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.File
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasEvents applies the HasEdge predicate on the "events" edge.
+func HasEvents() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.UserEvents
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEventsWith applies the HasEdge predicate on the "events" edge with a given conditions (other predicates).
+func HasEventsWith(preds ...predicate.Event) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newEventsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.UserEvents
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasFeatures applies the HasEdge predicate on the "features" edge.
+func HasFeatures() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.UserFeatures
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFeaturesWith applies the HasEdge predicate on the "features" edge with a given conditions (other predicates).
+func HasFeaturesWith(preds ...predicate.Feature) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newFeaturesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.UserFeatures
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasGroupMemberships applies the HasEdge predicate on the "group_memberships" edge.
 func HasGroupMemberships() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

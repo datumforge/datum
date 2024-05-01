@@ -12,7 +12,10 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
@@ -23,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
 )
 
 // OrganizationCreate is the builder for creating a Organization entity.
@@ -421,6 +425,66 @@ func (oc *OrganizationCreate) AddSubscribers(s ...*Subscriber) *OrganizationCrea
 		ids[i] = s[i].ID
 	}
 	return oc.AddSubscriberIDs(ids...)
+}
+
+// AddWebhookIDs adds the "webhooks" edge to the Webhook entity by IDs.
+func (oc *OrganizationCreate) AddWebhookIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddWebhookIDs(ids...)
+	return oc
+}
+
+// AddWebhooks adds the "webhooks" edges to the Webhook entity.
+func (oc *OrganizationCreate) AddWebhooks(w ...*Webhook) *OrganizationCreate {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return oc.AddWebhookIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (oc *OrganizationCreate) AddEventIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddEventIDs(ids...)
+	return oc
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (oc *OrganizationCreate) AddEvents(e ...*Event) *OrganizationCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oc.AddEventIDs(ids...)
+}
+
+// AddSecretIDs adds the "secrets" edge to the Hush entity by IDs.
+func (oc *OrganizationCreate) AddSecretIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddSecretIDs(ids...)
+	return oc
+}
+
+// AddSecrets adds the "secrets" edges to the Hush entity.
+func (oc *OrganizationCreate) AddSecrets(h ...*Hush) *OrganizationCreate {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return oc.AddSecretIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (oc *OrganizationCreate) AddFileIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddFileIDs(ids...)
+	return oc
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (oc *OrganizationCreate) AddFiles(f ...*File) *OrganizationCreate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return oc.AddFileIDs(ids...)
 }
 
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
@@ -845,6 +909,74 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.Subscriber
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.WebhooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.WebhooksTable,
+			Columns: []string{organization.WebhooksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Webhook
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.EventsTable,
+			Columns: organization.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.OrganizationEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.SecretsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.SecretsTable,
+			Columns: organization.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.OrganizationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FilesTable,
+			Columns: organization.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.OrganizationFiles
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

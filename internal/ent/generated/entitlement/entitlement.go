@@ -46,6 +46,10 @@ const (
 	FieldCancelled = "cancelled"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
+	// EdgeFeatures holds the string denoting the features edge name in mutations.
+	EdgeFeatures = "features"
+	// EdgeEvents holds the string denoting the events edge name in mutations.
+	EdgeEvents = "events"
 	// Table holds the table name of the entitlement in the database.
 	Table = "entitlements"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -55,6 +59,16 @@ const (
 	OwnerInverseTable = "organizations"
 	// OwnerColumn is the table column denoting the owner relation/edge.
 	OwnerColumn = "owner_id"
+	// FeaturesTable is the table that holds the features relation/edge. The primary key declared below.
+	FeaturesTable = "entitlement_features"
+	// FeaturesInverseTable is the table name for the Feature entity.
+	// It exists in this package in order to avoid circular dependency with the "feature" package.
+	FeaturesInverseTable = "features"
+	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
+	EventsTable = "entitlement_events"
+	// EventsInverseTable is the table name for the Event entity.
+	// It exists in this package in order to avoid circular dependency with the "event" package.
+	EventsInverseTable = "events"
 )
 
 // Columns holds all SQL columns for entitlement fields.
@@ -74,6 +88,15 @@ var Columns = []string{
 	FieldExpiresAt,
 	FieldCancelled,
 }
+
+var (
+	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
+	// primary key for the features relation (M2M).
+	FeaturesPrimaryKey = []string{"entitlement_id", "feature_id"}
+	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
+	// primary key for the events relation (M2M).
+	EventsPrimaryKey = []string{"entitlement_id", "event_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -198,11 +221,53 @@ func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByFeaturesCount orders the results by features count.
+func ByFeaturesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFeaturesStep(), opts...)
+	}
+}
+
+// ByFeatures orders the results by features terms.
+func ByFeatures(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFeaturesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEventsCount orders the results by events count.
+func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEventsStep(), opts...)
+	}
+}
+
+// ByEvents orders the results by events terms.
+func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OwnerInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+	)
+}
+func newFeaturesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FeaturesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+	)
+}
+func newEventsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EventsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
 	)
 }
 

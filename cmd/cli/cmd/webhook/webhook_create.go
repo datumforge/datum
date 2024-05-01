@@ -60,12 +60,17 @@ func createwebhook(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("url")
 	}
 
+	enabled := viper.GetBool("webhook.create.enabled")
 	ownerID := viper.GetString("webhook.create.owner-id")
 	description := viper.GetString("webhook.create.description")
 
 	input := datumclient.CreateWebhookInput{
 		Name:           name,
 		DestinationURL: url,
+	}
+
+	if !enabled {
+		input.Enabled = &enabled
 	}
 
 	if description != "" {

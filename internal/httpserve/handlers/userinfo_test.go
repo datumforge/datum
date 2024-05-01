@@ -33,7 +33,7 @@ func (suite *HandlerTestSuite) TestHandler_UserInfo() {
 		SetLastName("Bee").
 		SaveX(ctx)
 
-	ec, err := auth.NewTestContextWithValidUser(user.ID)
+	ec, err := auth.NewTestEchoContextWithValidUser(user.ID)
 	require.NoError(t, err)
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)

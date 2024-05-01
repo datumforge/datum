@@ -43,7 +43,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 		SetLastName("Racoon").
 		SaveX(ctx)
 
-	ec, err := auth.NewTestContextWithValidUser(requestor.ID)
+	ec, err := auth.NewTestEchoContextWithValidUser(requestor.ID)
 	require.NoError(t, err)
 
 	newCtx := ec.Request().Context()
@@ -67,7 +67,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 		SetAuthProvider(enums.AuthProviderGoogle).
 		SaveX(ctx)
 
-	rc, err := auth.NewTestContextWithValidUser(recipient.ID)
+	rc, err := auth.NewTestEchoContextWithValidUser(recipient.ID)
 	require.NoError(t, err)
 
 	userCtx := context.WithValue(rc.Request().Context(), echocontext.EchoContextKey, rc)

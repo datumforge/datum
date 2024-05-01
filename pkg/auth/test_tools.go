@@ -35,8 +35,8 @@ func newValidClaims(subject string) *tokens.Claims {
 	return claims
 }
 
-// NewTestContextWithValidUser creates an echo context with a fake subject for testing purposes ONLY
-func NewTestContextWithValidUser(subject string) (echo.Context, error) {
+// NewTestEchoContextWithValidUser creates an echo context with a fake subject for testing purposes ONLY
+func NewTestEchoContextWithValidUser(subject string) (echo.Context, error) {
 	ec := echocontext.NewTestEchoContext()
 
 	claims := newValidClaims(subject)
@@ -44,6 +44,19 @@ func NewTestContextWithValidUser(subject string) (echo.Context, error) {
 	ec.Set(ContextUserClaims.name, claims)
 
 	return ec, nil
+}
+
+func NewTestContextWithValidUser(subject string) (context.Context, error) {
+	ec, err := NewTestEchoContextWithValidUser(subject)
+	if err != nil {
+		return nil, err
+	}
+
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	return reqCtx, nil
 }
 
 // newValidClaims returns claims with a fake orgID for testing purposes ONLY

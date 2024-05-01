@@ -156,7 +156,7 @@ func (suite *HandlerTestSuite) createTestOrg(t *testing.T) *ent.Organization {
 		SetLastName("Racoon").
 		SaveX(ctx)
 
-	ec, err := auth.NewTestContextWithValidUser(requestor.ID)
+	ec, err := auth.NewTestEchoContextWithValidUser(requestor.ID)
 	require.NoError(t, err)
 
 	newCtx := ec.Request().Context()

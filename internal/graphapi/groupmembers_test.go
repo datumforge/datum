@@ -31,9 +31,6 @@ func (suite *GraphTestSuite) TestQueryGroupMembers() {
 	require.NoError(t, err)
 	require.Len(t, groupMember, 1)
 
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, group.OwnerID)
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name        string
 		queryID     string

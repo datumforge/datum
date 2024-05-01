@@ -22,12 +22,12 @@ func TestGetActorUserID(t *testing.T) {
 
 	sub := ulids.New().String()
 
-	validCtx, err := auth.NewTestContextWithValidUser(sub)
+	validCtx, err := auth.NewTestEchoContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
 
-	invalidUserCtx, err := auth.NewTestContextWithValidUser(ulids.Null.String())
+	invalidUserCtx, err := auth.NewTestEchoContextWithValidUser(ulids.Null.String())
 	if err != nil {
 		t.Fatal()
 	}
@@ -91,7 +91,7 @@ func TestGetOrganizationID(t *testing.T) {
 		t.Fatal()
 	}
 
-	invalidUserCtx, err := auth.NewTestContextWithValidUser(ulids.Null.String())
+	invalidUserCtx, err := auth.NewTestEchoContextWithValidUser(ulids.Null.String())
 	if err != nil {
 		t.Fatal()
 	}

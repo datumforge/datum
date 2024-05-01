@@ -181,7 +181,9 @@ func init() {
 
 	emailverificationtoken.Hooks[3] = emailverificationtokenHooks[0]
 	emailverificationtokenMixinInters2 := emailverificationtokenMixin[2].Interceptors()
+	emailverificationtokenMixinInters3 := emailverificationtokenMixin[3].Interceptors()
 	emailverificationtoken.Interceptors[0] = emailverificationtokenMixinInters2[0]
+	emailverificationtoken.Interceptors[1] = emailverificationtokenMixinInters3[0]
 	emailverificationtokenMixinFields0 := emailverificationtokenMixin[0].Fields()
 	_ = emailverificationtokenMixinFields0
 	emailverificationtokenMixinFields1 := emailverificationtokenMixin[1].Fields()
@@ -1218,7 +1220,9 @@ func init() {
 
 	passwordresettoken.Hooks[3] = passwordresettokenHooks[0]
 	passwordresettokenMixinInters2 := passwordresettokenMixin[2].Interceptors()
+	passwordresettokenMixinInters3 := passwordresettokenMixin[3].Interceptors()
 	passwordresettoken.Interceptors[0] = passwordresettokenMixinInters2[0]
+	passwordresettoken.Interceptors[1] = passwordresettokenMixinInters3[0]
 	passwordresettokenMixinFields0 := passwordresettokenMixin[0].Fields()
 	_ = passwordresettokenMixinFields0
 	passwordresettokenMixinFields1 := passwordresettokenMixin[1].Fields()
@@ -1287,9 +1291,11 @@ func init() {
 
 	personalaccesstoken.Hooks[4] = personalaccesstokenHooks[1]
 	personalaccesstokenMixinInters1 := personalaccesstokenMixin[1].Interceptors()
+	personalaccesstokenMixinInters3 := personalaccesstokenMixin[3].Interceptors()
 	personalaccesstokenInters := schema.PersonalAccessToken{}.Interceptors()
 	personalaccesstoken.Interceptors[0] = personalaccesstokenMixinInters1[0]
-	personalaccesstoken.Interceptors[1] = personalaccesstokenInters[0]
+	personalaccesstoken.Interceptors[1] = personalaccesstokenMixinInters3[0]
+	personalaccesstoken.Interceptors[2] = personalaccesstokenInters[0]
 	personalaccesstokenMixinFields0 := personalaccesstokenMixin[0].Fields()
 	_ = personalaccesstokenMixinFields0
 	personalaccesstokenMixinFields2 := personalaccesstokenMixin[2].Fields()
@@ -1733,6 +1739,8 @@ func init() {
 	webauthnMixin := schema.Webauthn{}.Mixin()
 	webauthnMixinHooks0 := webauthnMixin[0].Hooks()
 	webauthn.Hooks[0] = webauthnMixinHooks0[0]
+	webauthnMixinInters2 := webauthnMixin[2].Interceptors()
+	webauthn.Interceptors[0] = webauthnMixinInters2[0]
 	webauthnMixinFields0 := webauthnMixin[0].Fields()
 	_ = webauthnMixinFields0
 	webauthnMixinFields1 := webauthnMixin[1].Fields()

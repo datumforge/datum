@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -71,6 +72,7 @@ func (EmailVerificationToken) Mixin() []ent.Mixin {
 		UserOwnedMixin{
 			Ref:               "email_verification_tokens",
 			SkipOASGeneration: true,
+			SkipInterceptor:   interceptors.SkipAll,
 		},
 	}
 }
@@ -112,7 +114,6 @@ func (EmailVerificationToken) Hooks() []ent.Hook {
 func (EmailVerificationToken) Policy() ent.Policy {
 	return privacy.Policy{
 		Query: privacy.QueryPolicy{
-			rule.AllowIfOwnedByViewer(),
 			rule.AllowAfterApplyingPrivacyTokenFilter(
 				&token.VerifyToken{},
 				func(t token.PrivacyToken, filter privacy.Filter) {
@@ -121,7 +122,7 @@ func (EmailVerificationToken) Policy() ent.Policy {
 					tokenFilter.WhereToken(entql.StringEQ(actualToken.GetToken()))
 				},
 			),
-			privacy.AlwaysDenyRule(),
+			privacy.AlwaysAllowRule(),
 		},
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(

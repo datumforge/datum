@@ -75,9 +75,11 @@ func init() {
 
 	apitoken.Hooks[4] = apitokenHooks[1]
 	apitokenMixinInters1 := apitokenMixin[1].Interceptors()
+	apitokenMixinInters3 := apitokenMixin[3].Interceptors()
 	apitokenInters := schema.APIToken{}.Interceptors()
 	apitoken.Interceptors[0] = apitokenMixinInters1[0]
-	apitoken.Interceptors[1] = apitokenInters[0]
+	apitoken.Interceptors[1] = apitokenMixinInters3[0]
+	apitoken.Interceptors[2] = apitokenInters[0]
 	apitokenMixinFields0 := apitokenMixin[0].Fields()
 	_ = apitokenMixinFields0
 	apitokenMixinFields2 := apitokenMixin[2].Fields()

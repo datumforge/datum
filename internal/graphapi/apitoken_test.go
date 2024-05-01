@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -9,7 +8,6 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,18 +19,6 @@ func (suite *GraphTestSuite) TestQueryApiToken() {
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
-
-	// create user to get tokens
-	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	orgID := user.Edges.Setting.Edges.DefaultOrg.ID
-
-	ec, err := auth.NewTestContextWithOrgID(user.ID, orgID)
-	require.NoError(t, err)
-
-	reqCtx = context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	apiToken := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 
@@ -60,7 +46,7 @@ func (suite *GraphTestSuite) TestQueryApiToken() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 
 				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", orgID)})
+				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
 			}
 
 			resp, err := suite.client.datum.GetAPITokenByID(reqCtx, tc.queryID)
@@ -77,7 +63,7 @@ func (suite *GraphTestSuite) TestQueryApiToken() {
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.APIToken)
 			assert.Equal(t, redacted, resp.APIToken.Token)
-			assert.Equal(t, orgID, resp.APIToken.Owner.ID)
+			assert.Equal(t, testPersonalOrgID, resp.APIToken.Owner.ID)
 		})
 	}
 }
@@ -88,18 +74,6 @@ func (suite *GraphTestSuite) TestQueryAPITokens() {
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
-
-	// create user to get tokens
-	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	orgID := user.Edges.Setting.Edges.DefaultOrg.ID
-
-	ec, err := auth.NewTestContextWithOrgID(user.ID, orgID)
-	require.NoError(t, err)
-
-	reqCtx = context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	(&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 	(&APITokenTokenBuilder{client: suite.client, Scopes: []string{"read", "write"}}).MustNew(reqCtx, t)
@@ -119,7 +93,7 @@ func (suite *GraphTestSuite) TestQueryAPITokens() {
 
 			if tc.errorMsg == "" {
 				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", orgID)})
+				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
 			}
 
 			resp, err := suite.client.datum.GetAllAPITokens(reqCtx)
@@ -145,18 +119,6 @@ func (suite *GraphTestSuite) TestMutationCreateAPIToken() {
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
-
-	// create user to get tokens
-	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	orgID := user.Edges.Setting.Edges.DefaultOrg.ID
-
-	ec, err := auth.NewTestContextWithOrgID(user.ID, orgID)
-	require.NoError(t, err)
-
-	reqCtx = context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	tokenDescription := gofakeit.Sentence(5)
 	expiration30Days := time.Now().Add(time.Hour * 24 * 30)
@@ -211,7 +173,7 @@ func (suite *GraphTestSuite) TestMutationCreateAPIToken() {
 
 			if tc.errorMsg == "" {
 				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", orgID)})
+				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
 				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
@@ -239,7 +201,7 @@ func (suite *GraphTestSuite) TestMutationCreateAPIToken() {
 			}
 
 			// ensure the owner is the org set in the request
-			assert.Equal(t, orgID, resp.CreateAPIToken.APIToken.Owner.ID)
+			assert.Equal(t, testPersonalOrgID, resp.CreateAPIToken.APIToken.Owner.ID)
 
 			// token should not be redacted on create
 			assert.NotEqual(t, redacted, resp.CreateAPIToken.APIToken.Token)
@@ -256,18 +218,6 @@ func (suite *GraphTestSuite) TestMutationUpdateAPIToken() {
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
-
-	// create user to get tokens
-	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	orgID := user.Edges.Setting.Edges.DefaultOrg.ID
-
-	ec, err := auth.NewTestContextWithOrgID(user.ID, orgID)
-	require.NoError(t, err)
-
-	reqCtx = context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	token := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 
@@ -318,7 +268,7 @@ func (suite *GraphTestSuite) TestMutationUpdateAPIToken() {
 			if tc.errorMsg == "" {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", orgID)})
+				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
 			}
 
 			resp, err := suite.client.datum.UpdateAPIToken(reqCtx, tc.tokenID, tc.input)
@@ -348,7 +298,7 @@ func (suite *GraphTestSuite) TestMutationUpdateAPIToken() {
 				assert.Len(t, resp.UpdateAPIToken.APIToken.Scopes, 1)
 			}
 
-			assert.Equal(t, orgID, resp.UpdateAPIToken.APIToken.Owner.ID)
+			assert.Equal(t, testPersonalOrgID, resp.UpdateAPIToken.APIToken.Owner.ID)
 
 			// token should be redacted on update
 			assert.Equal(t, redacted, resp.UpdateAPIToken.APIToken.Token)
@@ -370,21 +320,13 @@ func (suite *GraphTestSuite) TestMutationDeleteAPIToken() {
 	orgID := user.Edges.Setting.Edges.DefaultOrg.ID
 	orgID2 := user2.Edges.Setting.Edges.DefaultOrg.ID
 
-	ec, err := auth.NewTestContextWithOrgID(user.ID, orgID)
+	reqCtx, err = auth.NewTestContextWithOrgID(user.ID, orgID)
 	require.NoError(t, err)
-
-	reqCtx = context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	token := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	ec2, err := auth.NewTestContextWithOrgID(user2.ID, orgID2)
+	reqCtx2, err := auth.NewTestContextWithOrgID(user2.ID, orgID2)
 	require.NoError(t, err)
-
-	reqCtx2 := context.WithValue(ec2.Request().Context(), echocontext.EchoContextKey, ec2)
-
-	ec2.SetRequest(ec2.Request().WithContext(reqCtx2))
 
 	token2 := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx2, t)
 

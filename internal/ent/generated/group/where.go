@@ -1009,6 +1009,122 @@ func HasUsersWith(preds ...predicate.User) predicate.Group {
 	})
 }
 
+// HasFeatures applies the HasEdge predicate on the "features" edge.
+func HasFeatures() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.GroupFeatures
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFeaturesWith applies the HasEdge predicate on the "features" edge with a given conditions (other predicates).
+func HasFeaturesWith(preds ...predicate.Feature) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newFeaturesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.GroupFeatures
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasEvents applies the HasEdge predicate on the "events" edge.
+func HasEvents() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.GroupEvents
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEventsWith applies the HasEdge predicate on the "events" edge with a given conditions (other predicates).
+func HasEventsWith(preds ...predicate.Event) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newEventsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.GroupEvents
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasIntegrations applies the HasEdge predicate on the "integrations" edge.
+func HasIntegrations() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, IntegrationsTable, IntegrationsColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.Integration
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIntegrationsWith applies the HasEdge predicate on the "integrations" edge with a given conditions (other predicates).
+func HasIntegrationsWith(preds ...predicate.Integration) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newIntegrationsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.Integration
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasFiles applies the HasEdge predicate on the "files" edge.
+func HasFiles() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FilesTable, FilesPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.GroupFiles
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFilesWith applies the HasEdge predicate on the "files" edge with a given conditions (other predicates).
+func HasFilesWith(preds ...predicate.File) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newFilesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.GroupFiles
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMembers applies the HasEdge predicate on the "members" edge.
 func HasMembers() predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {

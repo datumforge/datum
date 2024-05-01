@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -37,8 +38,22 @@ const (
 	FieldConnectorData = "connector_data"
 	// FieldLastUsed holds the string denoting the last_used field in the database.
 	FieldLastUsed = "last_used"
+	// EdgeIntegration holds the string denoting the integration edge name in mutations.
+	EdgeIntegration = "integration"
+	// EdgeEvents holds the string denoting the events edge name in mutations.
+	EdgeEvents = "events"
 	// Table holds the table name of the ohauthtootoken in the database.
 	Table = "oh_auth_too_tokens"
+	// IntegrationTable is the table that holds the integration relation/edge. The primary key declared below.
+	IntegrationTable = "integration_oauth2tokens"
+	// IntegrationInverseTable is the table name for the Integration entity.
+	// It exists in this package in order to avoid circular dependency with the "integration" package.
+	IntegrationInverseTable = "integrations"
+	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
+	EventsTable = "oh_auth_too_token_events"
+	// EventsInverseTable is the table name for the Event entity.
+	// It exists in this package in order to avoid circular dependency with the "event" package.
+	EventsInverseTable = "events"
 )
 
 // Columns holds all SQL columns for ohauthtootoken fields.
@@ -57,6 +72,15 @@ var Columns = []string{
 	FieldConnectorData,
 	FieldLastUsed,
 }
+
+var (
+	// IntegrationPrimaryKey and IntegrationColumn2 are the table columns denoting the
+	// primary key for the integration relation (M2M).
+	IntegrationPrimaryKey = []string{"integration_id", "oh_auth_too_token_id"}
+	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
+	// primary key for the events relation (M2M).
+	EventsPrimaryKey = []string{"oh_auth_too_token_id", "event_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -138,4 +162,46 @@ func ByConnectorID(opts ...sql.OrderTermOption) OrderOption {
 // ByLastUsed orders the results by the last_used field.
 func ByLastUsed(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastUsed, opts...).ToFunc()
+}
+
+// ByIntegrationCount orders the results by integration count.
+func ByIntegrationCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIntegrationStep(), opts...)
+	}
+}
+
+// ByIntegration orders the results by integration terms.
+func ByIntegration(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIntegrationStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEventsCount orders the results by events count.
+func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEventsStep(), opts...)
+	}
+}
+
+// ByEvents orders the results by events terms.
+func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newIntegrationStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IntegrationInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, IntegrationTable, IntegrationPrimaryKey...),
+	)
+}
+func newEventsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EventsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+	)
 }

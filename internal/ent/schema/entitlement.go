@@ -4,6 +4,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	emixin "github.com/datumforge/entx/mixin"
@@ -44,7 +45,10 @@ func (Entitlement) Fields() []ent.Field {
 
 // Edges of the Entitlement
 func (Entitlement) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("features", Feature.Type),
+		edge.To("events", Event.Type),
+	}
 }
 
 // Annotations of the Entitlement

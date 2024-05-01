@@ -1,0 +1,112 @@
+mutation CreateEntitlement($input: CreateEntitlementInput!) {
+  createEntitlement(input: $input) {
+    entitlement {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      tier
+      externalCustomerID
+      externalSubscriptionID
+      expires
+      expiresAt
+      cancelled
+      owner {
+        id
+      }
+      features {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        name
+        global
+        enabled
+        description
+      }
+    }
+  }
+}
+
+mutation UpdateEntitlement($updateEntitlementId: ID!, $input: UpdateEntitlementInput!) {
+  updateEntitlement(id: $updateEntitlementId, input: $input) {
+entitlement {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      tier
+      externalCustomerID
+      externalSubscriptionID
+      expires
+      expiresAt
+      cancelled
+      owner {
+        id
+      }
+      features {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        name
+        global
+        enabled
+        description
+      }
+    }
+  }
+}
+
+mutation DeleteEntitlement($deleteEntitlementId: ID!) {
+  deleteEntitlement(id: $deleteEntitlementId) {
+    deletedID
+  }
+}
+
+query GetEntitlements($where: EntitlementWhereInput) {
+  entitlements(where: $where) {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        tier
+        externalCustomerID
+        externalSubscriptionID
+        expires
+        expiresAt
+        cancelled
+        owner {
+          id
+          name
+        }
+        features {
+          id
+          name
+          enabled
+        }
+        events {
+          eventType
+          metadata
+        }
+      }
+    }
+  }
+}

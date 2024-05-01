@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
@@ -21,13 +23,15 @@ import (
 // SubscriberQuery is the builder for querying Subscriber entities.
 type SubscriberQuery struct {
 	config
-	ctx        *QueryContext
-	order      []subscriber.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Subscriber
-	withOwner  *OrganizationQuery
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*Subscriber) error
+	ctx             *QueryContext
+	order           []subscriber.OrderOption
+	inters          []Interceptor
+	predicates      []predicate.Subscriber
+	withOwner       *OrganizationQuery
+	withEvents      *EventQuery
+	modifiers       []func(*sql.Selector)
+	loadTotal       []func(context.Context, []*Subscriber) error
+	withNamedEvents map[string]*EventQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -83,6 +87,31 @@ func (sq *SubscriberQuery) QueryOwner() *OrganizationQuery {
 		schemaConfig := sq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.Subscriber
+		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEvents chains the current query on the "events" edge.
+func (sq *SubscriberQuery) QueryEvents() *EventQuery {
+	query := (&EventClient{config: sq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := sq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := sq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(subscriber.Table, subscriber.FieldID, selector),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, subscriber.EventsTable, subscriber.EventsPrimaryKey...),
+		)
+		schemaConfig := sq.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.SubscriberEvents
 		fromU = sqlgraph.SetNeighbors(sq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -282,6 +311,7 @@ func (sq *SubscriberQuery) Clone() *SubscriberQuery {
 		inters:     append([]Interceptor{}, sq.inters...),
 		predicates: append([]predicate.Subscriber{}, sq.predicates...),
 		withOwner:  sq.withOwner.Clone(),
+		withEvents: sq.withEvents.Clone(),
 		// clone intermediate query.
 		sql:  sq.sql.Clone(),
 		path: sq.path,
@@ -296,6 +326,17 @@ func (sq *SubscriberQuery) WithOwner(opts ...func(*OrganizationQuery)) *Subscrib
 		opt(query)
 	}
 	sq.withOwner = query
+	return sq
+}
+
+// WithEvents tells the query-builder to eager-load the nodes that are connected to
+// the "events" edge. The optional arguments are used to configure the query builder of the edge.
+func (sq *SubscriberQuery) WithEvents(opts ...func(*EventQuery)) *SubscriberQuery {
+	query := (&EventClient{config: sq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	sq.withEvents = query
 	return sq
 }
 
@@ -383,8 +424,9 @@ func (sq *SubscriberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*S
 	var (
 		nodes       = []*Subscriber{}
 		_spec       = sq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			sq.withOwner != nil,
+			sq.withEvents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -413,6 +455,20 @@ func (sq *SubscriberQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*S
 	if query := sq.withOwner; query != nil {
 		if err := sq.loadOwner(ctx, query, nodes, nil,
 			func(n *Subscriber, e *Organization) { n.Edges.Owner = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := sq.withEvents; query != nil {
+		if err := sq.loadEvents(ctx, query, nodes,
+			func(n *Subscriber) { n.Edges.Events = []*Event{} },
+			func(n *Subscriber, e *Event) { n.Edges.Events = append(n.Edges.Events, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range sq.withNamedEvents {
+		if err := sq.loadEvents(ctx, query, nodes,
+			func(n *Subscriber) { n.appendNamedEvents(name) },
+			func(n *Subscriber, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -449,6 +505,68 @@ func (sq *SubscriberQuery) loadOwner(ctx context.Context, query *OrganizationQue
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (sq *SubscriberQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*Subscriber, init func(*Subscriber), assign func(*Subscriber, *Event)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Subscriber)
+	nids := make(map[string]map[*Subscriber]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(subscriber.EventsTable)
+		joinT.Schema(sq.schemaConfig.SubscriberEvents)
+		s.Join(joinT).On(s.C(event.FieldID), joinT.C(subscriber.EventsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(subscriber.EventsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(subscriber.EventsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Subscriber]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Event](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -544,6 +662,20 @@ func (sq *SubscriberQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (sq *SubscriberQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *SubscriberQuery {
+	query := (&EventClient{config: sq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if sq.withNamedEvents == nil {
+		sq.withNamedEvents = make(map[string]*EventQuery)
+	}
+	sq.withNamedEvents[name] = query
+	return sq
 }
 
 // SubscriberGroupBy is the group-by builder for Subscriber entities.

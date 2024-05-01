@@ -6,7 +6,10 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // ID filters vertices based on their ID field.
@@ -642,6 +645,64 @@ func LastUsedLT(v time.Time) predicate.OhAuthTooToken {
 // LastUsedLTE applies the LTE predicate on the "last_used" field.
 func LastUsedLTE(v time.Time) predicate.OhAuthTooToken {
 	return predicate.OhAuthTooToken(sql.FieldLTE(FieldLastUsed, v))
+}
+
+// HasIntegration applies the HasEdge predicate on the "integration" edge.
+func HasIntegration() predicate.OhAuthTooToken {
+	return predicate.OhAuthTooToken(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, IntegrationTable, IntegrationPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.IntegrationOauth2tokens
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasIntegrationWith applies the HasEdge predicate on the "integration" edge with a given conditions (other predicates).
+func HasIntegrationWith(preds ...predicate.Integration) predicate.OhAuthTooToken {
+	return predicate.OhAuthTooToken(func(s *sql.Selector) {
+		step := newIntegrationStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.IntegrationOauth2tokens
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasEvents applies the HasEdge predicate on the "events" edge.
+func HasEvents() predicate.OhAuthTooToken {
+	return predicate.OhAuthTooToken(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.OhAuthTooTokenEvents
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEventsWith applies the HasEdge predicate on the "events" edge with a given conditions (other predicates).
+func HasEventsWith(preds ...predicate.Event) predicate.OhAuthTooToken {
+	return predicate.OhAuthTooToken(func(s *sql.Selector) {
+		step := newEventsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.OhAuthTooTokenEvents
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

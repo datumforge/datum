@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up webhook by ID
+    """
+     webhook(
+        """
+        ID of the webhook
+        """
+        id: ID!
+    ):  Webhook!
+}
+
+extend type Mutation{
+    """
+    Create a new webhook
+    """
+    createWebhook(
+        """
+        values of the webhook
+        """
+        input: CreateWebhookInput!
+    ): WebhookCreatePayload!
+    """
+    Update an existing webhook
+    """
+    updateWebhook(
+        """
+        ID of the webhook
+        """
+        id: ID!
+        """
+        New values for the webhook
+        """
+        input: UpdateWebhookInput!
+    ): WebhookUpdatePayload!
+    """
+    Delete an existing webhook
+    """
+    deleteWebhook(
+        """
+        ID of the webhook
+        """
+        id: ID!
+    ): WebhookDeletePayload!
+}
+
+"""
+Return response for createWebhook mutation
+"""
+type WebhookCreatePayload {
+    """
+    Created webhook
+    """
+    webhook: Webhook!
+}
+
+"""
+Return response for updateWebhook mutation
+"""
+type WebhookUpdatePayload {
+    """
+    Updated webhook
+    """
+    webhook: Webhook!
+}
+
+"""
+Return response for deleteWebhook mutation
+"""
+type WebhookDeletePayload {
+    """
+    Deleted webhook ID
+    """
+    deletedID: ID!
+}

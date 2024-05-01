@@ -6,27 +6,119 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
-// CreateHush is the resolver for the createHush field.
+// CreateHush is the resolver for the createHush field
 func (r *mutationResolver) CreateHush(ctx context.Context, input generated.CreateHushInput) (*HushCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateHush - createHush"))
+	t, err := withTransactionalMutation(ctx).Hush.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "hush")
+		}
+
+		r.logger.Errorw("failed to create hush", "error", err)
+
+		return nil, err
+	}
+
+	return &HushCreatePayload{Hush: t}, nil
 }
 
-// UpdateHush is the resolver for the updateHush field.
+// UpdateHush is the resolver for the updateHush field
 func (r *mutationResolver) UpdateHush(ctx context.Context, id string, input generated.UpdateHushInput) (*HushUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateHush - updateHush"))
+	hush, err := withTransactionalMutation(ctx).Hush.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to get hush on update", "error", err)
+
+			return nil, newPermissionDeniedError(ActionGet, "hush")
+		}
+
+		r.logger.Errorw("failed to get hush", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	hush, err = hush.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to update hush", "error", err)
+
+			return nil, newPermissionDeniedError(ActionUpdate, "hush")
+		}
+
+		r.logger.Errorw("failed to update hush", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &HushUpdatePayload{Hush: hush}, nil
 }
 
-// DeleteHush is the resolver for the deleteHush field.
+// DeleteHush is the resolver for the deleteHush field
 func (r *mutationResolver) DeleteHush(ctx context.Context, id string) (*HushDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteHush - deleteHush"))
+	if err := withTransactionalMutation(ctx).Hush.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionDelete, "hush")
+		}
+
+		r.logger.Errorw("failed to delete hush", "error", err)
+		return nil, err
+	}
+
+	if err := generated.HushEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &HushDeletePayload{DeletedID: id}, nil
 }
 
-// Hush is the resolver for the hush field.
+// Hush is the resolver for the hush field
 func (r *queryResolver) Hush(ctx context.Context, id string) (*generated.Hush, error) {
-	panic(fmt.Errorf("not implemented: Hush - hush"))
+	hush, err := withTransactionalMutation(ctx).Hush.Get(ctx, id)
+	if err != nil {
+		r.logger.Errorw("failed to get hush", "error", err)
+
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "hush")
+		}
+
+		return nil, ErrInternalServerError
+	}
+
+	return hush, nil
 }

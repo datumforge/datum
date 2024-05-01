@@ -13,6 +13,9 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
+	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
+	"github.com/datumforge/datum/internal/ent/generated/filehistory"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
@@ -25,6 +28,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/webhookhistory"
 	"github.com/datumforge/enthistory"
 )
 
@@ -165,6 +169,180 @@ func (eh *EntitlementHistory) Diff(history *EntitlementHistory) (*HistoryDiff[En
 			Old:     history,
 			New:     eh,
 			Changes: history.changes(eh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
+func (eh *EventHistory) changes(new *EventHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(eh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(eventhistory.FieldCreatedAt, eh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(eh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(eventhistory.FieldUpdatedAt, eh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(eh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(eventhistory.FieldCreatedBy, eh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(eh.EventID, new.EventID) {
+		changes = append(changes, NewChange(eventhistory.FieldEventID, eh.EventID, new.EventID))
+	}
+	if !reflect.DeepEqual(eh.CorrelationID, new.CorrelationID) {
+		changes = append(changes, NewChange(eventhistory.FieldCorrelationID, eh.CorrelationID, new.CorrelationID))
+	}
+	if !reflect.DeepEqual(eh.EventType, new.EventType) {
+		changes = append(changes, NewChange(eventhistory.FieldEventType, eh.EventType, new.EventType))
+	}
+	if !reflect.DeepEqual(eh.Metadata, new.Metadata) {
+		changes = append(changes, NewChange(eventhistory.FieldMetadata, eh.Metadata, new.Metadata))
+	}
+	return changes
+}
+
+func (eh *EventHistory) Diff(history *EventHistory) (*HistoryDiff[EventHistory], error) {
+	if eh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	ehUnix, historyUnix := eh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	ehOlder := ehUnix < historyUnix || (ehUnix == historyUnix && eh.ID < history.ID)
+	historyOlder := ehUnix > historyUnix || (ehUnix == historyUnix && eh.ID > history.ID)
+
+	if ehOlder {
+		return &HistoryDiff[EventHistory]{
+			Old:     eh,
+			New:     history,
+			Changes: eh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[EventHistory]{
+			Old:     history,
+			New:     eh,
+			Changes: history.changes(eh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
+func (fh *FeatureHistory) changes(new *FeatureHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(fh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(featurehistory.FieldCreatedAt, fh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(fh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(featurehistory.FieldUpdatedAt, fh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(fh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(featurehistory.FieldCreatedBy, fh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(fh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(featurehistory.FieldDeletedAt, fh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(fh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(featurehistory.FieldDeletedBy, fh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(fh.Name, new.Name) {
+		changes = append(changes, NewChange(featurehistory.FieldName, fh.Name, new.Name))
+	}
+	if !reflect.DeepEqual(fh.Global, new.Global) {
+		changes = append(changes, NewChange(featurehistory.FieldGlobal, fh.Global, new.Global))
+	}
+	if !reflect.DeepEqual(fh.Enabled, new.Enabled) {
+		changes = append(changes, NewChange(featurehistory.FieldEnabled, fh.Enabled, new.Enabled))
+	}
+	if !reflect.DeepEqual(fh.Description, new.Description) {
+		changes = append(changes, NewChange(featurehistory.FieldDescription, fh.Description, new.Description))
+	}
+	return changes
+}
+
+func (fh *FeatureHistory) Diff(history *FeatureHistory) (*HistoryDiff[FeatureHistory], error) {
+	if fh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	fhUnix, historyUnix := fh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	fhOlder := fhUnix < historyUnix || (fhUnix == historyUnix && fh.ID < history.ID)
+	historyOlder := fhUnix > historyUnix || (fhUnix == historyUnix && fh.ID > history.ID)
+
+	if fhOlder {
+		return &HistoryDiff[FeatureHistory]{
+			Old:     fh,
+			New:     history,
+			Changes: fh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[FeatureHistory]{
+			Old:     history,
+			New:     fh,
+			Changes: history.changes(fh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
+func (fh *FileHistory) changes(new *FileHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(fh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(filehistory.FieldCreatedAt, fh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(fh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(filehistory.FieldUpdatedAt, fh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(fh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(filehistory.FieldCreatedBy, fh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(fh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(filehistory.FieldDeletedAt, fh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(fh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(filehistory.FieldDeletedBy, fh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(fh.FileName, new.FileName) {
+		changes = append(changes, NewChange(filehistory.FieldFileName, fh.FileName, new.FileName))
+	}
+	if !reflect.DeepEqual(fh.FileExtension, new.FileExtension) {
+		changes = append(changes, NewChange(filehistory.FieldFileExtension, fh.FileExtension, new.FileExtension))
+	}
+	if !reflect.DeepEqual(fh.FileSize, new.FileSize) {
+		changes = append(changes, NewChange(filehistory.FieldFileSize, fh.FileSize, new.FileSize))
+	}
+	if !reflect.DeepEqual(fh.ContentType, new.ContentType) {
+		changes = append(changes, NewChange(filehistory.FieldContentType, fh.ContentType, new.ContentType))
+	}
+	if !reflect.DeepEqual(fh.StoreKey, new.StoreKey) {
+		changes = append(changes, NewChange(filehistory.FieldStoreKey, fh.StoreKey, new.StoreKey))
+	}
+	if !reflect.DeepEqual(fh.Category, new.Category) {
+		changes = append(changes, NewChange(filehistory.FieldCategory, fh.Category, new.Category))
+	}
+	if !reflect.DeepEqual(fh.Annotation, new.Annotation) {
+		changes = append(changes, NewChange(filehistory.FieldAnnotation, fh.Annotation, new.Annotation))
+	}
+	return changes
+}
+
+func (fh *FileHistory) Diff(history *FileHistory) (*HistoryDiff[FileHistory], error) {
+	if fh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	fhUnix, historyUnix := fh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	fhOlder := fhUnix < historyUnix || (fhUnix == historyUnix && fh.ID < history.ID)
+	historyOlder := fhUnix > historyUnix || (fhUnix == historyUnix && fh.ID > history.ID)
+
+	if fhOlder {
+		return &HistoryDiff[FileHistory]{
+			Old:     fh,
+			New:     history,
+			Changes: fh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[FileHistory]{
+			Old:     history,
+			New:     fh,
+			Changes: history.changes(fh),
 		}, nil
 	}
 	return nil, IdenticalHistoryError
@@ -950,6 +1128,84 @@ func (ush *UserSettingHistory) Diff(history *UserSettingHistory) (*HistoryDiff[U
 	return nil, IdenticalHistoryError
 }
 
+func (wh *WebhookHistory) changes(new *WebhookHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(wh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(webhookhistory.FieldCreatedAt, wh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(wh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(webhookhistory.FieldUpdatedAt, wh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(wh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(webhookhistory.FieldCreatedBy, wh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(wh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(webhookhistory.FieldDeletedAt, wh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(wh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(webhookhistory.FieldDeletedBy, wh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(wh.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(webhookhistory.FieldOwnerID, wh.OwnerID, new.OwnerID))
+	}
+	if !reflect.DeepEqual(wh.Name, new.Name) {
+		changes = append(changes, NewChange(webhookhistory.FieldName, wh.Name, new.Name))
+	}
+	if !reflect.DeepEqual(wh.Description, new.Description) {
+		changes = append(changes, NewChange(webhookhistory.FieldDescription, wh.Description, new.Description))
+	}
+	if !reflect.DeepEqual(wh.DestinationURL, new.DestinationURL) {
+		changes = append(changes, NewChange(webhookhistory.FieldDestinationURL, wh.DestinationURL, new.DestinationURL))
+	}
+	if !reflect.DeepEqual(wh.Enabled, new.Enabled) {
+		changes = append(changes, NewChange(webhookhistory.FieldEnabled, wh.Enabled, new.Enabled))
+	}
+	if !reflect.DeepEqual(wh.Callback, new.Callback) {
+		changes = append(changes, NewChange(webhookhistory.FieldCallback, wh.Callback, new.Callback))
+	}
+	if !reflect.DeepEqual(wh.ExpiresAt, new.ExpiresAt) {
+		changes = append(changes, NewChange(webhookhistory.FieldExpiresAt, wh.ExpiresAt, new.ExpiresAt))
+	}
+	if !reflect.DeepEqual(wh.Secret, new.Secret) {
+		changes = append(changes, NewChange(webhookhistory.FieldSecret, wh.Secret, new.Secret))
+	}
+	if !reflect.DeepEqual(wh.Failures, new.Failures) {
+		changes = append(changes, NewChange(webhookhistory.FieldFailures, wh.Failures, new.Failures))
+	}
+	if !reflect.DeepEqual(wh.LastError, new.LastError) {
+		changes = append(changes, NewChange(webhookhistory.FieldLastError, wh.LastError, new.LastError))
+	}
+	if !reflect.DeepEqual(wh.LastResponse, new.LastResponse) {
+		changes = append(changes, NewChange(webhookhistory.FieldLastResponse, wh.LastResponse, new.LastResponse))
+	}
+	return changes
+}
+
+func (wh *WebhookHistory) Diff(history *WebhookHistory) (*HistoryDiff[WebhookHistory], error) {
+	if wh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	whUnix, historyUnix := wh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	whOlder := whUnix < historyUnix || (whUnix == historyUnix && wh.ID < history.ID)
+	historyOlder := whUnix > historyUnix || (whUnix == historyUnix && wh.ID > history.ID)
+
+	if whOlder {
+		return &HistoryDiff[WebhookHistory]{
+			Old:     wh,
+			New:     history,
+			Changes: wh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[WebhookHistory]{
+			Old:     history,
+			New:     wh,
+			Changes: history.changes(wh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
 func (c Change) String(op enthistory.OpType) string {
 	var newstr, oldstr string
 	if c.New != nil {
@@ -991,6 +1247,24 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	records = append(records, record...)
 
 	record, err = auditEntitlementHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
+	record, err = auditEventHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
+	record, err = auditFeatureHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
+	record, err = auditFileHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
 	}
@@ -1063,6 +1337,12 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	records = append(records, record...)
 
 	record, err = auditUserSettingHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
+	record, err = auditWebhookHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
 	}
@@ -1190,6 +1470,162 @@ func auditEntitlementHistory(ctx context.Context, config config) ([][]string, er
 			default:
 				if i == 0 {
 					record.Changes = (&EntitlementHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type eventhistoryref struct {
+	Ref string
+}
+
+func auditEventHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []eventhistoryref
+	client := NewEventHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(eventhistory.ByRef()).
+		Select(eventhistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(eventhistory.Ref(currRef.Ref)).
+			Order(eventhistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "EventHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&EventHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&EventHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&EventHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type featurehistoryref struct {
+	Ref string
+}
+
+func auditFeatureHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []featurehistoryref
+	client := NewFeatureHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(featurehistory.ByRef()).
+		Select(featurehistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(featurehistory.Ref(currRef.Ref)).
+			Order(featurehistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "FeatureHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&FeatureHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&FeatureHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&FeatureHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type filehistoryref struct {
+	Ref string
+}
+
+func auditFileHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []filehistoryref
+	client := NewFileHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(filehistory.ByRef()).
+		Select(filehistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(filehistory.Ref(currRef.Ref)).
+			Order(filehistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "FileHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&FileHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&FileHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&FileHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}
@@ -1814,6 +2250,58 @@ func auditUserSettingHistory(ctx context.Context, config config) ([][]string, er
 			default:
 				if i == 0 {
 					record.Changes = (&UserSettingHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type webhookhistoryref struct {
+	Ref string
+}
+
+func auditWebhookHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []webhookhistoryref
+	client := NewWebhookHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(webhookhistory.ByRef()).
+		Select(webhookhistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(webhookhistory.Ref(currRef.Ref)).
+			Order(webhookhistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "WebhookHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&WebhookHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&WebhookHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&WebhookHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}

@@ -13,6 +13,9 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -423,6 +426,51 @@ func (uu *UserUpdate) AddWebauthn(w ...*Webauthn) *UserUpdate {
 	return uu.AddWebauthnIDs(ids...)
 }
 
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (uu *UserUpdate) AddFileIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddFileIDs(ids...)
+	return uu
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (uu *UserUpdate) AddFiles(f ...*File) *UserUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.AddFileIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (uu *UserUpdate) AddEventIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddEventIDs(ids...)
+	return uu
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (uu *UserUpdate) AddEvents(e ...*Event) *UserUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.AddEventIDs(ids...)
+}
+
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (uu *UserUpdate) AddFeatureIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddFeatureIDs(ids...)
+	return uu
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (uu *UserUpdate) AddFeatures(f ...*Feature) *UserUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.AddFeatureIDs(ids...)
+}
+
 // AddGroupMembershipIDs adds the "group_memberships" edge to the GroupMembership entity by IDs.
 func (uu *UserUpdate) AddGroupMembershipIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddGroupMembershipIDs(ids...)
@@ -609,6 +657,69 @@ func (uu *UserUpdate) RemoveWebauthn(w ...*Webauthn) *UserUpdate {
 		ids[i] = w[i].ID
 	}
 	return uu.RemoveWebauthnIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (uu *UserUpdate) ClearFiles() *UserUpdate {
+	uu.mutation.ClearFiles()
+	return uu
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (uu *UserUpdate) RemoveFileIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveFileIDs(ids...)
+	return uu
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (uu *UserUpdate) RemoveFiles(f ...*File) *UserUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.RemoveFileIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (uu *UserUpdate) ClearEvents() *UserUpdate {
+	uu.mutation.ClearEvents()
+	return uu
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (uu *UserUpdate) RemoveEventIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveEventIDs(ids...)
+	return uu
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (uu *UserUpdate) RemoveEvents(e ...*Event) *UserUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.RemoveEventIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to the Feature entity.
+func (uu *UserUpdate) ClearFeatures() *UserUpdate {
+	uu.mutation.ClearFeatures()
+	return uu
+}
+
+// RemoveFeatureIDs removes the "features" edge to Feature entities by IDs.
+func (uu *UserUpdate) RemoveFeatureIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveFeatureIDs(ids...)
+	return uu
+}
+
+// RemoveFeatures removes "features" edges to Feature entities.
+func (uu *UserUpdate) RemoveFeatures(f ...*Feature) *UserUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.RemoveFeatureIDs(ids...)
 }
 
 // ClearGroupMemberships clears all "group_memberships" edges to the GroupMembership entity.
@@ -1265,6 +1376,150 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.File
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !uu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.File
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.File
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: user.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.UserEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedEventsIDs(); len(nodes) > 0 && !uu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: user.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.UserEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: user.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.UserEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.UserFeatures
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !uu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.UserFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.UserFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if uu.mutation.GroupMembershipsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1765,6 +2020,51 @@ func (uuo *UserUpdateOne) AddWebauthn(w ...*Webauthn) *UserUpdateOne {
 	return uuo.AddWebauthnIDs(ids...)
 }
 
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (uuo *UserUpdateOne) AddFileIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddFileIDs(ids...)
+	return uuo
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (uuo *UserUpdateOne) AddFiles(f ...*File) *UserUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.AddFileIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (uuo *UserUpdateOne) AddEventIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddEventIDs(ids...)
+	return uuo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (uuo *UserUpdateOne) AddEvents(e ...*Event) *UserUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.AddEventIDs(ids...)
+}
+
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (uuo *UserUpdateOne) AddFeatureIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddFeatureIDs(ids...)
+	return uuo
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (uuo *UserUpdateOne) AddFeatures(f ...*Feature) *UserUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.AddFeatureIDs(ids...)
+}
+
 // AddGroupMembershipIDs adds the "group_memberships" edge to the GroupMembership entity by IDs.
 func (uuo *UserUpdateOne) AddGroupMembershipIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddGroupMembershipIDs(ids...)
@@ -1951,6 +2251,69 @@ func (uuo *UserUpdateOne) RemoveWebauthn(w ...*Webauthn) *UserUpdateOne {
 		ids[i] = w[i].ID
 	}
 	return uuo.RemoveWebauthnIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (uuo *UserUpdateOne) ClearFiles() *UserUpdateOne {
+	uuo.mutation.ClearFiles()
+	return uuo
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (uuo *UserUpdateOne) RemoveFileIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveFileIDs(ids...)
+	return uuo
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (uuo *UserUpdateOne) RemoveFiles(f ...*File) *UserUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.RemoveFileIDs(ids...)
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (uuo *UserUpdateOne) ClearEvents() *UserUpdateOne {
+	uuo.mutation.ClearEvents()
+	return uuo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (uuo *UserUpdateOne) RemoveEventIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveEventIDs(ids...)
+	return uuo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (uuo *UserUpdateOne) RemoveEvents(e ...*Event) *UserUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.RemoveEventIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to the Feature entity.
+func (uuo *UserUpdateOne) ClearFeatures() *UserUpdateOne {
+	uuo.mutation.ClearFeatures()
+	return uuo
+}
+
+// RemoveFeatureIDs removes the "features" edge to Feature entities by IDs.
+func (uuo *UserUpdateOne) RemoveFeatureIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveFeatureIDs(ids...)
+	return uuo
+}
+
+// RemoveFeatures removes "features" edges to Feature entities.
+func (uuo *UserUpdateOne) RemoveFeatures(f ...*Feature) *UserUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.RemoveFeatureIDs(ids...)
 }
 
 // ClearGroupMemberships clears all "group_memberships" edges to the GroupMembership entity.
@@ -2632,6 +2995,150 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			},
 		}
 		edge.Schema = uuo.schemaConfig.Webauthn
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.File
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !uuo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.File
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.File
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: user.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.UserEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !uuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: user.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.UserEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.EventsTable,
+			Columns: user.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.UserEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.UserFeatures
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !uuo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.UserFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.UserFeatures
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -10,6 +10,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
+	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
+	"github.com/datumforge/datum/internal/ent/generated/filehistory"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
@@ -22,6 +25,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/webhookhistory"
 )
 
 func (dd *DocumentData) History() *DocumentDataHistoryQuery {
@@ -113,6 +117,144 @@ func (ehq *EntitlementHistoryQuery) AsOf(ctx context.Context, time time.Time) (*
 	return ehq.
 		Where(entitlementhistory.HistoryTimeLTE(time)).
 		Order(entitlementhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (e *Event) History() *EventHistoryQuery {
+	historyClient := NewEventHistoryClient(e.config)
+	return historyClient.Query().Where(eventhistory.Ref(e.ID))
+}
+
+func (eh *EventHistory) Next(ctx context.Context) (*EventHistory, error) {
+	client := NewEventHistoryClient(eh.config)
+	return client.Query().
+		Where(
+			eventhistory.Ref(eh.Ref),
+			eventhistory.HistoryTimeGT(eh.HistoryTime),
+		).
+		Order(eventhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (eh *EventHistory) Prev(ctx context.Context) (*EventHistory, error) {
+	client := NewEventHistoryClient(eh.config)
+	return client.Query().
+		Where(
+			eventhistory.Ref(eh.Ref),
+			eventhistory.HistoryTimeLT(eh.HistoryTime),
+		).
+		Order(eventhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ehq *EventHistoryQuery) Earliest(ctx context.Context) (*EventHistory, error) {
+	return ehq.
+		Order(eventhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ehq *EventHistoryQuery) Latest(ctx context.Context) (*EventHistory, error) {
+	return ehq.
+		Order(eventhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ehq *EventHistoryQuery) AsOf(ctx context.Context, time time.Time) (*EventHistory, error) {
+	return ehq.
+		Where(eventhistory.HistoryTimeLTE(time)).
+		Order(eventhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (f *Feature) History() *FeatureHistoryQuery {
+	historyClient := NewFeatureHistoryClient(f.config)
+	return historyClient.Query().Where(featurehistory.Ref(f.ID))
+}
+
+func (fh *FeatureHistory) Next(ctx context.Context) (*FeatureHistory, error) {
+	client := NewFeatureHistoryClient(fh.config)
+	return client.Query().
+		Where(
+			featurehistory.Ref(fh.Ref),
+			featurehistory.HistoryTimeGT(fh.HistoryTime),
+		).
+		Order(featurehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (fh *FeatureHistory) Prev(ctx context.Context) (*FeatureHistory, error) {
+	client := NewFeatureHistoryClient(fh.config)
+	return client.Query().
+		Where(
+			featurehistory.Ref(fh.Ref),
+			featurehistory.HistoryTimeLT(fh.HistoryTime),
+		).
+		Order(featurehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (fhq *FeatureHistoryQuery) Earliest(ctx context.Context) (*FeatureHistory, error) {
+	return fhq.
+		Order(featurehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (fhq *FeatureHistoryQuery) Latest(ctx context.Context) (*FeatureHistory, error) {
+	return fhq.
+		Order(featurehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (fhq *FeatureHistoryQuery) AsOf(ctx context.Context, time time.Time) (*FeatureHistory, error) {
+	return fhq.
+		Where(featurehistory.HistoryTimeLTE(time)).
+		Order(featurehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (f *File) History() *FileHistoryQuery {
+	historyClient := NewFileHistoryClient(f.config)
+	return historyClient.Query().Where(filehistory.Ref(f.ID))
+}
+
+func (fh *FileHistory) Next(ctx context.Context) (*FileHistory, error) {
+	client := NewFileHistoryClient(fh.config)
+	return client.Query().
+		Where(
+			filehistory.Ref(fh.Ref),
+			filehistory.HistoryTimeGT(fh.HistoryTime),
+		).
+		Order(filehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (fh *FileHistory) Prev(ctx context.Context) (*FileHistory, error) {
+	client := NewFileHistoryClient(fh.config)
+	return client.Query().
+		Where(
+			filehistory.Ref(fh.Ref),
+			filehistory.HistoryTimeLT(fh.HistoryTime),
+		).
+		Order(filehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (fhq *FileHistoryQuery) Earliest(ctx context.Context) (*FileHistory, error) {
+	return fhq.
+		Order(filehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (fhq *FileHistoryQuery) Latest(ctx context.Context) (*FileHistory, error) {
+	return fhq.
+		Order(filehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (fhq *FileHistoryQuery) AsOf(ctx context.Context, time time.Time) (*FileHistory, error) {
+	return fhq.
+		Where(filehistory.HistoryTimeLTE(time)).
+		Order(filehistory.ByHistoryTime(sql.OrderDesc())).
 		First(ctx)
 }
 
@@ -665,5 +807,51 @@ func (ushq *UserSettingHistoryQuery) AsOf(ctx context.Context, time time.Time) (
 	return ushq.
 		Where(usersettinghistory.HistoryTimeLTE(time)).
 		Order(usersettinghistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (w *Webhook) History() *WebhookHistoryQuery {
+	historyClient := NewWebhookHistoryClient(w.config)
+	return historyClient.Query().Where(webhookhistory.Ref(w.ID))
+}
+
+func (wh *WebhookHistory) Next(ctx context.Context) (*WebhookHistory, error) {
+	client := NewWebhookHistoryClient(wh.config)
+	return client.Query().
+		Where(
+			webhookhistory.Ref(wh.Ref),
+			webhookhistory.HistoryTimeGT(wh.HistoryTime),
+		).
+		Order(webhookhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (wh *WebhookHistory) Prev(ctx context.Context) (*WebhookHistory, error) {
+	client := NewWebhookHistoryClient(wh.config)
+	return client.Query().
+		Where(
+			webhookhistory.Ref(wh.Ref),
+			webhookhistory.HistoryTimeLT(wh.HistoryTime),
+		).
+		Order(webhookhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (whq *WebhookHistoryQuery) Earliest(ctx context.Context) (*WebhookHistory, error) {
+	return whq.
+		Order(webhookhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (whq *WebhookHistoryQuery) Latest(ctx context.Context) (*WebhookHistory, error) {
+	return whq.
+		Order(webhookhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (whq *WebhookHistoryQuery) AsOf(ctx context.Context, time time.Time) (*WebhookHistory, error) {
+	return whq.
+		Where(webhookhistory.HistoryTimeLTE(time)).
+		Order(webhookhistory.ByHistoryTime(sql.OrderDesc())).
 		First(ctx)
 }

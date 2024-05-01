@@ -18,6 +18,12 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
+	"github.com/datumforge/datum/internal/ent/generated/file"
+	"github.com/datumforge/datum/internal/ent/generated/filehistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -49,6 +55,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
+	"github.com/datumforge/datum/internal/ent/generated/webhookhistory"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -115,6 +123,12 @@ func checkColumn(table, column string) error {
 			emailverificationtoken.Table:     emailverificationtoken.ValidColumn,
 			entitlement.Table:                entitlement.ValidColumn,
 			entitlementhistory.Table:         entitlementhistory.ValidColumn,
+			event.Table:                      event.ValidColumn,
+			eventhistory.Table:               eventhistory.ValidColumn,
+			feature.Table:                    feature.ValidColumn,
+			featurehistory.Table:             featurehistory.ValidColumn,
+			file.Table:                       file.ValidColumn,
+			filehistory.Table:                filehistory.ValidColumn,
 			group.Table:                      group.ValidColumn,
 			grouphistory.Table:               grouphistory.ValidColumn,
 			groupmembership.Table:            groupmembership.ValidColumn,
@@ -146,6 +160,8 @@ func checkColumn(table, column string) error {
 			usersetting.Table:                usersetting.ValidColumn,
 			usersettinghistory.Table:         usersettinghistory.ValidColumn,
 			webauthn.Table:                   webauthn.ValidColumn,
+			webhook.Table:                    webhook.ValidColumn,
+			webhookhistory.Table:             webhookhistory.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

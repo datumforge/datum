@@ -1,0 +1,97 @@
+query GetIntegrations($where: IntegrationWhereInput) {
+  integrations(where: $where) {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        ownerID
+        name
+        description
+        kind
+        owner {
+          id
+        }
+        secrets {
+          id
+        }
+        oauth2tokens {
+          id
+        }
+        events {
+          id
+        }
+      }
+    }
+  }
+}
+
+mutation CreateIntegration($input: CreateIntegrationInput!) {
+  createIntegration(input: $input) {
+    integration {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      ownerID
+      name
+      description
+      kind
+      owner {
+        id
+      }
+      secrets {
+        id
+      }
+      oauth2tokens {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+mutation UpdateIntegration($updateIntegrationId: ID!, $input: UpdateIntegrationInput!) {
+  updateIntegration(id: $updateIntegrationId, input: $input) {
+    integration {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      ownerID
+      name
+      description
+      kind
+      owner {
+        id
+      }
+      secrets {
+        id
+      }
+      oauth2tokens {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+mutation DeleteIntegration($deleteIntegrationId: ID!) {
+  deleteIntegration(id: $deleteIntegrationId) {
+    deletedID
+  }
+}

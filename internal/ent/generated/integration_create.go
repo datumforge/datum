@@ -10,8 +10,10 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
@@ -178,6 +180,36 @@ func (ic *IntegrationCreate) AddSecrets(h ...*Hush) *IntegrationCreate {
 		ids[i] = h[i].ID
 	}
 	return ic.AddSecretIDs(ids...)
+}
+
+// AddOauth2tokenIDs adds the "oauth2tokens" edge to the OhAuthTooToken entity by IDs.
+func (ic *IntegrationCreate) AddOauth2tokenIDs(ids ...string) *IntegrationCreate {
+	ic.mutation.AddOauth2tokenIDs(ids...)
+	return ic
+}
+
+// AddOauth2tokens adds the "oauth2tokens" edges to the OhAuthTooToken entity.
+func (ic *IntegrationCreate) AddOauth2tokens(o ...*OhAuthTooToken) *IntegrationCreate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ic.AddOauth2tokenIDs(ids...)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (ic *IntegrationCreate) AddEventIDs(ids ...string) *IntegrationCreate {
+	ic.mutation.AddEventIDs(ids...)
+	return ic
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (ic *IntegrationCreate) AddEvents(e ...*Event) *IntegrationCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ic.AddEventIDs(ids...)
 }
 
 // Mutation returns the IntegrationMutation object of the builder.
@@ -359,6 +391,40 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = ic.schemaConfig.IntegrationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ic.mutation.Oauth2tokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.Oauth2tokensTable,
+			Columns: integration.Oauth2tokensPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(ohauthtootoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ic.schemaConfig.IntegrationOauth2tokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ic.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.EventsTable,
+			Columns: integration.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ic.schemaConfig.IntegrationEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

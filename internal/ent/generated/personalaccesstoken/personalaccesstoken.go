@@ -45,6 +45,8 @@ const (
 	EdgeOwner = "owner"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"
+	// EdgeEvents holds the string denoting the events edge name in mutations.
+	EdgeEvents = "events"
 	// Table holds the table name of the personalaccesstoken in the database.
 	Table = "personal_access_tokens"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -59,6 +61,11 @@ const (
 	// OrganizationsInverseTable is the table name for the Organization entity.
 	// It exists in this package in order to avoid circular dependency with the "organization" package.
 	OrganizationsInverseTable = "organizations"
+	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
+	EventsTable = "personal_access_token_events"
+	// EventsInverseTable is the table name for the Event entity.
+	// It exists in this package in order to avoid circular dependency with the "event" package.
+	EventsInverseTable = "events"
 )
 
 // Columns holds all SQL columns for personalaccesstoken fields.
@@ -83,6 +90,9 @@ var (
 	// OrganizationsPrimaryKey and OrganizationsColumn2 are the table columns denoting the
 	// primary key for the organizations relation (M2M).
 	OrganizationsPrimaryKey = []string{"organization_id", "personal_access_token_id"}
+	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
+	// primary key for the events relation (M2M).
+	EventsPrimaryKey = []string{"personal_access_token_id", "event_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -206,6 +216,20 @@ func ByOrganizations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOrganizationsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByEventsCount orders the results by events count.
+func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEventsStep(), opts...)
+	}
+}
+
+// ByEvents orders the results by events terms.
+func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -218,5 +242,12 @@ func newOrganizationsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OrganizationsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, OrganizationsTable, OrganizationsPrimaryKey...),
+	)
+}
+func newEventsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EventsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
 	)
 }

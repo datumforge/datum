@@ -81,6 +81,78 @@ func (f EntitlementHistoryFunc) Mutate(ctx context.Context, m generated.Mutation
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementHistoryMutation", m)
 }
 
+// The EventFunc type is an adapter to allow the use of ordinary
+// function as Event mutator.
+type EventFunc func(context.Context, *generated.EventMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EventFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EventMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EventMutation", m)
+}
+
+// The EventHistoryFunc type is an adapter to allow the use of ordinary
+// function as EventHistory mutator.
+type EventHistoryFunc func(context.Context, *generated.EventHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EventHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EventHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EventHistoryMutation", m)
+}
+
+// The FeatureFunc type is an adapter to allow the use of ordinary
+// function as Feature mutator.
+type FeatureFunc func(context.Context, *generated.FeatureMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FeatureFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.FeatureMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.FeatureMutation", m)
+}
+
+// The FeatureHistoryFunc type is an adapter to allow the use of ordinary
+// function as FeatureHistory mutator.
+type FeatureHistoryFunc func(context.Context, *generated.FeatureHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FeatureHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.FeatureHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.FeatureHistoryMutation", m)
+}
+
+// The FileFunc type is an adapter to allow the use of ordinary
+// function as File mutator.
+type FileFunc func(context.Context, *generated.FileMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FileFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.FileMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.FileMutation", m)
+}
+
+// The FileHistoryFunc type is an adapter to allow the use of ordinary
+// function as FileHistory mutator.
+type FileHistoryFunc func(context.Context, *generated.FileHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FileHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.FileHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.FileHistoryMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *generated.GroupMutation) (generated.Value, error)
@@ -451,6 +523,30 @@ func (f WebauthnFunc) Mutate(ctx context.Context, m generated.Mutation) (generat
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.WebauthnMutation", m)
+}
+
+// The WebhookFunc type is an adapter to allow the use of ordinary
+// function as Webhook mutator.
+type WebhookFunc func(context.Context, *generated.WebhookMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WebhookFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.WebhookMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.WebhookMutation", m)
+}
+
+// The WebhookHistoryFunc type is an adapter to allow the use of ordinary
+// function as WebhookHistory mutator.
+type WebhookHistoryFunc func(context.Context, *generated.WebhookHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WebhookHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.WebhookHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.WebhookHistoryMutation", m)
 }
 
 // Condition is a hook condition function.

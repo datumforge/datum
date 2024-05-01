@@ -1,0 +1,97 @@
+query GetFiles($where: FileWhereInput) {
+  files(where: $where) {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        fileName
+        fileExtension
+        fileSize
+        contentType
+        storeKey
+        category
+        annotation
+        user {
+          id
+        }
+        organization {
+          id
+        }
+        group {
+          id
+        }
+      }
+    }
+  }
+}
+
+mutation CreateFile($input: CreateFileInput!) {
+  createFile(input: $input) {
+    file {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      fileName
+      fileExtension
+      fileSize
+      contentType
+      storeKey
+      category
+      annotation
+      user {
+        id
+      }
+      organization {
+        id
+      }
+      group {
+        id
+      }
+    }
+  }
+}
+
+mutation UpdateFile($updateFileId: ID!, $input: UpdateFileInput!) {
+  updateFile(id: $updateFileId, input: $input) {
+    file {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      fileName
+      fileExtension
+      fileSize
+      contentType
+      storeKey
+      category
+      annotation
+      user {
+        id
+      }
+      organization {
+        id
+      }
+      group {
+        id
+      }
+    }
+  }
+}
+
+mutation DeleteFile($deleteFileId: ID!) {
+  deleteFile(id: $deleteFileId) {
+    deletedID
+  }
+}

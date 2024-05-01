@@ -46,11 +46,11 @@ type RegisterReply struct {
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	var in RegisterRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// TODO: figure out if we want to create dynamic fun names, or remove as being required entirely
@@ -75,12 +75,15 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		h.Logger.Errorw("error creating new user", "error", err)
 
 		if IsUniqueConstraintError(err) {
-			return ctx.JSON(http.StatusConflict, rout.ErrorResponse("user already exists"))
+			return ctx.JSON(http.StatusConflict, rout.ErrorResponseWithCode("user already exists", UserExistsErrCode))
 		}
 
 		if generated.IsValidationError(err) {
 			field := err.(*generated.ValidationError).Name
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(fmt.Sprintf("%s was invalid", field)))
+
+			return ctx.JSON(http.StatusBadRequest,
+				rout.ErrorResponseWithCode(fmt.Sprintf("%s was invalid", field), InvalidInputErrCode),
+			)
 		}
 
 		return err

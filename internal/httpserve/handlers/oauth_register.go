@@ -34,7 +34,7 @@ type OauthTokenRequest struct {
 func (h *Handler) OauthRegister(ctx echo.Context) error {
 	var r OauthTokenRequest
 	if err := ctx.Bind(&r); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	ctxWithToken := token.NewContextWithOauthTooToken(ctx.Request().Context(), r.Email)
@@ -46,7 +46,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 
 	// verify the token provided to ensure the user is valid
 	if err := h.verifyClientToken(ctxWithToken, r.AuthProvider, tok, r.Email); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// check if users exists and create if not, updates last seen of existing user

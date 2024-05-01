@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/mixin"
 
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
@@ -30,6 +31,9 @@ type OrgOwnerMixin struct {
 	SkipOASGeneration bool
 	// AllowWhere includes the owner_id field in gql generated fields
 	AllowWhere bool
+	// SkipInterceptor skips the interceptor for that schema for all queries, or specific types,
+	// this is useful for tokens, etc
+	SkipInterceptor interceptors.SkipMode
 }
 
 // Fields of the OrgOwnerMixin
@@ -89,8 +93,20 @@ func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
 	} else {
 		return []ent.Interceptor{
 			intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
+				if orgOwned.SkipInterceptor == interceptors.SkipAll {
+					return nil
+				}
+
 				orgID, err := auth.GetOrganizationIDFromContext(ctx)
 				if err != nil {
+					ctxQuery := ent.QueryFromContext(ctx)
+
+					// Skip the interceptor if the query is for a single entity
+					// and the BypassInterceptor flag is set for Only queries
+					if orgOwned.SkipInterceptor == interceptors.SkipOnlyQuery && ctxQuery.Op == "Only" {
+						return nil
+					}
+
 					return err
 				}
 

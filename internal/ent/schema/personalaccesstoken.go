@@ -89,8 +89,9 @@ func (PersonalAccessToken) Mixin() []ent.Mixin {
 		mixin.SoftDeleteMixin{},
 		emixin.IDMixin{},
 		UserOwnedMixin{
-			Ref:         "personal_access_tokens",
-			AllowUpdate: false,
+			Ref:             "personal_access_tokens",
+			AllowUpdate:     false,
+			SkipInterceptor: interceptors.SkipOnlyQuery,
 		},
 	}
 }
@@ -131,8 +132,8 @@ func (PersonalAccessToken) Policy() ent.Policy {
 			privacy.AlwaysAllowRule(),
 		},
 		Query: privacy.QueryPolicy{
-			rule.AllowIfOwnedByViewer(),
-			privacy.AlwaysDenyRule(),
+			rule.DenyIfNoSubject(),
+			privacy.AlwaysAllowRule(),
 		},
 	}
 }

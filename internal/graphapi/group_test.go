@@ -11,6 +11,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 )
 
@@ -26,6 +27,9 @@ func (suite *GraphTestSuite) TestQueryGroup() {
 
 	listOrgs := []string{fmt.Sprintf("organization:%s", org1.ID)}
 	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org1.ID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name     string
@@ -96,6 +100,9 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 	group1 := (&GroupBuilder{client: suite.client, Owner: org1.ID}).MustNew(reqCtx, t)
 	group2 := (&GroupBuilder{client: suite.client, Owner: org2.ID}).MustNew(reqCtx, t)
 
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org1.ID)
+	require.NoError(t, err)
+
 	t.Run("Get Groups By Owner", func(t *testing.T) {
 		defer mock_fga.ClearMocks(suite.client.fga)
 
@@ -143,7 +150,6 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 
 		// Try to get groups for org not authorized to access
 		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
-		mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 
 		whereInput = &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
@@ -160,10 +166,13 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 	})
 
 	// delete created orgs and groups
+	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org2.ID)
+	require.NoError(t, err)
+
 	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&GroupCleanup{client: suite.client, GroupID: group2.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group2.ID}).MustDelete(reqCtx2, t)
 	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: suite.client, OrgID: org2.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org2.ID}).MustDelete(reqCtx2, t)
 }
 
 func (suite *GraphTestSuite) TestQueryGroups() {
@@ -179,6 +188,9 @@ func (suite *GraphTestSuite) TestQueryGroups() {
 	group1 := (&GroupBuilder{client: suite.client, Owner: org1.ID}).MustNew(reqCtx, t)
 	group2 := (&GroupBuilder{client: suite.client, Owner: org2.ID}).MustNew(reqCtx, t)
 	group3 := (&GroupBuilder{client: suite.client, Owner: org2.ID}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org2.ID)
+	require.NoError(t, err)
 
 	t.Run("Get Groups", func(t *testing.T) {
 		defer mock_fga.ClearMocks(suite.client.fga)
@@ -235,13 +247,6 @@ func (suite *GraphTestSuite) TestQueryGroups() {
 		// make sure no organizations are returned
 		assert.Equal(t, 0, len(resp.Groups.Edges))
 	})
-
-	// delete created orgs and groups
-	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&GroupCleanup{client: suite.client, GroupID: group2.ID}).MustDelete(reqCtx, t)
-	(&GroupCleanup{client: suite.client, GroupID: group3.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: suite.client, OrgID: org2.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationCreateGroup() {
@@ -255,6 +260,9 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 	owner2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("organization:%s", owner1.ID)}
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, owner1.ID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name        string
@@ -410,6 +418,9 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
 
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name        string
 		allowed     bool
@@ -556,6 +567,9 @@ func (suite *GraphTestSuite) TestMutationDeleteGroup() {
 	group := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, group.OwnerID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name     string

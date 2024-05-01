@@ -86,7 +86,7 @@ func TestGetOrganizationID(t *testing.T) {
 
 	orgID := ulids.New().String()
 
-	validCtx, err := auth.NewTestContextWithOrgID(orgID)
+	validCtx, err := auth.NewTestEchoContextWithOrgID(ulids.New().String(), orgID)
 	if err != nil {
 		t.Fatal()
 	}

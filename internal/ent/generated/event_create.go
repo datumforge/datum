@@ -96,9 +96,25 @@ func (ec *EventCreate) SetEventID(s string) *EventCreate {
 	return ec
 }
 
+// SetNillableEventID sets the "event_id" field if the given value is not nil.
+func (ec *EventCreate) SetNillableEventID(s *string) *EventCreate {
+	if s != nil {
+		ec.SetEventID(*s)
+	}
+	return ec
+}
+
 // SetCorrelationID sets the "correlation_id" field.
 func (ec *EventCreate) SetCorrelationID(s string) *EventCreate {
 	ec.mutation.SetCorrelationID(s)
+	return ec
+}
+
+// SetNillableCorrelationID sets the "correlation_id" field if the given value is not nil.
+func (ec *EventCreate) SetNillableCorrelationID(s *string) *EventCreate {
+	if s != nil {
+		ec.SetCorrelationID(*s)
+	}
 	return ec
 }
 
@@ -401,12 +417,6 @@ func (ec *EventCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (ec *EventCreate) check() error {
-	if _, ok := ec.mutation.EventID(); !ok {
-		return &ValidationError{Name: "event_id", err: errors.New(`generated: missing required field "Event.event_id"`)}
-	}
-	if _, ok := ec.mutation.CorrelationID(); !ok {
-		return &ValidationError{Name: "correlation_id", err: errors.New(`generated: missing required field "Event.correlation_id"`)}
-	}
 	if _, ok := ec.mutation.EventType(); !ok {
 		return &ValidationError{Name: "event_type", err: errors.New(`generated: missing required field "Event.event_type"`)}
 	}

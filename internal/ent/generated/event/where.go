@@ -407,6 +407,16 @@ func EventIDHasSuffix(v string) predicate.Event {
 	return predicate.Event(sql.FieldHasSuffix(FieldEventID, v))
 }
 
+// EventIDIsNil applies the IsNil predicate on the "event_id" field.
+func EventIDIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldEventID))
+}
+
+// EventIDNotNil applies the NotNil predicate on the "event_id" field.
+func EventIDNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldEventID))
+}
+
 // EventIDEqualFold applies the EqualFold predicate on the "event_id" field.
 func EventIDEqualFold(v string) predicate.Event {
 	return predicate.Event(sql.FieldEqualFold(FieldEventID, v))
@@ -470,6 +480,16 @@ func CorrelationIDHasPrefix(v string) predicate.Event {
 // CorrelationIDHasSuffix applies the HasSuffix predicate on the "correlation_id" field.
 func CorrelationIDHasSuffix(v string) predicate.Event {
 	return predicate.Event(sql.FieldHasSuffix(FieldCorrelationID, v))
+}
+
+// CorrelationIDIsNil applies the IsNil predicate on the "correlation_id" field.
+func CorrelationIDIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldCorrelationID))
+}
+
+// CorrelationIDNotNil applies the NotNil predicate on the "correlation_id" field.
+func CorrelationIDNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldCorrelationID))
 }
 
 // CorrelationIDEqualFold applies the EqualFold predicate on the "correlation_id" field.

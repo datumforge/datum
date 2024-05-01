@@ -344,8 +344,8 @@ input CreateEventInput {
 	updatedAt: Time
 	createdBy: String
 	updatedBy: String
-	eventID: String!
-	correlationID: String!
+	eventID: String
+	correlationID: String
 	eventType: String!
 	metadata: Map
 	userIDs: [ID!]
@@ -2040,8 +2040,8 @@ type Event implements Node {
 	updatedAt: Time
 	createdBy: String
 	updatedBy: String
-	eventID: String!
-	correlationID: String!
+	eventID: String
+	correlationID: String
 	eventType: String!
 	metadata: Map
 	user: [User!]
@@ -2116,8 +2116,8 @@ type EventHistory implements Node {
 	updatedAt: Time
 	createdBy: String
 	updatedBy: String
-	eventID: String!
-	correlationID: String!
+	eventID: String
+	correlationID: String
 	eventType: String!
 	metadata: Map
 }
@@ -2292,6 +2292,8 @@ input EventHistoryWhereInput {
 	eventIDContains: String
 	eventIDHasPrefix: String
 	eventIDHasSuffix: String
+	eventIDIsNil: Boolean
+	eventIDNotNil: Boolean
 	eventIDEqualFold: String
 	eventIDContainsFold: String
 	"""
@@ -2308,6 +2310,8 @@ input EventHistoryWhereInput {
 	correlationIDContains: String
 	correlationIDHasPrefix: String
 	correlationIDHasSuffix: String
+	correlationIDIsNil: Boolean
+	correlationIDNotNil: Boolean
 	correlationIDEqualFold: String
 	correlationIDContainsFold: String
 	"""
@@ -2433,6 +2437,8 @@ input EventWhereInput {
 	eventIDContains: String
 	eventIDHasPrefix: String
 	eventIDHasSuffix: String
+	eventIDIsNil: Boolean
+	eventIDNotNil: Boolean
 	eventIDEqualFold: String
 	eventIDContainsFold: String
 	"""
@@ -2449,6 +2455,8 @@ input EventWhereInput {
 	correlationIDContains: String
 	correlationIDHasPrefix: String
 	correlationIDHasSuffix: String
+	correlationIDIsNil: Boolean
+	correlationIDNotNil: Boolean
 	correlationIDEqualFold: String
 	correlationIDContainsFold: String
 	"""
@@ -13199,7 +13207,9 @@ input UpdateEventInput {
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	eventID: String
+	clearEventID: Boolean
 	correlationID: String
+	clearCorrelationID: Boolean
 	eventType: String
 	metadata: Map
 	clearMetadata: Boolean

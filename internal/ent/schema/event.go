@@ -17,8 +17,10 @@ type Event struct {
 // Fields of the TicketEvent.
 func (Event) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("event_id"),
-		field.String("correlation_id"),
+		field.String("event_id").
+			Optional(),
+		field.String("correlation_id").
+			Optional(),
 		field.String("event_type"),
 		field.JSON("metadata", map[string]interface{}{}).Optional().Annotations(entoas.Skip(true)),
 	}

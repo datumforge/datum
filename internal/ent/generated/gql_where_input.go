@@ -3410,6 +3410,8 @@ type EventWhereInput struct {
 	EventIDContains     *string  `json:"eventIDContains,omitempty"`
 	EventIDHasPrefix    *string  `json:"eventIDHasPrefix,omitempty"`
 	EventIDHasSuffix    *string  `json:"eventIDHasSuffix,omitempty"`
+	EventIDIsNil        bool     `json:"eventIDIsNil,omitempty"`
+	EventIDNotNil       bool     `json:"eventIDNotNil,omitempty"`
 	EventIDEqualFold    *string  `json:"eventIDEqualFold,omitempty"`
 	EventIDContainsFold *string  `json:"eventIDContainsFold,omitempty"`
 
@@ -3425,6 +3427,8 @@ type EventWhereInput struct {
 	CorrelationIDContains     *string  `json:"correlationIDContains,omitempty"`
 	CorrelationIDHasPrefix    *string  `json:"correlationIDHasPrefix,omitempty"`
 	CorrelationIDHasSuffix    *string  `json:"correlationIDHasSuffix,omitempty"`
+	CorrelationIDIsNil        bool     `json:"correlationIDIsNil,omitempty"`
+	CorrelationIDNotNil       bool     `json:"correlationIDNotNil,omitempty"`
 	CorrelationIDEqualFold    *string  `json:"correlationIDEqualFold,omitempty"`
 	CorrelationIDContainsFold *string  `json:"correlationIDContainsFold,omitempty"`
 
@@ -3784,6 +3788,12 @@ func (i *EventWhereInput) P() (predicate.Event, error) {
 	if i.EventIDHasSuffix != nil {
 		predicates = append(predicates, event.EventIDHasSuffix(*i.EventIDHasSuffix))
 	}
+	if i.EventIDIsNil {
+		predicates = append(predicates, event.EventIDIsNil())
+	}
+	if i.EventIDNotNil {
+		predicates = append(predicates, event.EventIDNotNil())
+	}
 	if i.EventIDEqualFold != nil {
 		predicates = append(predicates, event.EventIDEqualFold(*i.EventIDEqualFold))
 	}
@@ -3822,6 +3832,12 @@ func (i *EventWhereInput) P() (predicate.Event, error) {
 	}
 	if i.CorrelationIDHasSuffix != nil {
 		predicates = append(predicates, event.CorrelationIDHasSuffix(*i.CorrelationIDHasSuffix))
+	}
+	if i.CorrelationIDIsNil {
+		predicates = append(predicates, event.CorrelationIDIsNil())
+	}
+	if i.CorrelationIDNotNil {
+		predicates = append(predicates, event.CorrelationIDNotNil())
 	}
 	if i.CorrelationIDEqualFold != nil {
 		predicates = append(predicates, event.CorrelationIDEqualFold(*i.CorrelationIDEqualFold))
@@ -4253,6 +4269,8 @@ type EventHistoryWhereInput struct {
 	EventIDContains     *string  `json:"eventIDContains,omitempty"`
 	EventIDHasPrefix    *string  `json:"eventIDHasPrefix,omitempty"`
 	EventIDHasSuffix    *string  `json:"eventIDHasSuffix,omitempty"`
+	EventIDIsNil        bool     `json:"eventIDIsNil,omitempty"`
+	EventIDNotNil       bool     `json:"eventIDNotNil,omitempty"`
 	EventIDEqualFold    *string  `json:"eventIDEqualFold,omitempty"`
 	EventIDContainsFold *string  `json:"eventIDContainsFold,omitempty"`
 
@@ -4268,6 +4286,8 @@ type EventHistoryWhereInput struct {
 	CorrelationIDContains     *string  `json:"correlationIDContains,omitempty"`
 	CorrelationIDHasPrefix    *string  `json:"correlationIDHasPrefix,omitempty"`
 	CorrelationIDHasSuffix    *string  `json:"correlationIDHasSuffix,omitempty"`
+	CorrelationIDIsNil        bool     `json:"correlationIDIsNil,omitempty"`
+	CorrelationIDNotNil       bool     `json:"correlationIDNotNil,omitempty"`
 	CorrelationIDEqualFold    *string  `json:"correlationIDEqualFold,omitempty"`
 	CorrelationIDContainsFold *string  `json:"correlationIDContainsFold,omitempty"`
 
@@ -4652,6 +4672,12 @@ func (i *EventHistoryWhereInput) P() (predicate.EventHistory, error) {
 	if i.EventIDHasSuffix != nil {
 		predicates = append(predicates, eventhistory.EventIDHasSuffix(*i.EventIDHasSuffix))
 	}
+	if i.EventIDIsNil {
+		predicates = append(predicates, eventhistory.EventIDIsNil())
+	}
+	if i.EventIDNotNil {
+		predicates = append(predicates, eventhistory.EventIDNotNil())
+	}
 	if i.EventIDEqualFold != nil {
 		predicates = append(predicates, eventhistory.EventIDEqualFold(*i.EventIDEqualFold))
 	}
@@ -4690,6 +4716,12 @@ func (i *EventHistoryWhereInput) P() (predicate.EventHistory, error) {
 	}
 	if i.CorrelationIDHasSuffix != nil {
 		predicates = append(predicates, eventhistory.CorrelationIDHasSuffix(*i.CorrelationIDHasSuffix))
+	}
+	if i.CorrelationIDIsNil {
+		predicates = append(predicates, eventhistory.CorrelationIDIsNil())
+	}
+	if i.CorrelationIDNotNil {
+		predicates = append(predicates, eventhistory.CorrelationIDNotNil())
 	}
 	if i.CorrelationIDEqualFold != nil {
 		predicates = append(predicates, eventhistory.CorrelationIDEqualFold(*i.CorrelationIDEqualFold))

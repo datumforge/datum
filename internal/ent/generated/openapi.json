@@ -1849,8 +1849,6 @@
                 "required": [
                   "history_time",
                   "operation",
-                  "event_id",
-                  "correlation_id",
                   "event_type"
                 ]
               }
@@ -2193,8 +2191,6 @@
                   }
                 },
                 "required": [
-                  "event_id",
-                  "correlation_id",
                   "event_type"
                 ]
               }
@@ -18259,8 +18255,6 @@
         },
         "required": [
           "id",
-          "event_id",
-          "correlation_id",
           "event_type"
         ]
       },
@@ -18313,8 +18307,6 @@
           "id",
           "history_time",
           "operation",
-          "event_id",
-          "correlation_id",
           "event_type"
         ]
       },

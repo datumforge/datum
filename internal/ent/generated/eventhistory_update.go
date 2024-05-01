@@ -84,6 +84,12 @@ func (ehu *EventHistoryUpdate) SetNillableEventID(s *string) *EventHistoryUpdate
 	return ehu
 }
 
+// ClearEventID clears the value of the "event_id" field.
+func (ehu *EventHistoryUpdate) ClearEventID() *EventHistoryUpdate {
+	ehu.mutation.ClearEventID()
+	return ehu
+}
+
 // SetCorrelationID sets the "correlation_id" field.
 func (ehu *EventHistoryUpdate) SetCorrelationID(s string) *EventHistoryUpdate {
 	ehu.mutation.SetCorrelationID(s)
@@ -95,6 +101,12 @@ func (ehu *EventHistoryUpdate) SetNillableCorrelationID(s *string) *EventHistory
 	if s != nil {
 		ehu.SetCorrelationID(*s)
 	}
+	return ehu
+}
+
+// ClearCorrelationID clears the value of the "correlation_id" field.
+func (ehu *EventHistoryUpdate) ClearCorrelationID() *EventHistoryUpdate {
+	ehu.mutation.ClearCorrelationID()
 	return ehu
 }
 
@@ -189,8 +201,14 @@ func (ehu *EventHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ehu.mutation.EventID(); ok {
 		_spec.SetField(eventhistory.FieldEventID, field.TypeString, value)
 	}
+	if ehu.mutation.EventIDCleared() {
+		_spec.ClearField(eventhistory.FieldEventID, field.TypeString)
+	}
 	if value, ok := ehu.mutation.CorrelationID(); ok {
 		_spec.SetField(eventhistory.FieldCorrelationID, field.TypeString, value)
+	}
+	if ehu.mutation.CorrelationIDCleared() {
+		_spec.ClearField(eventhistory.FieldCorrelationID, field.TypeString)
 	}
 	if value, ok := ehu.mutation.EventType(); ok {
 		_spec.SetField(eventhistory.FieldEventType, field.TypeString, value)
@@ -277,6 +295,12 @@ func (ehuo *EventHistoryUpdateOne) SetNillableEventID(s *string) *EventHistoryUp
 	return ehuo
 }
 
+// ClearEventID clears the value of the "event_id" field.
+func (ehuo *EventHistoryUpdateOne) ClearEventID() *EventHistoryUpdateOne {
+	ehuo.mutation.ClearEventID()
+	return ehuo
+}
+
 // SetCorrelationID sets the "correlation_id" field.
 func (ehuo *EventHistoryUpdateOne) SetCorrelationID(s string) *EventHistoryUpdateOne {
 	ehuo.mutation.SetCorrelationID(s)
@@ -288,6 +312,12 @@ func (ehuo *EventHistoryUpdateOne) SetNillableCorrelationID(s *string) *EventHis
 	if s != nil {
 		ehuo.SetCorrelationID(*s)
 	}
+	return ehuo
+}
+
+// ClearCorrelationID clears the value of the "correlation_id" field.
+func (ehuo *EventHistoryUpdateOne) ClearCorrelationID() *EventHistoryUpdateOne {
+	ehuo.mutation.ClearCorrelationID()
 	return ehuo
 }
 
@@ -412,8 +442,14 @@ func (ehuo *EventHistoryUpdateOne) sqlSave(ctx context.Context) (_node *EventHis
 	if value, ok := ehuo.mutation.EventID(); ok {
 		_spec.SetField(eventhistory.FieldEventID, field.TypeString, value)
 	}
+	if ehuo.mutation.EventIDCleared() {
+		_spec.ClearField(eventhistory.FieldEventID, field.TypeString)
+	}
 	if value, ok := ehuo.mutation.CorrelationID(); ok {
 		_spec.SetField(eventhistory.FieldCorrelationID, field.TypeString, value)
+	}
+	if ehuo.mutation.CorrelationIDCleared() {
+		_spec.ClearField(eventhistory.FieldCorrelationID, field.TypeString)
 	}
 	if value, ok := ehuo.mutation.EventType(); ok {
 		_spec.SetField(eventhistory.FieldEventType, field.TypeString, value)

@@ -49,14 +49,11 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 		// check the organization from the mutation
 		oID, _ := m.ID()
 
-		// if it's not set, get the user's current organization
+		// if it's not set return an error
 		if oID == "" {
-			oID, err = auth.GetOrganizationIDFromContext(ctx)
-			if err != nil {
-				m.Logger.Debugw("missing expected organization id")
+			m.Logger.Debugw("missing expected organization id")
 
-				return privacy.Denyf("missing organization ID information in context")
-			}
+			return privacy.Denyf("missing organization ID information in context")
 		}
 
 		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID)

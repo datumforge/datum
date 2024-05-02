@@ -29,6 +29,9 @@ func init() {
 
 	eventCreateCmd.Flags().StringP("metadata", "m", "", "metadata for the event")
 	datum.ViperBindFlag("event.create.metadata", eventCreateCmd.Flags().Lookup("metadata"))
+
+	eventCreateCmd.Flags().StringP("userid", "u", "", "user id associated with the event")
+	datum.ViperBindFlag("event.create.userid", eventCreateCmd.Flags().Lookup("userid"))
 }
 
 func createevent(ctx context.Context) error {
@@ -47,10 +50,7 @@ func createevent(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("type")
 	}
 
-	//	eventMetadata := viper.GetString("event.create.metadata")
-	//	if eventMetadata == "" {
-	//		return datum.NewRequiredFieldMissingError("metadata")
-	//	}
+	userid := viper.GetStringSlice("event.create.userid")
 
 	inputJSON := "{ \"key\": \"value\" }"
 
@@ -59,6 +59,10 @@ func createevent(ctx context.Context) error {
 	input := datumclient.CreateEventInput{
 		EventType: eventType,
 		Metadata:  parsedMessage,
+	}
+
+	if userid != nil {
+		input.UserIDs = userid
 	}
 
 	u, err := cli.Client.CreateEvent(ctx, input, cli.Interceptor)

@@ -108,6 +108,7 @@ tasks:
     cmds:
       - task: compose:redis
       - task: compose:fga
+      - docker compose -f ./pkg/events/kafka/docker/docker-compose-kafka.yaml -p kafka up --build -d
       - go run main.go serve --debug --pretty
 
   pr:

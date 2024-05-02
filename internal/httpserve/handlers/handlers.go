@@ -9,6 +9,7 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/analytics"
+	"github.com/datumforge/datum/pkg/events/kafka/publisher"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
@@ -48,4 +49,6 @@ type Handler struct {
 	WebAuthn *webauthn.WebAuthn
 	// OTPManager contains the configuration settings for the OTP provider
 	OTPManager *totp.Manager
+	// EventPublisher contains the configuration settings for the event publisher
+	EventManager *publisher.KafkaPublisher
 }

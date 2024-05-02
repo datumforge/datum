@@ -100,13 +100,27 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		return sc.StartTLS(srv, s.config.Settings.Server.TLS.CertFile, s.config.Settings.Server.TLS.CertKey)
 	}
 
+	s.logger.Infow(datumBlock)
+
 	// otherwise, start without TLS
 	return sc.Start(srv)
 }
 
-func (s *Server) GetFuncs(routes echo.Routes) {
-	for _, r := range routes {
-		r.Name()
-		s.logger.Infow("registered route", "route", r.Path, "method", r.Method)
-	}
-}
+var datumBlock = `
+┌───────────────────────────────────────────────────────────────────────────┐
+│                                                                           │
+│                                                                           │
+│                                                                           │
+│               *******               **                                    │
+│              /**////**             /**                                    │
+│              /**    /**  ******   ****** **   ** **********               │
+│              /**    /** //////** ///**/ /**  /**//**//**//**              │
+│              /**    /**  *******   /**  /**  /** /** /** /**              │
+│              /**    **  **////**   /**  /**  /** /** /** /**              │
+│              /*******  //********  //** //****** *** /** /**              │
+│              ///////    ////////    //   ////// ///  //  //               │
+│                                                                           │
+│                                                                           │
+│                                                                           │
+│                                                                           │
+└───────────────────────────────────────────────────────────────────────────┘`

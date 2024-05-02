@@ -1776,11 +1776,167 @@ func (t *GetAllEvents_Events) GetEdges() []*GetAllEvents_Events_Edges {
 	return t.Edges
 }
 
+type CreateEvent_CreateEvent_Event_User struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_User) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_User{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Group struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Group) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Group{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Integration struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Integration) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Integration{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Organization struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Organization) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Organization{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Invite struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Invite) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Invite{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Feature struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Feature) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Feature{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_PersonalAccessToken struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_PersonalAccessToken) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_PersonalAccessToken{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Oauth2token struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Oauth2token) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Oauth2token{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Hush struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Hush) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Hush{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Orgmembership struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Orgmembership) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Orgmembership{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Groupmembership struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Groupmembership) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Groupmembership{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Entitlement struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Entitlement) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Entitlement{}
+	}
+	return t.ID
+}
+
+type CreateEvent_CreateEvent_Event_Webhook struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateEvent_CreateEvent_Event_Webhook) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event_Webhook{}
+	}
+	return t.ID
+}
+
 type CreateEvent_CreateEvent_Event struct {
-	EventID       *string                "json:\"eventID,omitempty\" graphql:\"eventID\""
-	CorrelationID *string                "json:\"correlationID,omitempty\" graphql:\"correlationID\""
-	EventType     string                 "json:\"eventType\" graphql:\"eventType\""
-	Metadata      map[string]interface{} "json:\"metadata,omitempty\" graphql:\"metadata\""
+	EventID             *string                                              "json:\"eventID,omitempty\" graphql:\"eventID\""
+	CorrelationID       *string                                              "json:\"correlationID,omitempty\" graphql:\"correlationID\""
+	EventType           string                                               "json:\"eventType\" graphql:\"eventType\""
+	Metadata            map[string]interface{}                               "json:\"metadata,omitempty\" graphql:\"metadata\""
+	User                []*CreateEvent_CreateEvent_Event_User                "json:\"user,omitempty\" graphql:\"user\""
+	Group               []*CreateEvent_CreateEvent_Event_Group               "json:\"group,omitempty\" graphql:\"group\""
+	Integration         []*CreateEvent_CreateEvent_Event_Integration         "json:\"integration,omitempty\" graphql:\"integration\""
+	Organization        []*CreateEvent_CreateEvent_Event_Organization        "json:\"organization,omitempty\" graphql:\"organization\""
+	Invite              []*CreateEvent_CreateEvent_Event_Invite              "json:\"invite,omitempty\" graphql:\"invite\""
+	Feature             []*CreateEvent_CreateEvent_Event_Feature             "json:\"feature,omitempty\" graphql:\"feature\""
+	PersonalAccessToken []*CreateEvent_CreateEvent_Event_PersonalAccessToken "json:\"personalAccessToken,omitempty\" graphql:\"personalAccessToken\""
+	Oauth2token         []*CreateEvent_CreateEvent_Event_Oauth2token         "json:\"oauth2token,omitempty\" graphql:\"oauth2token\""
+	Hush                []*CreateEvent_CreateEvent_Event_Hush                "json:\"hush,omitempty\" graphql:\"hush\""
+	Orgmembership       []*CreateEvent_CreateEvent_Event_Orgmembership       "json:\"orgmembership,omitempty\" graphql:\"orgmembership\""
+	Groupmembership     []*CreateEvent_CreateEvent_Event_Groupmembership     "json:\"groupmembership,omitempty\" graphql:\"groupmembership\""
+	Entitlement         []*CreateEvent_CreateEvent_Event_Entitlement         "json:\"entitlement,omitempty\" graphql:\"entitlement\""
+	Webhook             []*CreateEvent_CreateEvent_Event_Webhook             "json:\"webhook,omitempty\" graphql:\"webhook\""
 }
 
 func (t *CreateEvent_CreateEvent_Event) GetEventID() *string {
@@ -1806,6 +1962,84 @@ func (t *CreateEvent_CreateEvent_Event) GetMetadata() map[string]interface{} {
 		t = &CreateEvent_CreateEvent_Event{}
 	}
 	return t.Metadata
+}
+func (t *CreateEvent_CreateEvent_Event) GetUser() []*CreateEvent_CreateEvent_Event_User {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.User
+}
+func (t *CreateEvent_CreateEvent_Event) GetGroup() []*CreateEvent_CreateEvent_Event_Group {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Group
+}
+func (t *CreateEvent_CreateEvent_Event) GetIntegration() []*CreateEvent_CreateEvent_Event_Integration {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Integration
+}
+func (t *CreateEvent_CreateEvent_Event) GetOrganization() []*CreateEvent_CreateEvent_Event_Organization {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Organization
+}
+func (t *CreateEvent_CreateEvent_Event) GetInvite() []*CreateEvent_CreateEvent_Event_Invite {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Invite
+}
+func (t *CreateEvent_CreateEvent_Event) GetFeature() []*CreateEvent_CreateEvent_Event_Feature {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Feature
+}
+func (t *CreateEvent_CreateEvent_Event) GetPersonalAccessToken() []*CreateEvent_CreateEvent_Event_PersonalAccessToken {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.PersonalAccessToken
+}
+func (t *CreateEvent_CreateEvent_Event) GetOauth2token() []*CreateEvent_CreateEvent_Event_Oauth2token {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Oauth2token
+}
+func (t *CreateEvent_CreateEvent_Event) GetHush() []*CreateEvent_CreateEvent_Event_Hush {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Hush
+}
+func (t *CreateEvent_CreateEvent_Event) GetOrgmembership() []*CreateEvent_CreateEvent_Event_Orgmembership {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Orgmembership
+}
+func (t *CreateEvent_CreateEvent_Event) GetGroupmembership() []*CreateEvent_CreateEvent_Event_Groupmembership {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Groupmembership
+}
+func (t *CreateEvent_CreateEvent_Event) GetEntitlement() []*CreateEvent_CreateEvent_Event_Entitlement {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Entitlement
+}
+func (t *CreateEvent_CreateEvent_Event) GetWebhook() []*CreateEvent_CreateEvent_Event_Webhook {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.Webhook
 }
 
 type CreateEvent_CreateEvent struct {
@@ -14347,6 +14581,45 @@ const CreateEventDocument = `mutation CreateEvent ($input: CreateEventInput!) {
 			correlationID
 			eventType
 			metadata
+			user {
+				id
+			}
+			group {
+				id
+			}
+			integration {
+				id
+			}
+			organization {
+				id
+			}
+			invite {
+				id
+			}
+			feature {
+				id
+			}
+			personalAccessToken {
+				id
+			}
+			oauth2token {
+				id
+			}
+			hush {
+				id
+			}
+			orgmembership {
+				id
+			}
+			groupmembership {
+				id
+			}
+			entitlement {
+				id
+			}
+			webhook {
+				id
+			}
 		}
 	}
 }

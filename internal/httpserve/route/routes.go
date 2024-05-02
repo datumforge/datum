@@ -74,6 +74,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		registerUserInfoHandler,
 		registerOAuthRegisterHandler,
 		registerSwitchRoute,
+		registerEventPublisher,
 	}
 
 	for _, route := range routeHandlers {

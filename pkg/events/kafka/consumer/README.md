@@ -1,0 +1,1 @@
+go run pkg/events/kafka/consumer/main.go -brokers="localhost:10000" -topics="sarama" -group="example"

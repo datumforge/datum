@@ -22,9 +22,9 @@ import (
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
-
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/cache"
+	"github.com/datumforge/datum/pkg/events/kafka/publisher"
 	authmw "github.com/datumforge/datum/pkg/middleware/auth"
 	"github.com/datumforge/datum/pkg/middleware/cachecontrol"
 	"github.com/datumforge/datum/pkg/middleware/cors"
@@ -221,6 +221,22 @@ func WithMiddleware() ServerOption {
 			echocontext.EchoContextToContextMiddleware(),                                             // adds echo context to parent
 			mime.NewWithConfig(mime.Config{DefaultContentType: echo.MIMEApplicationJSONCharsetUTF8}), // add mime middleware
 		)
+	})
+}
+
+var appName = "example-kafka"
+
+func WithEventPublisher() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		broker := "localhost:10000"
+
+		//		ep := eventpublisher.EventPublisher{
+		//			Config: s.Config.Settings.Events.PublisherConfig,
+		//		}
+
+		publisher := publisher.NewKafkaPublisher(broker, appName)
+
+		s.Config.Handler.EventManager = publisher
 	})
 }
 

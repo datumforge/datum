@@ -46,16 +46,13 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 			return privacy.Skip
 		}
 
-		oID, err := auth.GetOrganizationIDFromContext(ctx)
-		if err != nil {
-			return err
-		}
+		// check the organization from the mutation
+		oID, _ := m.ID()
 
+		// if it's not set, get the user's current organization
 		if oID == "" {
-			var exists bool
-			oID, exists = m.ID()
-			// if its still empty fail
-			if !exists {
+			oID, err = auth.GetOrganizationIDFromContext(ctx)
+			if err != nil {
 				m.Logger.Debugw("missing expected organization id")
 
 				return privacy.Denyf("missing organization ID information in context")

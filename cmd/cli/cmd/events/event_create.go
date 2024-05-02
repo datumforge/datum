@@ -85,6 +85,10 @@ func createevent(ctx context.Context) error {
 		}
 	}
 
+	if userid != nil {
+		input.UserIDs = userid
+	}
+
 	u, err := cli.Client.CreateEvent(ctx, input, cli.Interceptor)
 	if err != nil {
 		return err

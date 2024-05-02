@@ -3,6 +3,7 @@ package datumswitch
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -56,6 +57,12 @@ func switchorg(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	if err := datum.StoreToken(switchOrganizationReply); err != nil {
+		return err
+	}
+
+	fmt.Println("auth tokens successfully stored in keychain")
 
 	return datum.JSONPrint(s)
 }

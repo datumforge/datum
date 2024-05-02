@@ -11,7 +11,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // CreateOrganization is the resolver for the createOrganization field.
@@ -43,25 +42,11 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 		return nil, err
 	}
 
-	// setup view context
-	v := viewer.UserViewer{
-		OrgID: org.ID,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	return &OrganizationCreatePayload{Organization: org}, nil
 }
 
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		OrgID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -99,13 +84,6 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 
 // DeleteOrganization is the resolver for the deleteOrganization field.
 func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		OrgID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	if err := withTransactionalMutation(ctx).Organization.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -128,13 +106,6 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 
 // Organization is the resolver for the organization field.
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		OrgID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get organization", "error", err)

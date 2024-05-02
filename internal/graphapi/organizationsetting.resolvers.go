@@ -10,14 +10,11 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
 // UpdateOrganizationSetting is the resolver for the updateOrganizationSetting field.
 func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id string, input generated.UpdateOrganizationSettingInput) (*OrganizationSettingUpdatePayload, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	organizationSetting, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -49,13 +46,6 @@ func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id str
 
 // OrganizationSetting is the resolver for the organizationSetting field.
 func (r *queryResolver) OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		OrgID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	org, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get organization settings", "error", err)

@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )
@@ -108,6 +109,13 @@ func (OrganizationSetting) Annotations() []schema.Annotation {
 			IDField:         "OrganizationID",
 			NillableIDField: true,
 		},
+	}
+}
+
+// Interceptors of the Subscriber
+func (OrganizationSetting) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.InterceptorOrganizationSetting(),
 	}
 }
 

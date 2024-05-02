@@ -8,7 +8,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
@@ -47,14 +46,11 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 			return privacy.Skip
 		}
 
-		view := viewer.FromContext(ctx)
-		if view == nil {
-			m.Logger.Debugw("missing viewer context")
-
-			return privacy.Denyf("viewer-context is missing when checking write access in org")
+		oID, err := auth.GetOrganizationIDFromContext(ctx)
+		if err != nil {
+			return err
 		}
 
-		oID := view.GetOrganizationID()
 		if oID == "" {
 			var exists bool
 			oID, exists = m.ID()
@@ -62,7 +58,7 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 			if !exists {
 				m.Logger.Debugw("missing expected organization id")
 
-				return privacy.Denyf("missing organization ID information in viewer")
+				return privacy.Denyf("missing organization ID information in context")
 			}
 		}
 

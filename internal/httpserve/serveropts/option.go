@@ -224,17 +224,14 @@ func WithMiddleware() ServerOption {
 	})
 }
 
-var appName = "example-kafka"
-
+// WithEventPublisher sets up the default Kafka event publisher
 func WithEventPublisher() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		broker := "localhost:10000"
+		ep := publisher.KafkaPublisher{
+			Config: s.Config.Settings.Events,
+		}
 
-		//		ep := eventpublisher.EventPublisher{
-		//			Config: s.Config.Settings.Events.PublisherConfig,
-		//		}
-
-		publisher := publisher.NewKafkaPublisher(broker, appName)
+		publisher := publisher.NewKafkaPublisher(ep.Config.Addresses, ep.Config.AppName)
 
 		s.Config.Handler.EventManager = publisher
 	})

@@ -70,27 +70,6 @@ email:
         subscriberVerify: /verify
     sendGridApiKey: ""
     testing: true
-eventPublisher:
-    consumerConfig:
-        enabled: false
-        groupId: ""
-        offsetFromNewest: false
-        output:
-            fileLocation: consumer.log
-            stdout: false
-        topics: null
-    publisherConfig:
-        Consumer:
-            enabled: false
-            groupId: test-group
-            output:
-                file: consumer.log
-                stdout: false
-            topics: null
-        address: localhost:9092
-        debug: false
-        kafkaAddresses:
-            addresses: null
 geodetic:
     baseUrl: http://localhost:1337
     debug: false
@@ -116,6 +95,13 @@ posthog:
     apiKey: ""
     enabled: false
     host: https://app.posthog.com
+publisherConfig:
+    address: localhost:10000
+    addresses:
+        - localhost:10000
+    appName: datum
+    debug: false
+    enabled: false
 ratelimit:
     burst: 30
     enabled: false

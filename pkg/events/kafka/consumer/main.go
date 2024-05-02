@@ -13,9 +13,10 @@ import (
 	"syscall"
 
 	"github.com/IBM/sarama"
+
+	"github.com/datumforge/datum/pkg/utils/slack"
 )
 
-// Sarama configuration options
 var (
 	brokers  = ""
 	version  = ""
@@ -51,6 +52,7 @@ func init() {
 
 func main() {
 	keepRunning := true
+
 	log.Println("Starting a new Sarama consumer")
 
 	if verbose {
@@ -62,10 +64,6 @@ func main() {
 		log.Panicf("Error parsing Kafka version: %v", err)
 	}
 
-	/**
-	 * Construct a new Sarama configuration.
-	 * The Kafka cluster version has to be defined before the consumer/producer is initialized.
-	 */
 	config := sarama.NewConfig()
 	config.Version = version
 
@@ -84,14 +82,12 @@ func main() {
 		config.Consumer.Offsets.Initial = sarama.OffsetOldest
 	}
 
-	/**
-	 * Setup a new Sarama consumer group
-	 */
 	consumer := Consumer{
 		ready: make(chan bool),
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
+
 	client, err := sarama.NewConsumerGroup(strings.Split(brokers, ","), group, config)
 	if err != nil {
 		log.Panicf("Error creating consumer group client: %v", err)
@@ -100,8 +96,10 @@ func main() {
 	consumptionIsPaused := false
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
+
 	go func() {
 		defer wg.Done()
+
 		for {
 			// `Consume` should be called inside an infinite loop, when a
 			// server-side rebalance happens, the consumer session will need to be
@@ -110,12 +108,14 @@ func main() {
 				if errors.Is(err, sarama.ErrClosedConsumerGroup) {
 					return
 				}
+
 				log.Panicf("Error from consumer: %v", err)
 			}
 			// check if context was cancelled, signaling that the consumer should stop
 			if ctx.Err() != nil {
 				return
 			}
+
 			consumer.ready = make(chan bool)
 		}
 	}()
@@ -133,16 +133,21 @@ func main() {
 		select {
 		case <-ctx.Done():
 			log.Println("terminating: context cancelled")
+
 			keepRunning = false
 		case <-sigterm:
 			log.Println("terminating: via signal")
+
 			keepRunning = false
 		case <-sigusr1:
 			toggleConsumptionFlow(client, &consumptionIsPaused)
 		}
 	}
+
 	cancel()
+
 	wg.Wait()
+
 	if err = client.Close(); err != nil {
 		log.Panicf("Error closing client: %v", err)
 	}
@@ -179,12 +184,10 @@ func (consumer *Consumer) Cleanup(sarama.ConsumerGroupSession) error {
 
 // ConsumeClaim must start a consumer loop of ConsumerGroupClaim's Messages().
 // Once the Messages() channel is closed, the Handler must finish its processing
-// loop and exit.
+// loop and exit
 func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	// NOTE:
 	// Do not move the code below to a goroutine.
-	// The `ConsumeClaim` itself is called within a goroutine, see:
-	// https://github.com/IBM/sarama/blob/main/consumer_group.go#L27-L29
+	// The `ConsumeClaim` itself is called within a goroutine
 	for {
 		select {
 		case message, ok := <-claim.Messages():
@@ -192,11 +195,23 @@ func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 				log.Printf("message channel was closed")
 				return nil
 			}
+
 			log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+			// Will move this into an actual configuration parameter later
+			webhookURL := ""
+
+			payload := slack.Payload{
+				Text: "I am a slack message that was sent by a Kafka consumer gobbling up messages produced via the EventManager!",
+			}
+
+			slackMessage := slack.New(webhookURL)
+			if err := slackMessage.Post(context.Background(), &payload); err != nil {
+				log.Printf("error: %s\n", err)
+			}
+
 			session.MarkMessage(message, "")
 		// Should return when `session.Context()` is done.
-		// If not, will raise `ErrRebalanceInProgress` or `read tcp <ip>:<port>: i/o timeout` when kafka rebalance. see:
-		// https://github.com/IBM/sarama/issues/1192
+		// If not, will raise `ErrRebalanceInProgress` or `read tcp <ip>:<port>: i/o timeout` when kafka rebalanc
 		case <-session.Context().Done():
 			return nil
 		}

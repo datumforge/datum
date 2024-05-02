@@ -111,54 +111,6 @@
       ],
       "description": "Auth settings including oauth2 providers and datum token configuration"
     },
-    "config.ConsumerConfig": {
-      "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "groupId": {
-          "type": "string"
-        },
-        "topics": {
-          "$ref": "#/$defs/[]string"
-        },
-        "offsetFromNewest": {
-          "type": "boolean"
-        },
-        "output": {
-          "$ref": "#/$defs/config.ConsumerOutput"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "config.ConsumerOutput": {
-      "properties": {
-        "stdout": {
-          "type": "boolean"
-        },
-        "fileLocation": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "config.KafkaConfig": {
-      "properties": {
-        "publisherConfig": {
-          "$ref": "#/$defs/config.Config",
-          "description": "PublisherConfig contains the kafka publisher configuration"
-        },
-        "consumerConfig": {
-          "$ref": "#/$defs/config.ConsumerConfig",
-          "description": "ConsumerConfig contains the kafka consumer configuration"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "KafkaConfig contains the configuration for the kafka integration"
-    },
     "config.ObjectStorage": {
       "properties": {
         "s3": {
@@ -601,6 +553,28 @@
       "additionalProperties": false,
       "type": "object",
       "description": "OauthProviderConfig represents the configuration for OAuth providers such as Github and Google"
+    },
+    "kafkaconfig.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "appName": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "addresses": {
+          "$ref": "#/$defs/[]string"
+        },
+        "debug": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Config is the configuration for the Kafka event source"
     },
     "map[string][]string": {
       "additionalProperties": {
@@ -1104,8 +1078,8 @@
       "$ref": "#/$defs/config.ObjectStorage",
       "description": "Storage contains the configuration for the storage provider"
     },
-    "eventPublisher": {
-      "$ref": "#/$defs/config.KafkaConfig",
+    "publisherConfig": {
+      "$ref": "#/$defs/kafkaconfig.Config",
       "description": "EventPublisher contains the configuration for the event publisher"
     }
   },

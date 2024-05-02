@@ -70,26 +70,8 @@ sentry:
 posthog:
   enabled: false
   apiKey: "phc_FakeKey"
-
-eventPublisher:
-    consumerConfig:
-        enabled: false
-        groupId: ""
-        offsetFromNewest: false
-        output:
-            fileLocation: consumer.log
-            stdout: false
-        topics: null
-    publisherConfig:
-        Consumer:
-            enabled: false
-            groupId: test-group
-            output:
-                file: consumer.log
-                stdout: false
-            topics: null
-        address: localhost:10000
-        debug: false
-        kafkaAddresses:
-            addresses:
-              - localhost:10000
+publisherConfig:
+    appName: datum
+    addresses:
+        - localhost:10000
+    enabled: true

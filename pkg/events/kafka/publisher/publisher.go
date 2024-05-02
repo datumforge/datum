@@ -3,16 +3,16 @@ package publisher
 import (
 	"github.com/IBM/sarama"
 
-	"github.com/datumforge/datum/pkg/events/kafka/config"
+	"github.com/datumforge/datum/pkg/events/kafka/kafkaconfig"
 )
 
 type KafkaPublisher struct {
-	Broker string
+	Broker []string
 	Topic  string
-	Config config.Config
+	Config kafkaconfig.Config
 }
 
-func NewKafkaPublisher(broker string, topic string) *KafkaPublisher {
+func NewKafkaPublisher(broker []string, topic string) *KafkaPublisher {
 	return &KafkaPublisher{
 		Broker: broker,
 		Topic:  topic,
@@ -25,7 +25,7 @@ func (kp *KafkaPublisher) Publish(message []byte) error {
 	config.Producer.Retry.Max = 5
 	config.Producer.Return.Successes = true
 
-	producer, err := sarama.NewSyncProducer([]string{kp.Broker}, config)
+	producer, err := sarama.NewSyncProducer(kp.Broker, config)
 	if err != nil {
 		return err
 	}

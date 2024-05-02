@@ -123,10 +123,7 @@ func switchClaims(u *generated.User, targetOrg string) *tokens.Claims {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: u.ID,
 		},
-		UserID:      u.ID,
-		Email:       u.Email,
-		DisplayName: u.DisplayName,
-		AvatarURL:   *u.AvatarRemoteURL,
-		OrgID:       targetOrg,
+		UserID: u.ID,
+		OrgID:  targetOrg,
 	}
 }

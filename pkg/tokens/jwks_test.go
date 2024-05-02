@@ -32,11 +32,8 @@ func (s *TokenTestSuite) TestJWKSValidator() {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: "01H6PGFB4T34D4WWEXQMAGJNMK",
 		},
-		UserID:      "Rusty Shackleford",
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: "Rusty Shackleford",
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	}
 
 	atks, rtks, err := tm.CreateTokenPair(claims)
@@ -106,11 +103,8 @@ func (s *TokenTestSuite) TestCachedJWKSValidator() {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: "01H6PGFB4T34D4WWEXQMAGJNMK",
 		},
-		UserID:      "Rusty Shackleford",
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: "Rusty Shackleford",
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	}
 
 	atks, _, err := tm.CreateTokenPair(claims)

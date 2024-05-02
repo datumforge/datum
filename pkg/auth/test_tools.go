@@ -25,11 +25,8 @@ func newValidClaims(subject string) *tokens.Claims {
 			NotBefore: jwt.NewNumericDate(nbf),
 			ExpiresAt: jwt.NewNumericDate(exp),
 		},
-		UserID:      subject,
-		Email:       "rustys@datum.net",
-		OrgID:       "nano_id_of_org",
-		ParentOrgID: "nano_id_of_parent_org",
-		Tier:        "premium",
+		UserID: subject,
+		OrgID:  "nano_id_of_org",
 	}
 
 	return claims
@@ -73,11 +70,8 @@ func newValidClaimsOrgID(sub, orgID string) *tokens.Claims {
 			NotBefore: jwt.NewNumericDate(nbf),
 			ExpiresAt: jwt.NewNumericDate(exp),
 		},
-		UserID:      sub,
-		Email:       "rustys@datum.net",
-		OrgID:       orgID,
-		ParentOrgID: "01HWRCWA74GJ7F4092CRNXT7MD",
-		Tier:        "premium",
+		UserID: sub,
+		OrgID:  orgID,
 	}
 
 	return claims

@@ -32,11 +32,6 @@ authz:
   storeName: datum
   createNewModel: false
 
-# session settings
-sessions:
-  signingKey: "4N0txRe4PSBTIGhXpMEriFlfDEH9zTri"
-  encryptionKey: "IF841pLk48ibOVo6w9UIkr9OBCkjXG2q"
-
 # email settings
 email:
   testing: false

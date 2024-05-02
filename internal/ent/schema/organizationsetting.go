@@ -112,7 +112,7 @@ func (OrganizationSetting) Annotations() []schema.Annotation {
 	}
 }
 
-// Interceptors of the Subscriber
+// Interceptors of the OrganizationSetting
 func (OrganizationSetting) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		interceptors.InterceptorOrganizationSetting(),

@@ -49,6 +49,6 @@ type Handler struct {
 	WebAuthn *webauthn.WebAuthn
 	// OTPManager contains the configuration settings for the OTP provider
 	OTPManager *totp.Manager
-	// EventPublisher contains the configuration settings for the event publisher
+	// EventManager contains the configuration settings for the event publisher
 	EventManager *publisher.KafkaPublisher
 }

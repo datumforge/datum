@@ -77,6 +77,18 @@ tasks:
       - task: fga
       - task: fga:open
 
+  kafka:
+    dir: ..
+    desc: brings up the compose environment for kafka
+    cmds:
+      - "docker compose -f ./pkg/events/kafka/docker/docker-compose-kafka.yaml -p kafka up --build -d"
+
+  kafka:down:
+    dir: ..
+    desc: brings the kafka compose environment down
+    cmds:
+      - docker compose -p kafka down
+
   rover:
     dir: ..
     desc: launches an interactive browser to navigate the configured graph schema

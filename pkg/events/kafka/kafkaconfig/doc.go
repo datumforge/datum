@@ -1,2 +1,2 @@
-// Package config provides configuration for the Kafka event source
+// Package kafkaconfig provides configuration for the Kafka event source
 package kafkaconfig

@@ -10,9 +10,15 @@ import (
 
 // PublishRequest is the request payload for the event publisher
 type PublishRequest struct {
-	Tags    map[string]string `json:"tags" koanf:"tags"`
-	Topic   string            `json:"topic" koanf:"topic"`
-	Message string            `json:"message" koanf:"message"`
+	Tags    map[string]string `json:"tags"`
+	Topic   string            `json:"topic"`
+	Message string            `json:"message"`
+}
+
+// PublishReply holds the fields that are sent on a response to the `/event/publish` endpoint
+type PublishReply struct {
+	rout.Reply
+	Message string `json:"message"`
 }
 
 // EventPublisher publishes an event to the configured topic in the message payload - today this can be anything but there is no event consumer on the other side yet
@@ -22,10 +28,14 @@ func (h *Handler) EventPublisher(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	h.EventManager.Topic = in.Topic
-	if err := h.EventManager.Publish([]byte(in.Message)); err != nil {
+	if err := h.EventManager.Publish(in.Topic, []byte(in.Message)); err != nil {
 		return ctx.JSON(http.StatusConflict, rout.ErrorResponse(err))
 	}
 
-	return ctx.JSON(http.StatusOK, "success!")
+	out := &PublishReply{
+		Reply:   rout.Reply{Success: true},
+		Message: "success!",
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }

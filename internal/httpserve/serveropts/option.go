@@ -231,7 +231,7 @@ func WithEventPublisher() ServerOption {
 			Config: s.Config.Settings.Events,
 		}
 
-		publisher := publisher.NewKafkaPublisher(ep.Config.Addresses, ep.Config.AppName)
+		publisher := publisher.NewKafkaPublisher(ep.Config.Addresses)
 
 		s.Config.Handler.EventManager = publisher
 	})

@@ -6,20 +6,28 @@ import (
 	"github.com/datumforge/datum/pkg/events/kafka/kafkaconfig"
 )
 
+// KafkaPublisher is a publisher that sends messages to a Kafka topic
 type KafkaPublisher struct {
+	// Broker is a list of Kafka brokers
 	Broker []string
-	Topic  string
+	// Config is the configuration for the Kafka event source
 	Config kafkaconfig.Config
 }
 
-func NewKafkaPublisher(broker []string, topic string) *KafkaPublisher {
+// NewKafkaPublisher creates a new KafkaPublisher
+func NewKafkaPublisher(broker []string) *KafkaPublisher {
 	return &KafkaPublisher{
 		Broker: broker,
-		Topic:  topic,
 	}
 }
 
-func (kp *KafkaPublisher) Publish(message []byte) error {
+// Publisher is an interface for publishing messages
+type Publisher interface {
+	Publish(topic string, message []byte) error
+}
+
+// Publish satisfies the Publisher interface
+func (kp *KafkaPublisher) Publish(topic string, message []byte) error {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
@@ -32,13 +40,9 @@ func (kp *KafkaPublisher) Publish(message []byte) error {
 	defer producer.Close()
 
 	_, _, err = producer.SendMessage(&sarama.ProducerMessage{
-		Topic: kp.Topic,
+		Topic: topic,
 		Value: sarama.ByteEncoder(message),
 	})
 
 	return err
-}
-
-type Publisher interface {
-	Publish(message []byte) error
 }

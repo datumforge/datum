@@ -656,11 +656,11 @@ Config is the configuration for the Kafka event source
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
-|**enabled**|`boolean`|||
-|**appName**|`string`|||
-|**address**|`string`|||
+|**enabled**|`boolean`|Enabled is a flag to determine if the Kafka event source is enabled<br/>||
+|**appName**|`string`|AppName is the name of the application that is publishing events<br/>||
+|**address**|`string`|Address is the address of the Kafka broker<br/>||
 |[**addresses**](#publisherconfigaddresses)|`string[]`|||
-|**debug**|`boolean`|||
+|**debug**|`boolean`|Debug is a flag to determine if the Kafka client should run in debug mode<br/>||
 
 **Additional Properties:** not allowed  
 <a name="publisherconfigaddresses"></a>

@@ -3,8 +3,6 @@ package datumevents
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -54,7 +52,10 @@ func createevent(ctx context.Context) error {
 
 	inputJSON := "{ \"key\": \"value\" }"
 
-	parsedMessage := parseJSON(inputJSON)
+	parsedMessage, err := datum.ParseJSON(inputJSON)
+	if err != nil {
+		return err
+	}
 
 	input := datumclient.CreateEventInput{
 		EventType: eventType,
@@ -76,18 +77,4 @@ func createevent(ctx context.Context) error {
 	}
 
 	return datum.JSONPrint(s)
-}
-
-// parseJSON parses a JSON formatted string into a map
-func parseJSON(v string) map[string]interface{} {
-	var m map[string]interface{}
-
-	err := json.Unmarshal([]byte(v), &m)
-	if err != nil {
-		fmt.Println("could not parse json", v)
-		fmt.Println("error:", err)
-		os.Exit(1)
-	}
-
-	return m
 }

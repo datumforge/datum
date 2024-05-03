@@ -557,19 +557,24 @@
     "kafkaconfig.Config": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enabled is a flag to determine if the Kafka event source is enabled"
         },
         "appName": {
-          "type": "string"
+          "type": "string",
+          "description": "AppName is the name of the application that is publishing events"
         },
         "address": {
-          "type": "string"
+          "type": "string",
+          "description": "Address is the address of the Kafka broker"
         },
         "addresses": {
-          "$ref": "#/$defs/[]string"
+          "$ref": "#/$defs/[]string",
+          "description": "Addresses is a list of addresses of the Kafka brokers"
         },
         "debug": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Debug is a flag to determine if the Kafka client should run in debug mode"
         }
       },
       "additionalProperties": false,

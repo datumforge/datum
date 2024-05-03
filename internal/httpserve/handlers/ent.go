@@ -307,9 +307,8 @@ func (h *Handler) getUserByMappingID(ctx context.Context, mappingID string) (*en
 	return user, nil
 }
 
-// getUserByMappingID returns the ent user with the user settings based on the mappingID in the claim
+// getUserDetailsByID returns the ent user with the user settings based on the user ID
 func (h *Handler) getUserDetailsByID(ctx context.Context, userID string) (*ent.User, error) {
-	// check user in the database, sub == claims subject and ensure only one record is returned
 	user, err := transaction.FromContext(ctx).User.Query().WithSetting().Where(
 		user.ID(userID),
 	).Only(ctx)

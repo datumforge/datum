@@ -130,6 +130,7 @@ type APITokenMutation struct {
 	updated_by    *string
 	deleted_at    *time.Time
 	deleted_by    *string
+	mapping_id    *string
 	name          *string
 	token         *string
 	expires_at    *time.Time
@@ -543,6 +544,42 @@ func (m *APITokenMutation) ResetDeletedBy() {
 	delete(m.clearedFields, apitoken.FieldDeletedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *APITokenMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *APITokenMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the APIToken entity.
+// If the APIToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APITokenMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *APITokenMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (m *APITokenMutation) SetOwnerID(s string) {
 	m.owner = &s
@@ -924,7 +961,7 @@ func (m *APITokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *APITokenMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, apitoken.FieldCreatedAt)
 	}
@@ -942,6 +979,9 @@ func (m *APITokenMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, apitoken.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, apitoken.FieldMappingID)
 	}
 	if m.owner != nil {
 		fields = append(fields, apitoken.FieldOwnerID)
@@ -984,6 +1024,8 @@ func (m *APITokenMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case apitoken.FieldDeletedBy:
 		return m.DeletedBy()
+	case apitoken.FieldMappingID:
+		return m.MappingID()
 	case apitoken.FieldOwnerID:
 		return m.OwnerID()
 	case apitoken.FieldName:
@@ -1019,6 +1061,8 @@ func (m *APITokenMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldDeletedAt(ctx)
 	case apitoken.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case apitoken.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case apitoken.FieldOwnerID:
 		return m.OldOwnerID(ctx)
 	case apitoken.FieldName:
@@ -1083,6 +1127,13 @@ func (m *APITokenMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case apitoken.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case apitoken.FieldOwnerID:
 		v, ok := value.(string)
@@ -1263,6 +1314,9 @@ func (m *APITokenMutation) ResetField(name string) error {
 	case apitoken.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case apitoken.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case apitoken.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
@@ -1372,6 +1426,7 @@ type DocumentDataMutation struct {
 	updated_at      *time.Time
 	created_by      *string
 	updated_by      *string
+	mapping_id      *string
 	deleted_at      *time.Time
 	deleted_by      *string
 	data            *customtypes.JSONObject
@@ -1683,6 +1738,42 @@ func (m *DocumentDataMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, documentdata.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *DocumentDataMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *DocumentDataMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *DocumentDataMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (m *DocumentDataMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
@@ -1914,7 +2005,7 @@ func (m *DocumentDataMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DocumentDataMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, documentdata.FieldCreatedAt)
 	}
@@ -1926,6 +2017,9 @@ func (m *DocumentDataMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, documentdata.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, documentdata.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, documentdata.FieldDeletedAt)
@@ -1955,6 +2049,8 @@ func (m *DocumentDataMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case documentdata.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case documentdata.FieldMappingID:
+		return m.MappingID()
 	case documentdata.FieldDeletedAt:
 		return m.DeletedAt()
 	case documentdata.FieldDeletedBy:
@@ -1980,6 +2076,8 @@ func (m *DocumentDataMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldCreatedBy(ctx)
 	case documentdata.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case documentdata.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case documentdata.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case documentdata.FieldDeletedBy:
@@ -2024,6 +2122,13 @@ func (m *DocumentDataMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case documentdata.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case documentdata.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -2153,6 +2258,9 @@ func (m *DocumentDataMutation) ResetField(name string) error {
 	case documentdata.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case documentdata.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case documentdata.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -2256,6 +2364,7 @@ type DocumentDataHistoryMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	template_id   *string
@@ -2687,6 +2796,42 @@ func (m *DocumentDataHistoryMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, documentdatahistory.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *DocumentDataHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *DocumentDataHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the DocumentDataHistory entity.
+// If the DocumentDataHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *DocumentDataHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (m *DocumentDataHistoryMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
@@ -2891,7 +3036,7 @@ func (m *DocumentDataHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DocumentDataHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.history_time != nil {
 		fields = append(fields, documentdatahistory.FieldHistoryTime)
 	}
@@ -2912,6 +3057,9 @@ func (m *DocumentDataHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, documentdatahistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, documentdatahistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, documentdatahistory.FieldDeletedAt)
@@ -2947,6 +3095,8 @@ func (m *DocumentDataHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case documentdatahistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case documentdatahistory.FieldMappingID:
+		return m.MappingID()
 	case documentdatahistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case documentdatahistory.FieldDeletedBy:
@@ -2978,6 +3128,8 @@ func (m *DocumentDataHistoryMutation) OldField(ctx context.Context, name string)
 		return m.OldCreatedBy(ctx)
 	case documentdatahistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case documentdatahistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case documentdatahistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case documentdatahistory.FieldDeletedBy:
@@ -3043,6 +3195,13 @@ func (m *DocumentDataHistoryMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case documentdatahistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case documentdatahistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -3187,6 +3346,9 @@ func (m *DocumentDataHistoryMutation) ResetField(name string) error {
 	case documentdatahistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case documentdatahistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case documentdatahistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -3261,6 +3423,7 @@ type EmailVerificationTokenMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	token         *string
@@ -3573,6 +3736,42 @@ func (m *EmailVerificationTokenMutation) UpdatedByCleared() bool {
 func (m *EmailVerificationTokenMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, emailverificationtoken.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *EmailVerificationTokenMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EmailVerificationTokenMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the EmailVerificationToken entity.
+// If the EmailVerificationToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EmailVerificationTokenMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EmailVerificationTokenMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -3914,7 +4113,7 @@ func (m *EmailVerificationTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EmailVerificationTokenMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, emailverificationtoken.FieldCreatedAt)
 	}
@@ -3926,6 +4125,9 @@ func (m *EmailVerificationTokenMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, emailverificationtoken.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, emailverificationtoken.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, emailverificationtoken.FieldDeletedAt)
@@ -3964,6 +4166,8 @@ func (m *EmailVerificationTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case emailverificationtoken.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case emailverificationtoken.FieldMappingID:
+		return m.MappingID()
 	case emailverificationtoken.FieldDeletedAt:
 		return m.DeletedAt()
 	case emailverificationtoken.FieldDeletedBy:
@@ -3995,6 +4199,8 @@ func (m *EmailVerificationTokenMutation) OldField(ctx context.Context, name stri
 		return m.OldCreatedBy(ctx)
 	case emailverificationtoken.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case emailverificationtoken.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case emailverificationtoken.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case emailverificationtoken.FieldDeletedBy:
@@ -4045,6 +4251,13 @@ func (m *EmailVerificationTokenMutation) SetField(name string, value ent.Value) 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case emailverificationtoken.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case emailverificationtoken.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -4195,6 +4408,9 @@ func (m *EmailVerificationTokenMutation) ResetField(name string) error {
 	case emailverificationtoken.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case emailverificationtoken.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case emailverificationtoken.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -4304,6 +4520,7 @@ type EntitlementMutation struct {
 	updated_at               *time.Time
 	created_by               *string
 	updated_by               *string
+	mapping_id               *string
 	deleted_at               *time.Time
 	deleted_by               *string
 	tier                     *enums.Tier
@@ -4624,6 +4841,42 @@ func (m *EntitlementMutation) UpdatedByCleared() bool {
 func (m *EntitlementMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, entitlement.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *EntitlementMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EntitlementMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EntitlementMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -5184,7 +5437,7 @@ func (m *EntitlementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntitlementMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, entitlement.FieldCreatedAt)
 	}
@@ -5196,6 +5449,9 @@ func (m *EntitlementMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, entitlement.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, entitlement.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, entitlement.FieldDeletedAt)
@@ -5240,6 +5496,8 @@ func (m *EntitlementMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case entitlement.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case entitlement.FieldMappingID:
+		return m.MappingID()
 	case entitlement.FieldDeletedAt:
 		return m.DeletedAt()
 	case entitlement.FieldDeletedBy:
@@ -5275,6 +5533,8 @@ func (m *EntitlementMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldCreatedBy(ctx)
 	case entitlement.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case entitlement.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case entitlement.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case entitlement.FieldDeletedBy:
@@ -5329,6 +5589,13 @@ func (m *EntitlementMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case entitlement.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case entitlement.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -5511,6 +5778,9 @@ func (m *EntitlementMutation) ResetField(name string) error {
 	case entitlement.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case entitlement.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case entitlement.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -5683,6 +5953,7 @@ type EntitlementHistoryMutation struct {
 	updated_at               *time.Time
 	created_by               *string
 	updated_by               *string
+	mapping_id               *string
 	deleted_at               *time.Time
 	deleted_by               *string
 	owner_id                 *string
@@ -6119,6 +6390,42 @@ func (m *EntitlementHistoryMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, entitlementhistory.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *EntitlementHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EntitlementHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the EntitlementHistory entity.
+// If the EntitlementHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EntitlementHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (m *EntitlementHistoryMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
@@ -6542,7 +6849,7 @@ func (m *EntitlementHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntitlementHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.history_time != nil {
 		fields = append(fields, entitlementhistory.FieldHistoryTime)
 	}
@@ -6563,6 +6870,9 @@ func (m *EntitlementHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, entitlementhistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, entitlementhistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, entitlementhistory.FieldDeletedAt)
@@ -6613,6 +6923,8 @@ func (m *EntitlementHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case entitlementhistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case entitlementhistory.FieldMappingID:
+		return m.MappingID()
 	case entitlementhistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case entitlementhistory.FieldDeletedBy:
@@ -6654,6 +6966,8 @@ func (m *EntitlementHistoryMutation) OldField(ctx context.Context, name string) 
 		return m.OldCreatedBy(ctx)
 	case entitlementhistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case entitlementhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case entitlementhistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case entitlementhistory.FieldDeletedBy:
@@ -6729,6 +7043,13 @@ func (m *EntitlementHistoryMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case entitlementhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case entitlementhistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -6926,6 +7247,9 @@ func (m *EntitlementHistoryMutation) ResetField(name string) error {
 	case entitlementhistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case entitlementhistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case entitlementhistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -7015,6 +7339,7 @@ type EventMutation struct {
 	updated_at                   *time.Time
 	created_by                   *string
 	updated_by                   *string
+	mapping_id                   *string
 	event_id                     *string
 	correlation_id               *string
 	event_type                   *string
@@ -7365,6 +7690,42 @@ func (m *EventMutation) UpdatedByCleared() bool {
 func (m *EventMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, event.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *EventMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EventMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EventMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetEventID sets the "event_id" field.
@@ -8340,7 +8701,7 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, event.FieldCreatedAt)
 	}
@@ -8352,6 +8713,9 @@ func (m *EventMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, event.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, event.FieldMappingID)
 	}
 	if m.event_id != nil {
 		fields = append(fields, event.FieldEventID)
@@ -8381,6 +8745,8 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case event.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case event.FieldMappingID:
+		return m.MappingID()
 	case event.FieldEventID:
 		return m.EventID()
 	case event.FieldCorrelationID:
@@ -8406,6 +8772,8 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreatedBy(ctx)
 	case event.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case event.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case event.FieldEventID:
 		return m.OldEventID(ctx)
 	case event.FieldCorrelationID:
@@ -8450,6 +8818,13 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case event.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case event.FieldEventID:
 		v, ok := value.(string)
@@ -8584,6 +8959,9 @@ func (m *EventMutation) ResetField(name string) error {
 		return nil
 	case event.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case event.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case event.FieldEventID:
 		m.ResetEventID()
@@ -9036,6 +9414,7 @@ type EventHistoryMutation struct {
 	updated_at     *time.Time
 	created_by     *string
 	updated_by     *string
+	mapping_id     *string
 	event_id       *string
 	correlation_id *string
 	event_type     *string
@@ -9467,6 +9846,42 @@ func (m *EventHistoryMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, eventhistory.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *EventHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EventHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the EventHistory entity.
+// If the EventHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EventHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetEventID sets the "event_id" field.
 func (m *EventHistoryMutation) SetEventID(s string) {
 	m.event_id = &s
@@ -9684,7 +10099,7 @@ func (m *EventHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.history_time != nil {
 		fields = append(fields, eventhistory.FieldHistoryTime)
 	}
@@ -9705,6 +10120,9 @@ func (m *EventHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, eventhistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, eventhistory.FieldMappingID)
 	}
 	if m.event_id != nil {
 		fields = append(fields, eventhistory.FieldEventID)
@@ -9740,6 +10158,8 @@ func (m *EventHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case eventhistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case eventhistory.FieldMappingID:
+		return m.MappingID()
 	case eventhistory.FieldEventID:
 		return m.EventID()
 	case eventhistory.FieldCorrelationID:
@@ -9771,6 +10191,8 @@ func (m *EventHistoryMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldCreatedBy(ctx)
 	case eventhistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case eventhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case eventhistory.FieldEventID:
 		return m.OldEventID(ctx)
 	case eventhistory.FieldCorrelationID:
@@ -9836,6 +10258,13 @@ func (m *EventHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case eventhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case eventhistory.FieldEventID:
 		v, ok := value.(string)
@@ -9986,6 +10415,9 @@ func (m *EventHistoryMutation) ResetField(name string) error {
 	case eventhistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case eventhistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case eventhistory.FieldEventID:
 		m.ResetEventID()
 		return nil
@@ -10062,6 +10494,7 @@ type FeatureMutation struct {
 	updated_by           *string
 	deleted_at           *time.Time
 	deleted_by           *string
+	mapping_id           *string
 	name                 *string
 	global               *bool
 	enabled              *bool
@@ -10483,6 +10916,42 @@ func (m *FeatureMutation) DeletedByCleared() bool {
 func (m *FeatureMutation) ResetDeletedBy() {
 	m.deleted_by = nil
 	delete(m.clearedFields, feature.FieldDeletedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *FeatureMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *FeatureMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Feature entity.
+// If the Feature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FeatureMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *FeatureMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetName sets the "name" field.
@@ -10946,7 +11415,7 @@ func (m *FeatureMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FeatureMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, feature.FieldCreatedAt)
 	}
@@ -10964,6 +11433,9 @@ func (m *FeatureMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, feature.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, feature.FieldMappingID)
 	}
 	if m.name != nil {
 		fields = append(fields, feature.FieldName)
@@ -10997,6 +11469,8 @@ func (m *FeatureMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case feature.FieldDeletedBy:
 		return m.DeletedBy()
+	case feature.FieldMappingID:
+		return m.MappingID()
 	case feature.FieldName:
 		return m.Name()
 	case feature.FieldGlobal:
@@ -11026,6 +11500,8 @@ func (m *FeatureMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldDeletedAt(ctx)
 	case feature.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case feature.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case feature.FieldName:
 		return m.OldName(ctx)
 	case feature.FieldGlobal:
@@ -11084,6 +11560,13 @@ func (m *FeatureMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case feature.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case feature.FieldName:
 		v, ok := value.(string)
@@ -11224,6 +11707,9 @@ func (m *FeatureMutation) ResetField(name string) error {
 		return nil
 	case feature.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case feature.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case feature.FieldName:
 		m.ResetName()
@@ -11444,6 +11930,7 @@ type FeatureHistoryMutation struct {
 	updated_by    *string
 	deleted_at    *time.Time
 	deleted_by    *string
+	mapping_id    *string
 	name          *string
 	global        *bool
 	enabled       *bool
@@ -11973,6 +12460,42 @@ func (m *FeatureHistoryMutation) ResetDeletedBy() {
 	delete(m.clearedFields, featurehistory.FieldDeletedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *FeatureHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *FeatureHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the FeatureHistory entity.
+// If the FeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FeatureHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *FeatureHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetName sets the "name" field.
 func (m *FeatureHistoryMutation) SetName(s string) {
 	m.name = &s
@@ -12164,7 +12687,7 @@ func (m *FeatureHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FeatureHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.history_time != nil {
 		fields = append(fields, featurehistory.FieldHistoryTime)
 	}
@@ -12191,6 +12714,9 @@ func (m *FeatureHistoryMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, featurehistory.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, featurehistory.FieldMappingID)
 	}
 	if m.name != nil {
 		fields = append(fields, featurehistory.FieldName)
@@ -12230,6 +12756,8 @@ func (m *FeatureHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case featurehistory.FieldDeletedBy:
 		return m.DeletedBy()
+	case featurehistory.FieldMappingID:
+		return m.MappingID()
 	case featurehistory.FieldName:
 		return m.Name()
 	case featurehistory.FieldGlobal:
@@ -12265,6 +12793,8 @@ func (m *FeatureHistoryMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldDeletedAt(ctx)
 	case featurehistory.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case featurehistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case featurehistory.FieldName:
 		return m.OldName(ctx)
 	case featurehistory.FieldGlobal:
@@ -12344,6 +12874,13 @@ func (m *FeatureHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case featurehistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case featurehistory.FieldName:
 		v, ok := value.(string)
@@ -12500,6 +13037,9 @@ func (m *FeatureHistoryMutation) ResetField(name string) error {
 	case featurehistory.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case featurehistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case featurehistory.FieldName:
 		m.ResetName()
 		return nil
@@ -12576,6 +13116,7 @@ type FileMutation struct {
 	updated_by          *string
 	deleted_at          *time.Time
 	deleted_by          *string
+	mapping_id          *string
 	file_name           *string
 	file_extension      *string
 	file_size           *int
@@ -12994,6 +13535,42 @@ func (m *FileMutation) DeletedByCleared() bool {
 func (m *FileMutation) ResetDeletedBy() {
 	m.deleted_by = nil
 	delete(m.clearedFields, file.FieldDeletedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *FileMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *FileMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *FileMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetFileName sets the "file_name" field.
@@ -13489,7 +14066,7 @@ func (m *FileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FileMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, file.FieldCreatedAt)
 	}
@@ -13507,6 +14084,9 @@ func (m *FileMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, file.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, file.FieldMappingID)
 	}
 	if m.file_name != nil {
 		fields = append(fields, file.FieldFileName)
@@ -13549,6 +14129,8 @@ func (m *FileMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case file.FieldDeletedBy:
 		return m.DeletedBy()
+	case file.FieldMappingID:
+		return m.MappingID()
 	case file.FieldFileName:
 		return m.FileName()
 	case file.FieldFileExtension:
@@ -13584,6 +14166,8 @@ func (m *FileMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDeletedAt(ctx)
 	case file.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case file.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case file.FieldFileName:
 		return m.OldFileName(ctx)
 	case file.FieldFileExtension:
@@ -13648,6 +14232,13 @@ func (m *FileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case file.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case file.FieldFileName:
 		v, ok := value.(string)
@@ -13837,6 +14428,9 @@ func (m *FileMutation) ResetField(name string) error {
 	case file.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case file.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case file.FieldFileName:
 		m.ResetFileName()
 		return nil
@@ -14005,6 +14599,7 @@ type FileHistoryMutation struct {
 	updated_by     *string
 	deleted_at     *time.Time
 	deleted_by     *string
+	mapping_id     *string
 	file_name      *string
 	file_extension *string
 	file_size      *int
@@ -14538,6 +15133,42 @@ func (m *FileHistoryMutation) ResetDeletedBy() {
 	delete(m.clearedFields, filehistory.FieldDeletedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *FileHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *FileHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the FileHistory entity.
+// If the FileHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *FileHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetFileName sets the "file_name" field.
 func (m *FileHistoryMutation) SetFileName(s string) {
 	m.file_name = &s
@@ -14884,7 +15515,7 @@ func (m *FileHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FileHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.history_time != nil {
 		fields = append(fields, filehistory.FieldHistoryTime)
 	}
@@ -14911,6 +15542,9 @@ func (m *FileHistoryMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, filehistory.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, filehistory.FieldMappingID)
 	}
 	if m.file_name != nil {
 		fields = append(fields, filehistory.FieldFileName)
@@ -14959,6 +15593,8 @@ func (m *FileHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case filehistory.FieldDeletedBy:
 		return m.DeletedBy()
+	case filehistory.FieldMappingID:
+		return m.MappingID()
 	case filehistory.FieldFileName:
 		return m.FileName()
 	case filehistory.FieldFileExtension:
@@ -15000,6 +15636,8 @@ func (m *FileHistoryMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldDeletedAt(ctx)
 	case filehistory.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case filehistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case filehistory.FieldFileName:
 		return m.OldFileName(ctx)
 	case filehistory.FieldFileExtension:
@@ -15085,6 +15723,13 @@ func (m *FileHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case filehistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case filehistory.FieldFileName:
 		v, ok := value.(string)
@@ -15289,6 +15934,9 @@ func (m *FileHistoryMutation) ResetField(name string) error {
 	case filehistory.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case filehistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case filehistory.FieldFileName:
 		m.ResetFileName()
 		return nil
@@ -15374,6 +16022,7 @@ type GroupMutation struct {
 	updated_by          *string
 	deleted_at          *time.Time
 	deleted_by          *string
+	mapping_id          *string
 	name                *string
 	description         *string
 	gravatar_logo_url   *string
@@ -15803,6 +16452,42 @@ func (m *GroupMutation) DeletedByCleared() bool {
 func (m *GroupMutation) ResetDeletedBy() {
 	m.deleted_by = nil
 	delete(m.clearedFields, group.FieldDeletedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *GroupMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *GroupMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *GroupMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetOwnerID sets the "owner_id" field.
@@ -16484,7 +17169,7 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, group.FieldCreatedAt)
 	}
@@ -16502,6 +17187,9 @@ func (m *GroupMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, group.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, group.FieldMappingID)
 	}
 	if m.owner != nil {
 		fields = append(fields, group.FieldOwnerID)
@@ -16541,6 +17229,8 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case group.FieldDeletedBy:
 		return m.DeletedBy()
+	case group.FieldMappingID:
+		return m.MappingID()
 	case group.FieldOwnerID:
 		return m.OwnerID()
 	case group.FieldName:
@@ -16574,6 +17264,8 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldDeletedAt(ctx)
 	case group.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case group.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case group.FieldOwnerID:
 		return m.OldOwnerID(ctx)
 	case group.FieldName:
@@ -16636,6 +17328,13 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case group.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case group.FieldOwnerID:
 		v, ok := value.(string)
@@ -16802,6 +17501,9 @@ func (m *GroupMutation) ResetField(name string) error {
 		return nil
 	case group.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case group.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case group.FieldOwnerID:
 		m.ResetOwnerID()
@@ -17090,6 +17792,7 @@ type GroupHistoryMutation struct {
 	updated_by        *string
 	deleted_at        *time.Time
 	deleted_by        *string
+	mapping_id        *string
 	owner_id          *string
 	name              *string
 	description       *string
@@ -17621,6 +18324,42 @@ func (m *GroupHistoryMutation) ResetDeletedBy() {
 	delete(m.clearedFields, grouphistory.FieldDeletedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *GroupHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *GroupHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the GroupHistory entity.
+// If the GroupHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *GroupHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (m *GroupHistoryMutation) SetOwnerID(s string) {
 	m.owner_id = &s
@@ -17910,7 +18649,7 @@ func (m *GroupHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.history_time != nil {
 		fields = append(fields, grouphistory.FieldHistoryTime)
 	}
@@ -17937,6 +18676,9 @@ func (m *GroupHistoryMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, grouphistory.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, grouphistory.FieldMappingID)
 	}
 	if m.owner_id != nil {
 		fields = append(fields, grouphistory.FieldOwnerID)
@@ -17982,6 +18724,8 @@ func (m *GroupHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case grouphistory.FieldDeletedBy:
 		return m.DeletedBy()
+	case grouphistory.FieldMappingID:
+		return m.MappingID()
 	case grouphistory.FieldOwnerID:
 		return m.OwnerID()
 	case grouphistory.FieldName:
@@ -18021,6 +18765,8 @@ func (m *GroupHistoryMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDeletedAt(ctx)
 	case grouphistory.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case grouphistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case grouphistory.FieldOwnerID:
 		return m.OldOwnerID(ctx)
 	case grouphistory.FieldName:
@@ -18104,6 +18850,13 @@ func (m *GroupHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case grouphistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case grouphistory.FieldOwnerID:
 		v, ok := value.(string)
@@ -18286,6 +19039,9 @@ func (m *GroupHistoryMutation) ResetField(name string) error {
 	case grouphistory.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case grouphistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case grouphistory.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
@@ -18366,6 +19122,7 @@ type GroupMembershipMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	role          *enums.Role
@@ -18680,6 +19437,42 @@ func (m *GroupMembershipMutation) UpdatedByCleared() bool {
 func (m *GroupMembershipMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, groupmembership.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *GroupMembershipMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *GroupMembershipMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the GroupMembership entity.
+// If the GroupMembership object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMembershipMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *GroupMembershipMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -19030,7 +19823,7 @@ func (m *GroupMembershipMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMembershipMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, groupmembership.FieldCreatedAt)
 	}
@@ -19042,6 +19835,9 @@ func (m *GroupMembershipMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, groupmembership.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, groupmembership.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, groupmembership.FieldDeletedAt)
@@ -19074,6 +19870,8 @@ func (m *GroupMembershipMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case groupmembership.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case groupmembership.FieldMappingID:
+		return m.MappingID()
 	case groupmembership.FieldDeletedAt:
 		return m.DeletedAt()
 	case groupmembership.FieldDeletedBy:
@@ -19101,6 +19899,8 @@ func (m *GroupMembershipMutation) OldField(ctx context.Context, name string) (en
 		return m.OldCreatedBy(ctx)
 	case groupmembership.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case groupmembership.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case groupmembership.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case groupmembership.FieldDeletedBy:
@@ -19147,6 +19947,13 @@ func (m *GroupMembershipMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case groupmembership.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case groupmembership.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -19282,6 +20089,9 @@ func (m *GroupMembershipMutation) ResetField(name string) error {
 		return nil
 	case groupmembership.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case groupmembership.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case groupmembership.FieldDeletedAt:
 		m.ResetDeletedAt()
@@ -19435,6 +20245,7 @@ type GroupMembershipHistoryMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	role          *enums.Role
@@ -19867,6 +20678,42 @@ func (m *GroupMembershipHistoryMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, groupmembershiphistory.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *GroupMembershipHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *GroupMembershipHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the GroupMembershipHistory entity.
+// If the GroupMembershipHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMembershipHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *GroupMembershipHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (m *GroupMembershipHistoryMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
@@ -20107,7 +20954,7 @@ func (m *GroupMembershipHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMembershipHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.history_time != nil {
 		fields = append(fields, groupmembershiphistory.FieldHistoryTime)
 	}
@@ -20128,6 +20975,9 @@ func (m *GroupMembershipHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, groupmembershiphistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, groupmembershiphistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, groupmembershiphistory.FieldDeletedAt)
@@ -20166,6 +21016,8 @@ func (m *GroupMembershipHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case groupmembershiphistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case groupmembershiphistory.FieldMappingID:
+		return m.MappingID()
 	case groupmembershiphistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case groupmembershiphistory.FieldDeletedBy:
@@ -20199,6 +21051,8 @@ func (m *GroupMembershipHistoryMutation) OldField(ctx context.Context, name stri
 		return m.OldCreatedBy(ctx)
 	case groupmembershiphistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case groupmembershiphistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case groupmembershiphistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case groupmembershiphistory.FieldDeletedBy:
@@ -20266,6 +21120,13 @@ func (m *GroupMembershipHistoryMutation) SetField(name string, value ent.Value) 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case groupmembershiphistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case groupmembershiphistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -20417,6 +21278,9 @@ func (m *GroupMembershipHistoryMutation) ResetField(name string) error {
 	case groupmembershiphistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case groupmembershiphistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case groupmembershiphistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -20494,6 +21358,7 @@ type GroupSettingMutation struct {
 	updated_at     *time.Time
 	created_by     *string
 	updated_by     *string
+	mapping_id     *string
 	deleted_at     *time.Time
 	deleted_by     *string
 	visibility     *enums.Visibility
@@ -20808,6 +21673,42 @@ func (m *GroupSettingMutation) UpdatedByCleared() bool {
 func (m *GroupSettingMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, groupsetting.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *GroupSettingMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *GroupSettingMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the GroupSetting entity.
+// If the GroupSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupSettingMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *GroupSettingMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -21253,7 +22154,7 @@ func (m *GroupSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupSettingMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, groupsetting.FieldCreatedAt)
 	}
@@ -21265,6 +22166,9 @@ func (m *GroupSettingMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, groupsetting.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, groupsetting.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, groupsetting.FieldDeletedAt)
@@ -21306,6 +22210,8 @@ func (m *GroupSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case groupsetting.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case groupsetting.FieldMappingID:
+		return m.MappingID()
 	case groupsetting.FieldDeletedAt:
 		return m.DeletedAt()
 	case groupsetting.FieldDeletedBy:
@@ -21339,6 +22245,8 @@ func (m *GroupSettingMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldCreatedBy(ctx)
 	case groupsetting.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case groupsetting.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case groupsetting.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case groupsetting.FieldDeletedBy:
@@ -21391,6 +22299,13 @@ func (m *GroupSettingMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case groupsetting.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case groupsetting.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -21572,6 +22487,9 @@ func (m *GroupSettingMutation) ResetField(name string) error {
 	case groupsetting.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case groupsetting.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case groupsetting.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -21687,6 +22605,7 @@ type GroupSettingHistoryMutation struct {
 	updated_at     *time.Time
 	created_by     *string
 	updated_by     *string
+	mapping_id     *string
 	deleted_at     *time.Time
 	deleted_by     *string
 	visibility     *enums.Visibility
@@ -22123,6 +23042,42 @@ func (m *GroupSettingHistoryMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, groupsettinghistory.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *GroupSettingHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *GroupSettingHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the GroupSettingHistory entity.
+// If the GroupSettingHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupSettingHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *GroupSettingHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (m *GroupSettingHistoryMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
@@ -22539,7 +23494,7 @@ func (m *GroupSettingHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupSettingHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.history_time != nil {
 		fields = append(fields, groupsettinghistory.FieldHistoryTime)
 	}
@@ -22560,6 +23515,9 @@ func (m *GroupSettingHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, groupsettinghistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, groupsettinghistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, groupsettinghistory.FieldDeletedAt)
@@ -22607,6 +23565,8 @@ func (m *GroupSettingHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case groupsettinghistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case groupsettinghistory.FieldMappingID:
+		return m.MappingID()
 	case groupsettinghistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case groupsettinghistory.FieldDeletedBy:
@@ -22646,6 +23606,8 @@ func (m *GroupSettingHistoryMutation) OldField(ctx context.Context, name string)
 		return m.OldCreatedBy(ctx)
 	case groupsettinghistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case groupsettinghistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case groupsettinghistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case groupsettinghistory.FieldDeletedBy:
@@ -22719,6 +23681,13 @@ func (m *GroupSettingHistoryMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case groupsettinghistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case groupsettinghistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -22915,6 +23884,9 @@ func (m *GroupSettingHistoryMutation) ResetField(name string) error {
 	case groupsettinghistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case groupsettinghistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case groupsettinghistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -23001,6 +23973,7 @@ type HushMutation struct {
 	updated_at          *time.Time
 	created_by          *string
 	updated_by          *string
+	mapping_id          *string
 	deleted_at          *time.Time
 	deleted_by          *string
 	name                *string
@@ -23321,6 +24294,42 @@ func (m *HushMutation) UpdatedByCleared() bool {
 func (m *HushMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, hush.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *HushMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *HushMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *HushMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -23849,7 +24858,7 @@ func (m *HushMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *HushMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, hush.FieldCreatedAt)
 	}
@@ -23861,6 +24870,9 @@ func (m *HushMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, hush.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, hush.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, hush.FieldDeletedAt)
@@ -23899,6 +24911,8 @@ func (m *HushMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case hush.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case hush.FieldMappingID:
+		return m.MappingID()
 	case hush.FieldDeletedAt:
 		return m.DeletedAt()
 	case hush.FieldDeletedBy:
@@ -23930,6 +24944,8 @@ func (m *HushMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedBy(ctx)
 	case hush.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case hush.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case hush.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case hush.FieldDeletedBy:
@@ -23980,6 +24996,13 @@ func (m *HushMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case hush.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case hush.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -24153,6 +25176,9 @@ func (m *HushMutation) ResetField(name string) error {
 		return nil
 	case hush.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case hush.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case hush.FieldDeletedAt:
 		m.ResetDeletedAt()
@@ -24328,6 +25354,7 @@ type HushHistoryMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	name          *string
@@ -24762,6 +25789,42 @@ func (m *HushHistoryMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, hushhistory.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *HushHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *HushHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *HushHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (m *HushHistoryMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
@@ -25126,7 +26189,7 @@ func (m *HushHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *HushHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.history_time != nil {
 		fields = append(fields, hushhistory.FieldHistoryTime)
 	}
@@ -25147,6 +26210,9 @@ func (m *HushHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, hushhistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, hushhistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, hushhistory.FieldDeletedAt)
@@ -25191,6 +26257,8 @@ func (m *HushHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case hushhistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case hushhistory.FieldMappingID:
+		return m.MappingID()
 	case hushhistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case hushhistory.FieldDeletedBy:
@@ -25228,6 +26296,8 @@ func (m *HushHistoryMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldCreatedBy(ctx)
 	case hushhistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case hushhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case hushhistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case hushhistory.FieldDeletedBy:
@@ -25299,6 +26369,13 @@ func (m *HushHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case hushhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case hushhistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -25488,6 +26565,9 @@ func (m *HushHistoryMutation) ResetField(name string) error {
 	case hushhistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case hushhistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case hushhistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -25571,6 +26651,7 @@ type IntegrationMutation struct {
 	updated_at          *time.Time
 	created_by          *string
 	updated_by          *string
+	mapping_id          *string
 	deleted_at          *time.Time
 	deleted_by          *string
 	name                *string
@@ -25891,6 +26972,42 @@ func (m *IntegrationMutation) UpdatedByCleared() bool {
 func (m *IntegrationMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, integration.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *IntegrationMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *IntegrationMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Integration entity.
+// If the Integration object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IntegrationMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *IntegrationMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -26384,7 +27501,7 @@ func (m *IntegrationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IntegrationMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, integration.FieldCreatedAt)
 	}
@@ -26396,6 +27513,9 @@ func (m *IntegrationMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, integration.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, integration.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, integration.FieldDeletedAt)
@@ -26431,6 +27551,8 @@ func (m *IntegrationMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case integration.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case integration.FieldMappingID:
+		return m.MappingID()
 	case integration.FieldDeletedAt:
 		return m.DeletedAt()
 	case integration.FieldDeletedBy:
@@ -26460,6 +27582,8 @@ func (m *IntegrationMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldCreatedBy(ctx)
 	case integration.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case integration.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case integration.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case integration.FieldDeletedBy:
@@ -26508,6 +27632,13 @@ func (m *IntegrationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case integration.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case integration.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -26662,6 +27793,9 @@ func (m *IntegrationMutation) ResetField(name string) error {
 		return nil
 	case integration.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case integration.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case integration.FieldDeletedAt:
 		m.ResetDeletedAt()
@@ -26852,6 +27986,7 @@ type IntegrationHistoryMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	owner_id      *string
@@ -27285,6 +28420,42 @@ func (m *IntegrationHistoryMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, integrationhistory.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *IntegrationHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *IntegrationHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the IntegrationHistory entity.
+// If the IntegrationHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IntegrationHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *IntegrationHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (m *IntegrationHistoryMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
@@ -27587,7 +28758,7 @@ func (m *IntegrationHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IntegrationHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.history_time != nil {
 		fields = append(fields, integrationhistory.FieldHistoryTime)
 	}
@@ -27608,6 +28779,9 @@ func (m *IntegrationHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, integrationhistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, integrationhistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, integrationhistory.FieldDeletedAt)
@@ -27649,6 +28823,8 @@ func (m *IntegrationHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case integrationhistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case integrationhistory.FieldMappingID:
+		return m.MappingID()
 	case integrationhistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case integrationhistory.FieldDeletedBy:
@@ -27684,6 +28860,8 @@ func (m *IntegrationHistoryMutation) OldField(ctx context.Context, name string) 
 		return m.OldCreatedBy(ctx)
 	case integrationhistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case integrationhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case integrationhistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case integrationhistory.FieldDeletedBy:
@@ -27753,6 +28931,13 @@ func (m *IntegrationHistoryMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case integrationhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case integrationhistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -27923,6 +29108,9 @@ func (m *IntegrationHistoryMutation) ResetField(name string) error {
 	case integrationhistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case integrationhistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case integrationhistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -28003,6 +29191,7 @@ type InviteMutation struct {
 	updated_at       *time.Time
 	created_by       *string
 	updated_by       *string
+	mapping_id       *string
 	deleted_at       *time.Time
 	deleted_by       *string
 	token            *string
@@ -28323,6 +29512,42 @@ func (m *InviteMutation) UpdatedByCleared() bool {
 func (m *InviteMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, invite.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *InviteMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *InviteMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Invite entity.
+// If the Invite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InviteMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *InviteMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -28882,7 +30107,7 @@ func (m *InviteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InviteMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, invite.FieldCreatedAt)
 	}
@@ -28894,6 +30119,9 @@ func (m *InviteMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, invite.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, invite.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, invite.FieldDeletedAt)
@@ -28944,6 +30172,8 @@ func (m *InviteMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case invite.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case invite.FieldMappingID:
+		return m.MappingID()
 	case invite.FieldDeletedAt:
 		return m.DeletedAt()
 	case invite.FieldDeletedBy:
@@ -28983,6 +30213,8 @@ func (m *InviteMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldCreatedBy(ctx)
 	case invite.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case invite.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case invite.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case invite.FieldDeletedBy:
@@ -29041,6 +30273,13 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case invite.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case invite.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -29234,6 +30473,9 @@ func (m *InviteMutation) ResetField(name string) error {
 	case invite.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case invite.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case invite.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -29383,6 +30625,7 @@ type OauthProviderMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	name          *string
@@ -29701,6 +30944,42 @@ func (m *OauthProviderMutation) UpdatedByCleared() bool {
 func (m *OauthProviderMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, oauthprovider.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *OauthProviderMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OauthProviderMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the OauthProvider entity.
+// If the OauthProvider object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OauthProviderMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OauthProviderMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -30218,7 +31497,7 @@ func (m *OauthProviderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OauthProviderMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, oauthprovider.FieldCreatedAt)
 	}
@@ -30230,6 +31509,9 @@ func (m *OauthProviderMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, oauthprovider.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, oauthprovider.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, oauthprovider.FieldDeletedAt)
@@ -30280,6 +31562,8 @@ func (m *OauthProviderMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case oauthprovider.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case oauthprovider.FieldMappingID:
+		return m.MappingID()
 	case oauthprovider.FieldDeletedAt:
 		return m.DeletedAt()
 	case oauthprovider.FieldDeletedBy:
@@ -30319,6 +31603,8 @@ func (m *OauthProviderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldCreatedBy(ctx)
 	case oauthprovider.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case oauthprovider.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case oauthprovider.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case oauthprovider.FieldDeletedBy:
@@ -30377,6 +31663,13 @@ func (m *OauthProviderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case oauthprovider.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case oauthprovider.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -30570,6 +31863,9 @@ func (m *OauthProviderMutation) ResetField(name string) error {
 	case oauthprovider.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case oauthprovider.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case oauthprovider.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -30694,6 +31990,7 @@ type OauthProviderHistoryMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	name          *string
@@ -31131,6 +32428,42 @@ func (m *OauthProviderHistoryMutation) UpdatedByCleared() bool {
 func (m *OauthProviderHistoryMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, oauthproviderhistory.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *OauthProviderHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OauthProviderHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the OauthProviderHistory entity.
+// If the OauthProviderHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OauthProviderHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OauthProviderHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -31609,7 +32942,7 @@ func (m *OauthProviderHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OauthProviderHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.history_time != nil {
 		fields = append(fields, oauthproviderhistory.FieldHistoryTime)
 	}
@@ -31630,6 +32963,9 @@ func (m *OauthProviderHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, oauthproviderhistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, oauthproviderhistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, oauthproviderhistory.FieldDeletedAt)
@@ -31686,6 +33022,8 @@ func (m *OauthProviderHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case oauthproviderhistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case oauthproviderhistory.FieldMappingID:
+		return m.MappingID()
 	case oauthproviderhistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case oauthproviderhistory.FieldDeletedBy:
@@ -31731,6 +33069,8 @@ func (m *OauthProviderHistoryMutation) OldField(ctx context.Context, name string
 		return m.OldCreatedBy(ctx)
 	case oauthproviderhistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case oauthproviderhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case oauthproviderhistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case oauthproviderhistory.FieldDeletedBy:
@@ -31810,6 +33150,13 @@ func (m *OauthProviderHistoryMutation) SetField(name string, value ent.Value) er
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case oauthproviderhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case oauthproviderhistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -32018,6 +33365,9 @@ func (m *OauthProviderHistoryMutation) ResetField(name string) error {
 	case oauthproviderhistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case oauthproviderhistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case oauthproviderhistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -32109,6 +33459,7 @@ type OhAuthTooTokenMutation struct {
 	op                        Op
 	typ                       string
 	id                        *string
+	mapping_id                *string
 	client_id                 *string
 	scopes                    *[]string
 	appendscopes              []string
@@ -32238,6 +33589,42 @@ func (m *OhAuthTooTokenMutation) IDs(ctx context.Context) ([]string, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *OhAuthTooTokenMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OhAuthTooTokenMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the OhAuthTooToken entity.
+// If the OhAuthTooToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OhAuthTooTokenMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OhAuthTooTokenMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetClientID sets the "client_id" field.
@@ -32901,7 +34288,10 @@ func (m *OhAuthTooTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OhAuthTooTokenMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
+	if m.mapping_id != nil {
+		fields = append(fields, ohauthtootoken.FieldMappingID)
+	}
 	if m.client_id != nil {
 		fields = append(fields, ohauthtootoken.FieldClientID)
 	}
@@ -32946,6 +34336,8 @@ func (m *OhAuthTooTokenMutation) Fields() []string {
 // schema.
 func (m *OhAuthTooTokenMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case ohauthtootoken.FieldMappingID:
+		return m.MappingID()
 	case ohauthtootoken.FieldClientID:
 		return m.ClientID()
 	case ohauthtootoken.FieldScopes:
@@ -32979,6 +34371,8 @@ func (m *OhAuthTooTokenMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *OhAuthTooTokenMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case ohauthtootoken.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case ohauthtootoken.FieldClientID:
 		return m.OldClientID(ctx)
 	case ohauthtootoken.FieldScopes:
@@ -33012,6 +34406,13 @@ func (m *OhAuthTooTokenMutation) OldField(ctx context.Context, name string) (ent
 // type.
 func (m *OhAuthTooTokenMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case ohauthtootoken.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
+		return nil
 	case ohauthtootoken.FieldClientID:
 		v, ok := value.(string)
 		if !ok {
@@ -33166,6 +34567,9 @@ func (m *OhAuthTooTokenMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *OhAuthTooTokenMutation) ResetField(name string) error {
 	switch name {
+	case ohauthtootoken.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case ohauthtootoken.FieldClientID:
 		m.ResetClientID()
 		return nil
@@ -33326,6 +34730,7 @@ type OrgMembershipMutation struct {
 	updated_at          *time.Time
 	created_by          *string
 	updated_by          *string
+	mapping_id          *string
 	deleted_at          *time.Time
 	deleted_by          *string
 	role                *enums.Role
@@ -33640,6 +35045,42 @@ func (m *OrgMembershipMutation) UpdatedByCleared() bool {
 func (m *OrgMembershipMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, orgmembership.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *OrgMembershipMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OrgMembershipMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the OrgMembership entity.
+// If the OrgMembership object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrgMembershipMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OrgMembershipMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -33990,7 +35431,7 @@ func (m *OrgMembershipMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrgMembershipMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, orgmembership.FieldCreatedAt)
 	}
@@ -34002,6 +35443,9 @@ func (m *OrgMembershipMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, orgmembership.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, orgmembership.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, orgmembership.FieldDeletedAt)
@@ -34034,6 +35478,8 @@ func (m *OrgMembershipMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case orgmembership.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case orgmembership.FieldMappingID:
+		return m.MappingID()
 	case orgmembership.FieldDeletedAt:
 		return m.DeletedAt()
 	case orgmembership.FieldDeletedBy:
@@ -34061,6 +35507,8 @@ func (m *OrgMembershipMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldCreatedBy(ctx)
 	case orgmembership.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case orgmembership.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case orgmembership.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case orgmembership.FieldDeletedBy:
@@ -34107,6 +35555,13 @@ func (m *OrgMembershipMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case orgmembership.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case orgmembership.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -34242,6 +35697,9 @@ func (m *OrgMembershipMutation) ResetField(name string) error {
 		return nil
 	case orgmembership.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case orgmembership.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case orgmembership.FieldDeletedAt:
 		m.ResetDeletedAt()
@@ -34395,6 +35853,7 @@ type OrgMembershipHistoryMutation struct {
 	updated_at      *time.Time
 	created_by      *string
 	updated_by      *string
+	mapping_id      *string
 	deleted_at      *time.Time
 	deleted_by      *string
 	role            *enums.Role
@@ -34827,6 +36286,42 @@ func (m *OrgMembershipHistoryMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, orgmembershiphistory.FieldUpdatedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *OrgMembershipHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OrgMembershipHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the OrgMembershipHistory entity.
+// If the OrgMembershipHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrgMembershipHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OrgMembershipHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (m *OrgMembershipHistoryMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
@@ -35067,7 +36562,7 @@ func (m *OrgMembershipHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrgMembershipHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.history_time != nil {
 		fields = append(fields, orgmembershiphistory.FieldHistoryTime)
 	}
@@ -35088,6 +36583,9 @@ func (m *OrgMembershipHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, orgmembershiphistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, orgmembershiphistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, orgmembershiphistory.FieldDeletedAt)
@@ -35126,6 +36624,8 @@ func (m *OrgMembershipHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case orgmembershiphistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case orgmembershiphistory.FieldMappingID:
+		return m.MappingID()
 	case orgmembershiphistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case orgmembershiphistory.FieldDeletedBy:
@@ -35159,6 +36659,8 @@ func (m *OrgMembershipHistoryMutation) OldField(ctx context.Context, name string
 		return m.OldCreatedBy(ctx)
 	case orgmembershiphistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case orgmembershiphistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case orgmembershiphistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case orgmembershiphistory.FieldDeletedBy:
@@ -35226,6 +36728,13 @@ func (m *OrgMembershipHistoryMutation) SetField(name string, value ent.Value) er
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case orgmembershiphistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case orgmembershiphistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -35377,6 +36886,9 @@ func (m *OrgMembershipHistoryMutation) ResetField(name string) error {
 	case orgmembershiphistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case orgmembershiphistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case orgmembershiphistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -35454,6 +36966,7 @@ type OrganizationMutation struct {
 	updated_at                    *time.Time
 	created_by                    *string
 	updated_by                    *string
+	mapping_id                    *string
 	deleted_at                    *time.Time
 	deleted_by                    *string
 	name                          *string
@@ -35821,6 +37334,42 @@ func (m *OrganizationMutation) UpdatedByCleared() bool {
 func (m *OrganizationMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, organization.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *OrganizationMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OrganizationMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Organization entity.
+// If the Organization object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OrganizationMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -37256,7 +38805,7 @@ func (m *OrganizationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, organization.FieldCreatedAt)
 	}
@@ -37268,6 +38817,9 @@ func (m *OrganizationMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, organization.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, organization.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, organization.FieldDeletedAt)
@@ -37312,6 +38864,8 @@ func (m *OrganizationMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case organization.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case organization.FieldMappingID:
+		return m.MappingID()
 	case organization.FieldDeletedAt:
 		return m.DeletedAt()
 	case organization.FieldDeletedBy:
@@ -37347,6 +38901,8 @@ func (m *OrganizationMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldCreatedBy(ctx)
 	case organization.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case organization.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case organization.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case organization.FieldDeletedBy:
@@ -37401,6 +38957,13 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case organization.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case organization.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -37588,6 +39151,9 @@ func (m *OrganizationMutation) ResetField(name string) error {
 		return nil
 	case organization.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case organization.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case organization.FieldDeletedAt:
 		m.ResetDeletedAt()
@@ -38169,6 +39735,7 @@ type OrganizationHistoryMutation struct {
 	updated_at             *time.Time
 	created_by             *string
 	updated_by             *string
+	mapping_id             *string
 	deleted_at             *time.Time
 	deleted_by             *string
 	name                   *string
@@ -38603,6 +40170,42 @@ func (m *OrganizationHistoryMutation) UpdatedByCleared() bool {
 func (m *OrganizationHistoryMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, organizationhistory.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *OrganizationHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OrganizationHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the OrganizationHistory entity.
+// If the OrganizationHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OrganizationHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -39041,7 +40644,7 @@ func (m *OrganizationHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.history_time != nil {
 		fields = append(fields, organizationhistory.FieldHistoryTime)
 	}
@@ -39062,6 +40665,9 @@ func (m *OrganizationHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, organizationhistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, organizationhistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, organizationhistory.FieldDeletedAt)
@@ -39112,6 +40718,8 @@ func (m *OrganizationHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case organizationhistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case organizationhistory.FieldMappingID:
+		return m.MappingID()
 	case organizationhistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case organizationhistory.FieldDeletedBy:
@@ -39153,6 +40761,8 @@ func (m *OrganizationHistoryMutation) OldField(ctx context.Context, name string)
 		return m.OldCreatedBy(ctx)
 	case organizationhistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case organizationhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case organizationhistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case organizationhistory.FieldDeletedBy:
@@ -39228,6 +40838,13 @@ func (m *OrganizationHistoryMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case organizationhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case organizationhistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -39431,6 +41048,9 @@ func (m *OrganizationHistoryMutation) ResetField(name string) error {
 	case organizationhistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case organizationhistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case organizationhistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -39520,6 +41140,7 @@ type OrganizationSettingMutation struct {
 	updated_at          *time.Time
 	created_by          *string
 	updated_by          *string
+	mapping_id          *string
 	deleted_at          *time.Time
 	deleted_by          *string
 	domains             *[]string
@@ -39838,6 +41459,42 @@ func (m *OrganizationSettingMutation) UpdatedByCleared() bool {
 func (m *OrganizationSettingMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, organizationsetting.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *OrganizationSettingMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OrganizationSettingMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the OrganizationSetting entity.
+// If the OrganizationSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationSettingMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OrganizationSettingMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -40472,7 +42129,7 @@ func (m *OrganizationSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationSettingMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, organizationsetting.FieldCreatedAt)
 	}
@@ -40484,6 +42141,9 @@ func (m *OrganizationSettingMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, organizationsetting.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, organizationsetting.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, organizationsetting.FieldDeletedAt)
@@ -40534,6 +42194,8 @@ func (m *OrganizationSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case organizationsetting.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case organizationsetting.FieldMappingID:
+		return m.MappingID()
 	case organizationsetting.FieldDeletedAt:
 		return m.DeletedAt()
 	case organizationsetting.FieldDeletedBy:
@@ -40573,6 +42235,8 @@ func (m *OrganizationSettingMutation) OldField(ctx context.Context, name string)
 		return m.OldCreatedBy(ctx)
 	case organizationsetting.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case organizationsetting.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case organizationsetting.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case organizationsetting.FieldDeletedBy:
@@ -40631,6 +42295,13 @@ func (m *OrganizationSettingMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case organizationsetting.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case organizationsetting.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -40863,6 +42534,9 @@ func (m *OrganizationSettingMutation) ResetField(name string) error {
 	case organizationsetting.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case organizationsetting.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case organizationsetting.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -40987,6 +42661,7 @@ type OrganizationSettingHistoryMutation struct {
 	updated_at      *time.Time
 	created_by      *string
 	updated_by      *string
+	mapping_id      *string
 	deleted_at      *time.Time
 	deleted_by      *string
 	domains         *[]string
@@ -41425,6 +43100,42 @@ func (m *OrganizationSettingHistoryMutation) UpdatedByCleared() bool {
 func (m *OrganizationSettingHistoryMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, organizationsettinghistory.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *OrganizationSettingHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *OrganizationSettingHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the OrganizationSettingHistory entity.
+// If the OrganizationSettingHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationSettingHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *OrganizationSettingHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -42032,7 +43743,7 @@ func (m *OrganizationSettingHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationSettingHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.history_time != nil {
 		fields = append(fields, organizationsettinghistory.FieldHistoryTime)
 	}
@@ -42053,6 +43764,9 @@ func (m *OrganizationSettingHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, organizationsettinghistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, organizationsettinghistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, organizationsettinghistory.FieldDeletedAt)
@@ -42109,6 +43823,8 @@ func (m *OrganizationSettingHistoryMutation) Field(name string) (ent.Value, bool
 		return m.CreatedBy()
 	case organizationsettinghistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case organizationsettinghistory.FieldMappingID:
+		return m.MappingID()
 	case organizationsettinghistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case organizationsettinghistory.FieldDeletedBy:
@@ -42154,6 +43870,8 @@ func (m *OrganizationSettingHistoryMutation) OldField(ctx context.Context, name 
 		return m.OldCreatedBy(ctx)
 	case organizationsettinghistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case organizationsettinghistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case organizationsettinghistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case organizationsettinghistory.FieldDeletedBy:
@@ -42233,6 +43951,13 @@ func (m *OrganizationSettingHistoryMutation) SetField(name string, value ent.Val
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case organizationsettinghistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case organizationsettinghistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -42480,6 +44205,9 @@ func (m *OrganizationSettingHistoryMutation) ResetField(name string) error {
 	case organizationsettinghistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case organizationsettinghistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case organizationsettinghistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -42575,6 +44303,7 @@ type PasswordResetTokenMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	mapping_id    *string
 	deleted_at    *time.Time
 	deleted_by    *string
 	token         *string
@@ -42887,6 +44616,42 @@ func (m *PasswordResetTokenMutation) UpdatedByCleared() bool {
 func (m *PasswordResetTokenMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, passwordresettoken.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *PasswordResetTokenMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *PasswordResetTokenMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the PasswordResetToken entity.
+// If the PasswordResetToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PasswordResetTokenMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *PasswordResetTokenMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -43228,7 +44993,7 @@ func (m *PasswordResetTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PasswordResetTokenMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, passwordresettoken.FieldCreatedAt)
 	}
@@ -43240,6 +45005,9 @@ func (m *PasswordResetTokenMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, passwordresettoken.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, passwordresettoken.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, passwordresettoken.FieldDeletedAt)
@@ -43278,6 +45046,8 @@ func (m *PasswordResetTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case passwordresettoken.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case passwordresettoken.FieldMappingID:
+		return m.MappingID()
 	case passwordresettoken.FieldDeletedAt:
 		return m.DeletedAt()
 	case passwordresettoken.FieldDeletedBy:
@@ -43309,6 +45079,8 @@ func (m *PasswordResetTokenMutation) OldField(ctx context.Context, name string) 
 		return m.OldCreatedBy(ctx)
 	case passwordresettoken.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case passwordresettoken.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case passwordresettoken.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case passwordresettoken.FieldDeletedBy:
@@ -43359,6 +45131,13 @@ func (m *PasswordResetTokenMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case passwordresettoken.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case passwordresettoken.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -43509,6 +45288,9 @@ func (m *PasswordResetTokenMutation) ResetField(name string) error {
 	case passwordresettoken.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case passwordresettoken.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case passwordresettoken.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -43620,6 +45402,7 @@ type PersonalAccessTokenMutation struct {
 	updated_by           *string
 	deleted_at           *time.Time
 	deleted_by           *string
+	mapping_id           *string
 	name                 *string
 	token                *string
 	expires_at           *time.Time
@@ -44037,6 +45820,42 @@ func (m *PersonalAccessTokenMutation) DeletedByCleared() bool {
 func (m *PersonalAccessTokenMutation) ResetDeletedBy() {
 	m.deleted_by = nil
 	delete(m.clearedFields, personalaccesstoken.FieldDeletedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *PersonalAccessTokenMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *PersonalAccessTokenMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *PersonalAccessTokenMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetOwnerID sets the "owner_id" field.
@@ -44515,7 +46334,7 @@ func (m *PersonalAccessTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PersonalAccessTokenMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, personalaccesstoken.FieldCreatedAt)
 	}
@@ -44533,6 +46352,9 @@ func (m *PersonalAccessTokenMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, personalaccesstoken.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, personalaccesstoken.FieldMappingID)
 	}
 	if m.owner != nil {
 		fields = append(fields, personalaccesstoken.FieldOwnerID)
@@ -44575,6 +46397,8 @@ func (m *PersonalAccessTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case personalaccesstoken.FieldDeletedBy:
 		return m.DeletedBy()
+	case personalaccesstoken.FieldMappingID:
+		return m.MappingID()
 	case personalaccesstoken.FieldOwnerID:
 		return m.OwnerID()
 	case personalaccesstoken.FieldName:
@@ -44610,6 +46434,8 @@ func (m *PersonalAccessTokenMutation) OldField(ctx context.Context, name string)
 		return m.OldDeletedAt(ctx)
 	case personalaccesstoken.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case personalaccesstoken.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case personalaccesstoken.FieldOwnerID:
 		return m.OldOwnerID(ctx)
 	case personalaccesstoken.FieldName:
@@ -44674,6 +46500,13 @@ func (m *PersonalAccessTokenMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case personalaccesstoken.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case personalaccesstoken.FieldOwnerID:
 		v, ok := value.(string)
@@ -44848,6 +46681,9 @@ func (m *PersonalAccessTokenMutation) ResetField(name string) error {
 	case personalaccesstoken.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case personalaccesstoken.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case personalaccesstoken.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
@@ -45011,6 +46847,7 @@ type SubscriberMutation struct {
 	updated_at     *time.Time
 	created_by     *string
 	updated_by     *string
+	mapping_id     *string
 	deleted_at     *time.Time
 	deleted_by     *string
 	email          *string
@@ -45330,6 +47167,42 @@ func (m *SubscriberMutation) UpdatedByCleared() bool {
 func (m *SubscriberMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, subscriber.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *SubscriberMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *SubscriberMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SubscriberMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *SubscriberMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -45895,7 +47768,7 @@ func (m *SubscriberMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SubscriberMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, subscriber.FieldCreatedAt)
 	}
@@ -45907,6 +47780,9 @@ func (m *SubscriberMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, subscriber.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, subscriber.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, subscriber.FieldDeletedAt)
@@ -45957,6 +47833,8 @@ func (m *SubscriberMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case subscriber.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case subscriber.FieldMappingID:
+		return m.MappingID()
 	case subscriber.FieldDeletedAt:
 		return m.DeletedAt()
 	case subscriber.FieldDeletedBy:
@@ -45996,6 +47874,8 @@ func (m *SubscriberMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldCreatedBy(ctx)
 	case subscriber.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case subscriber.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case subscriber.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case subscriber.FieldDeletedBy:
@@ -46054,6 +47934,13 @@ func (m *SubscriberMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case subscriber.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case subscriber.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -46244,6 +48131,9 @@ func (m *SubscriberMutation) ResetField(name string) error {
 	case subscriber.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case subscriber.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case subscriber.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -46393,6 +48283,7 @@ type TFASettingMutation struct {
 	updated_at           *time.Time
 	created_by           *string
 	updated_by           *string
+	mapping_id           *string
 	deleted_at           *time.Time
 	deleted_by           *string
 	tfa_secret           *string
@@ -46708,6 +48599,42 @@ func (m *TFASettingMutation) UpdatedByCleared() bool {
 func (m *TFASettingMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, tfasetting.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *TFASettingMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *TFASettingMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TFASettingMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *TFASettingMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -47215,7 +49142,7 @@ func (m *TFASettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TFASettingMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, tfasetting.FieldCreatedAt)
 	}
@@ -47227,6 +49154,9 @@ func (m *TFASettingMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, tfasetting.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, tfasetting.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, tfasetting.FieldDeletedAt)
@@ -47271,6 +49201,8 @@ func (m *TFASettingMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case tfasetting.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case tfasetting.FieldMappingID:
+		return m.MappingID()
 	case tfasetting.FieldDeletedAt:
 		return m.DeletedAt()
 	case tfasetting.FieldDeletedBy:
@@ -47306,6 +49238,8 @@ func (m *TFASettingMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldCreatedBy(ctx)
 	case tfasetting.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case tfasetting.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case tfasetting.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case tfasetting.FieldDeletedBy:
@@ -47360,6 +49294,13 @@ func (m *TFASettingMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case tfasetting.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case tfasetting.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -47560,6 +49501,9 @@ func (m *TFASettingMutation) ResetField(name string) error {
 	case tfasetting.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case tfasetting.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case tfasetting.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -47677,6 +49621,7 @@ type TemplateMutation struct {
 	updated_by       *string
 	deleted_at       *time.Time
 	deleted_by       *string
+	mapping_id       *string
 	name             *string
 	template_type    *enums.DocumentType
 	description      *string
@@ -48091,6 +50036,42 @@ func (m *TemplateMutation) ResetDeletedBy() {
 	delete(m.clearedFields, template.FieldDeletedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *TemplateMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *TemplateMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Template entity.
+// If the Template object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *TemplateMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (m *TemplateMutation) SetOwnerID(s string) {
 	m.owner = &s
@@ -48448,7 +50429,7 @@ func (m *TemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TemplateMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, template.FieldCreatedAt)
 	}
@@ -48466,6 +50447,9 @@ func (m *TemplateMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, template.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, template.FieldMappingID)
 	}
 	if m.owner != nil {
 		fields = append(fields, template.FieldOwnerID)
@@ -48505,6 +50489,8 @@ func (m *TemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case template.FieldDeletedBy:
 		return m.DeletedBy()
+	case template.FieldMappingID:
+		return m.MappingID()
 	case template.FieldOwnerID:
 		return m.OwnerID()
 	case template.FieldName:
@@ -48538,6 +50524,8 @@ func (m *TemplateMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldDeletedAt(ctx)
 	case template.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case template.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case template.FieldOwnerID:
 		return m.OldOwnerID(ctx)
 	case template.FieldName:
@@ -48600,6 +50588,13 @@ func (m *TemplateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case template.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case template.FieldOwnerID:
 		v, ok := value.(string)
@@ -48761,6 +50756,9 @@ func (m *TemplateMutation) ResetField(name string) error {
 	case template.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case template.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case template.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
@@ -48900,6 +50898,7 @@ type TemplateHistoryMutation struct {
 	updated_by    *string
 	deleted_at    *time.Time
 	deleted_by    *string
+	mapping_id    *string
 	owner_id      *string
 	name          *string
 	template_type *enums.DocumentType
@@ -49431,6 +51430,42 @@ func (m *TemplateHistoryMutation) ResetDeletedBy() {
 	delete(m.clearedFields, templatehistory.FieldDeletedBy)
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (m *TemplateHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *TemplateHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *TemplateHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (m *TemplateHistoryMutation) SetOwnerID(s string) {
 	m.owner_id = &s
@@ -49707,7 +51742,7 @@ func (m *TemplateHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TemplateHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.history_time != nil {
 		fields = append(fields, templatehistory.FieldHistoryTime)
 	}
@@ -49734,6 +51769,9 @@ func (m *TemplateHistoryMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, templatehistory.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, templatehistory.FieldMappingID)
 	}
 	if m.owner_id != nil {
 		fields = append(fields, templatehistory.FieldOwnerID)
@@ -49779,6 +51817,8 @@ func (m *TemplateHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case templatehistory.FieldDeletedBy:
 		return m.DeletedBy()
+	case templatehistory.FieldMappingID:
+		return m.MappingID()
 	case templatehistory.FieldOwnerID:
 		return m.OwnerID()
 	case templatehistory.FieldName:
@@ -49818,6 +51858,8 @@ func (m *TemplateHistoryMutation) OldField(ctx context.Context, name string) (en
 		return m.OldDeletedAt(ctx)
 	case templatehistory.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case templatehistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case templatehistory.FieldOwnerID:
 		return m.OldOwnerID(ctx)
 	case templatehistory.FieldName:
@@ -49901,6 +51943,13 @@ func (m *TemplateHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case templatehistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case templatehistory.FieldOwnerID:
 		v, ok := value.(string)
@@ -50077,6 +52126,9 @@ func (m *TemplateHistoryMutation) ResetField(name string) error {
 	case templatehistory.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case templatehistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case templatehistory.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
@@ -50159,6 +52211,7 @@ type UserMutation struct {
 	updated_by                       *string
 	deleted_at                       *time.Time
 	deleted_by                       *string
+	mapping_id                       *string
 	email                            *string
 	first_name                       *string
 	last_name                        *string
@@ -50611,6 +52664,42 @@ func (m *UserMutation) DeletedByCleared() bool {
 func (m *UserMutation) ResetDeletedBy() {
 	m.deleted_by = nil
 	delete(m.clearedFields, user.FieldDeletedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *UserMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *UserMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *UserMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetEmail sets the "email" field.
@@ -51857,7 +53946,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -51875,6 +53964,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, user.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, user.FieldMappingID)
 	}
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
@@ -51932,6 +54024,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case user.FieldDeletedBy:
 		return m.DeletedBy()
+	case user.FieldMappingID:
+		return m.MappingID()
 	case user.FieldEmail:
 		return m.Email()
 	case user.FieldFirstName:
@@ -51977,6 +54071,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDeletedAt(ctx)
 	case user.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case user.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case user.FieldEmail:
 		return m.OldEmail(ctx)
 	case user.FieldFirstName:
@@ -52051,6 +54147,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case user.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case user.FieldEmail:
 		v, ok := value.(string)
@@ -52283,6 +54386,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case user.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case user.FieldEmail:
 		m.ResetEmail()
@@ -52727,6 +54833,7 @@ type UserHistoryMutation struct {
 	updated_by        *string
 	deleted_at        *time.Time
 	deleted_by        *string
+	mapping_id        *string
 	email             *string
 	first_name        *string
 	last_name         *string
@@ -53262,6 +55369,42 @@ func (m *UserHistoryMutation) DeletedByCleared() bool {
 func (m *UserHistoryMutation) ResetDeletedBy() {
 	m.deleted_by = nil
 	delete(m.clearedFields, userhistory.FieldDeletedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *UserHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *UserHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the UserHistory entity.
+// If the UserHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *UserHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetEmail sets the "email" field.
@@ -53821,7 +55964,7 @@ func (m *UserHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.history_time != nil {
 		fields = append(fields, userhistory.FieldHistoryTime)
 	}
@@ -53848,6 +55991,9 @@ func (m *UserHistoryMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, userhistory.FieldDeletedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, userhistory.FieldMappingID)
 	}
 	if m.email != nil {
 		fields = append(fields, userhistory.FieldEmail)
@@ -53911,6 +56057,8 @@ func (m *UserHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case userhistory.FieldDeletedBy:
 		return m.DeletedBy()
+	case userhistory.FieldMappingID:
+		return m.MappingID()
 	case userhistory.FieldEmail:
 		return m.Email()
 	case userhistory.FieldFirstName:
@@ -53962,6 +56110,8 @@ func (m *UserHistoryMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldDeletedAt(ctx)
 	case userhistory.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case userhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case userhistory.FieldEmail:
 		return m.OldEmail(ctx)
 	case userhistory.FieldFirstName:
@@ -54057,6 +56207,13 @@ func (m *UserHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case userhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case userhistory.FieldEmail:
 		v, ok := value.(string)
@@ -54305,6 +56462,9 @@ func (m *UserHistoryMutation) ResetField(name string) error {
 	case userhistory.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case userhistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case userhistory.FieldEmail:
 		m.ResetEmail()
 		return nil
@@ -54403,6 +56563,7 @@ type UserSettingMutation struct {
 	updated_at          *time.Time
 	created_by          *string
 	updated_by          *string
+	mapping_id          *string
 	deleted_at          *time.Time
 	deleted_by          *string
 	locked              *bool
@@ -54723,6 +56884,42 @@ func (m *UserSettingMutation) UpdatedByCleared() bool {
 func (m *UserSettingMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, usersetting.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *UserSettingMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *UserSettingMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *UserSettingMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -55390,7 +57587,7 @@ func (m *UserSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserSettingMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_at != nil {
 		fields = append(fields, usersetting.FieldCreatedAt)
 	}
@@ -55402,6 +57599,9 @@ func (m *UserSettingMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, usersetting.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, usersetting.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, usersetting.FieldDeletedAt)
@@ -55455,6 +57655,8 @@ func (m *UserSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case usersetting.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case usersetting.FieldMappingID:
+		return m.MappingID()
 	case usersetting.FieldDeletedAt:
 		return m.DeletedAt()
 	case usersetting.FieldDeletedBy:
@@ -55496,6 +57698,8 @@ func (m *UserSettingMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldCreatedBy(ctx)
 	case usersetting.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case usersetting.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case usersetting.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case usersetting.FieldDeletedBy:
@@ -55556,6 +57760,13 @@ func (m *UserSettingMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case usersetting.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case usersetting.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -55783,6 +57994,9 @@ func (m *UserSettingMutation) ResetField(name string) error {
 	case usersetting.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case usersetting.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case usersetting.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -55928,6 +58142,7 @@ type UserSettingHistoryMutation struct {
 	updated_at          *time.Time
 	created_by          *string
 	updated_by          *string
+	mapping_id          *string
 	deleted_at          *time.Time
 	deleted_by          *string
 	user_id             *string
@@ -56366,6 +58581,42 @@ func (m *UserSettingHistoryMutation) UpdatedByCleared() bool {
 func (m *UserSettingHistoryMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, usersettinghistory.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *UserSettingHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *UserSettingHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the UserSettingHistory entity.
+// If the UserSettingHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *UserSettingHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -56967,7 +59218,7 @@ func (m *UserSettingHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserSettingHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.history_time != nil {
 		fields = append(fields, usersettinghistory.FieldHistoryTime)
 	}
@@ -56988,6 +59239,9 @@ func (m *UserSettingHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, usersettinghistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, usersettinghistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, usersettinghistory.FieldDeletedAt)
@@ -57047,6 +59301,8 @@ func (m *UserSettingHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case usersettinghistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case usersettinghistory.FieldMappingID:
+		return m.MappingID()
 	case usersettinghistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case usersettinghistory.FieldDeletedBy:
@@ -57094,6 +59350,8 @@ func (m *UserSettingHistoryMutation) OldField(ctx context.Context, name string) 
 		return m.OldCreatedBy(ctx)
 	case usersettinghistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case usersettinghistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case usersettinghistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case usersettinghistory.FieldDeletedBy:
@@ -57175,6 +59433,13 @@ func (m *UserSettingHistoryMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case usersettinghistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case usersettinghistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -57417,6 +59682,9 @@ func (m *UserSettingHistoryMutation) ResetField(name string) error {
 	case usersettinghistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case usersettinghistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case usersettinghistory.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -57515,6 +59783,7 @@ type WebauthnMutation struct {
 	updated_at       *time.Time
 	created_by       *string
 	updated_by       *string
+	mapping_id       *string
 	credential_id    *[]byte
 	public_key       *[]byte
 	attestation_type *string
@@ -57833,6 +60102,42 @@ func (m *WebauthnMutation) UpdatedByCleared() bool {
 func (m *WebauthnMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, webauthn.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *WebauthnMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *WebauthnMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Webauthn entity.
+// If the Webauthn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WebauthnMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *WebauthnMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetOwnerID sets the "owner_id" field.
@@ -58366,7 +60671,7 @@ func (m *WebauthnMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WebauthnMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, webauthn.FieldCreatedAt)
 	}
@@ -58378,6 +60683,9 @@ func (m *WebauthnMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, webauthn.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, webauthn.FieldMappingID)
 	}
 	if m.owner != nil {
 		fields = append(fields, webauthn.FieldOwnerID)
@@ -58428,6 +60736,8 @@ func (m *WebauthnMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case webauthn.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case webauthn.FieldMappingID:
+		return m.MappingID()
 	case webauthn.FieldOwnerID:
 		return m.OwnerID()
 	case webauthn.FieldCredentialID:
@@ -58467,6 +60777,8 @@ func (m *WebauthnMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldCreatedBy(ctx)
 	case webauthn.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case webauthn.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case webauthn.FieldOwnerID:
 		return m.OldOwnerID(ctx)
 	case webauthn.FieldCredentialID:
@@ -58525,6 +60837,13 @@ func (m *WebauthnMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case webauthn.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case webauthn.FieldOwnerID:
 		v, ok := value.(string)
@@ -58724,6 +61043,9 @@ func (m *WebauthnMutation) ResetField(name string) error {
 	case webauthn.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case webauthn.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case webauthn.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
@@ -58845,6 +61167,7 @@ type WebhookMutation struct {
 	updated_at      *time.Time
 	created_by      *string
 	updated_by      *string
+	mapping_id      *string
 	deleted_at      *time.Time
 	deleted_by      *string
 	name            *string
@@ -59167,6 +61490,42 @@ func (m *WebhookMutation) UpdatedByCleared() bool {
 func (m *WebhookMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, webhook.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *WebhookMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *WebhookMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the Webhook entity.
+// If the Webhook object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WebhookMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *WebhookMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -59903,7 +62262,7 @@ func (m *WebhookMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WebhookMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, webhook.FieldCreatedAt)
 	}
@@ -59915,6 +62274,9 @@ func (m *WebhookMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, webhook.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, webhook.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, webhook.FieldDeletedAt)
@@ -59971,6 +62333,8 @@ func (m *WebhookMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case webhook.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case webhook.FieldMappingID:
+		return m.MappingID()
 	case webhook.FieldDeletedAt:
 		return m.DeletedAt()
 	case webhook.FieldDeletedBy:
@@ -60014,6 +62378,8 @@ func (m *WebhookMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreatedBy(ctx)
 	case webhook.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case webhook.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case webhook.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case webhook.FieldDeletedBy:
@@ -60076,6 +62442,13 @@ func (m *WebhookMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case webhook.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case webhook.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -60331,6 +62704,9 @@ func (m *WebhookMutation) ResetField(name string) error {
 	case webhook.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case webhook.FieldMappingID:
+		m.ResetMappingID()
+		return nil
 	case webhook.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -60489,6 +62865,7 @@ type WebhookHistoryMutation struct {
 	updated_at      *time.Time
 	created_by      *string
 	updated_by      *string
+	mapping_id      *string
 	deleted_at      *time.Time
 	deleted_by      *string
 	owner_id        *string
@@ -60928,6 +63305,42 @@ func (m *WebhookHistoryMutation) UpdatedByCleared() bool {
 func (m *WebhookHistoryMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, webhookhistory.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *WebhookHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *WebhookHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the WebhookHistory entity.
+// If the WebhookHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WebhookHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *WebhookHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -61583,7 +63996,7 @@ func (m *WebhookHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WebhookHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.history_time != nil {
 		fields = append(fields, webhookhistory.FieldHistoryTime)
 	}
@@ -61604,6 +64017,9 @@ func (m *WebhookHistoryMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, webhookhistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, webhookhistory.FieldMappingID)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, webhookhistory.FieldDeletedAt)
@@ -61666,6 +64082,8 @@ func (m *WebhookHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case webhookhistory.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case webhookhistory.FieldMappingID:
+		return m.MappingID()
 	case webhookhistory.FieldDeletedAt:
 		return m.DeletedAt()
 	case webhookhistory.FieldDeletedBy:
@@ -61715,6 +64133,8 @@ func (m *WebhookHistoryMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldCreatedBy(ctx)
 	case webhookhistory.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case webhookhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
 	case webhookhistory.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case webhookhistory.FieldDeletedBy:
@@ -61798,6 +64218,13 @@ func (m *WebhookHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case webhookhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
 		return nil
 	case webhookhistory.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -62067,6 +64494,9 @@ func (m *WebhookHistoryMutation) ResetField(name string) error {
 		return nil
 	case webhookhistory.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case webhookhistory.FieldMappingID:
+		m.ResetMappingID()
 		return nil
 	case webhookhistory.FieldDeletedAt:
 		m.ResetDeletedAt()

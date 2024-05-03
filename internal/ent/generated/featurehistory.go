@@ -36,6 +36,8 @@ type FeatureHistory struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Global holds the value of the "global" field.
@@ -56,7 +58,7 @@ func (*FeatureHistory) scanValues(columns []string) ([]any, error) {
 			values[i] = new(enthistory.OpType)
 		case featurehistory.FieldGlobal, featurehistory.FieldEnabled:
 			values[i] = new(sql.NullBool)
-		case featurehistory.FieldID, featurehistory.FieldRef, featurehistory.FieldCreatedBy, featurehistory.FieldUpdatedBy, featurehistory.FieldDeletedBy, featurehistory.FieldName, featurehistory.FieldDescription:
+		case featurehistory.FieldID, featurehistory.FieldRef, featurehistory.FieldCreatedBy, featurehistory.FieldUpdatedBy, featurehistory.FieldDeletedBy, featurehistory.FieldMappingID, featurehistory.FieldName, featurehistory.FieldDescription:
 			values[i] = new(sql.NullString)
 		case featurehistory.FieldHistoryTime, featurehistory.FieldCreatedAt, featurehistory.FieldUpdatedAt, featurehistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -134,6 +136,12 @@ func (fh *FeatureHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
 				fh.DeletedBy = value.String
+			}
+		case featurehistory.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				fh.MappingID = value.String
 			}
 		case featurehistory.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -222,6 +230,9 @@ func (fh *FeatureHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(fh.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(fh.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(fh.Name)

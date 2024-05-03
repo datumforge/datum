@@ -78,6 +78,20 @@ func (ddc *DocumentDataCreate) SetNillableUpdatedBy(s *string) *DocumentDataCrea
 	return ddc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ddc *DocumentDataCreate) SetMappingID(s string) *DocumentDataCreate {
+	ddc.mutation.SetMappingID(s)
+	return ddc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ddc *DocumentDataCreate) SetNillableMappingID(s *string) *DocumentDataCreate {
+	if s != nil {
+		ddc.SetMappingID(*s)
+	}
+	return ddc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ddc *DocumentDataCreate) SetDeletedAt(t time.Time) *DocumentDataCreate {
 	ddc.mutation.SetDeletedAt(t)
@@ -188,6 +202,13 @@ func (ddc *DocumentDataCreate) defaults() error {
 		v := documentdata.DefaultUpdatedAt()
 		ddc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ddc.mutation.MappingID(); !ok {
+		if documentdata.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized documentdata.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := documentdata.DefaultMappingID()
+		ddc.mutation.SetMappingID(v)
+	}
 	if _, ok := ddc.mutation.ID(); !ok {
 		if documentdata.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized documentdata.DefaultID (forgotten import generated/runtime?)")
@@ -200,6 +221,9 @@ func (ddc *DocumentDataCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (ddc *DocumentDataCreate) check() error {
+	if _, ok := ddc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "DocumentData.mapping_id"`)}
+	}
 	if _, ok := ddc.mutation.TemplateID(); !ok {
 		return &ValidationError{Name: "template_id", err: errors.New(`generated: missing required field "DocumentData.template_id"`)}
 	}
@@ -260,6 +284,10 @@ func (ddc *DocumentDataCreate) createSpec() (*DocumentData, *sqlgraph.CreateSpec
 	if value, ok := ddc.mutation.UpdatedBy(); ok {
 		_spec.SetField(documentdata.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := ddc.mutation.MappingID(); ok {
+		_spec.SetField(documentdata.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ddc.mutation.DeletedAt(); ok {
 		_spec.SetField(documentdata.FieldDeletedAt, field.TypeTime, value)

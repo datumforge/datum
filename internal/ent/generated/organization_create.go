@@ -93,6 +93,20 @@ func (oc *OrganizationCreate) SetNillableUpdatedBy(s *string) *OrganizationCreat
 	return oc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (oc *OrganizationCreate) SetMappingID(s string) *OrganizationCreate {
+	oc.mutation.SetMappingID(s)
+	return oc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableMappingID(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetMappingID(*s)
+	}
+	return oc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (oc *OrganizationCreate) SetDeletedAt(t time.Time) *OrganizationCreate {
 	oc.mutation.SetDeletedAt(t)
@@ -569,6 +583,13 @@ func (oc *OrganizationCreate) defaults() error {
 		v := organization.DefaultUpdatedAt()
 		oc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := oc.mutation.MappingID(); !ok {
+		if organization.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized organization.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := organization.DefaultMappingID()
+		oc.mutation.SetMappingID(v)
+	}
 	if _, ok := oc.mutation.DisplayName(); !ok {
 		v := organization.DefaultDisplayName
 		oc.mutation.SetDisplayName(v)
@@ -593,6 +614,9 @@ func (oc *OrganizationCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (oc *OrganizationCreate) check() error {
+	if _, ok := oc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Organization.mapping_id"`)}
+	}
 	if _, ok := oc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Organization.name"`)}
 	}
@@ -668,6 +692,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := oc.mutation.UpdatedBy(); ok {
 		_spec.SetField(organization.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := oc.mutation.MappingID(); ok {
+		_spec.SetField(organization.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := oc.mutation.DeletedAt(); ok {
 		_spec.SetField(organization.FieldDeletedAt, field.TypeTime, value)

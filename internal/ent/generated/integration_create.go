@@ -80,6 +80,20 @@ func (ic *IntegrationCreate) SetNillableUpdatedBy(s *string) *IntegrationCreate 
 	return ic
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ic *IntegrationCreate) SetMappingID(s string) *IntegrationCreate {
+	ic.mutation.SetMappingID(s)
+	return ic
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableMappingID(s *string) *IntegrationCreate {
+	if s != nil {
+		ic.SetMappingID(*s)
+	}
+	return ic
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ic *IntegrationCreate) SetDeletedAt(t time.Time) *IntegrationCreate {
 	ic.mutation.SetDeletedAt(t)
@@ -263,6 +277,13 @@ func (ic *IntegrationCreate) defaults() error {
 		v := integration.DefaultUpdatedAt()
 		ic.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ic.mutation.MappingID(); !ok {
+		if integration.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized integration.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := integration.DefaultMappingID()
+		ic.mutation.SetMappingID(v)
+	}
 	if _, ok := ic.mutation.ID(); !ok {
 		if integration.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized integration.DefaultID (forgotten import generated/runtime?)")
@@ -275,6 +296,9 @@ func (ic *IntegrationCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (ic *IntegrationCreate) check() error {
+	if _, ok := ic.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Integration.mapping_id"`)}
+	}
 	if _, ok := ic.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Integration.owner_id"`)}
 	}
@@ -340,6 +364,10 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.UpdatedBy(); ok {
 		_spec.SetField(integration.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := ic.mutation.MappingID(); ok {
+		_spec.SetField(integration.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ic.mutation.DeletedAt(); ok {
 		_spec.SetField(integration.FieldDeletedAt, field.TypeTime, value)

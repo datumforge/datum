@@ -167,8 +167,6 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Or
 	m := o.client.db.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SetDisplayName(o.DisplayName).SetPersonalOrg(o.PersonalOrg)
 
 	if o.ParentOrgID != "" {
-		mock_fga.ListAny(t, o.client.fga, []string{fmt.Sprintf("organization:%s", o.ParentOrgID)})
-
 		m.SetParentID(o.ParentOrgID)
 	}
 
@@ -182,9 +180,6 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Or
 
 // MustDelete is used to cleanup, without authz checks, orgs in the database
 func (o *OrganizationCleanup) MustDelete(ctx context.Context, t *testing.T) {
-	// mock checks
-	mock_fga.ListAny(t, o.client.fga, []string{fmt.Sprintf("organization:%s", o.OrgID)})
-
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	o.client.db.Organization.DeleteOneID(o.OrgID).ExecX(ctx)
@@ -237,9 +232,6 @@ func (u *UserBuilder) MustNew(ctx context.Context, t *testing.T) *ent.User {
 
 // MustDelete is used to cleanup, without authz checks, users in the database
 func (u *UserCleanup) MustDelete(ctx context.Context, t *testing.T) {
-	// mock checks
-	mock_fga.ListAny(t, u.client.fga, []string{})
-
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	u.client.db.User.DeleteOneID(u.UserID).ExecX(ctx)
@@ -276,7 +268,6 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 	}
 
 	// mock writes
-	mock_fga.ListAny(t, om.client.fga, []string{fmt.Sprintf("organization:%s", om.OrgID)})
 	mock_fga.WriteOnce(t, om.client.fga)
 
 	orgMembers := om.client.db.OrgMembership.Create().
@@ -366,9 +357,6 @@ func (i *InviteBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Invite {
 	if rec == "" {
 		rec = gofakeit.Email()
 	}
-
-	// mock check
-	mock_fga.ListAny(t, i.client.fga, []string{fmt.Sprintf("organization:%s", orgID)})
 
 	inviteQuery := i.client.db.Invite.Create().
 		SetOwnerID(orgID).

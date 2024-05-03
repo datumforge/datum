@@ -141,6 +141,20 @@ func (thc *TemplateHistoryCreate) SetNillableDeletedBy(s *string) *TemplateHisto
 	return thc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (thc *TemplateHistoryCreate) SetMappingID(s string) *TemplateHistoryCreate {
+	thc.mutation.SetMappingID(s)
+	return thc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (thc *TemplateHistoryCreate) SetNillableMappingID(s *string) *TemplateHistoryCreate {
+	if s != nil {
+		thc.SetMappingID(*s)
+	}
+	return thc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (thc *TemplateHistoryCreate) SetOwnerID(s string) *TemplateHistoryCreate {
 	thc.mutation.SetOwnerID(s)
@@ -254,6 +268,10 @@ func (thc *TemplateHistoryCreate) defaults() {
 		v := templatehistory.DefaultUpdatedAt()
 		thc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := thc.mutation.MappingID(); !ok {
+		v := templatehistory.DefaultMappingID()
+		thc.mutation.SetMappingID(v)
+	}
 	if _, ok := thc.mutation.TemplateType(); !ok {
 		v := templatehistory.DefaultTemplateType
 		thc.mutation.SetTemplateType(v)
@@ -276,6 +294,9 @@ func (thc *TemplateHistoryCreate) check() error {
 		if err := templatehistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "TemplateHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := thc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "TemplateHistory.mapping_id"`)}
 	}
 	if _, ok := thc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "TemplateHistory.owner_id"`)}
@@ -365,6 +386,10 @@ func (thc *TemplateHistoryCreate) createSpec() (*TemplateHistory, *sqlgraph.Crea
 	if value, ok := thc.mutation.DeletedBy(); ok {
 		_spec.SetField(templatehistory.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := thc.mutation.MappingID(); ok {
+		_spec.SetField(templatehistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := thc.mutation.OwnerID(); ok {
 		_spec.SetField(templatehistory.FieldOwnerID, field.TypeString, value)

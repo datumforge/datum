@@ -13,7 +13,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 	"github.com/datumforge/datum/pkg/rout"
@@ -65,12 +64,10 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	// setup view context
-	context := ctx.Request().Context()
-	userCtx := viewer.NewContext(context, viewer.NewUserViewerFromSubject(context))
+	reqCtx := ctx.Request().Context()
 
 	// get the authenticated user from the context
-	userID, err := auth.GetUserIDFromContext(context)
+	userID, err := auth.GetUserIDFromContext(reqCtx)
 	if err != nil {
 		h.Logger.Errorw("unable to get user id from context", "error", err)
 
@@ -87,7 +84,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	}
 
 	// set the initial context based on the token
-	ctxWithToken := token.NewContextWithOrgInviteToken(userCtx, inv.Token)
+	ctxWithToken := token.NewContextWithOrgInviteToken(reqCtx, inv.Token)
 
 	// fetch the recipient and org owner based on token
 	invitedUser, err := h.getUserByInviteToken(ctxWithToken, inv.Token)
@@ -105,7 +102,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	inv.Email = invitedUser.Recipient
 
 	// get user details for logged in user
-	user, err := h.getUserBySub(userCtx, userID)
+	user, err := h.getUserDetailsByID(reqCtx, userID)
 	if err != nil {
 		h.Logger.Errorw("unable to get user for request", "error", err)
 

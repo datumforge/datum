@@ -118,6 +118,20 @@ func (uc *UserCreate) SetNillableDeletedBy(s *string) *UserCreate {
 	return uc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (uc *UserCreate) SetMappingID(s string) *UserCreate {
+	uc.mutation.SetMappingID(s)
+	return uc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableMappingID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetMappingID(*s)
+	}
+	return uc
+}
+
 // SetEmail sets the "email" field.
 func (uc *UserCreate) SetEmail(s string) *UserCreate {
 	uc.mutation.SetEmail(s)
@@ -510,6 +524,13 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := uc.mutation.MappingID(); !ok {
+		if user.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized user.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := user.DefaultMappingID()
+		uc.mutation.SetMappingID(v)
+	}
 	if _, ok := uc.mutation.AuthProvider(); !ok {
 		v := user.DefaultAuthProvider
 		uc.mutation.SetAuthProvider(v)
@@ -530,6 +551,9 @@ func (uc *UserCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
+	if _, ok := uc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "User.mapping_id"`)}
+	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "User.email"`)}
 	}
@@ -647,6 +671,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.DeletedBy(); ok {
 		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := uc.mutation.MappingID(); ok {
+		_spec.SetField(user.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)

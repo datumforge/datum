@@ -139,6 +139,20 @@ func (fhc *FeatureHistoryCreate) SetNillableDeletedBy(s *string) *FeatureHistory
 	return fhc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (fhc *FeatureHistoryCreate) SetMappingID(s string) *FeatureHistoryCreate {
+	fhc.mutation.SetMappingID(s)
+	return fhc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (fhc *FeatureHistoryCreate) SetNillableMappingID(s *string) *FeatureHistoryCreate {
+	if s != nil {
+		fhc.SetMappingID(*s)
+	}
+	return fhc
+}
+
 // SetName sets the "name" field.
 func (fhc *FeatureHistoryCreate) SetName(s string) *FeatureHistoryCreate {
 	fhc.mutation.SetName(s)
@@ -248,6 +262,10 @@ func (fhc *FeatureHistoryCreate) defaults() {
 		v := featurehistory.DefaultUpdatedAt()
 		fhc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := fhc.mutation.MappingID(); !ok {
+		v := featurehistory.DefaultMappingID()
+		fhc.mutation.SetMappingID(v)
+	}
 	if _, ok := fhc.mutation.Global(); !ok {
 		v := featurehistory.DefaultGlobal
 		fhc.mutation.SetGlobal(v)
@@ -274,6 +292,9 @@ func (fhc *FeatureHistoryCreate) check() error {
 		if err := featurehistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "FeatureHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := fhc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "FeatureHistory.mapping_id"`)}
 	}
 	if _, ok := fhc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "FeatureHistory.name"`)}
@@ -355,6 +376,10 @@ func (fhc *FeatureHistoryCreate) createSpec() (*FeatureHistory, *sqlgraph.Create
 	if value, ok := fhc.mutation.DeletedBy(); ok {
 		_spec.SetField(featurehistory.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := fhc.mutation.MappingID(); ok {
+		_spec.SetField(featurehistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := fhc.mutation.Name(); ok {
 		_spec.SetField(featurehistory.FieldName, field.TypeString, value)

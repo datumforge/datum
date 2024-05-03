@@ -34,6 +34,8 @@ type GroupSettingHistory struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -64,7 +66,7 @@ func (*GroupSettingHistory) scanValues(columns []string) ([]any, error) {
 			values[i] = new(enthistory.OpType)
 		case groupsettinghistory.FieldSyncToSlack, groupsettinghistory.FieldSyncToGithub:
 			values[i] = new(sql.NullBool)
-		case groupsettinghistory.FieldID, groupsettinghistory.FieldRef, groupsettinghistory.FieldCreatedBy, groupsettinghistory.FieldUpdatedBy, groupsettinghistory.FieldDeletedBy, groupsettinghistory.FieldVisibility, groupsettinghistory.FieldJoinPolicy, groupsettinghistory.FieldGroupID:
+		case groupsettinghistory.FieldID, groupsettinghistory.FieldRef, groupsettinghistory.FieldCreatedBy, groupsettinghistory.FieldUpdatedBy, groupsettinghistory.FieldMappingID, groupsettinghistory.FieldDeletedBy, groupsettinghistory.FieldVisibility, groupsettinghistory.FieldJoinPolicy, groupsettinghistory.FieldGroupID:
 			values[i] = new(sql.NullString)
 		case groupsettinghistory.FieldHistoryTime, groupsettinghistory.FieldCreatedAt, groupsettinghistory.FieldUpdatedAt, groupsettinghistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -130,6 +132,12 @@ func (gsh *GroupSettingHistory) assignValues(columns []string, values []any) err
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				gsh.UpdatedBy = value.String
+			}
+		case groupsettinghistory.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				gsh.MappingID = value.String
 			}
 		case groupsettinghistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -237,6 +245,9 @@ func (gsh *GroupSettingHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(gsh.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(gsh.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(gsh.DeletedAt.Format(time.ANSIC))

@@ -23,6 +23,8 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
+	// FieldMappingID holds the string denoting the mapping_id field in the database.
+	FieldMappingID = "mapping_id"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -205,6 +207,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
+	FieldMappingID,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldName,
@@ -262,6 +265,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
+	DefaultMappingID func() string
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// DefaultDisplayName holds the default value on creation for the "display_name" field.
@@ -304,6 +309,11 @@ func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedBy orders the results by the updated_by field.
 func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
+}
+
+// ByMappingID orders the results by the mapping_id field.
+func ByMappingID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMappingID, opts...).ToFunc()
 }
 
 // ByDeletedAt orders the results by the deleted_at field.

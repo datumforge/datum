@@ -140,6 +140,20 @@ func (uhc *UserHistoryCreate) SetNillableDeletedBy(s *string) *UserHistoryCreate
 	return uhc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (uhc *UserHistoryCreate) SetMappingID(s string) *UserHistoryCreate {
+	uhc.mutation.SetMappingID(s)
+	return uhc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (uhc *UserHistoryCreate) SetNillableMappingID(s *string) *UserHistoryCreate {
+	if s != nil {
+		uhc.SetMappingID(*s)
+	}
+	return uhc
+}
+
 // SetEmail sets the "email" field.
 func (uhc *UserHistoryCreate) SetEmail(s string) *UserHistoryCreate {
 	uhc.mutation.SetEmail(s)
@@ -337,6 +351,10 @@ func (uhc *UserHistoryCreate) defaults() {
 		v := userhistory.DefaultUpdatedAt()
 		uhc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := uhc.mutation.MappingID(); !ok {
+		v := userhistory.DefaultMappingID()
+		uhc.mutation.SetMappingID(v)
+	}
 	if _, ok := uhc.mutation.AuthProvider(); !ok {
 		v := userhistory.DefaultAuthProvider
 		uhc.mutation.SetAuthProvider(v)
@@ -363,6 +381,9 @@ func (uhc *UserHistoryCreate) check() error {
 		if err := userhistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "UserHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := uhc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "UserHistory.mapping_id"`)}
 	}
 	if _, ok := uhc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "UserHistory.email"`)}
@@ -460,6 +481,10 @@ func (uhc *UserHistoryCreate) createSpec() (*UserHistory, *sqlgraph.CreateSpec) 
 	if value, ok := uhc.mutation.DeletedBy(); ok {
 		_spec.SetField(userhistory.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := uhc.mutation.MappingID(); ok {
+		_spec.SetField(userhistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := uhc.mutation.Email(); ok {
 		_spec.SetField(userhistory.FieldEmail, field.TypeString, value)

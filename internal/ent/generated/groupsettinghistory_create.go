@@ -112,6 +112,20 @@ func (gshc *GroupSettingHistoryCreate) SetNillableUpdatedBy(s *string) *GroupSet
 	return gshc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (gshc *GroupSettingHistoryCreate) SetMappingID(s string) *GroupSettingHistoryCreate {
+	gshc.mutation.SetMappingID(s)
+	return gshc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (gshc *GroupSettingHistoryCreate) SetNillableMappingID(s *string) *GroupSettingHistoryCreate {
+	if s != nil {
+		gshc.SetMappingID(*s)
+	}
+	return gshc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gshc *GroupSettingHistoryCreate) SetDeletedAt(t time.Time) *GroupSettingHistoryCreate {
 	gshc.mutation.SetDeletedAt(t)
@@ -277,6 +291,10 @@ func (gshc *GroupSettingHistoryCreate) defaults() {
 		v := groupsettinghistory.DefaultUpdatedAt()
 		gshc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := gshc.mutation.MappingID(); !ok {
+		v := groupsettinghistory.DefaultMappingID()
+		gshc.mutation.SetMappingID(v)
+	}
 	if _, ok := gshc.mutation.Visibility(); !ok {
 		v := groupsettinghistory.DefaultVisibility
 		gshc.mutation.SetVisibility(v)
@@ -315,6 +333,9 @@ func (gshc *GroupSettingHistoryCreate) check() error {
 		if err := groupsettinghistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "GroupSettingHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := gshc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "GroupSettingHistory.mapping_id"`)}
 	}
 	if _, ok := gshc.mutation.Visibility(); !ok {
 		return &ValidationError{Name: "visibility", err: errors.New(`generated: missing required field "GroupSettingHistory.visibility"`)}
@@ -395,6 +416,10 @@ func (gshc *GroupSettingHistoryCreate) createSpec() (*GroupSettingHistory, *sqlg
 	if value, ok := gshc.mutation.UpdatedBy(); ok {
 		_spec.SetField(groupsettinghistory.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := gshc.mutation.MappingID(); ok {
+		_spec.SetField(groupsettinghistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := gshc.mutation.DeletedAt(); ok {
 		_spec.SetField(groupsettinghistory.FieldDeletedAt, field.TypeTime, value)

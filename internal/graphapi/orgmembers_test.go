@@ -175,7 +175,7 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 			orgID:     "not-a-valid-org-id",
 			userID:    testUser1.ID,
 			role:      enums.RoleMember,
-			checkOrg:  true,
+			checkOrg:  false,
 			checkRole: true,
 			errMsg:    "organization not found",
 		},

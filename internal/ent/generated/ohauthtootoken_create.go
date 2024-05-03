@@ -22,6 +22,20 @@ type OhAuthTooTokenCreate struct {
 	hooks    []Hook
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (oattc *OhAuthTooTokenCreate) SetMappingID(s string) *OhAuthTooTokenCreate {
+	oattc.mutation.SetMappingID(s)
+	return oattc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (oattc *OhAuthTooTokenCreate) SetNillableMappingID(s *string) *OhAuthTooTokenCreate {
+	if s != nil {
+		oattc.SetMappingID(*s)
+	}
+	return oattc
+}
+
 // SetClientID sets the "client_id" field.
 func (oattc *OhAuthTooTokenCreate) SetClientID(s string) *OhAuthTooTokenCreate {
 	oattc.mutation.SetClientID(s)
@@ -181,6 +195,10 @@ func (oattc *OhAuthTooTokenCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (oattc *OhAuthTooTokenCreate) defaults() {
+	if _, ok := oattc.mutation.MappingID(); !ok {
+		v := ohauthtootoken.DefaultMappingID()
+		oattc.mutation.SetMappingID(v)
+	}
 	if _, ok := oattc.mutation.LastUsed(); !ok {
 		v := ohauthtootoken.DefaultLastUsed()
 		oattc.mutation.SetLastUsed(v)
@@ -193,6 +211,9 @@ func (oattc *OhAuthTooTokenCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (oattc *OhAuthTooTokenCreate) check() error {
+	if _, ok := oattc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "OhAuthTooToken.mapping_id"`)}
+	}
 	if _, ok := oattc.mutation.ClientID(); !ok {
 		return &ValidationError{Name: "client_id", err: errors.New(`generated: missing required field "OhAuthTooToken.client_id"`)}
 	}
@@ -285,6 +306,10 @@ func (oattc *OhAuthTooTokenCreate) createSpec() (*OhAuthTooToken, *sqlgraph.Crea
 	if id, ok := oattc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := oattc.mutation.MappingID(); ok {
+		_spec.SetField(ohauthtootoken.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := oattc.mutation.ClientID(); ok {
 		_spec.SetField(ohauthtootoken.FieldClientID, field.TypeString, value)

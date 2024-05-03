@@ -33,6 +33,8 @@ type OrgMembershipHistory struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -53,7 +55,7 @@ func (*OrgMembershipHistory) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case orgmembershiphistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
-		case orgmembershiphistory.FieldID, orgmembershiphistory.FieldRef, orgmembershiphistory.FieldCreatedBy, orgmembershiphistory.FieldUpdatedBy, orgmembershiphistory.FieldDeletedBy, orgmembershiphistory.FieldRole, orgmembershiphistory.FieldOrganizationID, orgmembershiphistory.FieldUserID:
+		case orgmembershiphistory.FieldID, orgmembershiphistory.FieldRef, orgmembershiphistory.FieldCreatedBy, orgmembershiphistory.FieldUpdatedBy, orgmembershiphistory.FieldMappingID, orgmembershiphistory.FieldDeletedBy, orgmembershiphistory.FieldRole, orgmembershiphistory.FieldOrganizationID, orgmembershiphistory.FieldUserID:
 			values[i] = new(sql.NullString)
 		case orgmembershiphistory.FieldHistoryTime, orgmembershiphistory.FieldCreatedAt, orgmembershiphistory.FieldUpdatedAt, orgmembershiphistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -119,6 +121,12 @@ func (omh *OrgMembershipHistory) assignValues(columns []string, values []any) er
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				omh.UpdatedBy = value.String
+			}
+		case orgmembershiphistory.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				omh.MappingID = value.String
 			}
 		case orgmembershiphistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -206,6 +214,9 @@ func (omh *OrgMembershipHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(omh.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(omh.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(omh.DeletedAt.Format(time.ANSIC))

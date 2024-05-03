@@ -112,6 +112,20 @@ func (ehc *EntitlementHistoryCreate) SetNillableUpdatedBy(s *string) *Entitlemen
 	return ehc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ehc *EntitlementHistoryCreate) SetMappingID(s string) *EntitlementHistoryCreate {
+	ehc.mutation.SetMappingID(s)
+	return ehc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ehc *EntitlementHistoryCreate) SetNillableMappingID(s *string) *EntitlementHistoryCreate {
+	if s != nil {
+		ehc.SetMappingID(*s)
+	}
+	return ehc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ehc *EntitlementHistoryCreate) SetDeletedAt(t time.Time) *EntitlementHistoryCreate {
 	ehc.mutation.SetDeletedAt(t)
@@ -291,6 +305,10 @@ func (ehc *EntitlementHistoryCreate) defaults() {
 		v := entitlementhistory.DefaultUpdatedAt()
 		ehc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ehc.mutation.MappingID(); !ok {
+		v := entitlementhistory.DefaultMappingID()
+		ehc.mutation.SetMappingID(v)
+	}
 	if _, ok := ehc.mutation.Tier(); !ok {
 		v := entitlementhistory.DefaultTier
 		ehc.mutation.SetTier(v)
@@ -321,6 +339,9 @@ func (ehc *EntitlementHistoryCreate) check() error {
 		if err := entitlementhistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "EntitlementHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := ehc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "EntitlementHistory.mapping_id"`)}
 	}
 	if _, ok := ehc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "EntitlementHistory.owner_id"`)}
@@ -402,6 +423,10 @@ func (ehc *EntitlementHistoryCreate) createSpec() (*EntitlementHistory, *sqlgrap
 	if value, ok := ehc.mutation.UpdatedBy(); ok {
 		_spec.SetField(entitlementhistory.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := ehc.mutation.MappingID(); ok {
+		_spec.SetField(entitlementhistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ehc.mutation.DeletedAt(); ok {
 		_spec.SetField(entitlementhistory.FieldDeletedAt, field.TypeTime, value)

@@ -76,7 +76,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	props := ph.NewProperties().
 		Set("user_id", user.ID).
 		Set("email", user.Email).
-		Set("organization_id", claims.OrgID).
+		Set("organization_id", user.Edges.Setting.Edges.DefaultOrg.ID). // user is logged into their default org
 		Set("auth_provider", user.AuthProvider)
 
 	h.AnalyticsClient.Event("user_authenticated", props)
@@ -103,17 +103,18 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, out)
 }
 
+// createClaims creates the claims for the JWT token using the mapping ids for the user and organization
 func createClaims(u *generated.User) *tokens.Claims {
 	orgID := ""
 	if u.Edges.Setting.Edges.DefaultOrg != nil {
-		orgID = u.Edges.Setting.Edges.DefaultOrg.ID
+		orgID = u.Edges.Setting.Edges.DefaultOrg.MappingID
 	}
 
 	return &tokens.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: u.ID,
+			Subject: u.MappingID,
 		},
-		UserID: u.ID,
+		UserID: u.MappingID,
 		OrgID:  orgID,
 	}
 }

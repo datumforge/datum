@@ -41,7 +41,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	// check user in the database, sub == claims subject and ensure only one record is returned
-	user, err := h.getUserBySub(ctx.Request().Context(), claims.Subject)
+	user, err := h.getUserByMappingID(ctx.Request().Context(), claims.Subject)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)
@@ -56,7 +56,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	// UserID is not on the refresh token, so we need to set it now
-	claims.UserID = user.ID
+	claims.UserID = user.MappingID
 
 	accessToken, refreshToken, err := h.TM.CreateTokenPair(claims)
 	if err != nil {

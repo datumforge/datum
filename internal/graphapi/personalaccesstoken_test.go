@@ -204,7 +204,7 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			if tc.errorMsg == "" {
+			if len(tc.input.OrganizationIDs) > 0 {
 				// mock a call to check orgs
 				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
 			}
@@ -238,7 +238,7 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 					assert.Contains(t, tc.input.OrganizationIDs, orgID.ID)
 				}
 			} else {
-				assert.Nil(t, resp.CreatePersonalAccessToken.PersonalAccessToken.Organizations)
+				assert.Len(t, resp.CreatePersonalAccessToken.PersonalAccessToken.Organizations, 0)
 			}
 
 			// ensure the owner is the user that made the request

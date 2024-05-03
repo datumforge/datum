@@ -18,6 +18,8 @@ type OhAuthTooToken struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// ClientID holds the value of the "client_id" field.
 	ClientID string `json:"client_id,omitempty"`
 	// Scopes holds the value of the "scopes" field.
@@ -91,7 +93,7 @@ func (*OhAuthTooToken) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case ohauthtootoken.FieldClaimsEmailVerified:
 			values[i] = new(sql.NullBool)
-		case ohauthtootoken.FieldID, ohauthtootoken.FieldClientID, ohauthtootoken.FieldNonce, ohauthtootoken.FieldClaimsUserID, ohauthtootoken.FieldClaimsUsername, ohauthtootoken.FieldClaimsEmail, ohauthtootoken.FieldClaimsPreferredUsername, ohauthtootoken.FieldConnectorID:
+		case ohauthtootoken.FieldID, ohauthtootoken.FieldMappingID, ohauthtootoken.FieldClientID, ohauthtootoken.FieldNonce, ohauthtootoken.FieldClaimsUserID, ohauthtootoken.FieldClaimsUsername, ohauthtootoken.FieldClaimsEmail, ohauthtootoken.FieldClaimsPreferredUsername, ohauthtootoken.FieldConnectorID:
 			values[i] = new(sql.NullString)
 		case ohauthtootoken.FieldLastUsed:
 			values[i] = new(sql.NullTime)
@@ -115,6 +117,12 @@ func (oatt *OhAuthTooToken) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				oatt.ID = value.String
+			}
+		case ohauthtootoken.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				oatt.MappingID = value.String
 			}
 		case ohauthtootoken.FieldClientID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -240,6 +248,9 @@ func (oatt *OhAuthTooToken) String() string {
 	var builder strings.Builder
 	builder.WriteString("OhAuthTooToken(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", oatt.ID))
+	builder.WriteString("mapping_id=")
+	builder.WriteString(oatt.MappingID)
+	builder.WriteString(", ")
 	builder.WriteString("client_id=")
 	builder.WriteString(oatt.ClientID)
 	builder.WriteString(", ")

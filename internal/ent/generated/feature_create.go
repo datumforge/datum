@@ -109,6 +109,20 @@ func (fc *FeatureCreate) SetNillableDeletedBy(s *string) *FeatureCreate {
 	return fc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (fc *FeatureCreate) SetMappingID(s string) *FeatureCreate {
+	fc.mutation.SetMappingID(s)
+	return fc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (fc *FeatureCreate) SetNillableMappingID(s *string) *FeatureCreate {
+	if s != nil {
+		fc.SetMappingID(*s)
+	}
+	return fc
+}
+
 // SetName sets the "name" field.
 func (fc *FeatureCreate) SetName(s string) *FeatureCreate {
 	fc.mutation.SetName(s)
@@ -297,6 +311,13 @@ func (fc *FeatureCreate) defaults() error {
 		v := feature.DefaultUpdatedAt()
 		fc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := fc.mutation.MappingID(); !ok {
+		if feature.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized feature.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := feature.DefaultMappingID()
+		fc.mutation.SetMappingID(v)
+	}
 	if _, ok := fc.mutation.Global(); !ok {
 		v := feature.DefaultGlobal
 		fc.mutation.SetGlobal(v)
@@ -317,6 +338,9 @@ func (fc *FeatureCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (fc *FeatureCreate) check() error {
+	if _, ok := fc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Feature.mapping_id"`)}
+	}
 	if _, ok := fc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Feature.name"`)}
 	}
@@ -390,6 +414,10 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 	if value, ok := fc.mutation.DeletedBy(); ok {
 		_spec.SetField(feature.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := fc.mutation.MappingID(); ok {
+		_spec.SetField(feature.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := fc.mutation.Name(); ok {
 		_spec.SetField(feature.FieldName, field.TypeString, value)

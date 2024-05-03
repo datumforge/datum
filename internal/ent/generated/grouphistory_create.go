@@ -139,6 +139,20 @@ func (ghc *GroupHistoryCreate) SetNillableDeletedBy(s *string) *GroupHistoryCrea
 	return ghc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ghc *GroupHistoryCreate) SetMappingID(s string) *GroupHistoryCreate {
+	ghc.mutation.SetMappingID(s)
+	return ghc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ghc *GroupHistoryCreate) SetNillableMappingID(s *string) *GroupHistoryCreate {
+	if s != nil {
+		ghc.SetMappingID(*s)
+	}
+	return ghc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (ghc *GroupHistoryCreate) SetOwnerID(s string) *GroupHistoryCreate {
 	ghc.mutation.SetOwnerID(s)
@@ -268,6 +282,10 @@ func (ghc *GroupHistoryCreate) defaults() {
 		v := grouphistory.DefaultUpdatedAt()
 		ghc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ghc.mutation.MappingID(); !ok {
+		v := grouphistory.DefaultMappingID()
+		ghc.mutation.SetMappingID(v)
+	}
 	if _, ok := ghc.mutation.DisplayName(); !ok {
 		v := grouphistory.DefaultDisplayName
 		ghc.mutation.SetDisplayName(v)
@@ -290,6 +308,9 @@ func (ghc *GroupHistoryCreate) check() error {
 		if err := grouphistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "GroupHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := ghc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "GroupHistory.mapping_id"`)}
 	}
 	if _, ok := ghc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "GroupHistory.owner_id"`)}
@@ -371,6 +392,10 @@ func (ghc *GroupHistoryCreate) createSpec() (*GroupHistory, *sqlgraph.CreateSpec
 	if value, ok := ghc.mutation.DeletedBy(); ok {
 		_spec.SetField(grouphistory.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := ghc.mutation.MappingID(); ok {
+		_spec.SetField(grouphistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ghc.mutation.OwnerID(); ok {
 		_spec.SetField(grouphistory.FieldOwnerID, field.TypeString, value)

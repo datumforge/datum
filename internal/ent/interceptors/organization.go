@@ -8,6 +8,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
@@ -67,7 +68,17 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 		}
 	}
 
-	// by pass checks on invite
+	// return early if no organizations
+	if len(orgs) == 0 {
+		return orgs, nil
+	}
+
+	// by pass checks on invite or pre-allowed request
+	_, allow := privacy.DecisionFromContext(ctx)
+	if allow {
+		return orgs, nil
+	}
+
 	if rule.ContextHasPrivacyTokenOfType(ctx, &token.OrgInviteToken{}) || rule.ContextHasPrivacyTokenOfType(ctx, &token.SignUpToken{}) {
 		if len(orgs) != 1 {
 			q.Logger.Errorw("unexpected number of orgs on token request")

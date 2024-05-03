@@ -9,7 +9,6 @@ import (
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/pkg/sessions"
-	"github.com/datumforge/datum/pkg/tokens"
 )
 
 const (
@@ -70,17 +69,6 @@ func GetRefreshToken(c echo.Context) (string, error) {
 	}
 
 	return cookie.Value, nil
-}
-
-// GetClaims fetches and parses datum claims from the echo context. Returns an
-// error if no claims exist on the context
-func GetClaims(c echo.Context) (*tokens.Claims, error) {
-	claims, ok := c.Get(ContextUserClaims.name).(*tokens.Claims)
-	if !ok {
-		return nil, ErrNoClaims
-	}
-
-	return claims, nil
 }
 
 // AuthContextFromRequest creates a context from the echo request context, copying fields

@@ -107,6 +107,20 @@ func (fc *FileCreate) SetNillableDeletedBy(s *string) *FileCreate {
 	return fc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (fc *FileCreate) SetMappingID(s string) *FileCreate {
+	fc.mutation.SetMappingID(s)
+	return fc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (fc *FileCreate) SetNillableMappingID(s *string) *FileCreate {
+	if s != nil {
+		fc.SetMappingID(*s)
+	}
+	return fc
+}
+
 // SetFileName sets the "file_name" field.
 func (fc *FileCreate) SetFileName(s string) *FileCreate {
 	fc.mutation.SetFileName(s)
@@ -287,6 +301,13 @@ func (fc *FileCreate) defaults() error {
 		v := file.DefaultUpdatedAt()
 		fc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := fc.mutation.MappingID(); !ok {
+		if file.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized file.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := file.DefaultMappingID()
+		fc.mutation.SetMappingID(v)
+	}
 	if _, ok := fc.mutation.ID(); !ok {
 		if file.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized file.DefaultID (forgotten import generated/runtime?)")
@@ -299,6 +320,9 @@ func (fc *FileCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (fc *FileCreate) check() error {
+	if _, ok := fc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "File.mapping_id"`)}
+	}
 	if _, ok := fc.mutation.FileName(); !ok {
 		return &ValidationError{Name: "file_name", err: errors.New(`generated: missing required field "File.file_name"`)}
 	}
@@ -375,6 +399,10 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	if value, ok := fc.mutation.DeletedBy(); ok {
 		_spec.SetField(file.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := fc.mutation.MappingID(); ok {
+		_spec.SetField(file.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := fc.mutation.FileName(); ok {
 		_spec.SetField(file.FieldFileName, field.TypeString, value)

@@ -14,6 +14,8 @@ const (
 	Label = "oh_auth_too_token"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldMappingID holds the string denoting the mapping_id field in the database.
+	FieldMappingID = "mapping_id"
 	// FieldClientID holds the string denoting the client_id field in the database.
 	FieldClientID = "client_id"
 	// FieldScopes holds the string denoting the scopes field in the database.
@@ -59,6 +61,7 @@ const (
 // Columns holds all SQL columns for ohauthtootoken fields.
 var Columns = []string{
 	FieldID,
+	FieldMappingID,
 	FieldClientID,
 	FieldScopes,
 	FieldNonce,
@@ -93,6 +96,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
+	DefaultMappingID func() string
 	// ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
 	ClientIDValidator func(string) error
 	// NonceValidator is a validator for the "nonce" field. It is called by the builders before save.
@@ -117,6 +122,11 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByMappingID orders the results by the mapping_id field.
+func ByMappingID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMappingID, opts...).ToFunc()
 }
 
 // ByClientID orders the results by the client_id field.

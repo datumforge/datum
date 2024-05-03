@@ -9,8 +9,10 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -19,7 +21,7 @@ import (
 // SessionSkipperFunc is the function that determines if the session check should be skipped
 // due to the request being a PAT or API Token auth request
 var SessionSkipperFunc = func(c echo.Context) bool {
-	return c.Get(auth.GetContextName(auth.ContextAuthType)) != auth.JWTAuthentication
+	return auth.GetAuthTypeFromEchoContext(c) != auth.JWTAuthentication
 }
 
 // Authenticate is a middleware function that is used to authenticate requests - it is not applied to all routes so be cognizant of that
@@ -75,10 +77,12 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 			}
 
 			// Add claims to context for use in downstream processing and continue handlers
-			c.Set(auth.GetContextName(auth.ContextUserClaims), claims)
+			au, err := createAuthenticatedUser(c.Request().Context(), conf.DBClient, claims, authType)
+			if err != nil {
+				return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
+			}
 
-			// Set auth type in context
-			c.Set(auth.GetContextName(auth.ContextAuthType), authType)
+			auth.SetAuthenticatedUserContext(c, au)
 
 			return next(c)
 		}
@@ -124,9 +128,34 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 	}
 }
 
+func createAuthenticatedUser(ctx context.Context, dbClient *generated.Client, claims *tokens.Claims, authType auth.AuthenticationType) (*auth.AuthenticatedUser, error) {
+	// get the user ID from the claims
+	mappingID := claims.UserID
+	mappingOrgID := claims.OrgID
+
+	user, err := dbClient.User.Query().Where(user.MappingID(mappingID)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// all the query to get the organization, need to bypass the authz filter to get the org
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	org, err := dbClient.Organization.Query().Where(organization.MappingID(mappingOrgID)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &auth.AuthenticatedUser{
+		SubjectID:          user.ID,
+		OrganizationID:     org.ID,
+		AuthenticationType: authType,
+	}, nil
+}
+
 // checkToken checks the bearer authorization token against the database to see if the provided
 // token is an active personal access token. If the token is valid, the claims are returned
-func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Claims, string, error) {
+func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Claims, auth.AuthenticationType, error) {
 	// allow check to bypass privacy rules
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 

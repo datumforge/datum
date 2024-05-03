@@ -80,6 +80,20 @@ func (ec *EntitlementCreate) SetNillableUpdatedBy(s *string) *EntitlementCreate 
 	return ec
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ec *EntitlementCreate) SetMappingID(s string) *EntitlementCreate {
+	ec.mutation.SetMappingID(s)
+	return ec
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableMappingID(s *string) *EntitlementCreate {
+	if s != nil {
+		ec.SetMappingID(*s)
+	}
+	return ec
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ec *EntitlementCreate) SetDeletedAt(t time.Time) *EntitlementCreate {
 	ec.mutation.SetDeletedAt(t)
@@ -298,6 +312,13 @@ func (ec *EntitlementCreate) defaults() error {
 		v := entitlement.DefaultUpdatedAt()
 		ec.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ec.mutation.MappingID(); !ok {
+		if entitlement.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized entitlement.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := entitlement.DefaultMappingID()
+		ec.mutation.SetMappingID(v)
+	}
 	if _, ok := ec.mutation.Tier(); !ok {
 		v := entitlement.DefaultTier
 		ec.mutation.SetTier(v)
@@ -322,6 +343,9 @@ func (ec *EntitlementCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (ec *EntitlementCreate) check() error {
+	if _, ok := ec.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Entitlement.mapping_id"`)}
+	}
 	if _, ok := ec.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Entitlement.owner_id"`)}
 	}
@@ -393,6 +417,10 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.UpdatedBy(); ok {
 		_spec.SetField(entitlement.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := ec.mutation.MappingID(); ok {
+		_spec.SetField(entitlement.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ec.mutation.DeletedAt(); ok {
 		_spec.SetField(entitlement.FieldDeletedAt, field.TypeTime, value)

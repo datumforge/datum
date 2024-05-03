@@ -77,6 +77,20 @@ func (wc *WebauthnCreate) SetNillableUpdatedBy(s *string) *WebauthnCreate {
 	return wc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (wc *WebauthnCreate) SetMappingID(s string) *WebauthnCreate {
+	wc.mutation.SetMappingID(s)
+	return wc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableMappingID(s *string) *WebauthnCreate {
+	if s != nil {
+		wc.SetMappingID(*s)
+	}
+	return wc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (wc *WebauthnCreate) SetOwnerID(s string) *WebauthnCreate {
 	wc.mutation.SetOwnerID(s)
@@ -253,6 +267,13 @@ func (wc *WebauthnCreate) defaults() error {
 		v := webauthn.DefaultUpdatedAt()
 		wc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := wc.mutation.MappingID(); !ok {
+		if webauthn.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized webauthn.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := webauthn.DefaultMappingID()
+		wc.mutation.SetMappingID(v)
+	}
 	if _, ok := wc.mutation.BackupEligible(); !ok {
 		v := webauthn.DefaultBackupEligible
 		wc.mutation.SetBackupEligible(v)
@@ -281,6 +302,9 @@ func (wc *WebauthnCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (wc *WebauthnCreate) check() error {
+	if _, ok := wc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Webauthn.mapping_id"`)}
+	}
 	if _, ok := wc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Webauthn.owner_id"`)}
 	}
@@ -359,6 +383,10 @@ func (wc *WebauthnCreate) createSpec() (*Webauthn, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.UpdatedBy(); ok {
 		_spec.SetField(webauthn.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := wc.mutation.MappingID(); ok {
+		_spec.SetField(webauthn.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := wc.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeBytes, value)

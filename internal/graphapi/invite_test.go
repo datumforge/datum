@@ -194,7 +194,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			recipient:     existingUser.Email,
 			orgID:         "boommeowboom",
 			role:          enums.RoleMember,
-			accessAllowed: true,
+			accessAllowed: false,
 			wantErr:       true,
 		},
 	}
@@ -205,7 +205,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 
 			mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
 
-			if tc.accessAllowed {
+			if !tc.wantErr {
 				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})
 			}
 

@@ -105,6 +105,11 @@ func DeletedBy(v string) predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldEQ(FieldDeletedBy, v))
 }
 
+// MappingID applies equality check predicate on the "mapping_id" field. It's identical to MappingIDEQ.
+func MappingID(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEQ(FieldMappingID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldEQ(FieldName, v))
@@ -633,6 +638,71 @@ func DeletedByEqualFold(v string) predicate.FeatureHistory {
 // DeletedByContainsFold applies the ContainsFold predicate on the "deleted_by" field.
 func DeletedByContainsFold(v string) predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldContainsFold(FieldDeletedBy, v))
+}
+
+// MappingIDEQ applies the EQ predicate on the "mapping_id" field.
+func MappingIDEQ(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEQ(FieldMappingID, v))
+}
+
+// MappingIDNEQ applies the NEQ predicate on the "mapping_id" field.
+func MappingIDNEQ(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNEQ(FieldMappingID, v))
+}
+
+// MappingIDIn applies the In predicate on the "mapping_id" field.
+func MappingIDIn(vs ...string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldIn(FieldMappingID, vs...))
+}
+
+// MappingIDNotIn applies the NotIn predicate on the "mapping_id" field.
+func MappingIDNotIn(vs ...string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNotIn(FieldMappingID, vs...))
+}
+
+// MappingIDGT applies the GT predicate on the "mapping_id" field.
+func MappingIDGT(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldGT(FieldMappingID, v))
+}
+
+// MappingIDGTE applies the GTE predicate on the "mapping_id" field.
+func MappingIDGTE(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldGTE(FieldMappingID, v))
+}
+
+// MappingIDLT applies the LT predicate on the "mapping_id" field.
+func MappingIDLT(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldLT(FieldMappingID, v))
+}
+
+// MappingIDLTE applies the LTE predicate on the "mapping_id" field.
+func MappingIDLTE(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldLTE(FieldMappingID, v))
+}
+
+// MappingIDContains applies the Contains predicate on the "mapping_id" field.
+func MappingIDContains(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldContains(FieldMappingID, v))
+}
+
+// MappingIDHasPrefix applies the HasPrefix predicate on the "mapping_id" field.
+func MappingIDHasPrefix(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldHasPrefix(FieldMappingID, v))
+}
+
+// MappingIDHasSuffix applies the HasSuffix predicate on the "mapping_id" field.
+func MappingIDHasSuffix(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldHasSuffix(FieldMappingID, v))
+}
+
+// MappingIDEqualFold applies the EqualFold predicate on the "mapping_id" field.
+func MappingIDEqualFold(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEqualFold(FieldMappingID, v))
+}
+
+// MappingIDContainsFold applies the ContainsFold predicate on the "mapping_id" field.
+func MappingIDContainsFold(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.

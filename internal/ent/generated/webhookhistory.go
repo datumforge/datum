@@ -32,6 +32,8 @@ type WebhookHistory struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -74,7 +76,7 @@ func (*WebhookHistory) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case webhookhistory.FieldFailures:
 			values[i] = new(sql.NullInt64)
-		case webhookhistory.FieldID, webhookhistory.FieldRef, webhookhistory.FieldCreatedBy, webhookhistory.FieldUpdatedBy, webhookhistory.FieldDeletedBy, webhookhistory.FieldOwnerID, webhookhistory.FieldName, webhookhistory.FieldDescription, webhookhistory.FieldDestinationURL, webhookhistory.FieldCallback, webhookhistory.FieldLastError, webhookhistory.FieldLastResponse:
+		case webhookhistory.FieldID, webhookhistory.FieldRef, webhookhistory.FieldCreatedBy, webhookhistory.FieldUpdatedBy, webhookhistory.FieldMappingID, webhookhistory.FieldDeletedBy, webhookhistory.FieldOwnerID, webhookhistory.FieldName, webhookhistory.FieldDescription, webhookhistory.FieldDestinationURL, webhookhistory.FieldCallback, webhookhistory.FieldLastError, webhookhistory.FieldLastResponse:
 			values[i] = new(sql.NullString)
 		case webhookhistory.FieldHistoryTime, webhookhistory.FieldCreatedAt, webhookhistory.FieldUpdatedAt, webhookhistory.FieldDeletedAt, webhookhistory.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
@@ -140,6 +142,12 @@ func (wh *WebhookHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				wh.UpdatedBy = value.String
+			}
+		case webhookhistory.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				wh.MappingID = value.String
 			}
 		case webhookhistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -275,6 +283,9 @@ func (wh *WebhookHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(wh.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(wh.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(wh.DeletedAt.Format(time.ANSIC))

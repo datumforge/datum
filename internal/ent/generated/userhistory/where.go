@@ -106,6 +106,11 @@ func DeletedBy(v string) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldEQ(FieldDeletedBy, v))
 }
 
+// MappingID applies equality check predicate on the "mapping_id" field. It's identical to MappingIDEQ.
+func MappingID(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldEQ(FieldMappingID, v))
+}
+
 // Email applies equality check predicate on the "email" field. It's identical to EmailEQ.
 func Email(v string) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldEQ(FieldEmail, v))
@@ -664,6 +669,71 @@ func DeletedByEqualFold(v string) predicate.UserHistory {
 // DeletedByContainsFold applies the ContainsFold predicate on the "deleted_by" field.
 func DeletedByContainsFold(v string) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldContainsFold(FieldDeletedBy, v))
+}
+
+// MappingIDEQ applies the EQ predicate on the "mapping_id" field.
+func MappingIDEQ(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldEQ(FieldMappingID, v))
+}
+
+// MappingIDNEQ applies the NEQ predicate on the "mapping_id" field.
+func MappingIDNEQ(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldNEQ(FieldMappingID, v))
+}
+
+// MappingIDIn applies the In predicate on the "mapping_id" field.
+func MappingIDIn(vs ...string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldIn(FieldMappingID, vs...))
+}
+
+// MappingIDNotIn applies the NotIn predicate on the "mapping_id" field.
+func MappingIDNotIn(vs ...string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldNotIn(FieldMappingID, vs...))
+}
+
+// MappingIDGT applies the GT predicate on the "mapping_id" field.
+func MappingIDGT(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldGT(FieldMappingID, v))
+}
+
+// MappingIDGTE applies the GTE predicate on the "mapping_id" field.
+func MappingIDGTE(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldGTE(FieldMappingID, v))
+}
+
+// MappingIDLT applies the LT predicate on the "mapping_id" field.
+func MappingIDLT(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldLT(FieldMappingID, v))
+}
+
+// MappingIDLTE applies the LTE predicate on the "mapping_id" field.
+func MappingIDLTE(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldLTE(FieldMappingID, v))
+}
+
+// MappingIDContains applies the Contains predicate on the "mapping_id" field.
+func MappingIDContains(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldContains(FieldMappingID, v))
+}
+
+// MappingIDHasPrefix applies the HasPrefix predicate on the "mapping_id" field.
+func MappingIDHasPrefix(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldHasPrefix(FieldMappingID, v))
+}
+
+// MappingIDHasSuffix applies the HasSuffix predicate on the "mapping_id" field.
+func MappingIDHasSuffix(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldHasSuffix(FieldMappingID, v))
+}
+
+// MappingIDEqualFold applies the EqualFold predicate on the "mapping_id" field.
+func MappingIDEqualFold(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldEqualFold(FieldMappingID, v))
+}
+
+// MappingIDContainsFold applies the ContainsFold predicate on the "mapping_id" field.
+func MappingIDContainsFold(v string) predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
 // EmailEQ applies the EQ predicate on the "email" field.

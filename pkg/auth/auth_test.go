@@ -8,12 +8,10 @@ import (
 	"time"
 
 	echo "github.com/datumforge/echox"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/pkg/auth"
-	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
 var happy = "happy path"
@@ -317,61 +315,6 @@ func TestCookieExpired(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			got := auth.CookieExpired(tc.cookie)
 			assert.Equal(t, tc.want, got)
-		})
-	}
-}
-
-func TestGetClaims(t *testing.T) {
-	// context with no user set
-	basicContext := echocontext.NewTestEchoContext()
-
-	missingSubCtx := echocontext.NewTestEchoContext()
-	jBasic := jwt.New(jwt.SigningMethodHS256)
-	missingSubCtx.Set("user_claims", jBasic)
-
-	validCtx, err := auth.NewTestEchoContextWithValidUser("foobar")
-	if err != nil {
-		t.Fatal()
-	}
-
-	tests := []struct {
-		name string
-		e    echo.Context
-		err  error
-	}{
-		{
-			name: happy,
-			e:    validCtx,
-			err:  nil,
-		},
-		{
-			name: "no user",
-			e:    basicContext,
-			err:  auth.ErrNoClaims,
-		},
-		{
-			name: "no user",
-			e:    missingSubCtx,
-			err:  auth.ErrNoClaims,
-		},
-	}
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			c, err := auth.GetClaims(tc.e)
-			if tc.err != nil {
-				assert.Error(t, err)
-				assert.Empty(t, c)
-
-				return
-			}
-
-			require.NoError(t, err)
-			// Check that we are getting things back
-			assert.NotEmpty(t, c)
-			// Make sure we are getting default claims back
-			assert.Equal(t, "foobar", c.Subject)
-			// Check a custom claim
-			assert.Equal(t, "nano_id_of_org", c.OrgID)
 		})
 	}
 }

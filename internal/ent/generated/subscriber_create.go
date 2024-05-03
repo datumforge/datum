@@ -78,6 +78,20 @@ func (sc *SubscriberCreate) SetNillableUpdatedBy(s *string) *SubscriberCreate {
 	return sc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (sc *SubscriberCreate) SetMappingID(s string) *SubscriberCreate {
+	sc.mutation.SetMappingID(s)
+	return sc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (sc *SubscriberCreate) SetNillableMappingID(s *string) *SubscriberCreate {
+	if s != nil {
+		sc.SetMappingID(*s)
+	}
+	return sc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (sc *SubscriberCreate) SetDeletedAt(t time.Time) *SubscriberCreate {
 	sc.mutation.SetDeletedAt(t)
@@ -285,6 +299,13 @@ func (sc *SubscriberCreate) defaults() error {
 		v := subscriber.DefaultUpdatedAt()
 		sc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := sc.mutation.MappingID(); !ok {
+		if subscriber.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized subscriber.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := subscriber.DefaultMappingID()
+		sc.mutation.SetMappingID(v)
+	}
 	if _, ok := sc.mutation.VerifiedEmail(); !ok {
 		v := subscriber.DefaultVerifiedEmail
 		sc.mutation.SetVerifiedEmail(v)
@@ -309,6 +330,9 @@ func (sc *SubscriberCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (sc *SubscriberCreate) check() error {
+	if _, ok := sc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Subscriber.mapping_id"`)}
+	}
 	if _, ok := sc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "Subscriber.email"`)}
 	}
@@ -401,6 +425,10 @@ func (sc *SubscriberCreate) createSpec() (*Subscriber, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.UpdatedBy(); ok {
 		_spec.SetField(subscriber.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := sc.mutation.MappingID(); ok {
+		_spec.SetField(subscriber.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := sc.mutation.DeletedAt(); ok {
 		_spec.SetField(subscriber.FieldDeletedAt, field.TypeTime, value)

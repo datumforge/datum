@@ -111,6 +111,20 @@ func (ohc *OrganizationHistoryCreate) SetNillableUpdatedBy(s *string) *Organizat
 	return ohc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ohc *OrganizationHistoryCreate) SetMappingID(s string) *OrganizationHistoryCreate {
+	ohc.mutation.SetMappingID(s)
+	return ohc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ohc *OrganizationHistoryCreate) SetNillableMappingID(s *string) *OrganizationHistoryCreate {
+	if s != nil {
+		ohc.SetMappingID(*s)
+	}
+	return ohc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ohc *OrganizationHistoryCreate) SetDeletedAt(t time.Time) *OrganizationHistoryCreate {
 	ohc.mutation.SetDeletedAt(t)
@@ -290,6 +304,10 @@ func (ohc *OrganizationHistoryCreate) defaults() {
 		v := organizationhistory.DefaultUpdatedAt()
 		ohc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ohc.mutation.MappingID(); !ok {
+		v := organizationhistory.DefaultMappingID()
+		ohc.mutation.SetMappingID(v)
+	}
 	if _, ok := ohc.mutation.DisplayName(); !ok {
 		v := organizationhistory.DefaultDisplayName
 		ohc.mutation.SetDisplayName(v)
@@ -320,6 +338,9 @@ func (ohc *OrganizationHistoryCreate) check() error {
 		if err := organizationhistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "OrganizationHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := ohc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "OrganizationHistory.mapping_id"`)}
 	}
 	if _, ok := ohc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "OrganizationHistory.name"`)}
@@ -393,6 +414,10 @@ func (ohc *OrganizationHistoryCreate) createSpec() (*OrganizationHistory, *sqlgr
 	if value, ok := ohc.mutation.UpdatedBy(); ok {
 		_spec.SetField(organizationhistory.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := ohc.mutation.MappingID(); ok {
+		_spec.SetField(organizationhistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ohc.mutation.DeletedAt(); ok {
 		_spec.SetField(organizationhistory.FieldDeletedAt, field.TypeTime, value)

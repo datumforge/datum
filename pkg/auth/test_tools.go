@@ -38,7 +38,11 @@ func NewTestEchoContextWithValidUser(subject string) (echo.Context, error) {
 
 	claims := newValidClaims(subject)
 
-	ec.Set(ContextUserClaims.name, claims)
+	SetAuthenticatedUserContext(ec, &AuthenticatedUser{
+		SubjectID:          claims.UserID,
+		OrganizationID:     claims.OrgID,
+		AuthenticationType: "jwt",
+	})
 
 	return ec, nil
 }
@@ -83,7 +87,11 @@ func NewTestEchoContextWithOrgID(sub, orgID string) (echo.Context, error) {
 
 	claims := newValidClaimsOrgID(sub, orgID)
 
-	ec.Set(ContextUserClaims.name, claims)
+	SetAuthenticatedUserContext(ec, &AuthenticatedUser{
+		SubjectID:          claims.UserID,
+		OrganizationID:     claims.OrgID,
+		AuthenticationType: "jwt",
+	})
 
 	return ec, nil
 }

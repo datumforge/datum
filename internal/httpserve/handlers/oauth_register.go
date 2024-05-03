@@ -90,7 +90,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	props := ph.NewProperties().
 		Set("user_id", user.ID).
 		Set("email", user.Email).
-		Set("organization_id", claims.OrgID).
+		Set("organization_id", user.Edges.Setting.Edges.DefaultOrg.ID). // user is logged into their default org
 		Set("auth_provider", r.AuthProvider)
 
 	h.AnalyticsClient.Event("user_authenticated", props)

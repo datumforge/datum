@@ -346,12 +346,12 @@ func (oattq *OhAuthTooTokenQuery) WithEvents(opts ...func(*EventQuery)) *OhAuthT
 // Example:
 //
 //	var v []struct {
-//		ClientID string `json:"client_id,omitempty"`
+//		MappingID string `json:"mapping_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.OhAuthTooToken.Query().
-//		GroupBy(ohauthtootoken.FieldClientID).
+//		GroupBy(ohauthtootoken.FieldMappingID).
 //		Aggregate(generated.Count()).
 //		Scan(ctx, &v)
 func (oattq *OhAuthTooTokenQuery) GroupBy(field string, fields ...string) *OhAuthTooTokenGroupBy {
@@ -369,11 +369,11 @@ func (oattq *OhAuthTooTokenQuery) GroupBy(field string, fields ...string) *OhAut
 // Example:
 //
 //	var v []struct {
-//		ClientID string `json:"client_id,omitempty"`
+//		MappingID string `json:"mapping_id,omitempty"`
 //	}
 //
 //	client.OhAuthTooToken.Query().
-//		Select(ohauthtootoken.FieldClientID).
+//		Select(ohauthtootoken.FieldMappingID).
 //		Scan(ctx, &v)
 func (oattq *OhAuthTooTokenQuery) Select(fields ...string) *OhAuthTooTokenSelect {
 	oattq.ctx.Fields = append(oattq.ctx.Fields, fields...)

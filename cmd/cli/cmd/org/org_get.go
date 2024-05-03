@@ -9,7 +9,6 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -23,9 +22,6 @@ var orgGetCmd = &cobra.Command{
 
 func init() {
 	orgCmd.AddCommand(orgGetCmd)
-
-	orgGetCmd.Flags().BoolP("current", "c", false, "get current org info, requires authentication")
-	datum.ViperBindFlag("org.get.current", orgGetCmd.Flags().Lookup("current"))
 
 	orgGetCmd.Flags().StringP("id", "i", "", "get a specific organization by ID")
 	datum.ViperBindFlag("org.get.id", orgGetCmd.Flags().Lookup("id"))
@@ -47,18 +43,8 @@ func orgs(ctx context.Context) error {
 
 	var s []byte
 
-	current := viper.GetBool("org.get.current")
-
 	writer := tables.NewTableWriter(orgCmd.OutOrStdout(), "ID", "Name", "Description", "PersonalOrg", "Children", "Members")
 
-	if current {
-		claims, err := tokens.ParseUnverifiedTokenClaims(cli.AccessToken)
-		if err != nil {
-			return err
-		}
-
-		oID = claims.ParseOrgID().String()
-	}
 	// if an org ID is provided, filter on that organization, otherwise get all
 	if oID != "" {
 		org, err := cli.Client.GetOrganizationByID(ctx, oID, cli.Interceptor)

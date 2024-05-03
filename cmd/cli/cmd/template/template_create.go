@@ -11,7 +11,6 @@ import (
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/tokens"
 )
 
 var templateCreateCmd = &cobra.Command{
@@ -30,9 +29,6 @@ func init() {
 
 	templateCreateCmd.Flags().StringP("description", "d", "", "description of the template")
 	datum.ViperBindFlag("template.create.description", templateCreateCmd.Flags().Lookup("description"))
-
-	templateCreateCmd.Flags().StringP("org-id", "o", "", "organization id, leave empty to create within current org")
-	datum.ViperBindFlag("template.create.org-id", templateCreateCmd.Flags().Lookup("org-id"))
 
 	templateCreateCmd.Flags().StringP("jsonconfig", "j", "", "json payload for the template")
 	datum.ViperBindFlag("template.create.jsonconfig", templateCreateCmd.Flags().Lookup("jsonconfig"))
@@ -61,7 +57,6 @@ func createTemplate(ctx context.Context) error {
 	}
 
 	description := viper.GetString("template.create.description")
-	parentOrgID := viper.GetString("template.create.org-id")
 	jsonconfig := viper.GetString("template.create.jsonconfig")
 	templateType := viper.GetString("template.create.type")
 	uischema := viper.GetString("template.create.uischema")
@@ -91,23 +86,8 @@ func createTemplate(ctx context.Context) error {
 		input.Uischema = data
 	}
 
-	if parentOrgID != "" {
-		input.OwnerID = parentOrgID
-	}
-
 	if templateType != "" {
 		input.TemplateType = enums.ToDocumentType(templateType)
-	}
-
-	if parentOrgID == "" {
-		claims, err := tokens.ParseUnverifiedTokenClaims(cli.AccessToken)
-		if err != nil {
-			return err
-		}
-
-		oID := claims.ParseOrgID().String()
-
-		input.OwnerID = oID
 	}
 
 	o, err := cli.Client.CreateTemplate(ctx, input, cli.Interceptor)

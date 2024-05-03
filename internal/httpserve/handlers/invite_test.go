@@ -102,9 +102,6 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 
 			mock.ResetEmailMock()
 
-			// mock auth
-			mock_fga.ListAny(t, suite.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
-
 			invite := suite.db.Invite.Create().
 				SetOwnerID(org.ID).
 				SetRecipient(tc.email).SaveX(reqCtx)

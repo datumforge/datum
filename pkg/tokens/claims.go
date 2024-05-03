@@ -10,9 +10,9 @@ import (
 // Claims implements custom claims and extends the `jwt.RegisteredClaims` struct; we will store user-related elements here (and thus in the JWT Token) for reference / validation
 type Claims struct {
 	jwt.RegisteredClaims
-	// UserID is the internal generated ID for the user
+	// UserID is the internal generated mapping ID for the user
 	UserID string `json:"user_id,omitempty"`
-	// OrgID the JWT token is valid for
+	// OrgID is the internal generated mapping ID for the organization the JWT token is valid for
 	OrgID string `json:"org,omitempty"`
 }
 

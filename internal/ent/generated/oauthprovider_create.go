@@ -78,6 +78,20 @@ func (opc *OauthProviderCreate) SetNillableUpdatedBy(s *string) *OauthProviderCr
 	return opc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (opc *OauthProviderCreate) SetMappingID(s string) *OauthProviderCreate {
+	opc.mutation.SetMappingID(s)
+	return opc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (opc *OauthProviderCreate) SetNillableMappingID(s *string) *OauthProviderCreate {
+	if s != nil {
+		opc.SetMappingID(*s)
+	}
+	return opc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (opc *OauthProviderCreate) SetDeletedAt(t time.Time) *OauthProviderCreate {
 	opc.mutation.SetDeletedAt(t)
@@ -244,6 +258,13 @@ func (opc *OauthProviderCreate) defaults() error {
 		v := oauthprovider.DefaultUpdatedAt()
 		opc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := opc.mutation.MappingID(); !ok {
+		if oauthprovider.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized oauthprovider.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := oauthprovider.DefaultMappingID()
+		opc.mutation.SetMappingID(v)
+	}
 	if _, ok := opc.mutation.ID(); !ok {
 		if oauthprovider.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized oauthprovider.DefaultID (forgotten import generated/runtime?)")
@@ -256,6 +277,9 @@ func (opc *OauthProviderCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (opc *OauthProviderCreate) check() error {
+	if _, ok := opc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "OauthProvider.mapping_id"`)}
+	}
 	if _, ok := opc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "OauthProvider.name"`)}
 	}
@@ -334,6 +358,10 @@ func (opc *OauthProviderCreate) createSpec() (*OauthProvider, *sqlgraph.CreateSp
 	if value, ok := opc.mutation.UpdatedBy(); ok {
 		_spec.SetField(oauthprovider.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := opc.mutation.MappingID(); ok {
+		_spec.SetField(oauthprovider.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := opc.mutation.DeletedAt(); ok {
 		_spec.SetField(oauthprovider.FieldDeletedAt, field.TypeTime, value)

@@ -73,15 +73,18 @@ func init() {
 	}
 	apitokenMixinHooks0 := apitokenMixin[0].Hooks()
 	apitokenMixinHooks1 := apitokenMixin[1].Hooks()
+	apitokenMixinHooks3 := apitokenMixin[3].Hooks()
 	apitokenHooks := schema.APIToken{}.Hooks()
 
 	apitoken.Hooks[1] = apitokenMixinHooks0[0]
 
 	apitoken.Hooks[2] = apitokenMixinHooks1[0]
 
-	apitoken.Hooks[3] = apitokenHooks[0]
+	apitoken.Hooks[3] = apitokenMixinHooks3[0]
 
-	apitoken.Hooks[4] = apitokenHooks[1]
+	apitoken.Hooks[4] = apitokenHooks[0]
+
+	apitoken.Hooks[5] = apitokenHooks[1]
 	apitokenMixinInters1 := apitokenMixin[1].Interceptors()
 	apitokenMixinInters3 := apitokenMixin[3].Interceptors()
 	apitokenInters := schema.APIToken{}.Interceptors()
@@ -249,8 +252,10 @@ func init() {
 	entitlementMixin := schema.Entitlement{}.Mixin()
 	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
 	entitlementMixinHooks2 := entitlementMixin[2].Hooks()
+	entitlementMixinHooks3 := entitlementMixin[3].Hooks()
 	entitlement.Hooks[0] = entitlementMixinHooks0[0]
 	entitlement.Hooks[1] = entitlementMixinHooks2[0]
+	entitlement.Hooks[2] = entitlementMixinHooks3[0]
 	entitlementMixinInters2 := entitlementMixin[2].Interceptors()
 	entitlementMixinInters3 := entitlementMixin[3].Interceptors()
 	entitlement.Interceptors[0] = entitlementMixinInters2[0]
@@ -508,15 +513,18 @@ func init() {
 	}
 	groupMixinHooks0 := groupMixin[0].Hooks()
 	groupMixinHooks1 := groupMixin[1].Hooks()
+	groupMixinHooks3 := groupMixin[3].Hooks()
 	groupHooks := schema.Group{}.Hooks()
 
 	group.Hooks[1] = groupMixinHooks0[0]
 
 	group.Hooks[2] = groupMixinHooks1[0]
 
-	group.Hooks[3] = groupHooks[0]
+	group.Hooks[3] = groupMixinHooks3[0]
 
-	group.Hooks[4] = groupHooks[1]
+	group.Hooks[4] = groupHooks[0]
+
+	group.Hooks[5] = groupHooks[1]
 	groupMixinInters1 := groupMixin[1].Interceptors()
 	groupMixinInters3 := groupMixin[3].Interceptors()
 	groupInters := schema.Group{}.Interceptors()
@@ -811,10 +819,13 @@ func init() {
 	}
 	integrationMixinHooks0 := integrationMixin[0].Hooks()
 	integrationMixinHooks2 := integrationMixin[2].Hooks()
+	integrationMixinHooks3 := integrationMixin[3].Hooks()
 
 	integration.Hooks[1] = integrationMixinHooks0[0]
 
 	integration.Hooks[2] = integrationMixinHooks2[0]
+
+	integration.Hooks[3] = integrationMixinHooks3[0]
 	integrationMixinInters2 := integrationMixin[2].Interceptors()
 	integrationMixinInters3 := integrationMixin[3].Interceptors()
 	integration.Interceptors[0] = integrationMixinInters2[0]
@@ -881,15 +892,18 @@ func init() {
 	}
 	inviteMixinHooks0 := inviteMixin[0].Hooks()
 	inviteMixinHooks2 := inviteMixin[2].Hooks()
+	inviteMixinHooks3 := inviteMixin[3].Hooks()
 	inviteHooks := schema.Invite{}.Hooks()
 
 	invite.Hooks[1] = inviteMixinHooks0[0]
 
 	invite.Hooks[2] = inviteMixinHooks2[0]
 
-	invite.Hooks[3] = inviteHooks[0]
+	invite.Hooks[3] = inviteMixinHooks3[0]
 
-	invite.Hooks[4] = inviteHooks[1]
+	invite.Hooks[4] = inviteHooks[0]
+
+	invite.Hooks[5] = inviteHooks[1]
 	inviteMixinInters2 := inviteMixin[2].Interceptors()
 	inviteMixinInters3 := inviteMixin[3].Interceptors()
 	invite.Interceptors[0] = inviteMixinInters2[0]
@@ -1589,8 +1603,10 @@ func init() {
 	templateMixin := schema.Template{}.Mixin()
 	templateMixinHooks0 := templateMixin[0].Hooks()
 	templateMixinHooks1 := templateMixin[1].Hooks()
+	templateMixinHooks3 := templateMixin[3].Hooks()
 	template.Hooks[0] = templateMixinHooks0[0]
 	template.Hooks[1] = templateMixinHooks1[0]
+	template.Hooks[2] = templateMixinHooks3[0]
 	templateMixinInters1 := templateMixin[1].Interceptors()
 	templateMixinInters3 := templateMixin[3].Interceptors()
 	template.Interceptors[0] = templateMixinInters1[0]

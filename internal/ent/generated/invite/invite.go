@@ -113,7 +113,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [5]ent.Hook
+	Hooks        [6]ent.Hook
 	Interceptors [2]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.

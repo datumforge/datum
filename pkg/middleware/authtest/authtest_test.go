@@ -26,11 +26,8 @@ func TestGenerateToken(t *testing.T) {
 
 	userID := ulids.New().String()
 	claims := &tokens.Claims{
-		UserID:      userID,
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: userID,
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	}
 
 	accessToken, refreshToken, err := srv.CreateTokenPair(claims)

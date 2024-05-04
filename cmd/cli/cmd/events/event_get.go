@@ -38,7 +38,31 @@ func events(ctx context.Context) error {
 
 	var s []byte
 
-	writer := tables.NewTableWriter(eventCmd.OutOrStdout(), "ID", "Name", "Description")
+	eventID := viper.GetString("event.get.id")
+	if eventID != "" {
+		event, err := cli.Client.GetEventByID(ctx, eventID, cli.Interceptor)
+		if err != nil {
+			return err
+		}
+
+		if viper.GetString("output.format") == "json" {
+			s, err = json.Marshal(event)
+			if err != nil {
+				return err
+			}
+
+			return datum.JSONPrint(s)
+		}
+
+		writer := tables.NewTableWriter(eventCmd.OutOrStdout(), "ID", "EventType", "EventMetadata", "CorrelationID")
+		writer.AddRow(event.Event.ID, event.Event.EventType, event.Event.Metadata, event.Event.CorrelationID)
+
+		writer.Render()
+
+		return nil
+	}
+
+	writer := tables.NewTableWriter(eventCmd.OutOrStdout(), "ID", "EventType", "EventMetadata", "CorrelationID")
 
 	events, err := cli.Client.GetAllEvents(ctx, cli.Interceptor)
 	if err != nil {
@@ -55,7 +79,7 @@ func events(ctx context.Context) error {
 	}
 
 	for _, event := range events.Events.Edges {
-		writer.AddRow(event.Node.ID, event.Node.EventType, event.Node.Metadata)
+		writer.AddRow(event.Node.ID, event.Node.EventType, event.Node.Metadata, event.Node.CorrelationID)
 	}
 
 	writer.Render()

@@ -3,6 +3,7 @@ package datumevents
 import (
 	"context"
 	"encoding/json"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -30,6 +31,9 @@ func init() {
 
 	eventCreateCmd.Flags().StringP("userid", "u", "", "user id associated with the event")
 	datum.ViperBindFlag("event.create.userid", eventCreateCmd.Flags().Lookup("userid"))
+
+	eventCreateCmd.Flags().StringP("eventjson", "j", "", "json payload for the template")
+	datum.ViperBindFlag("event.create.metadata", eventCreateCmd.Flags().Lookup("eventjson"))
 }
 
 func createevent(ctx context.Context) error {
@@ -49,21 +53,36 @@ func createevent(ctx context.Context) error {
 	}
 
 	userid := viper.GetStringSlice("event.create.userid")
-
-	inputJSON := "{ \"key\": \"value\" }"
-
-	parsedMessage, err := datum.ParseJSON(inputJSON)
-	if err != nil {
-		return err
-	}
+	eventjson := viper.GetString("event.create.metadata")
+	metadata := viper.GetString("event.create.metadata")
 
 	input := datumclient.CreateEventInput{
 		EventType: eventType,
-		Metadata:  parsedMessage,
 	}
 
 	if userid != nil {
 		input.UserIDs = userid
+	}
+
+	if eventjson != "" {
+		var data []byte
+
+		if data, err = os.ReadFile(eventjson); err != nil {
+			return err
+		}
+
+		parsedMessage, err := datum.ParseBytes(data)
+		if err != nil {
+			return err
+		}
+
+		input.Metadata = parsedMessage
+	}
+
+	if metadata != "" {
+		if err := json.Unmarshal([]byte(metadata), &input.Metadata); err != nil {
+			return err
+		}
 	}
 
 	u, err := cli.Client.CreateEvent(ctx, input, cli.Interceptor)

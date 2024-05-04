@@ -192,8 +192,17 @@ func ParseJSON(v string) (map[string]interface{}, error) {
 	var m map[string]interface{}
 
 	if err := json.Unmarshal([]byte(v), &m); err != nil {
-		fmt.Println("could not parse json", v)
+		return nil, err
+	}
 
+	return m, nil
+}
+
+// ParseBytes parses buffered bytes into a map
+func ParseBytes(v []byte) (map[string]interface{}, error) {
+	var m map[string]interface{}
+
+	if err := json.Unmarshal(v, &m); err != nil {
 		return nil, err
 	}
 

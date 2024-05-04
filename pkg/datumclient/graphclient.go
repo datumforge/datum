@@ -27,6 +27,7 @@ type DatumClient interface {
 	DeleteEntitlement(ctx context.Context, deleteEntitlementID string, interceptors ...clientv2.RequestInterceptor) (*DeleteEntitlement, error)
 	GetEntitlements(ctx context.Context, where *EntitlementWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntitlements, error)
 	GetEvents(ctx context.Context, where *EventWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEvents, error)
+	GetEventByID(ctx context.Context, eventID string, interceptors ...clientv2.RequestInterceptor) (*GetEventByID, error)
 	GetAllEvents(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEvents, error)
 	CreateEvent(ctx context.Context, input CreateEventInput, interceptors ...clientv2.RequestInterceptor) (*CreateEvent, error)
 	UpdateEvent(ctx context.Context, updateEventID string, input UpdateEventInput, interceptors ...clientv2.RequestInterceptor) (*UpdateEvent, error)
@@ -1400,10 +1401,11 @@ func (t *GetEntitlements_Entitlements) GetEdges() []*GetEntitlements_Entitlement
 }
 
 type GetEvents_Events_Edges_Node struct {
-	EventID       *string "json:\"eventID,omitempty\" graphql:\"eventID\""
-	ID            string  "json:\"id\" graphql:\"id\""
-	CorrelationID *string "json:\"correlationID,omitempty\" graphql:\"correlationID\""
-	EventType     string  "json:\"eventType\" graphql:\"eventType\""
+	EventID       *string                "json:\"eventID,omitempty\" graphql:\"eventID\""
+	ID            string                 "json:\"id\" graphql:\"id\""
+	CorrelationID *string                "json:\"correlationID,omitempty\" graphql:\"correlationID\""
+	EventType     string                 "json:\"eventType\" graphql:\"eventType\""
+	Metadata      map[string]interface{} "json:\"metadata,omitempty\" graphql:\"metadata\""
 }
 
 func (t *GetEvents_Events_Edges_Node) GetEventID() *string {
@@ -1430,6 +1432,12 @@ func (t *GetEvents_Events_Edges_Node) GetEventType() string {
 	}
 	return t.EventType
 }
+func (t *GetEvents_Events_Edges_Node) GetMetadata() map[string]interface{} {
+	if t == nil {
+		t = &GetEvents_Events_Edges_Node{}
+	}
+	return t.Metadata
+}
 
 type GetEvents_Events_Edges struct {
 	Node *GetEvents_Events_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
@@ -1451,6 +1459,307 @@ func (t *GetEvents_Events) GetEdges() []*GetEvents_Events_Edges {
 		t = &GetEvents_Events{}
 	}
 	return t.Edges
+}
+
+type GetEventByID_Event_User struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_User) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_User{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Group struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Group) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Group{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Integration struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Integration) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Integration{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Organization struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Organization) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Organization{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Invite struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Invite) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Invite{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Feature struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Feature) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Feature{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_PersonalAccessToken struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_PersonalAccessToken) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_PersonalAccessToken{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Oauth2token struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Oauth2token) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Oauth2token{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Hush struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Hush) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Hush{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Orgmembership struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Orgmembership) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Orgmembership{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Groupmembership struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Groupmembership) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Groupmembership{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Entitlement struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Entitlement) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Entitlement{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event_Webhook struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetEventByID_Event_Webhook) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event_Webhook{}
+	}
+	return t.ID
+}
+
+type GetEventByID_Event struct {
+	ID                  string                                    "json:\"id\" graphql:\"id\""
+	CreatedAt           *time.Time                                "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt           *time.Time                                "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy           *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy           *string                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	EventID             *string                                   "json:\"eventID,omitempty\" graphql:\"eventID\""
+	CorrelationID       *string                                   "json:\"correlationID,omitempty\" graphql:\"correlationID\""
+	EventType           string                                    "json:\"eventType\" graphql:\"eventType\""
+	Metadata            map[string]interface{}                    "json:\"metadata,omitempty\" graphql:\"metadata\""
+	User                []*GetEventByID_Event_User                "json:\"user,omitempty\" graphql:\"user\""
+	Group               []*GetEventByID_Event_Group               "json:\"group,omitempty\" graphql:\"group\""
+	Integration         []*GetEventByID_Event_Integration         "json:\"integration,omitempty\" graphql:\"integration\""
+	Organization        []*GetEventByID_Event_Organization        "json:\"organization,omitempty\" graphql:\"organization\""
+	Invite              []*GetEventByID_Event_Invite              "json:\"invite,omitempty\" graphql:\"invite\""
+	Feature             []*GetEventByID_Event_Feature             "json:\"feature,omitempty\" graphql:\"feature\""
+	PersonalAccessToken []*GetEventByID_Event_PersonalAccessToken "json:\"personalAccessToken,omitempty\" graphql:\"personalAccessToken\""
+	Oauth2token         []*GetEventByID_Event_Oauth2token         "json:\"oauth2token,omitempty\" graphql:\"oauth2token\""
+	Hush                []*GetEventByID_Event_Hush                "json:\"hush,omitempty\" graphql:\"hush\""
+	Orgmembership       []*GetEventByID_Event_Orgmembership       "json:\"orgmembership,omitempty\" graphql:\"orgmembership\""
+	Groupmembership     []*GetEventByID_Event_Groupmembership     "json:\"groupmembership,omitempty\" graphql:\"groupmembership\""
+	Entitlement         []*GetEventByID_Event_Entitlement         "json:\"entitlement,omitempty\" graphql:\"entitlement\""
+	Webhook             []*GetEventByID_Event_Webhook             "json:\"webhook,omitempty\" graphql:\"webhook\""
+}
+
+func (t *GetEventByID_Event) GetID() string {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.ID
+}
+func (t *GetEventByID_Event) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.CreatedAt
+}
+func (t *GetEventByID_Event) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetEventByID_Event) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.CreatedBy
+}
+func (t *GetEventByID_Event) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetEventByID_Event) GetEventID() *string {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.EventID
+}
+func (t *GetEventByID_Event) GetCorrelationID() *string {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.CorrelationID
+}
+func (t *GetEventByID_Event) GetEventType() string {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.EventType
+}
+func (t *GetEventByID_Event) GetMetadata() map[string]interface{} {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Metadata
+}
+func (t *GetEventByID_Event) GetUser() []*GetEventByID_Event_User {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.User
+}
+func (t *GetEventByID_Event) GetGroup() []*GetEventByID_Event_Group {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Group
+}
+func (t *GetEventByID_Event) GetIntegration() []*GetEventByID_Event_Integration {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Integration
+}
+func (t *GetEventByID_Event) GetOrganization() []*GetEventByID_Event_Organization {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Organization
+}
+func (t *GetEventByID_Event) GetInvite() []*GetEventByID_Event_Invite {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Invite
+}
+func (t *GetEventByID_Event) GetFeature() []*GetEventByID_Event_Feature {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Feature
+}
+func (t *GetEventByID_Event) GetPersonalAccessToken() []*GetEventByID_Event_PersonalAccessToken {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.PersonalAccessToken
+}
+func (t *GetEventByID_Event) GetOauth2token() []*GetEventByID_Event_Oauth2token {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Oauth2token
+}
+func (t *GetEventByID_Event) GetHush() []*GetEventByID_Event_Hush {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Hush
+}
+func (t *GetEventByID_Event) GetOrgmembership() []*GetEventByID_Event_Orgmembership {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Orgmembership
+}
+func (t *GetEventByID_Event) GetGroupmembership() []*GetEventByID_Event_Groupmembership {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Groupmembership
+}
+func (t *GetEventByID_Event) GetEntitlement() []*GetEventByID_Event_Entitlement {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Entitlement
+}
+func (t *GetEventByID_Event) GetWebhook() []*GetEventByID_Event_Webhook {
+	if t == nil {
+		t = &GetEventByID_Event{}
+	}
+	return t.Webhook
 }
 
 type GetAllEvents_Events_Edges_Node_User struct {
@@ -1920,6 +2229,7 @@ func (t *CreateEvent_CreateEvent_Event_Webhook) GetID() string {
 }
 
 type CreateEvent_CreateEvent_Event struct {
+	ID                  string                                               "json:\"id\" graphql:\"id\""
 	EventID             *string                                              "json:\"eventID,omitempty\" graphql:\"eventID\""
 	CorrelationID       *string                                              "json:\"correlationID,omitempty\" graphql:\"correlationID\""
 	EventType           string                                               "json:\"eventType\" graphql:\"eventType\""
@@ -1939,6 +2249,12 @@ type CreateEvent_CreateEvent_Event struct {
 	Webhook             []*CreateEvent_CreateEvent_Event_Webhook             "json:\"webhook,omitempty\" graphql:\"webhook\""
 }
 
+func (t *CreateEvent_CreateEvent_Event) GetID() string {
+	if t == nil {
+		t = &CreateEvent_CreateEvent_Event{}
+	}
+	return t.ID
+}
 func (t *CreateEvent_CreateEvent_Event) GetEventID() *string {
 	if t == nil {
 		t = &CreateEvent_CreateEvent_Event{}
@@ -13051,6 +13367,17 @@ func (t *GetEvents) GetEvents() *GetEvents_Events {
 	return &t.Events
 }
 
+type GetEventByID struct {
+	Event GetEventByID_Event "json:\"event\" graphql:\"event\""
+}
+
+func (t *GetEventByID) GetEvent() *GetEventByID_Event {
+	if t == nil {
+		t = &GetEventByID{}
+	}
+	return &t.Event
+}
+
 type GetAllEvents struct {
 	Events GetAllEvents_Events "json:\"events\" graphql:\"events\""
 }
@@ -14478,6 +14805,7 @@ const GetEventsDocument = `query GetEvents ($where: EventWhereInput) {
 				id
 				correlationID
 				eventType
+				metadata
 			}
 		}
 	}
@@ -14491,6 +14819,77 @@ func (c *Client) GetEvents(ctx context.Context, where *EventWhereInput, intercep
 
 	var res GetEvents
 	if err := c.Client.Post(ctx, "GetEvents", GetEventsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetEventByIDDocument = `query GetEventByID ($eventId: ID!) {
+	event(id: $eventId) {
+		id
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
+		eventID
+		correlationID
+		eventType
+		metadata
+		user {
+			id
+		}
+		group {
+			id
+		}
+		integration {
+			id
+		}
+		organization {
+			id
+		}
+		invite {
+			id
+		}
+		feature {
+			id
+		}
+		personalAccessToken {
+			id
+		}
+		oauth2token {
+			id
+		}
+		hush {
+			id
+		}
+		orgmembership {
+			id
+		}
+		groupmembership {
+			id
+		}
+		entitlement {
+			id
+		}
+		webhook {
+			id
+		}
+	}
+}
+`
+
+func (c *Client) GetEventByID(ctx context.Context, eventID string, interceptors ...clientv2.RequestInterceptor) (*GetEventByID, error) {
+	vars := map[string]any{
+		"eventId": eventID,
+	}
+
+	var res GetEventByID
+	if err := c.Client.Post(ctx, "GetEventByID", GetEventByIDDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -14577,6 +14976,7 @@ func (c *Client) GetAllEvents(ctx context.Context, interceptors ...clientv2.Requ
 const CreateEventDocument = `mutation CreateEvent ($input: CreateEventInput!) {
 	createEvent(input: $input) {
 		event {
+			id
 			eventID
 			correlationID
 			eventType
@@ -18169,6 +18569,7 @@ var DocumentOperationNames = map[string]string{
 	DeleteEntitlementDocument:           "DeleteEntitlement",
 	GetEntitlementsDocument:             "GetEntitlements",
 	GetEventsDocument:                   "GetEvents",
+	GetEventByIDDocument:                "GetEventByID",
 	GetAllEventsDocument:                "GetAllEvents",
 	CreateEventDocument:                 "CreateEvent",
 	UpdateEventDocument:                 "UpdateEvent",

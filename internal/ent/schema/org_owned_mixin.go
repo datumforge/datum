@@ -102,7 +102,9 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 					}
 
 					// set owner on mutation
-					m.SetField(ownerFieldName, orgID)
+					if err := m.SetField(ownerFieldName, orgID); err != nil {
+						return nil, err
+					}
 
 					return next.Mutate(ctx, m)
 				})

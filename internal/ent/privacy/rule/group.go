@@ -18,6 +18,7 @@ func CanCreateGroupsInOrg() privacy.GroupMutationRuleFunc {
 		if !ok || oID == "" {
 			// get organization from the auth context
 			var err error
+
 			oID, err = auth.GetOrganizationIDFromContext(ctx)
 			if err != nil || oID == "" {
 				return privacy.Skipf("no owner set on request, cannot check access")

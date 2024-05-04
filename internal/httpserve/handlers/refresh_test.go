@@ -71,7 +71,6 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 			Subject: user.ID,
 		},
 		UserID: user.ID,
-		Email:  user.Email,
 	}
 
 	_, refresh, err := tm.CreateTokenPair(claims)

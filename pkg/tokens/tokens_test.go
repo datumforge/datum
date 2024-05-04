@@ -61,11 +61,8 @@ func (s *TokenTestSuite) TestCreateTokenPair() {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: "01H6PGFB4T34D4WWEXQMAGJNMK",
 		},
-		UserID:      "Rusty Shackleford",
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: "Rusty Shackleford",
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	}
 
 	atks, rtks, err := tm.CreateTokenPair(claims)
@@ -99,11 +96,8 @@ func (s *TokenTestSuite) TestTokenManager() {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: "01H6PGFB4T34D4WWEXQMAGJNMK",
 		},
-		UserID:      "Rusty Shackleford",
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: "Rusty Shackleford",
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	}
 
 	accessToken, err := tm.CreateAccessToken(creds)
@@ -123,10 +117,7 @@ func (s *TokenTestSuite) TestTokenManager() {
 	require.True(ac.ExpiresAt.After(now))
 	require.Equal(creds.Subject, ac.Subject)
 	require.Equal(creds.UserID, ac.UserID)
-	require.Equal(creds.Email, ac.Email)
 	require.Equal(creds.OrgID, ac.OrgID)
-	require.Equal(creds.ParentOrgID, ac.ParentOrgID)
-	require.Equal(creds.Tier, ac.Tier)
 
 	// Create a refresh token from the access token
 	refreshToken, err := tm.CreateRefreshToken(accessToken)
@@ -144,10 +135,7 @@ func (s *TokenTestSuite) TestTokenManager() {
 	require.True(rc.ExpiresAt.After(rc.NotBefore.Time))
 	require.Equal(ac.Subject, rc.Subject)
 	require.Empty(rc.UserID)
-	require.Empty(rc.Email)
 	require.Equal(ac.OrgID, rc.OrgID)
-	require.Equal(ac.ParentOrgID, rc.ParentOrgID)
-	require.Equal(ac.Tier, rc.Tier)
 
 	// Verify relative nbf and exp claims of access and refresh tokens
 	require.True(ac.IssuedAt.Equal(rc.IssuedAt.Time), "access and refresh tokens do not have same iss timestamp")
@@ -183,11 +171,8 @@ func (s *TokenTestSuite) TestValidTokens() {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: "01H6PGFB4T34D4WWEXQMAGJNMK",
 		},
-		UserID:      "Rusty Shackleford",
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: "Rusty Shackleford",
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	}
 
 	// TODO: add validation steps and test
@@ -212,11 +197,8 @@ func (s *TokenTestSuite) TestInvalidTokens() {
 			NotBefore: jwt.NewNumericDate(now.Add(15 * time.Minute)),  // nbf is validated and is after now
 			ExpiresAt: jwt.NewNumericDate(now.Add(-30 * time.Minute)), // exp is validated and is before now
 		},
-		UserID:      "Rusty Shackleford",
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: "Rusty Shackleford",
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	}
 
 	// Test validation signed with wrong kid
@@ -295,11 +277,8 @@ func (s *TokenTestSuite) TestKeyRotation() {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: "01H6PGFB4T34D4WWEXQMAGJNMK",
 		},
-		UserID:      "Rusty Shackleford",
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: "Rusty Shackleford",
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	})
 	require.NoError(err)
 
@@ -330,11 +309,8 @@ func (s *TokenTestSuite) TestParseExpiredToken() {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: "01H6PGFB4T34D4WWEXQMAGJNMK",
 		},
-		UserID:      "Rusty Shackleford",
-		Email:       "rustys@datum.net",
-		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
-		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",
-		Tier:        "Pro",
+		UserID: "Rusty Shackleford",
+		OrgID:  "01H6PGFG71N0AFEVTK3NJB71T9",
 	}
 
 	accessToken, err := tm.CreateAccessToken(creds)
@@ -365,7 +341,6 @@ func (s *TokenTestSuite) TestParseExpiredToken() {
 	// Check claims
 	require.Equal(claims.ID, pclaims.ID)
 	require.Equal(claims.ExpiresAt, pclaims.ExpiresAt)
-	require.Equal(creds.Email, claims.Email)
 	require.Equal(creds.UserID, claims.UserID)
 
 	// Ensure signature is still validated on parse

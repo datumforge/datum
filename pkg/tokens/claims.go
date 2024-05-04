@@ -12,18 +12,8 @@ type Claims struct {
 	jwt.RegisteredClaims
 	// UserID is the internal generated ID for the user
 	UserID string `json:"user_id,omitempty"`
-	// Email associated with the user
-	Email string `json:"email,omitempty"`
 	// OrgID the JWT token is valid for
 	OrgID string `json:"org,omitempty"`
-	// ParentOrgID of the parent organization, if a child
-	ParentOrgID string `json:"parentorg,omitempty"`
-	// Tier the token is valid for
-	Tier string `json:"tier,omitempty"`
-	// DisplayName of the user
-	DisplayName string `json:"displayName,omitempty"`
-	// AvatarURL of the user
-	AvatarURL string `json:"avatarURL,omitempty"`
 }
 
 // ParseUserID returns the ID of the user from the Subject of the claims
@@ -44,24 +34,4 @@ func (c Claims) ParseOrgID() ulid.ULID {
 	}
 
 	return orgID
-}
-
-// ParseParentOrgID parses and returns the parent organization ID from the ParentOrgID field of the claims
-func (c Claims) ParseParentOrgID() ulid.ULID {
-	parentOrgID, err := ulid.Parse(c.ParentOrgID)
-	if err != nil {
-		return ulids.Null
-	}
-
-	return parentOrgID
-}
-
-// ParseEmail is used to parse and return the email from the `Email` field of the claims.
-func (c Claims) ParseEmail() ulid.ULID {
-	email, err := ulid.Parse(c.Email)
-	if err != nil {
-		return ulids.Null
-	}
-
-	return email
 }

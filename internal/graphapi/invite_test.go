@@ -56,7 +56,7 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 			queryID:     inviteExistingUser.ID,
 			shouldCheck: true,
 			expected:    nil,
-			wantErr:     true,
+			wantErr:     false,
 		},
 		{
 			name:        "invalid id",

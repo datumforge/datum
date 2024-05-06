@@ -155,7 +155,7 @@ server:
         mimeTypesFile: ""
     readHeaderTimeout: 2000000000
     readTimeout: 15000000000
-    redirect:
+    redirects:
         code: 0
         enabled: true
         redirects: null

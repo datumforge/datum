@@ -129,14 +129,31 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 }
 
 func createAuthenticatedUser(ctx context.Context, dbClient *generated.Client, claims *tokens.Claims, authType auth.AuthenticationType) (*auth.AuthenticatedUser, error) {
+	var subjectID string
+
 	// get the user ID from the claims
 	mappingID := claims.UserID
-	mappingOrgID := claims.OrgID
 
-	user, err := dbClient.User.Query().Where(user.MappingID(mappingID)).Only(ctx)
-	if err != nil {
-		return nil, err
+	switch authType {
+	case auth.PATAuthentication, auth.JWTAuthentication:
+		user, err := dbClient.User.Query().Where(user.MappingID(mappingID)).Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		subjectID = user.ID
+	case auth.APITokenAuthentication:
+		tokenCtx := privacy.DecisionContext(ctx, privacy.Allow)
+
+		token, err := dbClient.APIToken.Query().Where(apitoken.MappingID(mappingID)).Only(tokenCtx)
+		if err != nil {
+			return nil, err
+		}
+
+		subjectID = token.ID
 	}
+
+	mappingOrgID := claims.OrgID
 
 	// all the query to get the organization, need to bypass the authz filter to get the org
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
@@ -147,7 +164,7 @@ func createAuthenticatedUser(ctx context.Context, dbClient *generated.Client, cl
 	}
 
 	return &auth.AuthenticatedUser{
-		SubjectID:          user.ID,
+		SubjectID:          subjectID,
 		OrganizationID:     org.ID,
 		AuthenticationType: authType,
 	}, nil
@@ -186,6 +203,7 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 
 	claims := &tokens.Claims{
 		UserID: pat.OwnerID,
+		// TODO (sfunk): Add org ID(s) to claims
 	}
 
 	return claims, nil
@@ -201,8 +219,14 @@ func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token stri
 		return nil, rout.ErrExpiredCredentials
 	}
 
+	org, err := t.Owner(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	claims := &tokens.Claims{
-		OrgID: t.OwnerID,
+		UserID: t.MappingID,
+		OrgID:  org.MappingID,
 	}
 
 	return claims, nil

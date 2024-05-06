@@ -131,3 +131,36 @@ func GetUserIDFromContext(ctx context.Context) (string, error) {
 
 	return getSubjectIDFromEchoContext(ec)
 }
+
+// GetAuthTypeFromEchoContext retrieves the authentication type from the context
+func GetAuthTypeFromContext(ctx context.Context) AuthenticationType {
+	ec, err := echocontext.EchoContextFromContext(ctx)
+	if err != nil {
+		return ""
+	}
+
+	return GetAuthTypeFromEchoContext(ec)
+}
+
+func IsAPITokenAuthentication(ctx context.Context) bool {
+	return GetAuthTypeFromContext(ctx) == APITokenAuthentication
+}
+
+const (
+	// UserSubjectType is the subject type for user accounts
+	UserSubjectType = "user"
+	// ServiceSubjectType is the subject type for service accounts
+	ServiceSubjectType = "service"
+)
+
+// GetAuthzSubjectType returns the subject type based on the authentication type
+func GetAuthzSubjectType(ctx context.Context) string {
+	subjectType := UserSubjectType
+
+	authType := GetAuthTypeFromContext(ctx)
+	if authType == APITokenAuthentication {
+		subjectType = ServiceSubjectType
+	}
+
+	return subjectType
+}

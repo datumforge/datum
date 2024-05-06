@@ -31,7 +31,7 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 			parentOrgID, ok := m.ParentID()
 
 			if ok {
-				access, err := m.Authz.CheckOrgAccess(ctx, userID, parentOrgID, relation)
+				access, err := m.Authz.CheckOrgAccess(ctx, userID, auth.GetAuthzSubjectType(ctx), parentOrgID, relation)
 				if err != nil {
 					return privacy.Skipf("unable to check access, %s", err.Error())
 				}
@@ -58,7 +58,7 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 
 		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID)
 
-		access, err := m.Authz.CheckOrgAccess(ctx, userID, oID, relation)
+		access, err := m.Authz.CheckOrgAccess(ctx, userID, auth.GetAuthzSubjectType(ctx), oID, relation)
 		if err != nil {
 			return privacy.Skipf("unable to check access, %s", err.Error())
 		}

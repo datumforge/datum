@@ -39,7 +39,7 @@ func CanCreateGroupsInOrg() privacy.GroupMutationRuleFunc {
 
 		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID)
 
-		access, err := m.Authz.CheckOrgAccess(ctx, userID, oID, relation)
+		access, err := m.Authz.CheckOrgAccess(ctx, userID, auth.GetAuthzSubjectType(ctx), oID, relation)
 		if err != nil {
 			return privacy.Skipf("unable to check access, %s", err.Error())
 		}

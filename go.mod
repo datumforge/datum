@@ -56,7 +56,7 @@ require (
 	golang.org/x/oauth2 v0.20.0
 	golang.org/x/term v0.20.0
 	google.golang.org/api v0.177.0
-	modernc.org/sqlite v1.29.8
+	modernc.org/sqlite v1.29.9
 )
 
 require (
@@ -310,7 +310,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.26.0
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.26.0
 	gocloud.dev v0.37.0
-	golang.org/x/crypto v0.22.0
+	golang.org/x/crypto v0.23.0
 	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
 	golang.org/x/mod v0.17.0 // indirect
 	golang.org/x/net v0.24.0 // indirect

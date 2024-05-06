@@ -53,7 +53,7 @@ func createevent(ctx context.Context) error {
 	}
 
 	userid := viper.GetStringSlice("event.create.userid")
-	eventjson := viper.GetString("event.create.metadata")
+	eventjson := viper.GetString("event.create.eventjson")
 	metadata := viper.GetString("event.create.metadata")
 
 	input := datumclient.CreateEventInput{

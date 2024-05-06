@@ -98,7 +98,7 @@ func (c Config) GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error
 			innerPrefix := prefix
 
 			if !ftype.Anonymous {
-				innerPrefix = prefix + "." + info.Tags.Get("json")
+				innerPrefix = prefix + "_" + info.Tags.Get("json")
 			}
 
 			embeddedPtr := f.Addr().Interface()

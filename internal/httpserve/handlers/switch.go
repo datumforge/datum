@@ -46,7 +46,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// get user from database by subject
-	user, err := h.getUserByMappingID(reqCtx, userID)
+	user, err := h.getUserDetailsByID(reqCtx, userID)
 	if err != nil {
 		h.Logger.Errorw("unable to get user by subject", "error", err)
 

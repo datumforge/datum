@@ -70,3 +70,8 @@ sentry:
 posthog:
   enabled: false
   apiKey: "phc_FakeKey"
+publisherConfig:
+    appName: datum
+    addresses:
+        - localhost:10000
+    enabled: true

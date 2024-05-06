@@ -7398,9 +7398,22 @@ func (m *EventMutation) OldEventID(ctx context.Context) (v string, err error) {
 	return oldValue.EventID, nil
 }
 
+// ClearEventID clears the value of the "event_id" field.
+func (m *EventMutation) ClearEventID() {
+	m.event_id = nil
+	m.clearedFields[event.FieldEventID] = struct{}{}
+}
+
+// EventIDCleared returns if the "event_id" field was cleared in this mutation.
+func (m *EventMutation) EventIDCleared() bool {
+	_, ok := m.clearedFields[event.FieldEventID]
+	return ok
+}
+
 // ResetEventID resets all changes to the "event_id" field.
 func (m *EventMutation) ResetEventID() {
 	m.event_id = nil
+	delete(m.clearedFields, event.FieldEventID)
 }
 
 // SetCorrelationID sets the "correlation_id" field.
@@ -7434,9 +7447,22 @@ func (m *EventMutation) OldCorrelationID(ctx context.Context) (v string, err err
 	return oldValue.CorrelationID, nil
 }
 
+// ClearCorrelationID clears the value of the "correlation_id" field.
+func (m *EventMutation) ClearCorrelationID() {
+	m.correlation_id = nil
+	m.clearedFields[event.FieldCorrelationID] = struct{}{}
+}
+
+// CorrelationIDCleared returns if the "correlation_id" field was cleared in this mutation.
+func (m *EventMutation) CorrelationIDCleared() bool {
+	_, ok := m.clearedFields[event.FieldCorrelationID]
+	return ok
+}
+
 // ResetCorrelationID resets all changes to the "correlation_id" field.
 func (m *EventMutation) ResetCorrelationID() {
 	m.correlation_id = nil
+	delete(m.clearedFields, event.FieldCorrelationID)
 }
 
 // SetEventType sets the "event_type" field.
@@ -8495,6 +8521,12 @@ func (m *EventMutation) ClearedFields() []string {
 	if m.FieldCleared(event.FieldUpdatedBy) {
 		fields = append(fields, event.FieldUpdatedBy)
 	}
+	if m.FieldCleared(event.FieldEventID) {
+		fields = append(fields, event.FieldEventID)
+	}
+	if m.FieldCleared(event.FieldCorrelationID) {
+		fields = append(fields, event.FieldCorrelationID)
+	}
 	if m.FieldCleared(event.FieldMetadata) {
 		fields = append(fields, event.FieldMetadata)
 	}
@@ -8523,6 +8555,12 @@ func (m *EventMutation) ClearField(name string) error {
 		return nil
 	case event.FieldUpdatedBy:
 		m.ClearUpdatedBy()
+		return nil
+	case event.FieldEventID:
+		m.ClearEventID()
+		return nil
+	case event.FieldCorrelationID:
+		m.ClearCorrelationID()
 		return nil
 	case event.FieldMetadata:
 		m.ClearMetadata()
@@ -9460,9 +9498,22 @@ func (m *EventHistoryMutation) OldEventID(ctx context.Context) (v string, err er
 	return oldValue.EventID, nil
 }
 
+// ClearEventID clears the value of the "event_id" field.
+func (m *EventHistoryMutation) ClearEventID() {
+	m.event_id = nil
+	m.clearedFields[eventhistory.FieldEventID] = struct{}{}
+}
+
+// EventIDCleared returns if the "event_id" field was cleared in this mutation.
+func (m *EventHistoryMutation) EventIDCleared() bool {
+	_, ok := m.clearedFields[eventhistory.FieldEventID]
+	return ok
+}
+
 // ResetEventID resets all changes to the "event_id" field.
 func (m *EventHistoryMutation) ResetEventID() {
 	m.event_id = nil
+	delete(m.clearedFields, eventhistory.FieldEventID)
 }
 
 // SetCorrelationID sets the "correlation_id" field.
@@ -9496,9 +9547,22 @@ func (m *EventHistoryMutation) OldCorrelationID(ctx context.Context) (v string, 
 	return oldValue.CorrelationID, nil
 }
 
+// ClearCorrelationID clears the value of the "correlation_id" field.
+func (m *EventHistoryMutation) ClearCorrelationID() {
+	m.correlation_id = nil
+	m.clearedFields[eventhistory.FieldCorrelationID] = struct{}{}
+}
+
+// CorrelationIDCleared returns if the "correlation_id" field was cleared in this mutation.
+func (m *EventHistoryMutation) CorrelationIDCleared() bool {
+	_, ok := m.clearedFields[eventhistory.FieldCorrelationID]
+	return ok
+}
+
 // ResetCorrelationID resets all changes to the "correlation_id" field.
 func (m *EventHistoryMutation) ResetCorrelationID() {
 	m.correlation_id = nil
+	delete(m.clearedFields, eventhistory.FieldCorrelationID)
 }
 
 // SetEventType sets the "event_type" field.
@@ -9846,6 +9910,12 @@ func (m *EventHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(eventhistory.FieldUpdatedBy) {
 		fields = append(fields, eventhistory.FieldUpdatedBy)
 	}
+	if m.FieldCleared(eventhistory.FieldEventID) {
+		fields = append(fields, eventhistory.FieldEventID)
+	}
+	if m.FieldCleared(eventhistory.FieldCorrelationID) {
+		fields = append(fields, eventhistory.FieldCorrelationID)
+	}
 	if m.FieldCleared(eventhistory.FieldMetadata) {
 		fields = append(fields, eventhistory.FieldMetadata)
 	}
@@ -9877,6 +9947,12 @@ func (m *EventHistoryMutation) ClearField(name string) error {
 		return nil
 	case eventhistory.FieldUpdatedBy:
 		m.ClearUpdatedBy()
+		return nil
+	case eventhistory.FieldEventID:
+		m.ClearEventID()
+		return nil
+	case eventhistory.FieldCorrelationID:
+		m.ClearCorrelationID()
 		return nil
 	case eventhistory.FieldMetadata:
 		m.ClearMetadata()

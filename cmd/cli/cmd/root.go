@@ -187,6 +187,28 @@ func JSONPrint(s []byte) error {
 	return nil
 }
 
+// ParseJSON parses a JSON formatted string into a map
+func ParseJSON(v string) (map[string]interface{}, error) {
+	var m map[string]interface{}
+
+	if err := json.Unmarshal([]byte(v), &m); err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
+// ParseBytes parses buffered bytes into a map
+func ParseBytes(v []byte) (map[string]interface{}, error) {
+	var m map[string]interface{}
+
+	if err := json.Unmarshal(v, &m); err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
 func createClient(ctx context.Context, baseURL string) (*CLI, error) {
 	cli := CLI{}
 

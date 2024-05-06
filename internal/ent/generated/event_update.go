@@ -90,6 +90,12 @@ func (eu *EventUpdate) SetNillableEventID(s *string) *EventUpdate {
 	return eu
 }
 
+// ClearEventID clears the value of the "event_id" field.
+func (eu *EventUpdate) ClearEventID() *EventUpdate {
+	eu.mutation.ClearEventID()
+	return eu
+}
+
 // SetCorrelationID sets the "correlation_id" field.
 func (eu *EventUpdate) SetCorrelationID(s string) *EventUpdate {
 	eu.mutation.SetCorrelationID(s)
@@ -101,6 +107,12 @@ func (eu *EventUpdate) SetNillableCorrelationID(s *string) *EventUpdate {
 	if s != nil {
 		eu.SetCorrelationID(*s)
 	}
+	return eu
+}
+
+// ClearCorrelationID clears the value of the "correlation_id" field.
+func (eu *EventUpdate) ClearCorrelationID() *EventUpdate {
+	eu.mutation.ClearCorrelationID()
 	return eu
 }
 
@@ -711,8 +723,14 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.EventID(); ok {
 		_spec.SetField(event.FieldEventID, field.TypeString, value)
 	}
+	if eu.mutation.EventIDCleared() {
+		_spec.ClearField(event.FieldEventID, field.TypeString)
+	}
 	if value, ok := eu.mutation.CorrelationID(); ok {
 		_spec.SetField(event.FieldCorrelationID, field.TypeString, value)
+	}
+	if eu.mutation.CorrelationIDCleared() {
+		_spec.ClearField(event.FieldCorrelationID, field.TypeString)
 	}
 	if value, ok := eu.mutation.EventType(); ok {
 		_spec.SetField(event.FieldEventType, field.TypeString, value)
@@ -1463,6 +1481,12 @@ func (euo *EventUpdateOne) SetNillableEventID(s *string) *EventUpdateOne {
 	return euo
 }
 
+// ClearEventID clears the value of the "event_id" field.
+func (euo *EventUpdateOne) ClearEventID() *EventUpdateOne {
+	euo.mutation.ClearEventID()
+	return euo
+}
+
 // SetCorrelationID sets the "correlation_id" field.
 func (euo *EventUpdateOne) SetCorrelationID(s string) *EventUpdateOne {
 	euo.mutation.SetCorrelationID(s)
@@ -1474,6 +1498,12 @@ func (euo *EventUpdateOne) SetNillableCorrelationID(s *string) *EventUpdateOne {
 	if s != nil {
 		euo.SetCorrelationID(*s)
 	}
+	return euo
+}
+
+// ClearCorrelationID clears the value of the "correlation_id" field.
+func (euo *EventUpdateOne) ClearCorrelationID() *EventUpdateOne {
+	euo.mutation.ClearCorrelationID()
 	return euo
 }
 
@@ -2114,8 +2144,14 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	if value, ok := euo.mutation.EventID(); ok {
 		_spec.SetField(event.FieldEventID, field.TypeString, value)
 	}
+	if euo.mutation.EventIDCleared() {
+		_spec.ClearField(event.FieldEventID, field.TypeString)
+	}
 	if value, ok := euo.mutation.CorrelationID(); ok {
 		_spec.SetField(event.FieldCorrelationID, field.TypeString, value)
+	}
+	if euo.mutation.CorrelationIDCleared() {
+		_spec.ClearField(event.FieldCorrelationID, field.TypeString)
 	}
 	if value, ok := euo.mutation.EventType(); ok {
 		_spec.SetField(event.FieldEventType, field.TypeString, value)

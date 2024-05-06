@@ -6,6 +6,7 @@ import (
 	// since the cmds are no longer part of the same package
 	// they must all be imported in main
 	_ "github.com/datumforge/datum/cmd/cli/cmd/apitokens"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/events"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/group"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/groupmembers"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/groupsetting"

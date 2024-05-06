@@ -174,3 +174,8 @@ data:
   DATUM_OBJSTORAGE_GCS_BUCKET: {{ .Values.datum.objstorage.gcs.bucket | "yourbucketname" }}
   DATUM_OBJSTORAGE_FS_ENABLED: {{ .Values.datum.objstorage.fs.enabled | false }}
   DATUM_OBJSTORAGE_FS_ROOT: {{ .Values.datum.objstorage.fs.root | "./storage" }}
+  DATUM_PUBLISHERCONFIG_ENABLED: {{ .Values.datum.publisherconfig.enabled | false }}
+  DATUM_PUBLISHERCONFIG_APPNAME: {{ .Values.datum.publisherconfig.appName | "datum" }}
+  DATUM_PUBLISHERCONFIG_ADDRESS: {{ .Values.datum.publisherconfig.address | "localhost:10000" }}
+  DATUM_PUBLISHERCONFIG_ADDRESSES: {{ .Values.datum.publisherconfig.addresses | [localhost:10000] }}
+  DATUM_PUBLISHERCONFIG_DEBUG: {{ .Values.datum.publisherconfig.debug | false }}

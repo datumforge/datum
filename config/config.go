@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/analytics/posthog"
 	"github.com/datumforge/datum/pkg/cache"
+	"github.com/datumforge/datum/pkg/events/kafka/kafkaconfig"
 	"github.com/datumforge/datum/pkg/middleware/cachecontrol"
 	"github.com/datumforge/datum/pkg/middleware/cors"
 	"github.com/datumforge/datum/pkg/middleware/mime"
@@ -84,6 +85,9 @@ type Config struct {
 
 	// Storage contains the configuration for the storage provider
 	ObjStorage ObjectStorage `json:"objstorage" koanf:"objstorage"`
+
+	// EventPublisher contains the configuration for the event publisher
+	Events kafkaconfig.Config `json:"publisherConfig" koanf:"publisherConfig"`
 }
 
 // ObjectStorage contains the configuration for the object storage provider

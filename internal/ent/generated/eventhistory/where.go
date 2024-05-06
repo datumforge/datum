@@ -550,6 +550,16 @@ func EventIDHasSuffix(v string) predicate.EventHistory {
 	return predicate.EventHistory(sql.FieldHasSuffix(FieldEventID, v))
 }
 
+// EventIDIsNil applies the IsNil predicate on the "event_id" field.
+func EventIDIsNil() predicate.EventHistory {
+	return predicate.EventHistory(sql.FieldIsNull(FieldEventID))
+}
+
+// EventIDNotNil applies the NotNil predicate on the "event_id" field.
+func EventIDNotNil() predicate.EventHistory {
+	return predicate.EventHistory(sql.FieldNotNull(FieldEventID))
+}
+
 // EventIDEqualFold applies the EqualFold predicate on the "event_id" field.
 func EventIDEqualFold(v string) predicate.EventHistory {
 	return predicate.EventHistory(sql.FieldEqualFold(FieldEventID, v))
@@ -613,6 +623,16 @@ func CorrelationIDHasPrefix(v string) predicate.EventHistory {
 // CorrelationIDHasSuffix applies the HasSuffix predicate on the "correlation_id" field.
 func CorrelationIDHasSuffix(v string) predicate.EventHistory {
 	return predicate.EventHistory(sql.FieldHasSuffix(FieldCorrelationID, v))
+}
+
+// CorrelationIDIsNil applies the IsNil predicate on the "correlation_id" field.
+func CorrelationIDIsNil() predicate.EventHistory {
+	return predicate.EventHistory(sql.FieldIsNull(FieldCorrelationID))
+}
+
+// CorrelationIDNotNil applies the NotNil predicate on the "correlation_id" field.
+func CorrelationIDNotNil() predicate.EventHistory {
+	return predicate.EventHistory(sql.FieldNotNull(FieldCorrelationID))
 }
 
 // CorrelationIDEqualFold applies the EqualFold predicate on the "correlation_id" field.

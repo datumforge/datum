@@ -95,6 +95,13 @@ posthog:
     apiKey: ""
     enabled: false
     host: https://app.posthog.com
+publisherConfig:
+    address: localhost:10000
+    addresses:
+        - localhost:10000
+    appName: datum
+    debug: false
+    enabled: false
 ratelimit:
     burst: 30
     enabled: false

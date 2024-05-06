@@ -554,6 +554,33 @@
       "type": "object",
       "description": "OauthProviderConfig represents the configuration for OAuth providers such as Github and Google"
     },
+    "kafkaconfig.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is a flag to determine if the Kafka event source is enabled"
+        },
+        "appName": {
+          "type": "string",
+          "description": "AppName is the name of the application that is publishing events"
+        },
+        "address": {
+          "type": "string",
+          "description": "Address is the address of the Kafka broker"
+        },
+        "addresses": {
+          "$ref": "#/$defs/[]string",
+          "description": "Addresses is a list of addresses of the Kafka brokers"
+        },
+        "debug": {
+          "type": "boolean",
+          "description": "Debug is a flag to determine if the Kafka client should run in debug mode"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Config is the configuration for the Kafka event source"
+    },
     "map[string][]string": {
       "additionalProperties": {
         "$ref": "#/$defs/[]string"
@@ -1055,6 +1082,10 @@
     "objstorage": {
       "$ref": "#/$defs/config.ObjectStorage",
       "description": "Storage contains the configuration for the storage provider"
+    },
+    "publisherConfig": {
+      "$ref": "#/$defs/kafkaconfig.Config",
+      "description": "EventPublisher contains the configuration for the event publisher"
     }
   },
   "additionalProperties": false,

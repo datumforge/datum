@@ -381,8 +381,8 @@ type CreateEventInput struct {
 	UpdatedAt              *time.Time
 	CreatedBy              *string
 	UpdatedBy              *string
-	EventID                string
-	CorrelationID          string
+	EventID                *string
+	CorrelationID          *string
 	EventType              string
 	Metadata               map[string]interface{}
 	UserIDs                []string
@@ -413,8 +413,12 @@ func (i *CreateEventInput) Mutate(m *EventMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	m.SetEventID(i.EventID)
-	m.SetCorrelationID(i.CorrelationID)
+	if v := i.EventID; v != nil {
+		m.SetEventID(*v)
+	}
+	if v := i.CorrelationID; v != nil {
+		m.SetCorrelationID(*v)
+	}
 	m.SetEventType(i.EventType)
 	if v := i.Metadata; v != nil {
 		m.SetMetadata(v)
@@ -469,7 +473,9 @@ type UpdateEventInput struct {
 	UpdatedAt                    *time.Time
 	ClearUpdatedBy               bool
 	UpdatedBy                    *string
+	ClearEventID                 bool
 	EventID                      *string
+	ClearCorrelationID           bool
 	CorrelationID                *string
 	EventType                    *string
 	ClearMetadata                bool
@@ -526,8 +532,14 @@ func (i *UpdateEventInput) Mutate(m *EventMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
+	if i.ClearEventID {
+		m.ClearEventID()
+	}
 	if v := i.EventID; v != nil {
 		m.SetEventID(*v)
+	}
+	if i.ClearCorrelationID {
+		m.ClearCorrelationID()
 	}
 	if v := i.CorrelationID; v != nil {
 		m.SetCorrelationID(*v)

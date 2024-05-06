@@ -22,9 +22,9 @@ import (
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
-
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/cache"
+	"github.com/datumforge/datum/pkg/events/kafka/publisher"
 	authmw "github.com/datumforge/datum/pkg/middleware/auth"
 	"github.com/datumforge/datum/pkg/middleware/cachecontrol"
 	"github.com/datumforge/datum/pkg/middleware/cors"
@@ -221,6 +221,19 @@ func WithMiddleware() ServerOption {
 			echocontext.EchoContextToContextMiddleware(),                                             // adds echo context to parent
 			mime.NewWithConfig(mime.Config{DefaultContentType: echo.MIMEApplicationJSONCharsetUTF8}), // add mime middleware
 		)
+	})
+}
+
+// WithEventPublisher sets up the default Kafka event publisher
+func WithEventPublisher() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		ep := publisher.KafkaPublisher{
+			Config: s.Config.Settings.Events,
+		}
+
+		publisher := publisher.NewKafkaPublisher(ep.Config.Addresses)
+
+		s.Config.Handler.EventManager = publisher
 	})
 }
 

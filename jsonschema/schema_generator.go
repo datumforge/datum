@@ -42,6 +42,7 @@ var includedPackages = []string{
 	"./pkg/providers",
 	"./pkg/analytics",
 	"./pkg/middleware",
+	"./pkg/events/kafka/kafkaconfig",
 }
 
 // schemaConfig represents the configuration for the schema generator

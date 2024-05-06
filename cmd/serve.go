@@ -59,6 +59,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithCacheHeaders(),
 		serveropts.WithCORS(),
 		serveropts.WithAnalytics(),
+		serveropts.WithEventPublisher(),
 	)
 
 	so := serveropts.NewServerOptions(serverOpts, viper.GetString("config"))

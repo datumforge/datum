@@ -22,6 +22,7 @@ Config contains the configuration for the datum server
 |[**totp**](#totp)|`object`|||
 |[**ratelimit**](#ratelimit)|`object`|Config defines the configuration settings for the default rate limiter<br/>||
 |[**objstorage**](#objstorage)|`object`|ObjectStorage contains the configuration for the object storage provider<br/>||
+|[**publisherConfig**](#publisherconfig)|`object`|Config is the configuration for the Kafka event source<br/>||
 
 **Additional Properties:** not allowed  
 <a name="server"></a>
@@ -645,4 +646,27 @@ Config is the configuration for Storage
 |**root**|`string`|Root is the root directory for the filesystem storage<br/>||
 
 **Additional Properties:** not allowed  
+<a name="publisherconfig"></a>
+## publisherConfig: object
+
+Config is the configuration for the Kafka event source
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is a flag to determine if the Kafka event source is enabled<br/>||
+|**appName**|`string`|AppName is the name of the application that is publishing events<br/>||
+|**address**|`string`|Address is the address of the Kafka broker<br/>||
+|[**addresses**](#publisherconfigaddresses)|`string[]`|||
+|**debug**|`boolean`|Debug is a flag to determine if the Kafka client should run in debug mode<br/>||
+
+**Additional Properties:** not allowed  
+<a name="publisherconfigaddresses"></a>
+### publisherConfig\.addresses: array
+
+**Items**
+
+**Item Type:** `string`  
 

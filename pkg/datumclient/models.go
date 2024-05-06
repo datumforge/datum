@@ -285,8 +285,8 @@ type CreateEventInput struct {
 	UpdatedAt              *time.Time             `json:"updatedAt,omitempty"`
 	CreatedBy              *string                `json:"createdBy,omitempty"`
 	UpdatedBy              *string                `json:"updatedBy,omitempty"`
-	EventID                string                 `json:"eventID"`
-	CorrelationID          string                 `json:"correlationID"`
+	EventID                *string                `json:"eventID,omitempty"`
+	CorrelationID          *string                `json:"correlationID,omitempty"`
 	EventType              string                 `json:"eventType"`
 	Metadata               map[string]interface{} `json:"metadata,omitempty"`
 	UserIDs                []string               `json:"userIDs,omitempty"`
@@ -1570,8 +1570,8 @@ type Event struct {
 	UpdatedAt           *time.Time             `json:"updatedAt,omitempty"`
 	CreatedBy           *string                `json:"createdBy,omitempty"`
 	UpdatedBy           *string                `json:"updatedBy,omitempty"`
-	EventID             string                 `json:"eventID"`
-	CorrelationID       string                 `json:"correlationID"`
+	EventID             *string                `json:"eventID,omitempty"`
+	CorrelationID       *string                `json:"correlationID,omitempty"`
 	EventType           string                 `json:"eventType"`
 	Metadata            map[string]interface{} `json:"metadata,omitempty"`
 	User                []*User                `json:"user,omitempty"`
@@ -1631,8 +1631,8 @@ type EventHistory struct {
 	UpdatedAt     *time.Time             `json:"updatedAt,omitempty"`
 	CreatedBy     *string                `json:"createdBy,omitempty"`
 	UpdatedBy     *string                `json:"updatedBy,omitempty"`
-	EventID       string                 `json:"eventID"`
-	CorrelationID string                 `json:"correlationID"`
+	EventID       *string                `json:"eventID,omitempty"`
+	CorrelationID *string                `json:"correlationID,omitempty"`
 	EventType     string                 `json:"eventType"`
 	Metadata      map[string]interface{} `json:"metadata,omitempty"`
 }
@@ -1770,6 +1770,8 @@ type EventHistoryWhereInput struct {
 	EventIDContains     *string  `json:"eventIDContains,omitempty"`
 	EventIDHasPrefix    *string  `json:"eventIDHasPrefix,omitempty"`
 	EventIDHasSuffix    *string  `json:"eventIDHasSuffix,omitempty"`
+	EventIDIsNil        *bool    `json:"eventIDIsNil,omitempty"`
+	EventIDNotNil       *bool    `json:"eventIDNotNil,omitempty"`
 	EventIDEqualFold    *string  `json:"eventIDEqualFold,omitempty"`
 	EventIDContainsFold *string  `json:"eventIDContainsFold,omitempty"`
 	// correlation_id field predicates
@@ -1784,6 +1786,8 @@ type EventHistoryWhereInput struct {
 	CorrelationIDContains     *string  `json:"correlationIDContains,omitempty"`
 	CorrelationIDHasPrefix    *string  `json:"correlationIDHasPrefix,omitempty"`
 	CorrelationIDHasSuffix    *string  `json:"correlationIDHasSuffix,omitempty"`
+	CorrelationIDIsNil        *bool    `json:"correlationIDIsNil,omitempty"`
+	CorrelationIDNotNil       *bool    `json:"correlationIDNotNil,omitempty"`
 	CorrelationIDEqualFold    *string  `json:"correlationIDEqualFold,omitempty"`
 	CorrelationIDContainsFold *string  `json:"correlationIDContainsFold,omitempty"`
 	// event_type field predicates
@@ -1891,6 +1895,8 @@ type EventWhereInput struct {
 	EventIDContains     *string  `json:"eventIDContains,omitempty"`
 	EventIDHasPrefix    *string  `json:"eventIDHasPrefix,omitempty"`
 	EventIDHasSuffix    *string  `json:"eventIDHasSuffix,omitempty"`
+	EventIDIsNil        *bool    `json:"eventIDIsNil,omitempty"`
+	EventIDNotNil       *bool    `json:"eventIDNotNil,omitempty"`
 	EventIDEqualFold    *string  `json:"eventIDEqualFold,omitempty"`
 	EventIDContainsFold *string  `json:"eventIDContainsFold,omitempty"`
 	// correlation_id field predicates
@@ -1905,6 +1911,8 @@ type EventWhereInput struct {
 	CorrelationIDContains     *string  `json:"correlationIDContains,omitempty"`
 	CorrelationIDHasPrefix    *string  `json:"correlationIDHasPrefix,omitempty"`
 	CorrelationIDHasSuffix    *string  `json:"correlationIDHasSuffix,omitempty"`
+	CorrelationIDIsNil        *bool    `json:"correlationIDIsNil,omitempty"`
+	CorrelationIDNotNil       *bool    `json:"correlationIDNotNil,omitempty"`
 	CorrelationIDEqualFold    *string  `json:"correlationIDEqualFold,omitempty"`
 	CorrelationIDContainsFold *string  `json:"correlationIDContainsFold,omitempty"`
 	// event_type field predicates
@@ -8599,7 +8607,9 @@ type UpdateEventInput struct {
 	UpdatedBy                    *string                `json:"updatedBy,omitempty"`
 	ClearUpdatedBy               *bool                  `json:"clearUpdatedBy,omitempty"`
 	EventID                      *string                `json:"eventID,omitempty"`
+	ClearEventID                 *bool                  `json:"clearEventID,omitempty"`
 	CorrelationID                *string                `json:"correlationID,omitempty"`
+	ClearCorrelationID           *bool                  `json:"clearCorrelationID,omitempty"`
 	EventType                    *string                `json:"eventType,omitempty"`
 	Metadata                     map[string]interface{} `json:"metadata,omitempty"`
 	ClearMetadata                *bool                  `json:"clearMetadata,omitempty"`

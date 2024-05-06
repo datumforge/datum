@@ -117,9 +117,25 @@ func (ehc *EventHistoryCreate) SetEventID(s string) *EventHistoryCreate {
 	return ehc
 }
 
+// SetNillableEventID sets the "event_id" field if the given value is not nil.
+func (ehc *EventHistoryCreate) SetNillableEventID(s *string) *EventHistoryCreate {
+	if s != nil {
+		ehc.SetEventID(*s)
+	}
+	return ehc
+}
+
 // SetCorrelationID sets the "correlation_id" field.
 func (ehc *EventHistoryCreate) SetCorrelationID(s string) *EventHistoryCreate {
 	ehc.mutation.SetCorrelationID(s)
+	return ehc
+}
+
+// SetNillableCorrelationID sets the "correlation_id" field if the given value is not nil.
+func (ehc *EventHistoryCreate) SetNillableCorrelationID(s *string) *EventHistoryCreate {
+	if s != nil {
+		ehc.SetCorrelationID(*s)
+	}
 	return ehc
 }
 
@@ -214,12 +230,6 @@ func (ehc *EventHistoryCreate) check() error {
 		if err := eventhistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "EventHistory.operation": %w`, err)}
 		}
-	}
-	if _, ok := ehc.mutation.EventID(); !ok {
-		return &ValidationError{Name: "event_id", err: errors.New(`generated: missing required field "EventHistory.event_id"`)}
-	}
-	if _, ok := ehc.mutation.CorrelationID(); !ok {
-		return &ValidationError{Name: "correlation_id", err: errors.New(`generated: missing required field "EventHistory.correlation_id"`)}
 	}
 	if _, ok := ehc.mutation.EventType(); !ok {
 		return &ValidationError{Name: "event_type", err: errors.New(`generated: missing required field "EventHistory.event_type"`)}

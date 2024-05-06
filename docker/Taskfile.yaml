@@ -81,7 +81,7 @@ tasks:
     dir: ..
     desc: brings up the compose environment for kafka
     cmds:
-      - "docker compose -f ./docker/docker-compose-kafka.yml -p kafka up -d"
+      - "docker compose -f ./docker/docker-compose-kafka.yml -p kafka up --build -d"
 
   kafka:down:
     dir: ..

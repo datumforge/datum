@@ -441,12 +441,6 @@ func (ec *EventCreate) check() error {
 	if _, ok := ec.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Event.mapping_id"`)}
 	}
-	if _, ok := ec.mutation.EventID(); !ok {
-		return &ValidationError{Name: "event_id", err: errors.New(`generated: missing required field "Event.event_id"`)}
-	}
-	if _, ok := ec.mutation.CorrelationID(); !ok {
-		return &ValidationError{Name: "correlation_id", err: errors.New(`generated: missing required field "Event.correlation_id"`)}
-	}
 	if _, ok := ec.mutation.EventType(); !ok {
 		return &ValidationError{Name: "event_type", err: errors.New(`generated: missing required field "Event.event_type"`)}
 	}

@@ -252,12 +252,6 @@ func (ehc *EventHistoryCreate) check() error {
 	if _, ok := ehc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "EventHistory.mapping_id"`)}
 	}
-	if _, ok := ehc.mutation.EventID(); !ok {
-		return &ValidationError{Name: "event_id", err: errors.New(`generated: missing required field "EventHistory.event_id"`)}
-	}
-	if _, ok := ehc.mutation.CorrelationID(); !ok {
-		return &ValidationError{Name: "correlation_id", err: errors.New(`generated: missing required field "EventHistory.correlation_id"`)}
-	}
 	if _, ok := ehc.mutation.EventType(); !ok {
 		return &ValidationError{Name: "event_type", err: errors.New(`generated: missing required field "EventHistory.event_type"`)}
 	}

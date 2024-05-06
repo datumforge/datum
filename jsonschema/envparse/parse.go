@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/stoewer/go-strcase"
 )
 
 // ErrInvalidSpecification indicates that a specification is of the wrong type.
@@ -86,7 +88,7 @@ func (c Config) GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error
 
 		if prefix != "" {
 			info.Key = fmt.Sprintf("%s_%s", prefix, info.Key)
-			info.FullPath = fmt.Sprintf("%s.%s", strings.ToLower(strings.Replace(prefix, "_", ".", -1)), info.FieldName) // nolint: gocritic
+			info.FullPath = fmt.Sprintf("%s.%s", strcase.LowerCamelCase(strings.Replace(prefix, "_", ".", -1)), info.FieldName) // nolint: gocritic
 		}
 
 		info.Key = strings.ToUpper(info.Key)
@@ -96,7 +98,7 @@ func (c Config) GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error
 			innerPrefix := prefix
 
 			if !ftype.Anonymous {
-				innerPrefix = info.Key
+				innerPrefix = prefix + "_" + info.Tags.Get("json")
 			}
 
 			embeddedPtr := f.Addr().Interface()

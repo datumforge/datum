@@ -125,7 +125,7 @@ type Server struct {
 	// Secure contains settings for the secure middleware
 	Secure secure.Config `json:"secure" koanf:"secure"`
 	// Redirect contains settings for the redirect middleware
-	Redirects redirect.Config `json:"redirect" koanf:"redirects"`
+	Redirects redirect.Config `json:"redirects" koanf:"redirects"`
 	// CacheControl contains settings for the cache control middleware
 	CacheControl cachecontrol.Config `json:"cacheControl" koanf:"cacheControl"`
 	// Mime contains settings for the mime middleware

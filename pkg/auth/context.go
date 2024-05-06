@@ -66,7 +66,7 @@ func GetAuthTypeFromEchoContext(c echo.Context) AuthenticationType {
 	return ""
 }
 
-// GetSubjectIDFromContext retrieves the subject ID from the context
+// getSubjectIDFromEchoContext retrieves the subject ID from the echo context
 func getSubjectIDFromEchoContext(c echo.Context) (string, error) {
 	if v := c.Get(ContextAuthenticatedUser.name); v != nil {
 		a, ok := v.(*AuthenticatedUser)
@@ -89,6 +89,7 @@ func getSubjectIDFromEchoContext(c echo.Context) (string, error) {
 	return "", ErrNoAuthUser
 }
 
+// getOrganizationIDFromEchoContext returns the organization ID from the echo context
 func getOrganizationIDFromEchoContext(c echo.Context) (string, error) {
 	if v := c.Get(ContextAuthenticatedUser.name); v != nil {
 		a, ok := v.(*AuthenticatedUser)

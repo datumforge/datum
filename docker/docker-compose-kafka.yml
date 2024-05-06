@@ -1,14 +1,12 @@
 services:
 
   proxy:
-    build:
-      context: .
-      dockerfile: ./shared/envoy/Dockerfile
-      args:
-        ENVOY_VARIANT: contrib-dev
+    image: envoyproxy/envoy:contrib-v1.30-latest
     ports:
-    - "${PORT_PROXY:-10000}:10000"
-    - "${PORT_ADMIN:-8001}:8001"
+      - "${PORT_PROXY:-10000}:10000"
+      - "${PORT_ADMIN:-8001}:8001"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
 
   kafka-server:
     image: docker.io/bitnami/kafka:3.7

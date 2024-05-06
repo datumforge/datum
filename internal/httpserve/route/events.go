@@ -19,7 +19,7 @@ func registerEventPublisher(router *echo.Echo, h *handlers.Handler) (err error) 
 		Handler: func(c echo.Context) error {
 			return h.EventPublisher(c)
 		},
-	}.ForGroup(V1Version, restrictedEndpointsMW))
+	}.ForGroup(V1Version, authMW))
 
 	return
 }

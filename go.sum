@@ -159,8 +159,8 @@ github.com/datumforge/enthistory v0.0.9 h1:jA1zvzoqTXfBtPhuWrZhqoeCUB6gGMpBXSA1M
 github.com/datumforge/enthistory v0.0.9/go.mod h1:QVPj2xf/7bSWf8iXsyHKR5j8r+CKYGSbHYeS6lwg28U=
 github.com/datumforge/entx v0.1.0 h1:Y6fh9AC7pz+38MuwUI78qGlv8ogK0tahZI+lqXrzQnY=
 github.com/datumforge/entx v0.1.0/go.mod h1:IWp/w6GnoN1/ejJPKxMeSQrO2mfJUb+/A8brydWFu0U=
-github.com/datumforge/fgax v0.1.7 h1:ZxW7TgyVnHgQIrJU3MsTI741Fws470MeI5/MJIOL5Sc=
-github.com/datumforge/fgax v0.1.7/go.mod h1:m+yg51Og72DzpKydfMuUNBbHxo78C5gR/HL++IbSPbM=
+github.com/datumforge/fgax v0.2.0 h1:Ep4M2bmATn0KnwQv5y2FnLOm9PxGbM2CBNBvnd3npCE=
+github.com/datumforge/fgax v0.2.0/go.mod h1:5QHcnJQwYEpgK9oi/C1Q/frKvvENClJh//tYzq/5Dv4=
 github.com/datumforge/geodetic v0.0.3 h1:nyUJhUh3+jeezlUoPvUEUQFQI8n5vlb1FuKOhTI3tow=
 github.com/datumforge/geodetic v0.0.3/go.mod h1:LgA3ei9aTK5VBrj/UMWkJGKwpsgg8NYEhzMAXxm9oe4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -873,8 +873,8 @@ google.golang.org/protobuf v1.22.0/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2
 google.golang.org/protobuf v1.23.0/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2l/sGQquU=
 google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod h1:EGpADcykh3NcUnDUJcl1+ZksZNG86OlYog2l/sGQquU=
 google.golang.org/protobuf v1.25.0/go.mod h1:9JNX74DMeImyA3h4bdi1ymwjUzf21/xIlbajtzgsN7c=
-google.golang.org/protobuf v1.34.0 h1:Qo/qEd2RZPCf2nKuorzksSknv0d3ERwp1vFG38gSmH4=
-google.golang.org/protobuf v1.34.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
+google.golang.org/protobuf v1.34.1 h1:9ddQBjfCyZPOHPUiPxpYESBLc+T8P3E+Vo4IbKZgFWg=
+google.golang.org/protobuf v1.34.1/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

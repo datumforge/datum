@@ -90,6 +90,20 @@ func (ec *EventCreate) SetNillableUpdatedBy(s *string) *EventCreate {
 	return ec
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ec *EventCreate) SetMappingID(s string) *EventCreate {
+	ec.mutation.SetMappingID(s)
+	return ec
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ec *EventCreate) SetNillableMappingID(s *string) *EventCreate {
+	if s != nil {
+		ec.SetMappingID(*s)
+	}
+	return ec
+}
+
 // SetEventID sets the "event_id" field.
 func (ec *EventCreate) SetEventID(s string) *EventCreate {
 	ec.mutation.SetEventID(s)
@@ -405,6 +419,13 @@ func (ec *EventCreate) defaults() error {
 		v := event.DefaultUpdatedAt()
 		ec.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ec.mutation.MappingID(); !ok {
+		if event.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized event.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := event.DefaultMappingID()
+		ec.mutation.SetMappingID(v)
+	}
 	if _, ok := ec.mutation.ID(); !ok {
 		if event.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized event.DefaultID (forgotten import generated/runtime?)")
@@ -417,6 +438,9 @@ func (ec *EventCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (ec *EventCreate) check() error {
+	if _, ok := ec.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Event.mapping_id"`)}
+	}
 	if _, ok := ec.mutation.EventType(); !ok {
 		return &ValidationError{Name: "event_type", err: errors.New(`generated: missing required field "Event.event_type"`)}
 	}
@@ -471,6 +495,10 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.UpdatedBy(); ok {
 		_spec.SetField(event.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := ec.mutation.MappingID(); ok {
+		_spec.SetField(event.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ec.mutation.EventID(); ok {
 		_spec.SetField(event.FieldEventID, field.TypeString, value)

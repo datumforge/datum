@@ -5,7 +5,6 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 )
@@ -13,10 +12,9 @@ import (
 // UserInfo returns the user information for the authenticated user
 func (h *Handler) UserInfo(ctx echo.Context) error {
 	// setup view context
-	context := ctx.Request().Context()
-	userCtx := viewer.NewContext(context, viewer.NewUserViewerFromSubject(context))
+	reqCtx := ctx.Request().Context()
 
-	userID, err := auth.GetUserIDFromContext(context)
+	userID, err := auth.GetUserIDFromContext(reqCtx)
 	if err != nil {
 		h.Logger.Errorw("unable to get user id from context", "error", err)
 
@@ -24,7 +22,7 @@ func (h *Handler) UserInfo(ctx echo.Context) error {
 	}
 
 	// get user from database by subject
-	user, err := h.getUserBySub(userCtx, userID)
+	user, err := h.getUserDetailsByID(reqCtx, userID)
 	if err != nil {
 		h.Logger.Errorw("unable to get user by subject", "error", err)
 

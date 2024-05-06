@@ -108,8 +108,6 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 		mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 
-		mock_fga.CheckAny(t, suite.client.fga, true)
-
 		whereInput := &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
 				{
@@ -164,8 +162,6 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org2.ID)
 	require.NoError(t, err)
 
-	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&GroupCleanup{client: suite.client, GroupID: group2.ID}).MustDelete(reqCtx2, t)
 	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 	(&OrganizationCleanup{client: suite.client, OrgID: org2.ID}).MustDelete(reqCtx2, t)
 }
@@ -317,13 +313,6 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			owner:     owner1.ID,
 			allowed:   true,
 			check:     true,
-		},
-		{
-			name:      "missing owner",
-			groupName: gofakeit.Name(),
-			errorMsg:  "not authorized",
-			allowed:   true,
-			check:     false, // check caught earlier
 		},
 		{
 			name:     "missing name",

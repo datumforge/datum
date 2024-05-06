@@ -8,7 +8,7 @@ import (
 	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/sessions"
@@ -36,10 +36,9 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	context := ctx.Request().Context()
-	userCtx := viewer.NewContext(context, viewer.NewUserViewerFromSubject(context))
+	reqCtx := ctx.Request().Context()
 
-	userID, err := auth.GetUserIDFromContext(context)
+	userID, err := auth.GetUserIDFromContext(reqCtx)
 	if err != nil {
 		h.Logger.Errorw("unable to get user id from context", "error", err)
 
@@ -47,14 +46,14 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// get user from database by subject
-	user, err := h.getUserBySub(userCtx, userID)
+	user, err := h.getUserDetailsByID(reqCtx, userID)
 	if err != nil {
 		h.Logger.Errorw("unable to get user by subject", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	orgID, err := auth.GetOrganizationIDFromContext(context)
+	orgID, err := auth.GetOrganizationIDFromContext(reqCtx)
 	if err != nil {
 		h.Logger.Errorw("unable to get organization id from context", "error", err)
 
@@ -67,12 +66,20 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// ensure user is already a member of the destination organization
-	if err := h.confirmOrgMembership(userCtx, userID, req.TargetOrganizationID); err != nil {
+	if err := h.confirmOrgMembership(reqCtx, userID, req.TargetOrganizationID); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
+	// get the target organization
+	orgGetCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	org, err := h.getOrgByID(orgGetCtx, req.TargetOrganizationID)
+	if err != nil {
+		h.Logger.Errorw("unable to get target organization by id", "error", err)
+	}
+
 	// create new claims for the user
-	newClaims := switchClaims(user, req.TargetOrganizationID)
+	newClaims := switchClaims(user, org.MappingID)
 
 	// create a new token pair for the user
 	access, refresh, err := h.TM.CreateTokenPair(newClaims)
@@ -100,7 +107,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	props := ph.NewProperties().
 		Set("user_id", user.ID).
 		Set("email", user.Email).
-		Set("target_organization_id", newClaims.OrgID).
+		Set("target_organization_id", org.ID).
 		Set("auth_provider", user.AuthProvider).
 		Set("previous_organization_id", orgID)
 
@@ -118,12 +125,12 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 }
 
 // switchClaims creates a new set of claims for the user based on the target organization and returns them
-func switchClaims(u *generated.User, targetOrg string) *tokens.Claims {
+func switchClaims(u *generated.User, targetOrgMappingID string) *tokens.Claims {
 	return &tokens.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: u.ID,
+			Subject: u.MappingID,
 		},
-		UserID: u.ID,
-		OrgID:  targetOrg,
+		UserID: u.MappingID,
+		OrgID:  targetOrgMappingID,
 	}
 }

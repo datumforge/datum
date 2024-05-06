@@ -29,8 +29,6 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 
 	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
-	listObjects := []string{"organization:test"}
-
 	testCases := []struct {
 		name            string
 		userConfirmed   bool
@@ -78,10 +76,6 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.fga)
-
-			if tc.expectedStatus == http.StatusOK {
-				mock_fga.ListAny(t, suite.fga, listObjects)
-			}
 
 			// set privacy allow in order to allow the creation of the users without
 			// authentication in the tests

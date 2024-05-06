@@ -52,8 +52,6 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 		SetSetting(userSetting).
 		SaveX(ctx)
 
-	listObjects := []string{"organization:test"}
-
 	validUnconfirmedUser := "msmith@datum.net"
 
 	userSetting = suite.db.UserSetting.Create().
@@ -121,11 +119,6 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.fga)
-
-			// required to list objects to get the default org in claims
-			if tc.expectedErr == nil {
-				mock_fga.ListAny(t, suite.fga, listObjects)
-			}
 
 			loginJSON := handlers.LoginRequest{
 				Username: tc.username,

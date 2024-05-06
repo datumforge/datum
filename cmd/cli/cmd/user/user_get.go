@@ -9,7 +9,6 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -23,9 +22,6 @@ var userGetCmd = &cobra.Command{
 
 func init() {
 	userCmd.AddCommand(userGetCmd)
-
-	userGetCmd.Flags().BoolP("self", "s", false, "get current user info, requires authentication")
-	datum.ViperBindFlag("user.get.self", userGetCmd.Flags().Lookup("self"))
 
 	userGetCmd.Flags().StringP("id", "i", "", "user id to query")
 	datum.ViperBindFlag("user.get.id", userGetCmd.Flags().Lookup("id"))
@@ -44,20 +40,10 @@ func users(ctx context.Context) error {
 
 	// filter options
 	userID := viper.GetString("user.get.id")
-	self := viper.GetBool("user.get.self")
 
 	var s []byte
 
 	writer := tables.NewTableWriter(userCmd.OutOrStdout(), "ID", "Email", "FirstName", "LastName", "AuthProvider")
-
-	if self {
-		claims, err := tokens.ParseUnverifiedTokenClaims(cli.AccessToken)
-		if err != nil {
-			return err
-		}
-
-		userID = claims.ParseUserID().String()
-	}
 
 	// if a user ID is provided, filter on that user, otherwise get all
 	if userID != "" {

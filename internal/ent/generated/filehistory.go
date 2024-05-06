@@ -36,6 +36,8 @@ type FileHistory struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// FileName holds the value of the "file_name" field.
 	FileName string `json:"file_name,omitempty"`
 	// FileExtension holds the value of the "file_extension" field.
@@ -62,7 +64,7 @@ func (*FileHistory) scanValues(columns []string) ([]any, error) {
 			values[i] = new(enthistory.OpType)
 		case filehistory.FieldFileSize:
 			values[i] = new(sql.NullInt64)
-		case filehistory.FieldID, filehistory.FieldRef, filehistory.FieldCreatedBy, filehistory.FieldUpdatedBy, filehistory.FieldDeletedBy, filehistory.FieldFileName, filehistory.FieldFileExtension, filehistory.FieldContentType, filehistory.FieldStoreKey, filehistory.FieldCategory, filehistory.FieldAnnotation:
+		case filehistory.FieldID, filehistory.FieldRef, filehistory.FieldCreatedBy, filehistory.FieldUpdatedBy, filehistory.FieldDeletedBy, filehistory.FieldMappingID, filehistory.FieldFileName, filehistory.FieldFileExtension, filehistory.FieldContentType, filehistory.FieldStoreKey, filehistory.FieldCategory, filehistory.FieldAnnotation:
 			values[i] = new(sql.NullString)
 		case filehistory.FieldHistoryTime, filehistory.FieldCreatedAt, filehistory.FieldUpdatedAt, filehistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -140,6 +142,12 @@ func (fh *FileHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
 				fh.DeletedBy = value.String
+			}
+		case filehistory.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				fh.MappingID = value.String
 			}
 		case filehistory.FieldFileName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -245,6 +253,9 @@ func (fh *FileHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(fh.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(fh.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("file_name=")
 	builder.WriteString(fh.FileName)

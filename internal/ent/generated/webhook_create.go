@@ -78,6 +78,20 @@ func (wc *WebhookCreate) SetNillableUpdatedBy(s *string) *WebhookCreate {
 	return wc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (wc *WebhookCreate) SetMappingID(s string) *WebhookCreate {
+	wc.mutation.SetMappingID(s)
+	return wc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (wc *WebhookCreate) SetNillableMappingID(s *string) *WebhookCreate {
+	if s != nil {
+		wc.SetMappingID(*s)
+	}
+	return wc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (wc *WebhookCreate) SetDeletedAt(t time.Time) *WebhookCreate {
 	wc.mutation.SetDeletedAt(t)
@@ -321,6 +335,13 @@ func (wc *WebhookCreate) defaults() error {
 		v := webhook.DefaultUpdatedAt()
 		wc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := wc.mutation.MappingID(); !ok {
+		if webhook.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized webhook.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := webhook.DefaultMappingID()
+		wc.mutation.SetMappingID(v)
+	}
 	if _, ok := wc.mutation.Enabled(); !ok {
 		v := webhook.DefaultEnabled
 		wc.mutation.SetEnabled(v)
@@ -341,6 +362,9 @@ func (wc *WebhookCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (wc *WebhookCreate) check() error {
+	if _, ok := wc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Webhook.mapping_id"`)}
+	}
 	if _, ok := wc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Webhook.name"`)}
 	}
@@ -411,6 +435,10 @@ func (wc *WebhookCreate) createSpec() (*Webhook, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.UpdatedBy(); ok {
 		_spec.SetField(webhook.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := wc.mutation.MappingID(); ok {
+		_spec.SetField(webhook.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := wc.mutation.DeletedAt(); ok {
 		_spec.SetField(webhook.FieldDeletedAt, field.TypeTime, value)

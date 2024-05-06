@@ -36,6 +36,8 @@ type GroupHistory struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
 	// the name of the group - must be unique within the organization
@@ -58,7 +60,7 @@ func (*GroupHistory) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case grouphistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
-		case grouphistory.FieldID, grouphistory.FieldRef, grouphistory.FieldCreatedBy, grouphistory.FieldUpdatedBy, grouphistory.FieldDeletedBy, grouphistory.FieldOwnerID, grouphistory.FieldName, grouphistory.FieldDescription, grouphistory.FieldGravatarLogoURL, grouphistory.FieldLogoURL, grouphistory.FieldDisplayName:
+		case grouphistory.FieldID, grouphistory.FieldRef, grouphistory.FieldCreatedBy, grouphistory.FieldUpdatedBy, grouphistory.FieldDeletedBy, grouphistory.FieldMappingID, grouphistory.FieldOwnerID, grouphistory.FieldName, grouphistory.FieldDescription, grouphistory.FieldGravatarLogoURL, grouphistory.FieldLogoURL, grouphistory.FieldDisplayName:
 			values[i] = new(sql.NullString)
 		case grouphistory.FieldHistoryTime, grouphistory.FieldCreatedAt, grouphistory.FieldUpdatedAt, grouphistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -136,6 +138,12 @@ func (gh *GroupHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
 				gh.DeletedBy = value.String
+			}
+		case grouphistory.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				gh.MappingID = value.String
 			}
 		case grouphistory.FieldOwnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -235,6 +243,9 @@ func (gh *GroupHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(gh.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(gh.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("owner_id=")
 	builder.WriteString(gh.OwnerID)

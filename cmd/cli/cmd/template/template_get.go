@@ -9,7 +9,6 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -24,9 +23,6 @@ var templateGetCmd = &cobra.Command{
 func init() {
 	templateCmd.AddCommand(templateGetCmd)
 
-	templateGetCmd.Flags().BoolP("current", "c", false, "get template from currently logged in organization")
-	datum.ViperBindFlag("template.get.current", templateGetCmd.Flags().Lookup("current"))
-
 	templateGetCmd.Flags().StringP("id", "i", "", "get a specific template by ID")
 	datum.ViperBindFlag("template.get.id", templateGetCmd.Flags().Lookup("id"))
 }
@@ -40,25 +36,14 @@ func templates(ctx context.Context) error {
 	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
-	oID := viper.GetString("template.get.id")
+	templateID := viper.GetString("template.get.id")
 
 	var s []byte
 
-	current := viper.GetBool("template.get.current")
-
 	writer := tables.NewTableWriter(templateCmd.OutOrStdout(), "ID", "Name", "Description", "JSON")
 
-	if current {
-		claims, err := tokens.ParseUnverifiedTokenClaims(cli.AccessToken)
-		if err != nil {
-			return err
-		}
-
-		oID = claims.ParseOrgID().String()
-	}
-
-	if oID != "" {
-		template, err := cli.Client.GetTemplate(ctx, oID, cli.Interceptor)
+	if templateID != "" {
+		template, err := cli.Client.GetTemplate(ctx, templateID, cli.Interceptor)
 		if err != nil {
 			return err
 		}

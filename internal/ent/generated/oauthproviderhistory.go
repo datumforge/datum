@@ -33,6 +33,8 @@ type OauthProviderHistory struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -67,7 +69,7 @@ func (*OauthProviderHistory) scanValues(columns []string) ([]any, error) {
 			values[i] = new(enthistory.OpType)
 		case oauthproviderhistory.FieldAuthStyle:
 			values[i] = new(sql.NullInt64)
-		case oauthproviderhistory.FieldID, oauthproviderhistory.FieldRef, oauthproviderhistory.FieldCreatedBy, oauthproviderhistory.FieldUpdatedBy, oauthproviderhistory.FieldDeletedBy, oauthproviderhistory.FieldName, oauthproviderhistory.FieldClientID, oauthproviderhistory.FieldClientSecret, oauthproviderhistory.FieldRedirectURL, oauthproviderhistory.FieldScopes, oauthproviderhistory.FieldAuthURL, oauthproviderhistory.FieldTokenURL, oauthproviderhistory.FieldInfoURL:
+		case oauthproviderhistory.FieldID, oauthproviderhistory.FieldRef, oauthproviderhistory.FieldCreatedBy, oauthproviderhistory.FieldUpdatedBy, oauthproviderhistory.FieldMappingID, oauthproviderhistory.FieldDeletedBy, oauthproviderhistory.FieldName, oauthproviderhistory.FieldClientID, oauthproviderhistory.FieldClientSecret, oauthproviderhistory.FieldRedirectURL, oauthproviderhistory.FieldScopes, oauthproviderhistory.FieldAuthURL, oauthproviderhistory.FieldTokenURL, oauthproviderhistory.FieldInfoURL:
 			values[i] = new(sql.NullString)
 		case oauthproviderhistory.FieldHistoryTime, oauthproviderhistory.FieldCreatedAt, oauthproviderhistory.FieldUpdatedAt, oauthproviderhistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -133,6 +135,12 @@ func (oph *OauthProviderHistory) assignValues(columns []string, values []any) er
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				oph.UpdatedBy = value.String
+			}
+		case oauthproviderhistory.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				oph.MappingID = value.String
 			}
 		case oauthproviderhistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -256,6 +264,9 @@ func (oph *OauthProviderHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(oph.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(oph.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(oph.DeletedAt.Format(time.ANSIC))

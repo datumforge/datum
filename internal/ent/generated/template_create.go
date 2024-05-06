@@ -108,6 +108,20 @@ func (tc *TemplateCreate) SetNillableDeletedBy(s *string) *TemplateCreate {
 	return tc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (tc *TemplateCreate) SetMappingID(s string) *TemplateCreate {
+	tc.mutation.SetMappingID(s)
+	return tc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (tc *TemplateCreate) SetNillableMappingID(s *string) *TemplateCreate {
+	if s != nil {
+		tc.SetMappingID(*s)
+	}
+	return tc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (tc *TemplateCreate) SetOwnerID(s string) *TemplateCreate {
 	tc.mutation.SetOwnerID(s)
@@ -245,6 +259,13 @@ func (tc *TemplateCreate) defaults() error {
 		v := template.DefaultUpdatedAt()
 		tc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := tc.mutation.MappingID(); !ok {
+		if template.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized template.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := template.DefaultMappingID()
+		tc.mutation.SetMappingID(v)
+	}
 	if _, ok := tc.mutation.TemplateType(); !ok {
 		v := template.DefaultTemplateType
 		tc.mutation.SetTemplateType(v)
@@ -261,6 +282,9 @@ func (tc *TemplateCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TemplateCreate) check() error {
+	if _, ok := tc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Template.mapping_id"`)}
+	}
 	if _, ok := tc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Template.owner_id"`)}
 	}
@@ -345,6 +369,10 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.DeletedBy(); ok {
 		_spec.SetField(template.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := tc.mutation.MappingID(); ok {
+		_spec.SetField(template.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := tc.mutation.Name(); ok {
 		_spec.SetField(template.FieldName, field.TypeString, value)

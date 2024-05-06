@@ -30,9 +30,6 @@ func init() {
 
 	groupCreateCmd.Flags().StringP("description", "d", "", "description of the group")
 	datum.ViperBindFlag("group.create.description", groupCreateCmd.Flags().Lookup("description"))
-
-	groupCreateCmd.Flags().StringP("owner-id", "o", "", "owner org id")
-	datum.ViperBindFlag("group.create.owner-id", groupCreateCmd.Flags().Lookup("owner-id"))
 }
 
 func createGroup(ctx context.Context) error {
@@ -52,17 +49,11 @@ func createGroup(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("group name")
 	}
 
-	owner := viper.GetString("group.create.owner-id")
-	if owner == "" {
-		return datum.NewRequiredFieldMissingError("organization id")
-	}
-
 	displayName := viper.GetString("group.create.short-name")
 	description := viper.GetString("group.create.description")
 
 	input := datumclient.CreateGroupInput{
-		Name:    name,
-		OwnerID: owner,
+		Name: name,
 	}
 
 	if displayName != "" {

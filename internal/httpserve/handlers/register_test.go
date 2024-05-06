@@ -157,10 +157,6 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 				// Bypass auth check because user is not authenticated before verified
 				ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-				// mocks to check for org access
-				listObjects := []string{"organization:test"}
-				mock_fga.ListOnce(t, suite.fga, listObjects, nil)
-
 				// make sure user is an owner of their personal org
 				orgMemberships, err := user.OrgMemberships(ctx)
 				require.NoError(t, err)

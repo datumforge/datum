@@ -9,7 +9,6 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/tokens"
 )
 
 var webhookCreateCmd = &cobra.Command{
@@ -81,23 +80,12 @@ func createwebhook(ctx context.Context) error {
 		input.OwnerID = &ownerID
 	}
 
-	if ownerID == "" {
-		claims, err := tokens.ParseUnverifiedTokenClaims(cli.AccessToken)
-		if err != nil {
-			return err
-		}
-
-		oID := claims.ParseOrgID().String()
-
-		input.OwnerID = &oID
-	}
-
-	u, err := cli.Client.CreateWebhook(ctx, input, cli.Interceptor)
+	w, err := cli.Client.CreateWebhook(ctx, input, cli.Interceptor)
 	if err != nil {
 		return err
 	}
 
-	s, err = json.Marshal(u)
+	s, err = json.Marshal(w)
 	if err != nil {
 		return err
 	}

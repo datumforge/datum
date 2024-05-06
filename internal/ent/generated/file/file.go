@@ -27,6 +27,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
+	// FieldMappingID holds the string denoting the mapping_id field in the database.
+	FieldMappingID = "mapping_id"
 	// FieldFileName holds the string denoting the file_name field in the database.
 	FieldFileName = "file_name"
 	// FieldFileExtension holds the string denoting the file_extension field in the database.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldDeletedAt,
 	FieldDeletedBy,
+	FieldMappingID,
 	FieldFileName,
 	FieldFileExtension,
 	FieldFileSize,
@@ -130,6 +133,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
+	DefaultMappingID func() string
 	// FileSizeValidator is a validator for the "file_size" field. It is called by the builders before save.
 	FileSizeValidator func(int) error
 	// DefaultID holds the default value on creation for the "id" field.
@@ -172,6 +177,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByDeletedBy orders the results by the deleted_by field.
 func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
+}
+
+// ByMappingID orders the results by the mapping_id field.
+func ByMappingID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMappingID, opts...).ToFunc()
 }
 
 // ByFileName orders the results by the file_name field.

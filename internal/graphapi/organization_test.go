@@ -56,7 +56,10 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			mock_fga.CheckAny(t, suite.client.fga, true)
-			mock_fga.ListAny(t, suite.client.fga, listObjects)
+
+			if tc.errorMsg == "" {
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
+			}
 
 			resp, err := suite.client.datum.GetOrganizationByID(reqCtx, tc.queryID)
 
@@ -93,7 +96,7 @@ func (suite *GraphTestSuite) TestQueryOrganizations() {
 		// check tuple per org
 		listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", org2.ID)}
 
-		mock_fga.ListTimes(t, suite.client.fga, listObjects, 5)
+		mock_fga.ListTimes(t, suite.client.fga, listObjects, 1)
 
 		resp, err := suite.client.datum.GetAllOrganizations(reqCtx)
 
@@ -266,7 +269,10 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			if tc.errorMsg == "" {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 				mock_fga.WriteAny(t, suite.client.fga)
-				mock_fga.ListTimes(t, suite.client.fga, listObjects, 2)
+
+				if tc.parentOrgID != "" {
+					mock_fga.ListTimes(t, suite.client.fga, listObjects, 1)
+				}
 			}
 
 			resp, err := suite.client.datum.CreateOrganization(reqCtx, input)
@@ -504,8 +510,8 @@ func (suite *GraphTestSuite) TestMutationDeleteOrganization() {
 		{
 			name:          "delete org, not found",
 			orgID:         "tacos-tuesday",
-			accessAllowed: true,
-			errorMsg:      "not found",
+			accessAllowed: false,
+			errorMsg:      "you are not authorized to perform this action",
 		},
 	}
 
@@ -516,7 +522,7 @@ func (suite *GraphTestSuite) TestMutationDeleteOrganization() {
 			// mock read of tuple
 			mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
 
-			if tc.accessAllowed {
+			if tc.errorMsg == "" {
 				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
@@ -583,13 +589,10 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	// mocks checks for all calls
 	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 4)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 3)
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 2)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 3)
-	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 4)
 
 	// mock writes to delete member of org
 	mock_fga.WriteAny(t, suite.client.fga)
@@ -668,9 +671,6 @@ func (suite *GraphTestSuite) TestMutationCreateOrganizationTransaction() {
 
 		require.Error(t, err)
 		require.Empty(t, resp)
-
-		// Make sure the org was not added to the database (check without auth)
-		mock_fga.ListAny(t, suite.client.fga, []string{})
 
 		ctx := privacy.DecisionContext(reqCtx, privacy.Allow)
 

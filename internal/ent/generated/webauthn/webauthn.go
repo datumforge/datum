@@ -23,6 +23,8 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
+	// FieldMappingID holds the string denoting the mapping_id field in the database.
+	FieldMappingID = "mapping_id"
 	// FieldOwnerID holds the string denoting the owner_id field in the database.
 	FieldOwnerID = "owner_id"
 	// FieldCredentialID holds the string denoting the credential_id field in the database.
@@ -65,6 +67,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
+	FieldMappingID,
 	FieldOwnerID,
 	FieldCredentialID,
 	FieldPublicKey,
@@ -102,6 +105,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
+	DefaultMappingID func() string
 	// DefaultBackupEligible holds the default value on creation for the "backup_eligible" field.
 	DefaultBackupEligible bool
 	// DefaultBackupState holds the default value on creation for the "backup_state" field.
@@ -140,6 +145,11 @@ func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedBy orders the results by the updated_by field.
 func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
+}
+
+// ByMappingID orders the results by the mapping_id field.
+func ByMappingID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMappingID, opts...).ToFunc()
 }
 
 // ByOwnerID orders the results by the owner_id field.

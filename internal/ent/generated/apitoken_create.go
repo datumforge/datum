@@ -105,6 +105,20 @@ func (atc *APITokenCreate) SetNillableDeletedBy(s *string) *APITokenCreate {
 	return atc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (atc *APITokenCreate) SetMappingID(s string) *APITokenCreate {
+	atc.mutation.SetMappingID(s)
+	return atc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (atc *APITokenCreate) SetNillableMappingID(s *string) *APITokenCreate {
+	if s != nil {
+		atc.SetMappingID(*s)
+	}
+	return atc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (atc *APITokenCreate) SetOwnerID(s string) *APITokenCreate {
 	atc.mutation.SetOwnerID(s)
@@ -249,6 +263,13 @@ func (atc *APITokenCreate) defaults() error {
 		v := apitoken.DefaultUpdatedAt()
 		atc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := atc.mutation.MappingID(); !ok {
+		if apitoken.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized apitoken.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := apitoken.DefaultMappingID()
+		atc.mutation.SetMappingID(v)
+	}
 	if _, ok := atc.mutation.Token(); !ok {
 		if apitoken.DefaultToken == nil {
 			return fmt.Errorf("generated: uninitialized apitoken.DefaultToken (forgotten import generated/runtime?)")
@@ -268,6 +289,9 @@ func (atc *APITokenCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (atc *APITokenCreate) check() error {
+	if _, ok := atc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "APIToken.mapping_id"`)}
+	}
 	if _, ok := atc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "APIToken.owner_id"`)}
 	}
@@ -344,6 +368,10 @@ func (atc *APITokenCreate) createSpec() (*APIToken, *sqlgraph.CreateSpec) {
 	if value, ok := atc.mutation.DeletedBy(); ok {
 		_spec.SetField(apitoken.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := atc.mutation.MappingID(); ok {
+		_spec.SetField(apitoken.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := atc.mutation.Name(); ok {
 		_spec.SetField(apitoken.FieldName, field.TypeString, value)

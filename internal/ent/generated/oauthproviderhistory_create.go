@@ -112,6 +112,20 @@ func (ophc *OauthProviderHistoryCreate) SetNillableUpdatedBy(s *string) *OauthPr
 	return ophc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ophc *OauthProviderHistoryCreate) SetMappingID(s string) *OauthProviderHistoryCreate {
+	ophc.mutation.SetMappingID(s)
+	return ophc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ophc *OauthProviderHistoryCreate) SetNillableMappingID(s *string) *OauthProviderHistoryCreate {
+	if s != nil {
+		ophc.SetMappingID(*s)
+	}
+	return ophc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ophc *OauthProviderHistoryCreate) SetDeletedAt(t time.Time) *OauthProviderHistoryCreate {
 	ophc.mutation.SetDeletedAt(t)
@@ -255,6 +269,10 @@ func (ophc *OauthProviderHistoryCreate) defaults() {
 		v := oauthproviderhistory.DefaultUpdatedAt()
 		ophc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ophc.mutation.MappingID(); !ok {
+		v := oauthproviderhistory.DefaultMappingID()
+		ophc.mutation.SetMappingID(v)
+	}
 	if _, ok := ophc.mutation.ID(); !ok {
 		v := oauthproviderhistory.DefaultID()
 		ophc.mutation.SetID(v)
@@ -273,6 +291,9 @@ func (ophc *OauthProviderHistoryCreate) check() error {
 		if err := oauthproviderhistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "OauthProviderHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := ophc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "OauthProviderHistory.mapping_id"`)}
 	}
 	if _, ok := ophc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "OauthProviderHistory.name"`)}
@@ -364,6 +385,10 @@ func (ophc *OauthProviderHistoryCreate) createSpec() (*OauthProviderHistory, *sq
 	if value, ok := ophc.mutation.UpdatedBy(); ok {
 		_spec.SetField(oauthproviderhistory.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := ophc.mutation.MappingID(); ok {
+		_spec.SetField(oauthproviderhistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ophc.mutation.DeletedAt(); ok {
 		_spec.SetField(oauthproviderhistory.FieldDeletedAt, field.TypeTime, value)

@@ -33,6 +33,8 @@ type Template struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
 	// the name of the template
@@ -93,7 +95,7 @@ func (*Template) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case template.FieldJsonconfig, template.FieldUischema:
 			values[i] = new([]byte)
-		case template.FieldID, template.FieldCreatedBy, template.FieldUpdatedBy, template.FieldDeletedBy, template.FieldOwnerID, template.FieldName, template.FieldTemplateType, template.FieldDescription:
+		case template.FieldID, template.FieldCreatedBy, template.FieldUpdatedBy, template.FieldDeletedBy, template.FieldMappingID, template.FieldOwnerID, template.FieldName, template.FieldTemplateType, template.FieldDescription:
 			values[i] = new(sql.NullString)
 		case template.FieldCreatedAt, template.FieldUpdatedAt, template.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -153,6 +155,12 @@ func (t *Template) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
 				t.DeletedBy = value.String
+			}
+		case template.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				t.MappingID = value.String
 			}
 		case template.FieldOwnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -257,6 +265,9 @@ func (t *Template) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(t.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(t.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("owner_id=")
 	builder.WriteString(t.OwnerID)

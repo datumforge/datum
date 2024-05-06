@@ -15,8 +15,14 @@ import (
 func CanCreateGroupsInOrg() privacy.GroupMutationRuleFunc {
 	return privacy.GroupMutationRuleFunc(func(ctx context.Context, m *generated.GroupMutation) error {
 		oID, ok := m.OwnerID()
-		if !ok {
-			return privacy.Skipf("no owner set on request, cannot check access")
+		if !ok || oID == "" {
+			// get organization from the auth context
+			var err error
+
+			oID, err = auth.GetOrganizationIDFromContext(ctx)
+			if err != nil || oID == "" {
+				return privacy.Skipf("no owner set on request, cannot check access")
+			}
 		}
 
 		m.Logger.Debugw("checking mutation access")

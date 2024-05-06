@@ -78,6 +78,20 @@ func (gsc *GroupSettingCreate) SetNillableUpdatedBy(s *string) *GroupSettingCrea
 	return gsc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (gsc *GroupSettingCreate) SetMappingID(s string) *GroupSettingCreate {
+	gsc.mutation.SetMappingID(s)
+	return gsc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (gsc *GroupSettingCreate) SetNillableMappingID(s *string) *GroupSettingCreate {
+	if s != nil {
+		gsc.SetMappingID(*s)
+	}
+	return gsc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gsc *GroupSettingCreate) SetDeletedAt(t time.Time) *GroupSettingCreate {
 	gsc.mutation.SetDeletedAt(t)
@@ -252,6 +266,13 @@ func (gsc *GroupSettingCreate) defaults() error {
 		v := groupsetting.DefaultUpdatedAt()
 		gsc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := gsc.mutation.MappingID(); !ok {
+		if groupsetting.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized groupsetting.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := groupsetting.DefaultMappingID()
+		gsc.mutation.SetMappingID(v)
+	}
 	if _, ok := gsc.mutation.Visibility(); !ok {
 		v := groupsetting.DefaultVisibility
 		gsc.mutation.SetVisibility(v)
@@ -284,6 +305,9 @@ func (gsc *GroupSettingCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (gsc *GroupSettingCreate) check() error {
+	if _, ok := gsc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "GroupSetting.mapping_id"`)}
+	}
 	if _, ok := gsc.mutation.Visibility(); !ok {
 		return &ValidationError{Name: "visibility", err: errors.New(`generated: missing required field "GroupSetting.visibility"`)}
 	}
@@ -351,6 +375,10 @@ func (gsc *GroupSettingCreate) createSpec() (*GroupSetting, *sqlgraph.CreateSpec
 	if value, ok := gsc.mutation.UpdatedBy(); ok {
 		_spec.SetField(groupsetting.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := gsc.mutation.MappingID(); ok {
+		_spec.SetField(groupsetting.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := gsc.mutation.DeletedAt(); ok {
 		_spec.SetField(groupsetting.FieldDeletedAt, field.TypeTime, value)

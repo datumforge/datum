@@ -29,6 +29,8 @@ type Feature struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Global holds the value of the "global" field.
@@ -120,7 +122,7 @@ func (*Feature) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case feature.FieldGlobal, feature.FieldEnabled:
 			values[i] = new(sql.NullBool)
-		case feature.FieldID, feature.FieldCreatedBy, feature.FieldUpdatedBy, feature.FieldDeletedBy, feature.FieldName, feature.FieldDescription:
+		case feature.FieldID, feature.FieldCreatedBy, feature.FieldUpdatedBy, feature.FieldDeletedBy, feature.FieldMappingID, feature.FieldName, feature.FieldDescription:
 			values[i] = new(sql.NullString)
 		case feature.FieldCreatedAt, feature.FieldUpdatedAt, feature.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -180,6 +182,12 @@ func (f *Feature) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
 				f.DeletedBy = value.String
+			}
+		case feature.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				f.MappingID = value.String
 			}
 		case feature.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -284,6 +292,9 @@ func (f *Feature) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(f.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(f.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(f.Name)

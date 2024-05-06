@@ -102,12 +102,10 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 
 			mock.ResetEmailMock()
 
-			// mock auth
-			mock_fga.ListAny(t, suite.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
+			ctx := privacy.DecisionContext(userCtx, privacy.Allow)
 
 			invite := suite.db.Invite.Create().
-				SetOwnerID(org.ID).
-				SetRecipient(tc.email).SaveX(reqCtx)
+				SetRecipient(tc.email).SaveX(ctx)
 
 			// wait for messages so we don't have conflicts with the accept message
 			predicate := func() bool {

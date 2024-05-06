@@ -29,6 +29,8 @@ type UserSetting struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -104,7 +106,7 @@ func (*UserSetting) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case usersetting.FieldLocked, usersetting.FieldEmailConfirmed, usersetting.FieldIsWebauthnAllowed, usersetting.FieldIsTfaEnabled:
 			values[i] = new(sql.NullBool)
-		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldDeletedBy, usersetting.FieldUserID, usersetting.FieldStatus, usersetting.FieldPhoneNumber:
+		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldMappingID, usersetting.FieldDeletedBy, usersetting.FieldUserID, usersetting.FieldStatus, usersetting.FieldPhoneNumber:
 			values[i] = new(sql.NullString)
 		case usersetting.FieldCreatedAt, usersetting.FieldUpdatedAt, usersetting.FieldDeletedAt, usersetting.FieldSilencedAt, usersetting.FieldSuspendedAt:
 			values[i] = new(sql.NullTime)
@@ -154,6 +156,12 @@ func (us *UserSetting) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				us.UpdatedBy = value.String
+			}
+		case usersetting.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				us.MappingID = value.String
 			}
 		case usersetting.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -296,6 +304,9 @@ func (us *UserSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(us.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(us.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(us.DeletedAt.Format(time.ANSIC))

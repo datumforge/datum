@@ -112,6 +112,20 @@ func (gc *GroupCreate) SetNillableDeletedBy(s *string) *GroupCreate {
 	return gc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (gc *GroupCreate) SetMappingID(s string) *GroupCreate {
+	gc.mutation.SetMappingID(s)
+	return gc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableMappingID(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetMappingID(*s)
+	}
+	return gc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (gc *GroupCreate) SetOwnerID(s string) *GroupCreate {
 	gc.mutation.SetOwnerID(s)
@@ -351,6 +365,13 @@ func (gc *GroupCreate) defaults() error {
 		v := group.DefaultUpdatedAt()
 		gc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := gc.mutation.MappingID(); !ok {
+		if group.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized group.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := group.DefaultMappingID()
+		gc.mutation.SetMappingID(v)
+	}
 	if _, ok := gc.mutation.DisplayName(); !ok {
 		v := group.DefaultDisplayName
 		gc.mutation.SetDisplayName(v)
@@ -367,6 +388,9 @@ func (gc *GroupCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (gc *GroupCreate) check() error {
+	if _, ok := gc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Group.mapping_id"`)}
+	}
 	if _, ok := gc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Group.owner_id"`)}
 	}
@@ -451,6 +475,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.DeletedBy(); ok {
 		_spec.SetField(group.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := gc.mutation.MappingID(); ok {
+		_spec.SetField(group.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := gc.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

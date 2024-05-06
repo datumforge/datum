@@ -36,7 +36,7 @@ func EchoContextToContextMiddleware() echo.MiddlewareFunc {
 }
 
 // EchoContextFromContext gets the echo.Context from the parent context
-func EchoContextFromContext(ctx context.Context) (*echo.Context, error) {
+func EchoContextFromContext(ctx context.Context) (echo.Context, error) {
 	// retrieve echo.Context from provided context
 	echoContext := ctx.Value(EchoContextKey)
 	if echoContext == nil {
@@ -46,8 +46,8 @@ func EchoContextFromContext(ctx context.Context) (*echo.Context, error) {
 	// type cast the context to ensure echo.Context
 	ec, ok := echoContext.(echo.Context)
 	if !ok {
-		return &ec, ErrUnableToRetrieveEchoContext
+		return ec, ErrUnableToRetrieveEchoContext
 	}
 
-	return &ec, nil
+	return ec, nil
 }

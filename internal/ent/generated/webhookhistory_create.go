@@ -111,6 +111,20 @@ func (whc *WebhookHistoryCreate) SetNillableUpdatedBy(s *string) *WebhookHistory
 	return whc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (whc *WebhookHistoryCreate) SetMappingID(s string) *WebhookHistoryCreate {
+	whc.mutation.SetMappingID(s)
+	return whc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (whc *WebhookHistoryCreate) SetNillableMappingID(s *string) *WebhookHistoryCreate {
+	if s != nil {
+		whc.SetMappingID(*s)
+	}
+	return whc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (whc *WebhookHistoryCreate) SetDeletedAt(t time.Time) *WebhookHistoryCreate {
 	whc.mutation.SetDeletedAt(t)
@@ -330,6 +344,10 @@ func (whc *WebhookHistoryCreate) defaults() {
 		v := webhookhistory.DefaultUpdatedAt()
 		whc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := whc.mutation.MappingID(); !ok {
+		v := webhookhistory.DefaultMappingID()
+		whc.mutation.SetMappingID(v)
+	}
 	if _, ok := whc.mutation.Enabled(); !ok {
 		v := webhookhistory.DefaultEnabled
 		whc.mutation.SetEnabled(v)
@@ -356,6 +374,9 @@ func (whc *WebhookHistoryCreate) check() error {
 		if err := webhookhistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "WebhookHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := whc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "WebhookHistory.mapping_id"`)}
 	}
 	if _, ok := whc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "WebhookHistory.name"`)}
@@ -429,6 +450,10 @@ func (whc *WebhookHistoryCreate) createSpec() (*WebhookHistory, *sqlgraph.Create
 	if value, ok := whc.mutation.UpdatedBy(); ok {
 		_spec.SetField(webhookhistory.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := whc.mutation.MappingID(); ok {
+		_spec.SetField(webhookhistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := whc.mutation.DeletedAt(); ok {
 		_spec.SetField(webhookhistory.FieldDeletedAt, field.TypeTime, value)

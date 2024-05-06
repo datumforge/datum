@@ -111,6 +111,20 @@ func (ihc *IntegrationHistoryCreate) SetNillableUpdatedBy(s *string) *Integratio
 	return ihc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (ihc *IntegrationHistoryCreate) SetMappingID(s string) *IntegrationHistoryCreate {
+	ihc.mutation.SetMappingID(s)
+	return ihc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (ihc *IntegrationHistoryCreate) SetNillableMappingID(s *string) *IntegrationHistoryCreate {
+	if s != nil {
+		ihc.SetMappingID(*s)
+	}
+	return ihc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ihc *IntegrationHistoryCreate) SetDeletedAt(t time.Time) *IntegrationHistoryCreate {
 	ihc.mutation.SetDeletedAt(t)
@@ -240,6 +254,10 @@ func (ihc *IntegrationHistoryCreate) defaults() {
 		v := integrationhistory.DefaultUpdatedAt()
 		ihc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ihc.mutation.MappingID(); !ok {
+		v := integrationhistory.DefaultMappingID()
+		ihc.mutation.SetMappingID(v)
+	}
 	if _, ok := ihc.mutation.ID(); !ok {
 		v := integrationhistory.DefaultID()
 		ihc.mutation.SetID(v)
@@ -258,6 +276,9 @@ func (ihc *IntegrationHistoryCreate) check() error {
 		if err := integrationhistory.OperationValidator(v); err != nil {
 			return &ValidationError{Name: "operation", err: fmt.Errorf(`generated: validator failed for field "IntegrationHistory.operation": %w`, err)}
 		}
+	}
+	if _, ok := ihc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "IntegrationHistory.mapping_id"`)}
 	}
 	if _, ok := ihc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "IntegrationHistory.owner_id"`)}
@@ -328,6 +349,10 @@ func (ihc *IntegrationHistoryCreate) createSpec() (*IntegrationHistory, *sqlgrap
 	if value, ok := ihc.mutation.UpdatedBy(); ok {
 		_spec.SetField(integrationhistory.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := ihc.mutation.MappingID(); ok {
+		_spec.SetField(integrationhistory.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := ihc.mutation.DeletedAt(); ok {
 		_spec.SetField(integrationhistory.FieldDeletedAt, field.TypeTime, value)

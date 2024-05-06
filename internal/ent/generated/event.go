@@ -26,6 +26,8 @@ type Event struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// EventID holds the value of the "event_id" field.
 	EventID string `json:"event_id,omitempty"`
 	// CorrelationID holds the value of the "correlation_id" field.
@@ -225,7 +227,7 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case event.FieldMetadata:
 			values[i] = new([]byte)
-		case event.FieldID, event.FieldCreatedBy, event.FieldUpdatedBy, event.FieldEventID, event.FieldCorrelationID, event.FieldEventType:
+		case event.FieldID, event.FieldCreatedBy, event.FieldUpdatedBy, event.FieldMappingID, event.FieldEventID, event.FieldCorrelationID, event.FieldEventType:
 			values[i] = new(sql.NullString)
 		case event.FieldCreatedAt, event.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -273,6 +275,12 @@ func (e *Event) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				e.UpdatedBy = value.String
+			}
+		case event.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				e.MappingID = value.String
 			}
 		case event.FieldEventID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -417,6 +425,9 @@ func (e *Event) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(e.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(e.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("event_id=")
 	builder.WriteString(e.EventID)

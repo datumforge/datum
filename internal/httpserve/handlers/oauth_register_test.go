@@ -89,12 +89,6 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 				mock_fga.WriteOnce(t, suite.fga)
 			}
 
-			if !tt.writes && tt.expectedStatus == http.StatusOK {
-				// required to list objects to get the default org in claims
-				// when the user is not created in the call
-				mock_fga.ListAny(t, suite.fga, []string{"organization:test"})
-			}
-
 			registerJSON := handlers.OauthTokenRequest{
 				Name:             tt.args.name,
 				Email:            tt.args.email,

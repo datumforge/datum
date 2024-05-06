@@ -3,6 +3,7 @@ package schema
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
@@ -86,6 +87,33 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 	}
 }
 
+// Hooks of the OrgOwnerMixin
+func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
+	if orgOwned.Optional {
+		// do not add hooks if the field is optional
+		return []ent.Hook{}
+	}
+
+	return []ent.Hook{
+		func(next ent.Mutator) ent.Mutator {
+			return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+				orgID, err := auth.GetOrganizationIDFromContext(ctx)
+				if err != nil {
+					return nil, fmt.Errorf("failed to get organization id from context: %w", err)
+				}
+
+				// set owner on mutation
+				if err := m.SetField(ownerFieldName, orgID); err != nil {
+					return nil, err
+				}
+
+				return next.Mutate(ctx, m)
+			})
+		},
+	}
+}
+
+// Interceptors of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
 	if orgOwned.Optional {
 		// do not add interceptors if the field is optional

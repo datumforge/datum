@@ -22,13 +22,14 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
+	// Org to invite users to
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-	inviteExistingUser := (&InviteBuilder{client: suite.client, Recipient: user.Email}).MustNew(reqCtx, t)
-
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, invite.OwnerID)
+	// setup valid user context with org
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
 	require.NoError(t, err)
+
+	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name        string
@@ -43,13 +44,6 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 			shouldCheck: true,
 			expected:    invite,
 			wantErr:     false,
-		},
-		{
-			name:        "invite accepted, should be deleted and not found",
-			queryID:     inviteExistingUser.ID,
-			shouldCheck: false,
-			expected:    nil,
-			wantErr:     true,
 		},
 		{
 			name:        "invalid id",
@@ -100,7 +94,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 	// Org to invite users to
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(userCtx, t)
 
-	// setup valid user context ith org
+	// setup valid user context with org
 	reqCtx, err := auth.NewTestContextWithOrgID(orgAdmin.ID, org.ID)
 	require.NoError(t, err)
 
@@ -194,7 +188,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			recipient:     existingUser.Email,
 			orgID:         "boommeowboom",
 			role:          enums.RoleMember,
-			accessAllowed: true,
+			accessAllowed: false,
 			wantErr:       true,
 		},
 	}
@@ -205,7 +199,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 
 			mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
 
-			if tc.accessAllowed {
+			if !tc.wantErr {
 				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})
 			}
 
@@ -244,6 +238,13 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 
 	// setup user context
 	reqCtx, err := userContext()
+	require.NoError(t, err)
+
+	// Org to invite users to
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	// setup valid user context with org
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
 	require.NoError(t, err)
 
 	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)

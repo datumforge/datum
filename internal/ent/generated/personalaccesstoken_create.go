@@ -107,6 +107,20 @@ func (patc *PersonalAccessTokenCreate) SetNillableDeletedBy(s *string) *Personal
 	return patc
 }
 
+// SetMappingID sets the "mapping_id" field.
+func (patc *PersonalAccessTokenCreate) SetMappingID(s string) *PersonalAccessTokenCreate {
+	patc.mutation.SetMappingID(s)
+	return patc
+}
+
+// SetNillableMappingID sets the "mapping_id" field if the given value is not nil.
+func (patc *PersonalAccessTokenCreate) SetNillableMappingID(s *string) *PersonalAccessTokenCreate {
+	if s != nil {
+		patc.SetMappingID(*s)
+	}
+	return patc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (patc *PersonalAccessTokenCreate) SetOwnerID(s string) *PersonalAccessTokenCreate {
 	patc.mutation.SetOwnerID(s)
@@ -273,6 +287,13 @@ func (patc *PersonalAccessTokenCreate) defaults() error {
 		v := personalaccesstoken.DefaultUpdatedAt()
 		patc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := patc.mutation.MappingID(); !ok {
+		if personalaccesstoken.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized personalaccesstoken.DefaultMappingID (forgotten import generated/runtime?)")
+		}
+		v := personalaccesstoken.DefaultMappingID()
+		patc.mutation.SetMappingID(v)
+	}
 	if _, ok := patc.mutation.Token(); !ok {
 		if personalaccesstoken.DefaultToken == nil {
 			return fmt.Errorf("generated: uninitialized personalaccesstoken.DefaultToken (forgotten import generated/runtime?)")
@@ -292,6 +313,9 @@ func (patc *PersonalAccessTokenCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (patc *PersonalAccessTokenCreate) check() error {
+	if _, ok := patc.mutation.MappingID(); !ok {
+		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "PersonalAccessToken.mapping_id"`)}
+	}
 	if _, ok := patc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "PersonalAccessToken.owner_id"`)}
 	}
@@ -371,6 +395,10 @@ func (patc *PersonalAccessTokenCreate) createSpec() (*PersonalAccessToken, *sqlg
 	if value, ok := patc.mutation.DeletedBy(); ok {
 		_spec.SetField(personalaccesstoken.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := patc.mutation.MappingID(); ok {
+		_spec.SetField(personalaccesstoken.FieldMappingID, field.TypeString, value)
+		_node.MappingID = value
 	}
 	if value, ok := patc.mutation.Name(); ok {
 		_spec.SetField(personalaccesstoken.FieldName, field.TypeString, value)

@@ -34,6 +34,8 @@ type OrganizationSettingHistory struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// MappingID holds the value of the "mapping_id" field.
+	MappingID string `json:"mapping_id,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -68,7 +70,7 @@ func (*OrganizationSettingHistory) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case organizationsettinghistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
-		case organizationsettinghistory.FieldID, organizationsettinghistory.FieldRef, organizationsettinghistory.FieldCreatedBy, organizationsettinghistory.FieldUpdatedBy, organizationsettinghistory.FieldDeletedBy, organizationsettinghistory.FieldBillingContact, organizationsettinghistory.FieldBillingEmail, organizationsettinghistory.FieldBillingPhone, organizationsettinghistory.FieldBillingAddress, organizationsettinghistory.FieldTaxIdentifier, organizationsettinghistory.FieldGeoLocation, organizationsettinghistory.FieldOrganizationID:
+		case organizationsettinghistory.FieldID, organizationsettinghistory.FieldRef, organizationsettinghistory.FieldCreatedBy, organizationsettinghistory.FieldUpdatedBy, organizationsettinghistory.FieldMappingID, organizationsettinghistory.FieldDeletedBy, organizationsettinghistory.FieldBillingContact, organizationsettinghistory.FieldBillingEmail, organizationsettinghistory.FieldBillingPhone, organizationsettinghistory.FieldBillingAddress, organizationsettinghistory.FieldTaxIdentifier, organizationsettinghistory.FieldGeoLocation, organizationsettinghistory.FieldOrganizationID:
 			values[i] = new(sql.NullString)
 		case organizationsettinghistory.FieldHistoryTime, organizationsettinghistory.FieldCreatedAt, organizationsettinghistory.FieldUpdatedAt, organizationsettinghistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -134,6 +136,12 @@ func (osh *OrganizationSettingHistory) assignValues(columns []string, values []a
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				osh.UpdatedBy = value.String
+			}
+		case organizationsettinghistory.FieldMappingID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
+			} else if value.Valid {
+				osh.MappingID = value.String
 			}
 		case organizationsettinghistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -261,6 +269,9 @@ func (osh *OrganizationSettingHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(osh.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("mapping_id=")
+	builder.WriteString(osh.MappingID)
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(osh.DeletedAt.Format(time.ANSIC))

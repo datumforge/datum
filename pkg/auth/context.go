@@ -131,3 +131,13 @@ func GetUserIDFromContext(ctx context.Context) (string, error) {
 
 	return getSubjectIDFromEchoContext(ec)
 }
+
+// GetAuthTypeFromEchoContext retrieves the authentication type from the echo context
+func GetAuthTypeFromContext(ctx context.Context) AuthenticationType {
+	ec, err := echocontext.EchoContextFromContext(ctx)
+	if err != nil {
+		return ""
+	}
+
+	return GetAuthTypeFromEchoContext(ec)
+}

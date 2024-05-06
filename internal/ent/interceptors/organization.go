@@ -74,8 +74,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 	}
 
 	// by pass checks on invite or pre-allowed request
-	_, allow := privacy.DecisionFromContext(ctx)
-	if allow {
+	if _, allow := privacy.DecisionFromContext(ctx); allow {
 		return orgs, nil
 	}
 

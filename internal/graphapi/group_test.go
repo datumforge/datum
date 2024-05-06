@@ -108,8 +108,6 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 		mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 
-		// mock_fga.CheckAny(t, suite.client.fga, true)
-
 		whereInput := &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
 				{

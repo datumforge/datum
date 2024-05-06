@@ -23,9 +23,6 @@ var inviteCreateCmd = &cobra.Command{
 func init() {
 	inviteCmd.AddCommand(inviteCreateCmd)
 
-	inviteCreateCmd.Flags().StringP("org-id", "o", "", "org id")
-	datum.ViperBindFlag("invite.create.orgid", inviteCreateCmd.Flags().Lookup("org-id"))
-
 	inviteCreateCmd.Flags().StringP("email", "e", "", "destination email for the invitation")
 	datum.ViperBindFlag("invite.create.email", inviteCreateCmd.Flags().Lookup("email"))
 
@@ -43,11 +40,6 @@ func createInvite(ctx context.Context) error {
 	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
-	oID := viper.GetString("invite.create.orgid")
-	if oID == "" {
-		return datum.NewRequiredFieldMissingError("org id")
-	}
-
 	email := viper.GetString("invite.create.email")
 	if email == "" {
 		return datum.NewRequiredFieldMissingError("email")
@@ -56,7 +48,6 @@ func createInvite(ctx context.Context) error {
 	role := enums.ToRole(viper.GetString("invite.create.role"))
 
 	input := datumclient.CreateInviteInput{
-		OwnerID:   oID,
 		Recipient: email,
 		Role:      role,
 	}

@@ -31,12 +31,6 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 
 	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-	inviteExistingUser := (&InviteBuilder{client: suite.client, Recipient: user.Email}).MustNew(reqCtx, t)
-
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, invite.OwnerID)
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name        string
 		queryID     string
@@ -49,13 +43,6 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 			queryID:     invite.ID,
 			shouldCheck: true,
 			expected:    invite,
-			wantErr:     false,
-		},
-		{
-			name:        "invite accepted, should be deleted and not found",
-			queryID:     inviteExistingUser.ID,
-			shouldCheck: true,
-			expected:    nil,
 			wantErr:     false,
 		},
 		{

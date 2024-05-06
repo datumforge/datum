@@ -1421,7 +1421,6 @@ func (t *GetEvents_Events_Edges_Node) GetID() string {
 	return t.ID
 }
 func (t *GetEvents_Events_Edges_Node) GetCorrelationID() *string {
-func (t *GetEvents_Events_Edges_Node) GetCorrelationID() *string {
 	if t == nil {
 		t = &GetEvents_Events_Edges_Node{}
 	}
@@ -2231,12 +2230,8 @@ func (t *CreateEvent_CreateEvent_Event_Webhook) GetID() string {
 
 type CreateEvent_CreateEvent_Event struct {
 	ID                  string                                               "json:\"id\" graphql:\"id\""
-	CreatedAt           *time.Time                                           "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt           *time.Time                                           "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy           *string                                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy           *string                                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	EventID             string                                               "json:\"eventID\" graphql:\"eventID\""
-	CorrelationID       string                                               "json:\"correlationID\" graphql:\"correlationID\""
+	EventID             *string                                              "json:\"eventID,omitempty\" graphql:\"eventID\""
+	CorrelationID       *string                                              "json:\"correlationID,omitempty\" graphql:\"correlationID\""
 	EventType           string                                               "json:\"eventType\" graphql:\"eventType\""
 	Metadata            map[string]interface{}                               "json:\"metadata,omitempty\" graphql:\"metadata\""
 	User                []*CreateEvent_CreateEvent_Event_User                "json:\"user,omitempty\" graphql:\"user\""
@@ -2260,31 +2255,7 @@ func (t *CreateEvent_CreateEvent_Event) GetID() string {
 	}
 	return t.ID
 }
-func (t *CreateEvent_CreateEvent_Event) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &CreateEvent_CreateEvent_Event{}
-	}
-	return t.CreatedAt
-}
-func (t *CreateEvent_CreateEvent_Event) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &CreateEvent_CreateEvent_Event{}
-	}
-	return t.UpdatedAt
-}
-func (t *CreateEvent_CreateEvent_Event) GetCreatedBy() *string {
-	if t == nil {
-		t = &CreateEvent_CreateEvent_Event{}
-	}
-	return t.CreatedBy
-}
-func (t *CreateEvent_CreateEvent_Event) GetUpdatedBy() *string {
-	if t == nil {
-		t = &CreateEvent_CreateEvent_Event{}
-	}
-	return t.UpdatedBy
-}
-func (t *CreateEvent_CreateEvent_Event) GetEventID() string {
+func (t *CreateEvent_CreateEvent_Event) GetEventID() *string {
 	if t == nil {
 		t = &CreateEvent_CreateEvent_Event{}
 	}
@@ -15006,10 +14977,6 @@ const CreateEventDocument = `mutation CreateEvent ($input: CreateEventInput!) {
 	createEvent(input: $input) {
 		event {
 			id
-			createdAt
-			updatedAt
-			createdBy
-			updatedBy
 			eventID
 			correlationID
 			eventType

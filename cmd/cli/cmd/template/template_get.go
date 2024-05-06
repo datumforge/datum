@@ -36,14 +36,14 @@ func templates(ctx context.Context) error {
 	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
-	oID := viper.GetString("template.get.id")
+	templateID := viper.GetString("template.get.id")
 
 	var s []byte
 
 	writer := tables.NewTableWriter(templateCmd.OutOrStdout(), "ID", "Name", "Description", "JSON")
 
-	if oID != "" {
-		template, err := cli.Client.GetTemplate(ctx, oID, cli.Interceptor)
+	if templateID != "" {
+		template, err := cli.Client.GetTemplate(ctx, templateID, cli.Interceptor)
 		if err != nil {
 			return err
 		}

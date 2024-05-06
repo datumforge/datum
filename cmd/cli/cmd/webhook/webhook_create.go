@@ -80,12 +80,12 @@ func createwebhook(ctx context.Context) error {
 		input.OwnerID = &ownerID
 	}
 
-	u, err := cli.Client.CreateWebhook(ctx, input, cli.Interceptor)
+	w, err := cli.Client.CreateWebhook(ctx, input, cli.Interceptor)
 	if err != nil {
 		return err
 	}
 
-	s, err = json.Marshal(u)
+	s, err = json.Marshal(w)
 	if err != nil {
 		return err
 	}

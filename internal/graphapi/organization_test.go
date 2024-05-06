@@ -593,9 +593,6 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 3)
 	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
-	// mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
-	// mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
-	// mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 
 	// mock writes to delete member of org
 	mock_fga.WriteAny(t, suite.client.fga)

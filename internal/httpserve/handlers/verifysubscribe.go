@@ -9,7 +9,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
 	ph "github.com/posthog/posthog-go"
-	"github.com/samber/lo"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -70,12 +69,10 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 		}
 
 		input := generated.UpdateSubscriberInput{
-			Email:         &entSubscriber.Email,
-			VerifiedEmail: lo.ToPtr(true),
-			Active:        lo.ToPtr(true),
+			Email: &entSubscriber.Email,
 		}
 
-		if err := h.updateSubscriber(ctxWithToken, entSubscriber.ID, input); err != nil {
+		if err := h.updateSubscriberVerifiedEmail(ctxWithToken, entSubscriber.ID, input); err != nil {
 			h.Logger.Errorf("error updating subscriber", "error", err)
 
 			return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
@@ -146,8 +143,11 @@ func (h *Handler) verifySubscriberToken(ctx context.Context, entSubscriber *gene
 				return err
 			}
 
+			// set viewer context
+			ctxWithToken := token.NewContextWithSignUpToken(ctx, entSubscriber.Email)
+
 			// resend email with new token to the subscriber
-			if err := h.sendSubscriberEmail(ctx, user, entSubscriber.OwnerID); err != nil {
+			if err := h.sendSubscriberEmail(ctxWithToken, user, entSubscriber.OwnerID); err != nil {
 				h.Logger.Errorw("error sending subscriber email", "error", err)
 
 				return err

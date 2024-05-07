@@ -344,8 +344,8 @@ type SubscriberCreatePayload struct {
 
 // Return response for deleteSubscriber mutation
 type SubscriberDeletePayload struct {
-	// Deleted subscriber ID
-	DeletedID string `json:"deletedID"`
+	// Deleted subscriber email
+	Email string `json:"email"`
 }
 
 // Return response for updateSubscriber mutation

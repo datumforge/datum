@@ -11,3 +11,24 @@ query Subscribers($where: SubscriberWhereInput) {
     }
   }
 }
+
+mutation CreateSubscriber($input: CreateSubscriberInput!) {
+  createSubscriber(input: $input) {
+    subscriber {
+      id
+      email
+      active
+      verifiedEmail
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+    }
+  }
+}
+
+mutation DeleteSubscriber($deleteSubscriberEmail: String!) {
+  deleteSubscriber(email: $deleteSubscriberEmail) {
+    email
+  }
+}

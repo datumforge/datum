@@ -1,12 +1,12 @@
 extend type Query {
     """
-    Look up subscriber by ID
+    Look up subscriber by Email
     """
      subscriber(
         """
-        ID of the subscriber
+        Email of the subscriber
         """
-        id: ID!
+        email: String!
     ):  Subscriber!
 }
 
@@ -25,22 +25,22 @@ extend type Mutation{
     """
     updateSubscriber(
         """
-        ID of the subscriber
+        Email of the subscriber
         """
-        id: ID!
+        email: String!
         """
         New values for the subscriber
         """
         input: UpdateSubscriberInput!
     ): SubscriberUpdatePayload!
     """
-    Delete an existing subscriber
+    Delete an existing subscriber by Email
     """
     deleteSubscriber(
         """
-        ID of the subscriber
+        Email of the subscriber
         """
-        id: ID!
+        email: String!
     ): SubscriberDeletePayload!
 }
 
@@ -69,7 +69,7 @@ Return response for deleteSubscriber mutation
 """
 type SubscriberDeletePayload {
     """
-    Deleted subscriber ID
+    Deleted subscriber email
     """
-    deletedID: ID!
+    email: String!
 }

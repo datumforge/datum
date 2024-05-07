@@ -90,6 +90,8 @@ type DatumClient interface {
 	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
 	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
 	Subscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*Subscribers, error)
+	CreateSubscriber(ctx context.Context, input CreateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*CreateSubscriber, error)
+	DeleteSubscriber(ctx context.Context, deleteSubscriberEmail string, interceptors ...clientv2.RequestInterceptor) (*DeleteSubscriber, error)
 	CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error)
 	UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error)
 	GetAllTemplates(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTemplates, error)
@@ -10118,11 +10120,11 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 }
 
 type Subscribers_Subscribers_Edges_Node struct {
-	ID            string  "json:\"id\" graphql:\"id\""
-	Email         string  "json:\"email\" graphql:\"email\""
-	VerifiedEmail bool    "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
-	Active        bool    "json:\"active\" graphql:\"active\""
-	OwnerID       *string "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	ID            string "json:\"id\" graphql:\"id\""
+	Email         string "json:\"email\" graphql:\"email\""
+	VerifiedEmail bool   "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+	Active        bool   "json:\"active\" graphql:\"active\""
+	OwnerID       string "json:\"ownerID\" graphql:\"ownerID\""
 }
 
 func (t *Subscribers_Subscribers_Edges_Node) GetID() string {
@@ -10149,7 +10151,7 @@ func (t *Subscribers_Subscribers_Edges_Node) GetActive() bool {
 	}
 	return t.Active
 }
-func (t *Subscribers_Subscribers_Edges_Node) GetOwnerID() *string {
+func (t *Subscribers_Subscribers_Edges_Node) GetOwnerID() string {
 	if t == nil {
 		t = &Subscribers_Subscribers_Edges_Node{}
 	}
@@ -10176,6 +10178,88 @@ func (t *Subscribers_Subscribers) GetEdges() []*Subscribers_Subscribers_Edges {
 		t = &Subscribers_Subscribers{}
 	}
 	return t.Edges
+}
+
+type CreateSubscriber_CreateSubscriber_Subscriber struct {
+	ID            string     "json:\"id\" graphql:\"id\""
+	Email         string     "json:\"email\" graphql:\"email\""
+	Active        bool       "json:\"active\" graphql:\"active\""
+	VerifiedEmail bool       "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+	CreatedAt     *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy     *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt     *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy     *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateSubscriber_CreateSubscriber_Subscriber) GetID() string {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber_Subscriber{}
+	}
+	return t.ID
+}
+func (t *CreateSubscriber_CreateSubscriber_Subscriber) GetEmail() string {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber_Subscriber{}
+	}
+	return t.Email
+}
+func (t *CreateSubscriber_CreateSubscriber_Subscriber) GetActive() bool {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber_Subscriber{}
+	}
+	return t.Active
+}
+func (t *CreateSubscriber_CreateSubscriber_Subscriber) GetVerifiedEmail() bool {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber_Subscriber{}
+	}
+	return t.VerifiedEmail
+}
+func (t *CreateSubscriber_CreateSubscriber_Subscriber) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber_Subscriber{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateSubscriber_CreateSubscriber_Subscriber) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber_Subscriber{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateSubscriber_CreateSubscriber_Subscriber) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber_Subscriber{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateSubscriber_CreateSubscriber_Subscriber) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber_Subscriber{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateSubscriber_CreateSubscriber struct {
+	Subscriber CreateSubscriber_CreateSubscriber_Subscriber "json:\"subscriber\" graphql:\"subscriber\""
+}
+
+func (t *CreateSubscriber_CreateSubscriber) GetSubscriber() *CreateSubscriber_CreateSubscriber_Subscriber {
+	if t == nil {
+		t = &CreateSubscriber_CreateSubscriber{}
+	}
+	return &t.Subscriber
+}
+
+type DeleteSubscriber_DeleteSubscriber struct {
+	Email string "json:\"email\" graphql:\"email\""
+}
+
+func (t *DeleteSubscriber_DeleteSubscriber) GetEmail() string {
+	if t == nil {
+		t = &DeleteSubscriber_DeleteSubscriber{}
+	}
+	return t.Email
 }
 
 type CreateTemplate_CreateTemplate_Template_Owner struct {
@@ -14060,6 +14144,28 @@ func (t *Subscribers) GetSubscribers() *Subscribers_Subscribers {
 	return &t.Subscribers
 }
 
+type CreateSubscriber struct {
+	CreateSubscriber CreateSubscriber_CreateSubscriber "json:\"createSubscriber\" graphql:\"createSubscriber\""
+}
+
+func (t *CreateSubscriber) GetCreateSubscriber() *CreateSubscriber_CreateSubscriber {
+	if t == nil {
+		t = &CreateSubscriber{}
+	}
+	return &t.CreateSubscriber
+}
+
+type DeleteSubscriber struct {
+	DeleteSubscriber DeleteSubscriber_DeleteSubscriber "json:\"deleteSubscriber\" graphql:\"deleteSubscriber\""
+}
+
+func (t *DeleteSubscriber) GetDeleteSubscriber() *DeleteSubscriber_DeleteSubscriber {
+	if t == nil {
+		t = &DeleteSubscriber{}
+	}
+	return &t.DeleteSubscriber
+}
+
 type CreateTemplate struct {
 	CreateTemplate CreateTemplate_CreateTemplate "json:\"createTemplate\" graphql:\"createTemplate\""
 }
@@ -17589,6 +17695,63 @@ func (c *Client) Subscribers(ctx context.Context, where *SubscriberWhereInput, i
 	return &res, nil
 }
 
+const CreateSubscriberDocument = `mutation CreateSubscriber ($input: CreateSubscriberInput!) {
+	createSubscriber(input: $input) {
+		subscriber {
+			id
+			email
+			active
+			verifiedEmail
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateSubscriber(ctx context.Context, input CreateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*CreateSubscriber, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateSubscriber
+	if err := c.Client.Post(ctx, "CreateSubscriber", CreateSubscriberDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteSubscriberDocument = `mutation DeleteSubscriber ($deleteSubscriberEmail: String!) {
+	deleteSubscriber(email: $deleteSubscriberEmail) {
+		email
+	}
+}
+`
+
+func (c *Client) DeleteSubscriber(ctx context.Context, deleteSubscriberEmail string, interceptors ...clientv2.RequestInterceptor) (*DeleteSubscriber, error) {
+	vars := map[string]any{
+		"deleteSubscriberEmail": deleteSubscriberEmail,
+	}
+
+	var res DeleteSubscriber
+	if err := c.Client.Post(ctx, "DeleteSubscriber", DeleteSubscriberDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const CreateTemplateDocument = `mutation CreateTemplate ($input: CreateTemplateInput!) {
 	createTemplate(input: $input) {
 		template {
@@ -18632,6 +18795,8 @@ var DocumentOperationNames = map[string]string{
 	GetPersonalAccessTokenByIDDocument:  "GetPersonalAccessTokenByID",
 	DeletePersonalAccessTokenDocument:   "DeletePersonalAccessToken",
 	SubscribersDocument:                 "Subscribers",
+	CreateSubscriberDocument:            "CreateSubscriber",
+	DeleteSubscriberDocument:            "DeleteSubscriber",
 	CreateTemplateDocument:              "CreateTemplate",
 	UpdateTemplateDocument:              "UpdateTemplate",
 	GetAllTemplatesDocument:             "GetAllTemplates",

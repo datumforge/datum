@@ -14089,7 +14089,8 @@
                   "verified_email",
                   "verified_phone",
                   "active",
-                  "ttl"
+                  "ttl",
+                  "owner"
                 ]
               }
             }
@@ -20306,7 +20307,8 @@
           "email",
           "verified_email",
           "verified_phone",
-          "active"
+          "active",
+          "owner"
         ]
       },
       "TFASetting": {

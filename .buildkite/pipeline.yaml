@@ -10,6 +10,7 @@ steps:
     steps:
       - label: ":golang: go generate"
         key: "generate"
+        cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
               image: "ghcr.io/datumforge/base-ci-image:v1.1.4"
@@ -18,6 +19,7 @@ steps:
                 - "GOTOOLCHAIN=auto"
       - label: ":yaml: generate config"
         key: "generate_config"
+        cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
               image: "ghcr.io/datumforge/base-ci-image:v1.1.4"
@@ -26,18 +28,19 @@ steps:
                 - "GOTOOLCHAIN=auto"
   - group: ":test_tube: Tests"
     key: "tests"
-    depends_on: "precheck"
     steps:
       - label: ":golangci-lint: lint :lint-roller:"
+        cancel_on_build_failing: true
         key: "lint"
         plugins:
           - docker#v5.11.0:
               image: "registry.hub.docker.com/golangci/golangci-lint:v1.57.1"
-              command: ["golangci-lint", "run", "-v", "--timeout", "10m", "--config", ".golangci.yaml"]
+              command: ["golangci-lint", "run", "-v", "--timeout", "10m", "--config", ".golangci.yaml", "--concurrency", "32"]
               environment:
                 - "GOTOOLCHAIN=auto"
       - label: ":golang: go test - libsql"
         key: "go_test_libsql"
+        cancel_on_build_failing: true
         env:
           TEST_DB_URL: "libsql://file::memory:?cache=shared"
         plugins:
@@ -75,7 +78,7 @@ steps:
               image: openfga/cli
               command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
   - group: ":closed_lock_with_key: Security Checks"
-    depends_on: "tests"
+    depends_on: "go_test_libsql"
     key: "security"
     steps:
       - label: ":closed_lock_with_key: gosec"
@@ -119,7 +122,6 @@ steps:
                 - "SONAR_TOKEN"
                 - "SONAR_HOST_URL=$SONAR_HOST"
   - group: ":golang: Builds"
-    depends_on: "tests"
     key: "go-builds"
     steps:
       - label: ":golang: build"
@@ -144,7 +146,6 @@ steps:
               command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
   - group: ":database: atlas migrate"
     key: "database"
-    depends_on: ["tests", "go-builds"]
     steps:
       - label: ":sqlite: atlas lint"
         key: "atlas_lint"
@@ -180,6 +181,7 @@ steps:
     steps:
       - label: ":docker: docker pr build"
         key: "docker-pr-build"
+        cancel_on_build_failing: true
         if: build.branch != "main" && build.tag == null
         commands: |
           #!/bin/bash
@@ -202,6 +204,7 @@ steps:
               skip-files: "cosign.key,Dockerfile.dev"
       - label: ":docker: docker build and publish"
         key: "docker-build"
+        cancel_on_build_failing: true
         if: build.branch == "main"
         commands: |
           #!/bin/bash

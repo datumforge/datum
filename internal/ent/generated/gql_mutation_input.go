@@ -2987,7 +2987,6 @@ type CreateSubscriberInput struct {
 	UpdatedBy   *string
 	Email       string
 	PhoneNumber *string
-	OwnerID     string
 	EventIDs    []string
 }
 
@@ -3009,7 +3008,6 @@ func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
 	if v := i.PhoneNumber; v != nil {
 		m.SetPhoneNumber(*v)
 	}
-	m.SetOwnerID(i.OwnerID)
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}

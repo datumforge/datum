@@ -88,6 +88,7 @@ func (Subscriber) Mixin() []ent.Mixin {
 			Ref:             "subscribers",
 			AllowWhere:      true,
 			SkipInterceptor: interceptors.SkipOnlyQuery,
+			SkipStuff:       true,
 		},
 	}
 }
@@ -123,9 +124,9 @@ func (Subscriber) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType:   "organization",
-			IncludeHooks: false,
-			IDField:      "OwnerID",
+			ObjectType:    "organization",
+			IncludeHooks:  false,
+			OrgOwnedField: true,
 		},
 		enthistory.Annotations{
 			Exclude: true,

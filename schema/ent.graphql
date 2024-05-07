@@ -763,7 +763,6 @@ input CreateSubscriberInput {
   phone number of the subscriber
   """
   phoneNumber: String
-  ownerID: ID!
   eventIDs: [ID!]
 }
 """

@@ -618,7 +618,6 @@ type CreateSubscriberInput struct {
 	Email string `json:"email"`
 	// phone number of the subscriber
 	PhoneNumber *string  `json:"phoneNumber,omitempty"`
-	OwnerID     string   `json:"ownerID"`
 	EventIDs    []string `json:"eventIDs,omitempty"`
 }
 

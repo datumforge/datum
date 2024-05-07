@@ -9063,7 +9063,6 @@ type UpdateSubscriberInput struct {
 	// phone number of the subscriber
 	PhoneNumber      *string  `json:"phoneNumber,omitempty"`
 	ClearPhoneNumber *bool    `json:"clearPhoneNumber,omitempty"`
-	OwnerID          *string  `json:"ownerID,omitempty"`
 	AddEventIDs      []string `json:"addEventIDs,omitempty"`
 	RemoveEventIDs   []string `json:"removeEventIDs,omitempty"`
 	ClearEvents      *bool    `json:"clearEvents,omitempty"`

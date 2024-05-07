@@ -3028,7 +3028,6 @@ type UpdateSubscriberInput struct {
 	Email            *string
 	ClearPhoneNumber bool
 	PhoneNumber      *string
-	OwnerID          *string
 	ClearEvents      bool
 	AddEventIDs      []string
 	RemoveEventIDs   []string
@@ -3056,9 +3055,6 @@ func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
 	}
 	if v := i.PhoneNumber; v != nil {
 		m.SetPhoneNumber(*v)
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()

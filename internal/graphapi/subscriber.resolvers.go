@@ -12,7 +12,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/hooks"
-	"github.com/datumforge/datum/pkg/auth"
 )
 
 // CreateSubscriber is the resolver for the createSubscriber field.
@@ -49,17 +48,9 @@ func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated
 
 // UpdateSubscriber is the resolver for the updateSubscriber field.
 func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, input generated.UpdateSubscriberInput) (*SubscriberUpdatePayload, error) {
-	orgID, err := auth.GetOrganizationIDFromContext(ctx)
-	if err != nil {
-		r.logger.Errorw("unable to get organization ID from context", "error", err)
-
-		return nil, ErrPermissionDenied
-	}
-
 	subscriber, err := withTransactionalMutation(ctx).Subscriber.Query().
 		Where(
 			subscriber.EmailEQ(email),
-			subscriber.OwnerIDEQ(orgID),
 		).Only(ctx)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -97,17 +88,9 @@ func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, i
 
 // DeleteSubscriber is the resolver for the deleteSubscriber field.
 func (r *mutationResolver) DeleteSubscriber(ctx context.Context, email string) (*SubscriberDeletePayload, error) {
-	orgID, err := auth.GetOrganizationIDFromContext(ctx)
-	if err != nil {
-		r.logger.Errorw("unable to get organization ID from context", "error", err)
-
-		return nil, ErrPermissionDenied
-	}
-
 	num, err := withTransactionalMutation(ctx).Subscriber.Delete().
 		Where(
 			subscriber.EmailEQ(email),
-			subscriber.OwnerIDEQ(orgID),
 		).Exec(ctx)
 	if err != nil {
 		r.logger.Errorw("failed to delete subscriber", "error", err)
@@ -124,17 +107,9 @@ func (r *mutationResolver) DeleteSubscriber(ctx context.Context, email string) (
 
 // Subscriber is the resolver for the subscriber field.
 func (r *queryResolver) Subscriber(ctx context.Context, email string) (*generated.Subscriber, error) {
-	orgID, err := auth.GetOrganizationIDFromContext(ctx)
-	if err != nil {
-		r.logger.Errorw("unable to get organization ID from context", "error", err)
-
-		return nil, ErrPermissionDenied
-	}
-
 	subscriber, err := withTransactionalMutation(ctx).Subscriber.Query().
 		Where(
 			subscriber.EmailEQ(email),
-			subscriber.OwnerIDEQ(orgID),
 		).Only(ctx)
 	if err != nil {
 		if generated.IsNotFound(err) {

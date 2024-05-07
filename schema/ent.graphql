@@ -12265,7 +12265,6 @@ input UpdateSubscriberInput {
   """
   phoneNumber: String
   clearPhoneNumber: Boolean
-  ownerID: ID
   addEventIDs: [ID!]
   removeEventIDs: [ID!]
   clearEvents: Boolean

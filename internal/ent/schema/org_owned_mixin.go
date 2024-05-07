@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
@@ -114,7 +113,6 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 
 				// set owner on create mutation
 				if m.Op() == ent.OpCreate {
-
 					// set owner on mutation
 					if err := m.SetField(ownerFieldName, orgID); err != nil {
 						return nil, err
@@ -124,11 +122,10 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 					mx, ok := m.(interface {
 						SetOp(ent.Op)
 						Client() *generated.Client
-						SetDeletedAt(time.Time)
 						WhereP(...func(*sql.Selector))
 					})
 					if !ok {
-						return nil, fmt.Errorf("unexpected mutation type %T", m)
+						return nil, ErrUnexpectedMutationType
 					}
 
 					orgOwned.P(mx, orgID)

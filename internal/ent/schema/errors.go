@@ -13,4 +13,7 @@ var (
 
 	// ErrPermissionDenied is returned when the user is not authorized to perform the requested query or mutation
 	ErrPermissionDenied = errors.New("you are not authorized to perform this action")
+
+	// ErrUnexpectedMutationType is returned when an unexpected mutation type is encountered
+	ErrUnexpectedMutationType = errors.New("unexpected mutation type")
 )

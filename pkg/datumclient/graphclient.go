@@ -90,7 +90,9 @@ type DatumClient interface {
 	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
 	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
 	Subscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*Subscribers, error)
+	GetSubscriber(ctx context.Context, email string, interceptors ...clientv2.RequestInterceptor) (*GetSubscriber, error)
 	CreateSubscriber(ctx context.Context, input CreateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*CreateSubscriber, error)
+	UpdateSubscriber(ctx context.Context, email string, input UpdateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*UpdateSubscriber, error)
 	DeleteSubscriber(ctx context.Context, deleteSubscriberEmail string, interceptors ...clientv2.RequestInterceptor) (*DeleteSubscriber, error)
 	CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error)
 	UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error)
@@ -10180,6 +10182,45 @@ func (t *Subscribers_Subscribers) GetEdges() []*Subscribers_Subscribers_Edges {
 	return t.Edges
 }
 
+type GetSubscriber_Subscriber struct {
+	ID            string "json:\"id\" graphql:\"id\""
+	Email         string "json:\"email\" graphql:\"email\""
+	VerifiedEmail bool   "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+	Active        bool   "json:\"active\" graphql:\"active\""
+	OwnerID       string "json:\"ownerID\" graphql:\"ownerID\""
+}
+
+func (t *GetSubscriber_Subscriber) GetID() string {
+	if t == nil {
+		t = &GetSubscriber_Subscriber{}
+	}
+	return t.ID
+}
+func (t *GetSubscriber_Subscriber) GetEmail() string {
+	if t == nil {
+		t = &GetSubscriber_Subscriber{}
+	}
+	return t.Email
+}
+func (t *GetSubscriber_Subscriber) GetVerifiedEmail() bool {
+	if t == nil {
+		t = &GetSubscriber_Subscriber{}
+	}
+	return t.VerifiedEmail
+}
+func (t *GetSubscriber_Subscriber) GetActive() bool {
+	if t == nil {
+		t = &GetSubscriber_Subscriber{}
+	}
+	return t.Active
+}
+func (t *GetSubscriber_Subscriber) GetOwnerID() string {
+	if t == nil {
+		t = &GetSubscriber_Subscriber{}
+	}
+	return t.OwnerID
+}
+
 type CreateSubscriber_CreateSubscriber_Subscriber struct {
 	ID            string     "json:\"id\" graphql:\"id\""
 	Email         string     "json:\"email\" graphql:\"email\""
@@ -10247,6 +10288,91 @@ type CreateSubscriber_CreateSubscriber struct {
 func (t *CreateSubscriber_CreateSubscriber) GetSubscriber() *CreateSubscriber_CreateSubscriber_Subscriber {
 	if t == nil {
 		t = &CreateSubscriber_CreateSubscriber{}
+	}
+	return &t.Subscriber
+}
+
+type UpdateSubscriber_UpdateSubscriber_Subscriber struct {
+	ID            string     "json:\"id\" graphql:\"id\""
+	Email         string     "json:\"email\" graphql:\"email\""
+	PhoneNumber   *string    "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	VerifiedEmail bool       "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+	VerifiedPhone bool       "json:\"verifiedPhone\" graphql:\"verifiedPhone\""
+	Active        bool       "json:\"active\" graphql:\"active\""
+	CreatedAt     *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy     *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt     *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy     *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetID() string {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.ID
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetEmail() string {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.Email
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetPhoneNumber() *string {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.PhoneNumber
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetVerifiedEmail() bool {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.VerifiedEmail
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetVerifiedPhone() bool {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.VerifiedPhone
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetActive() bool {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.Active
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateSubscriber_UpdateSubscriber_Subscriber) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber_Subscriber{}
+	}
+	return t.UpdatedBy
+}
+
+type UpdateSubscriber_UpdateSubscriber struct {
+	Subscriber UpdateSubscriber_UpdateSubscriber_Subscriber "json:\"subscriber\" graphql:\"subscriber\""
+}
+
+func (t *UpdateSubscriber_UpdateSubscriber) GetSubscriber() *UpdateSubscriber_UpdateSubscriber_Subscriber {
+	if t == nil {
+		t = &UpdateSubscriber_UpdateSubscriber{}
 	}
 	return &t.Subscriber
 }
@@ -14144,6 +14270,17 @@ func (t *Subscribers) GetSubscribers() *Subscribers_Subscribers {
 	return &t.Subscribers
 }
 
+type GetSubscriber struct {
+	Subscriber GetSubscriber_Subscriber "json:\"subscriber\" graphql:\"subscriber\""
+}
+
+func (t *GetSubscriber) GetSubscriber() *GetSubscriber_Subscriber {
+	if t == nil {
+		t = &GetSubscriber{}
+	}
+	return &t.Subscriber
+}
+
 type CreateSubscriber struct {
 	CreateSubscriber CreateSubscriber_CreateSubscriber "json:\"createSubscriber\" graphql:\"createSubscriber\""
 }
@@ -14153,6 +14290,17 @@ func (t *CreateSubscriber) GetCreateSubscriber() *CreateSubscriber_CreateSubscri
 		t = &CreateSubscriber{}
 	}
 	return &t.CreateSubscriber
+}
+
+type UpdateSubscriber struct {
+	UpdateSubscriber UpdateSubscriber_UpdateSubscriber "json:\"updateSubscriber\" graphql:\"updateSubscriber\""
+}
+
+func (t *UpdateSubscriber) GetUpdateSubscriber() *UpdateSubscriber_UpdateSubscriber {
+	if t == nil {
+		t = &UpdateSubscriber{}
+	}
+	return &t.UpdateSubscriber
 }
 
 type DeleteSubscriber struct {
@@ -17695,6 +17843,34 @@ func (c *Client) Subscribers(ctx context.Context, where *SubscriberWhereInput, i
 	return &res, nil
 }
 
+const GetSubscriberDocument = `query GetSubscriber ($email: String!) {
+	subscriber(email: $email) {
+		id
+		email
+		verifiedEmail
+		active
+		ownerID
+	}
+}
+`
+
+func (c *Client) GetSubscriber(ctx context.Context, email string, interceptors ...clientv2.RequestInterceptor) (*GetSubscriber, error) {
+	vars := map[string]any{
+		"email": email,
+	}
+
+	var res GetSubscriber
+	if err := c.Client.Post(ctx, "GetSubscriber", GetSubscriberDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const CreateSubscriberDocument = `mutation CreateSubscriber ($input: CreateSubscriberInput!) {
 	createSubscriber(input: $input) {
 		subscriber {
@@ -17718,6 +17894,42 @@ func (c *Client) CreateSubscriber(ctx context.Context, input CreateSubscriberInp
 
 	var res CreateSubscriber
 	if err := c.Client.Post(ctx, "CreateSubscriber", CreateSubscriberDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateSubscriberDocument = `mutation UpdateSubscriber ($email: String!, $input: UpdateSubscriberInput!) {
+	updateSubscriber(email: $email, input: $input) {
+		subscriber {
+			id
+			email
+			phoneNumber
+			verifiedEmail
+			verifiedPhone
+			active
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) UpdateSubscriber(ctx context.Context, email string, input UpdateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*UpdateSubscriber, error) {
+	vars := map[string]any{
+		"email": email,
+		"input": input,
+	}
+
+	var res UpdateSubscriber
+	if err := c.Client.Post(ctx, "UpdateSubscriber", UpdateSubscriberDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -18795,7 +19007,9 @@ var DocumentOperationNames = map[string]string{
 	GetPersonalAccessTokenByIDDocument:  "GetPersonalAccessTokenByID",
 	DeletePersonalAccessTokenDocument:   "DeletePersonalAccessToken",
 	SubscribersDocument:                 "Subscribers",
+	GetSubscriberDocument:               "GetSubscriber",
 	CreateSubscriberDocument:            "CreateSubscriber",
+	UpdateSubscriberDocument:            "UpdateSubscriber",
 	DeleteSubscriberDocument:            "DeleteSubscriber",
 	CreateTemplateDocument:              "CreateTemplate",
 	UpdateTemplateDocument:              "UpdateTemplate",

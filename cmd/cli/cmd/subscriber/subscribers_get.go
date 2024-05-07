@@ -24,6 +24,9 @@ func init() {
 
 	subscribersGetCmd.Flags().BoolP("active", "a", true, "filter on active subscribers")
 	datum.ViperBindFlag("subscribers.get.active", subscribersGetCmd.Flags().Lookup("active"))
+
+	subscribersGetCmd.Flags().StringP("email", "e", "", "email address of the subscriber to get")
+	datum.ViperBindFlag("subscribers.get.email", subscribersGetCmd.Flags().Lookup("email"))
 }
 
 func subscribers(ctx context.Context) error {
@@ -45,14 +48,28 @@ func subscribers(ctx context.Context) error {
 		where.Active = &active
 	}
 
-	var s []byte
+	email := viper.GetString("subscribers.get.email")
 
-	subs, err := cli.Client.Subscribers(ctx, &where, cli.Interceptor)
-	if err != nil {
-		return err
+	var (
+		s   []byte
+		sub interface{}
+	)
+
+	if email != "" {
+		sub, err = cli.Client.GetSubscriber(ctx, email, cli.Interceptor)
+		if err != nil {
+			return err
+		}
+
+	} else {
+		sub, err = cli.Client.Subscribers(ctx, &where, cli.Interceptor)
+		if err != nil {
+			return err
+		}
+
 	}
 
-	s, err = json.Marshal(subs)
+	s, err = json.Marshal(sub)
 	if err != nil {
 		return err
 	}

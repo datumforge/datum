@@ -97,7 +97,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 	}
 
 	// See all orgs user has view access
-	orgList, err := q.Authz.ListObjectsRequest(ctx, userID, "organization", fgax.CanView)
+	orgList, err := q.Authz.ListObjectsRequest(ctx, userID, auth.GetAuthzSubjectType(ctx), "organization", fgax.CanView)
 	if err != nil {
 		return nil, err
 	}

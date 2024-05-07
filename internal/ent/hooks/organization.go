@@ -64,8 +64,11 @@ func HookOrganization() ent.Hook {
 			}
 
 			if mutation.Op().Is(ent.OpCreate) {
-				if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
-					return v, err
+				// create the admin organization member if not using an API token (which is not associated with a user)
+				if !auth.IsAPITokenAuthentication(ctx) {
+					if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
+						return v, err
+					}
 				}
 
 				// create the database, if the org has a dedicated db and geodetic is available

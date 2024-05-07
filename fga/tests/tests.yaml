@@ -17,6 +17,14 @@ tuples:
   - user: user:ulid-of-member
     relation: member
     object: organization:datum
+  # setup service user
+  - user: service:ulid-of-service-editor
+    relation: can_edit
+    object: organization:datum
+  # setup service user
+  - user: service:ulid-of-service-viewer
+    relation: can_view
+    object: organization:datum
 tests:
   - name: organization
     description: test organization relationships
@@ -36,6 +44,24 @@ tests:
         object: organization:datum # parent org
         assertions:
           member: true
+          admin: false
+          owner: false
+          can_delete: false
+          can_edit: false
+          can_view: true
+      - user: service:ulid-of-service-editor
+        object: organization:datum # parent org
+        assertions:
+          member: false
+          admin: false
+          owner: false
+          can_delete: false
+          can_edit: true
+          can_view: true
+      - user: service:ulid-of-service-viewer
+        object: organization:datum # parent org
+        assertions:
+          member: false
           admin: false
           owner: false
           can_delete: false
@@ -96,6 +122,22 @@ tests:
           member:
             - organization:catum
             - organization:datum
+      - user: service:ulid-of-service-editor
+        type: organization
+        assertions:
+          can_edit:
+            - organization:catum
+            - organization:datum
+          can_view:
+            - organization:catum
+            - organization:datum
+      - user: service:ulid-of-service-viewer
+        type: organization
+        assertions:
+          can_edit:
+          can_view:
+            - organization:catum
+            - organization:datum
       - user: user:ulid-of-admin
         type: organization
         assertions:
@@ -153,6 +195,14 @@ tests:
           member: true
           can_delete: false
           can_edit: false
+          can_view: true
+      - user: service:ulid-of-service-editor
+        object: group:cat-lovers
+        assertions:
+          admin: false
+          member: false
+          can_delete: false
+          can_edit: true
           can_view: true
     list_objects:
       - user: user:ulid-of-owner

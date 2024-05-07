@@ -80,10 +80,11 @@ func HookGroupAuthz() ent.Hook {
 func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 	objID, exists := m.ID()
 	if exists {
-		// create the admin group member
-		err := createGroupMemberOwner(ctx, objID, m)
-		if err != nil {
-			return err
+		// create the admin group member if not using an API token (which is not associated with a user)
+		if !auth.IsAPITokenAuthentication(ctx) {
+			if err := createGroupMemberOwner(ctx, objID, m); err != nil {
+				return err
+			}
 		}
 	}
 

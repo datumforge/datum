@@ -51,6 +51,7 @@ func TestPriorityOrdering(t *testing.T) {
 	mu.Lock() // Lock the mutex to safely read callOrder
 
 	defer mu.Unlock()
+
 	if len(callOrder) != len(expectedOrder) {
 		t.Fatalf("Expected call order length to be %d, got %d", len(expectedOrder), len(callOrder))
 	}

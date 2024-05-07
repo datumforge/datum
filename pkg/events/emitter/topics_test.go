@@ -31,12 +31,14 @@ func TestAddRemoveListener(t *testing.T) {
 
 	id1 := "1"
 	topic.AddListener(id1, listener1)
+
 	if len(topic.listeners) != 1 {
 		t.Error("AddListener() failed to add listener 1")
 	}
 
 	id2 := "2"
 	topic.AddListener(id2, listener2)
+
 	if len(topic.listeners) != 2 {
 		t.Error("AddListener() failed to add listener 2")
 	}

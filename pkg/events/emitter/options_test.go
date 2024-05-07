@@ -23,6 +23,7 @@ func TestWithErrorHandler(t *testing.T) {
 
 			t.Logf("Custom error handler called with event: %s and error: %s", event.Topic(), err.Error())
 		}
+
 		return nil // Returning nil to indicate the error is handled
 	}
 
@@ -59,10 +60,13 @@ func TestWithErrorHandlerAsync(t *testing.T) {
 	// Define a custom error handler that sets handlerCalled to true
 	customErrorHandler := func(event Event, err error) error {
 		handlerMutex.Lock()
+
 		defer handlerMutex.Unlock()
+
 		if errors.Is(err, customError) {
 			handlerCalled = true
 		}
+
 		return nil // Assume the error is handled and return nil
 	}
 
@@ -152,6 +156,7 @@ func TestWithPanicHandlerAsync(t *testing.T) {
 	customPanicHandler := func(p interface{}) {
 		panicHandlerMutex.Lock()
 		defer panicHandlerMutex.Unlock()
+
 		if p == "test panic" {
 			panicHandlerInvoked = true
 		}

@@ -97,14 +97,17 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 	return []ent.Hook{
 		func(next ent.Mutator) ent.Mutator {
 			return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-				orgID, err := auth.GetOrganizationIDFromContext(ctx)
-				if err != nil {
-					return nil, fmt.Errorf("failed to get organization id from context: %w", err)
-				}
+				// set owner on create mutation
+				if m.Op() == ent.OpCreate {
+					orgID, err := auth.GetOrganizationIDFromContext(ctx)
+					if err != nil {
+						return nil, fmt.Errorf("failed to get organization id from context: %w", err)
+					}
 
-				// set owner on mutation
-				if err := m.SetField(ownerFieldName, orgID); err != nil {
-					return nil, err
+					// set owner on mutation
+					if err := m.SetField(ownerFieldName, orgID); err != nil {
+						return nil, err
+					}
 				}
 
 				return next.Mutate(ctx, m)

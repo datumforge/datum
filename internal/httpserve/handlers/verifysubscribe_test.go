@@ -20,9 +20,9 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
-	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
@@ -44,19 +44,14 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 		SetLastName(gofakeit.LastName()).
 		SaveX(ctx)
 
-	ec, err := auth.NewTestContextWithValidUser(user.ID)
+	reqCtx, err := auth.NewTestContextWithValidUser(user.ID)
 	require.NoError(t, err)
 
-	newCtx := ec.Request().Context()
-	newCtx = privacy.DecisionContext(newCtx, privacy.Allow)
-
-	reqCtx := context.WithValue(newCtx, echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	ctx = privacy.DecisionContext(reqCtx, privacy.Allow)
 
 	org := suite.db.Organization.Create().
 		SetName("mitb").
-		SaveX(reqCtx)
+		SaveX(ctx)
 
 	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
@@ -95,7 +90,6 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.fga)
-			mock_fga.ListAny(t, suite.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
 
 			sent := time.Now()
 
@@ -179,8 +173,12 @@ func (suite *HandlerTestSuite) createTestSubscriber(t *testing.T, orgID, email, 
 		require.NoError(t, err)
 	}
 
-	// bypass auth checks for test data
-	reqCtx := privacy.DecisionContext(context.Background(), privacy.Allow)
+	// set privacy allow in order to allow the creation of the users without
+	// authentication in the tests
+	ctx, err := auth.NewTestContextWithOrgID(ulids.New().String(), orgID)
+	require.NoError(t, err)
+
+	reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 
 	// store token in db
 	return suite.db.Subscriber.Create().

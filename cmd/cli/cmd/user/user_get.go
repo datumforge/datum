@@ -52,7 +52,7 @@ func users(ctx context.Context) error {
 			return err
 		}
 
-		if viper.GetString("output.format") == "json" {
+		if datum.OutputFormat == "json" {
 			s, err := json.Marshal(user.User)
 			if err != nil {
 				return err
@@ -78,7 +78,7 @@ func users(ctx context.Context) error {
 		return err
 	}
 
-	if viper.GetString("output.format") == "json" {
+	if datum.OutputFormat == "json" {
 		return datum.JSONPrint(s)
 	}
 

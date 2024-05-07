@@ -48,7 +48,7 @@ func templates(ctx context.Context) error {
 			return err
 		}
 
-		if viper.GetString("output.format") == "json" {
+		if datum.OutputFormat == "json" {
 			s, err := json.Marshal(template.Template)
 			if err != nil {
 				return err
@@ -73,7 +73,7 @@ func templates(ctx context.Context) error {
 		return err
 	}
 
-	if viper.GetString("output.format") == "json" {
+	if datum.OutputFormat == "json" {
 		return datum.JSONPrint(s)
 	}
 	// table writer doesn't visually show details of the json (it shows as bytes) but leaving in for now

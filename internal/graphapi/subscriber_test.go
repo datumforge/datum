@@ -98,7 +98,7 @@ func (suite *GraphTestSuite) TestQuerySubscribers() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// Org to invite users to
+	// Org to subscribe users to
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 

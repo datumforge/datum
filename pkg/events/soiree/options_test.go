@@ -1,4 +1,4 @@
-package emitter
+package soiree
 
 import (
 	"errors"
@@ -27,21 +27,21 @@ func TestWithErrorHandler(t *testing.T) {
 		return nil // Returning nil to indicate the error is handled
 	}
 
-	// Create a new MemoryEmitter with the custom error handler
-	emitter := NewMemoryEmitter(WithErrorHandler(customErrorHandler))
+	// Create a new Whisper with the custom error handler
+	soiree := NewWhisper(WithErrorHandler(customErrorHandler))
 
 	// Define a listener that returns the custom error
 	listener := func(e Event) error {
 		return customError
 	}
 
-	_, err := emitter.On("testTopic", listener)
+	_, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf(errorMessage, err)
 	}
 
 	// Emit the event synchronously to trigger the error
-	emitter.EmitSync("testTopic", NewBaseEvent("testTopic", "testPayload"))
+	soiree.EmitSync("testTopic", NewBaseEvent("testTopic", "testPayload"))
 
 	// Check if the custom error handler was called
 	if !handlerCalled {
@@ -70,8 +70,8 @@ func TestWithErrorHandlerAsync(t *testing.T) {
 		return nil // Assume the error is handled and return nil
 	}
 
-	// Create a new MemoryEmitter with the custom error handler
-	emitter := NewMemoryEmitter(WithErrorHandler(customErrorHandler))
+	// Create a new Whisper with the custom error handler
+	soiree := NewWhisper(WithErrorHandler(customErrorHandler))
 
 	// Define a listener that returns the custom error
 	listener := func(e Event) error {
@@ -79,13 +79,13 @@ func TestWithErrorHandlerAsync(t *testing.T) {
 	}
 
 	// Subscribe the listener to a topic
-	_, err := emitter.On("testTopic", listener)
+	_, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf("Error occurred: %v", err)
 	}
 
 	// Emit the event asynchronously to trigger the error
-	errChan := emitter.Emit("testTopic", NewBaseEvent("testTopic", "testPayload"))
+	errChan := soiree.Emit("testTopic", NewBaseEvent("testTopic", "testPayload"))
 
 	// Wait for all errors to be processed
 	for err := range errChan {
@@ -115,8 +115,8 @@ func TestWithPanicHandlerSync(t *testing.T) {
 		}
 	}
 
-	// Create a new MemoryEmitter with the custom panic handler
-	emitter := NewMemoryEmitter(WithPanicHandler(customPanicHandler))
+	// Create a new Whisper with the custom panic handler
+	soiree := NewWhisper(WithPanicHandler(customPanicHandler))
 
 	// Define a listener that panics
 	listener := func(e Event) error {
@@ -124,7 +124,7 @@ func TestWithPanicHandlerSync(t *testing.T) {
 	}
 
 	// Subscribe the listener to a topic
-	_, err := emitter.On("testTopic", listener)
+	_, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf("errorMessage: %v", err)
 	}
@@ -138,7 +138,7 @@ func TestWithPanicHandlerSync(t *testing.T) {
 	}()
 
 	// Emit the event synchronously to trigger the panic
-	emitter.EmitSync("testTopic", "testPayload")
+	soiree.EmitSync("testTopic", "testPayload")
 
 	// Verify that the custom panic handler was invoked
 	if !panicHandlerInvoked {
@@ -162,8 +162,8 @@ func TestWithPanicHandlerAsync(t *testing.T) {
 		}
 	}
 
-	// Create a new MemoryEmitter with the custom panic handler.
-	emitter := NewMemoryEmitter(WithPanicHandler(customPanicHandler))
+	// Create a new Whisper with the custom panic handler.
+	soiree := NewWhisper(WithPanicHandler(customPanicHandler))
 
 	// Define a listener that panics
 	listener := func(e Event) error {
@@ -171,13 +171,13 @@ func TestWithPanicHandlerAsync(t *testing.T) {
 	}
 
 	// Subscribe the listener to a topic
-	_, err := emitter.On("testTopic", listener)
+	_, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf(errorMessage, err)
 	}
 
 	// Emit the event asynchronously to trigger the panic
-	errChan := emitter.Emit("testTopic", "testPayload")
+	errChan := soiree.Emit("testTopic", "testPayload")
 
 	// Wait for all events to be processed (which includes recovering from panic)
 	for range errChan {
@@ -203,8 +203,8 @@ func TestWithIDGenerator(t *testing.T) {
 		return customID
 	}
 
-	// Create a new MemoryEmitter with the custom ID generator
-	emitter := NewMemoryEmitter(WithIDGenerator(customIDGenerator))
+	// Create a new Whisper with the custom ID generator
+	soiree := NewWhisper(WithIDGenerator(customIDGenerator))
 
 	// Define a no-op listener
 	listener := func(e Event) error {
@@ -212,7 +212,7 @@ func TestWithIDGenerator(t *testing.T) {
 	}
 
 	// Subscribe the listener to a topic and capture the returned ID
-	returnedID, err := emitter.On("testTopic", listener)
+	returnedID, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf(errorMessage, err)
 	}

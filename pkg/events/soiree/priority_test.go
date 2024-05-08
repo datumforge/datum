@@ -1,13 +1,13 @@
-package emitter
+package soiree
 
 import (
 	"sync"
 	"testing"
 )
 
-// TestPriorityOrdering checks if the Emitter calls listeners in the correct order of their priorities
+// TestPriorityOrdering checks if the Soiree calls listeners in the correct order of their priorities
 func TestPriorityOrdering(t *testing.T) {
-	em := NewMemoryEmitter()
+	em := NewWhisper()
 
 	var mu sync.Mutex // Mutex to protect access to callOrder slice
 
@@ -16,7 +16,7 @@ func TestPriorityOrdering(t *testing.T) {
 
 	var wg sync.WaitGroup // WaitGroup to wait for listeners to finish
 
-	// Helper function to subscribe to the emitter with synchronization
+	// Helper function to subscribe to the soiree with synchronization
 	subscribeWithPriority := func(priority Priority) {
 		wg.Add(1) // Increment the WaitGroup counter
 
@@ -65,7 +65,7 @@ func TestPriorityOrdering(t *testing.T) {
 
 // TestEmitSyncWithAbort tests the synchronous EmitSync method with a listener that aborts the event
 func TestEmitSyncWithAbort(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	// Create three listeners with different priorities
 	highPriorityListener := func(e Event) error {
@@ -87,28 +87,28 @@ func TestEmitSyncWithAbort(t *testing.T) {
 	}
 
 	// Subscribe the listeners to the "testTopic"
-	_, err := emitter.On("testTopic", lowPriorityListener, WithPriority(Low))
+	_, err := soiree.On("testTopic", lowPriorityListener, WithPriority(Low))
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
-	_, err = emitter.On("testTopic", abortingListener, WithPriority(Normal))
+	_, err = soiree.On("testTopic", abortingListener, WithPriority(Normal))
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
-	_, err = emitter.On("testTopic", highPriorityListener, WithPriority(High))
+	_, err = soiree.On("testTopic", highPriorityListener, WithPriority(High))
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
 	// Emit the event synchronously
-	emitter.EmitSync("testTopic", "testPayload")
+	soiree.EmitSync("testTopic", "testPayload")
 }
 
 // TestEmitWithAbort tests the asynchronous Emit method with a listener that aborts the event
 func TestEmitWithAbort(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	// Create three listeners with different priorities
 	highPriorityListener := func(e Event) error {
@@ -130,23 +130,23 @@ func TestEmitWithAbort(t *testing.T) {
 	}
 
 	// Subscribe the listeners to the "testTopic"
-	_, err := emitter.On("testTopic", lowPriorityListener, WithPriority(Low))
+	_, err := soiree.On("testTopic", lowPriorityListener, WithPriority(Low))
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
-	_, err = emitter.On("testTopic", abortingListener, WithPriority(Normal))
+	_, err = soiree.On("testTopic", abortingListener, WithPriority(Normal))
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
-	_, err = emitter.On("testTopic", highPriorityListener, WithPriority(High))
+	_, err = soiree.On("testTopic", highPriorityListener, WithPriority(High))
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
 	// Emit the event asynchronously
-	errChan := emitter.Emit("testTopic", "testPayload")
+	errChan := soiree.Emit("testTopic", "testPayload")
 
 	// Wait for all errors to be collected
 	var emitErrors []error

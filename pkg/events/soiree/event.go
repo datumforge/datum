@@ -1,4 +1,4 @@
-package emitter
+package soiree
 
 import "sync"
 
@@ -11,7 +11,11 @@ type Event interface {
 	IsAborted() bool
 }
 
-// BaseEvent provides a basic implementation of the Event interface
+// BaseEvent serves as a basic implementation of the `Event` interface and contains fields for storing the topic,
+// payload, and aborted status of an event. The struct includes methods to interact with these fields
+// such as getting and setting the payload, setting the aborted status, and checking if the event has
+// been aborted. The struct also includes a `sync.RWMutex` field `mu` to handle concurrent access to
+// the struct's fields in a thread-safe manner
 type BaseEvent struct {
 	topic   string
 	payload interface{}

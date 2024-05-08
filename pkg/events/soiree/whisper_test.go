@@ -1,4 +1,4 @@
-package emitter
+package soiree
 
 import (
 	"errors"
@@ -7,24 +7,24 @@ import (
 	"time"
 )
 
-// TestNewMemoryEmitter tests the creation of a new MemoryEmitter
-func TestNewMemoryEmitter(t *testing.T) {
-	emitter := NewMemoryEmitter()
-	if emitter == nil {
-		t.Fatal("NewMemoryEmitter() should not return nil")
+// TestNewWhisper tests the creation of a new Whisper
+func TestNewWhisper(t *testing.T) {
+	soiree := NewWhisper()
+	if soiree == nil {
+		t.Fatal("NewWhisper() should not return nil")
 	}
 }
 
 // TestOnOff tests subscribing to and unsubscribing from a topic
 func TestOnOff(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	listener := func(e Event) error {
 		return nil
 	}
 
 	// On to a topic
-	id, err := emitter.On("testTopic", listener)
+	id, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
@@ -34,14 +34,14 @@ func TestOnOff(t *testing.T) {
 	}
 
 	// Now unsubscribe and ensure the listener is removed
-	if err := emitter.Off("testTopic", id); err != nil {
+	if err := soiree.Off("testTopic", id); err != nil {
 		t.Fatalf("Off() failed with error: %v", err)
 	}
 }
 
 // TestEmitAsyncSuccess tests the asynchronous Emit method for successful event handling
 func TestEmitAsyncSuccess(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	// Create a listener that does not return an error
 	listener := func(e Event) error {
@@ -51,13 +51,13 @@ func TestEmitAsyncSuccess(t *testing.T) {
 	}
 
 	// Subscribe the listener to the "testTopic"
-	_, err := emitter.On("testTopic", listener)
+	_, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
 	// Emit the event asynchronously
-	errChan := emitter.Emit("testTopic", "testPayload")
+	errChan := soiree.Emit("testTopic", "testPayload")
 
 	// Collect errors from the error channel
 	var emitErrors []error
@@ -76,7 +76,7 @@ func TestEmitAsyncSuccess(t *testing.T) {
 
 // TestEmitAsyncFailure tests the asynchronous Emit method for event handling that returns an error
 func TestEmitAsyncFailure(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	// Create a listener that returns an error
 	listener := func(e Event) error {
@@ -87,13 +87,13 @@ func TestEmitAsyncFailure(t *testing.T) {
 	}
 
 	// Subscribe the listener to the "testTopic"
-	_, err := emitter.On("testTopic", listener)
+	_, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
 	// Emit the event asynchronously
-	errChan := emitter.Emit("testTopic", "testPayload")
+	errChan := soiree.Emit("testTopic", "testPayload")
 
 	// Collect errors from the error channel
 	var emitErrors []error
@@ -112,18 +112,18 @@ func TestEmitAsyncFailure(t *testing.T) {
 
 // TestEmitSyncSuccess tests emitting to a topic
 func TestEmitSyncSuccess(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 	received := make(chan string, 1) // Buffered channel to receive one message
 
 	// Prepare the listener
 	listener := createTestListener(received)
 
-	_, err := emitter.On("testTopic", listener)
+	_, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
-	emitter.Emit("testTopic", "testPayload")
+	soiree.Emit("testTopic", "testPayload")
 
 	// Wait for the listener to handle the event or timeout after a specific duration
 	select {
@@ -139,20 +139,20 @@ func TestEmitSyncSuccess(t *testing.T) {
 
 // TestEmitSyncFailure tests the synchronous EmitSync method for event handling that returns an error
 func TestEmitSyncFailure(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	// Create a listener that returns an error
 	listener := func(e Event) error {
 		return errors.New("listener error") // nolint: goerr113
 	}
 
-	_, err := emitter.On("testTopic", listener)
+	_, err := soiree.On("testTopic", listener)
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
 	// Emit the event synchronously and collect errors
-	errors := emitter.EmitSync("testTopic", "testPayload")
+	errors := soiree.EmitSync("testTopic", "testPayload")
 
 	// Check that the errors juicy slice is not empty
 	if len(errors) == 0 {
@@ -162,15 +162,15 @@ func TestEmitSyncFailure(t *testing.T) {
 
 // TestGetTopic tests getting a topic
 func TestGetTopic(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	// Creating a topic by subscribing to it
-	_, err := emitter.On("testTopic", func(e Event) error { return nil })
+	_, err := soiree.On("testTopic", func(e Event) error { return nil })
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
-	topic, err := emitter.GetTopic("testTopic")
+	topic, err := soiree.GetTopic("testTopic")
 
 	if err != nil {
 		t.Fatalf("GetTopic() failed with error: %v", err)
@@ -183,16 +183,16 @@ func TestGetTopic(t *testing.T) {
 
 // TestEnsureTopic tests getting or creating a topic
 func TestEnsureTopic(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	// Get or create a new topic
-	topic := emitter.EnsureTopic("newTopic")
+	topic := soiree.EnsureTopic("newTopic")
 	if topic == nil {
 		t.Fatal("EnsureTopic() should not return nil")
 	}
 
 	// Try to retrieve the same topic and check if it's the same instance
-	sameTopic, err := emitter.GetTopic("newTopic")
+	sameTopic, err := soiree.GetTopic("newTopic")
 	if err != nil {
 		t.Fatalf("GetTopic() failed with error: %v", err)
 	}
@@ -203,7 +203,7 @@ func TestEnsureTopic(t *testing.T) {
 }
 
 func TestWildcardSubscriptionAndEmitting(t *testing.T) {
-	emitter := NewMemoryEmitter()
+	soiree := NewWhisper()
 
 	topics := []string{
 		"event.some.*.*",
@@ -223,7 +223,7 @@ func TestWildcardSubscriptionAndEmitting(t *testing.T) {
 	// On the mock listener to all topics
 	for _, topic := range topics {
 		topicName := topic
-		_, err := emitter.On(topicName, func(e Event) error {
+		_, err := soiree.On(topicName, func(e Event) error {
 			// Record the event in the receivedEvents map
 			eventPayload := e.Payload().(string)
 			t.Logf("Listener received event on topic: %s with payload: %s", topicName, eventPayload)
@@ -241,7 +241,7 @@ func TestWildcardSubscriptionAndEmitting(t *testing.T) {
 	// Emit events to all topics and check if the listeners are notified
 	for eventKey := range expectedMatches {
 		t.Logf("Emitting event: %s", eventKey)
-		emitter.Emit(eventKey, eventKey) // Use the eventKey as the payload for identification
+		soiree.Emit(eventKey, eventKey) // Use the eventKey as the payload for identification
 	}
 
 	// Allow some time for the events to be processed asynchronously
@@ -270,14 +270,14 @@ func TestWildcardSubscriptionAndEmitting(t *testing.T) {
 	}
 }
 
-func TestMemoryEmitterClose(t *testing.T) {
-	emitter := NewMemoryEmitter()
+func TestWhisperClose(t *testing.T) {
+	soiree := NewWhisper()
 
 	// Set up topics and listeners
 	topic1 := "topic1"
 	listener1 := func(e Event) error { return nil }
 
-	_, err := emitter.On(topic1, listener1)
+	_, err := soiree.On(topic1, listener1)
 
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
@@ -286,27 +286,27 @@ func TestMemoryEmitterClose(t *testing.T) {
 	topic2 := "topic2"
 	listener2 := func(e Event) error { return nil }
 
-	_, err = emitter.On(topic2, listener2)
+	_, err = soiree.On(topic2, listener2)
 	if err != nil {
 		t.Fatalf("On() failed with error: %v", err)
 	}
 
 	// Use a Pool
 	pool := NewPondPool(10, 1000)
-	emitter.SetPool(pool)
+	soiree.SetPool(pool)
 
-	// Close the emitter
-	if err := emitter.Close(); err != nil {
+	// Close the soiree
+	if err := soiree.Close(); err != nil {
 		t.Fatalf("Close() failed with error: %v", err)
 	}
 
 	// Verify topics have been removed
-	_, err = emitter.GetTopic(topic1)
+	_, err = soiree.GetTopic(topic1)
 	if err == nil {
 		t.Errorf("GetTopic() should return an error after Close()")
 	}
 
-	_, err = emitter.GetTopic(topic2)
+	_, err = soiree.GetTopic(topic2)
 	if err == nil {
 		t.Errorf("GetTopic() should return an error after Close()")
 	}
@@ -317,7 +317,7 @@ func TestMemoryEmitterClose(t *testing.T) {
 	}
 
 	// Verify that no new events can be emitted
-	errChan := emitter.Emit(topic1, "payload")
+	errChan := soiree.Emit(topic1, "payload")
 	select {
 	case err := <-errChan:
 		if err == nil {

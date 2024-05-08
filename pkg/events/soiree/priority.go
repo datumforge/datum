@@ -1,4 +1,4 @@
-package emitter
+package soiree
 
 // Priority type for listener priority levels
 type Priority int

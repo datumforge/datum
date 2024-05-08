@@ -1,4 +1,4 @@
-package emitter
+package soiree
 
 import (
 	"sort"

@@ -1,4 +1,4 @@
-package emitter
+package soiree
 
 import (
 	"sync"
@@ -8,11 +8,11 @@ import (
 )
 
 func TestEmitEventWithPool(t *testing.T) {
-	emitter := NewMemoryEmitter(WithPool(NewPondPool(10, 100)))
+	soiree := NewWhisper(WithPool(NewPondPool(10, 100)))
 
 	var processedEvents int32
 
-	listenerID, err := emitter.On("testEvent", func(event Event) error {
+	listenerID, err := soiree.On("testEvent", func(event Event) error {
 		atomic.AddInt32(&processedEvents, 1)
 		time.Sleep(10 * time.Millisecond) // Simulating work
 
@@ -23,7 +23,7 @@ func TestEmitEventWithPool(t *testing.T) {
 		t.Fatalf("Error adding listener: %v", err)
 	}
 
-	errChan := emitter.Emit("testEvent", nil)
+	errChan := soiree.Emit("testEvent", nil)
 
 	// Collect all errors from the channel
 	var errors []error
@@ -45,7 +45,7 @@ func TestEmitEventWithPool(t *testing.T) {
 	}
 
 	// Unregister the listener as cleanup
-	if err := emitter.Off("testEvent", listenerID); err != nil {
+	if err := soiree.Off("testEvent", listenerID); err != nil {
 		t.Errorf("Failed to unregister listener: %v", err)
 	}
 
@@ -56,8 +56,8 @@ func TestEmitEventWithPool(t *testing.T) {
 }
 
 func TestEmitMultipleEventsWithPool(t *testing.T) {
-	// Create a MemoryEmitter instance with a PondPool.
-	emitter := NewMemoryEmitter(WithPool(NewPondPool(10, 100)))
+	// Create a Whisper instance with a PondPool.
+	soiree := NewWhisper(WithPool(NewPondPool(10, 100)))
 
 	// Define the number of concurrent events to emit
 	numConcurrentEvents := 10
@@ -71,7 +71,7 @@ func TestEmitMultipleEventsWithPool(t *testing.T) {
 	var processingError error
 
 	// Add an event listener to handle "testEvent" and increment the processedEvents count
-	_, err := emitter.On("testEvent", func(event Event) error {
+	_, err := soiree.On("testEvent", func(event Event) error {
 		// Simulate some processing
 		time.Sleep(100 * time.Millisecond)
 
@@ -87,8 +87,8 @@ func TestEmitMultipleEventsWithPool(t *testing.T) {
 	// Emit multiple events concurrently
 	for i := 0; i < numConcurrentEvents; i++ {
 		go func() {
-			// Emit an event using the emitter
-			errChan := emitter.Emit("testEvent", nil)
+			// Emit an event using the soiree
+			errChan := soiree.Emit("testEvent", nil)
 
 			// Wait for the event to be processed
 			for err := range errChan {

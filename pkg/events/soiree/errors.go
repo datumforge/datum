@@ -1,4 +1,4 @@
-package emitter
+package soiree
 
 import "errors"
 
@@ -15,8 +15,8 @@ var (
 	ErrListenerNotFound = errors.New("listener not found")
 	// ErrEventProcessingAborted is returned when event processing is aborted
 	ErrEventProcessingAborted = errors.New("event processing aborted")
-	// ErrEmitterClosed is returned when the emitter is closed
-	ErrEmitterClosed = errors.New("emitter is closed")
-	// ErrEmitterAlreadyClosed is returned when the emitter is already closed
-	ErrEmitterAlreadyClosed = errors.New("emitter is already closed")
+	// ErrEmitterClosed is returned when the soiree is closed
+	ErrEmitterClosed = errors.New("soiree is closed")
+	// ErrEmitterAlreadyClosed is returned when the soiree is already closed
+	ErrEmitterAlreadyClosed = errors.New("soiree is already closed")
 )

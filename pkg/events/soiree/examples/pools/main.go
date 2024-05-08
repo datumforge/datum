@@ -4,26 +4,27 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/datumforge/datum/pkg/events/emitter"
+	"github.com/datumforge/datum/pkg/events/soiree"
 )
 
 func main() {
 	// Initialize a goroutine pool with 5 workers and a maximum capacity of 1000 tasks
-	pool := emitter.NewPondPool(5, 1000)
+	pool := soiree.NewPondPool(5, 1000)
 
-	// Create a new emitter instance using the custom pool
-	e := emitter.NewMemoryEmitter(emitter.WithPool(pool))
+	// Create a new soiree instance using the custom pool
+	e := soiree.NewWhisper(soiree.WithPool(pool))
 
-	// Define a listener that simulates a time-consuming task
-	timeConsumingListener := func(evt emitter.Event) error {
+	// Define a listener that simulates a time-consuming task - dealing with humans usually
+	timeConsumingListener := func(evt soiree.Event) error {
 		fmt.Printf("Processing event: %s with payload: %v\n", evt.Topic(), evt.Payload())
 		// Simulate some work with a sleep
 		time.Sleep(2 * time.Second)
 		fmt.Printf("Finished processing event: %s\n", evt.Topic())
+
 		return nil
 	}
 
-	// Subscribe the listener to a topic
+	// Subscribe a listener to a topic
 	e.On("user.signup", timeConsumingListener)
 
 	// Emit several events concurrently
@@ -39,5 +40,6 @@ func main() {
 
 	// Release the resources used by the pool
 	pool.Release()
-	fmt.Println("All events have been processed and the pool has been released.")
+
+	fmt.Println("All events have been processed and the pool has been released")
 }

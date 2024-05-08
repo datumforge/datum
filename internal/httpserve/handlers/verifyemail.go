@@ -1,13 +1,11 @@
 package handlers
 
 import (
-	"context"
 	"errors"
 	"net/http"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
 	ph "github.com/posthog/posthog-go"
 
@@ -17,7 +15,6 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
-	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
 // VerifyRequest holds the fields that should be included on a request to the `/verify` endpoint
@@ -183,39 +180,4 @@ func (u *User) setUserTokens(user *generated.User, reqToken string) error {
 	}
 
 	return ErrNotFound
-}
-
-func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID string) error {
-	// get org name if not root level (Datum)
-	orgName := h.EmailManager.DefaultSubscriptionOrg
-
-	if orgID != "" {
-		org, err := h.getOrgByID(ctx, orgID)
-		if err != nil {
-			return err
-		}
-
-		orgName = org.Name
-	}
-
-	// send emails via TaskMan as to not create blocking operations in the server
-	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-		return h.SendSubscriberEmail(user, orgName)
-	}), marionette.WithRetries(3), // nolint: gomnd
-		marionette.WithBackoff(backoff.NewExponentialBackOff()),
-		marionette.WithErrorf("could not send subscriber verification email to user %s", user.Email),
-	); err != nil {
-		return err
-	}
-
-	props := ph.NewProperties().
-		Set("user_id", user.ID).
-		Set("email", user.Email).
-		Set("first_name", user.FirstName).
-		Set("last_name", user.LastName).
-		Set("organization_name", orgName)
-
-	h.AnalyticsClient.Event("email_verification_sent", props)
-
-	return nil
 }

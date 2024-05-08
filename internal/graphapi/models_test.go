@@ -404,14 +404,6 @@ func (i *InviteCleanup) MustDelete(ctx context.Context, t *testing.T) {
 
 // MustNew subscriber builder is used to create, without authz checks, subscribers in the database
 func (i *SubscriberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Subscriber {
-	// create owner if not provided
-	orgID := i.OrgID
-
-	if orgID == "" {
-		org := (&OrganizationBuilder{client: i.client}).MustNew(ctx, t)
-		orgID = org.ID
-	}
-
 	reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 
 	// create user if not provided
@@ -421,15 +413,9 @@ func (i *SubscriberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Subs
 		rec = gofakeit.Email()
 	}
 
-	// mock check
-	mock_fga.ListAny(t, i.client.fga, []string{fmt.Sprintf("organization:%s", orgID)})
-
 	sub := i.client.db.Subscriber.Create().
 		SetEmail(rec).
 		SetActive(true).SaveX(reqCtx)
-
-	// clear mocks before going to tests
-	mock_fga.ClearMocks(i.client.fga)
 
 	return sub
 }

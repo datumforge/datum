@@ -40,6 +40,7 @@ func HookSubscriber() ent.Hook {
 	}, ent.OpCreate)
 }
 
+// queueSubscriberEmail queues the email to be sent to the subscriber
 func queueSubscriberEmail(ctx context.Context, m *generated.SubscriberMutation) error {
 	// Get the details from the mutation, these will never be empty because they are set in the hook
 	orgID, _ := m.OwnerID()
@@ -92,7 +93,7 @@ func sendSubscriberEmail(m *generated.SubscriberMutation, orgName, token string)
 	return m.Emails.Send(msg)
 }
 
-// CreateVerificationToken creates a new email verification token for the user
+// createVerificationToken creates a new email verification token for the user
 func createVerificationToken(m *generated.SubscriberMutation, email string) error {
 	// Create a unique token from the user's email address
 	verify, err := tokens.NewVerificationToken(email)

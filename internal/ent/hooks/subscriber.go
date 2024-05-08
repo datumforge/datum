@@ -7,7 +7,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
-	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
@@ -22,16 +21,6 @@ func HookSubscriber() ent.Hook {
 			if !ok || email == "" {
 				return nil, ErrEmailRequired
 			}
-
-			orgID, err := auth.GetOrganizationIDFromContext(ctx)
-			if err != nil {
-				m.Logger.Errorw("unable to get organization ID from context", "error", err)
-
-				return nil, err
-			}
-
-			// Set owner for the subscriber based on authenticated user
-			m.SetOwnerID(orgID)
 
 			if err := createVerificationToken(m, email); err != nil {
 				return nil, err

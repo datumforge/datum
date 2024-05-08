@@ -127,6 +127,7 @@ func (Subscriber) Annotations() []schema.Annotation {
 			ObjectType:    "organization",
 			IncludeHooks:  false,
 			OrgOwnedField: true,
+			IDField:       "OwnerID",
 		},
 		enthistory.Annotations{
 			Exclude: true,

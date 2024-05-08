@@ -1585,28 +1585,28 @@ func (q *SubscriberQuery) CheckAccess(ctx context.Context) error {
 		whereArg := gCtx.Args["where"]
 		if whereArg != nil {
 			where, ok := whereArg.(*SubscriberWhereInput)
-			if ok && where != nil && where.ID != nil {
-				ac.ObjectID = *where.ID
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
 			}
 		}
 
 		// if that doesn't work, check for the id in the args
 		if ac.ObjectID == "" {
-			ac.ObjectID, _ = gCtx.Args["id"].(string)
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
 		}
 
 		// if we still don't have an object id, run the query and grab the object ID
 		// from the result
 		// this happens on join tables where we have the join ID (for updates and deletes)
 		// and not the actual object id
-		if ac.ObjectID == "" && "id" != "id" {
+		if ac.ObjectID == "" && "id" != "ownerid" {
 			// allow this query to run
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := q.Clone().Only(reqCtx)
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-			ac.ObjectID = ob.ID
+			ac.ObjectID = ob.OwnerID
 		}
 
 		// request is for a list objects, will get filtered in interceptors

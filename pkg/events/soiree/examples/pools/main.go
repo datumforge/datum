@@ -12,7 +12,7 @@ func main() {
 	pool := soiree.NewPondPool(5, 1000)
 
 	// Create a new soiree instance using the custom pool
-	e := soiree.NewWhisper(soiree.WithPool(pool))
+	e := soiree.NewEventPool(soiree.WithPool(pool))
 
 	// Define a listener that simulates a time-consuming task - dealing with humans usually
 	timeConsumingListener := func(evt soiree.Event) error {

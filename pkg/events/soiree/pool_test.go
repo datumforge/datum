@@ -8,7 +8,7 @@ import (
 )
 
 func TestEmitEventWithPool(t *testing.T) {
-	soiree := NewWhisper(WithPool(NewPondPool(10, 100)))
+	soiree := NewEventPool(WithPool(NewPondPool(10, 100)))
 
 	var processedEvents int32
 
@@ -56,8 +56,8 @@ func TestEmitEventWithPool(t *testing.T) {
 }
 
 func TestEmitMultipleEventsWithPool(t *testing.T) {
-	// Create a Whisper instance with a PondPool.
-	soiree := NewWhisper(WithPool(NewPondPool(10, 100)))
+	// Create a EventPool instance with a PondPool.
+	soiree := NewEventPool(WithPool(NewPondPool(10, 100)))
 
 	// Define the number of concurrent events to emit
 	numConcurrentEvents := 10

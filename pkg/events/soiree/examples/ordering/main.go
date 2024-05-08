@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Initialize the soiree - invite your friends
-	e := soiree.NewWhisper()
+	e := soiree.NewEventPool()
 
 	// High-priority listener for order validation
 	validateOrderListener := func(evt soiree.Event) error {

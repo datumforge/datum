@@ -14,7 +14,7 @@ func main() {
 	}
 
 	// Start a soiree but invite UUID instead of ULID
-	e := soiree.NewWhisper(soiree.WithIDGenerator(uuidGenerator))
+	e := soiree.NewEventPool(soiree.WithIDGenerator(uuidGenerator))
 
 	// Define an event listener
 	listener := func(evt soiree.Event) error {

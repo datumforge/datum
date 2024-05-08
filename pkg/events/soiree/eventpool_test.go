@@ -7,17 +7,17 @@ import (
 	"time"
 )
 
-// TestNewWhisper tests the creation of a new Whisper
-func TestNewWhisper(t *testing.T) {
-	soiree := NewWhisper()
+// TestNewEventPool tests the creation of a new EventPool
+func TestNewEventPool(t *testing.T) {
+	soiree := NewEventPool()
 	if soiree == nil {
-		t.Fatal("NewWhisper() should not return nil")
+		t.Fatal("NewEventPool() should not return nil")
 	}
 }
 
 // TestOnOff tests subscribing to and unsubscribing from a topic
 func TestOnOff(t *testing.T) {
-	soiree := NewWhisper()
+	soiree := NewEventPool()
 
 	listener := func(e Event) error {
 		return nil
@@ -41,7 +41,7 @@ func TestOnOff(t *testing.T) {
 
 // TestEmitAsyncSuccess tests the asynchronous Emit method for successful event handling
 func TestEmitAsyncSuccess(t *testing.T) {
-	soiree := NewWhisper()
+	soiree := NewEventPool()
 
 	// Create a listener that does not return an error
 	listener := func(e Event) error {
@@ -76,7 +76,7 @@ func TestEmitAsyncSuccess(t *testing.T) {
 
 // TestEmitAsyncFailure tests the asynchronous Emit method for event handling that returns an error
 func TestEmitAsyncFailure(t *testing.T) {
-	soiree := NewWhisper()
+	soiree := NewEventPool()
 
 	// Create a listener that returns an error
 	listener := func(e Event) error {
@@ -112,7 +112,7 @@ func TestEmitAsyncFailure(t *testing.T) {
 
 // TestEmitSyncSuccess tests emitting to a topic
 func TestEmitSyncSuccess(t *testing.T) {
-	soiree := NewWhisper()
+	soiree := NewEventPool()
 	received := make(chan string, 1) // Buffered channel to receive one message
 
 	// Prepare the listener
@@ -139,7 +139,7 @@ func TestEmitSyncSuccess(t *testing.T) {
 
 // TestEmitSyncFailure tests the synchronous EmitSync method for event handling that returns an error
 func TestEmitSyncFailure(t *testing.T) {
-	soiree := NewWhisper()
+	soiree := NewEventPool()
 
 	// Create a listener that returns an error
 	listener := func(e Event) error {
@@ -162,7 +162,7 @@ func TestEmitSyncFailure(t *testing.T) {
 
 // TestGetTopic tests getting a topic
 func TestGetTopic(t *testing.T) {
-	soiree := NewWhisper()
+	soiree := NewEventPool()
 
 	// Creating a topic by subscribing to it
 	_, err := soiree.On("testTopic", func(e Event) error { return nil })
@@ -183,7 +183,7 @@ func TestGetTopic(t *testing.T) {
 
 // TestEnsureTopic tests getting or creating a topic
 func TestEnsureTopic(t *testing.T) {
-	soiree := NewWhisper()
+	soiree := NewEventPool()
 
 	// Get or create a new topic
 	topic := soiree.EnsureTopic("newTopic")
@@ -203,7 +203,7 @@ func TestEnsureTopic(t *testing.T) {
 }
 
 func TestWildcardSubscriptionAndEmitting(t *testing.T) {
-	soiree := NewWhisper()
+	soiree := NewEventPool()
 
 	topics := []string{
 		"event.some.*.*",
@@ -270,8 +270,8 @@ func TestWildcardSubscriptionAndEmitting(t *testing.T) {
 	}
 }
 
-func TestWhisperClose(t *testing.T) {
-	soiree := NewWhisper()
+func TestEventPoolClose(t *testing.T) {
+	soiree := NewEventPool()
 
 	// Set up topics and listeners
 	topic1 := "topic1"

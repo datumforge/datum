@@ -27,8 +27,8 @@ func TestWithErrorHandler(t *testing.T) {
 		return nil // Returning nil to indicate the error is handled
 	}
 
-	// Create a new Whisper with the custom error handler
-	soiree := NewWhisper(WithErrorHandler(customErrorHandler))
+	// Create a new EventPool with the custom error handler
+	soiree := NewEventPool(WithErrorHandler(customErrorHandler))
 
 	// Define a listener that returns the custom error
 	listener := func(e Event) error {
@@ -70,8 +70,8 @@ func TestWithErrorHandlerAsync(t *testing.T) {
 		return nil // Assume the error is handled and return nil
 	}
 
-	// Create a new Whisper with the custom error handler
-	soiree := NewWhisper(WithErrorHandler(customErrorHandler))
+	// Create a new EventPool with the custom error handler
+	soiree := NewEventPool(WithErrorHandler(customErrorHandler))
 
 	// Define a listener that returns the custom error
 	listener := func(e Event) error {
@@ -115,8 +115,8 @@ func TestWithPanicHandlerSync(t *testing.T) {
 		}
 	}
 
-	// Create a new Whisper with the custom panic handler
-	soiree := NewWhisper(WithPanicHandler(customPanicHandler))
+	// Create a new EventPool with the custom panic handler
+	soiree := NewEventPool(WithPanicHandler(customPanicHandler))
 
 	// Define a listener that panics
 	listener := func(e Event) error {
@@ -162,8 +162,8 @@ func TestWithPanicHandlerAsync(t *testing.T) {
 		}
 	}
 
-	// Create a new Whisper with the custom panic handler.
-	soiree := NewWhisper(WithPanicHandler(customPanicHandler))
+	// Create a new EventPool with the custom panic handler.
+	soiree := NewEventPool(WithPanicHandler(customPanicHandler))
 
 	// Define a listener that panics
 	listener := func(e Event) error {
@@ -203,8 +203,8 @@ func TestWithIDGenerator(t *testing.T) {
 		return customID
 	}
 
-	// Create a new Whisper with the custom ID generator
-	soiree := NewWhisper(WithIDGenerator(customIDGenerator))
+	// Create a new EventPool with the custom ID generator
+	soiree := NewEventPool(WithIDGenerator(customIDGenerator))
 
 	// Define a no-op listener
 	listener := func(e Event) error {

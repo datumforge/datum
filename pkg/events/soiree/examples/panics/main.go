@@ -15,7 +15,7 @@ func CustomPanicHandler(recoveredPanic interface{}) {
 
 func main() {
 	// Create a new soiree instance with the custom panic handler
-	e := soiree.NewWhisper(soiree.WithPanicHandler(CustomPanicHandler))
+	e := soiree.NewEventPool(soiree.WithPanicHandler(CustomPanicHandler))
 
 	// Define an event listener that intentionally causes a panic
 	listener := func(evt soiree.Event) error {

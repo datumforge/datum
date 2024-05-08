@@ -1,6 +1,6 @@
 # Soiree
 
-Soiree, a fancy event affair, or, event - is a library indendied to simplify event management. The goal is a dead-simple interface for event subscription and handling, using [pond](https://github.com/alitto/pond) for performance and wrapping event management with thread-safe interactions.
+Soiree, a fancy event affair, or, event - is a library indendied to simplify event management inside a golang codebase but more generically is a 2-tier channel system, one for queuing jobs and another to control how many workers operate on that job queue concurrently. The goal is a dead-simple interface for event subscription and handling, using [pond](https://github.com/alitto/pond) for performance management, goroutine pooling, and wrapping an event management interface with thread-safe interactions.
 
 ## Overview
 
@@ -95,41 +95,9 @@ Now, where things start to get more fun is when you layer in the desire to perfo
                                                      │   Turso   │                        └──────────────┘
                                                      └───────────┘
 
+Given we need to be able to perform all kinds of workload actions such as writing a file to a bucket, committing a SQL transaction, sending an http request, we need bounded patterns and degrees of resource control. Which is to say, we need to control resource contention in our runtime as we don't want someone's regular HTTP request to be blocked by the fact someone else requested a bulk upload to S3. This means creating rough groupings of workload `types` and bounding them so that you can monitor and control the behaviors and lumpiness of the variances with the workload types.
 
-Adding "events" is really not as simple as having something like Kafka or Redis, either. In a "traditional" event architecture you will usually have something like this:
-
-                             ┌────────────────────────┐
-                             │   Traditional Event    │
-                             │     Architectures      │
-                             └────────────────────────┘
-
-┌────────────────┐
-│                │                                                                ┌────────────────┐
-│   Publisher    │────┐                                                           │                │
-│                │    │                                                   ┌───────▶   Subscriber   │
-└────────────────┘    │                                                   │       │                │
-                 ┌────┴──────┐                                      ┌───────────┐ └────────────────┘
-                 │ Message 1 │                                      │ Messages  │
-                 └────┬──────┘              .───────────────.       └───────────┘
-┌────────────────┐    │                 _.─'                 `──.         │       ┌────────────────┐
-│                │   ┌┴──────────┐     ╱    Pub / Sub Service    ╲        │       │                │
-│   Publisher    ├───┤ Message 3 ├────▶                           ───────┬┴───────▶   Subscriber   │
-│                │   └─────┬─────┘     `.        Channel        ,'       │        │                │
-└────────────────┘         │             `──.               _.─'         │        └────────────────┘
-                           │                 `─────────────'             │
-                           │                                             │
-┌────────────────┐    ┌────┴──────┐                                      │        ┌────────────────┐
-│                │    │ Message 2 │                                      │        │                │
-│   Publisher    ├────┴───────────┘                                      └───────▶│   Subscriber   │
-│                │                                                                │                │
-└────────────────┘                                                                └────────────────┘
-
-
-But this pattern assumes we can have discreet, secondary code bases consuming off an event broker channel. as well as consistent interfaces, data types, etc., for all those events. Pretty complicated. Creating more external dependencies for runtime is expensive in more ways than dollars, as well. What problem are we trying to solve for, then?
-
-If Datum as a service, which looks a bit like what you'd traditionally consider a "monolith", needs to perform all kinds of workload actions such as writing a file to a bucket, committing a SQL transaction, sending an http request, we need bounded patterns. Which is to say, we need to control resource contention in our runtime as we don't want someone's regular HTTP request to be blocked by the fact someone else requested a bulk upload to S3. This means creating rough groupings of workload `types` and bounding them so that you can monitor and control the behaviors  and lumpiness of the variances with the workload types.
-
-Additionally, unless we want to be in a living hell of reconciliation with regards to Event emission / management / storage, we're better served by creating in-memory constructs to execute on various action types. Example: we want to provide to our users the ability to send emails based on events which occur related to their use of Datum. If you were to offload this to an intermediary, such as datum -> kafka -> emailsender, in the event that the datum or kafka service fails, you're left asking the question if the email has been sent or not (e.g. has the event been processed).
+Check out [this blog](http://marcio.io/2015/07/handling-1-million-requests-per-minute-with-golang/) (there are many on this topic) for some real world examples on how systems with these "lumpy" workload types can become easily bottlenecked with volume. Since we are intending to open the flood gates around event ingestion from other sources (similar to how Posthog, Segment, etc., work) we need to anticipate a very high load of unstructured data which needs to be written efficiently to a myriad of external sources.
 
 ## How many goroutines can / should I have?
 
@@ -150,7 +118,7 @@ import (
 )
 
 func main() {
-	e := soiree.NewWhisper()
+	e := soiree.NewEventPool()
 	e.On("user.created", func(evt soiree.Event) error {
 		fmt.Println("Event received:", evt.Topic())
 		return nil
@@ -164,7 +132,7 @@ func main() {
 Customize Soiree with the provided options:
 
 ```go
-e := soiree.NewWhisper(
+e := soiree.NewEventPool(
 	soiree.WithErrorHandler(customErrorHandler),
 	soiree.WithIDGenerator(customIDGenerator),
 	// More options...
@@ -190,7 +158,7 @@ Pattern-match event topics with wildcards:
 ### Example:
 
 ```go
-e := soiree.NewWhisper()
+e := soiree.NewEventPool()
 e.On("user.*", userEventListener)
 e.On("invoice.**", orderEventListener)
 e.On("**.completed", completionEventListener)
@@ -199,7 +167,7 @@ e.On("**.completed", completionEventListener)
 ### Another Example
 
 ```go
-e := soiree.NewWhisper()
+e := soiree.NewEventPool()
 e.On("user.*", func(evt soiree.Event) error {
 	fmt.Printf("Event: %s, Payload: %+v\n", evt.Topic(), evt.Payload())
 	return nil
@@ -213,7 +181,7 @@ e.Emit("user.signup", "Funky Sarah")
 Stop event propagation using `SetAborted`:
 
 ```go
-e := soiree.NewWhisper()
+e := soiree.NewEventPool()
 e.On("invoice.processed", func(evt soiree.Event) error {
 	if /* condition fails */ false {
 		evt.SetAborted(true)
@@ -254,7 +222,7 @@ func main() {
 	pool := soiree.NewPondPool(10, 1000) // 10 workers, queue size 1000
 
 	// Set up the soiree with this pool
-	e := soiree.NewWhisper(soiree.WithPool(pool))
+	e := soiree.NewEventPool(soiree.WithPool(pool))
 
 	// Your soiree is now ready to handle events using the pool
 }
@@ -280,7 +248,7 @@ func main() {
 	}
 
 	// Apply the custom error handler to the soiree
-	e := soiree.NewWhisper(soiree.WithErrorHandler(customErrorHandler))
+	e := soiree.NewEventPool(soiree.WithErrorHandler(customErrorHandler))
 
 	// Your soiree will now log detailed errors encountered during event handling
 }
@@ -300,7 +268,7 @@ import (
 
 func main() {
 	// Set up the soiree
-	e := soiree.NewWhisper()
+	e := soiree.NewEventPool()
 
 	// Define listeners with varying priorities
 	normalPriorityListener := func(e soiree.Event) error {
@@ -343,7 +311,7 @@ func main() {
 	}
 
 	// Initialize the soiree with the UUID generator
-	e := soiree.NewWhisper(soiree.WithIDGenerator(uuidGenerator))
+	e := soiree.NewEventPool(soiree.WithIDGenerator(uuidGenerator))
 
 	// Listeners will now be registered with a unique UUID
 }
@@ -371,7 +339,7 @@ func main() {
 	}
 
 	// Equip the soiree with the panic handler
-	e := soiree.NewWhisper(soiree.WithPanicHandler(logPanicHandler))
+	e := soiree.NewEventPool(soiree.WithPanicHandler(logPanicHandler))
 
 	// Your soiree is now more resilient to panics
 }

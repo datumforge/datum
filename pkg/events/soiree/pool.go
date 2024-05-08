@@ -1,6 +1,8 @@
 package soiree
 
-import "github.com/alitto/pond"
+import (
+	"github.com/alitto/pond"
+)
 
 // Pool is an interface for a worker pool
 type Pool interface {

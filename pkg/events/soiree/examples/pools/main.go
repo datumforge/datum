@@ -8,14 +8,15 @@ import (
 )
 
 func main() {
+
 	// Initialize a goroutine pool with 5 workers and a maximum capacity of 1000 tasks
-	pool := soiree.NewPondPool(5, 1000)
+	pool := soiree.NewPondPool(100, 1000)
 
 	// Create a new soiree instance using the custom pool
 	e := soiree.NewEventPool(soiree.WithPool(pool))
 
 	// Define a listener that simulates a time-consuming task - dealing with humans usually
-	timeConsumingListener := func(evt soiree.Event) error {
+	userSignupListener := func(evt soiree.Event) error {
 		fmt.Printf("Processing event: %s with payload: %v\n", evt.Topic(), evt.Payload())
 		// Simulate some work with a sleep
 		time.Sleep(2 * time.Second)
@@ -25,10 +26,10 @@ func main() {
 	}
 
 	// Subscribe a listener to a topic
-	e.On("user.signup", timeConsumingListener)
+	e.On("user.signup", userSignupListener)
 
 	// Emit several events concurrently
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 100; i++ {
 		go func(index int) {
 			payload := fmt.Sprintf("User #%d", index)
 			e.Emit("user.signup", payload)

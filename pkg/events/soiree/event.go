@@ -2,7 +2,7 @@ package soiree
 
 import "sync"
 
-// Event is an interface representing the structure of an event
+// Event is an interface representing the structure of an instance of an event
 type Event interface {
 	Topic() string
 	Payload() interface{}

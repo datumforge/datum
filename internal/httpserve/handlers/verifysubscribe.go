@@ -7,14 +7,16 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
 	ph "github.com/posthog/posthog-go"
-	"github.com/samber/lo"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
+	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
 // VerifySubscribeRequest holds the fields that should be included on a request to the `/subscribe/verify` endpoint
@@ -53,6 +55,13 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
 	}
 
+	// add org to the authenticated context
+	reqCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		OrganizationID: entSubscriber.OwnerID,
+	})
+
+	ctxWithToken = token.NewContextWithVerifyToken(reqCtx, req.Token)
+
 	if !entSubscriber.VerifiedEmail {
 		if err := h.verifySubscriberToken(ctxWithToken, entSubscriber); err != nil {
 			if errors.Is(err, ErrExpiredToken) {
@@ -70,12 +79,10 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 		}
 
 		input := generated.UpdateSubscriberInput{
-			Email:         &entSubscriber.Email,
-			VerifiedEmail: lo.ToPtr(true),
-			Active:        lo.ToPtr(true),
+			Email: &entSubscriber.Email,
 		}
 
-		if err := h.updateSubscriber(ctxWithToken, entSubscriber.ID, input); err != nil {
+		if err := h.updateSubscriberVerifiedEmail(ctxWithToken, entSubscriber.ID, input); err != nil {
 			h.Logger.Errorf("error updating subscriber", "error", err)
 
 			return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
@@ -146,8 +153,11 @@ func (h *Handler) verifySubscriberToken(ctx context.Context, entSubscriber *gene
 				return err
 			}
 
+			// set viewer context
+			ctxWithToken := token.NewContextWithSignUpToken(ctx, entSubscriber.Email)
+
 			// resend email with new token to the subscriber
-			if err := h.sendSubscriberEmail(ctx, user, entSubscriber.OwnerID); err != nil {
+			if err := h.sendSubscriberEmail(ctxWithToken, user, entSubscriber.OwnerID); err != nil {
 				h.Logger.Errorw("error sending subscriber email", "error", err)
 
 				return err
@@ -156,6 +166,41 @@ func (h *Handler) verifySubscriberToken(ctx context.Context, entSubscriber *gene
 
 		return ErrExpiredToken
 	}
+
+	return nil
+}
+
+func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID string) error {
+	// get org name if not root level (Datum)
+	orgName := h.EmailManager.DefaultSubscriptionOrg
+
+	if orgID != "" {
+		org, err := h.getOrgByID(ctx, orgID)
+		if err != nil {
+			return err
+		}
+
+		orgName = org.Name
+	}
+
+	// send emails via TaskMan as to not create blocking operations in the server
+	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+		return h.SendSubscriberEmail(user, orgName)
+	}), marionette.WithRetries(3), // nolint: gomnd
+		marionette.WithBackoff(backoff.NewExponentialBackOff()),
+		marionette.WithErrorf("could not send subscriber verification email to user %s", user.Email),
+	); err != nil {
+		return err
+	}
+
+	props := ph.NewProperties().
+		Set("user_id", user.ID).
+		Set("email", user.Email).
+		Set("first_name", user.FirstName).
+		Set("last_name", user.LastName).
+		Set("organization_name", orgName)
+
+	h.AnalyticsClient.Event("email_verification_sent", props)
 
 	return nil
 }

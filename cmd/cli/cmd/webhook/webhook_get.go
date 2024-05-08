@@ -48,7 +48,7 @@ func webhooks(ctx context.Context) error {
 			return err
 		}
 
-		if viper.GetString("output.format") == "json" {
+		if datum.OutputFormat == "json" {
 			s, err := json.Marshal(webhook.Webhook)
 			if err != nil {
 				return err
@@ -73,7 +73,7 @@ func webhooks(ctx context.Context) error {
 		return err
 	}
 
-	if viper.GetString("output.format") == "json" {
+	if datum.OutputFormat == "json" {
 		return datum.JSONPrint(s)
 	}
 

@@ -52,7 +52,7 @@ func orgs(ctx context.Context) error {
 			return err
 		}
 
-		if viper.GetString("output.format") == "json" {
+		if datum.OutputFormat == "json" {
 			s, err := json.Marshal(org.Organization)
 			if err != nil {
 				return err
@@ -77,7 +77,7 @@ func orgs(ctx context.Context) error {
 		return err
 	}
 
-	if viper.GetString("output.format") == "json" {
+	if datum.OutputFormat == "json" {
 		return datum.JSONPrint(s)
 	}
 

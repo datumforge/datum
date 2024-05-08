@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 
+	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/pkg/auth"
@@ -35,6 +36,8 @@ type OrgOwnerMixin struct {
 	// SkipInterceptor skips the interceptor for that schema for all queries, or specific types,
 	// this is useful for tokens, etc
 	SkipInterceptor interceptors.SkipMode
+	// SkipMutationInput skips the field in the mutation input
+	SkipMutationInput bool
 }
 
 // Fields of the OrgOwnerMixin
@@ -71,6 +74,12 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 		ownerEdge.Required()
 	}
 
+	if orgOwned.SkipMutationInput {
+		ownerEdge.Annotations(
+			entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
+		)
+	}
+
 	if orgOwned.SkipOASGeneration {
 		ownerEdge.Annotations(
 			entoas.Skip(true),
@@ -102,9 +111,24 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 					return nil, fmt.Errorf("failed to get organization id from context: %w", err)
 				}
 
-				// set owner on mutation
-				if err := m.SetField(ownerFieldName, orgID); err != nil {
-					return nil, err
+				// set owner on create mutation
+				if m.Op() == ent.OpCreate {
+					// set owner on mutation
+					if err := m.SetField(ownerFieldName, orgID); err != nil {
+						return nil, err
+					}
+				} else {
+					// filter by owner on update and delete mutations
+					mx, ok := m.(interface {
+						SetOp(ent.Op)
+						Client() *generated.Client
+						WhereP(...func(*sql.Selector))
+					})
+					if !ok {
+						return nil, ErrUnexpectedMutationType
+					}
+
+					orgOwned.P(mx, orgID)
 				}
 
 				return next.Mutate(ctx, m)

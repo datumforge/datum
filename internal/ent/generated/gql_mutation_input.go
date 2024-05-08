@@ -2981,17 +2981,13 @@ func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput
 
 // CreateSubscriberInput represents a mutation input for creating subscribers.
 type CreateSubscriberInput struct {
-	CreatedAt     *time.Time
-	UpdatedAt     *time.Time
-	CreatedBy     *string
-	UpdatedBy     *string
-	Email         string
-	PhoneNumber   *string
-	VerifiedEmail *bool
-	VerifiedPhone *bool
-	Active        *bool
-	OwnerID       *string
-	EventIDs      []string
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	Email       string
+	PhoneNumber *string
+	EventIDs    []string
 }
 
 // Mutate applies the CreateSubscriberInput on the SubscriberMutation builder.
@@ -3011,18 +3007,6 @@ func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
 	m.SetEmail(i.Email)
 	if v := i.PhoneNumber; v != nil {
 		m.SetPhoneNumber(*v)
-	}
-	if v := i.VerifiedEmail; v != nil {
-		m.SetVerifiedEmail(*v)
-	}
-	if v := i.VerifiedPhone; v != nil {
-		m.SetVerifiedPhone(*v)
-	}
-	if v := i.Active; v != nil {
-		m.SetActive(*v)
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
 	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
@@ -3044,11 +3028,6 @@ type UpdateSubscriberInput struct {
 	Email            *string
 	ClearPhoneNumber bool
 	PhoneNumber      *string
-	VerifiedEmail    *bool
-	VerifiedPhone    *bool
-	Active           *bool
-	ClearOwner       bool
-	OwnerID          *string
 	ClearEvents      bool
 	AddEventIDs      []string
 	RemoveEventIDs   []string
@@ -3076,21 +3055,6 @@ func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
 	}
 	if v := i.PhoneNumber; v != nil {
 		m.SetPhoneNumber(*v)
-	}
-	if v := i.VerifiedEmail; v != nil {
-		m.SetVerifiedEmail(*v)
-	}
-	if v := i.VerifiedPhone; v != nil {
-		m.SetVerifiedPhone(*v)
-	}
-	if v := i.Active; v != nil {
-		m.SetActive(*v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()

@@ -11,3 +11,51 @@ query Subscribers($where: SubscriberWhereInput) {
     }
   }
 }
+
+query GetSubscriber($email: String!) {
+  subscriber(email: $email) {
+    id
+    email
+    verifiedEmail
+    active
+    ownerID
+  }
+}
+
+mutation CreateSubscriber($input: CreateSubscriberInput!) {
+  createSubscriber(input: $input) {
+    subscriber {
+      id
+      email
+      active
+      verifiedEmail
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+    }
+  }
+}
+
+mutation UpdateSubscriber($email: String!, $input: UpdateSubscriberInput!) {
+  updateSubscriber(email: $email, input: $input) {
+    subscriber {
+      id
+      email
+      phoneNumber
+      verifiedEmail
+      verifiedPhone
+      active
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+    }
+  }
+}
+
+mutation DeleteSubscriber($deleteSubscriberEmail: String!) {
+  deleteSubscriber(email: $deleteSubscriberEmail) {
+    email
+  }
+}

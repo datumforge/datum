@@ -1488,17 +1488,20 @@ func init() {
 	}
 	subscriberMixinHooks0 := subscriberMixin[0].Hooks()
 	subscriberMixinHooks2 := subscriberMixin[2].Hooks()
+	subscriberMixinHooks3 := subscriberMixin[3].Hooks()
 	subscriberHooks := schema.Subscriber{}.Hooks()
 
 	subscriber.Hooks[1] = subscriberMixinHooks0[0]
 
 	subscriber.Hooks[2] = subscriberMixinHooks2[0]
 
-	subscriber.Hooks[3] = subscriberHooks[0]
+	subscriber.Hooks[3] = subscriberMixinHooks3[0]
+
+	subscriber.Hooks[4] = subscriberHooks[0]
 	subscriberMixinInters2 := subscriberMixin[2].Interceptors()
-	subscriberInters := schema.Subscriber{}.Interceptors()
+	subscriberMixinInters3 := subscriberMixin[3].Interceptors()
 	subscriber.Interceptors[0] = subscriberMixinInters2[0]
-	subscriber.Interceptors[1] = subscriberInters[0]
+	subscriber.Interceptors[1] = subscriberMixinInters3[0]
 	subscriberMixinFields0 := subscriberMixin[0].Fields()
 	_ = subscriberMixinFields0
 	subscriberMixinFields1 := subscriberMixin[1].Fields()

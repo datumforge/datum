@@ -18,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
-	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/webhook"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/fgax"
@@ -29,8 +28,9 @@ func (q *APITokenQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -60,7 +60,6 @@ func (q *APITokenQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 
@@ -91,8 +90,9 @@ func (q *APITokenQuery) CheckAccess(ctx context.Context) error {
 
 func (m *APITokenMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -123,7 +123,6 @@ func (m *APITokenMutation) CheckAccessForEdit(ctx context.Context) error {
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 	}
@@ -160,8 +159,9 @@ func (m *APITokenMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *APITokenMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -202,8 +202,9 @@ func (q *GroupQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "group",
+			Relation:    fgax.CanView,
+			ObjectType:  "group",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -233,7 +234,6 @@ func (q *GroupQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.ID
 		}
 
@@ -264,8 +264,9 @@ func (q *GroupQuery) CheckAccess(ctx context.Context) error {
 
 func (m *GroupMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "group",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "group",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -286,7 +287,6 @@ func (m *GroupMutation) CheckAccessForEdit(ctx context.Context) error {
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.ID
 		}
 	}
@@ -323,8 +323,9 @@ func (m *GroupMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *GroupMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "group",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "group",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -365,8 +366,9 @@ func (q *GroupMembershipQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "group",
+			Relation:    fgax.CanView,
+			ObjectType:  "group",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -396,7 +398,6 @@ func (q *GroupMembershipQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.GroupID
 		}
 
@@ -427,8 +428,9 @@ func (q *GroupMembershipQuery) CheckAccess(ctx context.Context) error {
 
 func (m *GroupMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "group",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "group",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -459,7 +461,6 @@ func (m *GroupMembershipMutation) CheckAccessForEdit(ctx context.Context) error 
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.GroupID
 		}
 	}
@@ -496,8 +497,9 @@ func (m *GroupMembershipMutation) CheckAccessForEdit(ctx context.Context) error 
 
 func (m *GroupMembershipMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "group",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "group",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -538,8 +540,9 @@ func (q *GroupSettingQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "group",
+			Relation:    fgax.CanView,
+			ObjectType:  "group",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -569,7 +572,6 @@ func (q *GroupSettingQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.GroupID
 		}
 
@@ -600,8 +602,9 @@ func (q *GroupSettingQuery) CheckAccess(ctx context.Context) error {
 
 func (m *GroupSettingMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "group",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "group",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -632,7 +635,6 @@ func (m *GroupSettingMutation) CheckAccessForEdit(ctx context.Context) error {
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.GroupID
 		}
 	}
@@ -669,8 +671,9 @@ func (m *GroupSettingMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *GroupSettingMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "group",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "group",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -711,8 +714,9 @@ func (q *IntegrationQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -742,7 +746,6 @@ func (q *IntegrationQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 
@@ -773,8 +776,9 @@ func (q *IntegrationQuery) CheckAccess(ctx context.Context) error {
 
 func (m *IntegrationMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -805,7 +809,6 @@ func (m *IntegrationMutation) CheckAccessForEdit(ctx context.Context) error {
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 	}
@@ -842,8 +845,9 @@ func (m *IntegrationMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *IntegrationMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -884,8 +888,9 @@ func (q *InviteQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -915,7 +920,6 @@ func (q *InviteQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 
@@ -946,8 +950,9 @@ func (q *InviteQuery) CheckAccess(ctx context.Context) error {
 
 func (m *InviteMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -978,7 +983,6 @@ func (m *InviteMutation) CheckAccessForEdit(ctx context.Context) error {
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 	}
@@ -1015,8 +1019,9 @@ func (m *InviteMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *InviteMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1057,8 +1062,9 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -1088,7 +1094,6 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.OrganizationID
 		}
 
@@ -1119,8 +1124,9 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 
 func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1151,7 +1157,6 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.OrganizationID
 		}
 	}
@@ -1188,8 +1193,9 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *OrgMembershipMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1230,8 +1236,9 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -1261,7 +1268,6 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.ID
 		}
 
@@ -1292,8 +1298,9 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 
 func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1314,7 +1321,6 @@ func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.ID
 		}
 	}
@@ -1351,8 +1357,9 @@ func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *OrganizationMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1393,8 +1400,9 @@ func (q *OrganizationSettingQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -1424,7 +1432,6 @@ func (q *OrganizationSettingQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.OrganizationID
 		}
 
@@ -1455,8 +1462,9 @@ func (q *OrganizationSettingQuery) CheckAccess(ctx context.Context) error {
 
 func (m *OrganizationSettingMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1487,7 +1495,6 @@ func (m *OrganizationSettingMutation) CheckAccessForEdit(ctx context.Context) er
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.OrganizationID
 		}
 	}
@@ -1524,8 +1531,9 @@ func (m *OrganizationSettingMutation) CheckAccessForEdit(ctx context.Context) er
 
 func (m *OrganizationSettingMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1566,8 +1574,9 @@ func (q *SubscriberQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -1597,7 +1606,6 @@ func (q *SubscriberQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 
@@ -1628,42 +1636,16 @@ func (q *SubscriberQuery) CheckAccess(ctx context.Context) error {
 
 func (m *SubscriberMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
+	}
+	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
+	if oErr != nil {
+		return oErr
 	}
 
-	gCtx := graphql.GetFieldContext(ctx)
-
-	// get the input from the context
-	gInput := gCtx.Args["input"]
-
-	// check if the input is a CreateSubscriberInput
-	input, ok := gInput.(CreateSubscriberInput)
-	if ok {
-		ac.ObjectID = *input.OwnerID
-
-	}
-
-	// check the id from the args
-	if ac.ObjectID == "" {
-		ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
-	}
-
-	// if this is still empty, we need to query the object to get the object id
-	// this happens on join tables where we have the join ID (for updates and deletes)
-	if ac.ObjectID == "" && "id" != "ownerid" {
-		id, ok := gCtx.Args["id"].(string)
-		if ok {
-			// allow this query to run
-			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			ob, err := m.Client().Subscriber.Query().Where(subscriber.ID(id)).Only(reqCtx)
-			if err != nil {
-				return privacy.Skipf("nil request, skipping auth check")
-			}
-
-			ac.ObjectID = ob.OwnerID
-		}
-	}
+	ac.ObjectID = orgID
 
 	// request is for a list objects, will get filtered in interceptors
 	if ac.ObjectID == "" {
@@ -1697,8 +1679,9 @@ func (m *SubscriberMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *SubscriberMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1739,8 +1722,9 @@ func (q *WebhookQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -1770,7 +1754,6 @@ func (q *WebhookQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 
@@ -1801,8 +1784,9 @@ func (q *WebhookQuery) CheckAccess(ctx context.Context) error {
 
 func (m *WebhookMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -1833,7 +1817,6 @@ func (m *WebhookMutation) CheckAccessForEdit(ctx context.Context) error {
 			if err != nil {
 				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.OwnerID
 		}
 	}
@@ -1870,8 +1853,9 @@ func (m *WebhookMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *WebhookMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)

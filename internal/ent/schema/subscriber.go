@@ -51,13 +51,16 @@ func (Subscriber) Fields() []ent.Field {
 			}),
 		field.Bool("verified_email").
 			Comment("indicates if the email address has been verified").
-			Default(false),
+			Default(false).
+			Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 		field.Bool("verified_phone").
 			Comment("indicates if the phone number has been verified").
-			Default(false),
+			Default(false).
+			Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 		field.Bool("active").
 			Comment("indicates if the subscriber is active or not, active users will have at least one verified contact method").
-			Default(false),
+			Default(false).
+			Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 		field.String("token").
 			Comment("the verification token sent to the user via email which should only be provided to the /subscribe endpoint + handler").
 			Unique().
@@ -81,10 +84,11 @@ func (Subscriber) Mixin() []ent.Mixin {
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
-		OrgOwnerMixin{ // empty org means Datum system Subscriber
-			Ref:        "subscribers",
-			Optional:   true,
-			AllowWhere: true,
+		OrgOwnerMixin{
+			Ref:               "subscribers",
+			AllowWhere:        true,
+			SkipInterceptor:   interceptors.SkipOnlyQuery,
+			SkipMutationInput: true,
 		},
 	}
 }
@@ -120,21 +124,14 @@ func (Subscriber) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType:      "organization",
-			IncludeHooks:    false,
-			IDField:         "OwnerID",
-			NillableIDField: true,
+			ObjectType:    "organization",
+			IncludeHooks:  false,
+			OrgOwnedField: true,
+			IDField:       "OwnerID",
 		},
 		enthistory.Annotations{
 			Exclude: true,
 		},
-	}
-}
-
-// Interceptors of the Subscriber
-func (Subscriber) Interceptors() []ent.Interceptor {
-	return []ent.Interceptor{
-		interceptors.InterceptorSubscriber(),
 	}
 }
 

@@ -12,6 +12,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
 )
@@ -51,6 +52,13 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
 	}
+
+	// add org to the authenticated context
+	reqCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		OrganizationID: entSubscriber.OwnerID,
+	})
+
+	ctxWithToken = token.NewContextWithVerifyToken(reqCtx, req.Token)
 
 	if !entSubscriber.VerifiedEmail {
 		if err := h.verifySubscriberToken(ctxWithToken, entSubscriber); err != nil {

@@ -54,6 +54,17 @@ func SetAuthenticatedUserContext(c echo.Context, user *AuthenticatedUser) {
 	c.Set(ContextAuthenticatedUser.name, user)
 }
 
+// AddAuthenticatedUserContext adds the authenticated user context and returns the context
+func AddAuthenticatedUserContext(c echo.Context, user *AuthenticatedUser) context.Context {
+	c.Set(ContextAuthenticatedUser.name, user)
+
+	ctx := context.WithValue(c.Request().Context(), echocontext.EchoContextKey, c)
+
+	c.SetRequest(c.Request().WithContext(ctx))
+
+	return ctx
+}
+
 // GetAuthTypeFromEchoContext retrieves the authentication type from the echo context
 func GetAuthTypeFromEchoContext(c echo.Context) AuthenticationType {
 	if v := c.Get(ContextAuthenticatedUser.name); v != nil {

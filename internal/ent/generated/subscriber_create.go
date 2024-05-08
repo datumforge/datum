@@ -126,14 +126,6 @@ func (sc *SubscriberCreate) SetOwnerID(s string) *SubscriberCreate {
 	return sc
 }
 
-// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
-func (sc *SubscriberCreate) SetNillableOwnerID(s *string) *SubscriberCreate {
-	if s != nil {
-		sc.SetOwnerID(*s)
-	}
-	return sc
-}
-
 // SetEmail sets the "email" field.
 func (sc *SubscriberCreate) SetEmail(s string) *SubscriberCreate {
 	sc.mutation.SetEmail(s)
@@ -378,6 +370,9 @@ func (sc *SubscriberCreate) check() error {
 		if err := subscriber.SecretValidator(v); err != nil {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "Subscriber.secret": %w`, err)}
 		}
+	}
+	if _, ok := sc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Subscriber.owner"`)}
 	}
 	return nil
 }

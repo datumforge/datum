@@ -23927,8 +23927,6 @@ type SubscriberWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
-	OwnerIDIsNil        bool     `json:"ownerIDIsNil,omitempty"`
-	OwnerIDNotNil       bool     `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 
@@ -24343,12 +24341,6 @@ func (i *SubscriberWhereInput) P() (predicate.Subscriber, error) {
 	}
 	if i.OwnerIDHasSuffix != nil {
 		predicates = append(predicates, subscriber.OwnerIDHasSuffix(*i.OwnerIDHasSuffix))
-	}
-	if i.OwnerIDIsNil {
-		predicates = append(predicates, subscriber.OwnerIDIsNil())
-	}
-	if i.OwnerIDNotNil {
-		predicates = append(predicates, subscriber.OwnerIDNotNil())
 	}
 	if i.OwnerIDEqualFold != nil {
 		predicates = append(predicates, subscriber.OwnerIDEqualFold(*i.OwnerIDEqualFold))

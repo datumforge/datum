@@ -83,3 +83,17 @@ func registerRobotsHandler(router *echo.Echo) (err error) {
 
 	return
 }
+
+//go:embed assets/*
+var assets embed.FS
+
+// registerFaviconHandler serves up the favicon.ico
+func registerFaviconHandler(router *echo.Echo) (err error) {
+	_, err = router.AddRoute(echo.Route{
+		Method:  http.MethodGet,
+		Path:    "/favicon.ico",
+		Handler: echo.StaticFileHandler("assets/favicon.ico", assets),
+	}.ForGroup(unversioned, mw))
+
+	return
+}

@@ -6,8 +6,8 @@ import (
 	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
-// EmitterOption defines a function type for Soiree configuration options
-type EmitterOption func(Soiree)
+// EventPoolOption defines a function type for Soiree configuration options
+type EventPoolOption func(Soiree)
 
 var DefaultErrorHandler = func(event Event, err error) error {
 	return err
@@ -24,21 +24,21 @@ var DefaultPanicHandler = func(p interface{}) {
 }
 
 // WithErrorHandler sets a custom error handler for an Soiree
-func WithErrorHandler(errHandler func(Event, error) error) EmitterOption {
+func WithErrorHandler(errHandler func(Event, error) error) EventPoolOption {
 	return func(m Soiree) {
 		m.SetErrorHandler(errHandler)
 	}
 }
 
 // WithIDGenerator sets a custom ID generator for an Soiree
-func WithIDGenerator(idGen func() string) EmitterOption {
+func WithIDGenerator(idGen func() string) EventPoolOption {
 	return func(m Soiree) {
 		m.SetIDGenerator(idGen)
 	}
 }
 
 // WithPool sets a custom pool for an Soiree
-func WithPool(pool Pool) EmitterOption {
+func WithPool(pool Pool) EventPoolOption {
 	return func(m Soiree) {
 		m.SetPool(pool)
 	}
@@ -48,14 +48,14 @@ func WithPool(pool Pool) EmitterOption {
 type PanicHandler func(interface{})
 
 // WithPanicHandler sets a custom panic handler for an Soiree
-func WithPanicHandler(panicHandler PanicHandler) EmitterOption {
+func WithPanicHandler(panicHandler PanicHandler) EventPoolOption {
 	return func(m Soiree) {
 		m.SetPanicHandler(panicHandler)
 	}
 }
 
 // WithErrChanBufferSize sets the size of the buffered channel for errors returned by asynchronous emits
-func WithErrChanBufferSize(size int) EmitterOption {
+func WithErrChanBufferSize(size int) EventPoolOption {
 	return func(m Soiree) {
 		m.SetErrChanBufferSize(size)
 	}

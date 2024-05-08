@@ -25,7 +25,7 @@ type EventPool struct {
 }
 
 // NewEventPool initializes a new EventPool with optional configuration options
-func NewEventPool(opts ...EmitterOption) *EventPool {
+func NewEventPool(opts ...EventPoolOption) *EventPool {
 	m := &EventPool{
 		topics:            sync.Map{},
 		errorHandler:      DefaultErrorHandler,

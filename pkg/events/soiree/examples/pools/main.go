@@ -41,6 +41,5 @@ func main() {
 
 	// Release the resources used by the pool
 	pool.Release()
-
 	fmt.Println("All events have been processed and the pool has been released")
 }

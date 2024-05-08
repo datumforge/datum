@@ -35,7 +35,7 @@ func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated
 
 			r.logger.Debugw("constraint error", "error", constraintError.Error())
 
-			return nil, constraintError
+			return nil, newAlreadyExistsError("subscriber", input.Email)
 		}
 
 		r.logger.Errorw("failed to create subscriber", "error", err)

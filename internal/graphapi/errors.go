@@ -41,3 +41,22 @@ func newPermissionDeniedError(a string, o string) *PermissionDeniedError {
 func newCascadeDeleteError(err error) error {
 	return fmt.Errorf("%w: %v", ErrCascadeDelete, err)
 }
+
+// AlreadyExistsError is returned when an object already exists
+type AlreadyExistsError struct {
+	ObjectType string
+	Value      string
+}
+
+// Error returns the AlreadyExistsError in string format
+func (e *AlreadyExistsError) Error() string {
+	return fmt.Sprintf("%s (%s) already exists", e.ObjectType, e.Value)
+}
+
+// newAlreadyExistsError returns a AlreadyExistsError
+func newAlreadyExistsError(o, v string) *AlreadyExistsError {
+	return &AlreadyExistsError{
+		ObjectType: o,
+		Value:      v,
+	}
+}

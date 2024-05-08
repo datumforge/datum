@@ -16,7 +16,7 @@ require (
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/datumforge/enthistory v0.0.9
-	github.com/datumforge/fgax v0.2.1-0.20240507205455-c7d62f27f92a
+	github.com/datumforge/fgax v0.2.1
 	github.com/datumforge/geodetic v0.0.3
 	github.com/docker/go-connections v0.5.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
@@ -185,7 +185,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/openfga/api/proto v0.0.0-20240318145204-66b9e5cb403c // indirect
 	github.com/openfga/go-sdk v0.3.6 // indirect
-	github.com/openfga/language/pkg/go v0.0.0-20240429103126-f3e71ca3287d // indirect
+	github.com/openfga/language/pkg/go v0.0.0-20240508080213-a861f06327b6 // indirect
 	github.com/openfga/openfga v1.5.3 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect

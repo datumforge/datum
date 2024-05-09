@@ -30,7 +30,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	// debug log the event
 	c.Logger.Debugw("tracking event", "object", obj, "action", action)
 
-	event := fmt.Sprintf("%s_%sd", obj, action)
+	event := fmt.Sprintf("%s.%sd", obj, action)
 	e.EnsureTopic(event)
 
 	id, ok := out["id"]
@@ -50,12 +50,16 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	props := ph.NewProperties().
 		Set(fmt.Sprintf("%s_id", obj), i)
 
+	payload := map[string]string{"key": "value"}
+	sEvent := soiree.NewBaseEvent(event, payload)
+
 	soireeProps := soiree.NewProperties().Set(fmt.Sprintf("%s_id", obj), i)
 	// set the name if it exists
 	name, ok := out["name"]
 	if ok {
 		props.Set(fmt.Sprintf("%s_name", obj), name)
 		soireeProps.Set(fmt.Sprintf("%s_name", obj), name)
+		payload["name"] = name.(string)
 	}
 
 	// set the first name if it exists
@@ -63,6 +67,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	if ok {
 		props.Set("first_name", fName)
 		soireeProps.Set("first_name", fName)
+		payload["first_name"] = fName.(string)
 	}
 
 	// set the last name if it exists
@@ -70,6 +75,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	if ok {
 		props.Set("last_name", lName)
 		soireeProps.Set("last_name", lName)
+		payload["last_name"] = lName.(string)
 	}
 
 	// set the email if it exists
@@ -77,18 +83,23 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	if ok {
 		props.Set("email", email)
 		soireeProps.Set("email", email)
+		payload["email"] = email.(string)
 	}
 
 	authprovider, ok := out["auth_provider"]
 	if ok {
 		props.Set("auth_provider", authprovider)
 		soireeProps.Set("auth_provider", authprovider)
+		payload["auth_provider"] = authprovider.(string)
 	}
 
-	eventListener := func(evt soiree.Event) error {
-		webhookURL := "https://hooks.slack.com/services/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"
+	userCreatedListener := func(evt soiree.Event) error {
+		webhookURL := ""
+		retrieve := sEvent.Payload().(map[string]string)
+		log.Printf("event: %s\n", retrieve["key"])
+
 		payload := slack.Payload{
-			Text: "A soiree has definitely started !",
+			Text: fmt.Sprintf("A user with the following details has been created:\nName: %s\nFirst Name: %s\nLast Name: %s\nEmail: %s\nAuth Provider: %s", retrieve["name"], retrieve["first_name"], retrieve["last_name"], retrieve["email"], retrieve["auth_provider"]),
 		}
 
 		slackMessage := slack.New(webhookURL)
@@ -98,7 +109,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 		return nil
 	}
 
-	e.On(event, eventListener)
+	e.On("user.created", userCreatedListener)
 	e.Emit(event, soireeProps)
 
 	c.Analytics.Event(event, props)

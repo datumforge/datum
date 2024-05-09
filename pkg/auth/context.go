@@ -40,6 +40,8 @@ type AuthenticatedUser struct {
 	SubjectID string
 	// OrganizationID is the organization ID of the authenticated user
 	OrganizationID string
+	// OrganizationIDs is the list of organization IDs the user is authorized to access
+	OrganizationIDs []string
 	// AuthenticationType is the type of authentication used to authenticate the user (JWT, PAT, API Token)
 	AuthenticationType AuthenticationType
 }

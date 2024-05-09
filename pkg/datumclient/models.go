@@ -662,8 +662,8 @@ type CreateUserInput struct {
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	Email     string     `json:"email"`
-	FirstName string     `json:"firstName"`
-	LastName  string     `json:"lastName"`
+	FirstName *string    `json:"firstName,omitempty"`
+	LastName  *string    `json:"lastName,omitempty"`
 	// The user's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
 	// URL of the user's remote avatar
@@ -9118,7 +9118,9 @@ type UpdateUserInput struct {
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	Email          *string    `json:"email,omitempty"`
 	FirstName      *string    `json:"firstName,omitempty"`
+	ClearFirstName *bool      `json:"clearFirstName,omitempty"`
 	LastName       *string    `json:"lastName,omitempty"`
+	ClearLastName  *bool      `json:"clearLastName,omitempty"`
 	// The user's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// URL of the user's remote avatar
@@ -9253,8 +9255,8 @@ type User struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	Email     string     `json:"email"`
-	FirstName string     `json:"firstName"`
-	LastName  string     `json:"lastName"`
+	FirstName *string    `json:"firstName,omitempty"`
+	LastName  *string    `json:"lastName,omitempty"`
 	// The user's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
 	// URL of the user's remote avatar
@@ -9327,8 +9329,8 @@ type UserHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	Email       string            `json:"email"`
-	FirstName   string            `json:"firstName"`
-	LastName    string            `json:"lastName"`
+	FirstName   *string           `json:"firstName,omitempty"`
+	LastName    *string           `json:"lastName,omitempty"`
 	// The user's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
 	// URL of the user's remote avatar
@@ -9529,6 +9531,8 @@ type UserHistoryWhereInput struct {
 	FirstNameContains     *string  `json:"firstNameContains,omitempty"`
 	FirstNameHasPrefix    *string  `json:"firstNameHasPrefix,omitempty"`
 	FirstNameHasSuffix    *string  `json:"firstNameHasSuffix,omitempty"`
+	FirstNameIsNil        *bool    `json:"firstNameIsNil,omitempty"`
+	FirstNameNotNil       *bool    `json:"firstNameNotNil,omitempty"`
 	FirstNameEqualFold    *string  `json:"firstNameEqualFold,omitempty"`
 	FirstNameContainsFold *string  `json:"firstNameContainsFold,omitempty"`
 	// last_name field predicates
@@ -9543,6 +9547,8 @@ type UserHistoryWhereInput struct {
 	LastNameContains     *string  `json:"lastNameContains,omitempty"`
 	LastNameHasPrefix    *string  `json:"lastNameHasPrefix,omitempty"`
 	LastNameHasSuffix    *string  `json:"lastNameHasSuffix,omitempty"`
+	LastNameIsNil        *bool    `json:"lastNameIsNil,omitempty"`
+	LastNameNotNil       *bool    `json:"lastNameNotNil,omitempty"`
 	LastNameEqualFold    *string  `json:"lastNameEqualFold,omitempty"`
 	LastNameContainsFold *string  `json:"lastNameContainsFold,omitempty"`
 	// display_name field predicates
@@ -10241,6 +10247,8 @@ type UserWhereInput struct {
 	FirstNameContains     *string  `json:"firstNameContains,omitempty"`
 	FirstNameHasPrefix    *string  `json:"firstNameHasPrefix,omitempty"`
 	FirstNameHasSuffix    *string  `json:"firstNameHasSuffix,omitempty"`
+	FirstNameIsNil        *bool    `json:"firstNameIsNil,omitempty"`
+	FirstNameNotNil       *bool    `json:"firstNameNotNil,omitempty"`
 	FirstNameEqualFold    *string  `json:"firstNameEqualFold,omitempty"`
 	FirstNameContainsFold *string  `json:"firstNameContainsFold,omitempty"`
 	// last_name field predicates
@@ -10255,6 +10263,8 @@ type UserWhereInput struct {
 	LastNameContains     *string  `json:"lastNameContains,omitempty"`
 	LastNameHasPrefix    *string  `json:"lastNameHasPrefix,omitempty"`
 	LastNameHasSuffix    *string  `json:"lastNameHasSuffix,omitempty"`
+	LastNameIsNil        *bool    `json:"lastNameIsNil,omitempty"`
+	LastNameNotNil       *bool    `json:"lastNameNotNil,omitempty"`
 	LastNameEqualFold    *string  `json:"lastNameEqualFold,omitempty"`
 	LastNameContainsFold *string  `json:"lastNameContainsFold,omitempty"`
 	// display_name field predicates

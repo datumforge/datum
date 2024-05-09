@@ -26446,6 +26446,8 @@ type UserWhereInput struct {
 	FirstNameContains     *string  `json:"firstNameContains,omitempty"`
 	FirstNameHasPrefix    *string  `json:"firstNameHasPrefix,omitempty"`
 	FirstNameHasSuffix    *string  `json:"firstNameHasSuffix,omitempty"`
+	FirstNameIsNil        bool     `json:"firstNameIsNil,omitempty"`
+	FirstNameNotNil       bool     `json:"firstNameNotNil,omitempty"`
 	FirstNameEqualFold    *string  `json:"firstNameEqualFold,omitempty"`
 	FirstNameContainsFold *string  `json:"firstNameContainsFold,omitempty"`
 
@@ -26461,6 +26463,8 @@ type UserWhereInput struct {
 	LastNameContains     *string  `json:"lastNameContains,omitempty"`
 	LastNameHasPrefix    *string  `json:"lastNameHasPrefix,omitempty"`
 	LastNameHasSuffix    *string  `json:"lastNameHasSuffix,omitempty"`
+	LastNameIsNil        bool     `json:"lastNameIsNil,omitempty"`
+	LastNameNotNil       bool     `json:"lastNameNotNil,omitempty"`
 	LastNameEqualFold    *string  `json:"lastNameEqualFold,omitempty"`
 	LastNameContainsFold *string  `json:"lastNameContainsFold,omitempty"`
 
@@ -27024,6 +27028,12 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	if i.FirstNameHasSuffix != nil {
 		predicates = append(predicates, user.FirstNameHasSuffix(*i.FirstNameHasSuffix))
 	}
+	if i.FirstNameIsNil {
+		predicates = append(predicates, user.FirstNameIsNil())
+	}
+	if i.FirstNameNotNil {
+		predicates = append(predicates, user.FirstNameNotNil())
+	}
 	if i.FirstNameEqualFold != nil {
 		predicates = append(predicates, user.FirstNameEqualFold(*i.FirstNameEqualFold))
 	}
@@ -27062,6 +27072,12 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if i.LastNameHasSuffix != nil {
 		predicates = append(predicates, user.LastNameHasSuffix(*i.LastNameHasSuffix))
+	}
+	if i.LastNameIsNil {
+		predicates = append(predicates, user.LastNameIsNil())
+	}
+	if i.LastNameNotNil {
+		predicates = append(predicates, user.LastNameNotNil())
 	}
 	if i.LastNameEqualFold != nil {
 		predicates = append(predicates, user.LastNameEqualFold(*i.LastNameEqualFold))
@@ -27735,6 +27751,8 @@ type UserHistoryWhereInput struct {
 	FirstNameContains     *string  `json:"firstNameContains,omitempty"`
 	FirstNameHasPrefix    *string  `json:"firstNameHasPrefix,omitempty"`
 	FirstNameHasSuffix    *string  `json:"firstNameHasSuffix,omitempty"`
+	FirstNameIsNil        bool     `json:"firstNameIsNil,omitempty"`
+	FirstNameNotNil       bool     `json:"firstNameNotNil,omitempty"`
 	FirstNameEqualFold    *string  `json:"firstNameEqualFold,omitempty"`
 	FirstNameContainsFold *string  `json:"firstNameContainsFold,omitempty"`
 
@@ -27750,6 +27768,8 @@ type UserHistoryWhereInput struct {
 	LastNameContains     *string  `json:"lastNameContains,omitempty"`
 	LastNameHasPrefix    *string  `json:"lastNameHasPrefix,omitempty"`
 	LastNameHasSuffix    *string  `json:"lastNameHasSuffix,omitempty"`
+	LastNameIsNil        bool     `json:"lastNameIsNil,omitempty"`
+	LastNameNotNil       bool     `json:"lastNameNotNil,omitempty"`
 	LastNameEqualFold    *string  `json:"lastNameEqualFold,omitempty"`
 	LastNameContainsFold *string  `json:"lastNameContainsFold,omitempty"`
 
@@ -28354,6 +28374,12 @@ func (i *UserHistoryWhereInput) P() (predicate.UserHistory, error) {
 	if i.FirstNameHasSuffix != nil {
 		predicates = append(predicates, userhistory.FirstNameHasSuffix(*i.FirstNameHasSuffix))
 	}
+	if i.FirstNameIsNil {
+		predicates = append(predicates, userhistory.FirstNameIsNil())
+	}
+	if i.FirstNameNotNil {
+		predicates = append(predicates, userhistory.FirstNameNotNil())
+	}
 	if i.FirstNameEqualFold != nil {
 		predicates = append(predicates, userhistory.FirstNameEqualFold(*i.FirstNameEqualFold))
 	}
@@ -28392,6 +28418,12 @@ func (i *UserHistoryWhereInput) P() (predicate.UserHistory, error) {
 	}
 	if i.LastNameHasSuffix != nil {
 		predicates = append(predicates, userhistory.LastNameHasSuffix(*i.LastNameHasSuffix))
+	}
+	if i.LastNameIsNil {
+		predicates = append(predicates, userhistory.LastNameIsNil())
+	}
+	if i.LastNameNotNil {
+		predicates = append(predicates, userhistory.LastNameNotNil())
 	}
 	if i.LastNameEqualFold != nil {
 		predicates = append(predicates, userhistory.LastNameEqualFold(*i.LastNameEqualFold))

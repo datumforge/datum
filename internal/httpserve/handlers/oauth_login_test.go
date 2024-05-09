@@ -3,6 +3,7 @@ package handlers
 import (
 	"testing"
 
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -18,33 +19,29 @@ func TestParseName(t *testing.T) {
 			name: "happy path",
 			user: "Matty Anderson",
 			want: ent.CreateUserInput{
-				FirstName: "Matty",
-				LastName:  "Anderson",
+				FirstName: lo.ToPtr("Matty"),
+				LastName:  lo.ToPtr("Anderson"),
 			},
 		},
 		{
 			name: "very long name",
 			user: "Matty Anderson Is The Best",
 			want: ent.CreateUserInput{
-				FirstName: "Matty",
-				LastName:  "Anderson Is The Best",
+				FirstName: lo.ToPtr("Matty"),
+				LastName:  lo.ToPtr("Anderson Is The Best"),
 			},
 		},
 		{
 			name: "single name",
 			user: "Matty",
 			want: ent.CreateUserInput{
-				FirstName: "Matty",
-				LastName:  "",
+				FirstName: lo.ToPtr("Matty"),
 			},
 		},
 		{
 			name: "empty name",
 			user: "",
-			want: ent.CreateUserInput{
-				FirstName: "",
-				LastName:  "",
-			},
+			want: ent.CreateUserInput{},
 		},
 	}
 	for _, tt := range tests {

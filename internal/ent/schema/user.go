@@ -60,13 +60,13 @@ func (User) Fields() []ent.Field {
 				return err
 			}),
 		field.String("first_name").
-			NotEmpty().
+			Optional().
 			MaxLen(nameMaxLen).
 			Annotations(
 				entgql.OrderField("first_name"),
 			),
 		field.String("last_name").
-			NotEmpty().
+			Optional().
 			MaxLen(nameMaxLen).
 			Annotations(
 				entgql.OrderField("last_name"),

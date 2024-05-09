@@ -15304,8 +15304,6 @@
                   "history_time",
                   "operation",
                   "email",
-                  "first_name",
-                  "last_name",
                   "display_name",
                   "auth_provider"
                 ]
@@ -16072,8 +16070,6 @@
                 },
                 "required": [
                   "email",
-                  "first_name",
-                  "last_name",
                   "display_name",
                   "auth_provider",
                   "setting"
@@ -20653,8 +20649,6 @@
         "required": [
           "id",
           "email",
-          "first_name",
-          "last_name",
           "display_name",
           "auth_provider",
           "setting"
@@ -20753,8 +20747,6 @@
           "history_time",
           "operation",
           "email",
-          "first_name",
-          "last_name",
           "display_name",
           "auth_provider"
         ]

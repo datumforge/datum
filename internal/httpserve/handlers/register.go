@@ -24,8 +24,8 @@ const (
 
 // RegisterRequest holds the fields that should be included on a request to the `/register` endpoint
 type RegisterRequest struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
@@ -53,16 +53,10 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
-	// TODO: figure out if we want to create dynamic fun names, or remove as being required entirely
-	if in.FirstName == "" && in.LastName == "" {
-		in.FirstName = "Mysterious"
-		in.LastName = "Antelope"
-	}
-
 	// create user
 	input := generated.CreateUserInput{
-		FirstName: in.FirstName,
-		LastName:  in.LastName,
+		FirstName: &in.FirstName,
+		LastName:  &in.LastName,
 		Email:     in.Email,
 		Password:  &in.Password,
 	}

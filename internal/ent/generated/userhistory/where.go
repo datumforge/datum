@@ -856,6 +856,16 @@ func FirstNameHasSuffix(v string) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldHasSuffix(FieldFirstName, v))
 }
 
+// FirstNameIsNil applies the IsNil predicate on the "first_name" field.
+func FirstNameIsNil() predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldIsNull(FieldFirstName))
+}
+
+// FirstNameNotNil applies the NotNil predicate on the "first_name" field.
+func FirstNameNotNil() predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldNotNull(FieldFirstName))
+}
+
 // FirstNameEqualFold applies the EqualFold predicate on the "first_name" field.
 func FirstNameEqualFold(v string) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldEqualFold(FieldFirstName, v))
@@ -919,6 +929,16 @@ func LastNameHasPrefix(v string) predicate.UserHistory {
 // LastNameHasSuffix applies the HasSuffix predicate on the "last_name" field.
 func LastNameHasSuffix(v string) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldHasSuffix(FieldLastName, v))
+}
+
+// LastNameIsNil applies the IsNil predicate on the "last_name" field.
+func LastNameIsNil() predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldIsNull(FieldLastName))
+}
+
+// LastNameNotNil applies the NotNil predicate on the "last_name" field.
+func LastNameNotNil() predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldNotNull(FieldLastName))
 }
 
 // LastNameEqualFold applies the EqualFold predicate on the "last_name" field.

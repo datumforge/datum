@@ -139,6 +139,12 @@ func (uhu *UserHistoryUpdate) SetNillableFirstName(s *string) *UserHistoryUpdate
 	return uhu
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (uhu *UserHistoryUpdate) ClearFirstName() *UserHistoryUpdate {
+	uhu.mutation.ClearFirstName()
+	return uhu
+}
+
 // SetLastName sets the "last_name" field.
 func (uhu *UserHistoryUpdate) SetLastName(s string) *UserHistoryUpdate {
 	uhu.mutation.SetLastName(s)
@@ -150,6 +156,12 @@ func (uhu *UserHistoryUpdate) SetNillableLastName(s *string) *UserHistoryUpdate 
 	if s != nil {
 		uhu.SetLastName(*s)
 	}
+	return uhu
+}
+
+// ClearLastName clears the value of the "last_name" field.
+func (uhu *UserHistoryUpdate) ClearLastName() *UserHistoryUpdate {
+	uhu.mutation.ClearLastName()
 	return uhu
 }
 
@@ -419,8 +431,14 @@ func (uhu *UserHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uhu.mutation.FirstName(); ok {
 		_spec.SetField(userhistory.FieldFirstName, field.TypeString, value)
 	}
+	if uhu.mutation.FirstNameCleared() {
+		_spec.ClearField(userhistory.FieldFirstName, field.TypeString)
+	}
 	if value, ok := uhu.mutation.LastName(); ok {
 		_spec.SetField(userhistory.FieldLastName, field.TypeString, value)
+	}
+	if uhu.mutation.LastNameCleared() {
+		_spec.ClearField(userhistory.FieldLastName, field.TypeString)
 	}
 	if value, ok := uhu.mutation.DisplayName(); ok {
 		_spec.SetField(userhistory.FieldDisplayName, field.TypeString, value)
@@ -600,6 +618,12 @@ func (uhuo *UserHistoryUpdateOne) SetNillableFirstName(s *string) *UserHistoryUp
 	return uhuo
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (uhuo *UserHistoryUpdateOne) ClearFirstName() *UserHistoryUpdateOne {
+	uhuo.mutation.ClearFirstName()
+	return uhuo
+}
+
 // SetLastName sets the "last_name" field.
 func (uhuo *UserHistoryUpdateOne) SetLastName(s string) *UserHistoryUpdateOne {
 	uhuo.mutation.SetLastName(s)
@@ -611,6 +635,12 @@ func (uhuo *UserHistoryUpdateOne) SetNillableLastName(s *string) *UserHistoryUpd
 	if s != nil {
 		uhuo.SetLastName(*s)
 	}
+	return uhuo
+}
+
+// ClearLastName clears the value of the "last_name" field.
+func (uhuo *UserHistoryUpdateOne) ClearLastName() *UserHistoryUpdateOne {
+	uhuo.mutation.ClearLastName()
 	return uhuo
 }
 
@@ -910,8 +940,14 @@ func (uhuo *UserHistoryUpdateOne) sqlSave(ctx context.Context) (_node *UserHisto
 	if value, ok := uhuo.mutation.FirstName(); ok {
 		_spec.SetField(userhistory.FieldFirstName, field.TypeString, value)
 	}
+	if uhuo.mutation.FirstNameCleared() {
+		_spec.ClearField(userhistory.FieldFirstName, field.TypeString)
+	}
 	if value, ok := uhuo.mutation.LastName(); ok {
 		_spec.SetField(userhistory.FieldLastName, field.TypeString, value)
+	}
+	if uhuo.mutation.LastNameCleared() {
+		_spec.ClearField(userhistory.FieldLastName, field.TypeString)
 	}
 	if value, ok := uhuo.mutation.DisplayName(); ok {
 		_spec.SetField(userhistory.FieldDisplayName, field.TypeString, value)

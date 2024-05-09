@@ -72,8 +72,8 @@ func createUser(ctx context.Context) error {
 
 	input := datumclient.CreateUserInput{
 		Email:     email,
-		FirstName: firstName,
-		LastName:  lastName,
+		FirstName: &firstName,
+		LastName:  &lastName,
 	}
 
 	// if a displayName is not provided, the email is used

@@ -6,7 +6,9 @@ import "sync"
 type Event interface {
 	Topic() string
 	Payload() interface{}
+	Properties() Properties
 	SetPayload(interface{})
+	SetProperties(Properties)
 	SetAborted(bool)
 	IsAborted() bool
 }
@@ -17,10 +19,11 @@ type Event interface {
 // been aborted. The struct also includes a `sync.RWMutex` field `mu` to handle concurrent access to
 // the struct's fields in a thread-safe manner
 type BaseEvent struct {
-	topic   string
-	payload interface{}
-	aborted bool
-	mu      sync.RWMutex
+	topic      string
+	payload    interface{}
+	aborted    bool
+	properties Properties
+	mu         sync.RWMutex
 }
 
 // NewBaseEvent creates a new instance of BaseEvent with a payload
@@ -51,6 +54,21 @@ func (e *BaseEvent) SetPayload(payload interface{}) {
 	e.payload = payload
 }
 
+// Properties returns the event's properties
+func (e *BaseEvent) Properties() Properties {
+	e.mu.RLock() // Read lock
+	defer e.mu.RUnlock()
+
+	return e.properties
+}
+
+// SetProperties sets the event's properties
+func (e *BaseEvent) SetProperties(properties Properties) {
+	e.mu.Lock() // Write lock
+	defer e.mu.Unlock()
+	e.properties = properties
+}
+
 // SetAborted sets the event's aborted status
 func (e *BaseEvent) SetAborted(abort bool) {
 	e.mu.Lock() // Write lock
@@ -64,4 +82,18 @@ func (e *BaseEvent) IsAborted() bool {
 	defer e.mu.RUnlock()
 
 	return e.aborted
+}
+
+// Properties is a map of properties to set on an event
+type Properties map[string]interface{}
+
+// NewProperties creates a new Properties map
+func NewProperties() Properties {
+	return make(Properties, 10) // nolint: gomnd
+}
+
+// Set sets a property on the Properties map
+func (p Properties) Set(name string, value interface{}) Properties {
+	p[name] = value
+	return p
 }

@@ -1,16 +1,24 @@
 package graphapi
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
-	ent "github.com/datumforge/datum/internal/ent/generated"
 	ph "github.com/posthog/posthog-go"
+
+	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/events/soiree"
+	"github.com/datumforge/datum/pkg/utils/slack"
 )
 
 // CreateEvent creates an event for the mutation with the properties
 func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
+	pool := soiree.NewPondPool(100, 1000)
+	e := soiree.NewEventPool(soiree.WithPool(pool))
+
 	out, err := parseValue(v)
 	if err != nil {
 		return
@@ -23,6 +31,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	c.Logger.Debugw("tracking event", "object", obj, "action", action)
 
 	event := fmt.Sprintf("%s_%sd", obj, action)
+	e.EnsureTopic(event)
 
 	id, ok := out["id"]
 	if !ok {
@@ -41,34 +50,56 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	props := ph.NewProperties().
 		Set(fmt.Sprintf("%s_id", obj), i)
 
+	soireeProps := soiree.NewProperties().Set(fmt.Sprintf("%s_id", obj), i)
 	// set the name if it exists
 	name, ok := out["name"]
 	if ok {
 		props.Set(fmt.Sprintf("%s_name", obj), name)
+		soireeProps.Set(fmt.Sprintf("%s_name", obj), name)
 	}
 
 	// set the first name if it exists
 	fName, ok := out["first_name"]
 	if ok {
 		props.Set("first_name", fName)
+		soireeProps.Set("first_name", fName)
 	}
 
 	// set the last name if it exists
 	lName, ok := out["last_name"]
 	if ok {
 		props.Set("last_name", lName)
+		soireeProps.Set("last_name", lName)
 	}
 
 	// set the email if it exists
 	email, ok := out["email"]
 	if ok {
 		props.Set("email", email)
+		soireeProps.Set("email", email)
 	}
 
 	authprovider, ok := out["auth_provider"]
 	if ok {
 		props.Set("auth_provider", authprovider)
+		soireeProps.Set("auth_provider", authprovider)
 	}
+
+	eventListener := func(evt soiree.Event) error {
+		webhookURL := "https://hooks.slack.com/services/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"
+		payload := slack.Payload{
+			Text: "A soiree has definitely started !",
+		}
+
+		slackMessage := slack.New(webhookURL)
+		if err := slackMessage.Post(context.Background(), &payload); err != nil {
+			log.Printf("error: %s\n", err)
+		}
+		return nil
+	}
+
+	e.On(event, eventListener)
+	e.Emit(event, soireeProps)
 
 	c.Analytics.Event(event, props)
 	c.Analytics.Properties(i, obj, props)

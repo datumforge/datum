@@ -97,7 +97,7 @@ Now, where things start to get more fun is when you layer in the desire to perfo
 
 Given we need to be able to perform all kinds of workload actions such as writing a file to a bucket, committing a SQL transaction, sending an http request, we need bounded patterns and degrees of resource control. Which is to say, we need to control resource contention in our runtime as we don't want someone's regular HTTP request to be blocked by the fact someone else requested a bulk upload to S3. This means creating rough groupings of workload `types` and bounding them so that you can monitor and control the behaviors and lumpiness of the variances with the workload types.
 
-Check out [this blog](http://marcio.io/2015/07/handling-1-million-requests-per-minute-with-golang/) (there are many on this topic) for some real world examples on how systems with these "lumpy" workload types can become easily bottlenecked with volume. Since we are intending to open the flood gates around event ingestion from other sources (similar to how Posthog, Segment, etc., work) we need to anticipate a very high load of unstructured data which needs to be written efficiently to a myriad of external sources.
+Check out [this blog](http://marcio.io/2015/07/handling-1-million-requests-per-minute-with-golang/) (there are many on this topic) for some real world examples on how systems with these "lumpy" workload types can become easily bottlenecked with volume. Since we are intending to open the flood gates around event ingestion from other sources (similar to how Posthog, Segment, etc., work) we need to anticipate a very high load of unstructured data which needs to be written efficiently to a myriad of external sources, as well as bulk routines which may be long running such as file imports, uploads, exports, etc.
 
 ## How many goroutines can / should I have?
 
@@ -129,28 +129,46 @@ func main() {
 
 ## Configuration
 
-Customize Soiree with the provided options:
+Your Soiree can come with a few options if you wish:
 
 ```go
 e := soiree.NewEventPool(
 	soiree.WithErrorHandler(customErrorHandler),
 	soiree.WithIDGenerator(customIDGenerator),
-	// More options...
 )
 ```
 
-### Options
+## Subscribing to events using basic pattern matching
 
-| Option                                         | Description                                                  |
-|------------------------------------------------|--------------------------------------------------------------|
-| `WithPool(pool soiree.Pool)`                  | Assign a goroutine pool for concurrent event handling       |
-| `WithErrorHandler(handler func(soiree.Event, error) error)` | Set a custom error handler for the soiree that receives an event and an error |
-| `WithIDGenerator(generator func() string)`     | Define a function for generating unique listener IDs        |
-| `WithPanicHandler(handler func(interface{}))`  | Implement a panic recovery strategy                        |
+Per guidance of many pubsubs such as Kafka, operating a multi-tenant cluster typically requires you to define user spaces for each tenant. For the purpose of this section, "user spaces" are a collection of topics, which are grouped together under the management of a single entity or user.
 
-## Pattern-matched event Subscription
+In Kafka and many other pubsub systems, the main unit of data is the `topic`. Users can create and name each topic. They can also delete them, but it is not possible to rename a topic directly. Instead, to rename a topic, the user must create a new topic, move the messages from the original topic to the new, and then delete the original. With this in mind, it is recommended to define logical spaces, based on an hierarchical topic naming structure. This setup can then be combined with security features, such as prefixed ACLs, to isolate different spaces and tenants, while also minimizing the administrative overhead for securing the data in the cluster.
 
-Pattern-match event topics with wildcards:
+These logical user spaces can be grouped in different ways, by team or organizational unit: here, the `organization` is the main aggregator.
+
+Example topic naming structure:
+
+<org_id>.<user_id>.<object>.<event-name>
+(e.g., ULID.ULID.user.login, or "ULID.ULID.organization.created")
+By organization or product: their credentials will be different for each organization, so all the controls and settings will always be organization related which is a good high level topic for performing  a broad set of actions, but you can also be more granular.
+
+Example topic naming structure:
+
+<organization>.<product>.<event-name>
+(e.g., "datum.invoices.received")
+Certain information should normally not be put in a topic name, such as information that is likely to change over time (e.g., the name of the intended consumer) or that is a technical detail or metadata that is available elsewhere (e.g., the topic's partition count and other configuration settings).
+
+### Kafka specifics
+
+To enforce a topic naming structure in Kafka, several options are available:
+
+Use prefix ACLs (cf. KIP-290) to enforce a common prefix for topic names. For example, team A may only be permitted to create topics whose names start with payments.teamA..
+Define a custom CreateTopicPolicy (cf. KIP-108 and the setting create.topic.policy.class.name) to enforce strict naming patterns. These policies provide the most flexibility and can cover complex patterns and rules to match an organization's needs.
+Disable topic creation for normal users by denying it with an ACL, and then rely on an external process to create topics on behalf of users (e.g., scripting or your favorite automation toolkit).
+It may also be useful to disable the Kafka feature to auto-create topics on demand by setting auto.create.topics.enable=false in the broker configuration. Note that you should not rely solely on this option.
+
+
+### Soiree topic matching
 
 - `*` - Matches a single segment
 - `**` - Matches multiple segments
@@ -164,7 +182,7 @@ e.On("invoice.**", orderEventListener)
 e.On("**.completed", completionEventListener)
 ```
 
-### Another Example
+or:
 
 ```go
 e := soiree.NewEventPool()
@@ -173,7 +191,6 @@ e.On("user.*", func(evt soiree.Event) error {
 	return nil
 })
 e.Emit("user.signup", "Funky Sarah")
-// Use synchronization instead of sleep in production.
 ```
 
 ## Aborting Event Propagation
@@ -195,19 +212,11 @@ e.On("invoice.processed", func(evt soiree.Event) error {
 e.Emit("invoice.processed", "Order data")
 ```
 
-Abort event handling early based on custom logic
-
 ## Examples
 
-- [Managing Concurrency](#managing-concurrency-with-withpool)
-- [Custom Error Handling](#custom-error-handling-with-witherrorhandler)
-- [Listener Prioritization](#prioritizing-listeners-with-withpriority)
-- [ID Generation](#generating-unique-ids-with-withidgenerator)
-- [Panic Recovery](#handling-panics-gracefully-with-withpanichandler)
+### Concurrency
 
-### Managing Concurrency with `WithPool`
-
-Delegate concurrency management to a custom goroutine pool using the `WithPool` option:
+Delegate concurrency management to a goroutine pool using the `WithPool` option:
 
 ```go
 package main
@@ -221,16 +230,16 @@ func main() {
 	// Initialize a goroutine pool
 	pool := soiree.NewPondPool(10, 1000) // 10 workers, queue size 1000
 
-	// Set up the soiree with this pool
+	// Start your soiree and invite your friends (add your pool :))
 	e := soiree.NewEventPool(soiree.WithPool(pool))
 
-	// Your soiree is now ready to handle events using the pool
+	// Your soiree is now ready to handle whatever events (or in general, processing) using the pool
 }
 ```
 
-### Custom Error Handling with `WithErrorHandler`
+### Error Handling
 
-Enhance error visibility by defining a custom error handler:
+Change your error handling depending on your needs by passing in a custom error handler:
 
 ```go
 package main
@@ -244,19 +253,19 @@ func main() {
 	// Define a custom error handler that logs the event and the error
 	customErrorHandler := func(event soiree.Event, err error) error {
 		log.Printf("Error encountered during event '%s': %v, with payload: %v", event.Topic(), err, event.Payload())
-		return nil  // Returning nil to indicate that the error has been handled
+		return nil  // Returning nil to indicate that the error has been swallowed
 	}
 
 	// Apply the custom error handler to the soiree
 	e := soiree.NewEventPool(soiree.WithErrorHandler(customErrorHandler))
 
-	// Your soiree will now log detailed errors encountered during event handling
+	// Your soiree will now log errors encountered during event handling
 }
 ```
 
-### Prioritizing Listeners with `WithPriority`
+### Prioritizing Listeners
 
-Control the invocation order of event listeners:
+Control the invocation order of event listeners by prescribing priorities:
 
 ```go
 package main
@@ -267,7 +276,7 @@ import (
 )
 
 func main() {
-	// Set up the soiree
+	// Set up the swanky soiree
 	e := soiree.NewEventPool()
 
 	// Define listeners with varying priorities
@@ -290,9 +299,9 @@ func main() {
 }
 ```
 
-Listeners with higher priority are notified first when an event occurs.
+Listeners with higher priority are notified first when an event occurs - *NOTE* while the listeners may be _notified_ first, there's no guarantees beyond the notification, meaning, if the Listener which receives the high priority event has a long-running action, and the lower priority listener has a quick action, which one finishes first depends on the action(s) themselves. If you need _blocking_ logic (not ideal), use synchronous event handlers.
 
-### Generating Unique IDs with `WithIDGenerator`
+### Generating Unique IDs
 
 Implement custom ID generation for listener tracking:
 
@@ -313,15 +322,15 @@ func main() {
 	// Initialize the soiree with the UUID generator
 	e := soiree.NewEventPool(soiree.WithIDGenerator(uuidGenerator))
 
-	// Listeners will now be registered with a unique UUID
+	// Listeners will now be registered with a UUID
 }
 ```
 
-Listeners are now identified by a UUID vs. the standard ULID generated by Datum.
+Listeners are now identified by a UUID vs. the standard ULID generated by Datum. You can also create listeners with a similar naming convention as the topic so you can identify them more easily. Generally speaking, though: listeners are acting on the events immediately. This is an in-memory implementation so the most appropriate use of the goroutine pools are either writing to a persistent store immediately when the event occurs to perform other future actions if required, handling an event immediately based on a criteria (e.g. webhooks, outbound http methods) or other idempotent actions.
 
-### Handling Panics Gracefully with `WithPanicHandler`
+### Handling Panics
 
-Safeguard your application from unexpected panics during event handling:
+Safeguard the overall runtime from unexpected panics during event handling by using a panic handler:
 
 ```go
 package main
@@ -341,9 +350,9 @@ func main() {
 	// Equip the soiree with the panic handler
 	e := soiree.NewEventPool(soiree.WithPanicHandler(logPanicHandler))
 
-	// Your soiree is now more resilient to panics
+	// Your soiree is now more resilient to panics!
 }
 ```
 
-This handler ensures that panics are logged and managed without creating a service interruption for users.
+This handler ensures that panics are logged and managed without creating a service interruption.
 

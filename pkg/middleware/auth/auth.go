@@ -192,7 +192,10 @@ func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Cl
 }
 
 func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client, token string) (*tokens.Claims, error) {
-	pat, err := dbClient.PersonalAccessToken.Query().Where(personalaccesstoken.Token(token)).Only(ctx)
+	pat, err := dbClient.PersonalAccessToken.Query().Where(personalaccesstoken.Token(token)).
+		WithOwner().
+		WithOrganizations().
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -201,9 +204,15 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 		return nil, rout.ErrExpiredCredentials
 	}
 
+	orgs := pat.Edges.Organizations
+	if len(orgs) == 0 {
+		// an access token must have at least one organization to be used
+		return nil, rout.ErrInvalidCredentials
+	}
+
 	claims := &tokens.Claims{
-		UserID: pat.OwnerID,
-		// TODO (sfunk): Add org ID(s) to claims
+		UserID: pat.Edges.Owner.MappingID,
+		OrgID:  orgs[0].MappingID,
 	}
 
 	return claims, nil

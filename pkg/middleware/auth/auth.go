@@ -191,6 +191,7 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 
 	// gather the authorized organization IDs
 	var orgIDs []string
+
 	orgs := pat.Edges.Organizations
 
 	if len(orgs) == 0 {

@@ -204,9 +204,9 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 		orgIDs = append(orgIDs, org.ID)
 	}
 
+	// no organization_id is set on the PAT because it could be used for multiple organizations
 	return &auth.AuthenticatedUser{
 		SubjectID:          pat.OwnerID,
-		OrganizationID:     orgIDs[0],
 		OrganizationIDs:    orgIDs,
 		AuthenticationType: auth.PATAuthentication,
 	}, nil

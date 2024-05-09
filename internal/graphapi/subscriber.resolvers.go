@@ -11,7 +11,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
-	"github.com/datumforge/datum/internal/ent/hooks"
 )
 
 // CreateSubscriber is the resolver for the createSubscriber field.
@@ -26,10 +25,6 @@ func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated
 			return nil, validationError
 		}
 
-		if errors.Is(err, hooks.ErrEmailRequired) {
-			return nil, err
-		}
-
 		if generated.IsConstraintError(err) {
 			constraintError := err.(*generated.ConstraintError)
 
@@ -40,7 +35,7 @@ func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated
 
 		r.logger.Errorw("failed to create subscriber", "error", err)
 
-		return nil, ErrInternalServerError
+		return nil, err
 	}
 
 	return &SubscriberCreatePayload{Subscriber: sub}, nil

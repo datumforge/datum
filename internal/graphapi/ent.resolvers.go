@@ -256,6 +256,11 @@ func (r *Resolver) CreateOrganizationInput() CreateOrganizationInputResolver {
 	return &createOrganizationInputResolver{r}
 }
 
+// CreateSubscriberInput returns CreateSubscriberInputResolver implementation.
+func (r *Resolver) CreateSubscriberInput() CreateSubscriberInputResolver {
+	return &createSubscriberInputResolver{r}
+}
+
 // UpdateGroupInput returns UpdateGroupInputResolver implementation.
 func (r *Resolver) UpdateGroupInput() UpdateGroupInputResolver { return &updateGroupInputResolver{r} }
 
@@ -272,6 +277,7 @@ func (r *Resolver) UpdateTFASettingInput() UpdateTFASettingInputResolver {
 type queryResolver struct{ *Resolver }
 type createGroupInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
+type createSubscriberInputResolver struct{ *Resolver }
 type updateGroupInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }
 type updateTFASettingInputResolver struct{ *Resolver }

@@ -617,8 +617,9 @@ type CreateSubscriberInput struct {
 	// email address of the subscriber
 	Email string `json:"email"`
 	// phone number of the subscriber
-	PhoneNumber *string  `json:"phoneNumber,omitempty"`
-	EventIDs    []string `json:"eventIDs,omitempty"`
+	PhoneNumber       *string  `json:"phoneNumber,omitempty"`
+	EventIDs          []string `json:"eventIDs,omitempty"`
+	SetOrganizationID *string  `json:"setOrganizationID,omitempty"`
 }
 
 // CreateTFASettingInput is used for create TFASetting object.

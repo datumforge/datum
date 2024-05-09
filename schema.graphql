@@ -793,6 +793,7 @@ input CreateSubscriberInput {
 	"""
 	phoneNumber: String
 	eventIDs: [ID!]
+	setOrganizationID: String
 }
 """
 CreateTFASettingInput is used for create TFASetting object.

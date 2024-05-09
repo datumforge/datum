@@ -109,7 +109,7 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 				// set owner on create mutation
 				if m.Op() == ent.OpCreate {
 					orgID, err := auth.GetOrganizationIDFromContext(ctx)
-					if err != nil {
+					if err != nil || orgID == "" {
 						return nil, fmt.Errorf("failed to get organization id from context: %w", err)
 					}
 

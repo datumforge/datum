@@ -56,6 +56,23 @@ func SetAuthenticatedUserContext(c echo.Context, user *AuthenticatedUser) {
 	c.Set(ContextAuthenticatedUser.name, user)
 }
 
+// GetAuthenticatedUserContext gets the authenticated user context
+func GetAuthenticatedUserContext(c context.Context) (*AuthenticatedUser, error) {
+	ec, err := echocontext.EchoContextFromContext(c)
+	if err != nil {
+		return nil, err
+	}
+
+	result := ec.Get(ContextAuthenticatedUser.name)
+
+	au, ok := result.(*AuthenticatedUser)
+	if !ok {
+		return nil, ErrNoAuthUser
+	}
+
+	return au, nil
+}
+
 // AddAuthenticatedUserContext adds the authenticated user context and returns the context
 func AddAuthenticatedUserContext(c echo.Context, user *AuthenticatedUser) context.Context {
 	c.Set(ContextAuthenticatedUser.name, user)

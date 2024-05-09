@@ -106,18 +106,23 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 	return []ent.Hook{
 		func(next ent.Mutator) ent.Mutator {
 			return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-				orgID, err := auth.GetOrganizationIDFromContext(ctx)
-				if err != nil {
-					return nil, fmt.Errorf("failed to get organization id from context: %w", err)
-				}
-
 				// set owner on create mutation
 				if m.Op() == ent.OpCreate {
+					orgID, err := auth.GetOrganizationIDFromContext(ctx)
+					if err != nil {
+						return nil, fmt.Errorf("failed to get organization id from context: %w", err)
+					}
+
 					// set owner on mutation
 					if err := m.SetField(ownerFieldName, orgID); err != nil {
 						return nil, err
 					}
 				} else {
+					orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
+					if err != nil {
+						return nil, fmt.Errorf("failed to get organization id from context: %w", err)
+					}
+
 					// filter by owner on update and delete mutations
 					mx, ok := m.(interface {
 						SetOp(ent.Op)
@@ -128,7 +133,7 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 						return nil, ErrUnexpectedMutationType
 					}
 
-					orgOwned.P(mx, orgID)
+					orgOwned.P(mx, orgIDs)
 				}
 
 				return next.Mutate(ctx, m)
@@ -149,7 +154,7 @@ func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
 					return nil
 				}
 
-				orgID, err := auth.GetOrganizationIDFromContext(ctx)
+				orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
 				if err != nil {
 					ctxQuery := ent.QueryFromContext(ctx)
 
@@ -163,7 +168,7 @@ func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
 				}
 
 				// sets the owner id on the query for the current organization
-				orgOwned.P(q, orgID)
+				orgOwned.P(q, orgIDs)
 
 				return nil
 			}),
@@ -172,8 +177,8 @@ func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
 }
 
 // P adds a storage-level predicate to the queries and mutations.
-func (orgOwned OrgOwnerMixin) P(w interface{ WhereP(...func(*sql.Selector)) }, orgID string) {
+func (orgOwned OrgOwnerMixin) P(w interface{ WhereP(...func(*sql.Selector)) }, orgIDs []string) {
 	w.WhereP(
-		sql.FieldEQ(ownerFieldName, orgID),
+		sql.FieldIn(ownerFieldName, orgIDs...),
 	)
 }

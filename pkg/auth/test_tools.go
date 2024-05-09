@@ -41,6 +41,7 @@ func NewTestEchoContextWithValidUser(subject string) (echo.Context, error) {
 	SetAuthenticatedUserContext(ec, &AuthenticatedUser{
 		SubjectID:          claims.UserID,
 		OrganizationID:     claims.OrgID,
+		OrganizationIDs:    []string{claims.OrgID},
 		AuthenticationType: "jwt",
 	})
 
@@ -90,6 +91,7 @@ func NewTestEchoContextWithOrgID(sub, orgID string) (echo.Context, error) {
 	SetAuthenticatedUserContext(ec, &AuthenticatedUser{
 		SubjectID:          claims.UserID,
 		OrganizationID:     claims.OrgID,
+		OrganizationIDs:    []string{claims.OrgID},
 		AuthenticationType: "jwt",
 	})
 

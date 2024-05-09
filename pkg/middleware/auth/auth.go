@@ -62,6 +62,7 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 
 			// Verify the access token is authorized for use with datum and extract claims.
 			authType := auth.JWTAuthentication
+
 			var au *auth.AuthenticatedUser
 
 			claims, err := validator.Verify(accessToken)

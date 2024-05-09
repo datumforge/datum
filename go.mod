@@ -38,7 +38,7 @@ require (
 	github.com/panta/machineid v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.20.0
-	github.com/prometheus/client_golang v1.19.0
+	github.com/prometheus/client_golang v1.19.1
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/samber/lo v1.39.0

@@ -62,6 +62,7 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 
 			// Verify the access token is authorized for use with datum and extract claims.
 			authType := auth.JWTAuthentication
+			var au *auth.AuthenticatedUser
 
 			claims, err := validator.Verify(accessToken)
 			if err != nil {
@@ -70,16 +71,16 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 					return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
 				}
 
-				claims, authType, err = checkToken(c.Request().Context(), conf, accessToken)
+				au, err = checkToken(c.Request().Context(), conf, accessToken)
 				if err != nil {
 					return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
 				}
-			}
-
-			// Add claims to context for use in downstream processing and continue handlers
-			au, err := createAuthenticatedUser(c.Request().Context(), conf.DBClient, claims, authType)
-			if err != nil {
-				return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
+			} else {
+				// Add claims to context for use in downstream processing and continue handlers
+				au, err = createAuthenticatedUserFromClaims(c.Request().Context(), conf.DBClient, claims, authType)
+				if err != nil {
+					return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
+				}
 			}
 
 			auth.SetAuthenticatedUserContext(c, au)
@@ -128,70 +129,54 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 	}
 }
 
-func createAuthenticatedUser(ctx context.Context, dbClient *generated.Client, claims *tokens.Claims, authType auth.AuthenticationType) (*auth.AuthenticatedUser, error) {
-	var subjectID string
-
+// createAuthenticatedUserFromClaims creates an authenticated user from the claims provided
+func createAuthenticatedUserFromClaims(ctx context.Context, dbClient *generated.Client, claims *tokens.Claims, authType auth.AuthenticationType) (*auth.AuthenticatedUser, error) {
 	// get the user ID from the claims
-	mappingID := claims.UserID
-
-	switch authType {
-	case auth.PATAuthentication, auth.JWTAuthentication:
-		user, err := dbClient.User.Query().Where(user.MappingID(mappingID)).Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		subjectID = user.ID
-	case auth.APITokenAuthentication:
-		tokenCtx := privacy.DecisionContext(ctx, privacy.Allow)
-
-		token, err := dbClient.APIToken.Query().Where(apitoken.MappingID(mappingID)).Only(tokenCtx)
-		if err != nil {
-			return nil, err
-		}
-
-		subjectID = token.ID
+	user, err := dbClient.User.Query().Where(user.MappingID(claims.UserID)).Only(ctx)
+	if err != nil {
+		return nil, err
 	}
-
-	mappingOrgID := claims.OrgID
 
 	// all the query to get the organization, need to bypass the authz filter to get the org
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	org, err := dbClient.Organization.Query().Where(organization.MappingID(mappingOrgID)).Only(ctx)
+	org, err := dbClient.Organization.Query().Where(organization.MappingID(claims.OrgID)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return &auth.AuthenticatedUser{
-		SubjectID:          subjectID,
+		SubjectID:          user.ID,
 		OrganizationID:     org.ID,
+		OrganizationIDs:    []string{org.ID},
 		AuthenticationType: authType,
 	}, nil
 }
 
 // checkToken checks the bearer authorization token against the database to see if the provided
-// token is an active personal access token. If the token is valid, the claims are returned
-func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Claims, auth.AuthenticationType, error) {
+// token is an active personal access token or api token.
+// If the token is valid, the authenticated user is returned
+func checkToken(ctx context.Context, conf AuthOptions, token string) (*auth.AuthenticatedUser, error) {
 	// allow check to bypass privacy rules
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	// check if the token is a personal access token
-	claims, err := isValidPersonalAccessToken(ctx, conf.DBClient, token)
+	au, err := isValidPersonalAccessToken(ctx, conf.DBClient, token)
 	if err == nil {
-		return claims, auth.PATAuthentication, nil
+		return au, nil
 	}
 
 	// check if the token is an API token
-	claims, err = isValidAPIToken(ctx, conf.DBClient, token)
+	au, err = isValidAPIToken(ctx, conf.DBClient, token)
 	if err == nil {
-		return claims, auth.APITokenAuthentication, nil
+		return au, nil
 	}
 
-	return nil, "", err
+	return nil, err
 }
 
-func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client, token string) (*tokens.Claims, error) {
+// isValidPersonalAccessToken checks if the provided token is a valid personal access token and returns the authenticated user
+func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client, token string) (*auth.AuthenticatedUser, error) {
 	pat, err := dbClient.PersonalAccessToken.Query().Where(personalaccesstoken.Token(token)).
 		WithOwner().
 		WithOrganizations().
@@ -204,22 +189,30 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 		return nil, rout.ErrExpiredCredentials
 	}
 
+	// gather the authorized organization IDs
+	var orgIDs []string
 	orgs := pat.Edges.Organizations
+
 	if len(orgs) == 0 {
 		// an access token must have at least one organization to be used
 		return nil, rout.ErrInvalidCredentials
 	}
 
-	claims := &tokens.Claims{
-		UserID: pat.Edges.Owner.MappingID,
-		OrgID:  orgs[0].MappingID,
+	for _, org := range orgs {
+		orgIDs = append(orgIDs, org.ID)
 	}
 
-	return claims, nil
+	return &auth.AuthenticatedUser{
+		SubjectID:          pat.OwnerID,
+		OrganizationID:     orgIDs[0],
+		OrganizationIDs:    orgIDs,
+		AuthenticationType: auth.PATAuthentication,
+	}, nil
 }
 
-func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token string) (*tokens.Claims, error) {
-	t, err := dbClient.APIToken.Query().Where(apitoken.Token(token)).Only(ctx)
+func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token string) (*auth.AuthenticatedUser, error) {
+	t, err := dbClient.APIToken.Query().Where(apitoken.Token(token)).
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -228,15 +221,10 @@ func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token stri
 		return nil, rout.ErrExpiredCredentials
 	}
 
-	org, err := t.Owner(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	claims := &tokens.Claims{
-		UserID: t.MappingID,
-		OrgID:  org.MappingID,
-	}
-
-	return claims, nil
+	return &auth.AuthenticatedUser{
+		SubjectID:          t.ID,
+		OrganizationID:     t.OwnerID,
+		OrganizationIDs:    []string{t.OwnerID},
+		AuthenticationType: auth.APITokenAuthentication,
+	}, nil
 }

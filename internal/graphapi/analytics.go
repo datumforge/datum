@@ -94,7 +94,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	}
 
 	userCreatedListener := func(evt soiree.Event) error {
-		webhookURL := ""
+		webhookURL := "https://hooks.slack.com/services/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"
 		retrieve := sEvent.Payload().(map[string]string)
 		log.Printf("event: %s\n", retrieve["key"])
 
@@ -109,7 +109,24 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 		return nil
 	}
 
+	orgCreatedListener := func(evt soiree.Event) error {
+		webhookURL := "https://hooks.slack.com/services/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"
+		retrieve := sEvent.Payload().(map[string]string)
+		log.Printf("event: %s\n", retrieve["key"])
+
+		payload := slack.Payload{
+			Text: fmt.Sprintf("An organization with the following details has been created:\nName: %s", retrieve["name"]),
+		}
+
+		slackMessage := slack.New(webhookURL)
+		if err := slackMessage.Post(context.Background(), &payload); err != nil {
+			log.Printf("error: %s\n", err)
+		}
+		return nil
+	}
+
 	e.On("user.created", userCreatedListener)
+	e.On("organization.created", orgCreatedListener)
 	e.Emit(event, soireeProps)
 
 	c.Analytics.Event(event, props)

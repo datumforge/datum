@@ -105,6 +105,66 @@ query GetAllIntegrations {
   }
 }
 
+query GetIntegrationByID($integrationId: ID!) {
+  integration(id: $integrationId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    deletedAt
+    deletedBy
+    ownerID
+    name
+    description
+    kind
+    owner {
+      id
+    }
+    secrets {
+      id
+    }
+    oauth2tokens {
+      id
+    }
+    events {
+      id
+    }
+  }
+}
+
+query GetAllIntegrations {
+  integrations {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        ownerID
+        name
+        description
+        kind
+        owner {
+          id
+        }
+        secrets {
+          id
+        }
+        oauth2tokens {
+          id
+        }
+        events {
+          id
+        }
+      }
+    }
+  }
+}
+
 mutation CreateIntegration($input: CreateIntegrationInput!) {
   createIntegration(input: $input) {
     integration {

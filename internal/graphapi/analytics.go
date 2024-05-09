@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
 	ph "github.com/posthog/posthog-go"
@@ -133,6 +134,22 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 			if err := slackMessage.Post(context.Background(), &payload); err != nil {
 				return err
 			}
+		}
+		return nil
+	}
+
+	orgCreatedListener := func(evt soiree.Event) error {
+		webhookURL := "https://hooks.slack.com/services/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"
+		retrieve := sEvent.Payload().(map[string]string)
+		log.Printf("event: %s\n", retrieve["key"])
+
+		payload := slack.Payload{
+			Text: fmt.Sprintf("An organization with the following details has been created:\nName: %s", retrieve["name"]),
+		}
+
+		slackMessage := slack.New(webhookURL)
+		if err := slackMessage.Post(context.Background(), &payload); err != nil {
+			log.Printf("error: %s\n", err)
 		}
 		return nil
 	}

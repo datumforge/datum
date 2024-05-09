@@ -3847,9 +3847,9 @@ func (t *GetGroupByID_Group_Setting) GetTags() []string {
 }
 
 type GetGroupByID_Group_Members_User struct {
-	ID        string "json:\"id\" graphql:\"id\""
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	ID        string  "json:\"id\" graphql:\"id\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
 func (t *GetGroupByID_Group_Members_User) GetID() string {
@@ -3858,13 +3858,13 @@ func (t *GetGroupByID_Group_Members_User) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetGroupByID_Group_Members_User) GetFirstName() string {
+func (t *GetGroupByID_Group_Members_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetGroupByID_Group_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *GetGroupByID_Group_Members_User) GetLastName() string {
+func (t *GetGroupByID_Group_Members_User) GetLastName() *string {
 	if t == nil {
 		t = &GetGroupByID_Group_Members_User{}
 	}
@@ -4070,9 +4070,9 @@ func (t *GroupsWhere_Groups_Edges_Node_Setting) GetTags() []string {
 }
 
 type GroupsWhere_Groups_Edges_Node_Members_User struct {
-	ID        string "json:\"id\" graphql:\"id\""
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	ID        string  "json:\"id\" graphql:\"id\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
 func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetID() string {
@@ -4081,13 +4081,13 @@ func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetID() string {
 	}
 	return t.ID
 }
-func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetFirstName() string {
+func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetFirstName() *string {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetLastName() string {
+func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetLastName() *string {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node_Members_User{}
 	}
@@ -4315,9 +4315,9 @@ func (t *GetAllGroups_Groups_Edges_Node_Setting) GetTags() []string {
 }
 
 type GetAllGroups_Groups_Edges_Node_Members_User struct {
-	ID        string "json:\"id\" graphql:\"id\""
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	ID        string  "json:\"id\" graphql:\"id\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
 func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetID() string {
@@ -4326,13 +4326,13 @@ func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetFirstName() string {
+func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetLastName() string {
+func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetLastName() *string {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node_Members_User{}
 	}
@@ -4560,9 +4560,9 @@ func (t *CreateGroup_CreateGroup_Group_Setting) GetTags() []string {
 }
 
 type CreateGroup_CreateGroup_Group_Members_User struct {
-	ID        string "json:\"id\" graphql:\"id\""
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	ID        string  "json:\"id\" graphql:\"id\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
 func (t *CreateGroup_CreateGroup_Group_Members_User) GetID() string {
@@ -4571,13 +4571,13 @@ func (t *CreateGroup_CreateGroup_Group_Members_User) GetID() string {
 	}
 	return t.ID
 }
-func (t *CreateGroup_CreateGroup_Group_Members_User) GetFirstName() string {
+func (t *CreateGroup_CreateGroup_Group_Members_User) GetFirstName() *string {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *CreateGroup_CreateGroup_Group_Members_User) GetLastName() string {
+func (t *CreateGroup_CreateGroup_Group_Members_User) GetLastName() *string {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group_Members_User{}
 	}
@@ -4783,9 +4783,9 @@ func (t *UpdateGroup_UpdateGroup_Group_Setting) GetTags() []string {
 }
 
 type UpdateGroup_UpdateGroup_Group_Members_User struct {
-	ID        string "json:\"id\" graphql:\"id\""
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	ID        string  "json:\"id\" graphql:\"id\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
 func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetID() string {
@@ -4794,13 +4794,13 @@ func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetID() string {
 	}
 	return t.ID
 }
-func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetFirstName() string {
+func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetFirstName() *string {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetLastName() string {
+func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetLastName() *string {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group_Members_User{}
 	}
@@ -4915,20 +4915,20 @@ func (t *DeleteGroup_DeleteGroup) GetDeletedID() string {
 }
 
 type GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User struct {
-	FirstName   string "json:\"firstName\" graphql:\"firstName\""
-	LastName    string "json:\"lastName\" graphql:\"lastName\""
-	ID          string "json:\"id\" graphql:\"id\""
-	DisplayName string "json:\"displayName\" graphql:\"displayName\""
-	Email       string "json:\"email\" graphql:\"email\""
+	FirstName   *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName    *string "json:\"lastName,omitempty\" graphql:\"lastName\""
+	ID          string  "json:\"id\" graphql:\"id\""
+	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
+	Email       string  "json:\"email\" graphql:\"email\""
 }
 
-func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetFirstName() string {
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User{}
 	}
 	return t.FirstName
 }
-func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetLastName() string {
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetLastName() *string {
 	if t == nil {
 		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User{}
 	}
@@ -7463,9 +7463,9 @@ func (t *GetOrganizationByID_Organization_Children) GetEdges() []*GetOrganizatio
 }
 
 type GetOrganizationByID_Organization_Members_User struct {
-	ID        string "json:\"id\" graphql:\"id\""
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	ID        string  "json:\"id\" graphql:\"id\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
 func (t *GetOrganizationByID_Organization_Members_User) GetID() string {
@@ -7474,13 +7474,13 @@ func (t *GetOrganizationByID_Organization_Members_User) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetOrganizationByID_Organization_Members_User) GetFirstName() string {
+func (t *GetOrganizationByID_Organization_Members_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetOrganizationByID_Organization_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *GetOrganizationByID_Organization_Members_User) GetLastName() string {
+func (t *GetOrganizationByID_Organization_Members_User) GetLastName() *string {
 	if t == nil {
 		t = &GetOrganizationByID_Organization_Members_User{}
 	}
@@ -7775,9 +7775,9 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Children) GetEdges() []*Ge
 }
 
 type GetAllOrganizations_Organizations_Edges_Node_Members_User struct {
-	ID        string "json:\"id\" graphql:\"id\""
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	ID        string  "json:\"id\" graphql:\"id\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
 func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetID() string {
@@ -7786,13 +7786,13 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetID() stri
 	}
 	return t.ID
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetFirstName() string {
+func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetLastName() string {
+func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetLastName() *string {
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node_Members_User{}
 	}
@@ -8095,9 +8095,9 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Children) GetEdges() []*Org
 }
 
 type OrganizationsWhere_Organizations_Edges_Node_Members_User struct {
-	ID        string "json:\"id\" graphql:\"id\""
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	ID        string  "json:\"id\" graphql:\"id\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
 func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetID() string {
@@ -8106,13 +8106,13 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetID() strin
 	}
 	return t.ID
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetFirstName() string {
+func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetFirstName() *string {
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetLastName() string {
+func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetLastName() *string {
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node_Members_User{}
 	}
@@ -9346,20 +9346,20 @@ func (t *UpdateOrganizationSetting_UpdateOrganizationSetting) GetOrganizationSet
 }
 
 type GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User struct {
-	FirstName   string "json:\"firstName\" graphql:\"firstName\""
-	LastName    string "json:\"lastName\" graphql:\"lastName\""
-	ID          string "json:\"id\" graphql:\"id\""
-	DisplayName string "json:\"displayName\" graphql:\"displayName\""
-	Email       string "json:\"email\" graphql:\"email\""
+	FirstName   *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName    *string "json:\"lastName,omitempty\" graphql:\"lastName\""
+	ID          string  "json:\"id\" graphql:\"id\""
+	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
+	Email       string  "json:\"email\" graphql:\"email\""
 }
 
-func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetFirstName() string {
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User{}
 	}
 	return t.FirstName
 }
-func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetLastName() string {
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetLastName() *string {
 	if t == nil {
 		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User{}
 	}
@@ -11130,8 +11130,8 @@ func (t *GetUserByID_User_Organizations) GetMembers() []*GetUserByID_User_Organi
 
 type GetUserByID_User struct {
 	ID              string                            "json:\"id\" graphql:\"id\""
-	FirstName       string                            "json:\"firstName\" graphql:\"firstName\""
-	LastName        string                            "json:\"lastName\" graphql:\"lastName\""
+	FirstName       *string                           "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName        *string                           "json:\"lastName,omitempty\" graphql:\"lastName\""
 	DisplayName     string                            "json:\"displayName\" graphql:\"displayName\""
 	Email           string                            "json:\"email\" graphql:\"email\""
 	LastSeen        *time.Time                        "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
@@ -11153,13 +11153,13 @@ func (t *GetUserByID_User) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetUserByID_User) GetFirstName() string {
+func (t *GetUserByID_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetUserByID_User{}
 	}
 	return t.FirstName
 }
-func (t *GetUserByID_User) GetLastName() string {
+func (t *GetUserByID_User) GetLastName() *string {
 	if t == nil {
 		t = &GetUserByID_User{}
 	}
@@ -11351,17 +11351,17 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetSilencedAt() *time.Time {
 }
 
 type GetUserByIDWithOrgs_User_OrgMemberships_User struct {
-	FirstName string "json:\"firstName\" graphql:\"firstName\""
-	LastName  string "json:\"lastName\" graphql:\"lastName\""
+	FirstName *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName  *string "json:\"lastName,omitempty\" graphql:\"lastName\""
 }
 
-func (t *GetUserByIDWithOrgs_User_OrgMemberships_User) GetFirstName() string {
+func (t *GetUserByIDWithOrgs_User_OrgMemberships_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_OrgMemberships_User{}
 	}
 	return t.FirstName
 }
-func (t *GetUserByIDWithOrgs_User_OrgMemberships_User) GetLastName() string {
+func (t *GetUserByIDWithOrgs_User_OrgMemberships_User) GetLastName() *string {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_OrgMemberships_User{}
 	}
@@ -11395,8 +11395,8 @@ func (t *GetUserByIDWithOrgs_User_OrgMemberships) GetUser() *GetUserByIDWithOrgs
 
 type GetUserByIDWithOrgs_User struct {
 	ID              string                                     "json:\"id\" graphql:\"id\""
-	FirstName       string                                     "json:\"firstName\" graphql:\"firstName\""
-	LastName        string                                     "json:\"lastName\" graphql:\"lastName\""
+	FirstName       *string                                    "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName        *string                                    "json:\"lastName,omitempty\" graphql:\"lastName\""
 	DisplayName     string                                     "json:\"displayName\" graphql:\"displayName\""
 	Email           string                                     "json:\"email\" graphql:\"email\""
 	LastSeen        *time.Time                                 "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
@@ -11418,13 +11418,13 @@ func (t *GetUserByIDWithOrgs_User) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetUserByIDWithOrgs_User) GetFirstName() string {
+func (t *GetUserByIDWithOrgs_User) GetFirstName() *string {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
 	return t.FirstName
 }
-func (t *GetUserByIDWithOrgs_User) GetLastName() string {
+func (t *GetUserByIDWithOrgs_User) GetLastName() *string {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
@@ -11617,8 +11617,8 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetSilencedAt() *time.Time {
 
 type GetAllUsers_Users_Edges_Node struct {
 	ID              string                               "json:\"id\" graphql:\"id\""
-	FirstName       string                               "json:\"firstName\" graphql:\"firstName\""
-	LastName        string                               "json:\"lastName\" graphql:\"lastName\""
+	FirstName       *string                              "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName        *string                              "json:\"lastName,omitempty\" graphql:\"lastName\""
 	DisplayName     string                               "json:\"displayName\" graphql:\"displayName\""
 	Email           string                               "json:\"email\" graphql:\"email\""
 	LastSeen        *time.Time                           "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
@@ -11639,13 +11639,13 @@ func (t *GetAllUsers_Users_Edges_Node) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetAllUsers_Users_Edges_Node) GetFirstName() string {
+func (t *GetAllUsers_Users_Edges_Node) GetFirstName() *string {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
 	return t.FirstName
 }
-func (t *GetAllUsers_Users_Edges_Node) GetLastName() string {
+func (t *GetAllUsers_Users_Edges_Node) GetLastName() *string {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
@@ -11891,8 +11891,8 @@ func (t *CreateUser_CreateUser_User_Setting) GetSilencedAt() *time.Time {
 type CreateUser_CreateUser_User struct {
 	ID               string                                         "json:\"id\" graphql:\"id\""
 	Email            string                                         "json:\"email\" graphql:\"email\""
-	FirstName        string                                         "json:\"firstName\" graphql:\"firstName\""
-	LastName         string                                         "json:\"lastName\" graphql:\"lastName\""
+	FirstName        *string                                        "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName         *string                                        "json:\"lastName,omitempty\" graphql:\"lastName\""
 	DisplayName      string                                         "json:\"displayName\" graphql:\"displayName\""
 	AvatarRemoteURL  *string                                        "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
@@ -11915,13 +11915,13 @@ func (t *CreateUser_CreateUser_User) GetEmail() string {
 	}
 	return t.Email
 }
-func (t *CreateUser_CreateUser_User) GetFirstName() string {
+func (t *CreateUser_CreateUser_User) GetFirstName() *string {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
 	return t.FirstName
 }
-func (t *CreateUser_CreateUser_User) GetLastName() string {
+func (t *CreateUser_CreateUser_User) GetLastName() *string {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
@@ -12118,8 +12118,8 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetSilencedAt() *time.Time {
 type UpdateUser_UpdateUser_User struct {
 	ID               string                                         "json:\"id\" graphql:\"id\""
 	Email            string                                         "json:\"email\" graphql:\"email\""
-	FirstName        string                                         "json:\"firstName\" graphql:\"firstName\""
-	LastName         string                                         "json:\"lastName\" graphql:\"lastName\""
+	FirstName        *string                                        "json:\"firstName,omitempty\" graphql:\"firstName\""
+	LastName         *string                                        "json:\"lastName,omitempty\" graphql:\"lastName\""
 	DisplayName      string                                         "json:\"displayName\" graphql:\"displayName\""
 	AvatarRemoteURL  *string                                        "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
@@ -12142,13 +12142,13 @@ func (t *UpdateUser_UpdateUser_User) GetEmail() string {
 	}
 	return t.Email
 }
-func (t *UpdateUser_UpdateUser_User) GetFirstName() string {
+func (t *UpdateUser_UpdateUser_User) GetFirstName() *string {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
 	return t.FirstName
 }
-func (t *UpdateUser_UpdateUser_User) GetLastName() string {
+func (t *UpdateUser_UpdateUser_User) GetLastName() *string {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}

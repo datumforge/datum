@@ -144,6 +144,12 @@ func (uu *UserUpdate) SetNillableFirstName(s *string) *UserUpdate {
 	return uu
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (uu *UserUpdate) ClearFirstName() *UserUpdate {
+	uu.mutation.ClearFirstName()
+	return uu
+}
+
 // SetLastName sets the "last_name" field.
 func (uu *UserUpdate) SetLastName(s string) *UserUpdate {
 	uu.mutation.SetLastName(s)
@@ -155,6 +161,12 @@ func (uu *UserUpdate) SetNillableLastName(s *string) *UserUpdate {
 	if s != nil {
 		uu.SetLastName(*s)
 	}
+	return uu
+}
+
+// ClearLastName clears the value of the "last_name" field.
+func (uu *UserUpdate) ClearLastName() *UserUpdate {
+	uu.mutation.ClearLastName()
 	return uu
 }
 
@@ -916,8 +928,14 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
+	if uu.mutation.FirstNameCleared() {
+		_spec.ClearField(user.FieldFirstName, field.TypeString)
+	}
 	if value, ok := uu.mutation.LastName(); ok {
 		_spec.SetField(user.FieldLastName, field.TypeString, value)
+	}
+	if uu.mutation.LastNameCleared() {
+		_spec.ClearField(user.FieldLastName, field.TypeString)
 	}
 	if value, ok := uu.mutation.DisplayName(); ok {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
@@ -1738,6 +1756,12 @@ func (uuo *UserUpdateOne) SetNillableFirstName(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (uuo *UserUpdateOne) ClearFirstName() *UserUpdateOne {
+	uuo.mutation.ClearFirstName()
+	return uuo
+}
+
 // SetLastName sets the "last_name" field.
 func (uuo *UserUpdateOne) SetLastName(s string) *UserUpdateOne {
 	uuo.mutation.SetLastName(s)
@@ -1749,6 +1773,12 @@ func (uuo *UserUpdateOne) SetNillableLastName(s *string) *UserUpdateOne {
 	if s != nil {
 		uuo.SetLastName(*s)
 	}
+	return uuo
+}
+
+// ClearLastName clears the value of the "last_name" field.
+func (uuo *UserUpdateOne) ClearLastName() *UserUpdateOne {
+	uuo.mutation.ClearLastName()
 	return uuo
 }
 
@@ -2540,8 +2570,14 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 	}
+	if uuo.mutation.FirstNameCleared() {
+		_spec.ClearField(user.FieldFirstName, field.TypeString)
+	}
 	if value, ok := uuo.mutation.LastName(); ok {
 		_spec.SetField(user.FieldLastName, field.TypeString, value)
+	}
+	if uuo.mutation.LastNameCleared() {
+		_spec.ClearField(user.FieldLastName, field.TypeString)
 	}
 	if value, ok := uuo.mutation.DisplayName(); ok {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)

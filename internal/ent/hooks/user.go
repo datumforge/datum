@@ -3,6 +3,7 @@ package hooks
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"entgo.io/ent"
 	"github.com/datumforge/entx"
@@ -45,11 +46,13 @@ func HookUser() ent.Hook {
 				url := gravatar.New(email, nil)
 				mutation.SetAvatarRemoteURL(url)
 
-				// use the email as the display name, if not provided on creation
+				// use the email without the domain as the display name, if not provided on creation
 				if mutation.Op().Is(ent.OpCreate) {
 					displayName, _ := mutation.DisplayName()
 					if displayName == "" {
-						mutation.SetDisplayName(email)
+						displayName := strings.Split(email, "@")[0]
+
+						mutation.SetDisplayName(displayName)
 					}
 				}
 			}

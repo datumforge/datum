@@ -52750,9 +52750,22 @@ func (m *UserMutation) OldFirstName(ctx context.Context) (v string, err error) {
 	return oldValue.FirstName, nil
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (m *UserMutation) ClearFirstName() {
+	m.first_name = nil
+	m.clearedFields[user.FieldFirstName] = struct{}{}
+}
+
+// FirstNameCleared returns if the "first_name" field was cleared in this mutation.
+func (m *UserMutation) FirstNameCleared() bool {
+	_, ok := m.clearedFields[user.FieldFirstName]
+	return ok
+}
+
 // ResetFirstName resets all changes to the "first_name" field.
 func (m *UserMutation) ResetFirstName() {
 	m.first_name = nil
+	delete(m.clearedFields, user.FieldFirstName)
 }
 
 // SetLastName sets the "last_name" field.
@@ -52786,9 +52799,22 @@ func (m *UserMutation) OldLastName(ctx context.Context) (v string, err error) {
 	return oldValue.LastName, nil
 }
 
+// ClearLastName clears the value of the "last_name" field.
+func (m *UserMutation) ClearLastName() {
+	m.last_name = nil
+	m.clearedFields[user.FieldLastName] = struct{}{}
+}
+
+// LastNameCleared returns if the "last_name" field was cleared in this mutation.
+func (m *UserMutation) LastNameCleared() bool {
+	_, ok := m.clearedFields[user.FieldLastName]
+	return ok
+}
+
 // ResetLastName resets all changes to the "last_name" field.
 func (m *UserMutation) ResetLastName() {
 	m.last_name = nil
+	delete(m.clearedFields, user.FieldLastName)
 }
 
 // SetDisplayName sets the "display_name" field.
@@ -54268,6 +54294,12 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldDeletedBy) {
 		fields = append(fields, user.FieldDeletedBy)
 	}
+	if m.FieldCleared(user.FieldFirstName) {
+		fields = append(fields, user.FieldFirstName)
+	}
+	if m.FieldCleared(user.FieldLastName) {
+		fields = append(fields, user.FieldLastName)
+	}
 	if m.FieldCleared(user.FieldAvatarRemoteURL) {
 		fields = append(fields, user.FieldAvatarRemoteURL)
 	}
@@ -54320,6 +54352,12 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case user.FieldFirstName:
+		m.ClearFirstName()
+		return nil
+	case user.FieldLastName:
+		m.ClearLastName()
 		return nil
 	case user.FieldAvatarRemoteURL:
 		m.ClearAvatarRemoteURL()
@@ -55455,9 +55493,22 @@ func (m *UserHistoryMutation) OldFirstName(ctx context.Context) (v string, err e
 	return oldValue.FirstName, nil
 }
 
+// ClearFirstName clears the value of the "first_name" field.
+func (m *UserHistoryMutation) ClearFirstName() {
+	m.first_name = nil
+	m.clearedFields[userhistory.FieldFirstName] = struct{}{}
+}
+
+// FirstNameCleared returns if the "first_name" field was cleared in this mutation.
+func (m *UserHistoryMutation) FirstNameCleared() bool {
+	_, ok := m.clearedFields[userhistory.FieldFirstName]
+	return ok
+}
+
 // ResetFirstName resets all changes to the "first_name" field.
 func (m *UserHistoryMutation) ResetFirstName() {
 	m.first_name = nil
+	delete(m.clearedFields, userhistory.FieldFirstName)
 }
 
 // SetLastName sets the "last_name" field.
@@ -55491,9 +55542,22 @@ func (m *UserHistoryMutation) OldLastName(ctx context.Context) (v string, err er
 	return oldValue.LastName, nil
 }
 
+// ClearLastName clears the value of the "last_name" field.
+func (m *UserHistoryMutation) ClearLastName() {
+	m.last_name = nil
+	m.clearedFields[userhistory.FieldLastName] = struct{}{}
+}
+
+// LastNameCleared returns if the "last_name" field was cleared in this mutation.
+func (m *UserHistoryMutation) LastNameCleared() bool {
+	_, ok := m.clearedFields[userhistory.FieldLastName]
+	return ok
+}
+
 // ResetLastName resets all changes to the "last_name" field.
 func (m *UserHistoryMutation) ResetLastName() {
 	m.last_name = nil
+	delete(m.clearedFields, userhistory.FieldLastName)
 }
 
 // SetDisplayName sets the "display_name" field.
@@ -56331,6 +56395,12 @@ func (m *UserHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(userhistory.FieldDeletedBy) {
 		fields = append(fields, userhistory.FieldDeletedBy)
 	}
+	if m.FieldCleared(userhistory.FieldFirstName) {
+		fields = append(fields, userhistory.FieldFirstName)
+	}
+	if m.FieldCleared(userhistory.FieldLastName) {
+		fields = append(fields, userhistory.FieldLastName)
+	}
 	if m.FieldCleared(userhistory.FieldAvatarRemoteURL) {
 		fields = append(fields, userhistory.FieldAvatarRemoteURL)
 	}
@@ -56386,6 +56456,12 @@ func (m *UserHistoryMutation) ClearField(name string) error {
 		return nil
 	case userhistory.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case userhistory.FieldFirstName:
+		m.ClearFirstName()
+		return nil
+	case userhistory.FieldLastName:
+		m.ClearLastName()
 		return nil
 	case userhistory.FieldAvatarRemoteURL:
 		m.ClearAvatarRemoteURL()

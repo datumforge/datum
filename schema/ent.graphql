@@ -822,8 +822,8 @@ input CreateUserInput {
   createdBy: String
   updatedBy: String
   email: String!
-  firstName: String!
-  lastName: String!
+  firstName: String
+  lastName: String
   """
   The user's displayed 'friendly' name
   """
@@ -12335,7 +12335,9 @@ input UpdateUserInput {
   clearUpdatedBy: Boolean
   email: String
   firstName: String
+  clearFirstName: Boolean
   lastName: String
+  clearLastName: Boolean
   """
   The user's displayed 'friendly' name
   """
@@ -12519,8 +12521,8 @@ type User implements Node {
   deletedAt: Time
   deletedBy: String
   email: String!
-  firstName: String!
-  lastName: String!
+  firstName: String
+  lastName: String
   """
   The user's displayed 'friendly' name
   """
@@ -12615,8 +12617,8 @@ type UserHistory implements Node {
   deletedAt: Time
   deletedBy: String
   email: String!
-  firstName: String!
-  lastName: String!
+  firstName: String
+  lastName: String
   """
   The user's displayed 'friendly' name
   """
@@ -12906,6 +12908,8 @@ input UserHistoryWhereInput {
   firstNameContains: String
   firstNameHasPrefix: String
   firstNameHasSuffix: String
+  firstNameIsNil: Boolean
+  firstNameNotNil: Boolean
   firstNameEqualFold: String
   firstNameContainsFold: String
   """
@@ -12922,6 +12926,8 @@ input UserHistoryWhereInput {
   lastNameContains: String
   lastNameHasPrefix: String
   lastNameHasSuffix: String
+  lastNameIsNil: Boolean
+  lastNameNotNil: Boolean
   lastNameEqualFold: String
   lastNameContainsFold: String
   """
@@ -13814,6 +13820,8 @@ input UserWhereInput {
   firstNameContains: String
   firstNameHasPrefix: String
   firstNameHasSuffix: String
+  firstNameIsNil: Boolean
+  firstNameNotNil: Boolean
   firstNameEqualFold: String
   firstNameContainsFold: String
   """
@@ -13830,6 +13838,8 @@ input UserWhereInput {
   lastNameContains: String
   lastNameHasPrefix: String
   lastNameHasSuffix: String
+  lastNameIsNil: Boolean
+  lastNameNotNil: Boolean
   lastNameEqualFold: String
   lastNameContainsFold: String
   """

@@ -3,11 +3,13 @@ package graphapi_test
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/datumforge/entx"
 	mock_fga "github.com/datumforge/fgax/mockery"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -175,8 +177,8 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 		{
 			name: "happy path user",
 			userInput: datumclient.CreateUserInput{
-				FirstName:    gofakeit.FirstName(),
-				LastName:     gofakeit.LastName(),
+				FirstName:    lo.ToPtr(gofakeit.FirstName()),
+				LastName:     lo.ToPtr(gofakeit.LastName()),
 				DisplayName:  gofakeit.LetterN(50),
 				Email:        email,
 				AuthProvider: &enums.AuthProviderCredentials,
@@ -187,8 +189,8 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 		{
 			name: "same email, same auth provider",
 			userInput: datumclient.CreateUserInput{
-				FirstName:    gofakeit.FirstName(),
-				LastName:     gofakeit.LastName(),
+				FirstName:    lo.ToPtr(gofakeit.FirstName()),
+				LastName:     lo.ToPtr(gofakeit.LastName()),
 				DisplayName:  gofakeit.LetterN(50),
 				Email:        email,
 				AuthProvider: &enums.AuthProviderCredentials,
@@ -199,8 +201,8 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 		{
 			name: "same email, different auth provider",
 			userInput: datumclient.CreateUserInput{
-				FirstName:    gofakeit.FirstName(),
-				LastName:     gofakeit.LastName(),
+				FirstName:    lo.ToPtr(gofakeit.FirstName()),
+				LastName:     lo.ToPtr(gofakeit.LastName()),
 				DisplayName:  gofakeit.LetterN(50),
 				Email:        email,
 				AuthProvider: &enums.AuthProviderGitHub,
@@ -210,8 +212,8 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 		{
 			name: "no email",
 			userInput: datumclient.CreateUserInput{
-				FirstName:   gofakeit.FirstName(),
-				LastName:    gofakeit.LastName(),
+				FirstName:   lo.ToPtr(gofakeit.FirstName()),
+				LastName:    lo.ToPtr(gofakeit.LastName()),
 				DisplayName: gofakeit.LetterN(50),
 				Email:       "",
 			},
@@ -220,28 +222,28 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 		{
 			name: "no first name",
 			userInput: datumclient.CreateUserInput{
-				FirstName:   "",
-				LastName:    gofakeit.LastName(),
+				FirstName:   lo.ToPtr(""),
+				LastName:    lo.ToPtr(gofakeit.LastName()),
 				DisplayName: gofakeit.LetterN(50),
 				Email:       gofakeit.Email(),
 			},
-			errorMsg: "value is less than the required length",
+			errorMsg: "",
 		},
 		{
 			name: "no last name",
 			userInput: datumclient.CreateUserInput{
-				FirstName:   gofakeit.FirstName(),
-				LastName:    "",
+				FirstName:   lo.ToPtr(gofakeit.FirstName()),
+				LastName:    lo.ToPtr(""),
 				DisplayName: gofakeit.LetterN(50),
 				Email:       gofakeit.Email(),
 			},
-			errorMsg: "value is less than the required length",
+			errorMsg: "",
 		},
 		{
 			name: "no display name, should default to email",
 			userInput: datumclient.CreateUserInput{
-				FirstName: gofakeit.FirstName(),
-				LastName:  gofakeit.LastName(),
+				FirstName: lo.ToPtr(gofakeit.FirstName()),
+				LastName:  lo.ToPtr(gofakeit.LastName()),
 				Email:     gofakeit.Email(),
 			},
 			errorMsg: "",
@@ -249,8 +251,8 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 		{
 			name: "weak password",
 			userInput: datumclient.CreateUserInput{
-				FirstName: gofakeit.FirstName(),
-				LastName:  gofakeit.LastName(),
+				FirstName: lo.ToPtr(gofakeit.FirstName()),
+				LastName:  lo.ToPtr(gofakeit.LastName()),
 				Email:     gofakeit.Email(),
 				Password:  &weakPassword,
 			},
@@ -294,7 +296,8 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 			}
 			// display name defaults to email if not provided
 			if tc.userInput.DisplayName == "" {
-				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
+				expectedDisplayName := strings.Split(tc.userInput.Email, "@")[0]
+				assert.Equal(t, expectedDisplayName, resp.CreateUser.User.DisplayName)
 			} else {
 				assert.Equal(t, tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
 			}
@@ -354,8 +357,8 @@ func (suite *GraphTestSuite) TestMutationCreateUser() {
 		{
 			name: "no auth create user",
 			userInput: datumclient.CreateUserInput{
-				FirstName:   gofakeit.FirstName(),
-				LastName:    gofakeit.LastName(),
+				FirstName:   lo.ToPtr(gofakeit.FirstName()),
+				LastName:    lo.ToPtr(gofakeit.LastName()),
 				DisplayName: gofakeit.LetterN(50),
 				Email:       gofakeit.Email(),
 				Password:    &strongPassword,
@@ -512,8 +515,8 @@ func (suite *GraphTestSuite) TestMutationUpdateUser() {
 			},
 			expectedRes: datumclient.UpdateUser_UpdateUser_User{
 				ID:          user.ID,
-				FirstName:   firstNameUpdate,
-				LastName:    user.LastName,
+				FirstName:   &firstNameUpdate,
+				LastName:    &user.LastName,
 				DisplayName: user.DisplayName,
 				Email:       user.Email,
 			},
@@ -525,8 +528,8 @@ func (suite *GraphTestSuite) TestMutationUpdateUser() {
 			},
 			expectedRes: datumclient.UpdateUser_UpdateUser_User{
 				ID:          user.ID,
-				FirstName:   firstNameUpdate, // this would have been updated on the prior test
-				LastName:    lastNameUpdate,
+				FirstName:   &firstNameUpdate, // this would have been updated on the prior test
+				LastName:    &lastNameUpdate,
 				DisplayName: user.DisplayName,
 				Email:       user.Email,
 			},
@@ -538,8 +541,8 @@ func (suite *GraphTestSuite) TestMutationUpdateUser() {
 			},
 			expectedRes: datumclient.UpdateUser_UpdateUser_User{
 				ID:          user.ID,
-				FirstName:   firstNameUpdate,
-				LastName:    lastNameUpdate, // this would have been updated on the prior test
+				FirstName:   &firstNameUpdate,
+				LastName:    &lastNameUpdate, // this would have been updated on the prior test
 				DisplayName: user.DisplayName,
 				Email:       emailUpdate,
 			},
@@ -551,8 +554,8 @@ func (suite *GraphTestSuite) TestMutationUpdateUser() {
 			},
 			expectedRes: datumclient.UpdateUser_UpdateUser_User{
 				ID:          user.ID,
-				FirstName:   firstNameUpdate,
-				LastName:    lastNameUpdate,
+				FirstName:   &firstNameUpdate,
+				LastName:    &lastNameUpdate,
 				DisplayName: displayNameUpdate,
 				Email:       emailUpdate, // this would have been updated on the prior test
 			},
@@ -772,8 +775,8 @@ func (suite *GraphTestSuite) TestMutationSoftDeleteUniqueIndex() {
 	ec.SetRequest(ec.Request().WithContext(ctx))
 
 	input := datumclient.CreateUserInput{
-		FirstName: "Abraxos",
-		LastName:  "Funk",
+		FirstName: lo.ToPtr("Abraxos"),
+		LastName:  lo.ToPtr("Funk"),
 		Email:     "abraxos@datum.net",
 	}
 

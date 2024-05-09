@@ -14,6 +14,8 @@ import (
 func TestCreateUserInput(t *testing.T) {
 	name := "Walter White"
 	email := "ww@datum.net"
+	firstName := "Walter"
+	lastName := "White"
 
 	testCases := []struct {
 		testName string
@@ -28,8 +30,20 @@ func TestCreateUserInput(t *testing.T) {
 			email:    email,
 			provider: enums.AuthProviderGitHub,
 			expected: ent.CreateUserInput{
-				FirstName:    "Walter",
-				LastName:     "White",
+				FirstName:    &firstName,
+				LastName:     &lastName,
+				Email:        email,
+				AuthProvider: &enums.AuthProviderGitHub,
+				LastSeen:     lo.ToPtr(time.Now().UTC()),
+			},
+		},
+		{
+			testName: "oauth provider - github, only first name",
+			name:     "meow",
+			email:    email,
+			provider: enums.AuthProviderGitHub,
+			expected: ent.CreateUserInput{
+				FirstName:    lo.ToPtr("meow"),
 				Email:        email,
 				AuthProvider: &enums.AuthProviderGitHub,
 				LastSeen:     lo.ToPtr(time.Now().UTC()),
@@ -41,8 +55,8 @@ func TestCreateUserInput(t *testing.T) {
 			email:    email,
 			provider: enums.AuthProviderGoogle,
 			expected: ent.CreateUserInput{
-				FirstName:    "Walter",
-				LastName:     "White",
+				FirstName:    &firstName,
+				LastName:     &lastName,
 				Email:        email,
 				AuthProvider: &enums.AuthProviderGoogle,
 				LastSeen:     lo.ToPtr(time.Now().UTC()),
@@ -54,8 +68,8 @@ func TestCreateUserInput(t *testing.T) {
 			email:    email,
 			provider: enums.AuthProviderWebauthn,
 			expected: ent.CreateUserInput{
-				FirstName:    "Walter",
-				LastName:     "White",
+				FirstName:    &firstName,
+				LastName:     &lastName,
 				Email:        email,
 				AuthProvider: &enums.AuthProviderWebauthn,
 				LastSeen:     lo.ToPtr(time.Now().UTC()),

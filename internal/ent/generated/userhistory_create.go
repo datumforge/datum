@@ -166,9 +166,25 @@ func (uhc *UserHistoryCreate) SetFirstName(s string) *UserHistoryCreate {
 	return uhc
 }
 
+// SetNillableFirstName sets the "first_name" field if the given value is not nil.
+func (uhc *UserHistoryCreate) SetNillableFirstName(s *string) *UserHistoryCreate {
+	if s != nil {
+		uhc.SetFirstName(*s)
+	}
+	return uhc
+}
+
 // SetLastName sets the "last_name" field.
 func (uhc *UserHistoryCreate) SetLastName(s string) *UserHistoryCreate {
 	uhc.mutation.SetLastName(s)
+	return uhc
+}
+
+// SetNillableLastName sets the "last_name" field if the given value is not nil.
+func (uhc *UserHistoryCreate) SetNillableLastName(s *string) *UserHistoryCreate {
+	if s != nil {
+		uhc.SetLastName(*s)
+	}
 	return uhc
 }
 
@@ -387,12 +403,6 @@ func (uhc *UserHistoryCreate) check() error {
 	}
 	if _, ok := uhc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "UserHistory.email"`)}
-	}
-	if _, ok := uhc.mutation.FirstName(); !ok {
-		return &ValidationError{Name: "first_name", err: errors.New(`generated: missing required field "UserHistory.first_name"`)}
-	}
-	if _, ok := uhc.mutation.LastName(); !ok {
-		return &ValidationError{Name: "last_name", err: errors.New(`generated: missing required field "UserHistory.last_name"`)}
 	}
 	if _, ok := uhc.mutation.DisplayName(); !ok {
 		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "UserHistory.display_name"`)}

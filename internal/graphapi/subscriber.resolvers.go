@@ -88,7 +88,14 @@ func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, i
 }
 
 // DeleteSubscriber is the resolver for the deleteSubscriber field.
-func (r *mutationResolver) DeleteSubscriber(ctx context.Context, email string) (*SubscriberDeletePayload, error) {
+func (r *mutationResolver) DeleteSubscriber(ctx context.Context, email string, ownerID *string) (*SubscriberDeletePayload, error) {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, ownerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
 	num, err := withTransactionalMutation(ctx).Subscriber.Delete().
 		Where(
 			subscriber.EmailEQ(email),

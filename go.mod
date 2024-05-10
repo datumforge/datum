@@ -56,7 +56,7 @@ require (
 	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.20.0
 	golang.org/x/term v0.20.0
-	google.golang.org/api v0.179.0
+	google.golang.org/api v0.180.0
 	modernc.org/sqlite v1.29.9
 )
 

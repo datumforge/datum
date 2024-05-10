@@ -70,6 +70,12 @@ func (r *mutationResolver) UpdateInvite(ctx context.Context, id string, input ge
 		return nil, ErrInternalServerError
 	}
 
+	if err := setOrganizationInAuthContext(ctx, &invite.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
+	}
+
 	invite, err = invite.Update().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {

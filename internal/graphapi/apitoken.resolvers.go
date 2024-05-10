@@ -60,6 +60,12 @@ func (r *mutationResolver) UpdateAPIToken(ctx context.Context, id string, input 
 		return nil, ErrInternalServerError
 	}
 
+	if err := setOrganizationInAuthContext(ctx, &apiToken.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
+	}
+
 	apiToken, err = apiToken.Update().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {

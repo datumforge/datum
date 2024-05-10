@@ -333,7 +333,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 				Name:        tc.groupName,
 				Description: &tc.description,
 				DisplayName: &tc.displayName,
-				OwnerID:     tc.owner,
+				OwnerID:     &tc.owner,
 			}
 
 			if tc.displayName != "" {

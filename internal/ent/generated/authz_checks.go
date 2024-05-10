@@ -9,16 +9,12 @@ import (
 
 	"entgo.io/ent/privacy"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
-	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
-	"github.com/datumforge/datum/internal/ent/generated/webhook"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/fgax"
 )
@@ -94,38 +90,12 @@ func (m *APITokenMutation) CheckAccessForEdit(ctx context.Context) error {
 		ObjectType:  "organization",
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
-
-	gCtx := graphql.GetFieldContext(ctx)
-
-	// get the input from the context
-	gInput := gCtx.Args["input"]
-
-	// check if the input is a CreateAPITokenInput
-	input, ok := gInput.(CreateAPITokenInput)
-	if ok {
-		ac.ObjectID = input.OwnerID
-
+	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
+	if oErr != nil {
+		return oErr
 	}
 
-	// check the id from the args
-	if ac.ObjectID == "" {
-		ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
-	}
-
-	// if this is still empty, we need to query the object to get the object id
-	// this happens on join tables where we have the join ID (for updates and deletes)
-	if ac.ObjectID == "" && "id" != "ownerid" {
-		id, ok := gCtx.Args["id"].(string)
-		if ok {
-			// allow this query to run
-			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			ob, err := m.Client().APIToken.Query().Where(apitoken.ID(id)).Only(reqCtx)
-			if err != nil {
-				return privacy.Skipf("nil request, skipping auth check")
-			}
-			ac.ObjectID = ob.OwnerID
-		}
-	}
+	ac.ObjectID = orgID
 
 	// request is for a list objects, will get filtered in interceptors
 	if ac.ObjectID == "" {
@@ -780,38 +750,12 @@ func (m *IntegrationMutation) CheckAccessForEdit(ctx context.Context) error {
 		ObjectType:  "organization",
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
-
-	gCtx := graphql.GetFieldContext(ctx)
-
-	// get the input from the context
-	gInput := gCtx.Args["input"]
-
-	// check if the input is a CreateIntegrationInput
-	input, ok := gInput.(CreateIntegrationInput)
-	if ok {
-		ac.ObjectID = input.OwnerID
-
+	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
+	if oErr != nil {
+		return oErr
 	}
 
-	// check the id from the args
-	if ac.ObjectID == "" {
-		ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
-	}
-
-	// if this is still empty, we need to query the object to get the object id
-	// this happens on join tables where we have the join ID (for updates and deletes)
-	if ac.ObjectID == "" && "id" != "ownerid" {
-		id, ok := gCtx.Args["id"].(string)
-		if ok {
-			// allow this query to run
-			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			ob, err := m.Client().Integration.Query().Where(integration.ID(id)).Only(reqCtx)
-			if err != nil {
-				return privacy.Skipf("nil request, skipping auth check")
-			}
-			ac.ObjectID = ob.OwnerID
-		}
-	}
+	ac.ObjectID = orgID
 
 	// request is for a list objects, will get filtered in interceptors
 	if ac.ObjectID == "" {
@@ -954,38 +898,12 @@ func (m *InviteMutation) CheckAccessForEdit(ctx context.Context) error {
 		ObjectType:  "organization",
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
-
-	gCtx := graphql.GetFieldContext(ctx)
-
-	// get the input from the context
-	gInput := gCtx.Args["input"]
-
-	// check if the input is a CreateInviteInput
-	input, ok := gInput.(CreateInviteInput)
-	if ok {
-		ac.ObjectID = input.OwnerID
-
+	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
+	if oErr != nil {
+		return oErr
 	}
 
-	// check the id from the args
-	if ac.ObjectID == "" {
-		ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
-	}
-
-	// if this is still empty, we need to query the object to get the object id
-	// this happens on join tables where we have the join ID (for updates and deletes)
-	if ac.ObjectID == "" && "id" != "ownerid" {
-		id, ok := gCtx.Args["id"].(string)
-		if ok {
-			// allow this query to run
-			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			ob, err := m.Client().Invite.Query().Where(invite.ID(id)).Only(reqCtx)
-			if err != nil {
-				return privacy.Skipf("nil request, skipping auth check")
-			}
-			ac.ObjectID = ob.OwnerID
-		}
-	}
+	ac.ObjectID = orgID
 
 	// request is for a list objects, will get filtered in interceptors
 	if ac.ObjectID == "" {
@@ -1788,38 +1706,12 @@ func (m *WebhookMutation) CheckAccessForEdit(ctx context.Context) error {
 		ObjectType:  "organization",
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
-
-	gCtx := graphql.GetFieldContext(ctx)
-
-	// get the input from the context
-	gInput := gCtx.Args["input"]
-
-	// check if the input is a CreateWebhookInput
-	input, ok := gInput.(CreateWebhookInput)
-	if ok {
-		ac.ObjectID = *input.OwnerID
-
+	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
+	if oErr != nil {
+		return oErr
 	}
 
-	// check the id from the args
-	if ac.ObjectID == "" {
-		ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
-	}
-
-	// if this is still empty, we need to query the object to get the object id
-	// this happens on join tables where we have the join ID (for updates and deletes)
-	if ac.ObjectID == "" && "id" != "ownerid" {
-		id, ok := gCtx.Args["id"].(string)
-		if ok {
-			// allow this query to run
-			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			ob, err := m.Client().Webhook.Query().Where(webhook.ID(id)).Only(reqCtx)
-			if err != nil {
-				return privacy.Skipf("nil request, skipping auth check")
-			}
-			ac.ObjectID = ob.OwnerID
-		}
-	}
+	ac.ObjectID = orgID
 
 	// request is for a list objects, will get filtered in interceptors
 	if ac.ObjectID == "" {

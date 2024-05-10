@@ -161,6 +161,14 @@ func (thc *TemplateHistoryCreate) SetOwnerID(s string) *TemplateHistoryCreate {
 	return thc
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (thc *TemplateHistoryCreate) SetNillableOwnerID(s *string) *TemplateHistoryCreate {
+	if s != nil {
+		thc.SetOwnerID(*s)
+	}
+	return thc
+}
+
 // SetName sets the "name" field.
 func (thc *TemplateHistoryCreate) SetName(s string) *TemplateHistoryCreate {
 	thc.mutation.SetName(s)
@@ -297,9 +305,6 @@ func (thc *TemplateHistoryCreate) check() error {
 	}
 	if _, ok := thc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "TemplateHistory.mapping_id"`)}
-	}
-	if _, ok := thc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "TemplateHistory.owner_id"`)}
 	}
 	if _, ok := thc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "TemplateHistory.name"`)}

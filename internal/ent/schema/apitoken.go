@@ -102,9 +102,11 @@ func (APIToken) Annotations() []schema.Annotation {
 			Exclude: true,
 		},
 		entfga.Annotations{
-			ObjectType:   "organization",
-			IncludeHooks: false,
-			IDField:      "OwnerID",
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			NillableIDField: true,
+			OrgOwnedField:   true,
+			IDField:         "OwnerID",
 		},
 	}
 }

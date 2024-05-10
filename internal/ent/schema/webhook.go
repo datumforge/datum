@@ -80,7 +80,7 @@ func (Webhook) Mixin() []ent.Mixin {
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
 			Ref:        "webhooks",
-			Optional:   true,
+			AllowEmpty: true,
 			AllowWhere: true,
 		},
 	}
@@ -120,6 +120,7 @@ func (Webhook) Annotations() []schema.Annotation {
 			ObjectType:      "organization",
 			IncludeHooks:    false,
 			IDField:         "OwnerID",
+			OrgOwnedField:   true,
 			NillableIDField: true,
 		},
 		enthistory.Annotations{

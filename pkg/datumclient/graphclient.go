@@ -139,18 +139,18 @@ func (t *CreateAPIToken_CreateAPIToken_APIToken_Owner) GetID() string {
 }
 
 type CreateAPIToken_CreateAPIToken_APIToken struct {
-	ID          string                                       "json:\"id\" graphql:\"id\""
-	Token       string                                       "json:\"token\" graphql:\"token\""
-	Scopes      []string                                     "json:\"scopes,omitempty\" graphql:\"scopes\""
-	Owner       CreateAPIToken_CreateAPIToken_APIToken_Owner "json:\"owner\" graphql:\"owner\""
-	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Name        string                                       "json:\"name\" graphql:\"name\""
-	ExpiresAt   *time.Time                                   "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
-	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
-	LastUsedAt  *time.Time                                   "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	ID          string                                        "json:\"id\" graphql:\"id\""
+	Token       string                                        "json:\"token\" graphql:\"token\""
+	Scopes      []string                                      "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Owner       *CreateAPIToken_CreateAPIToken_APIToken_Owner "json:\"owner,omitempty\" graphql:\"owner\""
+	CreatedAt   *time.Time                                    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name        string                                        "json:\"name\" graphql:\"name\""
+	ExpiresAt   *time.Time                                    "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
+	Description *string                                       "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt  *time.Time                                    "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
 
 func (t *CreateAPIToken_CreateAPIToken_APIToken) GetID() string {
@@ -175,7 +175,7 @@ func (t *CreateAPIToken_CreateAPIToken_APIToken) GetOwner() *CreateAPIToken_Crea
 	if t == nil {
 		t = &CreateAPIToken_CreateAPIToken_APIToken{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *CreateAPIToken_CreateAPIToken_APIToken) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -249,18 +249,18 @@ func (t *UpdateAPIToken_UpdateAPIToken_APIToken_Owner) GetID() string {
 }
 
 type UpdateAPIToken_UpdateAPIToken_APIToken struct {
-	ID          string                                       "json:\"id\" graphql:\"id\""
-	Token       string                                       "json:\"token\" graphql:\"token\""
-	Scopes      []string                                     "json:\"scopes,omitempty\" graphql:\"scopes\""
-	Owner       UpdateAPIToken_UpdateAPIToken_APIToken_Owner "json:\"owner\" graphql:\"owner\""
-	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Name        string                                       "json:\"name\" graphql:\"name\""
-	ExpiresAt   *time.Time                                   "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
-	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
-	LastUsedAt  *time.Time                                   "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	ID          string                                        "json:\"id\" graphql:\"id\""
+	Token       string                                        "json:\"token\" graphql:\"token\""
+	Scopes      []string                                      "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Owner       *UpdateAPIToken_UpdateAPIToken_APIToken_Owner "json:\"owner,omitempty\" graphql:\"owner\""
+	CreatedAt   *time.Time                                    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name        string                                        "json:\"name\" graphql:\"name\""
+	ExpiresAt   *time.Time                                    "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
+	Description *string                                       "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt  *time.Time                                    "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
 
 func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetID() string {
@@ -285,7 +285,7 @@ func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetOwner() *UpdateAPIToken_Upda
 	if t == nil {
 		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -359,18 +359,18 @@ func (t *GetAllAPITokens_APITokens_Edges_Node_Owner) GetID() string {
 }
 
 type GetAllAPITokens_APITokens_Edges_Node struct {
-	ID          string                                     "json:\"id\" graphql:\"id\""
-	Token       string                                     "json:\"token\" graphql:\"token\""
-	Scopes      []string                                   "json:\"scopes,omitempty\" graphql:\"scopes\""
-	Owner       GetAllAPITokens_APITokens_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
-	CreatedAt   *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt   *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy   *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Name        string                                     "json:\"name\" graphql:\"name\""
-	ExpiresAt   *time.Time                                 "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
-	Description *string                                    "json:\"description,omitempty\" graphql:\"description\""
-	LastUsedAt  *time.Time                                 "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	ID          string                                      "json:\"id\" graphql:\"id\""
+	Token       string                                      "json:\"token\" graphql:\"token\""
+	Scopes      []string                                    "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Owner       *GetAllAPITokens_APITokens_Edges_Node_Owner "json:\"owner,omitempty\" graphql:\"owner\""
+	CreatedAt   *time.Time                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name        string                                      "json:\"name\" graphql:\"name\""
+	ExpiresAt   *time.Time                                  "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
+	Description *string                                     "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt  *time.Time                                  "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
 
 func (t *GetAllAPITokens_APITokens_Edges_Node) GetID() string {
@@ -395,7 +395,7 @@ func (t *GetAllAPITokens_APITokens_Edges_Node) GetOwner() *GetAllAPITokens_APITo
 	if t == nil {
 		t = &GetAllAPITokens_APITokens_Edges_Node{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GetAllAPITokens_APITokens_Edges_Node) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -480,18 +480,18 @@ func (t *GetAPITokenByID_APIToken_Owner) GetID() string {
 }
 
 type GetAPITokenByID_APIToken struct {
-	ID          string                         "json:\"id\" graphql:\"id\""
-	Token       string                         "json:\"token\" graphql:\"token\""
-	Scopes      []string                       "json:\"scopes,omitempty\" graphql:\"scopes\""
-	Owner       GetAPITokenByID_APIToken_Owner "json:\"owner\" graphql:\"owner\""
-	CreatedAt   *time.Time                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt   *time.Time                     "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy   *string                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Name        string                         "json:\"name\" graphql:\"name\""
-	ExpiresAt   *time.Time                     "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
-	Description *string                        "json:\"description,omitempty\" graphql:\"description\""
-	LastUsedAt  *time.Time                     "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	ID          string                          "json:\"id\" graphql:\"id\""
+	Token       string                          "json:\"token\" graphql:\"token\""
+	Scopes      []string                        "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Owner       *GetAPITokenByID_APIToken_Owner "json:\"owner,omitempty\" graphql:\"owner\""
+	CreatedAt   *time.Time                      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                      "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                         "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name        string                          "json:\"name\" graphql:\"name\""
+	ExpiresAt   *time.Time                      "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
+	Description *string                         "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt  *time.Time                      "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
 
 func (t *GetAPITokenByID_APIToken) GetID() string {
@@ -516,7 +516,7 @@ func (t *GetAPITokenByID_APIToken) GetOwner() *GetAPITokenByID_APIToken_Owner {
 	if t == nil {
 		t = &GetAPITokenByID_APIToken{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GetAPITokenByID_APIToken) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -876,7 +876,7 @@ type CreateEntitlement_CreateEntitlement_Entitlement struct {
 	Expires                bool                                                        "json:\"expires\" graphql:\"expires\""
 	ExpiresAt              *time.Time                                                  "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	Cancelled              bool                                                        "json:\"cancelled\" graphql:\"cancelled\""
-	Owner                  CreateEntitlement_CreateEntitlement_Entitlement_Owner       "json:\"owner\" graphql:\"owner\""
+	Owner                  *CreateEntitlement_CreateEntitlement_Entitlement_Owner      "json:\"owner,omitempty\" graphql:\"owner\""
 	Features               []*CreateEntitlement_CreateEntitlement_Entitlement_Features "json:\"features,omitempty\" graphql:\"features\""
 }
 
@@ -962,7 +962,7 @@ func (t *CreateEntitlement_CreateEntitlement_Entitlement) GetOwner() *CreateEnti
 	if t == nil {
 		t = &CreateEntitlement_CreateEntitlement_Entitlement{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *CreateEntitlement_CreateEntitlement_Entitlement) GetFeatures() []*CreateEntitlement_CreateEntitlement_Entitlement_Features {
 	if t == nil {
@@ -1088,7 +1088,7 @@ type UpdateEntitlement_UpdateEntitlement_Entitlement struct {
 	Expires                bool                                                        "json:\"expires\" graphql:\"expires\""
 	ExpiresAt              *time.Time                                                  "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	Cancelled              bool                                                        "json:\"cancelled\" graphql:\"cancelled\""
-	Owner                  UpdateEntitlement_UpdateEntitlement_Entitlement_Owner       "json:\"owner\" graphql:\"owner\""
+	Owner                  *UpdateEntitlement_UpdateEntitlement_Entitlement_Owner      "json:\"owner,omitempty\" graphql:\"owner\""
 	Features               []*UpdateEntitlement_UpdateEntitlement_Entitlement_Features "json:\"features,omitempty\" graphql:\"features\""
 }
 
@@ -1174,7 +1174,7 @@ func (t *UpdateEntitlement_UpdateEntitlement_Entitlement) GetOwner() *UpdateEnti
 	if t == nil {
 		t = &UpdateEntitlement_UpdateEntitlement_Entitlement{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *UpdateEntitlement_UpdateEntitlement_Entitlement) GetFeatures() []*UpdateEntitlement_UpdateEntitlement_Entitlement_Features {
 	if t == nil {
@@ -1280,7 +1280,7 @@ type GetEntitlements_Entitlements_Edges_Node struct {
 	Expires                bool                                                "json:\"expires\" graphql:\"expires\""
 	ExpiresAt              *time.Time                                          "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	Cancelled              bool                                                "json:\"cancelled\" graphql:\"cancelled\""
-	Owner                  GetEntitlements_Entitlements_Edges_Node_Owner       "json:\"owner\" graphql:\"owner\""
+	Owner                  *GetEntitlements_Entitlements_Edges_Node_Owner      "json:\"owner,omitempty\" graphql:\"owner\""
 	Features               []*GetEntitlements_Entitlements_Edges_Node_Features "json:\"features,omitempty\" graphql:\"features\""
 	Events                 []*GetEntitlements_Entitlements_Edges_Node_Events   "json:\"events,omitempty\" graphql:\"events\""
 }
@@ -1367,7 +1367,7 @@ func (t *GetEntitlements_Entitlements_Edges_Node) GetOwner() *GetEntitlements_En
 	if t == nil {
 		t = &GetEntitlements_Entitlements_Edges_Node{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GetEntitlements_Entitlements_Edges_Node) GetFeatures() []*GetEntitlements_Entitlements_Edges_Node_Features {
 	if t == nil {
@@ -3901,7 +3901,7 @@ type GetGroupByID_Group struct {
 	Name        string                        "json:\"name\" graphql:\"name\""
 	Description *string                       "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                        "json:\"displayName\" graphql:\"displayName\""
-	Owner       GetGroupByID_Group_Owner      "json:\"owner\" graphql:\"owner\""
+	Owner       *GetGroupByID_Group_Owner     "json:\"owner,omitempty\" graphql:\"owner\""
 	LogoURL     *string                       "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Setting     GetGroupByID_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GetGroupByID_Group_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -3939,7 +3939,7 @@ func (t *GetGroupByID_Group) GetOwner() *GetGroupByID_Group_Owner {
 	if t == nil {
 		t = &GetGroupByID_Group{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GetGroupByID_Group) GetLogoURL() *string {
 	if t == nil {
@@ -4124,7 +4124,7 @@ type GroupsWhere_Groups_Edges_Node struct {
 	Name        string                                   "json:\"name\" graphql:\"name\""
 	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
-	Owner       GroupsWhere_Groups_Edges_Node_Owner      "json:\"owner\" graphql:\"owner\""
+	Owner       *GroupsWhere_Groups_Edges_Node_Owner     "json:\"owner,omitempty\" graphql:\"owner\""
 	LogoURL     *string                                  "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Setting     GroupsWhere_Groups_Edges_Node_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GroupsWhere_Groups_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -4162,7 +4162,7 @@ func (t *GroupsWhere_Groups_Edges_Node) GetOwner() *GroupsWhere_Groups_Edges_Nod
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GroupsWhere_Groups_Edges_Node) GetLogoURL() *string {
 	if t == nil {
@@ -4369,7 +4369,7 @@ type GetAllGroups_Groups_Edges_Node struct {
 	Name        string                                    "json:\"name\" graphql:\"name\""
 	Description *string                                   "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                                    "json:\"displayName\" graphql:\"displayName\""
-	Owner       GetAllGroups_Groups_Edges_Node_Owner      "json:\"owner\" graphql:\"owner\""
+	Owner       *GetAllGroups_Groups_Edges_Node_Owner     "json:\"owner,omitempty\" graphql:\"owner\""
 	LogoURL     *string                                   "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Setting     GetAllGroups_Groups_Edges_Node_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GetAllGroups_Groups_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -4407,7 +4407,7 @@ func (t *GetAllGroups_Groups_Edges_Node) GetOwner() *GetAllGroups_Groups_Edges_N
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GetAllGroups_Groups_Edges_Node) GetLogoURL() *string {
 	if t == nil {
@@ -4614,7 +4614,7 @@ type CreateGroup_CreateGroup_Group struct {
 	Name        string                                   "json:\"name\" graphql:\"name\""
 	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
-	Owner       CreateGroup_CreateGroup_Group_Owner      "json:\"owner\" graphql:\"owner\""
+	Owner       *CreateGroup_CreateGroup_Group_Owner     "json:\"owner,omitempty\" graphql:\"owner\""
 	LogoURL     *string                                  "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Setting     CreateGroup_CreateGroup_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*CreateGroup_CreateGroup_Group_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -4652,7 +4652,7 @@ func (t *CreateGroup_CreateGroup_Group) GetOwner() *CreateGroup_CreateGroup_Grou
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *CreateGroup_CreateGroup_Group) GetLogoURL() *string {
 	if t == nil {
@@ -6170,11 +6170,11 @@ type GetIntegrations_Integrations_Edges_Node struct {
 	UpdatedBy    *string                                                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	DeletedAt    *time.Time                                              "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
 	DeletedBy    *string                                                 "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	OwnerID      string                                                  "json:\"ownerID\" graphql:\"ownerID\""
+	OwnerID      *string                                                 "json:\"ownerID,omitempty\" graphql:\"ownerID\""
 	Name         string                                                  "json:\"name\" graphql:\"name\""
 	Description  *string                                                 "json:\"description,omitempty\" graphql:\"description\""
 	Kind         *string                                                 "json:\"kind,omitempty\" graphql:\"kind\""
-	Owner        GetIntegrations_Integrations_Edges_Node_Owner           "json:\"owner\" graphql:\"owner\""
+	Owner        *GetIntegrations_Integrations_Edges_Node_Owner          "json:\"owner,omitempty\" graphql:\"owner\""
 	Secrets      []*GetIntegrations_Integrations_Edges_Node_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*GetIntegrations_Integrations_Edges_Node_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*GetIntegrations_Integrations_Edges_Node_Events       "json:\"events,omitempty\" graphql:\"events\""
@@ -6222,7 +6222,7 @@ func (t *GetIntegrations_Integrations_Edges_Node) GetDeletedBy() *string {
 	}
 	return t.DeletedBy
 }
-func (t *GetIntegrations_Integrations_Edges_Node) GetOwnerID() string {
+func (t *GetIntegrations_Integrations_Edges_Node) GetOwnerID() *string {
 	if t == nil {
 		t = &GetIntegrations_Integrations_Edges_Node{}
 	}
@@ -6250,7 +6250,7 @@ func (t *GetIntegrations_Integrations_Edges_Node) GetOwner() *GetIntegrations_In
 	if t == nil {
 		t = &GetIntegrations_Integrations_Edges_Node{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GetIntegrations_Integrations_Edges_Node) GetSecrets() []*GetIntegrations_Integrations_Edges_Node_Secrets {
 	if t == nil {
@@ -6345,11 +6345,11 @@ type CreateIntegration_CreateIntegration_Integration struct {
 	UpdatedBy    *string                                                         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	DeletedAt    *time.Time                                                      "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
 	DeletedBy    *string                                                         "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	OwnerID      string                                                          "json:\"ownerID\" graphql:\"ownerID\""
+	OwnerID      *string                                                         "json:\"ownerID,omitempty\" graphql:\"ownerID\""
 	Name         string                                                          "json:\"name\" graphql:\"name\""
 	Description  *string                                                         "json:\"description,omitempty\" graphql:\"description\""
 	Kind         *string                                                         "json:\"kind,omitempty\" graphql:\"kind\""
-	Owner        CreateIntegration_CreateIntegration_Integration_Owner           "json:\"owner\" graphql:\"owner\""
+	Owner        *CreateIntegration_CreateIntegration_Integration_Owner          "json:\"owner,omitempty\" graphql:\"owner\""
 	Secrets      []*CreateIntegration_CreateIntegration_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*CreateIntegration_CreateIntegration_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*CreateIntegration_CreateIntegration_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
@@ -6397,7 +6397,7 @@ func (t *CreateIntegration_CreateIntegration_Integration) GetDeletedBy() *string
 	}
 	return t.DeletedBy
 }
-func (t *CreateIntegration_CreateIntegration_Integration) GetOwnerID() string {
+func (t *CreateIntegration_CreateIntegration_Integration) GetOwnerID() *string {
 	if t == nil {
 		t = &CreateIntegration_CreateIntegration_Integration{}
 	}
@@ -6425,7 +6425,7 @@ func (t *CreateIntegration_CreateIntegration_Integration) GetOwner() *CreateInte
 	if t == nil {
 		t = &CreateIntegration_CreateIntegration_Integration{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *CreateIntegration_CreateIntegration_Integration) GetSecrets() []*CreateIntegration_CreateIntegration_Integration_Secrets {
 	if t == nil {
@@ -6509,11 +6509,11 @@ type UpdateIntegration_UpdateIntegration_Integration struct {
 	UpdatedBy    *string                                                         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	DeletedAt    *time.Time                                                      "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
 	DeletedBy    *string                                                         "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	OwnerID      string                                                          "json:\"ownerID\" graphql:\"ownerID\""
+	OwnerID      *string                                                         "json:\"ownerID,omitempty\" graphql:\"ownerID\""
 	Name         string                                                          "json:\"name\" graphql:\"name\""
 	Description  *string                                                         "json:\"description,omitempty\" graphql:\"description\""
 	Kind         *string                                                         "json:\"kind,omitempty\" graphql:\"kind\""
-	Owner        UpdateIntegration_UpdateIntegration_Integration_Owner           "json:\"owner\" graphql:\"owner\""
+	Owner        *UpdateIntegration_UpdateIntegration_Integration_Owner          "json:\"owner,omitempty\" graphql:\"owner\""
 	Secrets      []*UpdateIntegration_UpdateIntegration_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*UpdateIntegration_UpdateIntegration_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*UpdateIntegration_UpdateIntegration_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
@@ -6561,7 +6561,7 @@ func (t *UpdateIntegration_UpdateIntegration_Integration) GetDeletedBy() *string
 	}
 	return t.DeletedBy
 }
-func (t *UpdateIntegration_UpdateIntegration_Integration) GetOwnerID() string {
+func (t *UpdateIntegration_UpdateIntegration_Integration) GetOwnerID() *string {
 	if t == nil {
 		t = &UpdateIntegration_UpdateIntegration_Integration{}
 	}
@@ -6589,7 +6589,7 @@ func (t *UpdateIntegration_UpdateIntegration_Integration) GetOwner() *UpdateInte
 	if t == nil {
 		t = &UpdateIntegration_UpdateIntegration_Integration{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *UpdateIntegration_UpdateIntegration_Integration) GetSecrets() []*UpdateIntegration_UpdateIntegration_Integration_Secrets {
 	if t == nil {
@@ -6644,14 +6644,14 @@ func (t *CreateInvite_CreateInvite_Invite_Owner) GetID() string {
 }
 
 type CreateInvite_CreateInvite_Invite struct {
-	ID           string                                 "json:\"id\" graphql:\"id\""
-	Recipient    string                                 "json:\"recipient\" graphql:\"recipient\""
-	Status       enums.InviteStatus                     "json:\"status\" graphql:\"status\""
-	RequestorID  string                                 "json:\"requestorID\" graphql:\"requestorID\""
-	Expires      time.Time                              "json:\"expires\" graphql:\"expires\""
-	Role         enums.Role                             "json:\"role\" graphql:\"role\""
-	SendAttempts int64                                  "json:\"sendAttempts\" graphql:\"sendAttempts\""
-	Owner        CreateInvite_CreateInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
+	ID           string                                  "json:\"id\" graphql:\"id\""
+	Recipient    string                                  "json:\"recipient\" graphql:\"recipient\""
+	Status       enums.InviteStatus                      "json:\"status\" graphql:\"status\""
+	RequestorID  string                                  "json:\"requestorID\" graphql:\"requestorID\""
+	Expires      time.Time                               "json:\"expires\" graphql:\"expires\""
+	Role         enums.Role                              "json:\"role\" graphql:\"role\""
+	SendAttempts int64                                   "json:\"sendAttempts\" graphql:\"sendAttempts\""
+	Owner        *CreateInvite_CreateInvite_Invite_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *CreateInvite_CreateInvite_Invite) GetID() string {
@@ -6700,7 +6700,7 @@ func (t *CreateInvite_CreateInvite_Invite) GetOwner() *CreateInvite_CreateInvite
 	if t == nil {
 		t = &CreateInvite_CreateInvite_Invite{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 
 type CreateInvite_CreateInvite struct {
@@ -6751,20 +6751,20 @@ func (t *GetInvite_Invite_Owner) GetName() string {
 }
 
 type GetInvite_Invite struct {
-	ID           string                 "json:\"id\" graphql:\"id\""
-	CreatedAt    *time.Time             "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt    *time.Time             "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy    *string                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt    *time.Time             "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy    *string                "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Expires      time.Time              "json:\"expires\" graphql:\"expires\""
-	Recipient    string                 "json:\"recipient\" graphql:\"recipient\""
-	Status       enums.InviteStatus     "json:\"status\" graphql:\"status\""
-	RequestorID  string                 "json:\"requestorID\" graphql:\"requestorID\""
-	Role         enums.Role             "json:\"role\" graphql:\"role\""
-	SendAttempts int64                  "json:\"sendAttempts\" graphql:\"sendAttempts\""
-	Owner        GetInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
+	ID           string                  "json:\"id\" graphql:\"id\""
+	CreatedAt    *time.Time              "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time              "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy    *string                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt    *time.Time              "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy    *string                 "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Expires      time.Time               "json:\"expires\" graphql:\"expires\""
+	Recipient    string                  "json:\"recipient\" graphql:\"recipient\""
+	Status       enums.InviteStatus      "json:\"status\" graphql:\"status\""
+	RequestorID  string                  "json:\"requestorID\" graphql:\"requestorID\""
+	Role         enums.Role              "json:\"role\" graphql:\"role\""
+	SendAttempts int64                   "json:\"sendAttempts\" graphql:\"sendAttempts\""
+	Owner        *GetInvite_Invite_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *GetInvite_Invite) GetID() string {
@@ -6849,7 +6849,7 @@ func (t *GetInvite_Invite) GetOwner() *GetInvite_Invite_Owner {
 	if t == nil {
 		t = &GetInvite_Invite{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 
 type InvitesByOrgID_Invites_Edges_Node_Owner_Invites struct {
@@ -6910,14 +6910,14 @@ func (t *InvitesByOrgID_Invites_Edges_Node_Owner) GetInvites() []*InvitesByOrgID
 }
 
 type InvitesByOrgID_Invites_Edges_Node struct {
-	Owner InvitesByOrgID_Invites_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
+	Owner *InvitesByOrgID_Invites_Edges_Node_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *InvitesByOrgID_Invites_Edges_Node) GetOwner() *InvitesByOrgID_Invites_Edges_Node_Owner {
 	if t == nil {
 		t = &InvitesByOrgID_Invites_Edges_Node{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 
 type InvitesByOrgID_Invites_Edges struct {
@@ -10122,11 +10122,11 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 }
 
 type Subscribers_Subscribers_Edges_Node struct {
-	ID            string "json:\"id\" graphql:\"id\""
-	Email         string "json:\"email\" graphql:\"email\""
-	VerifiedEmail bool   "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
-	Active        bool   "json:\"active\" graphql:\"active\""
-	OwnerID       string "json:\"ownerID\" graphql:\"ownerID\""
+	ID            string  "json:\"id\" graphql:\"id\""
+	Email         string  "json:\"email\" graphql:\"email\""
+	VerifiedEmail bool    "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+	Active        bool    "json:\"active\" graphql:\"active\""
+	OwnerID       *string "json:\"ownerID,omitempty\" graphql:\"ownerID\""
 }
 
 func (t *Subscribers_Subscribers_Edges_Node) GetID() string {
@@ -10153,7 +10153,7 @@ func (t *Subscribers_Subscribers_Edges_Node) GetActive() bool {
 	}
 	return t.Active
 }
-func (t *Subscribers_Subscribers_Edges_Node) GetOwnerID() string {
+func (t *Subscribers_Subscribers_Edges_Node) GetOwnerID() *string {
 	if t == nil {
 		t = &Subscribers_Subscribers_Edges_Node{}
 	}
@@ -10183,11 +10183,11 @@ func (t *Subscribers_Subscribers) GetEdges() []*Subscribers_Subscribers_Edges {
 }
 
 type GetSubscriber_Subscriber struct {
-	ID            string "json:\"id\" graphql:\"id\""
-	Email         string "json:\"email\" graphql:\"email\""
-	VerifiedEmail bool   "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
-	Active        bool   "json:\"active\" graphql:\"active\""
-	OwnerID       string "json:\"ownerID\" graphql:\"ownerID\""
+	ID            string  "json:\"id\" graphql:\"id\""
+	Email         string  "json:\"email\" graphql:\"email\""
+	VerifiedEmail bool    "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+	Active        bool    "json:\"active\" graphql:\"active\""
+	OwnerID       *string "json:\"ownerID,omitempty\" graphql:\"ownerID\""
 }
 
 func (t *GetSubscriber_Subscriber) GetID() string {
@@ -10214,7 +10214,7 @@ func (t *GetSubscriber_Subscriber) GetActive() bool {
 	}
 	return t.Active
 }
-func (t *GetSubscriber_Subscriber) GetOwnerID() string {
+func (t *GetSubscriber_Subscriber) GetOwnerID() *string {
 	if t == nil {
 		t = &GetSubscriber_Subscriber{}
 	}
@@ -10400,18 +10400,18 @@ func (t *CreateTemplate_CreateTemplate_Template_Owner) GetID() string {
 }
 
 type CreateTemplate_CreateTemplate_Template struct {
-	ID          string                                       "json:\"id\" graphql:\"id\""
-	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt   *time.Time                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy   *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Name        string                                       "json:\"name\" graphql:\"name\""
-	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig  json.RawMessage                              "json:\"jsonconfig\" graphql:\"jsonconfig\""
-	Uischema    json.RawMessage                              "json:\"uischema,omitempty\" graphql:\"uischema\""
-	Owner       CreateTemplate_CreateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                                        "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                    "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                       "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                        "json:\"name\" graphql:\"name\""
+	Description *string                                       "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                               "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Uischema    json.RawMessage                               "json:\"uischema,omitempty\" graphql:\"uischema\""
+	Owner       *CreateTemplate_CreateTemplate_Template_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *CreateTemplate_CreateTemplate_Template) GetID() string {
@@ -10484,7 +10484,7 @@ func (t *CreateTemplate_CreateTemplate_Template) GetOwner() *CreateTemplate_Crea
 	if t == nil {
 		t = &CreateTemplate_CreateTemplate_Template{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 
 type CreateTemplate_CreateTemplate struct {
@@ -10510,18 +10510,18 @@ func (t *UpdateTemplate_UpdateTemplate_Template_Owner) GetID() string {
 }
 
 type UpdateTemplate_UpdateTemplate_Template struct {
-	ID          string                                       "json:\"id\" graphql:\"id\""
-	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt   *time.Time                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy   *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Name        string                                       "json:\"name\" graphql:\"name\""
-	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig  json.RawMessage                              "json:\"jsonconfig\" graphql:\"jsonconfig\""
-	Uischema    json.RawMessage                              "json:\"uischema,omitempty\" graphql:\"uischema\""
-	Owner       UpdateTemplate_UpdateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                                        "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                    "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                       "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                        "json:\"name\" graphql:\"name\""
+	Description *string                                       "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                               "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Uischema    json.RawMessage                               "json:\"uischema,omitempty\" graphql:\"uischema\""
+	Owner       *UpdateTemplate_UpdateTemplate_Template_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *UpdateTemplate_UpdateTemplate_Template) GetID() string {
@@ -10594,7 +10594,7 @@ func (t *UpdateTemplate_UpdateTemplate_Template) GetOwner() *UpdateTemplate_Upda
 	if t == nil {
 		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 
 type UpdateTemplate_UpdateTemplate struct {
@@ -10620,18 +10620,18 @@ func (t *GetAllTemplates_Templates_Edges_Node_Owner) GetID() string {
 }
 
 type GetAllTemplates_Templates_Edges_Node struct {
-	ID          string                                     "json:\"id\" graphql:\"id\""
-	CreatedAt   *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt   *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy   *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt   *time.Time                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy   *string                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Name        string                                     "json:\"name\" graphql:\"name\""
-	Description *string                                    "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig  json.RawMessage                            "json:\"jsonconfig\" graphql:\"jsonconfig\""
-	Uischema    json.RawMessage                            "json:\"uischema,omitempty\" graphql:\"uischema\""
-	Owner       GetAllTemplates_Templates_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                                      "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                  "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                     "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                      "json:\"name\" graphql:\"name\""
+	Description *string                                     "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                             "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Uischema    json.RawMessage                             "json:\"uischema,omitempty\" graphql:\"uischema\""
+	Owner       *GetAllTemplates_Templates_Edges_Node_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *GetAllTemplates_Templates_Edges_Node) GetID() string {
@@ -10704,7 +10704,7 @@ func (t *GetAllTemplates_Templates_Edges_Node) GetOwner() *GetAllTemplates_Templ
 	if t == nil {
 		t = &GetAllTemplates_Templates_Edges_Node{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 
 type GetAllTemplates_Templates_Edges struct {
@@ -10741,18 +10741,18 @@ func (t *GetTemplate_Template_Owner) GetID() string {
 }
 
 type GetTemplate_Template struct {
-	ID          string                     "json:\"id\" graphql:\"id\""
-	CreatedAt   *time.Time                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt   *time.Time                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy   *string                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt   *time.Time                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy   *string                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Name        string                     "json:\"name\" graphql:\"name\""
-	Description *string                    "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig  json.RawMessage            "json:\"jsonconfig\" graphql:\"jsonconfig\""
-	Uischema    json.RawMessage            "json:\"uischema,omitempty\" graphql:\"uischema\""
-	Owner       GetTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                      "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                  "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                     "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                      "json:\"name\" graphql:\"name\""
+	Description *string                     "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage             "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Uischema    json.RawMessage             "json:\"uischema,omitempty\" graphql:\"uischema\""
+	Owner       *GetTemplate_Template_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *GetTemplate_Template) GetID() string {
@@ -10825,7 +10825,7 @@ func (t *GetTemplate_Template) GetOwner() *GetTemplate_Template_Owner {
 	if t == nil {
 		t = &GetTemplate_Template{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 
 type GetTFASetting_TfaSetting struct {

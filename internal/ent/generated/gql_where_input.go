@@ -173,6 +173,8 @@ type APITokenWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        bool     `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       bool     `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 
@@ -578,6 +580,12 @@ func (i *APITokenWhereInput) P() (predicate.APIToken, error) {
 	}
 	if i.OwnerIDHasSuffix != nil {
 		predicates = append(predicates, apitoken.OwnerIDHasSuffix(*i.OwnerIDHasSuffix))
+	}
+	if i.OwnerIDIsNil {
+		predicates = append(predicates, apitoken.OwnerIDIsNil())
+	}
+	if i.OwnerIDNotNil {
+		predicates = append(predicates, apitoken.OwnerIDNotNil())
 	}
 	if i.OwnerIDEqualFold != nil {
 		predicates = append(predicates, apitoken.OwnerIDEqualFold(*i.OwnerIDEqualFold))
@@ -13543,6 +13551,8 @@ type IntegrationWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        bool     `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       bool     `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 
@@ -13954,6 +13964,12 @@ func (i *IntegrationWhereInput) P() (predicate.Integration, error) {
 	if i.OwnerIDHasSuffix != nil {
 		predicates = append(predicates, integration.OwnerIDHasSuffix(*i.OwnerIDHasSuffix))
 	}
+	if i.OwnerIDIsNil {
+		predicates = append(predicates, integration.OwnerIDIsNil())
+	}
+	if i.OwnerIDNotNil {
+		predicates = append(predicates, integration.OwnerIDNotNil())
+	}
 	if i.OwnerIDEqualFold != nil {
 		predicates = append(predicates, integration.OwnerIDEqualFold(*i.OwnerIDEqualFold))
 	}
@@ -14278,6 +14294,8 @@ type IntegrationHistoryWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        bool     `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       bool     `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 
@@ -14754,6 +14772,12 @@ func (i *IntegrationHistoryWhereInput) P() (predicate.IntegrationHistory, error)
 	if i.OwnerIDHasSuffix != nil {
 		predicates = append(predicates, integrationhistory.OwnerIDHasSuffix(*i.OwnerIDHasSuffix))
 	}
+	if i.OwnerIDIsNil {
+		predicates = append(predicates, integrationhistory.OwnerIDIsNil())
+	}
+	if i.OwnerIDNotNil {
+		predicates = append(predicates, integrationhistory.OwnerIDNotNil())
+	}
 	if i.OwnerIDEqualFold != nil {
 		predicates = append(predicates, integrationhistory.OwnerIDEqualFold(*i.OwnerIDEqualFold))
 	}
@@ -14973,6 +14997,8 @@ type InviteWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        bool     `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       bool     `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 
@@ -15405,6 +15431,12 @@ func (i *InviteWhereInput) P() (predicate.Invite, error) {
 	}
 	if i.OwnerIDHasSuffix != nil {
 		predicates = append(predicates, invite.OwnerIDHasSuffix(*i.OwnerIDHasSuffix))
+	}
+	if i.OwnerIDIsNil {
+		predicates = append(predicates, invite.OwnerIDIsNil())
+	}
+	if i.OwnerIDNotNil {
+		predicates = append(predicates, invite.OwnerIDNotNil())
 	}
 	if i.OwnerIDEqualFold != nil {
 		predicates = append(predicates, invite.OwnerIDEqualFold(*i.OwnerIDEqualFold))
@@ -23873,6 +23905,8 @@ type SubscriberWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        bool     `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       bool     `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 
@@ -24287,6 +24321,12 @@ func (i *SubscriberWhereInput) P() (predicate.Subscriber, error) {
 	}
 	if i.OwnerIDHasSuffix != nil {
 		predicates = append(predicates, subscriber.OwnerIDHasSuffix(*i.OwnerIDHasSuffix))
+	}
+	if i.OwnerIDIsNil {
+		predicates = append(predicates, subscriber.OwnerIDIsNil())
+	}
+	if i.OwnerIDNotNil {
+		predicates = append(predicates, subscriber.OwnerIDNotNil())
 	}
 	if i.OwnerIDEqualFold != nil {
 		predicates = append(predicates, subscriber.OwnerIDEqualFold(*i.OwnerIDEqualFold))

@@ -27,8 +27,10 @@ type OrgOwnerMixin struct {
 	mixin.Schema
 	// Ref table for the id
 	Ref string
-	// Optional makes the owner id field not required
-	Optional bool
+	// Required makes the owner id field required as input
+	Required bool
+	// AllowEmpty allows the owner id field to be empty
+	AllowEmpty bool
 	// SkipOASGeneration skips open api spec generation for the field
 	SkipOASGeneration bool
 	// AllowWhere includes the owner_id field in gql generated fields
@@ -48,8 +50,13 @@ func (orgOwned OrgOwnerMixin) Fields() []ent.Field {
 		ownerIDField.Annotations(entgql.Skip(), entoas.Skip(true))
 	}
 
-	if orgOwned.Optional {
+	if !orgOwned.Required {
 		ownerIDField.Optional()
+
+		// if explicitly set to allow empty values, otherwise ensure it is not empty
+		if !orgOwned.AllowEmpty {
+			ownerIDField.NotEmpty()
+		}
 	}
 
 	return []ent.Field{
@@ -70,14 +77,8 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 		Annotations(entoas.Skip(true)).
 		Unique()
 
-	if !orgOwned.Optional {
+	if orgOwned.Required {
 		ownerEdge.Required()
-	}
-
-	if orgOwned.SkipMutationInput {
-		ownerEdge.Annotations(
-			entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
-		)
 	}
 
 	if orgOwned.SkipOASGeneration {
@@ -98,11 +99,6 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 
 // Hooks of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
-	if orgOwned.Optional {
-		// do not add hooks if the field is optional
-		return []ent.Hook{}
-	}
-
 	return []ent.Hook{
 		func(next ent.Mutator) ent.Mutator {
 			return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
@@ -144,35 +140,30 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 
 // Interceptors of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
-	if orgOwned.Optional {
-		// do not add interceptors if the field is optional
-		return []ent.Interceptor{}
-	} else {
-		return []ent.Interceptor{
-			intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
-				if orgOwned.SkipInterceptor == interceptors.SkipAll {
+	return []ent.Interceptor{
+		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
+			if orgOwned.SkipInterceptor == interceptors.SkipAll {
+				return nil
+			}
+
+			orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
+			if err != nil {
+				ctxQuery := ent.QueryFromContext(ctx)
+
+				// Skip the interceptor if the query is for a single entity
+				// and the BypassInterceptor flag is set for Only queries
+				if orgOwned.SkipInterceptor == interceptors.SkipOnlyQuery && ctxQuery.Op == "Only" {
 					return nil
 				}
 
-				orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
-				if err != nil {
-					ctxQuery := ent.QueryFromContext(ctx)
+				return err
+			}
 
-					// Skip the interceptor if the query is for a single entity
-					// and the BypassInterceptor flag is set for Only queries
-					if orgOwned.SkipInterceptor == interceptors.SkipOnlyQuery && ctxQuery.Op == "Only" {
-						return nil
-					}
+			// sets the owner id on the query for the current organization
+			orgOwned.P(q, orgIDs)
 
-					return err
-				}
-
-				// sets the owner id on the query for the current organization
-				orgOwned.P(q, orgIDs)
-
-				return nil
-			}),
-		}
+			return nil
+		}),
 	}
 }
 

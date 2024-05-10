@@ -11,11 +11,18 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
-	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateSubscriber is the resolver for the createSubscriber field.
 func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated.CreateSubscriberInput) (*SubscriberCreatePayload, error) {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
 	sub, err := withTransactionalMutation(ctx).Subscriber.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -24,10 +31,6 @@ func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated
 			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
 
 			return nil, validationError
-		}
-
-		if errors.Is(err, hooks.ErrEmailRequired) {
-			return nil, err
 		}
 
 		if generated.IsConstraintError(err) {
@@ -40,7 +43,7 @@ func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated
 
 		r.logger.Errorw("failed to create subscriber", "error", err)
 
-		return nil, ErrInternalServerError
+		return nil, err
 	}
 
 	return &SubscriberCreatePayload{Subscriber: sub}, nil
@@ -53,10 +56,6 @@ func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, i
 			subscriber.EmailEQ(email),
 		).Only(ctx)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
 		if errors.Is(err, privacy.Deny) {
 			r.logger.Errorw("failed to get subscriber on update", "error", err)
 
@@ -64,15 +63,11 @@ func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, i
 		}
 
 		r.logger.Errorw("failed to get subscriber", "error", err)
-		return nil, ErrInternalServerError
+		return nil, err
 	}
 
 	subscriber, err = subscriber.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
 		if errors.Is(err, privacy.Deny) {
 			r.logger.Errorw("failed to update subscriber", "error", err)
 
@@ -80,7 +75,7 @@ func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, i
 		}
 
 		r.logger.Errorw("failed to update subscriber", "error", err)
-		return nil, ErrInternalServerError
+		return nil, err
 	}
 
 	return &SubscriberUpdatePayload{Subscriber: subscriber}, nil
@@ -95,7 +90,7 @@ func (r *mutationResolver) DeleteSubscriber(ctx context.Context, email string) (
 	if err != nil {
 		r.logger.Errorw("failed to delete subscriber", "error", err)
 
-		return nil, ErrInternalServerError
+		return nil, err
 	}
 
 	if num == 0 {
@@ -112,10 +107,6 @@ func (r *queryResolver) Subscriber(ctx context.Context, email string) (*generate
 			subscriber.EmailEQ(email),
 		).Only(ctx)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
 		if errors.Is(err, privacy.Deny) {
 			r.logger.Errorw("failed to get subscriber on update", "error", err)
 
@@ -123,7 +114,7 @@ func (r *queryResolver) Subscriber(ctx context.Context, email string) (*generate
 		}
 
 		r.logger.Errorw("failed to get subscriber", "error", err)
-		return nil, ErrInternalServerError
+		return nil, err
 	}
 
 	return subscriber, nil

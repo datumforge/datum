@@ -125,6 +125,12 @@ func (ehu *EntitlementHistoryUpdate) SetNillableOwnerID(s *string) *EntitlementH
 	return ehu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ehu *EntitlementHistoryUpdate) ClearOwnerID() *EntitlementHistoryUpdate {
+	ehu.mutation.ClearOwnerID()
+	return ehu
+}
+
 // SetTier sets the "tier" field.
 func (ehu *EntitlementHistoryUpdate) SetTier(e enums.Tier) *EntitlementHistoryUpdate {
 	ehu.mutation.SetTier(e)
@@ -317,6 +323,9 @@ func (ehu *EntitlementHistoryUpdate) sqlSave(ctx context.Context) (n int, err er
 	if value, ok := ehu.mutation.OwnerID(); ok {
 		_spec.SetField(entitlementhistory.FieldOwnerID, field.TypeString, value)
 	}
+	if ehu.mutation.OwnerIDCleared() {
+		_spec.ClearField(entitlementhistory.FieldOwnerID, field.TypeString)
+	}
 	if value, ok := ehu.mutation.Tier(); ok {
 		_spec.SetField(entitlementhistory.FieldTier, field.TypeEnum, value)
 	}
@@ -457,6 +466,12 @@ func (ehuo *EntitlementHistoryUpdateOne) SetNillableOwnerID(s *string) *Entitlem
 	if s != nil {
 		ehuo.SetOwnerID(*s)
 	}
+	return ehuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ehuo *EntitlementHistoryUpdateOne) ClearOwnerID() *EntitlementHistoryUpdateOne {
+	ehuo.mutation.ClearOwnerID()
 	return ehuo
 }
 
@@ -681,6 +696,9 @@ func (ehuo *EntitlementHistoryUpdateOne) sqlSave(ctx context.Context) (_node *En
 	}
 	if value, ok := ehuo.mutation.OwnerID(); ok {
 		_spec.SetField(entitlementhistory.FieldOwnerID, field.TypeString, value)
+	}
+	if ehuo.mutation.OwnerIDCleared() {
+		_spec.ClearField(entitlementhistory.FieldOwnerID, field.TypeString)
 	}
 	if value, ok := ehuo.mutation.Tier(); ok {
 		_spec.SetField(entitlementhistory.FieldTier, field.TypeEnum, value)

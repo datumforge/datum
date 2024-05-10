@@ -124,10 +124,11 @@ func (Subscriber) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType:    "organization",
-			IncludeHooks:  false,
-			OrgOwnedField: true,
-			IDField:       "OwnerID",
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			OrgOwnedField:   true,
+			NillableIDField: true,
+			IDField:         "OwnerID",
 		},
 		enthistory.Annotations{
 			Exclude: true,

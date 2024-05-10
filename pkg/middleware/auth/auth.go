@@ -206,7 +206,6 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 
 	return &auth.AuthenticatedUser{
 		SubjectID:          pat.OwnerID,
-		OrganizationID:     orgIDs[0],
 		OrganizationIDs:    orgIDs,
 		AuthenticationType: auth.PATAuthentication,
 	}, nil

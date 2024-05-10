@@ -132,6 +132,14 @@ func (gc *GroupCreate) SetOwnerID(s string) *GroupCreate {
 	return gc
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableOwnerID(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetOwnerID(*s)
+	}
+	return gc
+}
+
 // SetName sets the "name" field.
 func (gc *GroupCreate) SetName(s string) *GroupCreate {
 	gc.mutation.SetName(s)
@@ -391,8 +399,10 @@ func (gc *GroupCreate) check() error {
 	if _, ok := gc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Group.mapping_id"`)}
 	}
-	if _, ok := gc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Group.owner_id"`)}
+	if v, ok := gc.mutation.OwnerID(); ok {
+		if err := group.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Group.owner_id": %w`, err)}
+		}
 	}
 	if _, ok := gc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Group.name"`)}
@@ -409,9 +419,6 @@ func (gc *GroupCreate) check() error {
 		if err := group.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
 		}
-	}
-	if _, ok := gc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Group.owner"`)}
 	}
 	if _, ok := gc.mutation.SettingID(); !ok {
 		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "Group.setting"`)}

@@ -128,6 +128,14 @@ func (ec *EntitlementCreate) SetOwnerID(s string) *EntitlementCreate {
 	return ec
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableOwnerID(s *string) *EntitlementCreate {
+	if s != nil {
+		ec.SetOwnerID(*s)
+	}
+	return ec
+}
+
 // SetTier sets the "tier" field.
 func (ec *EntitlementCreate) SetTier(e enums.Tier) *EntitlementCreate {
 	ec.mutation.SetTier(e)
@@ -346,8 +354,10 @@ func (ec *EntitlementCreate) check() error {
 	if _, ok := ec.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Entitlement.mapping_id"`)}
 	}
-	if _, ok := ec.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Entitlement.owner_id"`)}
+	if v, ok := ec.mutation.OwnerID(); ok {
+		if err := entitlement.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.owner_id": %w`, err)}
+		}
 	}
 	if _, ok := ec.mutation.Tier(); !ok {
 		return &ValidationError{Name: "tier", err: errors.New(`generated: missing required field "Entitlement.tier"`)}
@@ -362,9 +372,6 @@ func (ec *EntitlementCreate) check() error {
 	}
 	if _, ok := ec.mutation.Cancelled(); !ok {
 		return &ValidationError{Name: "cancelled", err: errors.New(`generated: missing required field "Entitlement.cancelled"`)}
-	}
-	if _, ok := ec.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Entitlement.owner"`)}
 	}
 	return nil
 }

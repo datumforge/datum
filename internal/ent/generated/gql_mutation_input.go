@@ -20,7 +20,7 @@ type CreateAPITokenInput struct {
 	Description *string
 	Scopes      []string
 	LastUsedAt  *time.Time
-	OwnerID     string
+	OwnerID     *string
 }
 
 // Mutate applies the CreateAPITokenInput on the APITokenMutation builder.
@@ -50,7 +50,9 @@ func (i *CreateAPITokenInput) Mutate(m *APITokenMutation) {
 	if v := i.LastUsedAt; v != nil {
 		m.SetLastUsedAt(*v)
 	}
-	m.SetOwnerID(i.OwnerID)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 }
 
 // SetInput applies the change-set in the CreateAPITokenInput on the APITokenCreate builder.
@@ -73,6 +75,7 @@ type UpdateAPITokenInput struct {
 	AppendScopes     []string
 	ClearLastUsedAt  bool
 	LastUsedAt       *time.Time
+	ClearOwner       bool
 	OwnerID          *string
 }
 
@@ -113,6 +116,9 @@ func (i *UpdateAPITokenInput) Mutate(m *APITokenMutation) {
 	}
 	if v := i.LastUsedAt; v != nil {
 		m.SetLastUsedAt(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
@@ -223,7 +229,7 @@ type CreateEntitlementInput struct {
 	Expires                *bool
 	ExpiresAt              *time.Time
 	Cancelled              *bool
-	OwnerID                string
+	OwnerID                *string
 	FeatureIDs             []string
 	EventIDs               []string
 }
@@ -260,7 +266,9 @@ func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
 	}
-	m.SetOwnerID(i.OwnerID)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 	if v := i.FeatureIDs; len(v) > 0 {
 		m.AddFeatureIDs(v...)
 	}
@@ -290,6 +298,7 @@ type UpdateEntitlementInput struct {
 	ClearExpiresAt              bool
 	ExpiresAt                   *time.Time
 	Cancelled                   *bool
+	ClearOwner                  bool
 	OwnerID                     *string
 	ClearFeatures               bool
 	AddFeatureIDs               []string
@@ -339,6 +348,9 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	}
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
@@ -1032,7 +1044,7 @@ type CreateGroupInput struct {
 	GravatarLogoURL *string
 	LogoURL         *string
 	DisplayName     *string
-	OwnerID         string
+	OwnerID         *string
 	SettingID       string
 	UserIDs         []string
 	FeatureIDs      []string
@@ -1068,7 +1080,9 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
 	}
-	m.SetOwnerID(i.OwnerID)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 	m.SetSettingID(i.SettingID)
 	if v := i.UserIDs; len(v) > 0 {
 		m.AddUserIDs(v...)
@@ -1107,6 +1121,7 @@ type UpdateGroupInput struct {
 	ClearLogoURL         bool
 	LogoURL              *string
 	DisplayName          *string
+	ClearOwner           bool
 	OwnerID              *string
 	SettingID            *string
 	ClearUsers           bool
@@ -1163,6 +1178,9 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
@@ -1618,7 +1636,7 @@ type CreateIntegrationInput struct {
 	Name           string
 	Description    *string
 	Kind           *string
-	OwnerID        string
+	OwnerID        *string
 	SecretIDs      []string
 	Oauth2tokenIDs []string
 	EventIDs       []string
@@ -1645,7 +1663,9 @@ func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
 	if v := i.Kind; v != nil {
 		m.SetKind(*v)
 	}
-	m.SetOwnerID(i.OwnerID)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 	if v := i.SecretIDs; len(v) > 0 {
 		m.AddSecretIDs(v...)
 	}
@@ -1674,6 +1694,7 @@ type UpdateIntegrationInput struct {
 	Description          *string
 	ClearKind            bool
 	Kind                 *string
+	ClearOwner           bool
 	OwnerID              *string
 	ClearSecrets         bool
 	AddSecretIDs         []string
@@ -1714,6 +1735,9 @@ func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
 	}
 	if v := i.Kind; v != nil {
 		m.SetKind(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
@@ -1771,7 +1795,7 @@ type CreateInviteInput struct {
 	Role         *enums.Role
 	SendAttempts *int
 	RequestorID  string
-	OwnerID      string
+	OwnerID      *string
 	EventIDs     []string
 }
 
@@ -1801,7 +1825,9 @@ func (i *CreateInviteInput) Mutate(m *InviteMutation) {
 		m.SetSendAttempts(*v)
 	}
 	m.SetRequestorID(i.RequestorID)
-	m.SetOwnerID(i.OwnerID)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
@@ -1824,6 +1850,7 @@ type UpdateInviteInput struct {
 	Status         *enums.InviteStatus
 	Role           *enums.Role
 	SendAttempts   *int
+	ClearOwner     bool
 	OwnerID        *string
 	ClearEvents    bool
 	AddEventIDs    []string
@@ -1858,6 +1885,9 @@ func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
 	}
 	if v := i.SendAttempts; v != nil {
 		m.SetSendAttempts(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
@@ -2987,6 +3017,7 @@ type CreateSubscriberInput struct {
 	UpdatedBy   *string
 	Email       string
 	PhoneNumber *string
+	OwnerID     *string
 	EventIDs    []string
 }
 
@@ -3008,6 +3039,9 @@ func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
 	if v := i.PhoneNumber; v != nil {
 		m.SetPhoneNumber(*v)
 	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
@@ -3028,6 +3062,8 @@ type UpdateSubscriberInput struct {
 	Email            *string
 	ClearPhoneNumber bool
 	PhoneNumber      *string
+	ClearOwner       bool
+	OwnerID          *string
 	ClearEvents      bool
 	AddEventIDs      []string
 	RemoveEventIDs   []string
@@ -3055,6 +3091,12 @@ func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
 	}
 	if v := i.PhoneNumber; v != nil {
 		m.SetPhoneNumber(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()
@@ -3176,7 +3218,7 @@ type CreateTemplateInput struct {
 	Description  *string
 	Jsonconfig   customtypes.JSONObject
 	Uischema     customtypes.JSONObject
-	OwnerID      string
+	OwnerID      *string
 	DocumentIDs  []string
 }
 
@@ -3207,7 +3249,9 @@ func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
 	if v := i.Uischema; v != nil {
 		m.SetUischema(v)
 	}
-	m.SetOwnerID(i.OwnerID)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 	if v := i.DocumentIDs; len(v) > 0 {
 		m.AddDocumentIDs(v...)
 	}
@@ -3232,6 +3276,7 @@ type UpdateTemplateInput struct {
 	Jsonconfig        customtypes.JSONObject
 	ClearUischema     bool
 	Uischema          customtypes.JSONObject
+	ClearOwner        bool
 	OwnerID           *string
 	ClearDocuments    bool
 	AddDocumentIDs    []string
@@ -3272,6 +3317,9 @@ func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
 	}
 	if v := i.Uischema; v != nil {
 		m.SetUischema(v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)

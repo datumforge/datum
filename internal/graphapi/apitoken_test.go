@@ -171,6 +171,8 @@ func (suite *GraphTestSuite) TestMutationCreateAPIToken() {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
+			mock_fga.CheckAny(t, suite.client.fga, true)
+
 			if tc.errorMsg == "" {
 				// mock a call to check orgs
 				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
@@ -353,9 +355,7 @@ func (suite *GraphTestSuite) TestMutationDeleteAPIToken() {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			if tc.errorMsg == "" {
-				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
-			}
+			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
 			resp, err := suite.client.datum.DeleteAPIToken(reqCtx, tc.tokenID)
 

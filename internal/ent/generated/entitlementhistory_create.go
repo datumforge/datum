@@ -160,6 +160,14 @@ func (ehc *EntitlementHistoryCreate) SetOwnerID(s string) *EntitlementHistoryCre
 	return ehc
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ehc *EntitlementHistoryCreate) SetNillableOwnerID(s *string) *EntitlementHistoryCreate {
+	if s != nil {
+		ehc.SetOwnerID(*s)
+	}
+	return ehc
+}
+
 // SetTier sets the "tier" field.
 func (ehc *EntitlementHistoryCreate) SetTier(e enums.Tier) *EntitlementHistoryCreate {
 	ehc.mutation.SetTier(e)
@@ -342,9 +350,6 @@ func (ehc *EntitlementHistoryCreate) check() error {
 	}
 	if _, ok := ehc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "EntitlementHistory.mapping_id"`)}
-	}
-	if _, ok := ehc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "EntitlementHistory.owner_id"`)}
 	}
 	if _, ok := ehc.mutation.Tier(); !ok {
 		return &ValidationError{Name: "tier", err: errors.New(`generated: missing required field "EntitlementHistory.tier"`)}

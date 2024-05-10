@@ -125,6 +125,14 @@ func (atc *APITokenCreate) SetOwnerID(s string) *APITokenCreate {
 	return atc
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (atc *APITokenCreate) SetNillableOwnerID(s *string) *APITokenCreate {
+	if s != nil {
+		atc.SetOwnerID(*s)
+	}
+	return atc
+}
+
 // SetName sets the "name" field.
 func (atc *APITokenCreate) SetName(s string) *APITokenCreate {
 	atc.mutation.SetName(s)
@@ -292,8 +300,10 @@ func (atc *APITokenCreate) check() error {
 	if _, ok := atc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "APIToken.mapping_id"`)}
 	}
-	if _, ok := atc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "APIToken.owner_id"`)}
+	if v, ok := atc.mutation.OwnerID(); ok {
+		if err := apitoken.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "APIToken.owner_id": %w`, err)}
+		}
 	}
 	if _, ok := atc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "APIToken.name"`)}
@@ -305,9 +315,6 @@ func (atc *APITokenCreate) check() error {
 	}
 	if _, ok := atc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "APIToken.token"`)}
-	}
-	if _, ok := atc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "APIToken.owner"`)}
 	}
 	return nil
 }

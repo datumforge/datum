@@ -56,13 +56,13 @@ require (
 	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.20.0
 	golang.org/x/term v0.20.0
-	google.golang.org/api v0.178.0
+	google.golang.org/api v0.179.0
 	modernc.org/sqlite v1.29.9
 )
 
 require (
 	cloud.google.com/go v0.112.2 // indirect
-	cloud.google.com/go/auth v0.3.0 // indirect
+	cloud.google.com/go/auth v0.4.1 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/iam v1.1.7 // indirect

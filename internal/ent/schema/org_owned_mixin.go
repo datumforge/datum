@@ -38,8 +38,6 @@ type OrgOwnerMixin struct {
 	// SkipInterceptor skips the interceptor for that schema for all queries, or specific types,
 	// this is useful for tokens, etc
 	SkipInterceptor interceptors.SkipMode
-	// SkipMutationInput skips the field in the mutation input
-	SkipMutationInput bool
 }
 
 // Fields of the OrgOwnerMixin
@@ -99,6 +97,11 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 
 // Hooks of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
+	if orgOwned.AllowEmpty {
+		// do not add hooks if the field is optional
+		return []ent.Hook{}
+	}
+
 	return []ent.Hook{
 		func(next ent.Mutator) ent.Mutator {
 			return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
@@ -140,6 +143,11 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 
 // Interceptors of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
+	if orgOwned.AllowEmpty {
+		// do not add interceptors if the field is optional
+		return []ent.Interceptor{}
+	}
+
 	return []ent.Interceptor{
 		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
 			if orgOwned.SkipInterceptor == interceptors.SkipAll {

@@ -1987,14 +1987,10 @@ func init() {
 	webhookMixin := schema.Webhook{}.Mixin()
 	webhookMixinHooks0 := webhookMixin[0].Hooks()
 	webhookMixinHooks2 := webhookMixin[2].Hooks()
-	webhookMixinHooks3 := webhookMixin[3].Hooks()
 	webhook.Hooks[0] = webhookMixinHooks0[0]
 	webhook.Hooks[1] = webhookMixinHooks2[0]
-	webhook.Hooks[2] = webhookMixinHooks3[0]
 	webhookMixinInters2 := webhookMixin[2].Interceptors()
-	webhookMixinInters3 := webhookMixin[3].Interceptors()
 	webhook.Interceptors[0] = webhookMixinInters2[0]
-	webhook.Interceptors[1] = webhookMixinInters3[0]
 	webhookMixinFields0 := webhookMixin[0].Fields()
 	_ = webhookMixinFields0
 	webhookMixinFields1 := webhookMixin[1].Fields()

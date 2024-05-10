@@ -10,10 +10,18 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateInvite is the resolver for the createInvite field.
 func (r *mutationResolver) CreateInvite(ctx context.Context, input generated.CreateInviteInput) (*InviteCreatePayload, error) {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
 	om, err := withTransactionalMutation(ctx).Invite.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {

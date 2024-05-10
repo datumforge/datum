@@ -120,7 +120,6 @@ func (Webhook) Annotations() []schema.Annotation {
 			ObjectType:      "organization",
 			IncludeHooks:    false,
 			IDField:         "OwnerID",
-			OrgOwnedField:   true,
 			NillableIDField: true,
 		},
 		enthistory.Annotations{

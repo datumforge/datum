@@ -85,10 +85,9 @@ func (Subscriber) Mixin() []ent.Mixin {
 		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
-			Ref:               "subscribers",
-			AllowWhere:        true,
-			SkipInterceptor:   interceptors.SkipOnlyQuery,
-			SkipMutationInput: true,
+			Ref:             "subscribers",
+			AllowWhere:      true,
+			SkipInterceptor: interceptors.SkipOnlyQuery,
 		},
 	}
 }

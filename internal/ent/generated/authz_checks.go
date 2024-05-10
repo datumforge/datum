@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/fgax"
 )
@@ -1706,12 +1707,38 @@ func (m *WebhookMutation) CheckAccessForEdit(ctx context.Context) error {
 		ObjectType:  "organization",
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
-	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	gCtx := graphql.GetFieldContext(ctx)
+
+	// get the input from the context
+	gInput := gCtx.Args["input"]
+
+	// check if the input is a CreateWebhookInput
+	input, ok := gInput.(CreateWebhookInput)
+	if ok {
+		ac.ObjectID = *input.OwnerID
+
 	}
 
-	ac.ObjectID = orgID
+	// check the id from the args
+	if ac.ObjectID == "" {
+		ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+	}
+
+	// if this is still empty, we need to query the object to get the object id
+	// this happens on join tables where we have the join ID (for updates and deletes)
+	if ac.ObjectID == "" && "id" != "ownerid" {
+		id, ok := gCtx.Args["id"].(string)
+		if ok {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Webhook.Query().Where(webhook.ID(id)).Only(reqCtx)
+			if err != nil {
+				return privacy.Skipf("nil request, skipping auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+	}
 
 	// request is for a list objects, will get filtered in interceptors
 	if ac.ObjectID == "" {

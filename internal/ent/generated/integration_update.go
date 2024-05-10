@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -230,6 +231,21 @@ func (iu *IntegrationUpdate) AddEvents(e ...*Event) *IntegrationUpdate {
 	return iu.AddEventIDs(ids...)
 }
 
+// AddWebhookIDs adds the "webhooks" edge to the Webhook entity by IDs.
+func (iu *IntegrationUpdate) AddWebhookIDs(ids ...string) *IntegrationUpdate {
+	iu.mutation.AddWebhookIDs(ids...)
+	return iu
+}
+
+// AddWebhooks adds the "webhooks" edges to the Webhook entity.
+func (iu *IntegrationUpdate) AddWebhooks(w ...*Webhook) *IntegrationUpdate {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return iu.AddWebhookIDs(ids...)
+}
+
 // Mutation returns the IntegrationMutation object of the builder.
 func (iu *IntegrationUpdate) Mutation() *IntegrationMutation {
 	return iu.mutation
@@ -302,6 +318,27 @@ func (iu *IntegrationUpdate) RemoveEvents(e ...*Event) *IntegrationUpdate {
 		ids[i] = e[i].ID
 	}
 	return iu.RemoveEventIDs(ids...)
+}
+
+// ClearWebhooks clears all "webhooks" edges to the Webhook entity.
+func (iu *IntegrationUpdate) ClearWebhooks() *IntegrationUpdate {
+	iu.mutation.ClearWebhooks()
+	return iu
+}
+
+// RemoveWebhookIDs removes the "webhooks" edge to Webhook entities by IDs.
+func (iu *IntegrationUpdate) RemoveWebhookIDs(ids ...string) *IntegrationUpdate {
+	iu.mutation.RemoveWebhookIDs(ids...)
+	return iu
+}
+
+// RemoveWebhooks removes "webhooks" edges to Webhook entities.
+func (iu *IntegrationUpdate) RemoveWebhooks(w ...*Webhook) *IntegrationUpdate {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return iu.RemoveWebhookIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -593,6 +630,54 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if iu.mutation.WebhooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.WebhooksTable,
+			Columns: integration.WebhooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.IntegrationWebhooks
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.RemovedWebhooksIDs(); len(nodes) > 0 && !iu.mutation.WebhooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.WebhooksTable,
+			Columns: integration.WebhooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.IntegrationWebhooks
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.WebhooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.WebhooksTable,
+			Columns: integration.WebhooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.IntegrationWebhooks
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = iu.schemaConfig.Integration
 	ctx = internal.NewSchemaConfigContext(ctx, iu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, iu.driver, _spec); err != nil {
@@ -811,6 +896,21 @@ func (iuo *IntegrationUpdateOne) AddEvents(e ...*Event) *IntegrationUpdateOne {
 	return iuo.AddEventIDs(ids...)
 }
 
+// AddWebhookIDs adds the "webhooks" edge to the Webhook entity by IDs.
+func (iuo *IntegrationUpdateOne) AddWebhookIDs(ids ...string) *IntegrationUpdateOne {
+	iuo.mutation.AddWebhookIDs(ids...)
+	return iuo
+}
+
+// AddWebhooks adds the "webhooks" edges to the Webhook entity.
+func (iuo *IntegrationUpdateOne) AddWebhooks(w ...*Webhook) *IntegrationUpdateOne {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return iuo.AddWebhookIDs(ids...)
+}
+
 // Mutation returns the IntegrationMutation object of the builder.
 func (iuo *IntegrationUpdateOne) Mutation() *IntegrationMutation {
 	return iuo.mutation
@@ -883,6 +983,27 @@ func (iuo *IntegrationUpdateOne) RemoveEvents(e ...*Event) *IntegrationUpdateOne
 		ids[i] = e[i].ID
 	}
 	return iuo.RemoveEventIDs(ids...)
+}
+
+// ClearWebhooks clears all "webhooks" edges to the Webhook entity.
+func (iuo *IntegrationUpdateOne) ClearWebhooks() *IntegrationUpdateOne {
+	iuo.mutation.ClearWebhooks()
+	return iuo
+}
+
+// RemoveWebhookIDs removes the "webhooks" edge to Webhook entities by IDs.
+func (iuo *IntegrationUpdateOne) RemoveWebhookIDs(ids ...string) *IntegrationUpdateOne {
+	iuo.mutation.RemoveWebhookIDs(ids...)
+	return iuo
+}
+
+// RemoveWebhooks removes "webhooks" edges to Webhook entities.
+func (iuo *IntegrationUpdateOne) RemoveWebhooks(w ...*Webhook) *IntegrationUpdateOne {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return iuo.RemoveWebhookIDs(ids...)
 }
 
 // Where appends a list predicates to the IntegrationUpdate builder.
@@ -1199,6 +1320,54 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 			},
 		}
 		edge.Schema = iuo.schemaConfig.IntegrationEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iuo.mutation.WebhooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.WebhooksTable,
+			Columns: integration.WebhooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.IntegrationWebhooks
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.RemovedWebhooksIDs(); len(nodes) > 0 && !iuo.mutation.WebhooksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.WebhooksTable,
+			Columns: integration.WebhooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.IntegrationWebhooks
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.WebhooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.WebhooksTable,
+			Columns: integration.WebhooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.IntegrationWebhooks
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -4367,6 +4367,25 @@ func (c *IntegrationClient) QueryEvents(i *Integration) *EventQuery {
 	return query
 }
 
+// QueryWebhooks queries the webhooks edge of a Integration.
+func (c *IntegrationClient) QueryWebhooks(i *Integration) *WebhookQuery {
+	query := (&WebhookClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(integration.Table, integration.FieldID, id),
+			sqlgraph.To(webhook.Table, webhook.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, integration.WebhooksTable, integration.WebhooksPrimaryKey...),
+		)
+		schemaConfig := i.schemaConfig
+		step.To.Schema = schemaConfig.Webhook
+		step.Edge.Schema = schemaConfig.IntegrationWebhooks
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *IntegrationClient) Hooks() []Hook {
 	hooks := c.hooks.Integration
@@ -8493,6 +8512,25 @@ func (c *WebhookClient) QueryEvents(w *Webhook) *EventQuery {
 		schemaConfig := w.schemaConfig
 		step.To.Schema = schemaConfig.Event
 		step.Edge.Schema = schemaConfig.WebhookEvents
+		fromV = sqlgraph.Neighbors(w.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryIntegrations queries the integrations edge of a Webhook.
+func (c *WebhookClient) QueryIntegrations(w *Webhook) *IntegrationQuery {
+	query := (&IntegrationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := w.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(webhook.Table, webhook.FieldID, id),
+			sqlgraph.To(integration.Table, integration.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, webhook.IntegrationsTable, webhook.IntegrationsPrimaryKey...),
+		)
+		schemaConfig := w.schemaConfig
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.IntegrationWebhooks
 		fromV = sqlgraph.Neighbors(w.driver.Dialect(), step)
 		return fromV, nil
 	}

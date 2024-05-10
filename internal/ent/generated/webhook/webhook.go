@@ -55,6 +55,8 @@ const (
 	EdgeOwner = "owner"
 	// EdgeEvents holds the string denoting the events edge name in mutations.
 	EdgeEvents = "events"
+	// EdgeIntegrations holds the string denoting the integrations edge name in mutations.
+	EdgeIntegrations = "integrations"
 	// Table holds the table name of the webhook in the database.
 	Table = "webhooks"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -69,6 +71,11 @@ const (
 	// EventsInverseTable is the table name for the Event entity.
 	// It exists in this package in order to avoid circular dependency with the "event" package.
 	EventsInverseTable = "events"
+	// IntegrationsTable is the table that holds the integrations relation/edge. The primary key declared below.
+	IntegrationsTable = "integration_webhooks"
+	// IntegrationsInverseTable is the table name for the Integration entity.
+	// It exists in this package in order to avoid circular dependency with the "integration" package.
+	IntegrationsInverseTable = "integrations"
 )
 
 // Columns holds all SQL columns for webhook fields.
@@ -98,6 +105,9 @@ var (
 	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
 	// primary key for the events relation (M2M).
 	EventsPrimaryKey = []string{"webhook_id", "event_id"}
+	// IntegrationsPrimaryKey and IntegrationsColumn2 are the table columns denoting the
+	// primary key for the integrations relation (M2M).
+	IntegrationsPrimaryKey = []string{"integration_id", "webhook_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -251,6 +261,20 @@ func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByIntegrationsCount orders the results by integrations count.
+func ByIntegrationsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newIntegrationsStep(), opts...)
+	}
+}
+
+// ByIntegrations orders the results by integrations terms.
+func ByIntegrations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newIntegrationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -263,5 +287,12 @@ func newEventsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EventsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+	)
+}
+func newIntegrationsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(IntegrationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, IntegrationsTable, IntegrationsPrimaryKey...),
 	)
 }

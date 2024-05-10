@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
 )
 
 // IntegrationCreate is the builder for creating a Integration entity.
@@ -232,6 +233,21 @@ func (ic *IntegrationCreate) AddEvents(e ...*Event) *IntegrationCreate {
 		ids[i] = e[i].ID
 	}
 	return ic.AddEventIDs(ids...)
+}
+
+// AddWebhookIDs adds the "webhooks" edge to the Webhook entity by IDs.
+func (ic *IntegrationCreate) AddWebhookIDs(ids ...string) *IntegrationCreate {
+	ic.mutation.AddWebhookIDs(ids...)
+	return ic
+}
+
+// AddWebhooks adds the "webhooks" edges to the Webhook entity.
+func (ic *IntegrationCreate) AddWebhooks(w ...*Webhook) *IntegrationCreate {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return ic.AddWebhookIDs(ids...)
 }
 
 // Mutation returns the IntegrationMutation object of the builder.
@@ -460,6 +476,23 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = ic.schemaConfig.IntegrationEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ic.mutation.WebhooksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.WebhooksTable,
+			Columns: integration.WebhooksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ic.schemaConfig.IntegrationWebhooks
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

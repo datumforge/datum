@@ -13603,6 +13603,10 @@ type IntegrationWhereInput struct {
 	// "events" edge predicates.
 	HasEvents     *bool              `json:"hasEvents,omitempty"`
 	HasEventsWith []*EventWhereInput `json:"hasEventsWith,omitempty"`
+
+	// "webhooks" edge predicates.
+	HasWebhooks     *bool                `json:"hasWebhooks,omitempty"`
+	HasWebhooksWith []*WebhookWhereInput `json:"hasWebhooksWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -14132,6 +14136,24 @@ func (i *IntegrationWhereInput) P() (predicate.Integration, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, integration.HasEventsWith(with...))
+	}
+	if i.HasWebhooks != nil {
+		p := integration.HasWebhooks()
+		if !*i.HasWebhooks {
+			p = integration.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasWebhooksWith) > 0 {
+		with := make([]predicate.Webhook, 0, len(i.HasWebhooksWith))
+		for _, w := range i.HasWebhooksWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasWebhooksWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, integration.HasWebhooksWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -30487,6 +30509,10 @@ type WebhookWhereInput struct {
 	// "events" edge predicates.
 	HasEvents     *bool              `json:"hasEvents,omitempty"`
 	HasEventsWith []*EventWhereInput `json:"hasEventsWith,omitempty"`
+
+	// "integrations" edge predicates.
+	HasIntegrations     *bool                    `json:"hasIntegrations,omitempty"`
+	HasIntegrationsWith []*IntegrationWhereInput `json:"hasIntegrationsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -31100,6 +31126,24 @@ func (i *WebhookWhereInput) P() (predicate.Webhook, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, webhook.HasEventsWith(with...))
+	}
+	if i.HasIntegrations != nil {
+		p := webhook.HasIntegrations()
+		if !*i.HasIntegrations {
+			p = webhook.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasIntegrationsWith) > 0 {
+		with := make([]predicate.Integration, 0, len(i.HasIntegrationsWith))
+		for _, w := range i.HasIntegrationsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasIntegrationsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, webhook.HasIntegrationsWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

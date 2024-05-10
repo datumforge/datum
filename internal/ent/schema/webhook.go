@@ -90,14 +90,9 @@ func (Webhook) Mixin() []ent.Mixin {
 func (Webhook) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("events", Event.Type),
+		edge.From("integrations", Integration.Type).Ref("webhooks"),
 	}
 }
-
-// func (Webhook) Hooks() []ent.Hook {
-//	return []ent.Hook{
-//		hooks.Webhook(),
-//	}
-//}
 
 // Indexes of the Webhook
 func (Webhook) Indexes() []ent.Index {

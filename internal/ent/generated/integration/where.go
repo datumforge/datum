@@ -968,6 +968,35 @@ func HasEventsWith(preds ...predicate.Event) predicate.Integration {
 	})
 }
 
+// HasWebhooks applies the HasEdge predicate on the "webhooks" edge.
+func HasWebhooks() predicate.Integration {
+	return predicate.Integration(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, WebhooksTable, WebhooksPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Webhook
+		step.Edge.Schema = schemaConfig.IntegrationWebhooks
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasWebhooksWith applies the HasEdge predicate on the "webhooks" edge with a given conditions (other predicates).
+func HasWebhooksWith(preds ...predicate.Webhook) predicate.Integration {
+	return predicate.Integration(func(s *sql.Selector) {
+		step := newWebhooksStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Webhook
+		step.Edge.Schema = schemaConfig.IntegrationWebhooks
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Integration) predicate.Integration {
 	return predicate.Integration(sql.AndPredicates(predicates...))

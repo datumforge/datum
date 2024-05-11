@@ -160,6 +160,11 @@ query GetAllIntegrations {
         events {
           id
         }
+        webhooks {
+          id
+          destinationURL
+          enabled
+        }
       }
     }
   }

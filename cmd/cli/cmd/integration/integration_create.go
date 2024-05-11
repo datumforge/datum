@@ -33,6 +33,9 @@ func init() {
 
 	integrationCreateCmd.Flags().StringP("owner-id", "o", "", "owner of the integration")
 	datum.ViperBindFlag("integration.create.owner-id", integrationCreateCmd.Flags().Lookup("owner-id"))
+
+	integrationCreateCmd.Flags().StringP("webhook-id", "w", "", "the webhook id to associate with the integration")
+	datum.ViperBindFlag("integration.create.webhook-id", integrationCreateCmd.Flags().Lookup("webhook-id"))
 }
 
 func createintegration(ctx context.Context) error {
@@ -62,6 +65,10 @@ func createintegration(ctx context.Context) error {
 	input := datumclient.CreateIntegrationInput{
 		Name: name,
 		Kind: &kind,
+	}
+
+	if webhookID := viper.GetString("integration.create.webhook-id"); webhookID != "" {
+		input.WebhookIDs = append(input.WebhookIDs, webhookID)
 	}
 
 	if description != "" {

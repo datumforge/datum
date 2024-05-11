@@ -85,6 +85,11 @@ query GetAllIntegrations {
         events {
           id
         }
+        webhooks {
+          id
+          destinationURL
+          enabled
+        }
       }
     }
   }
@@ -146,6 +151,23 @@ mutation UpdateIntegration($updateIntegrationId: ID!, $input: UpdateIntegrationI
       events {
         id
       }
+    }
+  }
+}
+
+mutation CreateIntegrationWithWebhook($input: CreateIntegrationInput!, $createWebhookInput2: CreateWebhookInput!) {
+  createIntegration(input: $input) {
+    integration {
+      kind
+      name
+      ownerID
+    }
+  }
+  createWebhook(input: $createWebhookInput2) {
+    webhook {
+      name
+      destinationURL
+      enabled
     }
   }
 }

@@ -118,6 +118,12 @@ func (su *SubscriberUpdate) SetNillableOwnerID(s *string) *SubscriberUpdate {
 	return su
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (su *SubscriberUpdate) ClearOwnerID() *SubscriberUpdate {
+	su.mutation.ClearOwnerID()
+	return su
+}
+
 // SetEmail sets the "email" field.
 func (su *SubscriberUpdate) SetEmail(s string) *SubscriberUpdate {
 	su.mutation.SetEmail(s)
@@ -324,6 +330,11 @@ func (su *SubscriberUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (su *SubscriberUpdate) check() error {
+	if v, ok := su.mutation.OwnerID(); ok {
+		if err := subscriber.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Subscriber.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := su.mutation.Email(); ok {
 		if err := subscriber.EmailValidator(v); err != nil {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`generated: validator failed for field "Subscriber.email": %w`, err)}
@@ -343,9 +354,6 @@ func (su *SubscriberUpdate) check() error {
 		if err := subscriber.SecretValidator(v); err != nil {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "Subscriber.secret": %w`, err)}
 		}
-	}
-	if _, ok := su.mutation.OwnerID(); su.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Subscriber.owner"`)
 	}
 	return nil
 }
@@ -606,6 +614,12 @@ func (suo *SubscriberUpdateOne) SetNillableOwnerID(s *string) *SubscriberUpdateO
 	return suo
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (suo *SubscriberUpdateOne) ClearOwnerID() *SubscriberUpdateOne {
+	suo.mutation.ClearOwnerID()
+	return suo
+}
+
 // SetEmail sets the "email" field.
 func (suo *SubscriberUpdateOne) SetEmail(s string) *SubscriberUpdateOne {
 	suo.mutation.SetEmail(s)
@@ -825,6 +839,11 @@ func (suo *SubscriberUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (suo *SubscriberUpdateOne) check() error {
+	if v, ok := suo.mutation.OwnerID(); ok {
+		if err := subscriber.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Subscriber.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := suo.mutation.Email(); ok {
 		if err := subscriber.EmailValidator(v); err != nil {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`generated: validator failed for field "Subscriber.email": %w`, err)}
@@ -844,9 +863,6 @@ func (suo *SubscriberUpdateOne) check() error {
 		if err := subscriber.SecretValidator(v); err != nil {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "Subscriber.secret": %w`, err)}
 		}
-	}
-	if _, ok := suo.mutation.OwnerID(); suo.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Subscriber.owner"`)
 	}
 	return nil
 }

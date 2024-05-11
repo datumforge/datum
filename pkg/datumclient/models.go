@@ -21,7 +21,7 @@ type APIToken struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   string     `json:"ownerID"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	// the name associated with the token
 	Name  string `json:"name"`
 	Token string `json:"token"`
@@ -31,7 +31,7 @@ type APIToken struct {
 	Description *string       `json:"description,omitempty"`
 	Scopes      []string      `json:"scopes,omitempty"`
 	LastUsedAt  *time.Time    `json:"lastUsedAt,omitempty"`
-	Owner       *Organization `json:"owner"`
+	Owner       *Organization `json:"owner,omitempty"`
 }
 
 func (APIToken) IsNode() {}
@@ -182,6 +182,8 @@ type APITokenWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
@@ -240,7 +242,7 @@ type CreateAPITokenInput struct {
 	Description *string    `json:"description,omitempty"`
 	Scopes      []string   `json:"scopes,omitempty"`
 	LastUsedAt  *time.Time `json:"lastUsedAt,omitempty"`
-	OwnerID     string     `json:"ownerID"`
+	OwnerID     *string    `json:"ownerID,omitempty"`
 }
 
 // CreateDocumentDataInput is used for create DocumentData object.
@@ -273,7 +275,7 @@ type CreateEntitlementInput struct {
 	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
 	Cancelled  *bool    `json:"cancelled,omitempty"`
-	OwnerID    string   `json:"ownerID"`
+	OwnerID    *string  `json:"ownerID,omitempty"`
 	FeatureIDs []string `json:"featureIDs,omitempty"`
 	EventIDs   []string `json:"eventIDs,omitempty"`
 }
@@ -357,7 +359,7 @@ type CreateGroupInput struct {
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
 	DisplayName         *string                  `json:"displayName,omitempty"`
-	OwnerID             string                   `json:"ownerID"`
+	OwnerID             *string                  `json:"ownerID,omitempty"`
 	SettingID           string                   `json:"settingID"`
 	UserIDs             []string                 `json:"userIDs,omitempty"`
 	FeatureIDs          []string                 `json:"featureIDs,omitempty"`
@@ -434,7 +436,7 @@ type CreateIntegrationInput struct {
 	// a description of the integration
 	Description    *string  `json:"description,omitempty"`
 	Kind           *string  `json:"kind,omitempty"`
-	OwnerID        string   `json:"ownerID"`
+	OwnerID        *string  `json:"ownerID,omitempty"`
 	SecretIDs      []string `json:"secretIDs,omitempty"`
 	Oauth2tokenIDs []string `json:"oauth2tokenIDs,omitempty"`
 	EventIDs       []string `json:"eventIDs,omitempty"`
@@ -458,7 +460,7 @@ type CreateInviteInput struct {
 	SendAttempts *int64 `json:"sendAttempts,omitempty"`
 	// the user who initiated the invitation
 	RequestorID string   `json:"requestorID"`
-	OwnerID     string   `json:"ownerID"`
+	OwnerID     *string  `json:"ownerID,omitempty"`
 	EventIDs    []string `json:"eventIDs,omitempty"`
 }
 
@@ -618,6 +620,7 @@ type CreateSubscriberInput struct {
 	Email string `json:"email"`
 	// phone number of the subscriber
 	PhoneNumber *string  `json:"phoneNumber,omitempty"`
+	OwnerID     *string  `json:"ownerID,omitempty"`
 	EventIDs    []string `json:"eventIDs,omitempty"`
 }
 
@@ -650,7 +653,7 @@ type CreateTemplateInput struct {
 	Jsonconfig json.RawMessage `json:"jsonconfig"`
 	// the uischema for the template to render in the UI
 	Uischema    json.RawMessage `json:"uischema,omitempty"`
-	OwnerID     string          `json:"ownerID"`
+	OwnerID     *string         `json:"ownerID,omitempty"`
 	DocumentIDs []string        `json:"documentIDs,omitempty"`
 }
 
@@ -1123,7 +1126,7 @@ type Entitlement struct {
 	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
 	Cancelled bool          `json:"cancelled"`
-	Owner     *Organization `json:"owner"`
+	Owner     *Organization `json:"owner,omitempty"`
 	Features  []*Feature    `json:"features,omitempty"`
 	Events    []*Event      `json:"events,omitempty"`
 }
@@ -2930,7 +2933,7 @@ type Group struct {
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
 	DisplayName  string             `json:"displayName"`
-	Owner        *Organization      `json:"owner"`
+	Owner        *Organization      `json:"owner,omitempty"`
 	Setting      *GroupSetting      `json:"setting"`
 	Users        []*User            `json:"users,omitempty"`
 	Features     []*Feature         `json:"features,omitempty"`
@@ -4574,13 +4577,13 @@ type Integration struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   string     `json:"ownerID"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	// the name of the integration - must be unique within the organization
 	Name string `json:"name"`
 	// a description of the integration
 	Description *string       `json:"description,omitempty"`
 	Kind        *string       `json:"kind,omitempty"`
-	Owner       *Organization `json:"owner"`
+	Owner       *Organization `json:"owner,omitempty"`
 	// the secrets associated with the integration
 	Secrets []*Hush `json:"secrets,omitempty"`
 	// the oauth2 tokens associated with the integration
@@ -4631,7 +4634,7 @@ type IntegrationHistory struct {
 	UpdatedBy   *string           `json:"updatedBy,omitempty"`
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
-	OwnerID     string            `json:"ownerID"`
+	OwnerID     *string           `json:"ownerID,omitempty"`
 	// the name of the integration - must be unique within the organization
 	Name string `json:"name"`
 	// a description of the integration
@@ -4807,6 +4810,8 @@ type IntegrationHistoryWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
@@ -4965,6 +4970,8 @@ type IntegrationWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
@@ -5019,7 +5026,7 @@ type Invite struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   string     `json:"ownerID"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
 	Expires time.Time `json:"expires"`
 	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
@@ -5031,7 +5038,7 @@ type Invite struct {
 	SendAttempts int64 `json:"sendAttempts"`
 	// the user who initiated the invitation
 	RequestorID string        `json:"requestorID"`
-	Owner       *Organization `json:"owner"`
+	Owner       *Organization `json:"owner,omitempty"`
 	Events      []*Event      `json:"events,omitempty"`
 }
 
@@ -5183,6 +5190,8 @@ type InviteWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// expires field predicates
@@ -7710,7 +7719,7 @@ type Subscriber struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   string     `json:"ownerID"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	// email address of the subscriber
 	Email string `json:"email"`
 	// phone number of the subscriber
@@ -7721,7 +7730,7 @@ type Subscriber struct {
 	VerifiedPhone bool `json:"verifiedPhone"`
 	// indicates if the subscriber is active or not, active users will have at least one verified contact method
 	Active bool          `json:"active"`
-	Owner  *Organization `json:"owner"`
+	Owner  *Organization `json:"owner,omitempty"`
 	Events []*Event      `json:"events,omitempty"`
 }
 
@@ -7873,6 +7882,8 @@ type SubscriberWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// email field predicates
@@ -8121,7 +8132,7 @@ type Template struct {
 	Jsonconfig json.RawMessage `json:"jsonconfig"`
 	// the uischema for the template to render in the UI
 	Uischema  json.RawMessage `json:"uischema,omitempty"`
-	Owner     *Organization   `json:"owner"`
+	Owner     *Organization   `json:"owner,omitempty"`
 	Documents []*DocumentData `json:"documents,omitempty"`
 }
 
@@ -8546,6 +8557,7 @@ type UpdateAPITokenInput struct {
 	LastUsedAt       *time.Time `json:"lastUsedAt,omitempty"`
 	ClearLastUsedAt  *bool      `json:"clearLastUsedAt,omitempty"`
 	OwnerID          *string    `json:"ownerID,omitempty"`
+	ClearOwner       *bool      `json:"clearOwner,omitempty"`
 }
 
 // UpdateDocumentDataInput is used for update DocumentData object.
@@ -8582,6 +8594,7 @@ type UpdateEntitlementInput struct {
 	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
 	Cancelled        *bool    `json:"cancelled,omitempty"`
 	OwnerID          *string  `json:"ownerID,omitempty"`
+	ClearOwner       *bool    `json:"clearOwner,omitempty"`
 	AddFeatureIDs    []string `json:"addFeatureIDs,omitempty"`
 	RemoveFeatureIDs []string `json:"removeFeatureIDs,omitempty"`
 	ClearFeatures    *bool    `json:"clearFeatures,omitempty"`
@@ -8718,6 +8731,7 @@ type UpdateGroupInput struct {
 	// The group's displayed 'friendly' name
 	DisplayName          *string                       `json:"displayName,omitempty"`
 	OwnerID              *string                       `json:"ownerID,omitempty"`
+	ClearOwner           *bool                         `json:"clearOwner,omitempty"`
 	SettingID            *string                       `json:"settingID,omitempty"`
 	AddUserIDs           []string                      `json:"addUserIDs,omitempty"`
 	RemoveUserIDs        []string                      `json:"removeUserIDs,omitempty"`
@@ -8817,6 +8831,7 @@ type UpdateIntegrationInput struct {
 	Kind                 *string  `json:"kind,omitempty"`
 	ClearKind            *bool    `json:"clearKind,omitempty"`
 	OwnerID              *string  `json:"ownerID,omitempty"`
+	ClearOwner           *bool    `json:"clearOwner,omitempty"`
 	AddSecretIDs         []string `json:"addSecretIDs,omitempty"`
 	RemoveSecretIDs      []string `json:"removeSecretIDs,omitempty"`
 	ClearSecrets         *bool    `json:"clearSecrets,omitempty"`
@@ -8845,6 +8860,7 @@ type UpdateInviteInput struct {
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts   *int64   `json:"sendAttempts,omitempty"`
 	OwnerID        *string  `json:"ownerID,omitempty"`
+	ClearOwner     *bool    `json:"clearOwner,omitempty"`
 	AddEventIDs    []string `json:"addEventIDs,omitempty"`
 	RemoveEventIDs []string `json:"removeEventIDs,omitempty"`
 	ClearEvents    *bool    `json:"clearEvents,omitempty"`
@@ -9063,6 +9079,8 @@ type UpdateSubscriberInput struct {
 	// phone number of the subscriber
 	PhoneNumber      *string  `json:"phoneNumber,omitempty"`
 	ClearPhoneNumber *bool    `json:"clearPhoneNumber,omitempty"`
+	OwnerID          *string  `json:"ownerID,omitempty"`
+	ClearOwner       *bool    `json:"clearOwner,omitempty"`
 	AddEventIDs      []string `json:"addEventIDs,omitempty"`
 	RemoveEventIDs   []string `json:"removeEventIDs,omitempty"`
 	ClearEvents      *bool    `json:"clearEvents,omitempty"`
@@ -9104,6 +9122,7 @@ type UpdateTemplateInput struct {
 	Uischema          json.RawMessage `json:"uischema,omitempty"`
 	ClearUischema     *bool           `json:"clearUischema,omitempty"`
 	OwnerID           *string         `json:"ownerID,omitempty"`
+	ClearOwner        *bool           `json:"clearOwner,omitempty"`
 	AddDocumentIDs    []string        `json:"addDocumentIDs,omitempty"`
 	RemoveDocumentIDs []string        `json:"removeDocumentIDs,omitempty"`
 	ClearDocuments    *bool           `json:"clearDocuments,omitempty"`

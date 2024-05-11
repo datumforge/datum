@@ -617,6 +617,16 @@ func OwnerIDHasSuffix(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldHasSuffix(FieldOwnerID, v))
 }
 
+// OwnerIDIsNil applies the IsNil predicate on the "owner_id" field.
+func OwnerIDIsNil() predicate.Integration {
+	return predicate.Integration(sql.FieldIsNull(FieldOwnerID))
+}
+
+// OwnerIDNotNil applies the NotNil predicate on the "owner_id" field.
+func OwnerIDNotNil() predicate.Integration {
+	return predicate.Integration(sql.FieldNotNull(FieldOwnerID))
+}
+
 // OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
 func OwnerIDEqualFold(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldEqualFold(FieldOwnerID, v))

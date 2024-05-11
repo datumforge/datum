@@ -126,6 +126,12 @@ func (thu *TemplateHistoryUpdate) SetNillableOwnerID(s *string) *TemplateHistory
 	return thu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (thu *TemplateHistoryUpdate) ClearOwnerID() *TemplateHistoryUpdate {
+	thu.mutation.ClearOwnerID()
+	return thu
+}
+
 // SetName sets the "name" field.
 func (thu *TemplateHistoryUpdate) SetName(s string) *TemplateHistoryUpdate {
 	thu.mutation.SetName(s)
@@ -282,6 +288,9 @@ func (thu *TemplateHistoryUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := thu.mutation.OwnerID(); ok {
 		_spec.SetField(templatehistory.FieldOwnerID, field.TypeString, value)
 	}
+	if thu.mutation.OwnerIDCleared() {
+		_spec.ClearField(templatehistory.FieldOwnerID, field.TypeString)
+	}
 	if value, ok := thu.mutation.Name(); ok {
 		_spec.SetField(templatehistory.FieldName, field.TypeString, value)
 	}
@@ -416,6 +425,12 @@ func (thuo *TemplateHistoryUpdateOne) SetNillableOwnerID(s *string) *TemplateHis
 	if s != nil {
 		thuo.SetOwnerID(*s)
 	}
+	return thuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (thuo *TemplateHistoryUpdateOne) ClearOwnerID() *TemplateHistoryUpdateOne {
+	thuo.mutation.ClearOwnerID()
 	return thuo
 }
 
@@ -604,6 +619,9 @@ func (thuo *TemplateHistoryUpdateOne) sqlSave(ctx context.Context) (_node *Templ
 	}
 	if value, ok := thuo.mutation.OwnerID(); ok {
 		_spec.SetField(templatehistory.FieldOwnerID, field.TypeString, value)
+	}
+	if thuo.mutation.OwnerIDCleared() {
+		_spec.ClearField(templatehistory.FieldOwnerID, field.TypeString)
 	}
 	if value, ok := thuo.mutation.Name(); ok {
 		_spec.SetField(templatehistory.FieldName, field.TypeString, value)

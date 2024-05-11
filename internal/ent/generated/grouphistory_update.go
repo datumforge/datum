@@ -124,6 +124,12 @@ func (ghu *GroupHistoryUpdate) SetNillableOwnerID(s *string) *GroupHistoryUpdate
 	return ghu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ghu *GroupHistoryUpdate) ClearOwnerID() *GroupHistoryUpdate {
+	ghu.mutation.ClearOwnerID()
+	return ghu
+}
+
 // SetName sets the "name" field.
 func (ghu *GroupHistoryUpdate) SetName(s string) *GroupHistoryUpdate {
 	ghu.mutation.SetName(s)
@@ -289,6 +295,9 @@ func (ghu *GroupHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ghu.mutation.OwnerID(); ok {
 		_spec.SetField(grouphistory.FieldOwnerID, field.TypeString, value)
 	}
+	if ghu.mutation.OwnerIDCleared() {
+		_spec.ClearField(grouphistory.FieldOwnerID, field.TypeString)
+	}
 	if value, ok := ghu.mutation.Name(); ok {
 		_spec.SetField(grouphistory.FieldName, field.TypeString, value)
 	}
@@ -426,6 +435,12 @@ func (ghuo *GroupHistoryUpdateOne) SetNillableOwnerID(s *string) *GroupHistoryUp
 	if s != nil {
 		ghuo.SetOwnerID(*s)
 	}
+	return ghuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ghuo *GroupHistoryUpdateOne) ClearOwnerID() *GroupHistoryUpdateOne {
+	ghuo.mutation.ClearOwnerID()
 	return ghuo
 }
 
@@ -623,6 +638,9 @@ func (ghuo *GroupHistoryUpdateOne) sqlSave(ctx context.Context) (_node *GroupHis
 	}
 	if value, ok := ghuo.mutation.OwnerID(); ok {
 		_spec.SetField(grouphistory.FieldOwnerID, field.TypeString, value)
+	}
+	if ghuo.mutation.OwnerIDCleared() {
+		_spec.ClearField(grouphistory.FieldOwnerID, field.TypeString)
 	}
 	if value, ok := ghuo.mutation.Name(); ok {
 		_spec.SetField(grouphistory.FieldName, field.TypeString, value)

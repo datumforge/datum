@@ -633,6 +633,16 @@ func OwnerIDHasSuffix(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldHasSuffix(FieldOwnerID, v))
 }
 
+// OwnerIDIsNil applies the IsNil predicate on the "owner_id" field.
+func OwnerIDIsNil() predicate.Invite {
+	return predicate.Invite(sql.FieldIsNull(FieldOwnerID))
+}
+
+// OwnerIDNotNil applies the NotNil predicate on the "owner_id" field.
+func OwnerIDNotNil() predicate.Invite {
+	return predicate.Invite(sql.FieldNotNull(FieldOwnerID))
+}
+
 // OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
 func OwnerIDEqualFold(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldEqualFold(FieldOwnerID, v))

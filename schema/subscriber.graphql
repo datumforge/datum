@@ -41,6 +41,10 @@ extend type Mutation{
         Email of the subscriber
         """
         email: String!
+        """
+        OwnerID of the subscriber
+        """
+        ownerID: ID
     ): SubscriberDeletePayload!
 }
 

@@ -120,6 +120,12 @@ func (tu *TemplateUpdate) SetNillableOwnerID(s *string) *TemplateUpdate {
 	return tu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (tu *TemplateUpdate) ClearOwnerID() *TemplateUpdate {
+	tu.mutation.ClearOwnerID()
+	return tu
+}
+
 // SetName sets the "name" field.
 func (tu *TemplateUpdate) SetName(s string) *TemplateUpdate {
 	tu.mutation.SetName(s)
@@ -282,6 +288,11 @@ func (tu *TemplateUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (tu *TemplateUpdate) check() error {
+	if v, ok := tu.mutation.OwnerID(); ok {
+		if err := template.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Template.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := tu.mutation.Name(); ok {
 		if err := template.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Template.name": %w`, err)}
@@ -291,9 +302,6 @@ func (tu *TemplateUpdate) check() error {
 		if err := template.TemplateTypeValidator(v); err != nil {
 			return &ValidationError{Name: "template_type", err: fmt.Errorf(`generated: validator failed for field "Template.template_type": %w`, err)}
 		}
-	}
-	if _, ok := tu.mutation.OwnerID(); tu.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Template.owner"`)
 	}
 	return nil
 }
@@ -548,6 +556,12 @@ func (tuo *TemplateUpdateOne) SetNillableOwnerID(s *string) *TemplateUpdateOne {
 	return tuo
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (tuo *TemplateUpdateOne) ClearOwnerID() *TemplateUpdateOne {
+	tuo.mutation.ClearOwnerID()
+	return tuo
+}
+
 // SetName sets the "name" field.
 func (tuo *TemplateUpdateOne) SetName(s string) *TemplateUpdateOne {
 	tuo.mutation.SetName(s)
@@ -723,6 +737,11 @@ func (tuo *TemplateUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (tuo *TemplateUpdateOne) check() error {
+	if v, ok := tuo.mutation.OwnerID(); ok {
+		if err := template.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Template.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := tuo.mutation.Name(); ok {
 		if err := template.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Template.name": %w`, err)}
@@ -732,9 +751,6 @@ func (tuo *TemplateUpdateOne) check() error {
 		if err := template.TemplateTypeValidator(v); err != nil {
 			return &ValidationError{Name: "template_type", err: fmt.Errorf(`generated: validator failed for field "Template.template_type": %w`, err)}
 		}
-	}
-	if _, ok := tuo.mutation.OwnerID(); tuo.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Template.owner"`)
 	}
 	return nil
 }

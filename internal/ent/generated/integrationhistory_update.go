@@ -124,6 +124,12 @@ func (ihu *IntegrationHistoryUpdate) SetNillableOwnerID(s *string) *IntegrationH
 	return ihu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ihu *IntegrationHistoryUpdate) ClearOwnerID() *IntegrationHistoryUpdate {
+	ihu.mutation.ClearOwnerID()
+	return ihu
+}
+
 // SetName sets the "name" field.
 func (ihu *IntegrationHistoryUpdate) SetName(s string) *IntegrationHistoryUpdate {
 	ihu.mutation.SetName(s)
@@ -255,6 +261,9 @@ func (ihu *IntegrationHistoryUpdate) sqlSave(ctx context.Context) (n int, err er
 	if value, ok := ihu.mutation.OwnerID(); ok {
 		_spec.SetField(integrationhistory.FieldOwnerID, field.TypeString, value)
 	}
+	if ihu.mutation.OwnerIDCleared() {
+		_spec.ClearField(integrationhistory.FieldOwnerID, field.TypeString)
+	}
 	if value, ok := ihu.mutation.Name(); ok {
 		_spec.SetField(integrationhistory.FieldName, field.TypeString, value)
 	}
@@ -383,6 +392,12 @@ func (ihuo *IntegrationHistoryUpdateOne) SetNillableOwnerID(s *string) *Integrat
 	if s != nil {
 		ihuo.SetOwnerID(*s)
 	}
+	return ihuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ihuo *IntegrationHistoryUpdateOne) ClearOwnerID() *IntegrationHistoryUpdateOne {
+	ihuo.mutation.ClearOwnerID()
 	return ihuo
 }
 
@@ -546,6 +561,9 @@ func (ihuo *IntegrationHistoryUpdateOne) sqlSave(ctx context.Context) (_node *In
 	}
 	if value, ok := ihuo.mutation.OwnerID(); ok {
 		_spec.SetField(integrationhistory.FieldOwnerID, field.TypeString, value)
+	}
+	if ihuo.mutation.OwnerIDCleared() {
+		_spec.ClearField(integrationhistory.FieldOwnerID, field.TypeString)
 	}
 	if value, ok := ihuo.mutation.Name(); ok {
 		_spec.SetField(integrationhistory.FieldName, field.TypeString, value)

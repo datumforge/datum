@@ -206,7 +206,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			role := tc.role
 			input := datumclient.CreateInviteInput{
 				Recipient: tc.recipient,
-				OwnerID:   tc.orgID,
+				OwnerID:   &tc.orgID,
 				Role:      &role,
 			}
 
@@ -279,9 +279,7 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			if !tc.wantErr {
-				mock_fga.CheckAny(t, suite.client.fga, true)
-			}
+			mock_fga.CheckAny(t, suite.client.fga, true)
 
 			resp, err := suite.client.datum.DeleteInvite(reqCtx, tc.queryID)
 

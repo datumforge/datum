@@ -11,10 +11,18 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateAPIToken is the resolver for the createAPIToken field.
 func (r *mutationResolver) CreateAPIToken(ctx context.Context, input generated.CreateAPITokenInput) (*APITokenCreatePayload, error) {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
 	apiToken, err := withTransactionalMutation(ctx).APIToken.Create().SetInput(input).Save(ctx)
@@ -50,6 +58,12 @@ func (r *mutationResolver) UpdateAPIToken(ctx context.Context, id string, input 
 
 		r.logger.Errorw("failed to get api token", "error", err)
 		return nil, ErrInternalServerError
+	}
+
+	if err := setOrganizationInAuthContext(ctx, &apiToken.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
 	}
 
 	apiToken, err = apiToken.Update().SetInput(input).Save(ctx)

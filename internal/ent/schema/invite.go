@@ -123,9 +123,11 @@ func (Invite) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType:   "organization",
-			IncludeHooks: false,
-			IDField:      "OwnerID",
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			NillableIDField: true,
+			OrgOwnedField:   true,
+			IDField:         "OwnerID",
 		},
 		enthistory.Annotations{
 			Exclude: true,

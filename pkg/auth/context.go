@@ -40,6 +40,8 @@ type AuthenticatedUser struct {
 	SubjectID string
 	// OrganizationID is the organization ID of the authenticated user
 	OrganizationID string
+	// OrganizationIDs is the list of organization IDs the user is authorized to access
+	OrganizationIDs []string
 	// AuthenticationType is the type of authentication used to authenticate the user (JWT, PAT, API Token)
 	AuthenticationType AuthenticationType
 }
@@ -52,6 +54,23 @@ func GetContextName(key *ContextKey) string {
 // SetAuthenticatedUserContext sets the authenticated user context in the echo context
 func SetAuthenticatedUserContext(c echo.Context, user *AuthenticatedUser) {
 	c.Set(ContextAuthenticatedUser.name, user)
+}
+
+// GetAuthenticatedUserContext gets the authenticated user context
+func GetAuthenticatedUserContext(c context.Context) (*AuthenticatedUser, error) {
+	ec, err := echocontext.EchoContextFromContext(c)
+	if err != nil {
+		return nil, err
+	}
+
+	result := ec.Get(ContextAuthenticatedUser.name)
+
+	au, ok := result.(*AuthenticatedUser)
+	if !ok {
+		return nil, ErrNoAuthUser
+	}
+
+	return au, nil
 }
 
 // AddAuthenticatedUserContext adds the authenticated user context and returns the context
@@ -108,12 +127,12 @@ func getOrganizationIDFromEchoContext(c echo.Context) (string, error) {
 			return "", ErrNoAuthUser
 		}
 
-		uid, err := ulids.Parse(a.OrganizationID)
+		oID, err := ulids.Parse(a.OrganizationID)
 		if err != nil {
 			return "", err
 		}
 
-		if ulids.IsZero(uid) {
+		if ulids.IsZero(oID) {
 			return "", ErrNoAuthUser
 		}
 
@@ -123,7 +142,21 @@ func getOrganizationIDFromEchoContext(c echo.Context) (string, error) {
 	return "", ErrNoAuthUser
 }
 
-// GetOrganizationIDFromContext returns the organization ID from context from context
+// getOrganizationIDsFromEchoContext returns the list of organization IDs from the echo context
+func getOrganizationIDsFromEchoContext(c echo.Context) ([]string, error) {
+	if v := c.Get(ContextAuthenticatedUser.name); v != nil {
+		a, ok := v.(*AuthenticatedUser)
+		if !ok {
+			return []string{}, ErrNoAuthUser
+		}
+
+		return a.OrganizationIDs, nil
+	}
+
+	return []string{}, ErrNoAuthUser
+}
+
+// GetOrganizationIDFromContext returns the organization ID from context
 func GetOrganizationIDFromContext(ctx context.Context) (string, error) {
 	ec, err := echocontext.EchoContextFromContext(ctx)
 	if err != nil {
@@ -133,7 +166,17 @@ func GetOrganizationIDFromContext(ctx context.Context) (string, error) {
 	return getOrganizationIDFromEchoContext(ec)
 }
 
-// GetUserIDFromContext returns the actor subject from the echo context
+// GetOrganizationIDsFromContext returns the list of organization IDs from context
+func GetOrganizationIDsFromContext(ctx context.Context) ([]string, error) {
+	ec, err := echocontext.EchoContextFromContext(ctx)
+	if err != nil {
+		return []string{}, err
+	}
+
+	return getOrganizationIDsFromEchoContext(ec)
+}
+
+// GetUserIDFromContext returns the actor subject from the context
 func GetUserIDFromContext(ctx context.Context) (string, error) {
 	ec, err := echocontext.EchoContextFromContext(ctx)
 	if err != nil {

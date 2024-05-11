@@ -13,7 +13,7 @@ func (at *APIToken) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = at.QueryOwner().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (dd *DocumentData) Template(ctx context.Context) (*Template, error) {
@@ -29,7 +29,7 @@ func (e *Entitlement) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = e.QueryOwner().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (e *Entitlement) Features(ctx context.Context) (result []*Feature, err error) {
@@ -321,7 +321,7 @@ func (gr *Group) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = gr.QueryOwner().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (gr *Group) Setting(ctx context.Context) (*GroupSetting, error) {
@@ -481,7 +481,7 @@ func (i *Integration) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = i.QueryOwner().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (i *Integration) Secrets(ctx context.Context) (result []*Hush, err error) {
@@ -525,7 +525,7 @@ func (i *Invite) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = i.QueryOwner().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (i *Invite) Events(ctx context.Context) (result []*Event, err error) {
@@ -874,7 +874,7 @@ func (s *Subscriber) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = s.QueryOwner().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (s *Subscriber) Events(ctx context.Context) (result []*Event, err error) {
@@ -902,7 +902,7 @@ func (t *Template) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = t.QueryOwner().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (t *Template) Documents(ctx context.Context) (result []*DocumentData, err error) {

@@ -8,7 +8,7 @@ type APIToken implements Node {
 	updatedBy: String
 	deletedAt: Time
 	deletedBy: String
-	ownerID: ID!
+	ownerID: ID
 	"""
 	the name associated with the token
 	"""
@@ -24,7 +24,7 @@ type APIToken implements Node {
 	description: String
 	scopes: [String!]
 	lastUsedAt: Time
-	owner: Organization!
+	owner: Organization
 }
 """
 A connection to a list of items.
@@ -211,6 +211,8 @@ input APITokenWhereInput {
 	ownerIDContains: ID
 	ownerIDHasPrefix: ID
 	ownerIDHasSuffix: ID
+	ownerIDIsNil: Boolean
+	ownerIDNotNil: Boolean
 	ownerIDEqualFold: ID
 	ownerIDContainsFold: ID
 	"""
@@ -284,7 +286,7 @@ input CreateAPITokenInput {
 	description: String
 	scopes: [String!]
 	lastUsedAt: Time
-	ownerID: ID!
+	ownerID: ID
 }
 """
 CreateDocumentDataInput is used for create DocumentData object.
@@ -331,7 +333,7 @@ input CreateEntitlementInput {
 	whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
 	"""
 	cancelled: Boolean
-	ownerID: ID!
+	ownerID: ID
 	featureIDs: [ID!]
 	eventIDs: [ID!]
 }
@@ -429,7 +431,7 @@ input CreateGroupInput {
 	The group's displayed 'friendly' name
 	"""
 	displayName: String
-	ownerID: ID!
+	ownerID: ID
 	settingID: ID!
 	userIDs: [ID!]
 	featureIDs: [ID!]
@@ -534,7 +536,7 @@ input CreateIntegrationInput {
 	"""
 	description: String
 	kind: String
-	ownerID: ID!
+	ownerID: ID
 	secretIDs: [ID!]
 	oauth2tokenIDs: [ID!]
 	eventIDs: [ID!]
@@ -569,7 +571,7 @@ input CreateInviteInput {
 	the user who initiated the invitation
 	"""
 	requestorID: String!
-	ownerID: ID!
+	ownerID: ID
 	eventIDs: [ID!]
 }
 """
@@ -792,6 +794,7 @@ input CreateSubscriberInput {
 	phone number of the subscriber
 	"""
 	phoneNumber: String
+	ownerID: ID
 	eventIDs: [ID!]
 }
 """
@@ -838,7 +841,7 @@ input CreateTemplateInput {
 	the uischema for the template to render in the UI
 	"""
 	uischema: JSON
-	ownerID: ID!
+	ownerID: ID
 	documentIDs: [ID!]
 }
 """
@@ -1460,7 +1463,7 @@ type Entitlement implements Node {
 	whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
 	"""
 	cancelled: Boolean!
-	owner: Organization!
+	owner: Organization
 	features: [Feature!]
 	events: [Event!]
 }
@@ -3709,7 +3712,7 @@ type Group implements Node {
 	The group's displayed 'friendly' name
 	"""
 	displayName: String!
-	owner: Organization!
+	owner: Organization
 	setting: GroupSetting!
 	users: [User!]
 	features: [Feature!]
@@ -5857,7 +5860,7 @@ type Integration implements Node {
 	updatedBy: String
 	deletedAt: Time
 	deletedBy: String
-	ownerID: ID!
+	ownerID: ID
 	"""
 	the name of the integration - must be unique within the organization
 	"""
@@ -5867,7 +5870,7 @@ type Integration implements Node {
 	"""
 	description: String
 	kind: String
-	owner: Organization!
+	owner: Organization
 	"""
 	the secrets associated with the integration
 	"""
@@ -5937,7 +5940,7 @@ type IntegrationHistory implements Node {
 	updatedBy: String
 	deletedAt: Time
 	deletedBy: String
-	ownerID: String!
+	ownerID: String
 	"""
 	the name of the integration - must be unique within the organization
 	"""
@@ -6170,6 +6173,8 @@ input IntegrationHistoryWhereInput {
 	ownerIDContains: String
 	ownerIDHasPrefix: String
 	ownerIDHasSuffix: String
+	ownerIDIsNil: Boolean
+	ownerIDNotNil: Boolean
 	ownerIDEqualFold: String
 	ownerIDContainsFold: String
 	"""
@@ -6364,6 +6369,8 @@ input IntegrationWhereInput {
 	ownerIDContains: ID
 	ownerIDHasPrefix: ID
 	ownerIDHasSuffix: ID
+	ownerIDIsNil: Boolean
+	ownerIDNotNil: Boolean
 	ownerIDEqualFold: ID
 	ownerIDContainsFold: ID
 	"""
@@ -6429,7 +6436,7 @@ type Invite implements Node {
 	updatedBy: String
 	deletedAt: Time
 	deletedBy: String
-	ownerID: ID!
+	ownerID: ID
 	"""
 	the expiration date of the invitation token which defaults to 14 days in the future from creation
 	"""
@@ -6451,7 +6458,7 @@ type Invite implements Node {
 	the user who initiated the invitation
 	"""
 	requestorID: String!
-	owner: Organization!
+	owner: Organization
 	events: [Event!]
 }
 """
@@ -6656,6 +6663,8 @@ input InviteWhereInput {
 	ownerIDContains: ID
 	ownerIDHasPrefix: ID
 	ownerIDHasSuffix: ID
+	ownerIDIsNil: Boolean
+	ownerIDNotNil: Boolean
 	ownerIDEqualFold: ID
 	ownerIDContainsFold: ID
 	"""
@@ -7317,6 +7326,11 @@ type Mutation {
 		Email of the subscriber
 		"""
 		email: String!
+
+		"""
+		OwnerID of the subscriber
+		"""
+		ownerID: ID
 	): SubscriberDeletePayload!
 	"""
 	Create a new template
@@ -12027,7 +12041,7 @@ type Subscriber implements Node {
 	updatedBy: String
 	deletedAt: Time
 	deletedBy: String
-	ownerID: ID!
+	ownerID: ID
 	"""
 	email address of the subscriber
 	"""
@@ -12048,7 +12062,7 @@ type Subscriber implements Node {
 	indicates if the subscriber is active or not, active users will have at least one verified contact method
 	"""
 	active: Boolean!
-	owner: Organization!
+	owner: Organization
 	events: [Event!]
 }
 """
@@ -12236,6 +12250,8 @@ input SubscriberWhereInput {
 	ownerIDContains: ID
 	ownerIDHasPrefix: ID
 	ownerIDHasSuffix: ID
+	ownerIDIsNil: Boolean
+	ownerIDNotNil: Boolean
 	ownerIDEqualFold: ID
 	ownerIDContainsFold: ID
 	"""
@@ -12553,7 +12569,7 @@ type Template implements Node {
 	the uischema for the template to render in the UI
 	"""
 	uischema: JSON
-	owner: Organization!
+	owner: Organization
 	documents: [DocumentData!]
 }
 """
@@ -13125,6 +13141,7 @@ input UpdateAPITokenInput {
 	lastUsedAt: Time
 	clearLastUsedAt: Boolean
 	ownerID: ID
+	clearOwner: Boolean
 }
 """
 UpdateDocumentDataInput is used for update DocumentData object.
@@ -13175,6 +13192,7 @@ input UpdateEntitlementInput {
 	"""
 	cancelled: Boolean
 	ownerID: ID
+	clearOwner: Boolean
 	addFeatureIDs: [ID!]
 	removeFeatureIDs: [ID!]
 	clearFeatures: Boolean
@@ -13325,6 +13343,7 @@ input UpdateGroupInput {
 	"""
 	displayName: String
 	ownerID: ID
+	clearOwner: Boolean
 	settingID: ID
 	addUserIDs: [ID!]
 	removeUserIDs: [ID!]
@@ -13448,6 +13467,7 @@ input UpdateIntegrationInput {
 	kind: String
 	clearKind: Boolean
 	ownerID: ID
+	clearOwner: Boolean
 	addSecretIDs: [ID!]
 	removeSecretIDs: [ID!]
 	clearSecrets: Boolean
@@ -13485,6 +13505,7 @@ input UpdateInviteInput {
 	"""
 	sendAttempts: Int
 	ownerID: ID
+	clearOwner: Boolean
 	addEventIDs: [ID!]
 	removeEventIDs: [ID!]
 	clearEvents: Boolean
@@ -13760,6 +13781,8 @@ input UpdateSubscriberInput {
 	"""
 	phoneNumber: String
 	clearPhoneNumber: Boolean
+	ownerID: ID
+	clearOwner: Boolean
 	addEventIDs: [ID!]
 	removeEventIDs: [ID!]
 	clearEvents: Boolean
@@ -13819,6 +13842,7 @@ input UpdateTemplateInput {
 	uischema: JSON
 	clearUischema: Boolean
 	ownerID: ID
+	clearOwner: Boolean
 	addDocumentIDs: [ID!]
 	removeDocumentIDs: [ID!]
 	clearDocuments: Boolean

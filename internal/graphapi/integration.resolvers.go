@@ -9,10 +9,18 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateIntegration is the resolver for the createIntegration field.
 func (r *mutationResolver) CreateIntegration(ctx context.Context, input generated.CreateIntegrationInput) (*IntegrationCreatePayload, error) {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
 	i, err := withTransactionalMutation(ctx).Integration.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -36,6 +44,12 @@ func (r *mutationResolver) UpdateIntegration(ctx context.Context, id string, inp
 
 		r.logger.Errorw("failed to get integration", "error", err)
 		return nil, ErrInternalServerError
+	}
+
+	if err := setOrganizationInAuthContext(ctx, &i.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
 	}
 
 	i, err = i.Update().SetInput(input).Save(ctx)

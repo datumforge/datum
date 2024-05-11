@@ -10621,11 +10621,11 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 }
 
 type Subscribers_Subscribers_Edges_Node struct {
-	ID            string "json:\"id\" graphql:\"id\""
-	Email         string "json:\"email\" graphql:\"email\""
-	VerifiedEmail bool   "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
-	Active        bool   "json:\"active\" graphql:\"active\""
-	OwnerID       string "json:\"ownerID\" graphql:\"ownerID\""
+	ID            string  "json:\"id\" graphql:\"id\""
+	Email         string  "json:\"email\" graphql:\"email\""
+	VerifiedEmail bool    "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+	Active        bool    "json:\"active\" graphql:\"active\""
+	OwnerID       *string "json:\"ownerID,omitempty\" graphql:\"ownerID\""
 }
 
 func (t *Subscribers_Subscribers_Edges_Node) GetID() string {
@@ -10652,7 +10652,7 @@ func (t *Subscribers_Subscribers_Edges_Node) GetActive() bool {
 	}
 	return t.Active
 }
-func (t *Subscribers_Subscribers_Edges_Node) GetOwnerID() string {
+func (t *Subscribers_Subscribers_Edges_Node) GetOwnerID() *string {
 	if t == nil {
 		t = &Subscribers_Subscribers_Edges_Node{}
 	}

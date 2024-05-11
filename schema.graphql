@@ -12049,7 +12049,7 @@ type Subscriber implements Node {
 	updatedBy: String
 	deletedAt: Time
 	deletedBy: String
-	ownerID: ID!
+	ownerID: ID
 	"""
 	email address of the subscriber
 	"""
@@ -12070,7 +12070,7 @@ type Subscriber implements Node {
 	indicates if the subscriber is active or not, active users will have at least one verified contact method
 	"""
 	active: Boolean!
-	owner: Organization!
+	owner: Organization
 	events: [Event!]
 }
 """
@@ -12258,6 +12258,8 @@ input SubscriberWhereInput {
 	ownerIDContains: ID
 	ownerIDHasPrefix: ID
 	ownerIDHasSuffix: ID
+	ownerIDIsNil: Boolean
+	ownerIDNotNil: Boolean
 	ownerIDEqualFold: ID
 	ownerIDContainsFold: ID
 	"""

@@ -38,8 +38,6 @@ type OrgOwnerMixin struct {
 	// SkipInterceptor skips the interceptor for that schema for all queries, or specific types,
 	// this is useful for tokens, etc
 	SkipInterceptor interceptors.SkipMode
-	// SkipMutationInput skips the field in the mutation input
-	SkipMutationInput bool
 }
 
 // Fields of the OrgOwnerMixin
@@ -79,12 +77,6 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 
 	if orgOwned.Required {
 		ownerEdge.Required()
-	}
-
-	if orgOwned.SkipMutationInput {
-		ownerEdge.Annotations(
-			entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
-		)
 	}
 
 	if orgOwned.SkipOASGeneration {

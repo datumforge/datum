@@ -14160,8 +14160,7 @@
                   "verified_email",
                   "verified_phone",
                   "active",
-                  "ttl",
-                  "owner"
+                  "ttl"
                 ]
               }
             }
@@ -20450,8 +20449,7 @@
           "email",
           "verified_email",
           "verified_phone",
-          "active",
-          "owner"
+          "active"
         ]
       },
       "TFASetting": {

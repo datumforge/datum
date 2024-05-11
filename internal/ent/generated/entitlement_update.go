@@ -120,6 +120,12 @@ func (eu *EntitlementUpdate) SetNillableOwnerID(s *string) *EntitlementUpdate {
 	return eu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (eu *EntitlementUpdate) ClearOwnerID() *EntitlementUpdate {
+	eu.mutation.ClearOwnerID()
+	return eu
+}
+
 // SetTier sets the "tier" field.
 func (eu *EntitlementUpdate) SetTier(e enums.Tier) *EntitlementUpdate {
 	eu.mutation.SetTier(e)
@@ -354,13 +360,15 @@ func (eu *EntitlementUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (eu *EntitlementUpdate) check() error {
+	if v, ok := eu.mutation.OwnerID(); ok {
+		if err := entitlement.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := eu.mutation.Tier(); ok {
 		if err := entitlement.TierValidator(v); err != nil {
 			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "Entitlement.tier": %w`, err)}
 		}
-	}
-	if _, ok := eu.mutation.OwnerID(); eu.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Entitlement.owner"`)
 	}
 	return nil
 }
@@ -669,6 +677,12 @@ func (euo *EntitlementUpdateOne) SetNillableOwnerID(s *string) *EntitlementUpdat
 	return euo
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (euo *EntitlementUpdateOne) ClearOwnerID() *EntitlementUpdateOne {
+	euo.mutation.ClearOwnerID()
+	return euo
+}
+
 // SetTier sets the "tier" field.
 func (euo *EntitlementUpdateOne) SetTier(e enums.Tier) *EntitlementUpdateOne {
 	euo.mutation.SetTier(e)
@@ -916,13 +930,15 @@ func (euo *EntitlementUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (euo *EntitlementUpdateOne) check() error {
+	if v, ok := euo.mutation.OwnerID(); ok {
+		if err := entitlement.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := euo.mutation.Tier(); ok {
 		if err := entitlement.TierValidator(v); err != nil {
 			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "Entitlement.tier": %w`, err)}
 		}
-	}
-	if _, ok := euo.mutation.OwnerID(); euo.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Entitlement.owner"`)
 	}
 	return nil
 }

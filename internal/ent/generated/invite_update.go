@@ -119,6 +119,12 @@ func (iu *InviteUpdate) SetNillableOwnerID(s *string) *InviteUpdate {
 	return iu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (iu *InviteUpdate) ClearOwnerID() *InviteUpdate {
+	iu.mutation.ClearOwnerID()
+	return iu
+}
+
 // SetToken sets the "token" field.
 func (iu *InviteUpdate) SetToken(s string) *InviteUpdate {
 	iu.mutation.SetToken(s)
@@ -312,6 +318,11 @@ func (iu *InviteUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (iu *InviteUpdate) check() error {
+	if v, ok := iu.mutation.OwnerID(); ok {
+		if err := invite.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Invite.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := iu.mutation.Token(); ok {
 		if err := invite.TokenValidator(v); err != nil {
 			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Invite.token": %w`, err)}
@@ -336,9 +347,6 @@ func (iu *InviteUpdate) check() error {
 		if err := invite.SecretValidator(v); err != nil {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "Invite.secret": %w`, err)}
 		}
-	}
-	if _, ok := iu.mutation.OwnerID(); iu.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Invite.owner"`)
 	}
 	return nil
 }
@@ -596,6 +604,12 @@ func (iuo *InviteUpdateOne) SetNillableOwnerID(s *string) *InviteUpdateOne {
 	return iuo
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (iuo *InviteUpdateOne) ClearOwnerID() *InviteUpdateOne {
+	iuo.mutation.ClearOwnerID()
+	return iuo
+}
+
 // SetToken sets the "token" field.
 func (iuo *InviteUpdateOne) SetToken(s string) *InviteUpdateOne {
 	iuo.mutation.SetToken(s)
@@ -802,6 +816,11 @@ func (iuo *InviteUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (iuo *InviteUpdateOne) check() error {
+	if v, ok := iuo.mutation.OwnerID(); ok {
+		if err := invite.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Invite.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := iuo.mutation.Token(); ok {
 		if err := invite.TokenValidator(v); err != nil {
 			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Invite.token": %w`, err)}
@@ -826,9 +845,6 @@ func (iuo *InviteUpdateOne) check() error {
 		if err := invite.SecretValidator(v); err != nil {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "Invite.secret": %w`, err)}
 		}
-	}
-	if _, ok := iuo.mutation.OwnerID(); iuo.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Invite.owner"`)
 	}
 	return nil
 }

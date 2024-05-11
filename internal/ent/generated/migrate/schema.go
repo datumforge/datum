@@ -25,7 +25,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// APITokensTable holds the schema information for the "api_tokens" table.
 	APITokensTable = &schema.Table{
@@ -37,7 +37,7 @@ var (
 				Symbol:     "api_tokens_organizations_api_tokens",
 				Columns:    []*schema.Column{APITokensColumns[14]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -160,7 +160,7 @@ var (
 		{Name: "expires", Type: field.TypeBool, Default: false},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
 		{Name: "cancelled", Type: field.TypeBool, Default: false},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// EntitlementsTable holds the schema information for the "entitlements" table.
 	EntitlementsTable = &schema.Table{
@@ -172,7 +172,7 @@ var (
 				Symbol:     "entitlements_organizations_entitlements",
 				Columns:    []*schema.Column{EntitlementsColumns[14]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -189,7 +189,7 @@ var (
 		{Name: "mapping_id", Type: field.TypeString},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 		{Name: "tier", Type: field.TypeEnum, Enums: []string{"FREE", "PRO", "ENTERPRISE"}, Default: "FREE"},
 		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
 		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
@@ -392,7 +392,7 @@ var (
 		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
@@ -404,7 +404,7 @@ var (
 				Symbol:     "groups_organizations_groups",
 				Columns:    []*schema.Column{GroupsColumns[13]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -431,7 +431,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
@@ -657,7 +657,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "kind", Type: field.TypeString, Nullable: true},
 		{Name: "group_integrations", Type: field.TypeString, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// IntegrationsTable holds the schema information for the "integrations" table.
 	IntegrationsTable = &schema.Table{
@@ -675,7 +675,7 @@ var (
 				Symbol:     "integrations_organizations_integrations",
 				Columns:    []*schema.Column{IntegrationsColumns[12]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -692,7 +692,7 @@ var (
 		{Name: "mapping_id", Type: field.TypeString},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "kind", Type: field.TypeString, Nullable: true},
@@ -728,7 +728,7 @@ var (
 		{Name: "send_attempts", Type: field.TypeInt, Default: 0},
 		{Name: "requestor_id", Type: field.TypeString},
 		{Name: "secret", Type: field.TypeBytes},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// InvitesTable holds the schema information for the "invites" table.
 	InvitesTable = &schema.Table{
@@ -740,7 +740,7 @@ var (
 				Symbol:     "invites_organizations_invites",
 				Columns:    []*schema.Column{InvitesColumns[16]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -1165,7 +1165,7 @@ var (
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "ttl", Type: field.TypeTime},
 		{Name: "secret", Type: field.TypeBytes},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// SubscribersTable holds the schema information for the "subscribers" table.
 	SubscribersTable = &schema.Table{
@@ -1177,7 +1177,7 @@ var (
 				Symbol:     "subscribers_organizations_subscribers",
 				Columns:    []*schema.Column{SubscribersColumns[16]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -1248,7 +1248,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "jsonconfig", Type: field.TypeJSON},
 		{Name: "uischema", Type: field.TypeJSON, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// TemplatesTable holds the schema information for the "templates" table.
 	TemplatesTable = &schema.Table{
@@ -1260,7 +1260,7 @@ var (
 				Symbol:     "templates_organizations_templates",
 				Columns:    []*schema.Column{TemplatesColumns[13]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -1287,7 +1287,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "owner_id", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT"}, Default: "DOCUMENT"},
 		{Name: "description", Type: field.TypeString, Nullable: true},

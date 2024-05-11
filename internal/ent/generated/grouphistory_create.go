@@ -159,6 +159,14 @@ func (ghc *GroupHistoryCreate) SetOwnerID(s string) *GroupHistoryCreate {
 	return ghc
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ghc *GroupHistoryCreate) SetNillableOwnerID(s *string) *GroupHistoryCreate {
+	if s != nil {
+		ghc.SetOwnerID(*s)
+	}
+	return ghc
+}
+
 // SetName sets the "name" field.
 func (ghc *GroupHistoryCreate) SetName(s string) *GroupHistoryCreate {
 	ghc.mutation.SetName(s)
@@ -311,9 +319,6 @@ func (ghc *GroupHistoryCreate) check() error {
 	}
 	if _, ok := ghc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "GroupHistory.mapping_id"`)}
-	}
-	if _, ok := ghc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "GroupHistory.owner_id"`)}
 	}
 	if _, ok := ghc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "GroupHistory.name"`)}

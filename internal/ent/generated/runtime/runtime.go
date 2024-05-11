@@ -95,6 +95,8 @@ func init() {
 	_ = apitokenMixinFields0
 	apitokenMixinFields2 := apitokenMixin[2].Fields()
 	_ = apitokenMixinFields2
+	apitokenMixinFields3 := apitokenMixin[3].Fields()
+	_ = apitokenMixinFields3
 	apitokenFields := schema.APIToken{}.Fields()
 	_ = apitokenFields
 	// apitokenDescCreatedAt is the schema descriptor for created_at field.
@@ -111,6 +113,10 @@ func init() {
 	apitokenDescMappingID := apitokenMixinFields2[1].Descriptor()
 	// apitoken.DefaultMappingID holds the default value on creation for the mapping_id field.
 	apitoken.DefaultMappingID = apitokenDescMappingID.Default.(func() string)
+	// apitokenDescOwnerID is the schema descriptor for owner_id field.
+	apitokenDescOwnerID := apitokenMixinFields3[0].Descriptor()
+	// apitoken.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	apitoken.OwnerIDValidator = apitokenDescOwnerID.Validators[0].(func(string) error)
 	// apitokenDescName is the schema descriptor for name field.
 	apitokenDescName := apitokenFields[0].Descriptor()
 	// apitoken.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -264,6 +270,8 @@ func init() {
 	_ = entitlementMixinFields0
 	entitlementMixinFields1 := entitlementMixin[1].Fields()
 	_ = entitlementMixinFields1
+	entitlementMixinFields3 := entitlementMixin[3].Fields()
+	_ = entitlementMixinFields3
 	entitlementFields := schema.Entitlement{}.Fields()
 	_ = entitlementFields
 	// entitlementDescCreatedAt is the schema descriptor for created_at field.
@@ -280,6 +288,10 @@ func init() {
 	entitlementDescMappingID := entitlementMixinFields1[1].Descriptor()
 	// entitlement.DefaultMappingID holds the default value on creation for the mapping_id field.
 	entitlement.DefaultMappingID = entitlementDescMappingID.Default.(func() string)
+	// entitlementDescOwnerID is the schema descriptor for owner_id field.
+	entitlementDescOwnerID := entitlementMixinFields3[0].Descriptor()
+	// entitlement.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	entitlement.OwnerIDValidator = entitlementDescOwnerID.Validators[0].(func(string) error)
 	// entitlementDescExpires is the schema descriptor for expires field.
 	entitlementDescExpires := entitlementFields[3].Descriptor()
 	// entitlement.DefaultExpires holds the default value on creation for the expires field.
@@ -535,6 +547,8 @@ func init() {
 	_ = groupMixinFields0
 	groupMixinFields2 := groupMixin[2].Fields()
 	_ = groupMixinFields2
+	groupMixinFields3 := groupMixin[3].Fields()
+	_ = groupMixinFields3
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescCreatedAt is the schema descriptor for created_at field.
@@ -551,6 +565,10 @@ func init() {
 	groupDescMappingID := groupMixinFields2[1].Descriptor()
 	// group.DefaultMappingID holds the default value on creation for the mapping_id field.
 	group.DefaultMappingID = groupDescMappingID.Default.(func() string)
+	// groupDescOwnerID is the schema descriptor for owner_id field.
+	groupDescOwnerID := groupMixinFields3[0].Descriptor()
+	// group.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	group.OwnerIDValidator = groupDescOwnerID.Validators[0].(func(string) error)
 	// groupDescName is the schema descriptor for name field.
 	groupDescName := groupFields[0].Descriptor()
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -834,6 +852,8 @@ func init() {
 	_ = integrationMixinFields0
 	integrationMixinFields1 := integrationMixin[1].Fields()
 	_ = integrationMixinFields1
+	integrationMixinFields3 := integrationMixin[3].Fields()
+	_ = integrationMixinFields3
 	integrationFields := schema.Integration{}.Fields()
 	_ = integrationFields
 	// integrationDescCreatedAt is the schema descriptor for created_at field.
@@ -850,6 +870,10 @@ func init() {
 	integrationDescMappingID := integrationMixinFields1[1].Descriptor()
 	// integration.DefaultMappingID holds the default value on creation for the mapping_id field.
 	integration.DefaultMappingID = integrationDescMappingID.Default.(func() string)
+	// integrationDescOwnerID is the schema descriptor for owner_id field.
+	integrationDescOwnerID := integrationMixinFields3[0].Descriptor()
+	// integration.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	integration.OwnerIDValidator = integrationDescOwnerID.Validators[0].(func(string) error)
 	// integrationDescName is the schema descriptor for name field.
 	integrationDescName := integrationFields[0].Descriptor()
 	// integration.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -912,6 +936,8 @@ func init() {
 	_ = inviteMixinFields0
 	inviteMixinFields1 := inviteMixin[1].Fields()
 	_ = inviteMixinFields1
+	inviteMixinFields3 := inviteMixin[3].Fields()
+	_ = inviteMixinFields3
 	inviteFields := schema.Invite{}.Fields()
 	_ = inviteFields
 	// inviteDescCreatedAt is the schema descriptor for created_at field.
@@ -928,6 +954,10 @@ func init() {
 	inviteDescMappingID := inviteMixinFields1[1].Descriptor()
 	// invite.DefaultMappingID holds the default value on creation for the mapping_id field.
 	invite.DefaultMappingID = inviteDescMappingID.Default.(func() string)
+	// inviteDescOwnerID is the schema descriptor for owner_id field.
+	inviteDescOwnerID := inviteMixinFields3[0].Descriptor()
+	// invite.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	invite.OwnerIDValidator = inviteDescOwnerID.Validators[0].(func(string) error)
 	// inviteDescToken is the schema descriptor for token field.
 	inviteDescToken := inviteFields[0].Descriptor()
 	// invite.TokenValidator is a validator for the "token" field. It is called by the builders before save.
@@ -1506,6 +1536,8 @@ func init() {
 	_ = subscriberMixinFields0
 	subscriberMixinFields1 := subscriberMixin[1].Fields()
 	_ = subscriberMixinFields1
+	subscriberMixinFields3 := subscriberMixin[3].Fields()
+	_ = subscriberMixinFields3
 	subscriberFields := schema.Subscriber{}.Fields()
 	_ = subscriberFields
 	// subscriberDescCreatedAt is the schema descriptor for created_at field.
@@ -1522,6 +1554,10 @@ func init() {
 	subscriberDescMappingID := subscriberMixinFields1[1].Descriptor()
 	// subscriber.DefaultMappingID holds the default value on creation for the mapping_id field.
 	subscriber.DefaultMappingID = subscriberDescMappingID.Default.(func() string)
+	// subscriberDescOwnerID is the schema descriptor for owner_id field.
+	subscriberDescOwnerID := subscriberMixinFields3[0].Descriptor()
+	// subscriber.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	subscriber.OwnerIDValidator = subscriberDescOwnerID.Validators[0].(func(string) error)
 	// subscriberDescEmail is the schema descriptor for email field.
 	subscriberDescEmail := subscriberFields[0].Descriptor()
 	// subscriber.EmailValidator is a validator for the "email" field. It is called by the builders before save.
@@ -1618,6 +1654,8 @@ func init() {
 	_ = templateMixinFields0
 	templateMixinFields2 := templateMixin[2].Fields()
 	_ = templateMixinFields2
+	templateMixinFields3 := templateMixin[3].Fields()
+	_ = templateMixinFields3
 	templateFields := schema.Template{}.Fields()
 	_ = templateFields
 	// templateDescCreatedAt is the schema descriptor for created_at field.
@@ -1634,6 +1672,10 @@ func init() {
 	templateDescMappingID := templateMixinFields2[1].Descriptor()
 	// template.DefaultMappingID holds the default value on creation for the mapping_id field.
 	template.DefaultMappingID = templateDescMappingID.Default.(func() string)
+	// templateDescOwnerID is the schema descriptor for owner_id field.
+	templateDescOwnerID := templateMixinFields3[0].Descriptor()
+	// template.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	template.OwnerIDValidator = templateDescOwnerID.Validators[0].(func(string) error)
 	// templateDescName is the schema descriptor for name field.
 	templateDescName := templateFields[0].Descriptor()
 	// template.NameValidator is a validator for the "name" field. It is called by the builders before save.

@@ -120,6 +120,12 @@ func (iu *IntegrationUpdate) SetNillableOwnerID(s *string) *IntegrationUpdate {
 	return iu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (iu *IntegrationUpdate) ClearOwnerID() *IntegrationUpdate {
+	iu.mutation.ClearOwnerID()
+	return iu
+}
+
 // SetName sets the "name" field.
 func (iu *IntegrationUpdate) SetName(s string) *IntegrationUpdate {
 	iu.mutation.SetName(s)
@@ -342,13 +348,15 @@ func (iu *IntegrationUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (iu *IntegrationUpdate) check() error {
+	if v, ok := iu.mutation.OwnerID(); ok {
+		if err := integration.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Integration.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := iu.mutation.Name(); ok {
 		if err := integration.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
 		}
-	}
-	if _, ok := iu.mutation.OwnerID(); iu.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Integration.owner"`)
 	}
 	return nil
 }
@@ -693,6 +701,12 @@ func (iuo *IntegrationUpdateOne) SetNillableOwnerID(s *string) *IntegrationUpdat
 	return iuo
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (iuo *IntegrationUpdateOne) ClearOwnerID() *IntegrationUpdateOne {
+	iuo.mutation.ClearOwnerID()
+	return iuo
+}
+
 // SetName sets the "name" field.
 func (iuo *IntegrationUpdateOne) SetName(s string) *IntegrationUpdateOne {
 	iuo.mutation.SetName(s)
@@ -928,13 +942,15 @@ func (iuo *IntegrationUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (iuo *IntegrationUpdateOne) check() error {
+	if v, ok := iuo.mutation.OwnerID(); ok {
+		if err := integration.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Integration.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := iuo.mutation.Name(); ok {
 		if err := integration.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
 		}
-	}
-	if _, ok := iuo.mutation.OwnerID(); iuo.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Integration.owner"`)
 	}
 	return nil
 }

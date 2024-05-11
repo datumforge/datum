@@ -124,6 +124,12 @@ func (gu *GroupUpdate) SetNillableOwnerID(s *string) *GroupUpdate {
 	return gu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (gu *GroupUpdate) ClearOwnerID() *GroupUpdate {
+	gu.mutation.ClearOwnerID()
+	return gu
+}
+
 // SetName sets the "name" field.
 func (gu *GroupUpdate) SetName(s string) *GroupUpdate {
 	gu.mutation.SetName(s)
@@ -505,6 +511,11 @@ func (gu *GroupUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (gu *GroupUpdate) check() error {
+	if v, ok := gu.mutation.OwnerID(); ok {
+		if err := group.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Group.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := gu.mutation.Name(); ok {
 		if err := group.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Group.name": %w`, err)}
@@ -514,9 +525,6 @@ func (gu *GroupUpdate) check() error {
 		if err := group.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
 		}
-	}
-	if _, ok := gu.mutation.OwnerID(); gu.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Group.owner"`)
 	}
 	if _, ok := gu.mutation.SettingID(); gu.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)
@@ -1069,6 +1077,12 @@ func (guo *GroupUpdateOne) SetNillableOwnerID(s *string) *GroupUpdateOne {
 	return guo
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (guo *GroupUpdateOne) ClearOwnerID() *GroupUpdateOne {
+	guo.mutation.ClearOwnerID()
+	return guo
+}
+
 // SetName sets the "name" field.
 func (guo *GroupUpdateOne) SetName(s string) *GroupUpdateOne {
 	guo.mutation.SetName(s)
@@ -1463,6 +1477,11 @@ func (guo *GroupUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (guo *GroupUpdateOne) check() error {
+	if v, ok := guo.mutation.OwnerID(); ok {
+		if err := group.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Group.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := guo.mutation.Name(); ok {
 		if err := group.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Group.name": %w`, err)}
@@ -1472,9 +1491,6 @@ func (guo *GroupUpdateOne) check() error {
 		if err := group.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
 		}
-	}
-	if _, ok := guo.mutation.OwnerID(); guo.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Group.owner"`)
 	}
 	if _, ok := guo.mutation.SettingID(); guo.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)

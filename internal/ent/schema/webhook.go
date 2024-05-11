@@ -80,7 +80,7 @@ func (Webhook) Mixin() []ent.Mixin {
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
 			Ref:        "webhooks",
-			Optional:   true,
+			AllowEmpty: true,
 			AllowWhere: true,
 		},
 	}

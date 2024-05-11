@@ -127,6 +127,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
 	DefaultMappingID func() string
+	// OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	OwnerIDValidator func(string) error
 	// DefaultExpires holds the default value on creation for the "expires" field.
 	DefaultExpires bool
 	// DefaultCancelled holds the default value on creation for the "cancelled" field.

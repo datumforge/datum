@@ -159,6 +159,14 @@ func (ihc *IntegrationHistoryCreate) SetOwnerID(s string) *IntegrationHistoryCre
 	return ihc
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ihc *IntegrationHistoryCreate) SetNillableOwnerID(s *string) *IntegrationHistoryCreate {
+	if s != nil {
+		ihc.SetOwnerID(*s)
+	}
+	return ihc
+}
+
 // SetName sets the "name" field.
 func (ihc *IntegrationHistoryCreate) SetName(s string) *IntegrationHistoryCreate {
 	ihc.mutation.SetName(s)
@@ -279,9 +287,6 @@ func (ihc *IntegrationHistoryCreate) check() error {
 	}
 	if _, ok := ihc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "IntegrationHistory.mapping_id"`)}
-	}
-	if _, ok := ihc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "IntegrationHistory.owner_id"`)}
 	}
 	if _, ok := ihc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "IntegrationHistory.name"`)}

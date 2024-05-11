@@ -611,9 +611,22 @@ func (m *APITokenMutation) OldOwnerID(ctx context.Context) (v string, err error)
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *APITokenMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[apitoken.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *APITokenMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[apitoken.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *APITokenMutation) ResetOwnerID() {
 	m.owner = nil
+	delete(m.clearedFields, apitoken.FieldOwnerID)
 }
 
 // SetName sets the "name" field.
@@ -908,7 +921,7 @@ func (m *APITokenMutation) ClearOwner() {
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *APITokenMutation) OwnerCleared() bool {
-	return m.clearedowner
+	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -1232,6 +1245,9 @@ func (m *APITokenMutation) ClearedFields() []string {
 	if m.FieldCleared(apitoken.FieldDeletedBy) {
 		fields = append(fields, apitoken.FieldDeletedBy)
 	}
+	if m.FieldCleared(apitoken.FieldOwnerID) {
+		fields = append(fields, apitoken.FieldOwnerID)
+	}
 	if m.FieldCleared(apitoken.FieldExpiresAt) {
 		fields = append(fields, apitoken.FieldExpiresAt)
 	}
@@ -1275,6 +1291,9 @@ func (m *APITokenMutation) ClearField(name string) error {
 		return nil
 	case apitoken.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case apitoken.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case apitoken.FieldExpiresAt:
 		m.ClearExpiresAt()
@@ -5008,9 +5027,22 @@ func (m *EntitlementMutation) OldOwnerID(ctx context.Context) (v string, err err
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *EntitlementMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[entitlement.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *EntitlementMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *EntitlementMutation) ResetOwnerID() {
 	m.owner = nil
+	delete(m.clearedFields, entitlement.FieldOwnerID)
 }
 
 // SetTier sets the "tier" field.
@@ -5276,7 +5308,7 @@ func (m *EntitlementMutation) ClearOwner() {
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *EntitlementMutation) OwnerCleared() bool {
-	return m.clearedowner
+	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -5708,6 +5740,9 @@ func (m *EntitlementMutation) ClearedFields() []string {
 	if m.FieldCleared(entitlement.FieldDeletedBy) {
 		fields = append(fields, entitlement.FieldDeletedBy)
 	}
+	if m.FieldCleared(entitlement.FieldOwnerID) {
+		fields = append(fields, entitlement.FieldOwnerID)
+	}
 	if m.FieldCleared(entitlement.FieldExternalCustomerID) {
 		fields = append(fields, entitlement.FieldExternalCustomerID)
 	}
@@ -5748,6 +5783,9 @@ func (m *EntitlementMutation) ClearField(name string) error {
 		return nil
 	case entitlement.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case entitlement.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case entitlement.FieldExternalCustomerID:
 		m.ClearExternalCustomerID()
@@ -6555,9 +6593,22 @@ func (m *EntitlementHistoryMutation) OldOwnerID(ctx context.Context) (v string, 
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *EntitlementHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[entitlementhistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *EntitlementHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[entitlementhistory.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *EntitlementHistoryMutation) ResetOwnerID() {
 	m.owner_id = nil
+	delete(m.clearedFields, entitlementhistory.FieldOwnerID)
 }
 
 // SetTier sets the "tier" field.
@@ -7165,6 +7216,9 @@ func (m *EntitlementHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(entitlementhistory.FieldDeletedBy) {
 		fields = append(fields, entitlementhistory.FieldDeletedBy)
 	}
+	if m.FieldCleared(entitlementhistory.FieldOwnerID) {
+		fields = append(fields, entitlementhistory.FieldOwnerID)
+	}
 	if m.FieldCleared(entitlementhistory.FieldExternalCustomerID) {
 		fields = append(fields, entitlementhistory.FieldExternalCustomerID)
 	}
@@ -7208,6 +7262,9 @@ func (m *EntitlementHistoryMutation) ClearField(name string) error {
 		return nil
 	case entitlementhistory.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case entitlementhistory.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case entitlementhistory.FieldExternalCustomerID:
 		m.ClearExternalCustomerID()
@@ -16521,9 +16578,22 @@ func (m *GroupMutation) OldOwnerID(ctx context.Context) (v string, err error) {
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *GroupMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[group.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *GroupMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[group.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *GroupMutation) ResetOwnerID() {
 	m.owner = nil
+	delete(m.clearedFields, group.FieldOwnerID)
 }
 
 // SetName sets the "name" field.
@@ -16753,7 +16823,7 @@ func (m *GroupMutation) ClearOwner() {
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *GroupMutation) OwnerCleared() bool {
-	return m.clearedowner
+	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -17426,6 +17496,9 @@ func (m *GroupMutation) ClearedFields() []string {
 	if m.FieldCleared(group.FieldDeletedBy) {
 		fields = append(fields, group.FieldDeletedBy)
 	}
+	if m.FieldCleared(group.FieldOwnerID) {
+		fields = append(fields, group.FieldOwnerID)
+	}
 	if m.FieldCleared(group.FieldDescription) {
 		fields = append(fields, group.FieldDescription)
 	}
@@ -17466,6 +17539,9 @@ func (m *GroupMutation) ClearField(name string) error {
 		return nil
 	case group.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case group.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case group.FieldDescription:
 		m.ClearDescription()
@@ -18391,9 +18467,22 @@ func (m *GroupHistoryMutation) OldOwnerID(ctx context.Context) (v string, err er
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *GroupHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[grouphistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *GroupHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[grouphistory.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *GroupHistoryMutation) ResetOwnerID() {
 	m.owner_id = nil
+	delete(m.clearedFields, grouphistory.FieldOwnerID)
 }
 
 // SetName sets the "name" field.
@@ -18951,6 +19040,9 @@ func (m *GroupHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(grouphistory.FieldDeletedBy) {
 		fields = append(fields, grouphistory.FieldDeletedBy)
 	}
+	if m.FieldCleared(grouphistory.FieldOwnerID) {
+		fields = append(fields, grouphistory.FieldOwnerID)
+	}
 	if m.FieldCleared(grouphistory.FieldDescription) {
 		fields = append(fields, grouphistory.FieldDescription)
 	}
@@ -18994,6 +19086,9 @@ func (m *GroupHistoryMutation) ClearField(name string) error {
 		return nil
 	case grouphistory.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case grouphistory.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case grouphistory.FieldDescription:
 		m.ClearDescription()
@@ -27139,9 +27234,22 @@ func (m *IntegrationMutation) OldOwnerID(ctx context.Context) (v string, err err
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *IntegrationMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[integration.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *IntegrationMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[integration.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *IntegrationMutation) ResetOwnerID() {
 	m.owner = nil
+	delete(m.clearedFields, integration.FieldOwnerID)
 }
 
 // SetName sets the "name" field.
@@ -27286,7 +27394,7 @@ func (m *IntegrationMutation) ClearOwner() {
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *IntegrationMutation) OwnerCleared() bool {
-	return m.clearedowner
+	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -27730,6 +27838,9 @@ func (m *IntegrationMutation) ClearedFields() []string {
 	if m.FieldCleared(integration.FieldDeletedBy) {
 		fields = append(fields, integration.FieldDeletedBy)
 	}
+	if m.FieldCleared(integration.FieldOwnerID) {
+		fields = append(fields, integration.FieldOwnerID)
+	}
 	if m.FieldCleared(integration.FieldDescription) {
 		fields = append(fields, integration.FieldDescription)
 	}
@@ -27767,6 +27878,9 @@ func (m *IntegrationMutation) ClearField(name string) error {
 		return nil
 	case integration.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case integration.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case integration.FieldDescription:
 		m.ClearDescription()
@@ -28585,9 +28699,22 @@ func (m *IntegrationHistoryMutation) OldOwnerID(ctx context.Context) (v string, 
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *IntegrationHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[integrationhistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *IntegrationHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[integrationhistory.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *IntegrationHistoryMutation) ResetOwnerID() {
 	m.owner_id = nil
+	delete(m.clearedFields, integrationhistory.FieldOwnerID)
 }
 
 // SetName sets the "name" field.
@@ -29032,6 +29159,9 @@ func (m *IntegrationHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(integrationhistory.FieldDeletedBy) {
 		fields = append(fields, integrationhistory.FieldDeletedBy)
 	}
+	if m.FieldCleared(integrationhistory.FieldOwnerID) {
+		fields = append(fields, integrationhistory.FieldOwnerID)
+	}
 	if m.FieldCleared(integrationhistory.FieldDescription) {
 		fields = append(fields, integrationhistory.FieldDescription)
 	}
@@ -29072,6 +29202,9 @@ func (m *IntegrationHistoryMutation) ClearField(name string) error {
 		return nil
 	case integrationhistory.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case integrationhistory.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case integrationhistory.FieldDescription:
 		m.ClearDescription()
@@ -29679,9 +29812,22 @@ func (m *InviteMutation) OldOwnerID(ctx context.Context) (v string, err error) {
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *InviteMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[invite.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *InviteMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[invite.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *InviteMutation) ResetOwnerID() {
 	m.owner = nil
+	delete(m.clearedFields, invite.FieldOwnerID)
 }
 
 // SetToken sets the "token" field.
@@ -30000,7 +30146,7 @@ func (m *InviteMutation) ClearOwner() {
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *InviteMutation) OwnerCleared() bool {
-	return m.clearedowner
+	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -30421,6 +30567,9 @@ func (m *InviteMutation) ClearedFields() []string {
 	if m.FieldCleared(invite.FieldDeletedBy) {
 		fields = append(fields, invite.FieldDeletedBy)
 	}
+	if m.FieldCleared(invite.FieldOwnerID) {
+		fields = append(fields, invite.FieldOwnerID)
+	}
 	return fields
 }
 
@@ -30452,6 +30601,9 @@ func (m *InviteMutation) ClearField(name string) error {
 		return nil
 	case invite.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case invite.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	}
 	return fmt.Errorf("unknown Invite nullable field %s", name)
@@ -47334,9 +47486,22 @@ func (m *SubscriberMutation) OldOwnerID(ctx context.Context) (v string, err erro
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *SubscriberMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[subscriber.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *SubscriberMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *SubscriberMutation) ResetOwnerID() {
 	m.owner = nil
+	delete(m.clearedFields, subscriber.FieldOwnerID)
 }
 
 // SetEmail sets the "email" field.
@@ -47648,7 +47813,7 @@ func (m *SubscriberMutation) ClearOwner() {
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *SubscriberMutation) OwnerCleared() bool {
-	return m.clearedowner
+	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -48054,6 +48219,9 @@ func (m *SubscriberMutation) ClearedFields() []string {
 	if m.FieldCleared(subscriber.FieldDeletedBy) {
 		fields = append(fields, subscriber.FieldDeletedBy)
 	}
+	if m.FieldCleared(subscriber.FieldOwnerID) {
+		fields = append(fields, subscriber.FieldOwnerID)
+	}
 	if m.FieldCleared(subscriber.FieldPhoneNumber) {
 		fields = append(fields, subscriber.FieldPhoneNumber)
 	}
@@ -48088,6 +48256,9 @@ func (m *SubscriberMutation) ClearField(name string) error {
 		return nil
 	case subscriber.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case subscriber.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case subscriber.FieldPhoneNumber:
 		m.ClearPhoneNumber()
@@ -50084,9 +50255,22 @@ func (m *TemplateMutation) OldOwnerID(ctx context.Context) (v string, err error)
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *TemplateMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[template.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *TemplateMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[template.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *TemplateMutation) ResetOwnerID() {
 	m.owner = nil
+	delete(m.clearedFields, template.FieldOwnerID)
 }
 
 // SetName sets the "name" field.
@@ -50303,7 +50487,7 @@ func (m *TemplateMutation) ClearOwner() {
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *TemplateMutation) OwnerCleared() bool {
-	return m.clearedowner
+	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -50667,6 +50851,9 @@ func (m *TemplateMutation) ClearedFields() []string {
 	if m.FieldCleared(template.FieldDeletedBy) {
 		fields = append(fields, template.FieldDeletedBy)
 	}
+	if m.FieldCleared(template.FieldOwnerID) {
+		fields = append(fields, template.FieldOwnerID)
+	}
 	if m.FieldCleared(template.FieldDescription) {
 		fields = append(fields, template.FieldDescription)
 	}
@@ -50704,6 +50891,9 @@ func (m *TemplateMutation) ClearField(name string) error {
 		return nil
 	case template.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case template.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case template.FieldDescription:
 		m.ClearDescription()
@@ -51478,9 +51668,22 @@ func (m *TemplateHistoryMutation) OldOwnerID(ctx context.Context) (v string, err
 	return oldValue.OwnerID, nil
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *TemplateHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[templatehistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldOwnerID]
+	return ok
+}
+
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *TemplateHistoryMutation) ResetOwnerID() {
 	m.owner_id = nil
+	delete(m.clearedFields, templatehistory.FieldOwnerID)
 }
 
 // SetName sets the "name" field.
@@ -52025,6 +52228,9 @@ func (m *TemplateHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(templatehistory.FieldDeletedBy) {
 		fields = append(fields, templatehistory.FieldDeletedBy)
 	}
+	if m.FieldCleared(templatehistory.FieldOwnerID) {
+		fields = append(fields, templatehistory.FieldOwnerID)
+	}
 	if m.FieldCleared(templatehistory.FieldDescription) {
 		fields = append(fields, templatehistory.FieldDescription)
 	}
@@ -52065,6 +52271,9 @@ func (m *TemplateHistoryMutation) ClearField(name string) error {
 		return nil
 	case templatehistory.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case templatehistory.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	case templatehistory.FieldDescription:
 		m.ClearDescription()

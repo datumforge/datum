@@ -128,6 +128,14 @@ func (ic *IntegrationCreate) SetOwnerID(s string) *IntegrationCreate {
 	return ic
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableOwnerID(s *string) *IntegrationCreate {
+	if s != nil {
+		ic.SetOwnerID(*s)
+	}
+	return ic
+}
+
 // SetName sets the "name" field.
 func (ic *IntegrationCreate) SetName(s string) *IntegrationCreate {
 	ic.mutation.SetName(s)
@@ -299,8 +307,10 @@ func (ic *IntegrationCreate) check() error {
 	if _, ok := ic.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Integration.mapping_id"`)}
 	}
-	if _, ok := ic.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Integration.owner_id"`)}
+	if v, ok := ic.mutation.OwnerID(); ok {
+		if err := integration.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Integration.owner_id": %w`, err)}
+		}
 	}
 	if _, ok := ic.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Integration.name"`)}
@@ -309,9 +319,6 @@ func (ic *IntegrationCreate) check() error {
 		if err := integration.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
 		}
-	}
-	if _, ok := ic.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Integration.owner"`)}
 	}
 	return nil
 }

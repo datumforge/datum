@@ -122,8 +122,7 @@
                   }
                 },
                 "required": [
-                  "name",
-                  "owner"
+                  "name"
                 ]
               }
             }
@@ -1369,8 +1368,7 @@
                 "required": [
                   "tier",
                   "expires",
-                  "cancelled",
-                  "owner"
+                  "cancelled"
                 ]
               }
             }
@@ -6578,7 +6576,6 @@
                 "required": [
                   "name",
                   "display_name",
-                  "owner",
                   "setting"
                 ]
               }
@@ -8428,8 +8425,7 @@
                   }
                 },
                 "required": [
-                  "name",
-                  "owner"
+                  "name"
                 ]
               }
             }
@@ -8958,8 +8954,7 @@
                 },
                 "required": [
                   "recipient",
-                  "role",
-                  "owner"
+                  "role"
                 ]
               }
             }
@@ -14089,8 +14084,7 @@
                   "verified_email",
                   "verified_phone",
                   "active",
-                  "ttl",
-                  "owner"
+                  "ttl"
                 ]
               }
             }
@@ -14815,8 +14809,7 @@
                 "required": [
                   "name",
                   "template_type",
-                  "jsonconfig",
-                  "owner"
+                  "jsonconfig"
                 ]
               }
             }
@@ -17836,8 +17829,7 @@
         },
         "required": [
           "id",
-          "name",
-          "owner"
+          "name"
         ]
       },
       "DocumentData": {
@@ -18055,8 +18047,7 @@
           "id",
           "tier",
           "expires",
-          "cancelled",
-          "owner"
+          "cancelled"
         ]
       },
       "EntitlementHistory": {
@@ -18683,7 +18674,6 @@
           "id",
           "name",
           "display_name",
-          "owner",
           "setting"
         ]
       },
@@ -19229,8 +19219,7 @@
         },
         "required": [
           "id",
-          "name",
-          "owner"
+          "name"
         ]
       },
       "IntegrationHistory": {
@@ -19367,8 +19356,7 @@
           "status",
           "role",
           "send_attempts",
-          "requestor_id",
-          "owner"
+          "requestor_id"
         ]
       },
       "OauthProvider": {
@@ -20303,8 +20291,7 @@
           "email",
           "verified_email",
           "verified_phone",
-          "active",
-          "owner"
+          "active"
         ]
       },
       "TFASetting": {
@@ -20416,8 +20403,7 @@
           "id",
           "name",
           "template_type",
-          "jsonconfig",
-          "owner"
+          "jsonconfig"
         ]
       },
       "TemplateHistory": {

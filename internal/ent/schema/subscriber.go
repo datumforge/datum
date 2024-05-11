@@ -85,10 +85,9 @@ func (Subscriber) Mixin() []ent.Mixin {
 		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
-			Ref:               "subscribers",
-			AllowWhere:        true,
-			SkipInterceptor:   interceptors.SkipOnlyQuery,
-			SkipMutationInput: true,
+			Ref:             "subscribers",
+			AllowWhere:      true,
+			SkipInterceptor: interceptors.SkipOnlyQuery,
 		},
 	}
 }
@@ -124,10 +123,11 @@ func (Subscriber) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType:    "organization",
-			IncludeHooks:  false,
-			OrgOwnedField: true,
-			IDField:       "OwnerID",
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			OrgOwnedField:   true,
+			NillableIDField: true,
+			IDField:         "OwnerID",
 		},
 		enthistory.Annotations{
 			Exclude: true,

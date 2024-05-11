@@ -628,6 +628,16 @@ func OwnerIDHasSuffix(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldHasSuffix(FieldOwnerID, v))
 }
 
+// OwnerIDIsNil applies the IsNil predicate on the "owner_id" field.
+func OwnerIDIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldOwnerID))
+}
+
+// OwnerIDNotNil applies the NotNil predicate on the "owner_id" field.
+func OwnerIDNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldOwnerID))
+}
+
 // OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
 func OwnerIDEqualFold(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEqualFold(FieldOwnerID, v))

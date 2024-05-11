@@ -128,6 +128,14 @@ func (tc *TemplateCreate) SetOwnerID(s string) *TemplateCreate {
 	return tc
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (tc *TemplateCreate) SetNillableOwnerID(s *string) *TemplateCreate {
+	if s != nil {
+		tc.SetOwnerID(*s)
+	}
+	return tc
+}
+
 // SetName sets the "name" field.
 func (tc *TemplateCreate) SetName(s string) *TemplateCreate {
 	tc.mutation.SetName(s)
@@ -285,8 +293,10 @@ func (tc *TemplateCreate) check() error {
 	if _, ok := tc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Template.mapping_id"`)}
 	}
-	if _, ok := tc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Template.owner_id"`)}
+	if v, ok := tc.mutation.OwnerID(); ok {
+		if err := template.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Template.owner_id": %w`, err)}
+		}
 	}
 	if _, ok := tc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Template.name"`)}
@@ -306,9 +316,6 @@ func (tc *TemplateCreate) check() error {
 	}
 	if _, ok := tc.mutation.Jsonconfig(); !ok {
 		return &ValidationError{Name: "jsonconfig", err: errors.New(`generated: missing required field "Template.jsonconfig"`)}
-	}
-	if _, ok := tc.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Template.owner"`)}
 	}
 	return nil
 }

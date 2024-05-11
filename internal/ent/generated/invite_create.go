@@ -127,6 +127,14 @@ func (ic *InviteCreate) SetOwnerID(s string) *InviteCreate {
 	return ic
 }
 
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableOwnerID(s *string) *InviteCreate {
+	if s != nil {
+		ic.SetOwnerID(*s)
+	}
+	return ic
+}
+
 // SetToken sets the "token" field.
 func (ic *InviteCreate) SetToken(s string) *InviteCreate {
 	ic.mutation.SetToken(s)
@@ -318,8 +326,10 @@ func (ic *InviteCreate) check() error {
 	if _, ok := ic.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Invite.mapping_id"`)}
 	}
-	if _, ok := ic.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Invite.owner_id"`)}
+	if v, ok := ic.mutation.OwnerID(); ok {
+		if err := invite.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Invite.owner_id": %w`, err)}
+		}
 	}
 	if _, ok := ic.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "Invite.token"`)}
@@ -374,9 +384,6 @@ func (ic *InviteCreate) check() error {
 		if err := invite.SecretValidator(v); err != nil {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "Invite.secret": %w`, err)}
 		}
-	}
-	if _, ok := ic.mutation.OwnerID(); !ok {
-		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Invite.owner"`)}
 	}
 	return nil
 }

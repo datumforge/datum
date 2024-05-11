@@ -118,6 +118,12 @@ func (atu *APITokenUpdate) SetNillableOwnerID(s *string) *APITokenUpdate {
 	return atu
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (atu *APITokenUpdate) ClearOwnerID() *APITokenUpdate {
+	atu.mutation.ClearOwnerID()
+	return atu
+}
+
 // SetName sets the "name" field.
 func (atu *APITokenUpdate) SetName(s string) *APITokenUpdate {
 	atu.mutation.SetName(s)
@@ -270,13 +276,15 @@ func (atu *APITokenUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (atu *APITokenUpdate) check() error {
+	if v, ok := atu.mutation.OwnerID(); ok {
+		if err := apitoken.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "APIToken.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := atu.mutation.Name(); ok {
 		if err := apitoken.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "APIToken.name": %w`, err)}
 		}
-	}
-	if _, ok := atu.mutation.OwnerID(); atu.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "APIToken.owner"`)
 	}
 	return nil
 }
@@ -494,6 +502,12 @@ func (atuo *APITokenUpdateOne) SetNillableOwnerID(s *string) *APITokenUpdateOne 
 	return atuo
 }
 
+// ClearOwnerID clears the value of the "owner_id" field.
+func (atuo *APITokenUpdateOne) ClearOwnerID() *APITokenUpdateOne {
+	atuo.mutation.ClearOwnerID()
+	return atuo
+}
+
 // SetName sets the "name" field.
 func (atuo *APITokenUpdateOne) SetName(s string) *APITokenUpdateOne {
 	atuo.mutation.SetName(s)
@@ -659,13 +673,15 @@ func (atuo *APITokenUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (atuo *APITokenUpdateOne) check() error {
+	if v, ok := atuo.mutation.OwnerID(); ok {
+		if err := apitoken.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "APIToken.owner_id": %w`, err)}
+		}
+	}
 	if v, ok := atuo.mutation.Name(); ok {
 		if err := apitoken.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "APIToken.name": %w`, err)}
 		}
-	}
-	if _, ok := atuo.mutation.OwnerID(); atuo.mutation.OwnerCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "APIToken.owner"`)
 	}
 	return nil
 }

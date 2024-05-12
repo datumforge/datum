@@ -25,6 +25,11 @@ query GetIntegrations($where: IntegrationWhereInput) {
         events {
           id
         }
+        webhooks {
+          id
+          destinationURL
+          enabled
+        }
       }
     }
   }
@@ -54,6 +59,11 @@ query GetIntegrationByID($integrationId: ID!) {
     }
     events {
       id
+    }
+    webhooks {
+      id
+      destinationURL
+      enabled
     }
   }
 }

@@ -6165,6 +6165,31 @@ func (t *GetIntegrations_Integrations_Edges_Node_Events) GetID() string {
 	return t.ID
 }
 
+type GetIntegrations_Integrations_Edges_Node_Webhooks struct {
+	ID             string "json:\"id\" graphql:\"id\""
+	DestinationURL string "json:\"destinationURL\" graphql:\"destinationURL\""
+	Enabled        bool   "json:\"enabled\" graphql:\"enabled\""
+}
+
+func (t *GetIntegrations_Integrations_Edges_Node_Webhooks) GetID() string {
+	if t == nil {
+		t = &GetIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.ID
+}
+func (t *GetIntegrations_Integrations_Edges_Node_Webhooks) GetDestinationURL() string {
+	if t == nil {
+		t = &GetIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.DestinationURL
+}
+func (t *GetIntegrations_Integrations_Edges_Node_Webhooks) GetEnabled() bool {
+	if t == nil {
+		t = &GetIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.Enabled
+}
+
 type GetIntegrations_Integrations_Edges_Node struct {
 	ID           string                                                  "json:\"id\" graphql:\"id\""
 	CreatedAt    *time.Time                                              "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -6181,6 +6206,7 @@ type GetIntegrations_Integrations_Edges_Node struct {
 	Secrets      []*GetIntegrations_Integrations_Edges_Node_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*GetIntegrations_Integrations_Edges_Node_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*GetIntegrations_Integrations_Edges_Node_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*GetIntegrations_Integrations_Edges_Node_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
 }
 
 func (t *GetIntegrations_Integrations_Edges_Node) GetID() string {
@@ -6273,6 +6299,12 @@ func (t *GetIntegrations_Integrations_Edges_Node) GetEvents() []*GetIntegrations
 	}
 	return t.Events
 }
+func (t *GetIntegrations_Integrations_Edges_Node) GetWebhooks() []*GetIntegrations_Integrations_Edges_Node_Webhooks {
+	if t == nil {
+		t = &GetIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Webhooks
+}
 
 type GetIntegrations_Integrations_Edges struct {
 	Node *GetIntegrations_Integrations_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
@@ -6340,6 +6372,31 @@ func (t *GetIntegrationByID_Integration_Events) GetID() string {
 	return t.ID
 }
 
+type GetIntegrationByID_Integration_Webhooks struct {
+	ID             string "json:\"id\" graphql:\"id\""
+	DestinationURL string "json:\"destinationURL\" graphql:\"destinationURL\""
+	Enabled        bool   "json:\"enabled\" graphql:\"enabled\""
+}
+
+func (t *GetIntegrationByID_Integration_Webhooks) GetID() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Webhooks{}
+	}
+	return t.ID
+}
+func (t *GetIntegrationByID_Integration_Webhooks) GetDestinationURL() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Webhooks{}
+	}
+	return t.DestinationURL
+}
+func (t *GetIntegrationByID_Integration_Webhooks) GetEnabled() bool {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Webhooks{}
+	}
+	return t.Enabled
+}
+
 type GetIntegrationByID_Integration struct {
 	ID           string                                         "json:\"id\" graphql:\"id\""
 	CreatedAt    *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -6356,6 +6413,7 @@ type GetIntegrationByID_Integration struct {
 	Secrets      []*GetIntegrationByID_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*GetIntegrationByID_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*GetIntegrationByID_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*GetIntegrationByID_Integration_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
 }
 
 func (t *GetIntegrationByID_Integration) GetID() string {
@@ -6447,6 +6505,12 @@ func (t *GetIntegrationByID_Integration) GetEvents() []*GetIntegrationByID_Integ
 		t = &GetIntegrationByID_Integration{}
 	}
 	return t.Events
+}
+func (t *GetIntegrationByID_Integration) GetWebhooks() []*GetIntegrationByID_Integration_Webhooks {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Webhooks
 }
 
 type GetAllIntegrations_Integrations_Edges_Node_Owner struct {
@@ -17006,6 +17070,11 @@ const GetIntegrationsDocument = `query GetIntegrations ($where: IntegrationWhere
 				events {
 					id
 				}
+				webhooks {
+					id
+					destinationURL
+					enabled
+				}
 			}
 		}
 	}
@@ -17053,6 +17122,11 @@ const GetIntegrationByIDDocument = `query GetIntegrationByID ($integrationId: ID
 		}
 		events {
 			id
+		}
+		webhooks {
+			id
+			destinationURL
+			enabled
 		}
 	}
 }

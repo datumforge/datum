@@ -40,7 +40,7 @@ func integrations(ctx context.Context) error {
 
 	var s []byte
 
-	writer := tables.NewTableWriter(integrationCmd.OutOrStdout(), "ID", "Name", "Description")
+	writer := tables.NewTableWriter(integrationCmd.OutOrStdout(), "OwnerID", "Name", "Description", "Webhook ID", "Webhook URL", "Kind")
 
 	if oID != "" {
 		integration, err := cli.Client.GetIntegrationByID(ctx, oID, cli.Interceptor)
@@ -57,7 +57,10 @@ func integrations(ctx context.Context) error {
 			return datum.JSONPrint(s)
 		}
 
-		writer.AddRow(integration.Integration.ID, integration.Integration.Name, *integration.Integration.Description)
+		for _, webhook := range integration.Integration.Webhooks {
+			writer.AddRow(integration.Integration.OwnerID, integration.Integration.Name, *integration.Integration.Description, webhook.ID, webhook.DestinationURL, integration.Integration.Kind)
+		}
+
 		writer.Render()
 
 		return nil
@@ -78,7 +81,9 @@ func integrations(ctx context.Context) error {
 	}
 
 	for _, integration := range integrations.Integrations.Edges {
-		writer.AddRow(integration.Node.ID, integration.Node.Name, *integration.Node.Description)
+		for _, webhook := range integration.Node.Webhooks {
+			writer.AddRow(integration.Node.ID, integration.Node.Name, *integration.Node.Description, webhook.ID, webhook.DestinationURL, integration.Node.Kind)
+		}
 	}
 
 	writer.Render()

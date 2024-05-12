@@ -10,6 +10,8 @@ import (
 	ph "github.com/posthog/posthog-go"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
 	"github.com/datumforge/datum/pkg/events/soiree"
 	"github.com/datumforge/datum/pkg/utils/slack"
 )
@@ -94,33 +96,52 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	}
 
 	userCreatedListener := func(evt soiree.Event) error {
-		webhookURL := "https://hooks.slack.com/services/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"
-		retrieve := sEvent.Payload().(map[string]string)
-		log.Printf("event: %s\n", retrieve["key"])
+		integrationWithWebhook, err := c.Integration.Query().WithWebhooks().Where(
+			integration.KindEQ("slack")).QueryWebhooks().Where(
+			webhook.EnabledEQ(true)).All(context.Background())
 
-		payload := slack.Payload{
-			Text: fmt.Sprintf("A user with the following details has been created:\nName: %s\nFirst Name: %s\nLast Name: %s\nEmail: %s\nAuth Provider: %s", retrieve["name"], retrieve["first_name"], retrieve["last_name"], retrieve["email"], retrieve["auth_provider"]),
+		if err != nil {
+			log.Printf("error: %s\n", err)
 		}
 
-		slackMessage := slack.New(webhookURL)
-		if err := slackMessage.Post(context.Background(), &payload); err != nil {
-			log.Printf("error: %s\n", err)
+		for _, w := range integrationWithWebhook {
+			retrieve := sEvent.Payload().(map[string]string)
+			log.Printf("event: %s\n", retrieve["key"])
+
+			payload := slack.Payload{
+				Text: fmt.Sprintf("A user with the following details has been created:\nName: %s\nFirst Name: %s\nLast Name: %s\nEmail: %s\nAuth Provider: %s", retrieve["name"], retrieve["first_name"], retrieve["last_name"], retrieve["email"], retrieve["auth_provider"]),
+			}
+
+			slackMessage := slack.New(w.DestinationURL)
+			if err := slackMessage.Post(context.Background(), &payload); err != nil {
+				log.Printf("error: %s\n", err)
+			}
+
 		}
 		return nil
 	}
 
 	orgCreatedListener := func(evt soiree.Event) error {
-		webhookURL := "https://hooks.slack.com/services/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"
-		retrieve := sEvent.Payload().(map[string]string)
-		log.Printf("event: %s\n", retrieve["key"])
+		integrationWithWebhook, err := c.Integration.Query().WithWebhooks().Where(
+			integration.KindEQ("slack")).QueryWebhooks().Where(
+			webhook.EnabledEQ(true)).All(context.Background())
 
-		payload := slack.Payload{
-			Text: fmt.Sprintf("An organization with the following details has been created:\nName: %s", retrieve["name"]),
+		if err != nil {
+			log.Printf("error: %s\n", err)
 		}
 
-		slackMessage := slack.New(webhookURL)
-		if err := slackMessage.Post(context.Background(), &payload); err != nil {
-			log.Printf("error: %s\n", err)
+		for _, w := range integrationWithWebhook {
+			retrieve := sEvent.Payload().(map[string]string)
+			log.Printf("event: %s\n", retrieve["key"])
+
+			payload := slack.Payload{
+				Text: fmt.Sprintf("An organization with the following details has been created:\nName: %s", retrieve["name"]),
+			}
+
+			slackMessage := slack.New(w.DestinationURL)
+			if err := slackMessage.Post(context.Background(), &payload); err != nil {
+				log.Printf("error: %s\n", err)
+			}
 		}
 		return nil
 	}

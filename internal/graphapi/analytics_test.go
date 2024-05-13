@@ -64,7 +64,7 @@ func (suite *GraphTestSuite) TestCreateEvent() {
 				LastName:  "Pearson",
 				Email:     "jpearson@us.com",
 			},
-			expectedEvent: "user_created",
+			expectedEvent: "user.created",
 			expectedProps: map[string]interface{}{
 				"email":      "jpearson@us.com",
 				"first_name": "Jack",
@@ -79,7 +79,7 @@ func (suite *GraphTestSuite) TestCreateEvent() {
 				ID:   "123",
 				Name: "Meow",
 			},
-			expectedEvent: "organization_created",
+			expectedEvent: "organization.created",
 			expectedProps: map[string]interface{}{
 				"organization_name": "Meow",
 				"organization_id":   "123",

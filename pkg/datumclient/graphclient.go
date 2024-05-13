@@ -63,7 +63,6 @@ type DatumClient interface {
 	GetAllIntegrations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllIntegrations, error)
 	CreateIntegration(ctx context.Context, input CreateIntegrationInput, interceptors ...clientv2.RequestInterceptor) (*CreateIntegration, error)
 	UpdateIntegration(ctx context.Context, updateIntegrationID string, input UpdateIntegrationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateIntegration, error)
-	CreateIntegrationWithWebhook(ctx context.Context, input CreateIntegrationInput, createWebhookInput2 CreateWebhookInput, interceptors ...clientv2.RequestInterceptor) (*CreateIntegrationWithWebhook, error)
 	DeleteIntegration(ctx context.Context, deleteIntegrationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteIntegration, error)
 	CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error)
 	DeleteInvite(ctx context.Context, deleteInviteID string, interceptors ...clientv2.RequestInterceptor) (*DeleteInvite, error)
@@ -6405,11 +6404,11 @@ type GetIntegrationByID_Integration struct {
 	UpdatedBy    *string                                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	DeletedAt    *time.Time                                     "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
 	DeletedBy    *string                                        "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	OwnerID      string                                         "json:\"ownerID\" graphql:\"ownerID\""
+	OwnerID      *string                                        "json:\"ownerID,omitempty\" graphql:\"ownerID\""
 	Name         string                                         "json:\"name\" graphql:\"name\""
 	Description  *string                                        "json:\"description,omitempty\" graphql:\"description\""
 	Kind         *string                                        "json:\"kind,omitempty\" graphql:\"kind\""
-	Owner        GetIntegrationByID_Integration_Owner           "json:\"owner\" graphql:\"owner\""
+	Owner        *GetIntegrationByID_Integration_Owner          "json:\"owner,omitempty\" graphql:\"owner\""
 	Secrets      []*GetIntegrationByID_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*GetIntegrationByID_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*GetIntegrationByID_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
@@ -6458,7 +6457,7 @@ func (t *GetIntegrationByID_Integration) GetDeletedBy() *string {
 	}
 	return t.DeletedBy
 }
-func (t *GetIntegrationByID_Integration) GetOwnerID() string {
+func (t *GetIntegrationByID_Integration) GetOwnerID() *string {
 	if t == nil {
 		t = &GetIntegrationByID_Integration{}
 	}
@@ -6486,7 +6485,7 @@ func (t *GetIntegrationByID_Integration) GetOwner() *GetIntegrationByID_Integrat
 	if t == nil {
 		t = &GetIntegrationByID_Integration{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GetIntegrationByID_Integration) GetSecrets() []*GetIntegrationByID_Integration_Secrets {
 	if t == nil {
@@ -6590,11 +6589,11 @@ type GetAllIntegrations_Integrations_Edges_Node struct {
 	UpdatedBy    *string                                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	DeletedAt    *time.Time                                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
 	DeletedBy    *string                                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	OwnerID      string                                                     "json:\"ownerID\" graphql:\"ownerID\""
+	OwnerID      *string                                                    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
 	Name         string                                                     "json:\"name\" graphql:\"name\""
 	Description  *string                                                    "json:\"description,omitempty\" graphql:\"description\""
 	Kind         *string                                                    "json:\"kind,omitempty\" graphql:\"kind\""
-	Owner        GetAllIntegrations_Integrations_Edges_Node_Owner           "json:\"owner\" graphql:\"owner\""
+	Owner        *GetAllIntegrations_Integrations_Edges_Node_Owner          "json:\"owner,omitempty\" graphql:\"owner\""
 	Secrets      []*GetAllIntegrations_Integrations_Edges_Node_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*GetAllIntegrations_Integrations_Edges_Node_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*GetAllIntegrations_Integrations_Edges_Node_Events       "json:\"events,omitempty\" graphql:\"events\""
@@ -6643,7 +6642,7 @@ func (t *GetAllIntegrations_Integrations_Edges_Node) GetDeletedBy() *string {
 	}
 	return t.DeletedBy
 }
-func (t *GetAllIntegrations_Integrations_Edges_Node) GetOwnerID() string {
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetOwnerID() *string {
 	if t == nil {
 		t = &GetAllIntegrations_Integrations_Edges_Node{}
 	}
@@ -6671,7 +6670,7 @@ func (t *GetAllIntegrations_Integrations_Edges_Node) GetOwner() *GetAllIntegrati
 	if t == nil {
 		t = &GetAllIntegrations_Integrations_Edges_Node{}
 	}
-	return &t.Owner
+	return t.Owner
 }
 func (t *GetAllIntegrations_Integrations_Edges_Node) GetSecrets() []*GetAllIntegrations_Integrations_Edges_Node_Secrets {
 	if t == nil {
@@ -6764,6 +6763,31 @@ func (t *CreateIntegration_CreateIntegration_Integration_Events) GetID() string 
 	return t.ID
 }
 
+type CreateIntegration_CreateIntegration_Integration_Webhooks struct {
+	ID             string "json:\"id\" graphql:\"id\""
+	DestinationURL string "json:\"destinationURL\" graphql:\"destinationURL\""
+	Enabled        bool   "json:\"enabled\" graphql:\"enabled\""
+}
+
+func (t *CreateIntegration_CreateIntegration_Integration_Webhooks) GetID() string {
+	if t == nil {
+		t = &CreateIntegration_CreateIntegration_Integration_Webhooks{}
+	}
+	return t.ID
+}
+func (t *CreateIntegration_CreateIntegration_Integration_Webhooks) GetDestinationURL() string {
+	if t == nil {
+		t = &CreateIntegration_CreateIntegration_Integration_Webhooks{}
+	}
+	return t.DestinationURL
+}
+func (t *CreateIntegration_CreateIntegration_Integration_Webhooks) GetEnabled() bool {
+	if t == nil {
+		t = &CreateIntegration_CreateIntegration_Integration_Webhooks{}
+	}
+	return t.Enabled
+}
+
 type CreateIntegration_CreateIntegration_Integration struct {
 	ID           string                                                          "json:\"id\" graphql:\"id\""
 	CreatedAt    *time.Time                                                      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -6780,6 +6804,7 @@ type CreateIntegration_CreateIntegration_Integration struct {
 	Secrets      []*CreateIntegration_CreateIntegration_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*CreateIntegration_CreateIntegration_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*CreateIntegration_CreateIntegration_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*CreateIntegration_CreateIntegration_Integration_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
 }
 
 func (t *CreateIntegration_CreateIntegration_Integration) GetID() string {
@@ -6872,6 +6897,12 @@ func (t *CreateIntegration_CreateIntegration_Integration) GetEvents() []*CreateI
 	}
 	return t.Events
 }
+func (t *CreateIntegration_CreateIntegration_Integration) GetWebhooks() []*CreateIntegration_CreateIntegration_Integration_Webhooks {
+	if t == nil {
+		t = &CreateIntegration_CreateIntegration_Integration{}
+	}
+	return t.Webhooks
+}
 
 type CreateIntegration_CreateIntegration struct {
 	Integration CreateIntegration_CreateIntegration_Integration "json:\"integration\" graphql:\"integration\""
@@ -6928,6 +6959,17 @@ func (t *UpdateIntegration_UpdateIntegration_Integration_Events) GetID() string 
 	return t.ID
 }
 
+type UpdateIntegration_UpdateIntegration_Integration_Webhooks struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateIntegration_UpdateIntegration_Integration_Webhooks) GetID() string {
+	if t == nil {
+		t = &UpdateIntegration_UpdateIntegration_Integration_Webhooks{}
+	}
+	return t.ID
+}
+
 type UpdateIntegration_UpdateIntegration_Integration struct {
 	ID           string                                                          "json:\"id\" graphql:\"id\""
 	CreatedAt    *time.Time                                                      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -6944,6 +6986,7 @@ type UpdateIntegration_UpdateIntegration_Integration struct {
 	Secrets      []*UpdateIntegration_UpdateIntegration_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*UpdateIntegration_UpdateIntegration_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*UpdateIntegration_UpdateIntegration_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*UpdateIntegration_UpdateIntegration_Integration_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
 }
 
 func (t *UpdateIntegration_UpdateIntegration_Integration) GetID() string {
@@ -7036,6 +7079,12 @@ func (t *UpdateIntegration_UpdateIntegration_Integration) GetEvents() []*UpdateI
 	}
 	return t.Events
 }
+func (t *UpdateIntegration_UpdateIntegration_Integration) GetWebhooks() []*UpdateIntegration_UpdateIntegration_Integration_Webhooks {
+	if t == nil {
+		t = &UpdateIntegration_UpdateIntegration_Integration{}
+	}
+	return t.Webhooks
+}
 
 type UpdateIntegration_UpdateIntegration struct {
 	Integration UpdateIntegration_UpdateIntegration_Integration "json:\"integration\" graphql:\"integration\""
@@ -7046,78 +7095,6 @@ func (t *UpdateIntegration_UpdateIntegration) GetIntegration() *UpdateIntegratio
 		t = &UpdateIntegration_UpdateIntegration{}
 	}
 	return &t.Integration
-}
-
-type CreateIntegrationWithWebhook_CreateIntegration_Integration struct {
-	Kind    *string "json:\"kind,omitempty\" graphql:\"kind\""
-	Name    string  "json:\"name\" graphql:\"name\""
-	OwnerID string  "json:\"ownerID\" graphql:\"ownerID\""
-}
-
-func (t *CreateIntegrationWithWebhook_CreateIntegration_Integration) GetKind() *string {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook_CreateIntegration_Integration{}
-	}
-	return t.Kind
-}
-func (t *CreateIntegrationWithWebhook_CreateIntegration_Integration) GetName() string {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook_CreateIntegration_Integration{}
-	}
-	return t.Name
-}
-func (t *CreateIntegrationWithWebhook_CreateIntegration_Integration) GetOwnerID() string {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook_CreateIntegration_Integration{}
-	}
-	return t.OwnerID
-}
-
-type CreateIntegrationWithWebhook_CreateIntegration struct {
-	Integration CreateIntegrationWithWebhook_CreateIntegration_Integration "json:\"integration\" graphql:\"integration\""
-}
-
-func (t *CreateIntegrationWithWebhook_CreateIntegration) GetIntegration() *CreateIntegrationWithWebhook_CreateIntegration_Integration {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook_CreateIntegration{}
-	}
-	return &t.Integration
-}
-
-type CreateIntegrationWithWebhook_CreateWebhook_Webhook struct {
-	Name           string "json:\"name\" graphql:\"name\""
-	DestinationURL string "json:\"destinationURL\" graphql:\"destinationURL\""
-	Enabled        bool   "json:\"enabled\" graphql:\"enabled\""
-}
-
-func (t *CreateIntegrationWithWebhook_CreateWebhook_Webhook) GetName() string {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook_CreateWebhook_Webhook{}
-	}
-	return t.Name
-}
-func (t *CreateIntegrationWithWebhook_CreateWebhook_Webhook) GetDestinationURL() string {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook_CreateWebhook_Webhook{}
-	}
-	return t.DestinationURL
-}
-func (t *CreateIntegrationWithWebhook_CreateWebhook_Webhook) GetEnabled() bool {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook_CreateWebhook_Webhook{}
-	}
-	return t.Enabled
-}
-
-type CreateIntegrationWithWebhook_CreateWebhook struct {
-	Webhook CreateIntegrationWithWebhook_CreateWebhook_Webhook "json:\"webhook\" graphql:\"webhook\""
-}
-
-func (t *CreateIntegrationWithWebhook_CreateWebhook) GetWebhook() *CreateIntegrationWithWebhook_CreateWebhook_Webhook {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook_CreateWebhook{}
-	}
-	return &t.Webhook
 }
 
 type DeleteIntegration_DeleteIntegration struct {
@@ -14472,24 +14449,6 @@ func (t *UpdateIntegration) GetUpdateIntegration() *UpdateIntegration_UpdateInte
 	return &t.UpdateIntegration
 }
 
-type CreateIntegrationWithWebhook struct {
-	CreateIntegration CreateIntegrationWithWebhook_CreateIntegration "json:\"createIntegration\" graphql:\"createIntegration\""
-	CreateWebhook     CreateIntegrationWithWebhook_CreateWebhook     "json:\"createWebhook\" graphql:\"createWebhook\""
-}
-
-func (t *CreateIntegrationWithWebhook) GetCreateIntegration() *CreateIntegrationWithWebhook_CreateIntegration {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook{}
-	}
-	return &t.CreateIntegration
-}
-func (t *CreateIntegrationWithWebhook) GetCreateWebhook() *CreateIntegrationWithWebhook_CreateWebhook {
-	if t == nil {
-		t = &CreateIntegrationWithWebhook{}
-	}
-	return &t.CreateWebhook
-}
-
 type DeleteIntegration struct {
 	DeleteIntegration DeleteIntegration_DeleteIntegration "json:\"deleteIntegration\" graphql:\"deleteIntegration\""
 }
@@ -17181,6 +17140,7 @@ const GetAllIntegrationsDocument = `query GetAllIntegrations {
 					destinationURL
 					enabled
 				}
+			}
 		}
 	}
 }
@@ -17226,6 +17186,11 @@ const CreateIntegrationDocument = `mutation CreateIntegration ($input: CreateInt
 			}
 			events {
 				id
+			}
+			webhooks {
+				id
+				destinationURL
+				enabled
 			}
 		}
 	}
@@ -17275,6 +17240,9 @@ const UpdateIntegrationDocument = `mutation UpdateIntegration ($updateIntegratio
 			events {
 				id
 			}
+			webhooks {
+				id
+			}
 		}
 	}
 }
@@ -17288,42 +17256,6 @@ func (c *Client) UpdateIntegration(ctx context.Context, updateIntegrationID stri
 
 	var res UpdateIntegration
 	if err := c.Client.Post(ctx, "UpdateIntegration", UpdateIntegrationDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const CreateIntegrationWithWebhookDocument = `mutation CreateIntegrationWithWebhook ($input: CreateIntegrationInput!, $createWebhookInput2: CreateWebhookInput!) {
-	createIntegration(input: $input) {
-		integration {
-			kind
-			name
-			ownerID
-		}
-	}
-	createWebhook(input: $createWebhookInput2) {
-		webhook {
-			name
-			destinationURL
-			enabled
-		}
-	}
-}
-`
-
-func (c *Client) CreateIntegrationWithWebhook(ctx context.Context, input CreateIntegrationInput, createWebhookInput2 CreateWebhookInput, interceptors ...clientv2.RequestInterceptor) (*CreateIntegrationWithWebhook, error) {
-	vars := map[string]any{
-		"input":               input,
-		"createWebhookInput2": createWebhookInput2,
-	}
-
-	var res CreateIntegrationWithWebhook
-	if err := c.Client.Post(ctx, "CreateIntegrationWithWebhook", CreateIntegrationWithWebhookDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -19613,107 +19545,110 @@ func (c *Client) DeleteWebhook(ctx context.Context, deleteWebhookID string, inte
 }
 
 var DocumentOperationNames = map[string]string{
-	CreateAPITokenDocument:               "CreateAPIToken",
-	UpdateAPITokenDocument:               "UpdateAPIToken",
-	GetAllAPITokensDocument:              "GetAllAPITokens",
-	GetAPITokenByIDDocument:              "GetAPITokenByID",
-	DeleteAPITokenDocument:               "DeleteAPIToken",
-	GetDocumentDataDocument:              "GetDocumentData",
-	CreateDocumentDataDocument:           "CreateDocumentData",
-	UpdateDocumentDataDocument:           "UpdateDocumentData",
-	DeleteDocumentDataDocument:           "DeleteDocumentData",
-	CreateEntitlementDocument:            "CreateEntitlement",
-	UpdateEntitlementDocument:            "UpdateEntitlement",
-	DeleteEntitlementDocument:            "DeleteEntitlement",
-	GetEntitlementsDocument:              "GetEntitlements",
-	GetEventsDocument:                    "GetEvents",
-	GetEventByIDDocument:                 "GetEventByID",
-	GetAllEventsDocument:                 "GetAllEvents",
-	CreateEventDocument:                  "CreateEvent",
-	UpdateEventDocument:                  "UpdateEvent",
-	DeleteEventDocument:                  "DeleteEvent",
-	CreateFeatureDocument:                "CreateFeature",
-	GetFeaturesDocument:                  "GetFeatures",
-	UpdateFeatureDocument:                "UpdateFeature",
-	DeleteFeatureDocument:                "DeleteFeature",
-	GetFilesDocument:                     "GetFiles",
-	CreateFileDocument:                   "CreateFile",
-	UpdateFileDocument:                   "UpdateFile",
-	DeleteFileDocument:                   "DeleteFile",
-	GetGroupByIDDocument:                 "GetGroupByID",
-	GroupsWhereDocument:                  "GroupsWhere",
-	GetAllGroupsDocument:                 "GetAllGroups",
-	CreateGroupDocument:                  "CreateGroup",
-	UpdateGroupDocument:                  "UpdateGroup",
-	DeleteGroupDocument:                  "DeleteGroup",
-	GetGroupMembersByGroupIDDocument:     "GetGroupMembersByGroupID",
-	AddUserToGroupWithRoleDocument:       "AddUserToGroupWithRole",
-	UpdateUserRoleInGroupDocument:        "UpdateUserRoleInGroup",
-	RemoveUserFromGroupDocument:          "RemoveUserFromGroup",
-	GetGroupSettingByIDDocument:          "GetGroupSettingByID",
-	GetGroupSettingsDocument:             "GetGroupSettings",
-	GetGroupSettingWhereDocument:         "GetGroupSettingWhere",
-	UpdateGroupSettingDocument:           "UpdateGroupSetting",
-	GetHushesDocument:                    "GetHushes",
-	GetHushDocument:                      "GetHush",
-	CreateHushDocument:                   "CreateHush",
-	UpdateHushDocument:                   "UpdateHush",
-	GetIntegrationsDocument:              "GetIntegrations",
-	GetIntegrationByIDDocument:           "GetIntegrationByID",
-	GetAllIntegrationsDocument:           "GetAllIntegrations",
-	CreateIntegrationDocument:            "CreateIntegration",
-	UpdateIntegrationDocument:            "UpdateIntegration",
-	CreateIntegrationWithWebhookDocument: "CreateIntegrationWithWebhook",
-	DeleteIntegrationDocument:            "DeleteIntegration",
-	CreateInviteDocument:                 "CreateInvite",
-	DeleteInviteDocument:                 "DeleteInvite",
-	GetInviteDocument:                    "GetInvite",
-	InvitesByOrgIDDocument:               "InvitesByOrgID",
-	GetOhAuthTooTokensDocument:           "GetOhAuthTooTokens",
-	CreateOhAuthTooTokenDocument:         "CreateOhAuthTooToken",
-	UpdateOhAuthTooTokenDocument:         "UpdateOhAuthTooToken",
-	DeleteOhAuthTooTokenDocument:         "DeleteOhAuthTooToken",
-	GetOrganizationByIDDocument:          "GetOrganizationByID",
-	GetAllOrganizationsDocument:          "GetAllOrganizations",
-	OrganizationsWhereDocument:           "OrganizationsWhere",
-	CreateOrganizationDocument:           "CreateOrganization",
-	UpdateOrganizationDocument:           "UpdateOrganization",
-	DeleteOrganizationDocument:           "DeleteOrganization",
-	GetOrganizationSettingByIDDocument:   "GetOrganizationSettingByID",
-	GetOrganizationSettingsDocument:      "GetOrganizationSettings",
-	GetOrganizationSettingWhereDocument:  "GetOrganizationSettingWhere",
-	UpdateOrganizationSettingDocument:    "UpdateOrganizationSetting",
-	GetOrgMembersByOrgIDDocument:         "GetOrgMembersByOrgID",
-	AddUserToOrgWithRoleDocument:         "AddUserToOrgWithRole",
-	UpdateUserRoleInOrgDocument:          "UpdateUserRoleInOrg",
-	RemoveUserFromOrgDocument:            "RemoveUserFromOrg",
-	CreatePersonalAccessTokenDocument:    "CreatePersonalAccessToken",
-	UpdatePersonalAccessTokenDocument:    "UpdatePersonalAccessToken",
-	GetAllPersonalAccessTokensDocument:   "GetAllPersonalAccessTokens",
-	GetPersonalAccessTokenByIDDocument:   "GetPersonalAccessTokenByID",
-	DeletePersonalAccessTokenDocument:    "DeletePersonalAccessToken",
-	SubscribersDocument:                  "Subscribers",
-	CreateTemplateDocument:               "CreateTemplate",
-	UpdateTemplateDocument:               "UpdateTemplate",
-	GetAllTemplatesDocument:              "GetAllTemplates",
-	GetTemplateDocument:                  "GetTemplate",
-	GetTFASettingDocument:                "GetTFASetting",
-	GetTFASettingsDocument:               "GetTFASettings",
-	CreateTFASettingDocument:             "CreateTFASetting",
-	UpdateTFASettingDocument:             "UpdateTFASetting",
-	GetUserByIDDocument:                  "GetUserByID",
-	GetUserByIDWithOrgsDocument:          "GetUserByIDWithOrgs",
-	GetAllUsersDocument:                  "GetAllUsers",
-	CreateUserDocument:                   "CreateUser",
-	UpdateUserDocument:                   "UpdateUser",
-	DeleteUserDocument:                   "DeleteUser",
-	GetUserSettingByIDDocument:           "GetUserSettingByID",
-	GetUserSettingsDocument:              "GetUserSettings",
-	GetUserSettingWhereDocument:          "GetUserSettingWhere",
-	UpdateUserSettingDocument:            "UpdateUserSetting",
-	GetWebhookByIDDocument:               "GetWebhookByID",
-	GetAllWebhooksDocument:               "GetAllWebhooks",
-	CreateWebhookDocument:                "CreateWebhook",
-	UpdateWebhookDocument:                "UpdateWebhook",
-	DeleteWebhookDocument:                "DeleteWebhook",
+	CreateAPITokenDocument:              "CreateAPIToken",
+	UpdateAPITokenDocument:              "UpdateAPIToken",
+	GetAllAPITokensDocument:             "GetAllAPITokens",
+	GetAPITokenByIDDocument:             "GetAPITokenByID",
+	DeleteAPITokenDocument:              "DeleteAPIToken",
+	GetDocumentDataDocument:             "GetDocumentData",
+	CreateDocumentDataDocument:          "CreateDocumentData",
+	UpdateDocumentDataDocument:          "UpdateDocumentData",
+	DeleteDocumentDataDocument:          "DeleteDocumentData",
+	CreateEntitlementDocument:           "CreateEntitlement",
+	UpdateEntitlementDocument:           "UpdateEntitlement",
+	DeleteEntitlementDocument:           "DeleteEntitlement",
+	GetEntitlementsDocument:             "GetEntitlements",
+	GetEventsDocument:                   "GetEvents",
+	GetEventByIDDocument:                "GetEventByID",
+	GetAllEventsDocument:                "GetAllEvents",
+	CreateEventDocument:                 "CreateEvent",
+	UpdateEventDocument:                 "UpdateEvent",
+	DeleteEventDocument:                 "DeleteEvent",
+	CreateFeatureDocument:               "CreateFeature",
+	GetFeaturesDocument:                 "GetFeatures",
+	UpdateFeatureDocument:               "UpdateFeature",
+	DeleteFeatureDocument:               "DeleteFeature",
+	GetFilesDocument:                    "GetFiles",
+	CreateFileDocument:                  "CreateFile",
+	UpdateFileDocument:                  "UpdateFile",
+	DeleteFileDocument:                  "DeleteFile",
+	GetGroupByIDDocument:                "GetGroupByID",
+	GroupsWhereDocument:                 "GroupsWhere",
+	GetAllGroupsDocument:                "GetAllGroups",
+	CreateGroupDocument:                 "CreateGroup",
+	UpdateGroupDocument:                 "UpdateGroup",
+	DeleteGroupDocument:                 "DeleteGroup",
+	GetGroupMembersByGroupIDDocument:    "GetGroupMembersByGroupID",
+	AddUserToGroupWithRoleDocument:      "AddUserToGroupWithRole",
+	UpdateUserRoleInGroupDocument:       "UpdateUserRoleInGroup",
+	RemoveUserFromGroupDocument:         "RemoveUserFromGroup",
+	GetGroupSettingByIDDocument:         "GetGroupSettingByID",
+	GetGroupSettingsDocument:            "GetGroupSettings",
+	GetGroupSettingWhereDocument:        "GetGroupSettingWhere",
+	UpdateGroupSettingDocument:          "UpdateGroupSetting",
+	GetHushesDocument:                   "GetHushes",
+	GetHushDocument:                     "GetHush",
+	CreateHushDocument:                  "CreateHush",
+	UpdateHushDocument:                  "UpdateHush",
+	GetIntegrationsDocument:             "GetIntegrations",
+	GetIntegrationByIDDocument:          "GetIntegrationByID",
+	GetAllIntegrationsDocument:          "GetAllIntegrations",
+	CreateIntegrationDocument:           "CreateIntegration",
+	UpdateIntegrationDocument:           "UpdateIntegration",
+	DeleteIntegrationDocument:           "DeleteIntegration",
+	CreateInviteDocument:                "CreateInvite",
+	DeleteInviteDocument:                "DeleteInvite",
+	GetInviteDocument:                   "GetInvite",
+	InvitesByOrgIDDocument:              "InvitesByOrgID",
+	GetOhAuthTooTokensDocument:          "GetOhAuthTooTokens",
+	CreateOhAuthTooTokenDocument:        "CreateOhAuthTooToken",
+	UpdateOhAuthTooTokenDocument:        "UpdateOhAuthTooToken",
+	DeleteOhAuthTooTokenDocument:        "DeleteOhAuthTooToken",
+	GetOrganizationByIDDocument:         "GetOrganizationByID",
+	GetAllOrganizationsDocument:         "GetAllOrganizations",
+	OrganizationsWhereDocument:          "OrganizationsWhere",
+	CreateOrganizationDocument:          "CreateOrganization",
+	UpdateOrganizationDocument:          "UpdateOrganization",
+	DeleteOrganizationDocument:          "DeleteOrganization",
+	GetOrganizationSettingByIDDocument:  "GetOrganizationSettingByID",
+	GetOrganizationSettingsDocument:     "GetOrganizationSettings",
+	GetOrganizationSettingWhereDocument: "GetOrganizationSettingWhere",
+	UpdateOrganizationSettingDocument:   "UpdateOrganizationSetting",
+	GetOrgMembersByOrgIDDocument:        "GetOrgMembersByOrgID",
+	AddUserToOrgWithRoleDocument:        "AddUserToOrgWithRole",
+	UpdateUserRoleInOrgDocument:         "UpdateUserRoleInOrg",
+	RemoveUserFromOrgDocument:           "RemoveUserFromOrg",
+	CreatePersonalAccessTokenDocument:   "CreatePersonalAccessToken",
+	UpdatePersonalAccessTokenDocument:   "UpdatePersonalAccessToken",
+	GetAllPersonalAccessTokensDocument:  "GetAllPersonalAccessTokens",
+	GetPersonalAccessTokenByIDDocument:  "GetPersonalAccessTokenByID",
+	DeletePersonalAccessTokenDocument:   "DeletePersonalAccessToken",
+	SubscribersDocument:                 "Subscribers",
+	GetSubscriberDocument:               "GetSubscriber",
+	CreateSubscriberDocument:            "CreateSubscriber",
+	UpdateSubscriberDocument:            "UpdateSubscriber",
+	DeleteSubscriberDocument:            "DeleteSubscriber",
+	CreateTemplateDocument:              "CreateTemplate",
+	UpdateTemplateDocument:              "UpdateTemplate",
+	GetAllTemplatesDocument:             "GetAllTemplates",
+	GetTemplateDocument:                 "GetTemplate",
+	GetTFASettingDocument:               "GetTFASetting",
+	GetTFASettingsDocument:              "GetTFASettings",
+	CreateTFASettingDocument:            "CreateTFASetting",
+	UpdateTFASettingDocument:            "UpdateTFASetting",
+	GetUserByIDDocument:                 "GetUserByID",
+	GetUserByIDWithOrgsDocument:         "GetUserByIDWithOrgs",
+	GetAllUsersDocument:                 "GetAllUsers",
+	CreateUserDocument:                  "CreateUser",
+	UpdateUserDocument:                  "UpdateUser",
+	DeleteUserDocument:                  "DeleteUser",
+	GetUserSettingByIDDocument:          "GetUserSettingByID",
+	GetUserSettingsDocument:             "GetUserSettings",
+	GetUserSettingWhereDocument:         "GetUserSettingWhere",
+	UpdateUserSettingDocument:           "UpdateUserSetting",
+	GetWebhookByIDDocument:              "GetWebhookByID",
+	GetAllWebhooksDocument:              "GetAllWebhooks",
+	CreateWebhookDocument:               "CreateWebhook",
+	UpdateWebhookDocument:               "UpdateWebhook",
+	DeleteWebhookDocument:               "DeleteWebhook",
 }

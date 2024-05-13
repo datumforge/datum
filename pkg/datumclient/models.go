@@ -9,9 +9,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/datumforge/enthistory"
-
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/enthistory"
 )
 
 type APIToken struct {

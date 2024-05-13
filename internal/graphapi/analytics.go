@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	ph "github.com/posthog/posthog-go"
@@ -55,12 +54,10 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 	payload := map[string]string{"key": "value"}
 	sEvent := soiree.NewBaseEvent(event, payload)
 
-	soireeProps := soiree.NewProperties().Set(fmt.Sprintf("%s_id", obj), i)
 	// set the name if it exists
 	name, ok := out["name"]
 	if ok {
 		props.Set(fmt.Sprintf("%s_name", obj), name)
-		soireeProps.Set(fmt.Sprintf("%s_name", obj), name)
 		payload["name"] = name.(string)
 	}
 
@@ -68,7 +65,6 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 	fName, ok := out["first_name"]
 	if ok {
 		props.Set("first_name", fName)
-		soireeProps.Set("first_name", fName)
 		payload["first_name"] = fName.(string)
 	}
 
@@ -76,7 +72,6 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 	lName, ok := out["last_name"]
 	if ok {
 		props.Set("last_name", lName)
-		soireeProps.Set("last_name", lName)
 		payload["last_name"] = lName.(string)
 	}
 
@@ -84,14 +79,12 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 	email, ok := out["email"]
 	if ok {
 		props.Set("email", email)
-		soireeProps.Set("email", email)
 		payload["email"] = email.(string)
 	}
 
 	authprovider, ok := out["auth_provider"]
 	if ok {
 		props.Set("auth_provider", authprovider)
-		soireeProps.Set("auth_provider", authprovider)
 		payload["auth_provider"] = authprovider.(string)
 	}
 
@@ -101,12 +94,11 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 			webhook.EnabledEQ(true)).All(ctx)
 
 		if err != nil {
-			log.Printf("error: %s\n", err)
+			return err
 		}
 
 		for _, w := range integrationWithWebhook {
 			retrieve := sEvent.Payload().(map[string]string)
-			log.Printf("event: %s\n", retrieve["key"])
 
 			payload := slack.Payload{
 				Text: fmt.Sprintf("A user with the following details has been created:\nName: %s\nFirst Name: %s\nLast Name: %s\nEmail: %s\nAuth Provider: %s", retrieve["name"], retrieve["first_name"], retrieve["last_name"], retrieve["email"], retrieve["auth_provider"]),
@@ -114,7 +106,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 
 			slackMessage := slack.New(w.DestinationURL)
 			if err := slackMessage.Post(context.Background(), &payload); err != nil {
-				log.Printf("error: %s\n", err)
+				return err
 			}
 
 		}
@@ -127,13 +119,11 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 			webhook.EnabledEQ(true)).All(ctx)
 
 		if err != nil {
-			log.Printf("error: %s\n", err)
+			return err
 		}
 
 		for _, w := range integrationWithWebhook {
-			log.Printf("DESTINATION URLs ACTIVE", w.DestinationURL)
 			retrieve := sEvent.Payload().(map[string]string)
-			log.Printf("event: %s\n", retrieve["key"])
 
 			payload := slack.Payload{
 				Text: fmt.Sprintf("An organization with the following details has been created:\nName: %s", retrieve["name"]),
@@ -141,7 +131,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 
 			slackMessage := slack.New(w.DestinationURL)
 			if err := slackMessage.Post(context.Background(), &payload); err != nil {
-				log.Printf("error: %s\n", err)
+				return err
 			}
 		}
 		return nil
@@ -149,7 +139,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 
 	e.On("user.created", userCreatedListener)
 	e.On("organization.created", orgCreatedListener)
-	e.Emit(event, soireeProps)
+	e.Emit(event, payload)
 
 	c.Analytics.Event(event, props)
 	c.Analytics.Properties(i, obj, props)

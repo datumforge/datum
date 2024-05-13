@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/graphapi"
@@ -43,6 +44,9 @@ func (suite *GraphTestSuite) TestTrackedEvent() {
 
 func (suite *GraphTestSuite) TestCreateEvent() {
 	t := suite.T()
+
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name          string
@@ -97,7 +101,7 @@ func (suite *GraphTestSuite) TestCreateEvent() {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			out := suite.captureOutput(func() {
-				graphapi.CreateEvent(suite.client.db, tc.mutation, tc.v)
+				graphapi.CreateEvent(suite.client.db, tc.mutation, tc.v, reqCtx)
 			})
 
 			assert.Contains(t, out, tc.expectedEvent)

@@ -1,5 +1,5 @@
+version: "3.9"
 services:
-
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus

@@ -4,12 +4,19 @@ import "sync"
 
 // Event is an interface representing the structure of an instance of an event
 type Event interface {
+	// Topic returns the event's topic
 	Topic() string
+	// Payload returns the event's payload
 	Payload() interface{}
+	// Properties returns the event's properties
 	Properties() Properties
+	// SetPayload sets the event's payload
 	SetPayload(interface{})
+	// SetProperties sets the event's properties
 	SetProperties(Properties)
+	// SetAborted sets the event's aborted status
 	SetAborted(bool)
+	// IsAborted checks the event's aborted status
 	IsAborted() bool
 }
 
@@ -92,7 +99,7 @@ func NewProperties() Properties {
 	return make(Properties, 10) // nolint: gomnd
 }
 
-// Set sets a property on the Properties map
+// Set a property on the Properties map
 func (p Properties) Set(name string, value interface{}) Properties {
 	p[name] = value
 	return p

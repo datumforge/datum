@@ -8,8 +8,11 @@ import (
 
 // Pool is an interface for a worker pool
 type Pool interface {
+	// Submit submits a task to the worker pool
 	Submit(task func())
+	// Running returns the number of running workers in the pool
 	Running() int
+	// Release stops all workers in the pool and waits for them to finish
 	Release()
 }
 
@@ -56,7 +59,7 @@ func (p *PondPool) ReleaseWithDeadline(deadline time.Duration) {
 	p.pool.StopAndWaitFor(deadline)
 }
 
-// Stop scauses this pool to stop accepting new tasks and signals all workers to exit
+// Stop causes this pool to stop accepting new tasks and signals all workers to exit
 // Tasks being executed by workers will continue until completion (unless the process is terminated)
 // Tasks in the queue will not be executed (so will drop any buffered tasks - ideally use Release or ReleaseWithDeadline)
 func (p *PondPool) Stop() {

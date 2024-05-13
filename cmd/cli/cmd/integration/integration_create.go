@@ -15,7 +15,7 @@ var integrationCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new datum integration",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return createintegration(cmd.Context())
+		return createIntegration(cmd.Context())
 	},
 }
 
@@ -38,7 +38,7 @@ func init() {
 	datum.ViperBindFlag("integration.create.webhook-id", integrationCreateCmd.Flags().Lookup("webhook-id"))
 }
 
-func createintegration(ctx context.Context) error {
+func createIntegration(ctx context.Context) error {
 	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
 		return err

@@ -15,24 +15,24 @@ Functionally, Soiree is intended to provide:
 ### But why?
 
 In modern software architectures, microservices vs. monoliths is a false dichotomy; the optimum is usually somewhere in the middle. With the Datum service, we're pretty intentionally sticking with a "monolith" in the sense we are producing a single docker image from this codebase, but the often overlooked aspect of these architectures is the context under which the service is started, and run. If you assume that the connectivity from your client is created in a homogeneous fashion, ex:
-
+```
 ┌──────────────┐        .───────.         ┌─────────────────┐
 │              │       ╱         ╲        │                 │
 │    Client    │──────▶   proxy   ────────▶  Datum Service  │
 │              │       `.       ,'        │                 │
 └──────────────┘         `─────'          └─────────────────┘
-
+```
 Then all instances of the datum service will be required to perform things like authorizations validation, session issuance, etc. The validity of these actions is managed with external state machines, such as Redis.
-
+```
                                                                    ┌────────────────┐
 ┌──────────────┐        .───────.         ┌─────────────────┐      │                │
 │              │       ╱         ╲        │                 │      │     Redis,     │
 │    Client    │──────▶   proxy   ────────▶  Datum Service  ├─────▶│   PostgreSQL   │
 │              │       `.       ,'        │                 │      │                │
 └──────────────┘         `─────'          └─────────────────┘      └────────────────┘
-
+```
 We do this because we want to be able to run many instances of the Datum service, for things such as canary, rollouts, etc.
-
+```
                                           ┌─────────────────┐
                                           │                 │
                                      ┌───▶│  Datum Service  ├──┐
@@ -50,9 +50,9 @@ We do this because we want to be able to run many instances of the Datum service
                                      └───▶│  Datum Service  │───┘
                                           │                 │
                                           └─────────────────┘
-
+```
 Now, where things start to get more fun is when you layer in the desire to perform I/O operations either managed by us, or externally (e.g. S3), as well as connect to external data stores (e.g. Turso).
-
+```
                                              ┌──────────────┐
                                              │              │
                                              │      S3      │
@@ -94,7 +94,7 @@ Now, where things start to get more fun is when you layer in the desire to perfo
                                                      ┌───────────┐                        │    ideas     │
                                                      │   Turso   │                        └──────────────┘
                                                      └───────────┘
-
+```
 Given we need to be able to perform all kinds of workload actions such as writing a file to a bucket, committing a SQL transaction, sending an http request, we need bounded patterns and degrees of resource control. Which is to say, we need to control resource contention in our runtime as we don't want someone's regular HTTP request to be blocked by the fact someone else requested a bulk upload to S3. This means creating rough groupings of workload `types` and bounding them so that you can monitor and control the behaviors and lumpiness of the variances with the workload types.
 
 Check out [this blog](http://marcio.io/2015/07/handling-1-million-requests-per-minute-with-golang/) (there are many on this topic) for some real world examples on how systems with these "lumpy" workload types can become easily bottlenecked with volume. Since we are intending to open the flood gates around event ingestion from other sources (similar to how Posthog, Segment, etc., work) we need to anticipate a very high load of unstructured data which needs to be written efficiently to a myriad of external sources, as well as bulk routines which may be long running such as file imports, uploads, exports, etc.

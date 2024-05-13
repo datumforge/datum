@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-
 	// Initialize a goroutine pool with 5 workers and a maximum capacity of 1000 tasks
 	pool := soiree.NewPondPool(100, 1000)
 

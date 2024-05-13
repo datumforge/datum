@@ -5,14 +5,14 @@ import (
 )
 
 var (
-	SingleWildcard = "*" // Now only one wildcard variable for single node
-	MultiWildcard  = "**"
+	singleWildcard = "*" // Now only one wildcard variable for single node
+	multiWildcard  = "**"
 )
 
 // matchTopicPattern checks if the given subject matches the pattern with wildcards
 func matchTopicPattern(pattern, subject string) bool {
 	// Special case: single wildcard matches an empty string
-	if pattern == SingleWildcard && subject == "" {
+	if pattern == singleWildcard && subject == "" {
 		return true
 	}
 
@@ -20,7 +20,7 @@ func matchTopicPattern(pattern, subject string) bool {
 	subjectParts := strings.Split(subject, ".")
 
 	// Handle the case where pattern ends with ".**", it should not match just "event"
-	if len(patternParts) > 1 && patternParts[len(patternParts)-1] == MultiWildcard && len(subjectParts) == 1 && subjectParts[0] == patternParts[0] {
+	if len(patternParts) > 1 && patternParts[len(patternParts)-1] == multiWildcard && len(subjectParts) == 1 && subjectParts[0] == patternParts[0] {
 		return false
 	}
 
@@ -31,26 +31,29 @@ func matchTopicPattern(pattern, subject string) bool {
 		if p == len(patternParts) && s == len(subjectParts) {
 			return true
 		}
+
 		// If we've reached the end of the subject but the pattern has remaining parts (other than '**'), it's not a match
 		if s == len(subjectParts) {
 			for i := p; i < len(patternParts); i++ {
-				if patternParts[i] != MultiWildcard {
+				if patternParts[i] != multiWildcard {
 					return false
 				}
 			}
 
 			return true
 		}
+
 		// If we've reached the end of the pattern but not the subject, it's not a match
 		if p == len(patternParts) {
 			return false
 		}
+
 		// Match based on the current part of the pattern
 		switch patternParts[p] {
-		case SingleWildcard:
+		case singleWildcard:
 			// The single wildcard should match exactly one non-empty subject part
 			return s < len(subjectParts) && matchParts(p+1, s+1)
-		case MultiWildcard:
+		case multiWildcard:
 			// '**' matches any number of subject parts
 			if p == len(patternParts)-1 {
 				// If '**' is the last part in the pattern, it matches the rest of the subject

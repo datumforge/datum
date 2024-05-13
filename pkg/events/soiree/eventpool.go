@@ -8,16 +8,16 @@ import (
 
 // EventPool struct is controlling subscribing and unsubscribing listeners to topics, and emitting events to all subscribers
 type EventPool struct {
-	// Stores topics with concurrent access support
+	// topics with concurrent access support
 	topics sync.Map
-	// Handles errors that occur during event handling
+	// errorHandler will handle errors that occur during event handling
 	errorHandler func(Event, error) error
-	// Generates unique IDs for listeners
+	// idGenerator generates unique IDs for listeners
 	idGenerator func() string
-	// Handles panics that occur during event handling
+	// panicHandler will handle panics that occur during event handling
 	panicHandler PanicHandler
-	// Pool manages concurrent execution of event handlers
-	Pool Pool
+	// pool manages concurrent execution of event handlers
+	pool Pool
 	// Indicates whether the soiree is closed
 	closed atomic.Value
 	// Size of the buffer for the error channel in Emit
@@ -84,8 +84,8 @@ func (m *EventPool) Emit(eventName string, payload interface{}) <-chan error {
 		return errChan
 	}
 
-	if m.Pool != nil {
-		m.Pool.Submit(func() {
+	if m.pool != nil {
+		m.pool.Submit(func() {
 			defer close(errChan)
 			m.handleEvents(eventName, payload, func(err error) {
 				errChan <- err
@@ -168,28 +168,33 @@ func (m *EventPool) EnsureTopic(topicName string) *Topic {
 	return topic.(*Topic)
 }
 
+// SetErrorHandler sets the error handler for the event pool
 func (m *EventPool) SetErrorHandler(handler func(Event, error) error) {
 	if handler != nil {
 		m.errorHandler = handler
 	}
 }
 
+// SetIDGenerator sets the ID generator for the event pool
 func (m *EventPool) SetIDGenerator(generator func() string) {
 	if generator != nil {
 		m.idGenerator = generator
 	}
 }
 
+// SetPool sets the pool for the event pool
 func (m *EventPool) SetPool(pool Pool) {
-	m.Pool = pool
+	m.pool = pool
 }
 
+// SetPanicHandler sets the panic handler for the event pool
 func (m *EventPool) SetPanicHandler(panicHandler PanicHandler) {
 	if panicHandler != nil {
 		m.panicHandler = panicHandler
 	}
 }
 
+// SetErrChanBufferSize sets the buffer size for the error channel for the event pool
 func (m *EventPool) SetErrChanBufferSize(size int) {
 	m.errChanBufferSize = size
 }
@@ -208,8 +213,8 @@ func (m *EventPool) Close() error {
 		return true
 	})
 
-	if m.Pool != nil {
-		m.Pool.Release()
+	if m.pool != nil {
+		m.pool.Release()
 	}
 
 	return nil

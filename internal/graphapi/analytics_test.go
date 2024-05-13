@@ -101,7 +101,7 @@ func (suite *GraphTestSuite) TestCreateEvent() {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			out := suite.captureOutput(func() {
-				graphapi.CreateEvent(suite.client.db, tc.mutation, tc.v, reqCtx)
+				graphapi.CreateEvent(reqCtx, suite.client.db, tc.mutation, tc.v)
 			})
 
 			assert.Contains(t, out, tc.expectedEvent)

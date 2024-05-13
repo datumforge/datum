@@ -48,6 +48,7 @@ func TestWithErrorHandler(t *testing.T) {
 		t.Fatalf("Custom error handler was not called on listener error")
 	}
 }
+
 func TestWithErrorHandlerAsync(t *testing.T) {
 	// Define a variable to determine if the custom error handler was called
 	var handlerCalled bool

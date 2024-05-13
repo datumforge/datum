@@ -16,7 +16,7 @@ import (
 )
 
 // CreateEvent creates an event for the mutation with the properties
-func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context) {
+func CreateEvent(ctx context.Context, c *ent.Client, m ent.Mutation, v ent.Value) {
 	pool := soiree.NewPondPool(100, 1000)
 	e := soiree.NewEventPool(soiree.WithPool(pool))
 
@@ -88,54 +88,8 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context
 		payload["auth_provider"] = authprovider.(string)
 	}
 
-	userCreatedListener := func(evt soiree.Event) error {
-		integrationWithWebhook, err := c.Integration.Query().WithWebhooks().Where(
-			integration.KindEQ("slack")).QueryWebhooks().Where(
-			webhook.EnabledEQ(true)).All(ctx)
-
-		if err != nil {
-			return err
-		}
-
-		for _, w := range integrationWithWebhook {
-			retrieve := sEvent.Payload().(map[string]string)
-
-			payload := slack.Payload{
-				Text: fmt.Sprintf("A user with the following details has been created:\nName: %s\nFirst Name: %s\nLast Name: %s\nEmail: %s\nAuth Provider: %s", retrieve["name"], retrieve["first_name"], retrieve["last_name"], retrieve["email"], retrieve["auth_provider"]),
-			}
-
-			slackMessage := slack.New(w.DestinationURL)
-			if err := slackMessage.Post(context.Background(), &payload); err != nil {
-				return err
-			}
-
-		}
-		return nil
-	}
-
-	orgCreatedListener := func(evt soiree.Event) error {
-		integrationWithWebhook, err := c.Integration.Query().WithWebhooks().Where(
-			integration.KindEQ("slack")).QueryWebhooks().Where(
-			webhook.EnabledEQ(true)).All(ctx)
-
-		if err != nil {
-			return err
-		}
-
-		for _, w := range integrationWithWebhook {
-			retrieve := sEvent.Payload().(map[string]string)
-
-			payload := slack.Payload{
-				Text: fmt.Sprintf("An organization with the following details has been created:\nName: %s", retrieve["name"]),
-			}
-
-			slackMessage := slack.New(w.DestinationURL)
-			if err := slackMessage.Post(context.Background(), &payload); err != nil {
-				return err
-			}
-		}
-		return nil
-	}
+	userCreatedListener := userCreatedListener(ctx, c, sEvent)
+	orgCreatedListener := orgCreatedListener(ctx, c, sEvent)
 
 	e.On("user.created", userCreatedListener)
 	e.On("organization.created", orgCreatedListener)
@@ -192,4 +146,68 @@ func parseValue(v ent.Value) (map[string]interface{}, error) {
 	}
 
 	return valMap, nil
+}
+
+// userCreatedListener is a listener for the user created event
+func userCreatedListener(ctx context.Context, c *ent.Client, sEvent *soiree.BaseEvent) func(evt soiree.Event) error {
+	return func(evt soiree.Event) error {
+		integrationWithWebhook, err := c.Integration.Query().WithWebhooks().Where(
+			integration.KindEQ("slack")).QueryWebhooks().Where(
+			webhook.EnabledEQ(true)).All(ctx)
+		if err != nil {
+			return err
+		}
+
+		for _, w := range integrationWithWebhook {
+			retrieve := sEvent.Payload().(map[string]string)
+
+			payload := slack.Payload{
+				Text: fmt.Sprintf("A user with the following details has been created:\nName: %s\nFirst Name: %s\nLast Name: %s\nEmail: %s\nAuth Provider: %s",
+					retrieve["name"],
+					retrieve["first_name"],
+					retrieve["last_name"],
+					retrieve["email"],
+					retrieve["auth_provider"]),
+			}
+
+			slackMessage := slack.New(w.DestinationURL)
+			if err := slackMessage.Post(context.Background(), &payload); err != nil {
+				return err
+			}
+
+		}
+		return nil
+	}
+}
+
+// orgCreatedListener is a listener for the organization created event
+func orgCreatedListener(ctx context.Context, c *ent.Client, sEvent *soiree.BaseEvent) func(evt soiree.Event) error {
+	return func(evt soiree.Event) error {
+		integrationWithWebhook, err := c.Integration.Query().WithWebhooks().Where(
+			integration.KindEQ("slack")).QueryWebhooks().Where(
+			webhook.EnabledEQ(true)).All(ctx)
+		if err != nil {
+			return err
+		}
+
+		for _, w := range integrationWithWebhook {
+			retrieve := sEvent.Payload().(map[string]string)
+
+			payload := slack.Payload{
+				Text: fmt.Sprintf("A user with the following details has been created:\nName: %s\nFirst Name: %s\nLast Name: %s\nEmail: %s\nAuth Provider: %s",
+					retrieve["name"],
+					retrieve["first_name"],
+					retrieve["last_name"],
+					retrieve["email"],
+					retrieve["auth_provider"]),
+			}
+
+			slackMessage := slack.New(w.DestinationURL)
+			if err := slackMessage.Post(context.Background(), &payload); err != nil {
+				return err
+			}
+
+		}
+		return nil
+	}
 }

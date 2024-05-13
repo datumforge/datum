@@ -127,6 +127,7 @@ func (m *EventPool) handleEvents(topicName string, payload interface{}, errorHan
 	}()
 
 	event := NewBaseEvent(topicName, payload)
+
 	m.topics.Range(func(key, value interface{}) bool {
 		topicPattern := key.(string)
 		if matchTopicPattern(topicPattern, topicName) {
@@ -134,6 +135,7 @@ func (m *EventPool) handleEvents(topicName string, payload interface{}, errorHan
 			topicErrors := topic.Trigger(event)
 			m.handleTopicErrors(event, topicErrors, errorHandler)
 		}
+
 		return true
 	})
 }
@@ -144,6 +146,7 @@ func (m *EventPool) handleTopicErrors(event Event, topicErrors []error, errorHan
 		if m.errorHandler != nil {
 			err = m.errorHandler(event, err)
 		}
+
 		if err != nil {
 			errorHandler(err)
 		}

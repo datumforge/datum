@@ -7,10 +7,8 @@ route:
 
 receivers:
   - name: alerts
-    discord_configs:
-      - webhook_url: <your_discord_webhook>
     slack_configs:
       - send_resolved: true
         text: "{{ .CommonAnnotations.description }}"
-        channel: <#your_slack_channel_name>
-        api_url: <your_slack_webhook>
+        channel: alerts-sink
+        api_url: http://localhost:17608/metrics

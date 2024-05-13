@@ -30,7 +30,12 @@ func main() {
 		log.Fatalf("failed creating atlas migration directory: %v", err)
 	}
 
-	gooseDir, err := sqltool.NewGooseDir("migrations-goose")
+	gooseDirSqlite, err := sqltool.NewGooseDir("migrations-goose-sqlite")
+	if err != nil {
+		log.Fatalf("failed creating goose migration directory: %v", err)
+	}
+
+	gooseDirPG, err := sqltool.NewGooseDir("migrations-goose-postgres")
 	if err != nil {
 		log.Fatalf("failed creating goose migration directory: %v", err)
 	}
@@ -38,34 +43,49 @@ func main() {
 	// Migrate diff options.
 	baseOpts := []schema.MigrateOption{
 		schema.WithMigrationMode(schema.ModeReplay), // provide migration mode
-		schema.WithDialect(dialect.SQLite),          // Ent dialect to use
 		schema.WithDropColumn(true),
 		schema.WithDropIndex(true),
 	}
+
+	sqliteOpts := append(baseOpts, schema.WithDialect(dialect.SQLite))
+	postgresOpts := append(baseOpts, schema.WithDialect(dialect.Postgres))
 
 	if len(os.Args) != 2 {
 		log.Fatalln("migration name is required. Use: 'go run -mod=mod create_migration.go <name>'")
 	}
 
-	dbURI, ok := os.LookupEnv("ATLAS_DB_URI")
+	sqliteDBURI, ok := os.LookupEnv("ATLAS_SQLITE_DB_URI")
 	if !ok {
-		log.Fatalln("failed to load the ATLAS_DB_URI env var")
+		log.Fatalln("failed to load the ATLAS_SQLITE_DB_URI env var")
+	}
+
+	pgDBURI, ok := os.LookupEnv("ATLAS_POSTGRES_DB_URI")
+	if !ok {
+		log.Fatalln("failed to load the ATLAS_POSTGRES_DB_URI env var")
 	}
 
 	// Generate migrations using Atlas support for sqlite (note the Ent dialect option passed above).
 	atlasOpts := append(baseOpts,
+		schema.WithDialect(dialect.Postgres),
 		schema.WithDir(atlasDir),
 		schema.WithFormatter(atlas.DefaultFormatter),
 	)
 
-	if err := migrate.NamedDiff(ctx, dbURI, os.Args[1], atlasOpts...); err != nil {
+	if err := migrate.NamedDiff(ctx, pgDBURI, os.Args[1], atlasOpts...); err != nil {
 		log.Fatalf("failed generating atlas migration file: %v", err)
 	}
 
 	// Generate migrations using Goose support for sqlite
-	gooseOpts := append(baseOpts, schema.WithDir(gooseDir))
+	gooseOptsSQLite := append(sqliteOpts, schema.WithDir(gooseDirSqlite))
 
-	if err = migrate.NamedDiff(ctx, dbURI, os.Args[1], gooseOpts...); err != nil {
-		log.Fatalf("failed generating goose migration file: %v", err)
+	if err = migrate.NamedDiff(ctx, sqliteDBURI, os.Args[1], gooseOptsSQLite...); err != nil {
+		log.Fatalf("failed generating goose migration file for sqlite: %v", err)
+	}
+
+	// Generate migrations using Goose support for postgres
+	gooseOptsPG := append(postgresOpts, schema.WithDir(gooseDirPG))
+
+	if err = migrate.NamedDiff(ctx, pgDBURI, os.Args[1], gooseOptsPG...); err != nil {
+		log.Fatalf("failed generating goose migration file for postgres: %v", err)
 	}
 }

@@ -1,31 +1,17 @@
 version: "3.9"
+include:
+  - docker-compose-pg.yml
 services:
-  postgres:
-    image: postgres:16
-    container_name: postgres
-    command: postgres -c 'max_connections=100'
-    networks:
-      - default
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
   migrate:
-    depends_on:
-      postgres:
-        condition: service_healthy
     image: openfga/openfga:latest
     container_name: migrate
     command: migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       - OPENFGA_DATASTORE_ENGINE=postgres
-      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/postgres?sslmode=disable
+      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/openfga?sslmode=disable
     networks:
       - default
   openfga:
@@ -36,7 +22,7 @@ services:
     container_name: openfga
     environment:
       - OPENFGA_DATASTORE_ENGINE=postgres
-      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/postgres?sslmode=disable
+      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/openfga?sslmode=disable
       - OPENFGA_LOG_FORMAT=json
       - OPENFGA_DATASTORE_MAX_OPEN_CONNS=100 #see postgres container
       - OPENFGA_PLAYGROUND_ENABLED=true
@@ -50,8 +36,6 @@ services:
       interval: 5s
       timeout: 30s
       retries: 3
-    networks:
-      - default
     ports:
       # Needed for the http server
       - "8080:8080"
@@ -61,3 +45,5 @@ services:
       - "3000:3000"
       # Needed for the prometheus metrics
       - "2112:2112" #prometheus metrics
+    networks:
+      - default

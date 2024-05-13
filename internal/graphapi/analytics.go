@@ -17,7 +17,7 @@ import (
 )
 
 // CreateEvent creates an event for the mutation with the properties
-func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
+func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value, ctx context.Context) {
 	pool := soiree.NewPondPool(100, 1000)
 	e := soiree.NewEventPool(soiree.WithPool(pool))
 
@@ -98,7 +98,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	userCreatedListener := func(evt soiree.Event) error {
 		integrationWithWebhook, err := c.Integration.Query().WithWebhooks().Where(
 			integration.KindEQ("slack")).QueryWebhooks().Where(
-			webhook.EnabledEQ(true)).All(context.Background())
+			webhook.EnabledEQ(true)).All(ctx)
 
 		if err != nil {
 			log.Printf("error: %s\n", err)
@@ -124,13 +124,14 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	orgCreatedListener := func(evt soiree.Event) error {
 		integrationWithWebhook, err := c.Integration.Query().WithWebhooks().Where(
 			integration.KindEQ("slack")).QueryWebhooks().Where(
-			webhook.EnabledEQ(true)).All(context.Background())
+			webhook.EnabledEQ(true)).All(ctx)
 
 		if err != nil {
 			log.Printf("error: %s\n", err)
 		}
 
 		for _, w := range integrationWithWebhook {
+			log.Printf("DESTINATION URLs ACTIVE", w.DestinationURL)
 			retrieve := sEvent.Payload().(map[string]string)
 			log.Printf("event: %s\n", retrieve["key"])
 

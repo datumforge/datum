@@ -129,7 +129,7 @@ func WithEvents(c *ent.Client) {
 			}
 
 			if TrackedEvent(m) {
-				CreateEvent(c, m, retVal)
+				CreateEvent(c, m, retVal, ctx)
 			}
 
 			return retVal, nil

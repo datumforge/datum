@@ -127,28 +127,27 @@ func (m *EventPool) handleEvents(topicName string, payload interface{}, errorHan
 	}()
 
 	event := NewBaseEvent(topicName, payload)
-
 	m.topics.Range(func(key, value interface{}) bool {
 		topicPattern := key.(string)
-
 		if matchTopicPattern(topicPattern, topicName) {
 			topic := value.(*Topic)
-
 			topicErrors := topic.Trigger(event)
-
-			for _, err := range topicErrors {
-				if m.errorHandler != nil {
-					err = m.errorHandler(event, err)
-				}
-
-				if err != nil {
-					errorHandler(err)
-				}
-			}
+			m.handleTopicErrors(event, topicErrors, errorHandler)
 		}
-
 		return true
 	})
+}
+
+// handleTopicErrors handles the errors returned by a topic's Trigger method
+func (m *EventPool) handleTopicErrors(event Event, topicErrors []error, errorHandler func(error)) {
+	for _, err := range topicErrors {
+		if m.errorHandler != nil {
+			err = m.errorHandler(event, err)
+		}
+		if err != nil {
+			errorHandler(err)
+		}
+	}
 }
 
 // GetTopic retrieves a topic by its name. If the topic does not exist, it returns an error

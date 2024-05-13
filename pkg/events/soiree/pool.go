@@ -14,6 +14,28 @@ type Pool interface {
 	Running() int
 	// Release stops all workers in the pool and waits for them to finish
 	Release()
+	// ReleaseWithDeadline stops this pool and waits until either all tasks in the queue are completed or the given deadline is reached
+	ReleaseWithDeadline(deadline time.Duration)
+	// Stop causes this pool to stop accepting new tasks and signals all workers to exit
+	Stop()
+	// IdleWorkers returns the number of idle workers in the pool
+	IdleWorkers() int
+	// SubmittedTasks returns the number of tasks submitted to the pool
+	SubmittedTasks() int
+	// WaitingTasks returns the number of tasks waiting in the pool
+	WaitingTasks() int
+	// SuccessfulTasks returns the number of tasks that completed successfully
+	SuccessfulTasks() int
+	// FailedTasks returns the number of tasks that completed with a panic
+	FailedTasks() int
+	// CompletedTasks returns the number of tasks that completed either successfully or with a panic
+	CompletedTasks() int
+	// StopAndWaitFor stops this pool and waits until either all tasks in the queue are completed or the given deadline is reached
+	StopAndWaitFor(deadline time.Duration)
+	// SubmitAndWait submits a task to the worker pool and waits for it to finish
+	SubmitAndWait(task func())
+	// SubmitBefore submits a task to the worker pool before a specified task
+	SubmitBefore(task func(), deadline time.Duration)
 }
 
 // PondPool is a worker pool implementation using the pond library

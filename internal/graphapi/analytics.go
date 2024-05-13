@@ -91,8 +91,16 @@ func CreateEvent(ctx context.Context, c *ent.Client, m ent.Mutation, v ent.Value
 	userCreatedListener := userCreatedListener(ctx, c, sEvent)
 	orgCreatedListener := orgCreatedListener(ctx, c, sEvent)
 
-	e.On("user.created", userCreatedListener)
-	e.On("organization.created", orgCreatedListener)
+	_, err = e.On("user.created", userCreatedListener)
+	if err != nil {
+		return
+	}
+
+	_, err = e.On("organization.created", orgCreatedListener)
+	if err != nil {
+		return
+	}
+
 	e.Emit(event, payload)
 
 	c.Analytics.Event(event, props)

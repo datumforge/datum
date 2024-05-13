@@ -23,7 +23,8 @@ includes:
     taskfile: ./jsonschema/Taskfile.yaml
 
 env:
-  ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
+  ATLAS_SQLITE_DB_URI: "sqlite://file?mode=memory&_fk=1"
+  ATLAS_POSTGRES_DB_URI: "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
   TEST_DB_URL: "libsql://file::memory:?cache=shared"
   TEST_FGA_URL: "localhost:8080"
   ENV: config

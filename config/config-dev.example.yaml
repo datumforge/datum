@@ -12,9 +12,11 @@ server:
 # db settings
 db:
   debug: true
-  driverName: libsql
-  primaryDbSource: "file:datum.db"
+  driverName: postgres
+  primaryDbSource: "postgres://postgres:password@0.0.0.0:5432/datum?sslmode=disable"
   multiWrite: false
+  migrationProvider: "goose"
+  enableHistory: true
 # auth settings
 auth:
   enabled: true

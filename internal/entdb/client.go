@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"ariga.io/entcache"
+	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/datumforge/entx"
 	"github.com/pressly/goose/v3"
@@ -137,26 +138,38 @@ func (c *client) runGooseMigrations() error {
 	}
 	defer drv.Close()
 
-	if _, err := drv.Exec("PRAGMA foreign_keys = off;", nil); err != nil {
-		drv.Close()
+	migrations := migratedb.GooseMigrationsPG
+	if driver == dialect.SQLite {
+		migrations = migratedb.GooseMigrationsSQLite
 
-		return fmt.Errorf("failed to disable foreign keys: %w", err)
+		if _, err := drv.Exec("PRAGMA foreign_keys = off;", nil); err != nil {
+			drv.Close()
+
+			return fmt.Errorf("failed to disable foreign keys: %w", err)
+		}
 	}
 
-	goose.SetBaseFS(migratedb.GooseMigrations)
+	goose.SetBaseFS(migrations)
 
 	if err := goose.SetDialect(driver); err != nil {
 		return err
 	}
 
-	if err := goose.Up(drv, "migrations-goose"); err != nil {
+	migrationsDir := "migrations-goose-postgres"
+	if driver == dialect.SQLite {
+		migrationsDir = "migrations-goose-sqlite"
+	}
+
+	if err := goose.Up(drv, migrationsDir); err != nil {
 		return err
 	}
 
-	if _, err := drv.Exec("PRAGMA foreign_keys = on;", nil); err != nil {
-		drv.Close()
+	if driver == dialect.SQLite {
+		if _, err := drv.Exec("PRAGMA foreign_keys = on;", nil); err != nil {
+			drv.Close()
 
-		return fmt.Errorf("failed to enable foreign keys: %w", err)
+			return fmt.Errorf("failed to enable foreign keys: %w", err)
+		}
 	}
 
 	return nil

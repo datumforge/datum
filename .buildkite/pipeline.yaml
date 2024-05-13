@@ -172,7 +172,7 @@ steps:
         plugins:
           - datumforge/atlas#v0.0.3:
               project: datum
-              dev-url: "sqlite://dev?mode=memory&_fk=1"
+              dev-url: "docker://postgres/16/dev?search_path=public"
               dir: "file://db/migrations"
               step: apply
   - group: ":docker: Image Build"

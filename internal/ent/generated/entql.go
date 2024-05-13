@@ -1868,6 +1868,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Event",
 	)
 	graph.MustAddE(
+		"webhooks",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.WebhooksTable,
+			Columns: integration.WebhooksPrimaryKey,
+			Bidi:    false,
+		},
+		"Integration",
+		"Webhook",
+	)
+	graph.MustAddE(
 		"owner",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -2526,6 +2538,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"Webhook",
 		"Event",
+	)
+	graph.MustAddE(
+		"integrations",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   webhook.IntegrationsTable,
+			Columns: webhook.IntegrationsPrimaryKey,
+			Bidi:    false,
+		},
+		"Webhook",
+		"Integration",
 	)
 	return graph
 }()
@@ -5398,6 +5422,20 @@ func (f *IntegrationFilter) WhereHasEvents() {
 // WhereHasEventsWith applies a predicate to check if query has an edge events with a given conditions (other predicates).
 func (f *IntegrationFilter) WhereHasEventsWith(preds ...predicate.Event) {
 	f.Where(entql.HasEdgeWith("events", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasWebhooks applies a predicate to check if query has an edge webhooks.
+func (f *IntegrationFilter) WhereHasWebhooks() {
+	f.Where(entql.HasEdge("webhooks"))
+}
+
+// WhereHasWebhooksWith applies a predicate to check if query has an edge webhooks with a given conditions (other predicates).
+func (f *IntegrationFilter) WhereHasWebhooksWith(preds ...predicate.Webhook) {
+	f.Where(entql.HasEdgeWith("webhooks", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -8908,6 +8946,20 @@ func (f *WebhookFilter) WhereHasEvents() {
 // WhereHasEventsWith applies a predicate to check if query has an edge events with a given conditions (other predicates).
 func (f *WebhookFilter) WhereHasEventsWith(preds ...predicate.Event) {
 	f.Where(entql.HasEdgeWith("events", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasIntegrations applies a predicate to check if query has an edge integrations.
+func (f *WebhookFilter) WhereHasIntegrations() {
+	f.Where(entql.HasEdge("integrations"))
+}
+
+// WhereHasIntegrationsWith applies a predicate to check if query has an edge integrations with a given conditions (other predicates).
+func (f *WebhookFilter) WhereHasIntegrationsWith(preds ...predicate.Integration) {
+	f.Where(entql.HasEdgeWith("integrations", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

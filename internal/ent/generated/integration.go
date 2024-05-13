@@ -57,15 +57,18 @@ type IntegrationEdges struct {
 	Oauth2tokens []*OhAuthTooToken `json:"oauth2tokens,omitempty"`
 	// Events holds the value of the events edge.
 	Events []*Event `json:"events,omitempty"`
+	// Webhooks holds the value of the webhooks edge.
+	Webhooks []*Webhook `json:"webhooks,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [5]map[string]int
 
 	namedSecrets      map[string][]*Hush
 	namedOauth2tokens map[string][]*OhAuthTooToken
 	namedEvents       map[string][]*Event
+	namedWebhooks     map[string][]*Webhook
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -104,6 +107,15 @@ func (e IntegrationEdges) EventsOrErr() ([]*Event, error) {
 		return e.Events, nil
 	}
 	return nil, &NotLoadedError{edge: "events"}
+}
+
+// WebhooksOrErr returns the Webhooks value or an error if the edge
+// was not loaded in eager-loading.
+func (e IntegrationEdges) WebhooksOrErr() ([]*Webhook, error) {
+	if e.loadedTypes[4] {
+		return e.Webhooks, nil
+	}
+	return nil, &NotLoadedError{edge: "webhooks"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -244,6 +256,11 @@ func (i *Integration) QueryEvents() *EventQuery {
 	return NewIntegrationClient(i.config).QueryEvents(i)
 }
 
+// QueryWebhooks queries the "webhooks" edge of the Integration entity.
+func (i *Integration) QueryWebhooks() *WebhookQuery {
+	return NewIntegrationClient(i.config).QueryWebhooks(i)
+}
+
 // Update returns a builder for updating this Integration.
 // Note that you need to call Integration.Unwrap() before calling this method if this Integration
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -372,6 +389,30 @@ func (i *Integration) appendNamedEvents(name string, edges ...*Event) {
 		i.Edges.namedEvents[name] = []*Event{}
 	} else {
 		i.Edges.namedEvents[name] = append(i.Edges.namedEvents[name], edges...)
+	}
+}
+
+// NamedWebhooks returns the Webhooks named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (i *Integration) NamedWebhooks(name string) ([]*Webhook, error) {
+	if i.Edges.namedWebhooks == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := i.Edges.namedWebhooks[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (i *Integration) appendNamedWebhooks(name string, edges ...*Webhook) {
+	if i.Edges.namedWebhooks == nil {
+		i.Edges.namedWebhooks = make(map[string][]*Webhook)
+	}
+	if len(edges) == 0 {
+		i.Edges.namedWebhooks[name] = []*Webhook{}
+	} else {
+		i.Edges.namedWebhooks[name] = append(i.Edges.namedWebhooks[name], edges...)
 	}
 }
 

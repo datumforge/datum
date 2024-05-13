@@ -78,4 +78,4 @@ To generate a new schema, you can run `task newschema -- [yourschemaname]` where
 
 ### Migrations
 
-We use [atlas](https://atlasgo.io/) and [goose](https://github.com/pressly/goose) to create and manage our DB migrations - you can trigger one via `task atlas:create` and that will generate the necessary migrations. There should be a new migration file created in `db/migrations` and `db/migrations-goose`. On every PR, the Atlas integration also creates comments with any issues related to the schema changes / migrations.
+We use [atlas](https://atlasgo.io/) and [goose](https://github.com/pressly/goose) to create and manage our DB migrations - you can trigger one via `task atlas:create` and that will generate the necessary migrations. There should be a new migration file created in `db/migrations`, `db/migrations-goose-postgre` and `db/migrations-goose-sqlite`. On every PR, the Atlas integration also creates comments with any issues related to the schema changes / migrations.

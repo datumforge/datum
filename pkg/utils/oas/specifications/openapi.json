@@ -8422,6 +8422,12 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "webhooks": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
@@ -8585,6 +8591,12 @@
                     }
                   },
                   "events": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "webhooks": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -8839,6 +8851,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Hush"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/integrations/{id}/webhooks": {
+      "get": {
+        "tags": [
+          "Integration"
+        ],
+        "summary": "List attached Webhooks",
+        "description": "List attached Webhooks.",
+        "operationId": "listIntegrationWebhooks",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Integration",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Integrations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Webhook"
                   }
                 }
               }
@@ -17455,6 +17531,12 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "integrations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
@@ -17631,6 +17713,12 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "integrations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -17708,6 +17796,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/webhooks/{id}/integrations": {
+      "get": {
+        "tags": [
+          "Webhook"
+        ],
+        "summary": "List attached Integrations",
+        "description": "List attached Integrations.",
+        "operationId": "listWebhookIntegrations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Webhook",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Webhooks list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Integration"
                   }
                 }
               }
@@ -19214,6 +19366,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Event"
+            }
+          },
+          "webhooks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Webhook"
             }
           }
         },
@@ -21043,6 +21201,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Event"
+            }
+          },
+          "integrations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Integration"
             }
           }
         },

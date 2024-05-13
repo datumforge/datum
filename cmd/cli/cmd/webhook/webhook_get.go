@@ -40,7 +40,7 @@ func webhooks(ctx context.Context) error {
 
 	var s []byte
 
-	writer := tables.NewTableWriter(webhookCmd.OutOrStdout(), "ID", "Name", "Description")
+	writer := tables.NewTableWriter(webhookCmd.OutOrStdout(), "ID", "Name", "Description", "Destination URL", "Enabled")
 
 	if oID != "" {
 		webhook, err := cli.Client.GetWebhookByID(ctx, oID, cli.Interceptor)
@@ -57,7 +57,7 @@ func webhooks(ctx context.Context) error {
 			return datum.JSONPrint(s)
 		}
 
-		writer.AddRow(webhook.Webhook.ID, webhook.Webhook.Name, *webhook.Webhook.Description)
+		writer.AddRow(webhook.Webhook.ID, webhook.Webhook.Name, *webhook.Webhook.Description, webhook.Webhook.DestinationURL, webhook.Webhook.Enabled)
 		writer.Render()
 
 		return nil
@@ -78,7 +78,7 @@ func webhooks(ctx context.Context) error {
 	}
 
 	for _, webhook := range webhooks.Webhooks.Edges {
-		writer.AddRow(webhook.Node.ID, webhook.Node.Name, *webhook.Node.Description)
+		writer.AddRow(webhook.Node.ID, webhook.Node.Name, *webhook.Node.Description, webhook.Node.DestinationURL, webhook.Node.Enabled)
 	}
 
 	writer.Render()

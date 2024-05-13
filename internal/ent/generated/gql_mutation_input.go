@@ -1640,6 +1640,7 @@ type CreateIntegrationInput struct {
 	SecretIDs      []string
 	Oauth2tokenIDs []string
 	EventIDs       []string
+	WebhookIDs     []string
 }
 
 // Mutate applies the CreateIntegrationInput on the IntegrationMutation builder.
@@ -1675,6 +1676,9 @@ func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
+	if v := i.WebhookIDs; len(v) > 0 {
+		m.AddWebhookIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateIntegrationInput on the IntegrationCreate builder.
@@ -1705,6 +1709,9 @@ type UpdateIntegrationInput struct {
 	ClearEvents          bool
 	AddEventIDs          []string
 	RemoveEventIDs       []string
+	ClearWebhooks        bool
+	AddWebhookIDs        []string
+	RemoveWebhookIDs     []string
 }
 
 // Mutate applies the UpdateIntegrationInput on the IntegrationMutation builder.
@@ -1768,6 +1775,15 @@ func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
 	}
 	if v := i.RemoveEventIDs; len(v) > 0 {
 		m.RemoveEventIDs(v...)
+	}
+	if i.ClearWebhooks {
+		m.ClearWebhooks()
+	}
+	if v := i.AddWebhookIDs; len(v) > 0 {
+		m.AddWebhookIDs(v...)
+	}
+	if v := i.RemoveWebhookIDs; len(v) > 0 {
+		m.RemoveWebhookIDs(v...)
 	}
 }
 
@@ -3900,6 +3916,7 @@ type CreateWebhookInput struct {
 	LastResponse   *string
 	OwnerID        *string
 	EventIDs       []string
+	IntegrationIDs []string
 }
 
 // Mutate applies the CreateWebhookInput on the WebhookMutation builder.
@@ -3939,6 +3956,9 @@ func (i *CreateWebhookInput) Mutate(m *WebhookMutation) {
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
+	if v := i.IntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateWebhookInput on the WebhookCreate builder.
@@ -3949,26 +3969,29 @@ func (c *WebhookCreate) SetInput(i CreateWebhookInput) *WebhookCreate {
 
 // UpdateWebhookInput represents a mutation input for updating webhooks.
 type UpdateWebhookInput struct {
-	ClearUpdatedAt    bool
-	UpdatedAt         *time.Time
-	ClearUpdatedBy    bool
-	UpdatedBy         *string
-	Name              *string
-	ClearDescription  bool
-	Description       *string
-	DestinationURL    *string
-	Enabled           *bool
-	ClearFailures     bool
-	Failures          *int
-	ClearLastError    bool
-	LastError         *string
-	ClearLastResponse bool
-	LastResponse      *string
-	ClearOwner        bool
-	OwnerID           *string
-	ClearEvents       bool
-	AddEventIDs       []string
-	RemoveEventIDs    []string
+	ClearUpdatedAt       bool
+	UpdatedAt            *time.Time
+	ClearUpdatedBy       bool
+	UpdatedBy            *string
+	Name                 *string
+	ClearDescription     bool
+	Description          *string
+	DestinationURL       *string
+	Enabled              *bool
+	ClearFailures        bool
+	Failures             *int
+	ClearLastError       bool
+	LastError            *string
+	ClearLastResponse    bool
+	LastResponse         *string
+	ClearOwner           bool
+	OwnerID              *string
+	ClearEvents          bool
+	AddEventIDs          []string
+	RemoveEventIDs       []string
+	ClearIntegrations    bool
+	AddIntegrationIDs    []string
+	RemoveIntegrationIDs []string
 }
 
 // Mutate applies the UpdateWebhookInput on the WebhookMutation builder.
@@ -4032,6 +4055,15 @@ func (i *UpdateWebhookInput) Mutate(m *WebhookMutation) {
 	}
 	if v := i.RemoveEventIDs; len(v) > 0 {
 		m.RemoveEventIDs(v...)
+	}
+	if i.ClearIntegrations {
+		m.ClearIntegrations()
+	}
+	if v := i.AddIntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.RemoveIntegrationIDs; len(v) > 0 {
+		m.RemoveIntegrationIDs(v...)
 	}
 }
 

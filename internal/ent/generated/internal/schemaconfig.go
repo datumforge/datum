@@ -39,6 +39,7 @@ type SchemaConfig struct {
 	IntegrationSecrets               string // Integration-secrets->Hush table.
 	IntegrationOauth2tokens          string // Integration-oauth2tokens->OhAuthTooToken table.
 	IntegrationEvents                string // Integration-events->Event table.
+	IntegrationWebhooks              string // Integration-webhooks->Webhook table.
 	IntegrationHistory               string // IntegrationHistory table.
 	Invite                           string // Invite table.
 	InviteEvents                     string // Invite-events->Event table.

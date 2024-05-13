@@ -520,6 +520,18 @@ func (i *Integration) Events(ctx context.Context) (result []*Event, err error) {
 	return result, err
 }
 
+func (i *Integration) Webhooks(ctx context.Context) (result []*Webhook, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = i.NamedWebhooks(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = i.Edges.WebhooksOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = i.QueryWebhooks().All(ctx)
+	}
+	return result, err
+}
+
 func (i *Invite) Owner(ctx context.Context) (*Organization, error) {
 	result, err := i.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
@@ -1065,6 +1077,18 @@ func (w *Webhook) Events(ctx context.Context) (result []*Event, err error) {
 	}
 	if IsNotLoaded(err) {
 		result, err = w.QueryEvents().All(ctx)
+	}
+	return result, err
+}
+
+func (w *Webhook) Integrations(ctx context.Context) (result []*Integration, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = w.NamedIntegrations(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = w.Edges.IntegrationsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = w.QueryIntegrations().All(ctx)
 	}
 	return result, err
 }

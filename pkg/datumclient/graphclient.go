@@ -59,6 +59,8 @@ type DatumClient interface {
 	CreateHush(ctx context.Context, input CreateHushInput, interceptors ...clientv2.RequestInterceptor) (*CreateHush, error)
 	UpdateHush(ctx context.Context, updateHushID string, input UpdateHushInput, interceptors ...clientv2.RequestInterceptor) (*UpdateHush, error)
 	GetIntegrations(ctx context.Context, where *IntegrationWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetIntegrations, error)
+	GetIntegrationByID(ctx context.Context, integrationID string, interceptors ...clientv2.RequestInterceptor) (*GetIntegrationByID, error)
+	GetAllIntegrations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllIntegrations, error)
 	CreateIntegration(ctx context.Context, input CreateIntegrationInput, interceptors ...clientv2.RequestInterceptor) (*CreateIntegration, error)
 	UpdateIntegration(ctx context.Context, updateIntegrationID string, input UpdateIntegrationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateIntegration, error)
 	DeleteIntegration(ctx context.Context, deleteIntegrationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteIntegration, error)
@@ -6162,6 +6164,31 @@ func (t *GetIntegrations_Integrations_Edges_Node_Events) GetID() string {
 	return t.ID
 }
 
+type GetIntegrations_Integrations_Edges_Node_Webhooks struct {
+	ID             string "json:\"id\" graphql:\"id\""
+	DestinationURL string "json:\"destinationURL\" graphql:\"destinationURL\""
+	Enabled        bool   "json:\"enabled\" graphql:\"enabled\""
+}
+
+func (t *GetIntegrations_Integrations_Edges_Node_Webhooks) GetID() string {
+	if t == nil {
+		t = &GetIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.ID
+}
+func (t *GetIntegrations_Integrations_Edges_Node_Webhooks) GetDestinationURL() string {
+	if t == nil {
+		t = &GetIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.DestinationURL
+}
+func (t *GetIntegrations_Integrations_Edges_Node_Webhooks) GetEnabled() bool {
+	if t == nil {
+		t = &GetIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.Enabled
+}
+
 type GetIntegrations_Integrations_Edges_Node struct {
 	ID           string                                                  "json:\"id\" graphql:\"id\""
 	CreatedAt    *time.Time                                              "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -6178,6 +6205,7 @@ type GetIntegrations_Integrations_Edges_Node struct {
 	Secrets      []*GetIntegrations_Integrations_Edges_Node_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*GetIntegrations_Integrations_Edges_Node_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*GetIntegrations_Integrations_Edges_Node_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*GetIntegrations_Integrations_Edges_Node_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
 }
 
 func (t *GetIntegrations_Integrations_Edges_Node) GetID() string {
@@ -6270,6 +6298,12 @@ func (t *GetIntegrations_Integrations_Edges_Node) GetEvents() []*GetIntegrations
 	}
 	return t.Events
 }
+func (t *GetIntegrations_Integrations_Edges_Node) GetWebhooks() []*GetIntegrations_Integrations_Edges_Node_Webhooks {
+	if t == nil {
+		t = &GetIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Webhooks
+}
 
 type GetIntegrations_Integrations_Edges struct {
 	Node *GetIntegrations_Integrations_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
@@ -6289,6 +6323,398 @@ type GetIntegrations_Integrations struct {
 func (t *GetIntegrations_Integrations) GetEdges() []*GetIntegrations_Integrations_Edges {
 	if t == nil {
 		t = &GetIntegrations_Integrations{}
+	}
+	return t.Edges
+}
+
+type GetIntegrationByID_Integration_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetIntegrationByID_Integration_Owner) GetID() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Owner{}
+	}
+	return t.ID
+}
+
+type GetIntegrationByID_Integration_Secrets struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetIntegrationByID_Integration_Secrets) GetID() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Secrets{}
+	}
+	return t.ID
+}
+
+type GetIntegrationByID_Integration_Oauth2tokens struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetIntegrationByID_Integration_Oauth2tokens) GetID() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Oauth2tokens{}
+	}
+	return t.ID
+}
+
+type GetIntegrationByID_Integration_Events struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetIntegrationByID_Integration_Events) GetID() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Events{}
+	}
+	return t.ID
+}
+
+type GetIntegrationByID_Integration_Webhooks struct {
+	ID             string "json:\"id\" graphql:\"id\""
+	DestinationURL string "json:\"destinationURL\" graphql:\"destinationURL\""
+	Enabled        bool   "json:\"enabled\" graphql:\"enabled\""
+}
+
+func (t *GetIntegrationByID_Integration_Webhooks) GetID() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Webhooks{}
+	}
+	return t.ID
+}
+func (t *GetIntegrationByID_Integration_Webhooks) GetDestinationURL() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Webhooks{}
+	}
+	return t.DestinationURL
+}
+func (t *GetIntegrationByID_Integration_Webhooks) GetEnabled() bool {
+	if t == nil {
+		t = &GetIntegrationByID_Integration_Webhooks{}
+	}
+	return t.Enabled
+}
+
+type GetIntegrationByID_Integration struct {
+	ID           string                                         "json:\"id\" graphql:\"id\""
+	CreatedAt    *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time                                     "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy    *string                                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt    *time.Time                                     "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy    *string                                        "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	OwnerID      *string                                        "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Name         string                                         "json:\"name\" graphql:\"name\""
+	Description  *string                                        "json:\"description,omitempty\" graphql:\"description\""
+	Kind         *string                                        "json:\"kind,omitempty\" graphql:\"kind\""
+	Owner        *GetIntegrationByID_Integration_Owner          "json:\"owner,omitempty\" graphql:\"owner\""
+	Secrets      []*GetIntegrationByID_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
+	Oauth2tokens []*GetIntegrationByID_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
+	Events       []*GetIntegrationByID_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*GetIntegrationByID_Integration_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
+}
+
+func (t *GetIntegrationByID_Integration) GetID() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.ID
+}
+func (t *GetIntegrationByID_Integration) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.CreatedAt
+}
+func (t *GetIntegrationByID_Integration) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetIntegrationByID_Integration) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.CreatedBy
+}
+func (t *GetIntegrationByID_Integration) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetIntegrationByID_Integration) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.DeletedAt
+}
+func (t *GetIntegrationByID_Integration) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.DeletedBy
+}
+func (t *GetIntegrationByID_Integration) GetOwnerID() *string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.OwnerID
+}
+func (t *GetIntegrationByID_Integration) GetName() string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Name
+}
+func (t *GetIntegrationByID_Integration) GetDescription() *string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Description
+}
+func (t *GetIntegrationByID_Integration) GetKind() *string {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Kind
+}
+func (t *GetIntegrationByID_Integration) GetOwner() *GetIntegrationByID_Integration_Owner {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Owner
+}
+func (t *GetIntegrationByID_Integration) GetSecrets() []*GetIntegrationByID_Integration_Secrets {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Secrets
+}
+func (t *GetIntegrationByID_Integration) GetOauth2tokens() []*GetIntegrationByID_Integration_Oauth2tokens {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Oauth2tokens
+}
+func (t *GetIntegrationByID_Integration) GetEvents() []*GetIntegrationByID_Integration_Events {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Events
+}
+func (t *GetIntegrationByID_Integration) GetWebhooks() []*GetIntegrationByID_Integration_Webhooks {
+	if t == nil {
+		t = &GetIntegrationByID_Integration{}
+	}
+	return t.Webhooks
+}
+
+type GetAllIntegrations_Integrations_Edges_Node_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetAllIntegrations_Integrations_Edges_Node_Owner) GetID() string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node_Owner{}
+	}
+	return t.ID
+}
+
+type GetAllIntegrations_Integrations_Edges_Node_Secrets struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetAllIntegrations_Integrations_Edges_Node_Secrets) GetID() string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node_Secrets{}
+	}
+	return t.ID
+}
+
+type GetAllIntegrations_Integrations_Edges_Node_Oauth2tokens struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetAllIntegrations_Integrations_Edges_Node_Oauth2tokens) GetID() string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node_Oauth2tokens{}
+	}
+	return t.ID
+}
+
+type GetAllIntegrations_Integrations_Edges_Node_Events struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetAllIntegrations_Integrations_Edges_Node_Events) GetID() string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node_Events{}
+	}
+	return t.ID
+}
+
+type GetAllIntegrations_Integrations_Edges_Node_Webhooks struct {
+	ID             string "json:\"id\" graphql:\"id\""
+	DestinationURL string "json:\"destinationURL\" graphql:\"destinationURL\""
+	Enabled        bool   "json:\"enabled\" graphql:\"enabled\""
+}
+
+func (t *GetAllIntegrations_Integrations_Edges_Node_Webhooks) GetID() string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.ID
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node_Webhooks) GetDestinationURL() string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.DestinationURL
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node_Webhooks) GetEnabled() bool {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node_Webhooks{}
+	}
+	return t.Enabled
+}
+
+type GetAllIntegrations_Integrations_Edges_Node struct {
+	ID           string                                                     "json:\"id\" graphql:\"id\""
+	CreatedAt    *time.Time                                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time                                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy    *string                                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt    *time.Time                                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy    *string                                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	OwnerID      *string                                                    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Name         string                                                     "json:\"name\" graphql:\"name\""
+	Description  *string                                                    "json:\"description,omitempty\" graphql:\"description\""
+	Kind         *string                                                    "json:\"kind,omitempty\" graphql:\"kind\""
+	Owner        *GetAllIntegrations_Integrations_Edges_Node_Owner          "json:\"owner,omitempty\" graphql:\"owner\""
+	Secrets      []*GetAllIntegrations_Integrations_Edges_Node_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
+	Oauth2tokens []*GetAllIntegrations_Integrations_Edges_Node_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
+	Events       []*GetAllIntegrations_Integrations_Edges_Node_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*GetAllIntegrations_Integrations_Edges_Node_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
+}
+
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.DeletedAt
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.DeletedBy
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Description
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetKind() *string {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Kind
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetOwner() *GetAllIntegrations_Integrations_Edges_Node_Owner {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Owner
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetSecrets() []*GetAllIntegrations_Integrations_Edges_Node_Secrets {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Secrets
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetOauth2tokens() []*GetAllIntegrations_Integrations_Edges_Node_Oauth2tokens {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Oauth2tokens
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetEvents() []*GetAllIntegrations_Integrations_Edges_Node_Events {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Events
+}
+func (t *GetAllIntegrations_Integrations_Edges_Node) GetWebhooks() []*GetAllIntegrations_Integrations_Edges_Node_Webhooks {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges_Node{}
+	}
+	return t.Webhooks
+}
+
+type GetAllIntegrations_Integrations_Edges struct {
+	Node *GetAllIntegrations_Integrations_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllIntegrations_Integrations_Edges) GetNode() *GetAllIntegrations_Integrations_Edges_Node {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllIntegrations_Integrations struct {
+	Edges []*GetAllIntegrations_Integrations_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllIntegrations_Integrations) GetEdges() []*GetAllIntegrations_Integrations_Edges {
+	if t == nil {
+		t = &GetAllIntegrations_Integrations{}
 	}
 	return t.Edges
 }
@@ -6337,6 +6763,31 @@ func (t *CreateIntegration_CreateIntegration_Integration_Events) GetID() string 
 	return t.ID
 }
 
+type CreateIntegration_CreateIntegration_Integration_Webhooks struct {
+	ID             string "json:\"id\" graphql:\"id\""
+	DestinationURL string "json:\"destinationURL\" graphql:\"destinationURL\""
+	Enabled        bool   "json:\"enabled\" graphql:\"enabled\""
+}
+
+func (t *CreateIntegration_CreateIntegration_Integration_Webhooks) GetID() string {
+	if t == nil {
+		t = &CreateIntegration_CreateIntegration_Integration_Webhooks{}
+	}
+	return t.ID
+}
+func (t *CreateIntegration_CreateIntegration_Integration_Webhooks) GetDestinationURL() string {
+	if t == nil {
+		t = &CreateIntegration_CreateIntegration_Integration_Webhooks{}
+	}
+	return t.DestinationURL
+}
+func (t *CreateIntegration_CreateIntegration_Integration_Webhooks) GetEnabled() bool {
+	if t == nil {
+		t = &CreateIntegration_CreateIntegration_Integration_Webhooks{}
+	}
+	return t.Enabled
+}
+
 type CreateIntegration_CreateIntegration_Integration struct {
 	ID           string                                                          "json:\"id\" graphql:\"id\""
 	CreatedAt    *time.Time                                                      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -6353,6 +6804,7 @@ type CreateIntegration_CreateIntegration_Integration struct {
 	Secrets      []*CreateIntegration_CreateIntegration_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*CreateIntegration_CreateIntegration_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*CreateIntegration_CreateIntegration_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*CreateIntegration_CreateIntegration_Integration_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
 }
 
 func (t *CreateIntegration_CreateIntegration_Integration) GetID() string {
@@ -6445,6 +6897,12 @@ func (t *CreateIntegration_CreateIntegration_Integration) GetEvents() []*CreateI
 	}
 	return t.Events
 }
+func (t *CreateIntegration_CreateIntegration_Integration) GetWebhooks() []*CreateIntegration_CreateIntegration_Integration_Webhooks {
+	if t == nil {
+		t = &CreateIntegration_CreateIntegration_Integration{}
+	}
+	return t.Webhooks
+}
 
 type CreateIntegration_CreateIntegration struct {
 	Integration CreateIntegration_CreateIntegration_Integration "json:\"integration\" graphql:\"integration\""
@@ -6501,6 +6959,17 @@ func (t *UpdateIntegration_UpdateIntegration_Integration_Events) GetID() string 
 	return t.ID
 }
 
+type UpdateIntegration_UpdateIntegration_Integration_Webhooks struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateIntegration_UpdateIntegration_Integration_Webhooks) GetID() string {
+	if t == nil {
+		t = &UpdateIntegration_UpdateIntegration_Integration_Webhooks{}
+	}
+	return t.ID
+}
+
 type UpdateIntegration_UpdateIntegration_Integration struct {
 	ID           string                                                          "json:\"id\" graphql:\"id\""
 	CreatedAt    *time.Time                                                      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -6517,6 +6986,7 @@ type UpdateIntegration_UpdateIntegration_Integration struct {
 	Secrets      []*UpdateIntegration_UpdateIntegration_Integration_Secrets      "json:\"secrets,omitempty\" graphql:\"secrets\""
 	Oauth2tokens []*UpdateIntegration_UpdateIntegration_Integration_Oauth2tokens "json:\"oauth2tokens,omitempty\" graphql:\"oauth2tokens\""
 	Events       []*UpdateIntegration_UpdateIntegration_Integration_Events       "json:\"events,omitempty\" graphql:\"events\""
+	Webhooks     []*UpdateIntegration_UpdateIntegration_Integration_Webhooks     "json:\"webhooks,omitempty\" graphql:\"webhooks\""
 }
 
 func (t *UpdateIntegration_UpdateIntegration_Integration) GetID() string {
@@ -6608,6 +7078,12 @@ func (t *UpdateIntegration_UpdateIntegration_Integration) GetEvents() []*UpdateI
 		t = &UpdateIntegration_UpdateIntegration_Integration{}
 	}
 	return t.Events
+}
+func (t *UpdateIntegration_UpdateIntegration_Integration) GetWebhooks() []*UpdateIntegration_UpdateIntegration_Integration_Webhooks {
+	if t == nil {
+		t = &UpdateIntegration_UpdateIntegration_Integration{}
+	}
+	return t.Webhooks
 }
 
 type UpdateIntegration_UpdateIntegration struct {
@@ -13929,6 +14405,28 @@ func (t *GetIntegrations) GetIntegrations() *GetIntegrations_Integrations {
 	return &t.Integrations
 }
 
+type GetIntegrationByID struct {
+	Integration GetIntegrationByID_Integration "json:\"integration\" graphql:\"integration\""
+}
+
+func (t *GetIntegrationByID) GetIntegration() *GetIntegrationByID_Integration {
+	if t == nil {
+		t = &GetIntegrationByID{}
+	}
+	return &t.Integration
+}
+
+type GetAllIntegrations struct {
+	Integrations GetAllIntegrations_Integrations "json:\"integrations\" graphql:\"integrations\""
+}
+
+func (t *GetAllIntegrations) GetIntegrations() *GetAllIntegrations_Integrations {
+	if t == nil {
+		t = &GetAllIntegrations{}
+	}
+	return &t.Integrations
+}
+
 type CreateIntegration struct {
 	CreateIntegration CreateIntegration_CreateIntegration "json:\"createIntegration\" graphql:\"createIntegration\""
 }
@@ -16531,6 +17029,11 @@ const GetIntegrationsDocument = `query GetIntegrations ($where: IntegrationWhere
 				events {
 					id
 				}
+				webhooks {
+					id
+					destinationURL
+					enabled
+				}
 			}
 		}
 	}
@@ -16544,6 +17047,110 @@ func (c *Client) GetIntegrations(ctx context.Context, where *IntegrationWhereInp
 
 	var res GetIntegrations
 	if err := c.Client.Post(ctx, "GetIntegrations", GetIntegrationsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetIntegrationByIDDocument = `query GetIntegrationByID ($integrationId: ID!) {
+	integration(id: $integrationId) {
+		id
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
+		deletedAt
+		deletedBy
+		ownerID
+		name
+		description
+		kind
+		owner {
+			id
+		}
+		secrets {
+			id
+		}
+		oauth2tokens {
+			id
+		}
+		events {
+			id
+		}
+		webhooks {
+			id
+			destinationURL
+			enabled
+		}
+	}
+}
+`
+
+func (c *Client) GetIntegrationByID(ctx context.Context, integrationID string, interceptors ...clientv2.RequestInterceptor) (*GetIntegrationByID, error) {
+	vars := map[string]any{
+		"integrationId": integrationID,
+	}
+
+	var res GetIntegrationByID
+	if err := c.Client.Post(ctx, "GetIntegrationByID", GetIntegrationByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllIntegrationsDocument = `query GetAllIntegrations {
+	integrations {
+		edges {
+			node {
+				id
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				deletedAt
+				deletedBy
+				ownerID
+				name
+				description
+				kind
+				owner {
+					id
+				}
+				secrets {
+					id
+				}
+				oauth2tokens {
+					id
+				}
+				events {
+					id
+				}
+				webhooks {
+					id
+					destinationURL
+					enabled
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllIntegrations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllIntegrations, error) {
+	vars := map[string]any{}
+
+	var res GetAllIntegrations
+	if err := c.Client.Post(ctx, "GetAllIntegrations", GetAllIntegrationsDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -16579,6 +17186,11 @@ const CreateIntegrationDocument = `mutation CreateIntegration ($input: CreateInt
 			}
 			events {
 				id
+			}
+			webhooks {
+				id
+				destinationURL
+				enabled
 			}
 		}
 	}
@@ -16626,6 +17238,9 @@ const UpdateIntegrationDocument = `mutation UpdateIntegration ($updateIntegratio
 				id
 			}
 			events {
+				id
+			}
+			webhooks {
 				id
 			}
 		}
@@ -18976,6 +19591,8 @@ var DocumentOperationNames = map[string]string{
 	CreateHushDocument:                  "CreateHush",
 	UpdateHushDocument:                  "UpdateHush",
 	GetIntegrationsDocument:             "GetIntegrations",
+	GetIntegrationByIDDocument:          "GetIntegrationByID",
+	GetAllIntegrationsDocument:          "GetAllIntegrations",
 	CreateIntegrationDocument:           "CreateIntegration",
 	UpdateIntegrationDocument:           "UpdateIntegration",
 	DeleteIntegrationDocument:           "DeleteIntegration",

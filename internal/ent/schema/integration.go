@@ -54,6 +54,7 @@ func (Integration) Edges() []ent.Edge {
 		edge.To("oauth2tokens", OhAuthTooToken.Type).
 			Comment("the oauth2 tokens associated with the integration"),
 		edge.To("events", Event.Type),
+		edge.To("webhooks", Webhook.Type),
 	}
 }
 

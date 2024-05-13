@@ -15,10 +15,10 @@ tasks:
 
   datum:
     dir: ..
-    desc: brings up the compose environment for the datum server configured with auth
+    desc: brings up the compose environment for the datum server
     deps: [build]
     cmds:
-      - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
+      - "docker compose -f ./docker/docker-compose-redis.yml -f ./docker/docker-compose-fga.yml -f ./docker/docker-compose-kafka.yml -f ./docker/docker-compose.yml -p datum up -d"
 
   datum:down:
     dir: ..
@@ -50,6 +50,18 @@ tasks:
     desc: brings up the compose environment for redis
     cmds:
       - "docker compose -p redis down"
+
+  postgres:
+    dir: ..
+    desc: brings up the compose environment for postgres development
+    cmds:
+      - "docker compose -f ./docker/docker-compose-pg.yml -p postgres up -d"
+
+  postgres:down:
+    dir: ..
+    desc: brings the postgres compose environment down
+    cmds:
+      - docker compose -p postgres down
 
   fga:
     dir: ..

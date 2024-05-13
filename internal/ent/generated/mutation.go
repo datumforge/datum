@@ -26764,6 +26764,9 @@ type IntegrationMutation struct {
 	events              map[string]struct{}
 	removedevents       map[string]struct{}
 	clearedevents       bool
+	webhooks            map[string]struct{}
+	removedwebhooks     map[string]struct{}
+	clearedwebhooks     bool
 	done                bool
 	oldValue            func(context.Context) (*Integration, error)
 	predicates          []predicate.Integration
@@ -27575,6 +27578,60 @@ func (m *IntegrationMutation) ResetEvents() {
 	m.removedevents = nil
 }
 
+// AddWebhookIDs adds the "webhooks" edge to the Webhook entity by ids.
+func (m *IntegrationMutation) AddWebhookIDs(ids ...string) {
+	if m.webhooks == nil {
+		m.webhooks = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.webhooks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearWebhooks clears the "webhooks" edge to the Webhook entity.
+func (m *IntegrationMutation) ClearWebhooks() {
+	m.clearedwebhooks = true
+}
+
+// WebhooksCleared reports if the "webhooks" edge to the Webhook entity was cleared.
+func (m *IntegrationMutation) WebhooksCleared() bool {
+	return m.clearedwebhooks
+}
+
+// RemoveWebhookIDs removes the "webhooks" edge to the Webhook entity by IDs.
+func (m *IntegrationMutation) RemoveWebhookIDs(ids ...string) {
+	if m.removedwebhooks == nil {
+		m.removedwebhooks = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.webhooks, ids[i])
+		m.removedwebhooks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedWebhooks returns the removed IDs of the "webhooks" edge to the Webhook entity.
+func (m *IntegrationMutation) RemovedWebhooksIDs() (ids []string) {
+	for id := range m.removedwebhooks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// WebhooksIDs returns the "webhooks" edge IDs in the mutation.
+func (m *IntegrationMutation) WebhooksIDs() (ids []string) {
+	for id := range m.webhooks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetWebhooks resets all changes to the "webhooks" edge.
+func (m *IntegrationMutation) ResetWebhooks() {
+	m.webhooks = nil
+	m.clearedwebhooks = false
+	m.removedwebhooks = nil
+}
+
 // Where appends a list predicates to the IntegrationMutation builder.
 func (m *IntegrationMutation) Where(ps ...predicate.Integration) {
 	m.predicates = append(m.predicates, ps...)
@@ -27935,7 +27992,7 @@ func (m *IntegrationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *IntegrationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.owner != nil {
 		edges = append(edges, integration.EdgeOwner)
 	}
@@ -27947,6 +28004,9 @@ func (m *IntegrationMutation) AddedEdges() []string {
 	}
 	if m.events != nil {
 		edges = append(edges, integration.EdgeEvents)
+	}
+	if m.webhooks != nil {
+		edges = append(edges, integration.EdgeWebhooks)
 	}
 	return edges
 }
@@ -27977,13 +28037,19 @@ func (m *IntegrationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case integration.EdgeWebhooks:
+		ids := make([]ent.Value, 0, len(m.webhooks))
+		for id := range m.webhooks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *IntegrationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedsecrets != nil {
 		edges = append(edges, integration.EdgeSecrets)
 	}
@@ -27992,6 +28058,9 @@ func (m *IntegrationMutation) RemovedEdges() []string {
 	}
 	if m.removedevents != nil {
 		edges = append(edges, integration.EdgeEvents)
+	}
+	if m.removedwebhooks != nil {
+		edges = append(edges, integration.EdgeWebhooks)
 	}
 	return edges
 }
@@ -28018,13 +28087,19 @@ func (m *IntegrationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case integration.EdgeWebhooks:
+		ids := make([]ent.Value, 0, len(m.removedwebhooks))
+		for id := range m.removedwebhooks {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *IntegrationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedowner {
 		edges = append(edges, integration.EdgeOwner)
 	}
@@ -28036,6 +28111,9 @@ func (m *IntegrationMutation) ClearedEdges() []string {
 	}
 	if m.clearedevents {
 		edges = append(edges, integration.EdgeEvents)
+	}
+	if m.clearedwebhooks {
+		edges = append(edges, integration.EdgeWebhooks)
 	}
 	return edges
 }
@@ -28052,6 +28130,8 @@ func (m *IntegrationMutation) EdgeCleared(name string) bool {
 		return m.clearedoauth2tokens
 	case integration.EdgeEvents:
 		return m.clearedevents
+	case integration.EdgeWebhooks:
+		return m.clearedwebhooks
 	}
 	return false
 }
@@ -28082,6 +28162,9 @@ func (m *IntegrationMutation) ResetEdge(name string) error {
 		return nil
 	case integration.EdgeEvents:
 		m.ResetEvents()
+		return nil
+	case integration.EdgeWebhooks:
+		m.ResetWebhooks()
 		return nil
 	}
 	return fmt.Errorf("unknown Integration edge %s", name)
@@ -61426,36 +61509,39 @@ func (m *WebauthnMutation) ResetEdge(name string) error {
 // WebhookMutation represents an operation that mutates the Webhook nodes in the graph.
 type WebhookMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *string
-	created_at      *time.Time
-	updated_at      *time.Time
-	created_by      *string
-	updated_by      *string
-	mapping_id      *string
-	deleted_at      *time.Time
-	deleted_by      *string
-	name            *string
-	description     *string
-	destination_url *string
-	enabled         *bool
-	callback        *string
-	expires_at      *time.Time
-	secret          *[]byte
-	failures        *int
-	addfailures     *int
-	last_error      *string
-	last_response   *string
-	clearedFields   map[string]struct{}
-	owner           *string
-	clearedowner    bool
-	events          map[string]struct{}
-	removedevents   map[string]struct{}
-	clearedevents   bool
-	done            bool
-	oldValue        func(context.Context) (*Webhook, error)
-	predicates      []predicate.Webhook
+	op                  Op
+	typ                 string
+	id                  *string
+	created_at          *time.Time
+	updated_at          *time.Time
+	created_by          *string
+	updated_by          *string
+	mapping_id          *string
+	deleted_at          *time.Time
+	deleted_by          *string
+	name                *string
+	description         *string
+	destination_url     *string
+	enabled             *bool
+	callback            *string
+	expires_at          *time.Time
+	secret              *[]byte
+	failures            *int
+	addfailures         *int
+	last_error          *string
+	last_response       *string
+	clearedFields       map[string]struct{}
+	owner               *string
+	clearedowner        bool
+	events              map[string]struct{}
+	removedevents       map[string]struct{}
+	clearedevents       bool
+	integrations        map[string]struct{}
+	removedintegrations map[string]struct{}
+	clearedintegrations bool
+	done                bool
+	oldValue            func(context.Context) (*Webhook, error)
+	predicates          []predicate.Webhook
 }
 
 var _ ent.Mutation = (*WebhookMutation)(nil)
@@ -62494,6 +62580,60 @@ func (m *WebhookMutation) ResetEvents() {
 	m.removedevents = nil
 }
 
+// AddIntegrationIDs adds the "integrations" edge to the Integration entity by ids.
+func (m *WebhookMutation) AddIntegrationIDs(ids ...string) {
+	if m.integrations == nil {
+		m.integrations = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.integrations[ids[i]] = struct{}{}
+	}
+}
+
+// ClearIntegrations clears the "integrations" edge to the Integration entity.
+func (m *WebhookMutation) ClearIntegrations() {
+	m.clearedintegrations = true
+}
+
+// IntegrationsCleared reports if the "integrations" edge to the Integration entity was cleared.
+func (m *WebhookMutation) IntegrationsCleared() bool {
+	return m.clearedintegrations
+}
+
+// RemoveIntegrationIDs removes the "integrations" edge to the Integration entity by IDs.
+func (m *WebhookMutation) RemoveIntegrationIDs(ids ...string) {
+	if m.removedintegrations == nil {
+		m.removedintegrations = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.integrations, ids[i])
+		m.removedintegrations[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedIntegrations returns the removed IDs of the "integrations" edge to the Integration entity.
+func (m *WebhookMutation) RemovedIntegrationsIDs() (ids []string) {
+	for id := range m.removedintegrations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// IntegrationsIDs returns the "integrations" edge IDs in the mutation.
+func (m *WebhookMutation) IntegrationsIDs() (ids []string) {
+	for id := range m.integrations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetIntegrations resets all changes to the "integrations" edge.
+func (m *WebhookMutation) ResetIntegrations() {
+	m.integrations = nil
+	m.clearedintegrations = false
+	m.removedintegrations = nil
+}
+
 // Where appends a list predicates to the WebhookMutation builder.
 func (m *WebhookMutation) Where(ps ...predicate.Webhook) {
 	m.predicates = append(m.predicates, ps...)
@@ -63018,12 +63158,15 @@ func (m *WebhookMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *WebhookMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.owner != nil {
 		edges = append(edges, webhook.EdgeOwner)
 	}
 	if m.events != nil {
 		edges = append(edges, webhook.EdgeEvents)
+	}
+	if m.integrations != nil {
+		edges = append(edges, webhook.EdgeIntegrations)
 	}
 	return edges
 }
@@ -63042,15 +63185,24 @@ func (m *WebhookMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case webhook.EdgeIntegrations:
+		ids := make([]ent.Value, 0, len(m.integrations))
+		for id := range m.integrations {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *WebhookMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedevents != nil {
 		edges = append(edges, webhook.EdgeEvents)
+	}
+	if m.removedintegrations != nil {
+		edges = append(edges, webhook.EdgeIntegrations)
 	}
 	return edges
 }
@@ -63065,18 +63217,27 @@ func (m *WebhookMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case webhook.EdgeIntegrations:
+		ids := make([]ent.Value, 0, len(m.removedintegrations))
+		for id := range m.removedintegrations {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *WebhookMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedowner {
 		edges = append(edges, webhook.EdgeOwner)
 	}
 	if m.clearedevents {
 		edges = append(edges, webhook.EdgeEvents)
+	}
+	if m.clearedintegrations {
+		edges = append(edges, webhook.EdgeIntegrations)
 	}
 	return edges
 }
@@ -63089,6 +63250,8 @@ func (m *WebhookMutation) EdgeCleared(name string) bool {
 		return m.clearedowner
 	case webhook.EdgeEvents:
 		return m.clearedevents
+	case webhook.EdgeIntegrations:
+		return m.clearedintegrations
 	}
 	return false
 }
@@ -63113,6 +63276,9 @@ func (m *WebhookMutation) ResetEdge(name string) error {
 		return nil
 	case webhook.EdgeEvents:
 		m.ResetEvents()
+		return nil
+	case webhook.EdgeIntegrations:
+		m.ResetIntegrations()
 		return nil
 	}
 	return fmt.Errorf("unknown Webhook edge %s", name)

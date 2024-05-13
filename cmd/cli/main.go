@@ -10,6 +10,7 @@ import (
 	_ "github.com/datumforge/datum/cmd/cli/cmd/group"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/groupmembers"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/groupsetting"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/integration"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/invite"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/login"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/org"

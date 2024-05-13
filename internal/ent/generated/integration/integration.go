@@ -45,6 +45,8 @@ const (
 	EdgeOauth2tokens = "oauth2tokens"
 	// EdgeEvents holds the string denoting the events edge name in mutations.
 	EdgeEvents = "events"
+	// EdgeWebhooks holds the string denoting the webhooks edge name in mutations.
+	EdgeWebhooks = "webhooks"
 	// Table holds the table name of the integration in the database.
 	Table = "integrations"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -69,6 +71,11 @@ const (
 	// EventsInverseTable is the table name for the Event entity.
 	// It exists in this package in order to avoid circular dependency with the "event" package.
 	EventsInverseTable = "events"
+	// WebhooksTable is the table that holds the webhooks relation/edge. The primary key declared below.
+	WebhooksTable = "integration_webhooks"
+	// WebhooksInverseTable is the table name for the Webhook entity.
+	// It exists in this package in order to avoid circular dependency with the "webhook" package.
+	WebhooksInverseTable = "webhooks"
 )
 
 // Columns holds all SQL columns for integration fields.
@@ -103,6 +110,9 @@ var (
 	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
 	// primary key for the events relation (M2M).
 	EventsPrimaryKey = []string{"integration_id", "event_id"}
+	// WebhooksPrimaryKey and WebhooksColumn2 are the table columns denoting the
+	// primary key for the webhooks relation (M2M).
+	WebhooksPrimaryKey = []string{"integration_id", "webhook_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -256,6 +266,20 @@ func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByWebhooksCount orders the results by webhooks count.
+func ByWebhooksCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newWebhooksStep(), opts...)
+	}
+}
+
+// ByWebhooks orders the results by webhooks terms.
+func ByWebhooks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWebhooksStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -282,5 +306,12 @@ func newEventsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EventsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+	)
+}
+func newWebhooksStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WebhooksInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, WebhooksTable, WebhooksPrimaryKey...),
 	)
 }

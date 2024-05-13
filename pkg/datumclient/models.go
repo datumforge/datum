@@ -440,6 +440,7 @@ type CreateIntegrationInput struct {
 	SecretIDs      []string `json:"secretIDs,omitempty"`
 	Oauth2tokenIDs []string `json:"oauth2tokenIDs,omitempty"`
 	EventIDs       []string `json:"eventIDs,omitempty"`
+	WebhookIDs     []string `json:"webhookIDs,omitempty"`
 }
 
 // CreateInviteInput is used for create Invite object.
@@ -745,9 +746,10 @@ type CreateWebhookInput struct {
 	// the last error message
 	LastError *string `json:"lastError,omitempty"`
 	// the last response
-	LastResponse *string  `json:"lastResponse,omitempty"`
-	OwnerID      *string  `json:"ownerID,omitempty"`
-	EventIDs     []string `json:"eventIDs,omitempty"`
+	LastResponse   *string  `json:"lastResponse,omitempty"`
+	OwnerID        *string  `json:"ownerID,omitempty"`
+	EventIDs       []string `json:"eventIDs,omitempty"`
+	IntegrationIDs []string `json:"integrationIDs,omitempty"`
 }
 
 type DocumentData struct {
@@ -4589,6 +4591,7 @@ type Integration struct {
 	// the oauth2 tokens associated with the integration
 	Oauth2tokens []*OhAuthTooToken `json:"oauth2tokens,omitempty"`
 	Events       []*Event          `json:"events,omitempty"`
+	Webhooks     []*Webhook        `json:"webhooks,omitempty"`
 }
 
 func (Integration) IsNode() {}
@@ -5016,6 +5019,9 @@ type IntegrationWhereInput struct {
 	// events edge predicates
 	HasEvents     *bool              `json:"hasEvents,omitempty"`
 	HasEventsWith []*EventWhereInput `json:"hasEventsWith,omitempty"`
+	// webhooks edge predicates
+	HasWebhooks     *bool                `json:"hasWebhooks,omitempty"`
+	HasWebhooksWith []*WebhookWhereInput `json:"hasWebhooksWith,omitempty"`
 }
 
 type Invite struct {
@@ -8841,6 +8847,9 @@ type UpdateIntegrationInput struct {
 	AddEventIDs          []string `json:"addEventIDs,omitempty"`
 	RemoveEventIDs       []string `json:"removeEventIDs,omitempty"`
 	ClearEvents          *bool    `json:"clearEvents,omitempty"`
+	AddWebhookIDs        []string `json:"addWebhookIDs,omitempty"`
+	RemoveWebhookIDs     []string `json:"removeWebhookIDs,omitempty"`
+	ClearWebhooks        *bool    `json:"clearWebhooks,omitempty"`
 }
 
 // UpdateInviteInput is used for update Invite object.
@@ -9256,13 +9265,16 @@ type UpdateWebhookInput struct {
 	LastError      *string `json:"lastError,omitempty"`
 	ClearLastError *bool   `json:"clearLastError,omitempty"`
 	// the last response
-	LastResponse      *string  `json:"lastResponse,omitempty"`
-	ClearLastResponse *bool    `json:"clearLastResponse,omitempty"`
-	OwnerID           *string  `json:"ownerID,omitempty"`
-	ClearOwner        *bool    `json:"clearOwner,omitempty"`
-	AddEventIDs       []string `json:"addEventIDs,omitempty"`
-	RemoveEventIDs    []string `json:"removeEventIDs,omitempty"`
-	ClearEvents       *bool    `json:"clearEvents,omitempty"`
+	LastResponse         *string  `json:"lastResponse,omitempty"`
+	ClearLastResponse    *bool    `json:"clearLastResponse,omitempty"`
+	OwnerID              *string  `json:"ownerID,omitempty"`
+	ClearOwner           *bool    `json:"clearOwner,omitempty"`
+	AddEventIDs          []string `json:"addEventIDs,omitempty"`
+	RemoveEventIDs       []string `json:"removeEventIDs,omitempty"`
+	ClearEvents          *bool    `json:"clearEvents,omitempty"`
+	AddIntegrationIDs    []string `json:"addIntegrationIDs,omitempty"`
+	RemoveIntegrationIDs []string `json:"removeIntegrationIDs,omitempty"`
+	ClearIntegrations    *bool    `json:"clearIntegrations,omitempty"`
 }
 
 type User struct {
@@ -10436,9 +10448,10 @@ type Webhook struct {
 	// the last error message
 	LastError *string `json:"lastError,omitempty"`
 	// the last response
-	LastResponse *string       `json:"lastResponse,omitempty"`
-	Owner        *Organization `json:"owner,omitempty"`
-	Events       []*Event      `json:"events,omitempty"`
+	LastResponse *string        `json:"lastResponse,omitempty"`
+	Owner        *Organization  `json:"owner,omitempty"`
+	Events       []*Event       `json:"events,omitempty"`
+	Integrations []*Integration `json:"integrations,omitempty"`
 }
 
 func (Webhook) IsNode() {}
@@ -10957,6 +10970,9 @@ type WebhookWhereInput struct {
 	// events edge predicates
 	HasEvents     *bool              `json:"hasEvents,omitempty"`
 	HasEventsWith []*EventWhereInput `json:"hasEventsWith,omitempty"`
+	// integrations edge predicates
+	HasIntegrations     *bool                    `json:"hasIntegrations,omitempty"`
+	HasIntegrationsWith []*IntegrationWhereInput `json:"hasIntegrationsWith,omitempty"`
 }
 
 // Properties by which GroupHistory connections can be ordered.

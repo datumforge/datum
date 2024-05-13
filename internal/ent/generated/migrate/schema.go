@@ -1862,6 +1862,31 @@ var (
 			},
 		},
 	}
+	// IntegrationWebhooksColumns holds the columns for the "integration_webhooks" table.
+	IntegrationWebhooksColumns = []*schema.Column{
+		{Name: "integration_id", Type: field.TypeString},
+		{Name: "webhook_id", Type: field.TypeString},
+	}
+	// IntegrationWebhooksTable holds the schema information for the "integration_webhooks" table.
+	IntegrationWebhooksTable = &schema.Table{
+		Name:       "integration_webhooks",
+		Columns:    IntegrationWebhooksColumns,
+		PrimaryKey: []*schema.Column{IntegrationWebhooksColumns[0], IntegrationWebhooksColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "integration_webhooks_integration_id",
+				Columns:    []*schema.Column{IntegrationWebhooksColumns[0]},
+				RefColumns: []*schema.Column{IntegrationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "integration_webhooks_webhook_id",
+				Columns:    []*schema.Column{IntegrationWebhooksColumns[1]},
+				RefColumns: []*schema.Column{WebhooksColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// InviteEventsColumns holds the columns for the "invite_events" table.
 	InviteEventsColumns = []*schema.Column{
 		{Name: "invite_id", Type: field.TypeString},
@@ -2245,6 +2270,7 @@ var (
 		IntegrationSecretsTable,
 		IntegrationOauth2tokensTable,
 		IntegrationEventsTable,
+		IntegrationWebhooksTable,
 		InviteEventsTable,
 		OhAuthTooTokenEventsTable,
 		OrgMembershipEventsTable,
@@ -2364,6 +2390,8 @@ func init() {
 	IntegrationOauth2tokensTable.ForeignKeys[1].RefTable = OhAuthTooTokensTable
 	IntegrationEventsTable.ForeignKeys[0].RefTable = IntegrationsTable
 	IntegrationEventsTable.ForeignKeys[1].RefTable = EventsTable
+	IntegrationWebhooksTable.ForeignKeys[0].RefTable = IntegrationsTable
+	IntegrationWebhooksTable.ForeignKeys[1].RefTable = WebhooksTable
 	InviteEventsTable.ForeignKeys[0].RefTable = InvitesTable
 	InviteEventsTable.ForeignKeys[1].RefTable = EventsTable
 	OhAuthTooTokenEventsTable.ForeignKeys[0].RefTable = OhAuthTooTokensTable

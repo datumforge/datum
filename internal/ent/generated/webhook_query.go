@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/webhook"
@@ -22,15 +23,17 @@ import (
 // WebhookQuery is the builder for querying Webhook entities.
 type WebhookQuery struct {
 	config
-	ctx             *QueryContext
-	order           []webhook.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Webhook
-	withOwner       *OrganizationQuery
-	withEvents      *EventQuery
-	modifiers       []func(*sql.Selector)
-	loadTotal       []func(context.Context, []*Webhook) error
-	withNamedEvents map[string]*EventQuery
+	ctx                   *QueryContext
+	order                 []webhook.OrderOption
+	inters                []Interceptor
+	predicates            []predicate.Webhook
+	withOwner             *OrganizationQuery
+	withEvents            *EventQuery
+	withIntegrations      *IntegrationQuery
+	modifiers             []func(*sql.Selector)
+	loadTotal             []func(context.Context, []*Webhook) error
+	withNamedEvents       map[string]*EventQuery
+	withNamedIntegrations map[string]*IntegrationQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -111,6 +114,31 @@ func (wq *WebhookQuery) QueryEvents() *EventQuery {
 		schemaConfig := wq.schemaConfig
 		step.To.Schema = schemaConfig.Event
 		step.Edge.Schema = schemaConfig.WebhookEvents
+		fromU = sqlgraph.SetNeighbors(wq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryIntegrations chains the current query on the "integrations" edge.
+func (wq *WebhookQuery) QueryIntegrations() *IntegrationQuery {
+	query := (&IntegrationClient{config: wq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := wq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := wq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(webhook.Table, webhook.FieldID, selector),
+			sqlgraph.To(integration.Table, integration.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, webhook.IntegrationsTable, webhook.IntegrationsPrimaryKey...),
+		)
+		schemaConfig := wq.schemaConfig
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.IntegrationWebhooks
 		fromU = sqlgraph.SetNeighbors(wq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -304,13 +332,14 @@ func (wq *WebhookQuery) Clone() *WebhookQuery {
 		return nil
 	}
 	return &WebhookQuery{
-		config:     wq.config,
-		ctx:        wq.ctx.Clone(),
-		order:      append([]webhook.OrderOption{}, wq.order...),
-		inters:     append([]Interceptor{}, wq.inters...),
-		predicates: append([]predicate.Webhook{}, wq.predicates...),
-		withOwner:  wq.withOwner.Clone(),
-		withEvents: wq.withEvents.Clone(),
+		config:           wq.config,
+		ctx:              wq.ctx.Clone(),
+		order:            append([]webhook.OrderOption{}, wq.order...),
+		inters:           append([]Interceptor{}, wq.inters...),
+		predicates:       append([]predicate.Webhook{}, wq.predicates...),
+		withOwner:        wq.withOwner.Clone(),
+		withEvents:       wq.withEvents.Clone(),
+		withIntegrations: wq.withIntegrations.Clone(),
 		// clone intermediate query.
 		sql:  wq.sql.Clone(),
 		path: wq.path,
@@ -336,6 +365,17 @@ func (wq *WebhookQuery) WithEvents(opts ...func(*EventQuery)) *WebhookQuery {
 		opt(query)
 	}
 	wq.withEvents = query
+	return wq
+}
+
+// WithIntegrations tells the query-builder to eager-load the nodes that are connected to
+// the "integrations" edge. The optional arguments are used to configure the query builder of the edge.
+func (wq *WebhookQuery) WithIntegrations(opts ...func(*IntegrationQuery)) *WebhookQuery {
+	query := (&IntegrationClient{config: wq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	wq.withIntegrations = query
 	return wq
 }
 
@@ -417,9 +457,10 @@ func (wq *WebhookQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Webh
 	var (
 		nodes       = []*Webhook{}
 		_spec       = wq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			wq.withOwner != nil,
 			wq.withEvents != nil,
+			wq.withIntegrations != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -458,10 +499,24 @@ func (wq *WebhookQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Webh
 			return nil, err
 		}
 	}
+	if query := wq.withIntegrations; query != nil {
+		if err := wq.loadIntegrations(ctx, query, nodes,
+			func(n *Webhook) { n.Edges.Integrations = []*Integration{} },
+			func(n *Webhook, e *Integration) { n.Edges.Integrations = append(n.Edges.Integrations, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range wq.withNamedEvents {
 		if err := wq.loadEvents(ctx, query, nodes,
 			func(n *Webhook) { n.appendNamedEvents(name) },
 			func(n *Webhook, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range wq.withNamedIntegrations {
+		if err := wq.loadIntegrations(ctx, query, nodes,
+			func(n *Webhook) { n.appendNamedIntegrations(name) },
+			func(n *Webhook, e *Integration) { n.appendNamedIntegrations(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -557,6 +612,68 @@ func (wq *WebhookQuery) loadEvents(ctx context.Context, query *EventQuery, nodes
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (wq *WebhookQuery) loadIntegrations(ctx context.Context, query *IntegrationQuery, nodes []*Webhook, init func(*Webhook), assign func(*Webhook, *Integration)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Webhook)
+	nids := make(map[string]map[*Webhook]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(webhook.IntegrationsTable)
+		joinT.Schema(wq.schemaConfig.IntegrationWebhooks)
+		s.Join(joinT).On(s.C(integration.FieldID), joinT.C(webhook.IntegrationsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(webhook.IntegrationsPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(webhook.IntegrationsPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Webhook]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Integration](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "integrations" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
@@ -668,6 +785,20 @@ func (wq *WebhookQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) 
 		wq.withNamedEvents = make(map[string]*EventQuery)
 	}
 	wq.withNamedEvents[name] = query
+	return wq
+}
+
+// WithNamedIntegrations tells the query-builder to eager-load the nodes that are connected to the "integrations"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (wq *WebhookQuery) WithNamedIntegrations(name string, opts ...func(*IntegrationQuery)) *WebhookQuery {
+	query := (&IntegrationClient{config: wq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if wq.withNamedIntegrations == nil {
+		wq.withNamedIntegrations = make(map[string]*IntegrationQuery)
+	}
+	wq.withNamedIntegrations[name] = query
 	return wq
 }
 

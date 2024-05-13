@@ -3081,6 +3081,19 @@ func (i *IntegrationQuery) collectField(ctx context.Context, oneNode bool, opCtx
 			i.WithNamedEvents(alias, func(wq *EventQuery) {
 				*wq = *query
 			})
+
+		case "webhooks":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&WebhookClient{config: i.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, webhookImplementors)...); err != nil {
+				return err
+			}
+			i.WithNamedWebhooks(alias, func(wq *WebhookQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[integration.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, integration.FieldCreatedAt)
@@ -6752,6 +6765,19 @@ func (w *WebhookQuery) collectField(ctx context.Context, oneNode bool, opCtx *gr
 				return err
 			}
 			w.WithNamedEvents(alias, func(wq *EventQuery) {
+				*wq = *query
+			})
+
+		case "integrations":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&IntegrationClient{config: w.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, integrationImplementors)...); err != nil {
+				return err
+			}
+			w.WithNamedIntegrations(alias, func(wq *IntegrationQuery) {
 				*wq = *query
 			})
 		case "createdAt":

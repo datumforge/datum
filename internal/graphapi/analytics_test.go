@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/graphapi"
@@ -44,6 +45,9 @@ func (suite *GraphTestSuite) TestTrackedEvent() {
 func (suite *GraphTestSuite) TestCreateEvent() {
 	t := suite.T()
 
+	reqCtx, err := userContext()
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name          string
 		mutation      ent.Mutation
@@ -60,7 +64,7 @@ func (suite *GraphTestSuite) TestCreateEvent() {
 				LastName:  "Pearson",
 				Email:     "jpearson@us.com",
 			},
-			expectedEvent: "user_created",
+			expectedEvent: "user.created",
 			expectedProps: map[string]interface{}{
 				"email":      "jpearson@us.com",
 				"first_name": "Jack",
@@ -75,7 +79,7 @@ func (suite *GraphTestSuite) TestCreateEvent() {
 				ID:   "123",
 				Name: "Meow",
 			},
-			expectedEvent: "organization_created",
+			expectedEvent: "organization.created",
 			expectedProps: map[string]interface{}{
 				"organization_name": "Meow",
 				"organization_id":   "123",
@@ -97,7 +101,7 @@ func (suite *GraphTestSuite) TestCreateEvent() {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			out := suite.captureOutput(func() {
-				graphapi.CreateEvent(suite.client.db, tc.mutation, tc.v)
+				graphapi.CreateEvent(reqCtx, suite.client.db, tc.mutation, tc.v)
 			})
 
 			assert.Contains(t, out, tc.expectedEvent)

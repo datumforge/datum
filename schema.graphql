@@ -540,6 +540,7 @@ input CreateIntegrationInput {
 	secretIDs: [ID!]
 	oauth2tokenIDs: [ID!]
 	eventIDs: [ID!]
+	webhookIDs: [ID!]
 }
 """
 CreateInviteInput is used for create Invite object.
@@ -987,6 +988,7 @@ input CreateWebhookInput {
 	lastResponse: String
 	ownerID: ID
 	eventIDs: [ID!]
+	integrationIDs: [ID!]
 }
 """
 Define a Relay Cursor type:
@@ -5880,6 +5882,7 @@ type Integration implements Node {
 	"""
 	oauth2tokens: [OhAuthTooToken!]
 	events: [Event!]
+	webhooks: [Webhook!]
 }
 """
 A connection to a list of items.
@@ -6427,6 +6430,11 @@ input IntegrationWhereInput {
 	"""
 	hasEvents: Boolean
 	hasEventsWith: [EventWhereInput!]
+	"""
+	webhooks edge predicates
+	"""
+	hasWebhooks: Boolean
+	hasWebhooksWith: [WebhookWhereInput!]
 }
 type Invite implements Node {
 	id: ID!
@@ -13477,6 +13485,9 @@ input UpdateIntegrationInput {
 	addEventIDs: [ID!]
 	removeEventIDs: [ID!]
 	clearEvents: Boolean
+	addWebhookIDs: [ID!]
+	removeWebhookIDs: [ID!]
+	clearWebhooks: Boolean
 }
 """
 UpdateInviteInput is used for update Invite object.
@@ -14034,6 +14045,9 @@ input UpdateWebhookInput {
 	addEventIDs: [ID!]
 	removeEventIDs: [ID!]
 	clearEvents: Boolean
+	addIntegrationIDs: [ID!]
+	removeIntegrationIDs: [ID!]
+	clearIntegrations: Boolean
 }
 type User implements Node {
 	id: ID!
@@ -15603,6 +15617,7 @@ type Webhook implements Node {
 	lastResponse: String
 	owner: Organization
 	events: [Event!]
+	integrations: [Integration!]
 }
 """
 A connection to a list of items.
@@ -16263,4 +16278,9 @@ input WebhookWhereInput {
 	"""
 	hasEvents: Boolean
 	hasEventsWith: [EventWhereInput!]
+	"""
+	integrations edge predicates
+	"""
+	hasIntegrations: Boolean
+	hasIntegrationsWith: [IntegrationWhereInput!]
 }

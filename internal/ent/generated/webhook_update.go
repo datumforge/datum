@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/webhook"
@@ -325,6 +326,21 @@ func (wu *WebhookUpdate) AddEvents(e ...*Event) *WebhookUpdate {
 	return wu.AddEventIDs(ids...)
 }
 
+// AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
+func (wu *WebhookUpdate) AddIntegrationIDs(ids ...string) *WebhookUpdate {
+	wu.mutation.AddIntegrationIDs(ids...)
+	return wu
+}
+
+// AddIntegrations adds the "integrations" edges to the Integration entity.
+func (wu *WebhookUpdate) AddIntegrations(i ...*Integration) *WebhookUpdate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return wu.AddIntegrationIDs(ids...)
+}
+
 // Mutation returns the WebhookMutation object of the builder.
 func (wu *WebhookUpdate) Mutation() *WebhookMutation {
 	return wu.mutation
@@ -355,6 +371,27 @@ func (wu *WebhookUpdate) RemoveEvents(e ...*Event) *WebhookUpdate {
 		ids[i] = e[i].ID
 	}
 	return wu.RemoveEventIDs(ids...)
+}
+
+// ClearIntegrations clears all "integrations" edges to the Integration entity.
+func (wu *WebhookUpdate) ClearIntegrations() *WebhookUpdate {
+	wu.mutation.ClearIntegrations()
+	return wu
+}
+
+// RemoveIntegrationIDs removes the "integrations" edge to Integration entities by IDs.
+func (wu *WebhookUpdate) RemoveIntegrationIDs(ids ...string) *WebhookUpdate {
+	wu.mutation.RemoveIntegrationIDs(ids...)
+	return wu
+}
+
+// RemoveIntegrations removes "integrations" edges to Integration entities.
+func (wu *WebhookUpdate) RemoveIntegrations(i ...*Integration) *WebhookUpdate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return wu.RemoveIntegrationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -584,6 +621,54 @@ func (wu *WebhookUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = wu.schemaConfig.WebhookEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wu.mutation.IntegrationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   webhook.IntegrationsTable,
+			Columns: webhook.IntegrationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = wu.schemaConfig.IntegrationWebhooks
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wu.mutation.RemovedIntegrationsIDs(); len(nodes) > 0 && !wu.mutation.IntegrationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   webhook.IntegrationsTable,
+			Columns: webhook.IntegrationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = wu.schemaConfig.IntegrationWebhooks
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wu.mutation.IntegrationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   webhook.IntegrationsTable,
+			Columns: webhook.IntegrationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = wu.schemaConfig.IntegrationWebhooks
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -904,6 +989,21 @@ func (wuo *WebhookUpdateOne) AddEvents(e ...*Event) *WebhookUpdateOne {
 	return wuo.AddEventIDs(ids...)
 }
 
+// AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
+func (wuo *WebhookUpdateOne) AddIntegrationIDs(ids ...string) *WebhookUpdateOne {
+	wuo.mutation.AddIntegrationIDs(ids...)
+	return wuo
+}
+
+// AddIntegrations adds the "integrations" edges to the Integration entity.
+func (wuo *WebhookUpdateOne) AddIntegrations(i ...*Integration) *WebhookUpdateOne {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return wuo.AddIntegrationIDs(ids...)
+}
+
 // Mutation returns the WebhookMutation object of the builder.
 func (wuo *WebhookUpdateOne) Mutation() *WebhookMutation {
 	return wuo.mutation
@@ -934,6 +1034,27 @@ func (wuo *WebhookUpdateOne) RemoveEvents(e ...*Event) *WebhookUpdateOne {
 		ids[i] = e[i].ID
 	}
 	return wuo.RemoveEventIDs(ids...)
+}
+
+// ClearIntegrations clears all "integrations" edges to the Integration entity.
+func (wuo *WebhookUpdateOne) ClearIntegrations() *WebhookUpdateOne {
+	wuo.mutation.ClearIntegrations()
+	return wuo
+}
+
+// RemoveIntegrationIDs removes the "integrations" edge to Integration entities by IDs.
+func (wuo *WebhookUpdateOne) RemoveIntegrationIDs(ids ...string) *WebhookUpdateOne {
+	wuo.mutation.RemoveIntegrationIDs(ids...)
+	return wuo
+}
+
+// RemoveIntegrations removes "integrations" edges to Integration entities.
+func (wuo *WebhookUpdateOne) RemoveIntegrations(i ...*Integration) *WebhookUpdateOne {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return wuo.RemoveIntegrationIDs(ids...)
 }
 
 // Where appends a list predicates to the WebhookUpdate builder.
@@ -1193,6 +1314,54 @@ func (wuo *WebhookUpdateOne) sqlSave(ctx context.Context) (_node *Webhook, err e
 			},
 		}
 		edge.Schema = wuo.schemaConfig.WebhookEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if wuo.mutation.IntegrationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   webhook.IntegrationsTable,
+			Columns: webhook.IntegrationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = wuo.schemaConfig.IntegrationWebhooks
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wuo.mutation.RemovedIntegrationsIDs(); len(nodes) > 0 && !wuo.mutation.IntegrationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   webhook.IntegrationsTable,
+			Columns: webhook.IntegrationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = wuo.schemaConfig.IntegrationWebhooks
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wuo.mutation.IntegrationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   webhook.IntegrationsTable,
+			Columns: webhook.IntegrationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = wuo.schemaConfig.IntegrationWebhooks
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

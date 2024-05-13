@@ -6691,7 +6691,6 @@ func (t *GetAllIntegrations_Integrations_Edges_Node) GetEvents() []*GetAllIntegr
 	}
 	return t.Events
 }
-
 func (t *GetAllIntegrations_Integrations_Edges_Node) GetWebhooks() []*GetAllIntegrations_Integrations_Edges_Node_Webhooks {
 	if t == nil {
 		t = &GetAllIntegrations_Integrations_Edges_Node{}

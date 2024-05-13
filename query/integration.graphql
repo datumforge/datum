@@ -105,39 +105,6 @@ query GetAllIntegrations {
   }
 }
 
-query GetIntegrationByID($integrationId: ID!) {
-  integration(id: $integrationId) {
-    id
-    createdAt
-    updatedAt
-    createdBy
-    updatedBy
-    deletedAt
-    deletedBy
-    ownerID
-    name
-    description
-    kind
-    owner {
-      id
-    }
-    secrets {
-      id
-    }
-    oauth2tokens {
-      id
-    }
-    events {
-      id
-    }
-    webhooks {
-      id
-      destinationURL
-      enabled
-    }
-  }
-}
-
 
 mutation CreateIntegration($input: CreateIntegrationInput!) {
   createIntegration(input: $input) {

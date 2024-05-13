@@ -76,7 +76,7 @@ func createintegration(ctx context.Context) error {
 	}
 
 	if ownerID != "" {
-		input.OwnerID = ownerID
+		input.OwnerID = &ownerID
 	}
 
 	w, err := cli.Client.CreateIntegration(ctx, input, cli.Interceptor)

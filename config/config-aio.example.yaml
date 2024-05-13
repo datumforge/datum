@@ -30,7 +30,6 @@ auth:
 authz:
   enabled: true
   storeName: datum
-  createNewModel: false
 
 # email settings
 email:

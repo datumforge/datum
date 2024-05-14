@@ -99,6 +99,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 
 			// setup mock authz writes
 			if tc.expectedErrMessage == "" {
+				mock_fga.CheckAny(t, suite.fga, true)
 				mock_fga.WriteAny(t, suite.fga)
 			}
 

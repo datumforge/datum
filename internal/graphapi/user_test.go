@@ -170,9 +170,10 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 	email := gofakeit.Email()
 
 	testCases := []struct {
-		name      string
-		userInput datumclient.CreateUserInput
-		errorMsg  string
+		name        string
+		checkAccess bool
+		userInput   datumclient.CreateUserInput
+		errorMsg    string
 	}{
 		{
 			name: "happy path user",
@@ -184,7 +185,8 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 				AuthProvider: &enums.AuthProviderCredentials,
 				Password:     &strongPassword,
 			},
-			errorMsg: "",
+			checkAccess: true,
+			errorMsg:    "",
 		},
 		{
 			name: "same email, same auth provider",
@@ -265,6 +267,8 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errorMsg == "" {
+				mock_fga.CheckAny(t, suite.client.fga, true)
+
 				// mock writes to create personal org membership
 				mock_fga.WriteAny(t, suite.client.fga)
 			}
@@ -311,23 +315,16 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 			orgs := resp.CreateUser.User.OrgMemberships
 			require.Len(t, orgs, 1)
 
-			// setup valid user context
-			ec, err := auth.NewTestEchoContextWithValidUser(resp.CreateUser.User.ID)
-			if err != nil {
-				t.Fatal()
-			}
-
-			reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-			ec.SetRequest(ec.Request().WithContext(reqCtx))
+			// set user context
+			userCtx, err := auth.NewTestContextWithOrgID(resp.CreateUser.User.ID, orgs[0].OrganizationID)
+			require.NoError(t, err)
 
 			// mocks to check for org access
 			listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrganizationID)}
 			mock_fga.ListAny(t, suite.client.fga, listObjects)
-			mock_fga.CheckAny(t, suite.client.fga, true)
 
 			// Bypass auth checks to ensure input checks for now
-			personalOrg, err := suite.client.datum.GetOrganizationByID(reqCtx, orgs[0].OrganizationID)
+			personalOrg, err := suite.client.datum.GetOrganizationByID(userCtx, orgs[0].OrganizationID)
 			require.NoError(t, err)
 
 			assert.True(t, *personalOrg.Organization.PersonalOrg)
@@ -582,8 +579,6 @@ func (suite *GraphTestSuite) TestMutationUpdateUser() {
 
 			// checks for member tables
 			if tc.errorMsg == "" {
-				mock_fga.CheckAny(t, suite.client.fga, true)
-
 				// mock list for default org on user settings
 				mock_fga.ListAny(t, suite.client.fga, []string{"organization:test"})
 			}
@@ -627,12 +622,12 @@ func (suite *GraphTestSuite) TestMutationDeleteUser() {
 
 	userSetting := user.Edges.Setting
 
-	// setup valid user context
-	reqCtx, err := userContextWithID(user.ID)
-	require.NoError(t, err)
-
 	// personal org will be the default org when the user is created
-	personalOrgID := user.Edges.Setting.Edges.DefaultOrg.ParentOrganizationID
+	personalOrgID := user.Edges.Setting.Edges.DefaultOrg.ID
+
+	// setup valid user context
+	reqCtx, err := auth.NewTestContextWithOrgID(user.ID, personalOrgID)
+	require.NoError(t, err)
 
 	listObjects := []string{fmt.Sprintf("organization:%s", personalOrgID)}
 

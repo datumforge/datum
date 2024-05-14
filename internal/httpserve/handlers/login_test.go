@@ -35,6 +35,7 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 
 	// add mocks for writes
 	mock_fga.WriteAny(t, suite.fga)
+	mock_fga.CheckAny(t, suite.fga, true)
 
 	// create user in the database
 	validConfirmedUser := "rsanchez@datum.net"

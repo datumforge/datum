@@ -37,14 +37,13 @@ func orgMembers(ctx context.Context) error {
 	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
+	where := datumclient.OrgMembershipWhereInput{}
+
 	// filter options
 	oID := viper.GetString("orgmember.get.id")
-	if oID == "" {
-		return datum.NewRequiredFieldMissingError("organization id")
-	}
 
-	where := datumclient.OrgMembershipWhereInput{
-		OrganizationID: &oID,
+	if oID != "" {
+		where.OrganizationID = &oID
 	}
 
 	var s []byte

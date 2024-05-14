@@ -44,9 +44,6 @@ func addOrgMember(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	oID := viper.GetString("orgmember.create.orgid")
-	if oID == "" {
-		return datum.NewRequiredFieldMissingError("organization id")
-	}
 
 	uID := viper.GetString("orgmember.create.userid")
 	if uID == "" {
@@ -62,9 +59,12 @@ func addOrgMember(ctx context.Context) error {
 	}
 
 	input := datumclient.CreateOrgMembershipInput{
-		OrganizationID: oID,
-		UserID:         uID,
-		Role:           &r,
+		UserID: uID,
+		Role:   &r,
+	}
+
+	if oID != "" {
+		input.OrganizationID = oID
 	}
 
 	var s []byte

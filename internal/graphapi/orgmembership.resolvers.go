@@ -10,17 +10,17 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateOrgMembership is the resolver for the createOrgMembership field.
 func (r *mutationResolver) CreateOrgMembership(ctx context.Context, input generated.CreateOrgMembershipInput) (*OrgMembershipCreatePayload, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		OrgID: input.OrganizationID,
-	}
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &input.OrganizationID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
 
-	ctx = viewer.NewContext(ctx, v)
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
 
 	om, err := withTransactionalMutation(ctx).OrgMembership.Create().SetInput(input).Save(ctx)
 	if err != nil {
@@ -68,6 +68,13 @@ func (r *mutationResolver) UpdateOrgMembership(ctx context.Context, id string, i
 
 		r.logger.Errorw("failed to get org member", "error", err)
 		return nil, ErrInternalServerError
+	}
+
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &orgMember.OrganizationID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
 	}
 
 	orgMember, err = orgMember.Update().SetInput(input).Save(ctx)

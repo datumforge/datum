@@ -145,8 +145,9 @@ func (suite *GraphTestSuite) SetupTest() {
 	c.datum = graphTestClient(t, c.db)
 
 	// create test user
-	testUser = (&UserBuilder{client: c}).MustNew(context.Background(), t)
-	testPersonalOrg, err := testUser.Edges.Setting.DefaultOrg(context.Background())
+	ctx = echocontext.NewTestContext()
+	testUser = (&UserBuilder{client: c}).MustNew(ctx, t)
+	testPersonalOrg, err := testUser.Edges.Setting.DefaultOrg(ctx)
 	require.NoError(t, err)
 
 	testPersonalOrgID = testPersonalOrg.ID

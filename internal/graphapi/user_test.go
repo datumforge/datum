@@ -170,10 +170,9 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 	email := gofakeit.Email()
 
 	testCases := []struct {
-		name        string
-		checkAccess bool
-		userInput   datumclient.CreateUserInput
-		errorMsg    string
+		name      string
+		userInput datumclient.CreateUserInput
+		errorMsg  string
 	}{
 		{
 			name: "happy path user",
@@ -185,8 +184,7 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 				AuthProvider: &enums.AuthProviderCredentials,
 				Password:     &strongPassword,
 			},
-			checkAccess: true,
-			errorMsg:    "",
+			errorMsg: "",
 		},
 		{
 			name: "same email, same auth provider",

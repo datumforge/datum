@@ -415,9 +415,6 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 	// setup auth for the tests
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
 
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
-	require.NoError(t, err)
-
 	testCases := []struct {
 		name        string
 		allowed     bool

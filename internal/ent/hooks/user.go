@@ -206,8 +206,6 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 }
 
 func setDefaultOrg(ctx context.Context, dbClient *generated.Client, user *generated.User, org *generated.Organization) (*generated.UserSetting, error) {
-	ctx = privacy.DecisionContext(ctx, privacy.Allow)
-
 	setting, err := user.Setting(ctx)
 	if err != nil {
 		user.Logger.Errorw("unable to get user settings", "error", err)

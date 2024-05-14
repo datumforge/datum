@@ -61,7 +61,7 @@ func users(ctx context.Context) error {
 			return datum.JSONPrint(s)
 		}
 
-		writer.AddRow(user.User.ID, user.User.Email, user.User.FirstName, user.User.LastName, user.User.AuthProvider)
+		writer.AddRow(user.User.ID, user.User.Email, *user.User.FirstName, *user.User.LastName, user.User.AuthProvider)
 
 		writer.Render()
 
@@ -83,7 +83,7 @@ func users(ctx context.Context) error {
 	}
 
 	for _, u := range users.Users.Edges {
-		writer.AddRow(u.Node.ID, u.Node.Email, u.Node.FirstName, u.Node.LastName, u.Node.AuthProvider)
+		writer.AddRow(u.Node.ID, u.Node.Email, *u.Node.FirstName, *u.Node.LastName, u.Node.AuthProvider)
 	}
 
 	writer.Render()

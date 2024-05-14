@@ -23,7 +23,7 @@ func HookOrgMembers() ent.Hook {
 			}
 
 			orgID, exists := mutation.OrganizationID()
-			if !exists {
+			if !exists || orgID == "" {
 				var err error
 				// get the organization based on authorized context if its not set
 				orgID, err = auth.GetOrganizationIDFromContext(ctx)

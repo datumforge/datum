@@ -9,6 +9,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 func HookOrgMembers() ent.Hook {
@@ -44,13 +45,6 @@ func HookOrgMembers() ent.Hook {
 			if userID, ok := mutation.UserID(); ok {
 				role, _ := mutation.Role()
 
-				org, err := mutation.Client().Organization.Get(ctx, orgID)
-				if err != nil {
-					mutation.Logger.Errorw("error getting organization", "error", err)
-
-					return nil, err
-				}
-
 				user, err := mutation.Client().User.Get(ctx, userID)
 				if err != nil {
 					mutation.Logger.Errorw("error getting user", "error", err)
@@ -58,8 +52,15 @@ func HookOrgMembers() ent.Hook {
 					return nil, err
 				}
 
+				orgName, err := auth.GetOrganizationNameFromContext(ctx)
+				if err != nil {
+					mutation.Logger.Errorw("error getting org name from context", "error", err)
+
+					return nil, err
+				}
+
 				props := ph.NewProperties().
-					Set("organization_name", org.Name).
+					Set("organization_name", orgName).
 					Set("user_name", user.FirstName+user.LastName).
 					Set("join_role", role.String())
 

@@ -63,8 +63,15 @@ func HookOrgMembers() ent.Hook {
 					return nil, err
 				}
 
+				orgName, err := auth.GetOrganizationNameFromContext(ctx)
+				if err != nil {
+					mutation.Logger.Errorw("error getting org name from context", "error", err)
+
+					return nil, err
+				}
+
 				props := ph.NewProperties().
-					Set("organization_name", org.Name).
+					Set("organization_name", orgName).
 					Set("user_name", user.FirstName+user.LastName).
 					Set("join_role", role.String())
 

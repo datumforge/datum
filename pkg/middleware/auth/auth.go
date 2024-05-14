@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	echo "github.com/datumforge/echox"
@@ -148,7 +149,9 @@ func createAuthenticatedUserFromClaims(ctx context.Context, dbClient *generated.
 
 	return &auth.AuthenticatedUser{
 		SubjectID:          user.ID,
+		SubjectName:        getSubjectName(user),
 		OrganizationID:     org.ID,
+		OrganizationName:   org.Name,
 		OrganizationIDs:    []string{org.ID},
 		AuthenticationType: authType,
 	}, nil
@@ -206,6 +209,7 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 
 	return &auth.AuthenticatedUser{
 		SubjectID:          pat.OwnerID,
+		SubjectName:        getSubjectName(pat.Edges.Owner),
 		OrganizationIDs:    orgIDs,
 		AuthenticationType: auth.PATAuthentication,
 	}, nil
@@ -224,8 +228,19 @@ func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token stri
 
 	return &auth.AuthenticatedUser{
 		SubjectID:          t.ID,
+		SubjectName:        fmt.Sprintf("service: %s", t.Name),
 		OrganizationID:     t.OwnerID,
 		OrganizationIDs:    []string{t.OwnerID},
 		AuthenticationType: auth.APITokenAuthentication,
 	}, nil
+}
+
+// getSubjectName returns the subject name for the user
+func getSubjectName(user *generated.User) string {
+	subjectName := user.FirstName + " " + user.LastName
+	if subjectName == "" {
+		subjectName = user.DisplayName
+	}
+
+	return subjectName
 }

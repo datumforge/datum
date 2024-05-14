@@ -34,6 +34,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	mock_fga.WriteAny(t, suite.fga)
+	mock_fga.CheckAny(t, suite.fga, true)
 
 	// setup test data
 	requestor := suite.db.User.Create().

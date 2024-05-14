@@ -5,10 +5,13 @@ import (
 
 	"entgo.io/ent"
 
+	"github.com/datumforge/fgax"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
-	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
+	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 )
@@ -20,8 +23,16 @@ func HookUserSetting() ent.Hook {
 			org, ok := mutation.DefaultOrgID()
 			if ok {
 				// ensure user has access to the organization
-				_, err := mutation.Client().OrgMembership.Query().Where(orgmembership.OrganizationID(org)).All(ctx)
+				// the ID is always set on update
+				userSettingID, _ := mutation.ID()
+
+				owner, err := mutation.Client().User.Query().Where(user.HasSettingWith(usersetting.ID(userSettingID))).Only(ctx)
 				if err != nil {
+					return nil, err
+				}
+
+				allow, err := mutation.Authz.CheckOrgAccess(ctx, owner.ID, auth.UserSubjectType, org, fgax.CanView)
+				if err != nil || !allow {
 					return nil, rout.InvalidField(rout.ErrOrganizationNotFound)
 				}
 			}

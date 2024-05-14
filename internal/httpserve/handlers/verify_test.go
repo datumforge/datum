@@ -88,6 +88,7 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 
 			// mock writes for user creation
 			mock_fga.WriteAny(t, suite.fga)
+			mock_fga.CheckAny(t, suite.fga, true)
 
 			u := suite.db.User.Create().
 				SetFirstName(gofakeit.FirstName()).

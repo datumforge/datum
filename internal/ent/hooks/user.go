@@ -16,7 +16,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
-	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/utils/gravatar"
 )
@@ -201,14 +200,6 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 
 		return nil, err
 	}
-
-	// set authorization context
-	ec, err := echocontext.EchoContextFromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx = auth.AddAuthenticatedUserContext(ec, &auth.AuthenticatedUser{})
 
 	// set default org
 	return setDefaultOrg(ctx, dbClient, user, org)

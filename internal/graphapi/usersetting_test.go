@@ -10,6 +10,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 )
 
@@ -139,18 +140,17 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 	ctx, err := userContext()
 	require.NoError(t, err)
 
-	user := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
-	user1Setting, err := user.Setting(ctx)
-	require.NoError(t, err)
-
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(ctx, t)
+
+	// create another user to make sure we don't get their settings back
+	(&UserBuilder{client: suite.client}).MustNew(ctx, t)
 	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(ctx, t)
 
 	// mock list objects
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
 	// setup valid user context
-	reqCtx, err := userContextWithID(user.ID)
+	reqCtx, err := auth.NewTestContextWithOrgID(testUser.ID, testPersonalOrgID)
 	require.NoError(t, err)
 
 	testCases := []struct {
@@ -178,13 +178,13 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 			},
 		},
 		{
-			name: "update default org to invalid org ID",
+			name: "update default org to org without access",
 			updateInput: datumclient.UpdateUserSettingInput{
 				DefaultOrgID: &org2.ID,
 			},
 			allowed:  false,
 			checkOrg: true,
-			errorMsg: "invalid or unparsable field: Organization",
+			errorMsg: "Organization with the specified ID was not found",
 		},
 		{
 			name: "update status to invalid",
@@ -222,7 +222,7 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 			}
 
 			// update user
-			resp, err := suite.client.datum.UpdateUserSetting(reqCtx, user1Setting.ID, tc.updateInput)
+			resp, err := suite.client.datum.UpdateUserSetting(reqCtx, testUser.Edges.Setting.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)

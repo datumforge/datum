@@ -412,8 +412,7 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 
 	om := (&OrgMemberBuilder{client: suite.client, OrgID: org.ID}).MustNew(reqCtx, t)
 
-	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-
+	// setup auth for the tests
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
 
 	testCases := []struct {
@@ -549,7 +548,6 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 	}
 
 	(&GroupCleanup{client: suite.client, GroupID: group.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: suite.client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationDeleteGroup() {

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/fgax"
 	"github.com/golang-jwt/jwt/v5"
 	ph "github.com/posthog/posthog-go"
 
@@ -66,8 +67,10 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// ensure user is already a member of the destination organization
-	if err := h.confirmOrgMembership(reqCtx, userID, req.TargetOrganizationID); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	if allow, err := h.DBClient.Authz.CheckOrgAccess(reqCtx, userID, auth.UserSubjectType, orgID, fgax.CanView); err != nil || !allow {
+		h.Logger.Errorw("user not authorized to access organization", "error", err)
+
+		return ctx.JSON(http.StatusUnauthorized, rout.ErrorResponse("unauthorized"))
 	}
 
 	// get the target organization

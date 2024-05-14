@@ -12,6 +12,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 )
 
@@ -23,6 +24,9 @@ func (suite *GraphTestSuite) TestQueryOrgMembers() {
 	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org1.ID)
+	require.NoError(t, err)
 
 	// allow access to organization
 	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
@@ -248,6 +252,9 @@ func (suite *GraphTestSuite) TestQueryUpdateOrgMembers() {
 
 	om := (&OrgMemberBuilder{client: suite.client}).MustNew(reqCtx, t)
 
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, om.OrganizationID)
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name       string
 		role       enums.Role
@@ -325,6 +332,9 @@ func (suite *GraphTestSuite) TestQueryDeleteOrgMembers() {
 
 	mock_fga.WriteAny(t, suite.client.fga)
 	mock_fga.CheckAny(t, suite.client.fga, true)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, om.OrganizationID)
+	require.NoError(t, err)
 
 	resp, err := suite.client.datum.RemoveUserFromOrg(reqCtx, om.ID)
 

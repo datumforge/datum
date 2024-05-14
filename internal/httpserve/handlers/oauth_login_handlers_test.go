@@ -88,7 +88,12 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(suite.fga)
+
 			if tt.writes {
+				// add mocks for check on user setting update of org id
+				mock_fga.CheckAny(t, suite.fga, true)
+
 				// add mocks for writes when a new user is created
 				mock_fga.WriteOnce(t, suite.fga)
 			}

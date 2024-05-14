@@ -1110,7 +1110,9 @@ func init() {
 
 	orgmembership.Hooks[3] = orgmembershipHooks[0]
 	orgmembershipMixinInters2 := orgmembershipMixin[2].Interceptors()
+	orgmembershipInters := schema.OrgMembership{}.Interceptors()
 	orgmembership.Interceptors[0] = orgmembershipMixinInters2[0]
+	orgmembership.Interceptors[1] = orgmembershipInters[0]
 	orgmembershipMixinFields0 := orgmembershipMixin[0].Fields()
 	_ = orgmembershipMixinFields0
 	orgmembershipMixinFields1 := orgmembershipMixin[1].Fields()

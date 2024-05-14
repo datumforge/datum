@@ -1,6 +1,7 @@
 package echocontext
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"time"
@@ -21,6 +22,15 @@ func NewTestEchoContext() echo.Context {
 	recorder := httptest.NewRecorder()
 
 	return e.NewContext(req, recorder)
+}
+
+func NewTestContext() context.Context {
+	c := NewTestEchoContext()
+	ctx := context.WithValue(c.Request().Context(), EchoContextKey, c)
+
+	c.SetRequest(c.Request().WithContext(ctx))
+
+	return ctx
 }
 
 // newValidSignedJWT creates a jwt with a fake subject for testing purposes ONLY

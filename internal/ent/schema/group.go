@@ -133,7 +133,6 @@ func (Group) Annotations() []schema.Annotation {
 func (Group) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			privacy.OnMutationOperation(
 				rule.CanCreateGroupsInOrg(),
 				ent.OpCreate,

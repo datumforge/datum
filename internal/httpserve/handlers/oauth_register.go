@@ -12,7 +12,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
@@ -56,9 +55,9 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	}
 
 	// set context for remaining request based on logged in user
-	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
+	// userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
 
-	if err := h.addDefaultOrgToUserQuery(userCtx, user); err != nil {
+	if err := h.addDefaultOrgToUserQuery(ctxWithToken, user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 

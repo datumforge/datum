@@ -22,7 +22,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )
 
 // OrganizationSetting holds the schema definition for the OrganizationSetting entity
@@ -132,7 +131,6 @@ func (OrganizationSetting) Mixin() []ent.Mixin {
 func (OrganizationSetting) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			privacy.OrganizationSettingMutationRuleFunc(func(ctx context.Context, m *generated.OrganizationSettingMutation) error {
 				return m.CheckAccessForEdit(ctx)
 			}),

@@ -11,7 +11,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 	provider "github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/rout"
@@ -85,7 +84,9 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	}
 
 	// set context for remaining request based on logged in user
-	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(entUser.ID, true))
+	userCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		SubjectID: entUser.ID,
+	})
 
 	// set webauthn allowed
 	if err := h.setWebauthnAllowed(userCtx, entUser); err != nil {
@@ -174,7 +175,9 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	}
 
 	// set user in the viewer context for the rest of the request
-	userCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(entUser.ID, true))
+	userCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		SubjectID: entUser.ID,
+	})
 
 	// follows https://www.w3.org/TR/webauthn/#sctn-registering-a-new-credential
 	response, err := protocol.ParseCredentialCreationResponseBody(ctx.Request().Body)

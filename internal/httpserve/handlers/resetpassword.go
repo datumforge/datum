@@ -14,7 +14,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -112,7 +112,9 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	}
 
 	// set context for remaining request based on logged in user
-	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
+	userCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		SubjectID: entUser.ID,
+	})
 
 	if err := h.updateUserPassword(userCtx, entUser.ID, req.Password); err != nil {
 		h.Logger.Errorw("error updating user password", "error", err)

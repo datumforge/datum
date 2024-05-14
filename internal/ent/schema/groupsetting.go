@@ -17,7 +17,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )
 
 // GroupSetting holds the schema definition for the GroupSetting entity
@@ -95,7 +94,6 @@ func (GroupSetting) Mixin() []ent.Mixin {
 func (GroupSetting) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			privacy.GroupSettingMutationRuleFunc(func(ctx context.Context, m *generated.GroupSettingMutation) error {
 				return m.CheckAccessForEdit(ctx)
 			}),

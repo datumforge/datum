@@ -9,7 +9,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
@@ -65,9 +65,11 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		ID:        entUser.ID,
 	}
 
-	viewerCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(entUser.ID, true))
+	authCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		SubjectID: entUser.ID,
+	})
 
-	if _, err = h.storeAndSendPasswordResetToken(viewerCtx, user); err != nil {
+	if _, err = h.storeAndSendPasswordResetToken(authCtx, user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 

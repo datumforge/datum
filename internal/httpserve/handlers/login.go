@@ -9,7 +9,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
@@ -44,7 +43,9 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	}
 
 	// set context for remaining request based on logged in user
-	userCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(user.ID, true))
+	userCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		SubjectID: user.ID,
+	})
 
 	if err := h.addDefaultOrgToUserQuery(userCtx, user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))

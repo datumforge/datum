@@ -98,7 +98,7 @@ func (suite *GraphTestSuite) TestQueryGroupMembers() {
 	(&GroupCleanup{client: suite.client, GroupID: group.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryCreateGroupMembers() {
+func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 	t := suite.T()
 
 	// setup user context
@@ -257,7 +257,7 @@ func (suite *GraphTestSuite) TestQueryCreateGroupMembers() {
 	(&UserCleanup{client: suite.client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryUpdateGroupMembers() {
+func (suite *GraphTestSuite) TestMutationUpdateGroupMembers() {
 	t := suite.T()
 
 	// setup user context
@@ -338,7 +338,7 @@ func (suite *GraphTestSuite) TestQueryUpdateGroupMembers() {
 	(&GroupMemberCleanup{client: suite.client, ID: gm.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryDeleteGroupMembers() {
+func (suite *GraphTestSuite) TestMutationDeleteGroupMembers() {
 	t := suite.T()
 
 	// setup user context

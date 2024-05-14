@@ -12,7 +12,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/marionette"
@@ -83,8 +83,10 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return err
 	}
 
-	// setup viewer context
-	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(meowuser.ID, true))
+	// setup user context
+	userCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		SubjectID: meowuser.ID,
+	})
 
 	// create email verification token
 	user := &User{
@@ -94,7 +96,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		ID:        meowuser.ID,
 	}
 
-	meowtoken, err := h.storeAndSendEmailVerificationToken(viewerCtx, user)
+	meowtoken, err := h.storeAndSendEmailVerificationToken(userCtx, user)
 	if err != nil {
 		h.Logger.Errorw("error storing token", "error", err)
 

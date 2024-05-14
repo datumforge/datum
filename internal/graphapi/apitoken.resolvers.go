@@ -10,7 +10,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -22,8 +21,6 @@ func (r *mutationResolver) CreateAPIToken(ctx context.Context, input generated.C
 
 		return nil, rout.NewMissingRequiredFieldError("owner_id")
 	}
-
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
 	apiToken, err := withTransactionalMutation(ctx).APIToken.Create().SetInput(input).Save(ctx)
 	if err != nil {
@@ -44,8 +41,6 @@ func (r *mutationResolver) CreateAPIToken(ctx context.Context, input generated.C
 
 // UpdateAPIToken is the resolver for the updateAPIToken field.
 func (r *mutationResolver) UpdateAPIToken(ctx context.Context, id string, input generated.UpdateAPITokenInput) (*APITokenUpdatePayload, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	apiToken, err := withTransactionalMutation(ctx).APIToken.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -86,8 +81,6 @@ func (r *mutationResolver) UpdateAPIToken(ctx context.Context, id string, input 
 
 // DeleteAPIToken is the resolver for the deleteAPIToken field.
 func (r *mutationResolver) DeleteAPIToken(ctx context.Context, id string) (*APITokenDeletePayload, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	if err := withTransactionalMutation(ctx).APIToken.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -110,8 +103,6 @@ func (r *mutationResolver) DeleteAPIToken(ctx context.Context, id string) (*APIT
 
 // APIToken is the resolver for the apiToken field.
 func (r *queryResolver) APIToken(ctx context.Context, id string) (*generated.APIToken, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	apiToken, err := withTransactionalMutation(ctx).APIToken.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {

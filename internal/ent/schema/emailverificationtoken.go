@@ -127,7 +127,6 @@ func (EmailVerificationToken) Policy() ent.Policy {
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
-					rule.AllowIfAdmin(),
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
 					rule.AllowMutationAfterApplyingOwnerFilter(),
 					privacy.AlwaysDenyRule(),
@@ -136,7 +135,6 @@ func (EmailVerificationToken) Policy() ent.Policy {
 			),
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
-					rule.AllowIfAdmin(),
 					rule.AllowMutationAfterApplyingOwnerFilter(),
 					privacy.AlwaysDenyRule(),
 				},

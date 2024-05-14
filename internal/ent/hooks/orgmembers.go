@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
@@ -56,7 +57,9 @@ func HookOrgMembers() ent.Hook {
 			if userID, ok := mutation.UserID(); ok {
 				role, _ := mutation.Role()
 
-				user, err := mutation.Client().User.Get(ctx, userID)
+				allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+
+				user, err := mutation.Client().User.Get(allowCtx, userID)
 				if err != nil {
 					mutation.Logger.Errorw("error getting user", "error", err)
 

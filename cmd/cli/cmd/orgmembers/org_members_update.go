@@ -45,9 +45,6 @@ func updateOrgMember(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	oID := viper.GetString("orgmember.update.orgid")
-	if oID == "" {
-		return datum.NewRequiredFieldMissingError("organization id")
-	}
 
 	uID := viper.GetString("orgmember.update.userid")
 	if uID == "" {
@@ -66,8 +63,11 @@ func updateOrgMember(ctx context.Context) error {
 
 	// get the id of the org member
 	where := datumclient.OrgMembershipWhereInput{
-		OrganizationID: &oID,
-		UserID:         &uID,
+		UserID: &uID,
+	}
+
+	if oID != "" {
+		where.OrganizationID = &oID
 	}
 
 	orgMembers, err := cli.Client.GetOrgMembersByOrgID(ctx, &where, cli.Interceptor)

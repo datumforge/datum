@@ -10,7 +10,6 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
-	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
@@ -361,20 +360,6 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 		h.Logger.Errorw("error setting email confirmed", "error", err)
 
 		return err
-	}
-
-	return nil
-}
-
-// confirmOrgMembership confirms the user is a member of the requested switch-to organization
-func (h *Handler) confirmOrgMembership(ctx context.Context, userID, orgID string) error {
-	// bypass authz check to check for membership, exists queries currently fail the generated check
-	qctx := privacy.DecisionContext(ctx, privacy.Allow)
-
-	if exists, err := transaction.FromContext(ctx).OrgMembership.Query().Where(orgmembership.UserID(userID)).Where(orgmembership.OrganizationID(orgID)).Exist(qctx); !exists || err != nil {
-		h.Logger.Errorw("error checking org membership", "error", err)
-
-		return ErrUnauthorized
 	}
 
 	return nil

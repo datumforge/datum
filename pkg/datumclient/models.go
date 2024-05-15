@@ -752,6 +752,18 @@ type CreateWebhookInput struct {
 	IntegrationIDs []string `json:"integrationIDs,omitempty"`
 }
 
+// CreateWorkspaceInput is used for create Workspace object.
+type CreateWorkspaceInput struct {
+	// the name of the workspace
+	Name string `json:"name"`
+	// The workspace's displayed 'friendly' name
+	DisplayName *string `json:"displayName,omitempty"`
+	// An optional description of the organization
+	Description *string `json:"description,omitempty"`
+	// Whether the organization has a dedicated database
+	DedicatedDb *bool `json:"dedicatedDb,omitempty"`
+}
+
 type DocumentData struct {
 	ID        string     `json:"id"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -10973,6 +10985,12 @@ type WebhookWhereInput struct {
 	// integrations edge predicates
 	HasIntegrations     *bool                    `json:"hasIntegrations,omitempty"`
 	HasIntegrationsWith []*IntegrationWhereInput `json:"hasIntegrationsWith,omitempty"`
+}
+
+// Return response for createWorkspace mutation
+type WorkspaceCreatePayload struct {
+	// Created workspace
+	Workspace *Organization `json:"workspace"`
 }
 
 // Properties by which GroupHistory connections can be ordered.

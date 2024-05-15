@@ -991,6 +991,27 @@ input CreateWebhookInput {
 	integrationIDs: [ID!]
 }
 """
+CreateWorkspaceInput is used for create Workspace object.
+"""
+input CreateWorkspaceInput {
+	"""
+	the name of the workspace
+	"""
+	name: String!
+	"""
+	The workspace's displayed 'friendly' name
+	"""
+	displayName: String
+	"""
+	An optional description of the organization
+	"""
+	description: String
+	"""
+	Whether the organization has a dedicated database
+	"""
+	dedicatedDb: Boolean
+}
+"""
 Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
@@ -7468,6 +7489,15 @@ type Mutation {
 		"""
 		id: ID!
 	): WebhookDeletePayload!
+	"""
+	Create a new workspace
+	"""
+	createWorkspace(
+		"""
+		values of the workspace
+		"""
+		input: CreateWorkspaceInput!
+	): WorkspaceCreatePayload!
 	postMessageTo(subscriber: String!, content: String!): ID!
 }
 """
@@ -16283,4 +16313,13 @@ input WebhookWhereInput {
 	"""
 	hasIntegrations: Boolean
 	hasIntegrationsWith: [IntegrationWhereInput!]
+}
+"""
+Return response for createWorkspace mutation
+"""
+type WorkspaceCreatePayload {
+	"""
+	Created workspace
+	"""
+	workspace: Organization!
 }

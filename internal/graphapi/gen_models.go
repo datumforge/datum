@@ -24,6 +24,18 @@ type APITokenUpdatePayload struct {
 	APIToken *generated.APIToken `json:"apiToken"`
 }
 
+// CreateWorkspaceInput is used for create Workspace object.
+type CreateWorkspaceInput struct {
+	// the name of the workspace
+	Name string `json:"name"`
+	// The workspace's displayed 'friendly' name
+	DisplayName *string `json:"displayName,omitempty"`
+	// An optional description of the organization
+	Description *string `json:"description,omitempty"`
+	// Whether the organization has a dedicated database
+	DedicatedDb *bool `json:"dedicatedDb,omitempty"`
+}
+
 // Return response for createDocumentData mutation
 type DocumentDataCreatePayload struct {
 	// Created documentData
@@ -427,4 +439,10 @@ type WebhookDeletePayload struct {
 type WebhookUpdatePayload struct {
 	// Updated webhook
 	Webhook *generated.Webhook `json:"webhook"`
+}
+
+// Return response for createWorkspace mutation
+type WorkspaceCreatePayload struct {
+	// Created workspace
+	Workspace *generated.Organization `json:"workspace"`
 }

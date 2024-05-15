@@ -7,6 +7,7 @@ import (
 
 	"github.com/flopp/go-findfont"
 	"github.com/johnfercher/maroto/pkg/consts"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
 )
 
 // setFonts sets the fonts for the invoice
@@ -26,7 +27,7 @@ func (i *Invoice) setFonts() error {
 
 		for _, font := range fonts {
 			if strings.Contains(font, "Regular") || strings.EqualFold(font, i.Options.FontFamily) {
-				i.pdf.AddUTF8Font(i.Options.FontFamily, consts.Normal, filepath.Base(font))
+				i.pdf.AddUTF8Font(i.Options.FontFamily, fontstyle.Normal, filepath.Base(font))
 			}
 
 			if strings.Contains(font, "Italic") {

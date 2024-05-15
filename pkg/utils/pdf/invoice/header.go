@@ -2,8 +2,9 @@
 package invoice
 
 import (
-	"github.com/johnfercher/maroto/pkg/consts"
-	"github.com/johnfercher/maroto/pkg/props"
+	"github.com/johnfercher/maroto/v2/pkg/consts/align"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
+	"github.com/johnfercher/maroto/v2/pkg/props"
 )
 
 // BuildInvoiceHeader prepares header on the invoice
@@ -25,13 +26,13 @@ func (i *Invoice) BuildInvoiceHeader() {
 			i.pdf.Col(5, func() {
 				i.pdf.Text("Invoice", props.Text{
 					Size:  24,
-					Style: consts.Normal,
-					Align: consts.Left,
+					Style: fontstyle.Normal,
+					Align: align.Left,
 				})
 				i.pdf.Text(i.Number, props.Text{
 					Top:   12,
 					Size:  18,
-					Style: consts.Normal,
+					Style: fontstyle.Normal,
 				})
 				i.pdf.ColSpace(8)
 			})
@@ -40,40 +41,40 @@ func (i *Invoice) BuildInvoiceHeader() {
 				i.pdf.Col(4, func() {
 					i.pdf.Text("Date of issue:", props.Text{
 						Size:  8,
-						Style: consts.Normal,
-						Align: consts.Center,
+						Style: fontstyle.Normal,
+						Align: align.Center,
 						Color: getMulledWine(),
 					})
 					i.pdf.Text(i.IssueDate, props.Text{
 						Size:  8,
-						Style: consts.Normal,
-						Align: consts.Right,
+						Style: fontstyle.Normal,
+						Align: align.Right,
 					})
 					i.pdf.Text("Date of sale:", props.Text{
 						Top:   6,
 						Size:  8,
-						Style: consts.Normal,
-						Align: consts.Center,
+						Style: fontstyle.Normal,
+						Align: align.Center,
 						Color: getMulledWine(),
 					})
 					i.pdf.Text(i.SaleDate, props.Text{
 						Top:   6,
 						Size:  8,
-						Style: consts.Normal,
-						Align: consts.Right,
+						Style: fontstyle.Normal,
+						Align: align.Right,
 					})
 					i.pdf.Text("Due date:", props.Text{
 						Top:   12,
 						Size:  8,
-						Style: consts.Normal,
-						Align: consts.Center,
+						Style: fontstyle.Normal,
+						Align: align.Center,
 						Color: getMulledWine(),
 					})
 					i.pdf.Text(i.DueDate, props.Text{
 						Top:   12,
 						Size:  8,
-						Style: consts.Normal,
-						Align: consts.Right,
+						Style: fontstyle.Normal,
+						Align: align.Right,
 					})
 				})
 			})

@@ -6,8 +6,9 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/johnfercher/maroto/pkg/consts"
-	"github.com/johnfercher/maroto/pkg/props"
+	"github.com/johnfercher/maroto/v2/pkg/consts/align"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
+	"github.com/johnfercher/maroto/v2/pkg/props"
 )
 
 // BuildInvoiceLineItems prepares Tablelist with items on the invoice with calculated tax amounts and total gross amounts
@@ -26,17 +27,17 @@ func (i *Invoice) BuildInvoiceLineItems() {
 	i.pdf.SetBackgroundColor(getWinterSky())
 	i.pdf.TableList(header, contents, props.TableList{
 		HeaderProp: props.TableListContent{
-			Style:     consts.Normal,
+			Style:     fontstyle.Normal,
 			Size:      8,
 			GridSizes: []uint{1, 3, 1, 2, 1, 1, 3},
 			Color:     getMulledWine(),
 		},
 		ContentProp: props.TableListContent{
-			Style:     consts.Normal,
+			Style:     fontstyle.Normal,
 			Size:      10,
 			GridSizes: []uint{1, 3, 1, 2, 1, 1, 3},
 		},
-		Align:                consts.Center,
+		Align:                align.Center,
 		AlternatedBackground: &backgroundColor,
 		HeaderContentSpace:   1,
 		Line:                 false,
@@ -51,18 +52,18 @@ func (i *Invoice) BuildInvoiceLineItems() {
 		i.pdf.Col(2, func() {
 			i.pdf.Text("Total:", props.Text{
 				Top:   3,
-				Style: consts.Normal,
+				Style: fontstyle.Normal,
 				Size:  8,
-				Align: consts.Center,
+				Align: align.Center,
 				Color: getWinterSky(),
 			})
 		})
 		i.pdf.Col(2, func() {
 			i.pdf.Text(fmt.Sprintf("%s %s", calculateInvoiceSum(contents), i.Currency), props.Text{
 				Top:   3,
-				Style: consts.Normal,
+				Style: fontstyle.Normal,
 				Size:  8,
-				Align: consts.Center,
+				Align: align.Center,
 				Color: getWinterSky(),
 			})
 		})

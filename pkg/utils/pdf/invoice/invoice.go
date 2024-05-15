@@ -2,8 +2,9 @@
 package invoice
 
 import (
-	"github.com/johnfercher/maroto/pkg/consts"
-	"github.com/johnfercher/maroto/pkg/pdf"
+	"github.com/johnfercher/maroto/v2/pkg/consts/orientation"
+	"github.com/johnfercher/maroto/v2/pkg/consts/pagesize"
+	"github.com/johnfercher/maroto/v2/pkg/core"
 	"gopkg.in/yaml.v3"
 )
 
@@ -14,7 +15,7 @@ func NewInvoice(file []byte) (*Invoice, error) {
 		return nil, ErrFailedParsingYAML
 	}
 
-	invoice.pdf = pdf.NewMaroto(consts.Portrait, consts.A4)
+	invoice.pdf = core.NewMaroto(orientation.Vertical, pagesize.A4)
 
 	err := invoice.setPDFLayout()
 	if err != nil {
@@ -71,7 +72,7 @@ func (i *Invoice) SaveAsBytes() ([]byte, error) {
 
 // Invoice parameters.
 type Invoice struct {
-	pdf       pdf.Maroto
+	pdf       core.Maroto
 	Number    string  `yaml:"number"`
 	IssueDate string  `yaml:"issueDate"`
 	SaleDate  string  `yaml:"saleDate"`

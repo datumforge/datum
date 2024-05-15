@@ -2,9 +2,10 @@
 package invoice
 
 import (
-	"github.com/johnfercher/maroto/pkg/color"
-	"github.com/johnfercher/maroto/pkg/consts"
-	"github.com/johnfercher/maroto/pkg/props"
+	"github.com/johnfercher/maroto/v2/pkg/consts/align"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontfamily"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
+	"github.com/johnfercher/maroto/v2/pkg/props"
 )
 
 // BuildSignatureLines prepares signatures of the buyer and seller
@@ -17,18 +18,18 @@ func (i *Invoice) BuildSignatureLines() {
 		i.pdf.Col(1, func() {
 			i.pdf.Text("Notes:", props.Text{
 				Top:   1,
-				Style: consts.Bold,
+				Style: fontstyle.Bold,
 				Size:  8,
-				Align: consts.Left,
+				Align: align.Left,
 				Color: getMulledWine(),
 			})
 		})
 		i.pdf.Col(3, func() {
 			i.pdf.Text(i.Notes, props.Text{
 				Top:   1,
-				Style: consts.Italic,
+				Style: fontstyle.Italic,
 				Size:  8,
-				Align: consts.Left,
+				Align: align.Left,
 			})
 		})
 	})
@@ -37,9 +38,9 @@ func (i *Invoice) BuildSignatureLines() {
 		i.pdf.Col(5, func() {
 			i.pdf.Signature("Buyer signature", props.Font{
 				Size:   12.0,
-				Style:  consts.Normal,
-				Family: consts.Helvetica,
-				Color: color.Color{
+				Style:  fontstyle.Normal,
+				Family: fontfamily.Helvetica,
+				Color: &props.Color{
 					Red:   10,
 					Green: 20,
 					Blue:  30,
@@ -50,16 +51,16 @@ func (i *Invoice) BuildSignatureLines() {
 		i.pdf.Col(5, func() {
 			i.pdf.Text(i.Signature, props.Text{
 				Top:    5,
-				Style:  consts.Normal,
-				Family: consts.Helvetica,
+				Style:  fontstyle.Normal,
+				Family: fontfamily.Helvetica,
 				Size:   8,
-				Align:  consts.Center,
+				Align:  align.Center,
 			})
 			i.pdf.Signature("Seller signature", props.Font{
 				Size:   12.0,
-				Style:  consts.Normal,
-				Family: consts.Helvetica,
-				Color: color.Color{
+				Style:  fontstyle.Normal,
+				Family: fontfamily.Helvetica,
+				Color: &props.Color{
 					Red:   10,
 					Green: 20,
 					Blue:  30,

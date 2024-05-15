@@ -119,6 +119,7 @@ type DatumClient interface {
 	CreateWebhook(ctx context.Context, input CreateWebhookInput, interceptors ...clientv2.RequestInterceptor) (*CreateWebhook, error)
 	UpdateWebhook(ctx context.Context, updateWebhookID string, input UpdateWebhookInput, interceptors ...clientv2.RequestInterceptor) (*UpdateWebhook, error)
 	DeleteWebhook(ctx context.Context, deleteWebhookID string, interceptors ...clientv2.RequestInterceptor) (*DeleteWebhook, error)
+	CreateWorkspace(ctx context.Context, input CreateWorkspaceInput, interceptors ...clientv2.RequestInterceptor) (*CreateWorkspace, error)
 }
 
 type Client struct {
@@ -13899,6 +13900,399 @@ func (t *DeleteWebhook_DeleteWebhook) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type CreateWorkspace_CreateWorkspace_Workspace_Members_User struct {
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Members_User) GetDisplayName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Members_User{}
+	}
+	return t.DisplayName
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Members struct {
+	User CreateWorkspace_CreateWorkspace_Workspace_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Members) GetUser() *CreateWorkspace_CreateWorkspace_Workspace_Members_User {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Members{}
+	}
+	return &t.User
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Setting struct {
+	Tags    []string "json:\"tags,omitempty\" graphql:\"tags\""
+	Domains []string "json:\"domains,omitempty\" graphql:\"domains\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Setting) GetTags() []string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Setting{}
+	}
+	return t.Tags
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Setting) GetDomains() []string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Setting{}
+	}
+	return t.Domains
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Setting struct {
+	Tags []string "json:\"tags,omitempty\" graphql:\"tags\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Setting{}
+	}
+	return t.Tags
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members_User struct {
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members_User) GetDisplayName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members_User{}
+	}
+	return t.DisplayName
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members struct {
+	User CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members) GetUser() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members_User {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members{}
+	}
+	return &t.User
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members_User struct {
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members_User) GetDisplayName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members_User{}
+	}
+	return t.DisplayName
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members struct {
+	User CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members) GetUser() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members_User {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members{}
+	}
+	return &t.User
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Setting struct {
+	Tags []string "json:\"tags,omitempty\" graphql:\"tags\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Setting{}
+	}
+	return t.Tags
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Setting struct {
+	Tags []string "json:\"tags,omitempty\" graphql:\"tags\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Setting{}
+	}
+	return t.Tags
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members_User struct {
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members_User) GetDisplayName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members_User{}
+	}
+	return t.DisplayName
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members struct {
+	User CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members) GetUser() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members_User {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members{}
+	}
+	return &t.User
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node struct {
+	ID      string                                                                                                           "json:\"id\" graphql:\"id\""
+	Name    string                                                                                                           "json:\"name\" graphql:\"name\""
+	Setting *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
+	Members []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node) GetID() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node) GetName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node) GetSetting() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Setting {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.Setting
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node) GetMembers() []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node_Members {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.Members
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges struct {
+	Node *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges) GetNode() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges_Node {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges{}
+	}
+	return t.Node
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children struct {
+	Edges []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children) GetEdges() []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children_Edges {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children{}
+	}
+	return t.Edges
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node struct {
+	ID          string                                                                                       "json:\"id\" graphql:\"id\""
+	Name        string                                                                                       "json:\"name\" graphql:\"name\""
+	DisplayName string                                                                                       "json:\"displayName\" graphql:\"displayName\""
+	Members     []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
+	Setting     *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
+	Children    CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children   "json:\"children\" graphql:\"children\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node) GetID() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node) GetName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node) GetMembers() []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Members {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.Members
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node) GetSetting() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Setting {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return t.Setting
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node) GetChildren() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node_Children {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node{}
+	}
+	return &t.Children
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges struct {
+	Node *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges) GetNode() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges_Node {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges{}
+	}
+	return t.Node
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children struct {
+	Edges []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children) GetEdges() []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children_Edges {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children{}
+	}
+	return t.Edges
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node struct {
+	ID          string                                                                   "json:\"id\" graphql:\"id\""
+	Name        string                                                                   "json:\"name\" graphql:\"name\""
+	DisplayName string                                                                   "json:\"displayName\" graphql:\"displayName\""
+	Setting     *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
+	Members     []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
+	Children    CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children   "json:\"children\" graphql:\"children\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node) GetID() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node) GetName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node) GetSetting() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Setting {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node{}
+	}
+	return t.Setting
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node) GetMembers() []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Members {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node{}
+	}
+	return t.Members
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node) GetChildren() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node_Children {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node{}
+	}
+	return &t.Children
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children_Edges struct {
+	Node *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges) GetNode() *CreateWorkspace_CreateWorkspace_Workspace_Children_Edges_Node {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children_Edges{}
+	}
+	return t.Node
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace_Children struct {
+	Edges []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace_Children) GetEdges() []*CreateWorkspace_CreateWorkspace_Workspace_Children_Edges {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace_Children{}
+	}
+	return t.Edges
+}
+
+type CreateWorkspace_CreateWorkspace_Workspace struct {
+	ID          string                                               "json:\"id\" graphql:\"id\""
+	Name        string                                               "json:\"name\" graphql:\"name\""
+	DisplayName string                                               "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                              "json:\"description,omitempty\" graphql:\"description\""
+	Members     []*CreateWorkspace_CreateWorkspace_Workspace_Members "json:\"members,omitempty\" graphql:\"members\""
+	Setting     *CreateWorkspace_CreateWorkspace_Workspace_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
+	Children    CreateWorkspace_CreateWorkspace_Workspace_Children   "json:\"children\" graphql:\"children\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace_Workspace) GetID() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace{}
+	}
+	return t.ID
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace) GetName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace{}
+	}
+	return t.Name
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace) GetDisplayName() string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace{}
+	}
+	return t.DisplayName
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace) GetDescription() *string {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace{}
+	}
+	return t.Description
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace) GetMembers() []*CreateWorkspace_CreateWorkspace_Workspace_Members {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace{}
+	}
+	return t.Members
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace) GetSetting() *CreateWorkspace_CreateWorkspace_Workspace_Setting {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace{}
+	}
+	return t.Setting
+}
+func (t *CreateWorkspace_CreateWorkspace_Workspace) GetChildren() *CreateWorkspace_CreateWorkspace_Workspace_Children {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace_Workspace{}
+	}
+	return &t.Children
+}
+
+type CreateWorkspace_CreateWorkspace struct {
+	Workspace CreateWorkspace_CreateWorkspace_Workspace "json:\"workspace\" graphql:\"workspace\""
+}
+
+func (t *CreateWorkspace_CreateWorkspace) GetWorkspace() *CreateWorkspace_CreateWorkspace_Workspace {
+	if t == nil {
+		t = &CreateWorkspace_CreateWorkspace{}
+	}
+	return &t.Workspace
+}
+
 type CreateAPIToken struct {
 	CreateAPIToken CreateAPIToken_CreateAPIToken "json:\"createAPIToken\" graphql:\"createAPIToken\""
 }
@@ -15063,6 +15457,17 @@ func (t *DeleteWebhook) GetDeleteWebhook() *DeleteWebhook_DeleteWebhook {
 		t = &DeleteWebhook{}
 	}
 	return &t.DeleteWebhook
+}
+
+type CreateWorkspace struct {
+	CreateWorkspace CreateWorkspace_CreateWorkspace "json:\"createWorkspace\" graphql:\"createWorkspace\""
+}
+
+func (t *CreateWorkspace) GetCreateWorkspace() *CreateWorkspace_CreateWorkspace {
+	if t == nil {
+		t = &CreateWorkspace{}
+	}
+	return &t.CreateWorkspace
 }
 
 const CreateAPITokenDocument = `mutation CreateAPIToken ($input: CreateAPITokenInput!) {
@@ -19544,6 +19949,94 @@ func (c *Client) DeleteWebhook(ctx context.Context, deleteWebhookID string, inte
 	return &res, nil
 }
 
+const CreateWorkspaceDocument = `mutation CreateWorkspace ($input: CreateWorkspaceInput!) {
+	createWorkspace(input: $input) {
+		workspace {
+			id
+			name
+			displayName
+			description
+			members {
+				user {
+					displayName
+				}
+			}
+			setting {
+				tags
+				domains
+			}
+			children {
+				edges {
+					node {
+						id
+						name
+						displayName
+						setting {
+							tags
+						}
+						members {
+							user {
+								displayName
+							}
+						}
+						children {
+							edges {
+								node {
+									id
+									name
+									displayName
+									members {
+										user {
+											displayName
+										}
+									}
+									setting {
+										tags
+									}
+									children {
+										edges {
+											node {
+												id
+												name
+												setting {
+													tags
+												}
+												members {
+													user {
+														displayName
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) CreateWorkspace(ctx context.Context, input CreateWorkspaceInput, interceptors ...clientv2.RequestInterceptor) (*CreateWorkspace, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateWorkspace
+	if err := c.Client.Post(ctx, "CreateWorkspace", CreateWorkspaceDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 var DocumentOperationNames = map[string]string{
 	CreateAPITokenDocument:              "CreateAPIToken",
 	UpdateAPITokenDocument:              "UpdateAPIToken",
@@ -19651,4 +20144,5 @@ var DocumentOperationNames = map[string]string{
 	CreateWebhookDocument:               "CreateWebhook",
 	UpdateWebhookDocument:               "UpdateWebhook",
 	DeleteWebhookDocument:               "DeleteWebhook",
+	CreateWorkspaceDocument:             "CreateWorkspace",
 }

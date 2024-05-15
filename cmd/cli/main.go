@@ -26,6 +26,7 @@ import (
 	_ "github.com/datumforge/datum/cmd/cli/cmd/usersetting"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/version"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/webhook"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/workspace"
 )
 
 func main() {

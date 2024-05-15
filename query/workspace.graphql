@@ -1,0 +1,69 @@
+mutation CreateWorkspace($input: CreateWorkspaceInput!) {
+  createWorkspace(input: $input) {
+    workspace {
+      id
+      name
+      displayName
+      description
+      members {
+        user {
+          displayName
+        }
+      }
+      setting {
+        tags
+        domains
+      }
+      children {
+        edges {
+          node {
+            id
+            name
+            displayName
+            setting {
+              tags
+            }
+            members {
+              user {
+                displayName
+              }
+            }
+            children {
+              edges {
+                node {
+                  id
+                  name
+                  displayName
+                  members {
+                    user {
+                      displayName
+                    }
+                  }
+                  setting {
+                    tags
+                  }
+                  children {
+                    edges {
+                      node {
+                        id
+                        name
+                        setting {
+                          tags
+                        }
+                        members {
+                          user {
+                            displayName
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

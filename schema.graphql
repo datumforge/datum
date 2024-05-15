@@ -999,17 +999,13 @@ input CreateWorkspaceInput {
 	"""
 	name: String!
 	"""
-	The workspace's displayed 'friendly' name
-	"""
-	displayName: String
-	"""
 	An optional description of the organization
 	"""
 	description: String
 	"""
-	Whether the organization has a dedicated database
+	domains associated with the organization
 	"""
-	dedicatedDb: Boolean
+	domains: [String!]
 }
 """
 Define a Relay Cursor type:

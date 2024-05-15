@@ -11,3 +11,4 @@ extend input OrgMembershipWhereInput {
   organizationID: String
   userID: String
 }
+

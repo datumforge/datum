@@ -28,12 +28,10 @@ type APITokenUpdatePayload struct {
 type CreateWorkspaceInput struct {
 	// the name of the workspace
 	Name string `json:"name"`
-	// The workspace's displayed 'friendly' name
-	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
-	// Whether the organization has a dedicated database
-	DedicatedDb *bool `json:"dedicatedDb,omitempty"`
+	// domains associated with the organization
+	Domains []string `json:"domains,omitempty"`
 }
 
 // Return response for createDocumentData mutation

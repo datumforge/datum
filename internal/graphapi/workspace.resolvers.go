@@ -6,10 +6,9 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 )
 
 // CreateWorkspace is the resolver for the createWorkspace field.
 func (r *mutationResolver) CreateWorkspace(ctx context.Context, input CreateWorkspaceInput) (*WorkspaceCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateWorkspace - createWorkspace"))
+	return CreateWorkspace(ctx, input)
 }

@@ -54,9 +54,6 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	// set context for remaining request based on logged in user
-	// userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
-
 	if err := h.addDefaultOrgToUserQuery(ctxWithToken, user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}

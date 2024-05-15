@@ -132,11 +132,6 @@ func (h *Handler) issueGoogleSession() http.Handler {
 			return
 		}
 
-		// // set context for remaining request based on logged in user
-		// userCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
-		// 	SubjectID: user.ID,
-		// })
-
 		if err := h.addDefaultOrgToUserQuery(ctx, user); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -206,9 +201,6 @@ func (h *Handler) issueGitHubSession() http.Handler {
 			return
 		}
 
-		// // set context for remaining request based on logged in user
-		// userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
-
 		if err := h.addDefaultOrgToUserQuery(ctx, user); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -237,9 +229,6 @@ func (h *Handler) issueGitHubSession() http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		// setup viewer context
-		// viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
 
 		// remove cookie now that its in the context
 		sessions.RemoveCookie(w, "redirect_to", *h.SessionConfig.CookieConfig)

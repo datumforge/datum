@@ -25,6 +25,9 @@ func InterceptorUserSetting() ent.Interceptor {
 		}
 
 		qCtx := ent.QueryFromContext(ctx)
+		if qCtx == nil {
+			return nil
+		}
 
 		switch qCtx.Type {
 		// if we are looking at a user in the context of an organization or group

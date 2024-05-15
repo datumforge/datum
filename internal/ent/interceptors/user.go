@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 )
 
+// InterceptorUser returns an ent interceptor for user that filters users based on the context of the query
 func InterceptorUser() ent.Interceptor {
 	return intercept.TraverseUser(func(ctx context.Context, q *generated.UserQuery) error {
 		// bypass filter if the request is allowed, this happens when a user is
@@ -54,6 +55,7 @@ func InterceptorUser() ent.Interceptor {
 				return nil
 			}
 		default:
+			// if we want to get all users, don't apply any filters
 			return nil
 		}
 
@@ -65,6 +67,8 @@ func InterceptorUser() ent.Interceptor {
 func filterType(ctx context.Context) string {
 	rootFieldCtx := graphql.GetRootFieldContext(ctx)
 
+	// the extended resolvers allow members to be adding on creation or update of a group
+	// so we need to filter for the org
 	if rootFieldCtx != nil {
 		if rootFieldCtx.Object == "updateGroup" || rootFieldCtx.Object == "createGroup" {
 			return "org"
@@ -72,6 +76,9 @@ func filterType(ctx context.Context) string {
 	}
 
 	qCtx := ent.QueryFromContext(ctx)
+	if qCtx == nil {
+		return ""
+	}
 
 	switch qCtx.Type {
 	case "OrgMembership", "GroupMembership", "Group":

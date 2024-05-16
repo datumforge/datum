@@ -147,12 +147,12 @@ steps:
   - group: ":database: atlas migrate"
     key: "database"
     steps:
-      - label: ":sqlite: atlas lint"
+      - label: ":postgres: atlas lint"
         key: "atlas_lint"
         plugins:
           - datumforge/atlas#v0.0.3:
               project: datum
-              dev-url: "sqlite://dev?mode=memory&_fk=1"
+              dev-url: "docker://postgres/16/dev?search_path=public"
               dir: "file://db/migrations"
               step: lint
       - label: ":rocket: atlas push"
@@ -161,20 +161,9 @@ steps:
         plugins:
           - datumforge/atlas#v0.0.3:
               project: datum
-              dev-url: "sqlite://dev?mode=memory&_fk=1"
-              dir: "file://db/migrations"
-              step: migrate
-      - label: ":shipit: atlas apply"
-        if: build.branch == "main"
-        depends_on: "atlas_migrate"
-        key: "atlas_apply"
-        skip: "true" # temporarily skip this step
-        plugins:
-          - datumforge/atlas#v0.0.3:
-              project: datum
               dev-url: "docker://postgres/16/dev?search_path=public"
               dir: "file://db/migrations"
-              step: apply
+              step: migrate
   - group: ":docker: Image Build"
     depends_on: "go-builds"
     key: "image-build"

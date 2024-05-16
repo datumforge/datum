@@ -334,7 +334,11 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
+	// setup auth
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name        string
@@ -488,7 +492,11 @@ func (suite *GraphTestSuite) TestMutationDeleteOrganization() {
 
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
+	// setup auth
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name          string

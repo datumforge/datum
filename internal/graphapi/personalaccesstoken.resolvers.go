@@ -10,13 +10,10 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // CreatePersonalAccessToken is the resolver for the createPersonalAccessToken field.
 func (r *mutationResolver) CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -36,8 +33,6 @@ func (r *mutationResolver) CreatePersonalAccessToken(ctx context.Context, input 
 
 // UpdatePersonalAccessToken is the resolver for the updatePersonalAccessToken field.
 func (r *mutationResolver) UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -73,8 +68,6 @@ func (r *mutationResolver) UpdatePersonalAccessToken(ctx context.Context, id str
 
 // DeletePersonalAccessToken is the resolver for the deletePersonalAccessToken field.
 func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	if err := withTransactionalMutation(ctx).PersonalAccessToken.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -93,8 +86,6 @@ func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id str
 
 // PersonalAccessToken is the resolver for the PersonalAccessToken field.
 func (r *queryResolver) PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {

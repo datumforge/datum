@@ -126,7 +126,6 @@ func (PasswordResetToken) Policy() ent.Policy {
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
-					rule.AllowIfAdmin(),
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.ResetToken{}),
 					rule.AllowMutationAfterApplyingOwnerFilter(),
 					privacy.AlwaysDenyRule(),
@@ -135,7 +134,6 @@ func (PasswordResetToken) Policy() ent.Policy {
 			),
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
-					rule.AllowIfAdmin(),
 					rule.AllowMutationAfterApplyingOwnerFilter(),
 					privacy.AlwaysDenyRule(),
 				},

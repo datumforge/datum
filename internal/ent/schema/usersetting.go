@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"context"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
@@ -13,15 +11,12 @@ import (
 	emixin "github.com/datumforge/entx/mixin"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // UserSetting holds the schema definition for the User entity.
@@ -126,19 +121,7 @@ func (UserSetting) Hooks() []ent.Hook {
 // Interceptors of the UserSetting.
 func (d UserSetting) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
-		intercept.TraverseUserSetting(func(ctx context.Context, q *generated.UserSettingQuery) error {
-			// Filter query based on viewer context
-			v := viewer.FromContext(ctx)
-			if v != nil {
-				viewerID, exists := v.GetID()
-				if exists {
-					q.Where(usersetting.UserID(viewerID))
-					return nil
-				}
-			}
-
-			return nil
-		}),
+		interceptors.InterceptorUserSetting(),
 	}
 }
 
@@ -148,7 +131,6 @@ func (UserSetting) Policy() ent.Policy {
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.VerifyToken{}),
-					rule.DenyIfNoViewer(),
 					rule.AllowIfSelf(),
 					privacy.AlwaysDenyRule(),
 				},

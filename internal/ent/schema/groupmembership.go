@@ -19,7 +19,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )
 
 // GroupMembership holds the schema definition for the GroupMembership entity
@@ -97,7 +96,6 @@ func (GroupMembership) Hooks() []ent.Hook {
 func (GroupMembership) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			privacy.GroupMembershipMutationRuleFunc(func(ctx context.Context, m *generated.GroupMembershipMutation) error {
 				return m.CheckAccessForEdit(ctx)
 			}),

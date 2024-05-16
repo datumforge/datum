@@ -147,7 +147,6 @@ func (Invite) Hooks() []ent.Hook {
 func (Invite) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.AllowIfAdmin(),
 			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
 			privacy.InviteMutationRuleFunc(func(ctx context.Context, m *generated.InviteMutation) error {
 				return m.CheckAccessForEdit(ctx)

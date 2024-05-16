@@ -9,6 +9,7 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
 var orgMembersGetCmd = &cobra.Command{
@@ -37,14 +38,13 @@ func orgMembers(ctx context.Context) error {
 	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
+	where := datumclient.OrgMembershipWhereInput{}
+
 	// filter options
 	oID := viper.GetString("orgmember.get.id")
-	if oID == "" {
-		return datum.NewRequiredFieldMissingError("organization id")
-	}
 
-	where := datumclient.OrgMembershipWhereInput{
-		OrganizationID: &oID,
+	if oID != "" {
+		where.OrganizationID = &oID
 	}
 
 	var s []byte
@@ -54,10 +54,29 @@ func orgMembers(ctx context.Context) error {
 		return err
 	}
 
-	s, err = json.Marshal(org)
-	if err != nil {
-		return err
+	if datum.OutputFormat == "json" {
+		s, err = json.Marshal(org)
+		if err != nil {
+			return err
+		}
+
+		return datum.JSONPrint(s)
 	}
 
-	return datum.JSONPrint(s)
+	writer := tables.NewTableWriter(orgMembersCmd.OutOrStdout(), "UserID", "DisplayName", "FirstName", "LastName", "Email", "Role")
+
+	for _, o := range org.OrgMemberships.Edges {
+		writer.AddRow(
+			o.Node.UserID,
+			o.Node.User.DisplayName,
+			*o.Node.User.FirstName,
+			*o.Node.User.LastName,
+			o.Node.User.Email,
+			o.Node.Role,
+		)
+	}
+
+	writer.Render()
+
+	return nil
 }

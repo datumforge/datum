@@ -7,7 +7,7 @@ import (
 	"github.com/datumforge/entx"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // AllowIfSelf determines whether a query or mutation operation should be allowed based on whether the requested data is for the viewer
@@ -30,21 +30,16 @@ func AllowIfSelf() privacy.QueryMutationRule {
 			return privacy.Allow
 		}
 
-		v := viewer.FromContext(ctx)
-		if v == nil {
-			return privacy.Skipf("missing viewer in context")
-		}
-
-		viewerID, exists := v.GetID()
-		if !exists {
+		userID, err := auth.GetUserIDFromContext(ctx)
+		if err != nil {
 			return privacy.Skipf("anonymous viewer")
 		}
 
 		switch actualFilter := f.(type) {
 		case UserIDFilter:
-			actualFilter.WhereUserID(entql.StringEQ(viewerID))
+			actualFilter.WhereUserID(entql.StringEQ(userID))
 		case IDFilter:
-			actualFilter.WhereID(entql.StringEQ(viewerID))
+			actualFilter.WhereID(entql.StringEQ(userID))
 		default:
 			return privacy.Denyf("unexpected filter type %T", f)
 		}

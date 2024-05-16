@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -94,11 +95,17 @@ func (OrgMembership) Hooks() []ent.Hook {
 	}
 }
 
+// Interceptors of the OrgMembership
+func (OrgMembership) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.InterceptorOrgMembers(),
+	}
+}
+
 // Policy of the OrgMembership
 func (OrgMembership) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
 			privacy.OrgMembershipMutationRuleFunc(func(ctx context.Context, m *generated.OrgMembershipMutation) error {
 				return m.CheckAccessForEdit(ctx)

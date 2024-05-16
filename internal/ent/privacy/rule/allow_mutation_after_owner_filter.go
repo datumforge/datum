@@ -6,7 +6,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // AllowMutationAfterApplyingOwnerFilter defines a privacy rule for mutations in the context of an owner filter
@@ -17,19 +17,13 @@ func AllowMutationAfterApplyingOwnerFilter() privacy.MutationRule {
 
 	return privacy.FilterFunc(
 		func(ctx context.Context, f privacy.Filter) error {
-			v := viewer.FromContext(ctx)
-
-			if v == nil {
-				return privacy.Skip
-			}
-
 			ownerFilter, ok := f.(OwnerFilter)
 			if !ok {
 				return privacy.Deny
 			}
 
-			viewerID, exists := v.GetID()
-			if !exists {
+			viewerID, err := auth.GetUserIDFromContext(ctx)
+			if err != nil {
 				return privacy.Skip
 			}
 

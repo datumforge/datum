@@ -202,6 +202,7 @@ func (suite *HandlerTestSuite) createUserWithResetToken(t *testing.T, ec context
 
 	// add mocks for writes
 	mock_fga.WriteAny(t, suite.fga)
+	mock_fga.CheckAny(t, suite.fga, true)
 
 	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(true).

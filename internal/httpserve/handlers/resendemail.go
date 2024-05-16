@@ -9,7 +9,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -67,7 +67,10 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, out)
 	}
 
-	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(entUser.ID, true))
+	// setup user context
+	userCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		SubjectID: entUser.ID,
+	})
 
 	// create email verification token
 	user := &User{
@@ -77,7 +80,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		ID:        entUser.ID,
 	}
 
-	if _, err = h.storeAndSendEmailVerificationToken(viewerCtx, user); err != nil {
+	if _, err = h.storeAndSendEmailVerificationToken(userCtx, user); err != nil {
 		h.Logger.Errorw("error storing token", "error", err)
 
 		if errors.Is(err, ErrMaxAttempts) {

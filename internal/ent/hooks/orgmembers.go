@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"context"
+	"fmt"
 
 	"entgo.io/ent"
 	ph "github.com/posthog/posthog-go"
@@ -9,6 +10,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 func HookOrgMembers() ent.Hook {
@@ -20,20 +23,30 @@ func HookOrgMembers() ent.Hook {
 				return next.Mutate(ctx, mutation)
 			}
 
-			// get the organization based on input
 			orgID, exists := mutation.OrganizationID()
-			if exists {
-				org, err := mutation.Client().Organization.Get(ctx, orgID)
+			if !exists || orgID == "" {
+				var err error
+				// get the organization based on authorized context if its not set
+				orgID, err = auth.GetOrganizationIDFromContext(ctx)
 				if err != nil {
-					mutation.Logger.Errorw("error getting organization", "error", err)
-
-					return nil, err
+					return nil, fmt.Errorf("failed to get organization id from context: %w", err)
 				}
 
-				// do not allow members to be added to personal orgs
-				if org.PersonalOrg {
-					return nil, ErrPersonalOrgsNoMembers
-				}
+				// set organization id in mutation
+				mutation.SetOrganizationID(orgID)
+			}
+
+			// get the organization
+			org, err := mutation.Client().Organization.Get(ctx, orgID)
+			if err != nil {
+				mutation.Logger.Errorw("error getting organization", "error", err)
+
+				return nil, err
+			}
+
+			// do not allow members to be added to personal orgs
+			if org.PersonalOrg {
+				return nil, ErrPersonalOrgsNoMembers
 			}
 
 			retValue, err := next.Mutate(ctx, mutation)
@@ -44,22 +57,26 @@ func HookOrgMembers() ent.Hook {
 			if userID, ok := mutation.UserID(); ok {
 				role, _ := mutation.Role()
 
-				org, err := mutation.Client().Organization.Get(ctx, orgID)
-				if err != nil {
-					mutation.Logger.Errorw("error getting organization", "error", err)
+				// allow the user to be pulled directly with a GET User, which is not allowed by default
+				// the traverser will not allow this, so we need to create a new context
+				allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
 
-					return nil, err
-				}
-
-				user, err := mutation.Client().User.Get(ctx, userID)
+				user, err := mutation.Client().User.Get(allowCtx, userID)
 				if err != nil {
 					mutation.Logger.Errorw("error getting user", "error", err)
 
 					return nil, err
 				}
 
+				orgName, err := auth.GetOrganizationNameFromContext(ctx)
+				if err != nil {
+					mutation.Logger.Errorw("error getting org name from context", "error", err)
+
+					return nil, err
+				}
+
 				props := ph.NewProperties().
-					Set("organization_name", org.Name).
+					Set("organization_name", orgName).
 					Set("user_name", user.FirstName+user.LastName).
 					Set("join_role", role.String())
 

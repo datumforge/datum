@@ -11,7 +11,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
@@ -89,7 +88,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 	}
 
 	// get userID for tuple checks
-	userID, err := getAuthenticatedUserID(ctx)
+	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		q.Logger.Errorw("unable to get authenticated user id", "error", err)
 
@@ -132,25 +131,4 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 
 	// return updated orgs, if parent is denied, its removed from the result
 	return accessibleOrgs, nil
-}
-
-// getAuthenticatedUserID returns the authenticated user id from the context
-// first checking the echo context, followed by the viewer context
-func getAuthenticatedUserID(ctx context.Context) (string, error) {
-	// get userID for tuple checks
-	userID, err := auth.GetUserIDFromContext(ctx)
-	if err == nil {
-		return userID, nil
-	}
-
-	// try to get from viewer context
-	v := viewer.FromContext(ctx)
-	if v != nil {
-		userID, ok := v.GetID()
-		if ok {
-			return userID, nil
-		}
-	}
-
-	return "", ErrUnableToRetrieveUserID
 }

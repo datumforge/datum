@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"context"
 	"net/mail"
 	"net/url"
 	"strings"
@@ -20,15 +19,12 @@ import (
 	emixin "github.com/datumforge/entx/mixin"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 const (
@@ -221,9 +217,7 @@ func (User) Policy() ent.Policy {
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.OauthTooToken{}),
-					rule.DenyIfNoViewer(),
 					rule.AllowIfSelf(),
-					// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users
 					privacy.AlwaysDenyRule(),
 				},
 				// the user hook has update operations on user create so we need to allow email token sign up for update
@@ -232,9 +226,7 @@ func (User) Policy() ent.Policy {
 			),
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
-					rule.DenyIfNoViewer(),
 					rule.AllowIfSelf(),
-					// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users
 					privacy.AlwaysDenyRule(),
 				},
 				ent.OpUpdateOne|ent.OpUpdate|ent.OpDeleteOne|ent.OpDelete,
@@ -257,21 +249,6 @@ func (User) Hooks() []ent.Hook {
 // Interceptors of the User.
 func (d User) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
-		intercept.TraverseUser(func(ctx context.Context, q *generated.UserQuery) error {
-			// Filter query based on viewer context
-			v := viewer.FromContext(ctx)
-			if v != nil {
-				// TODO: expand based on viewer settings to
-				// obtain users in orgs, groups, etc
-				// for now, this will just return self
-				viewerID, exists := v.GetID()
-				if exists {
-					q.Where(user.ID(viewerID))
-					return nil
-				}
-			}
-
-			return nil
-		}),
+		interceptors.InterceptorUser(),
 	}
 }

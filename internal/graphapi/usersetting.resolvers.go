@@ -10,15 +10,11 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
 // UpdateUserSetting is the resolver for the updateUserSetting field.
 func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, input generated.UpdateUserSettingInput) (*UserSettingUpdatePayload, error) {
-	// setup view context
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -50,9 +46,6 @@ func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, inp
 
 // UserSetting is the resolver for the UserSetting field.
 func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.UserSetting, error) {
-	// setup view context
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {

@@ -207,6 +207,7 @@ func (o *OrganizationCleanup) MustDelete(ctx context.Context, t *testing.T) {
 func (u *UserBuilder) MustNew(ctx context.Context, t *testing.T) *ent.User {
 	// mock writes
 	mock_fga.WriteOnce(t, u.client.fga)
+	mock_fga.CheckAny(t, u.client.fga, true)
 
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 

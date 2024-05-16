@@ -29,40 +29,45 @@ func init() {
 }
 
 func switchorg(ctx context.Context) error {
-	var s []byte
-
-	cli, err := datum.GetRestClient(ctx)
-	if err != nil {
-		return err
-	}
-
-	dc := cli.Client.(*datumclient.Client)
-	defer datum.StoreSessionCookies(dc)
-
 	targetorg := viper.GetString("switch.targetorg")
 	if targetorg == "" {
 		return datum.NewRequiredFieldMissingError("target organization")
 	}
 
-	input := handlers.SwitchOrganizationRequest{
-		TargetOrganizationID: targetorg,
-	}
-
-	switchOrganizationReply, err := datumclient.Switch(dc, ctx, input, cli.AccessToken)
+	s, err := SwitchOrg(ctx, targetorg)
 	if err != nil {
-		return err
-	}
-
-	s, err = json.Marshal(switchOrganizationReply)
-	if err != nil {
-		return err
-	}
-
-	if err := datum.StoreToken(switchOrganizationReply); err != nil {
 		return err
 	}
 
 	fmt.Println("auth tokens successfully stored in keychain")
 
 	return datum.JSONPrint(s)
+}
+
+func SwitchOrg(ctx context.Context, targetOrg string) ([]byte, error) {
+	var s []byte
+
+	cli, err := datum.GetRestClient(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	dc := cli.Client.(*datumclient.Client)
+	defer datum.StoreSessionCookies(dc)
+
+	input := handlers.SwitchOrganizationRequest{
+		TargetOrganizationID: targetOrg,
+	}
+
+	switchOrganizationReply, err := datumclient.Switch(dc, ctx, input, cli.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err = json.Marshal(switchOrganizationReply)
+	if err != nil {
+		return nil, err
+	}
+
+	return s, datum.StoreToken(switchOrganizationReply)
 }

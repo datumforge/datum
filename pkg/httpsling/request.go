@@ -575,8 +575,7 @@ func (b *RequestBuilder) StreamDone(callback StreamDoneCallback) *RequestBuilder
 	return b
 }
 
-// Send executes the HTTP request
-func (b *RequestBuilder) Send(ctx context.Context) (*Response, error) {
+func (b *RequestBuilder) setContentType() (io.Reader, string, error) {
 	var body io.Reader
 
 	var contentType string
@@ -602,13 +601,62 @@ func (b *RequestBuilder) Send(ctx context.Context) (*Response, error) {
 			b.client.Logger.Errorf("Error preparing request body: %v", err)
 		}
 
-		return nil, err
+		return nil, contentType, err
 	}
 
 	if contentType != "" {
-		// Set the Content-Type header based on the determined contentType
 		b.headers.Set(HeaderContentType, contentType)
 	}
+
+	return body, contentType, nil
+}
+
+func (b *RequestBuilder) requestChecks(req *http.Request) *http.Request {
+	if b.auth != nil {
+		b.auth.Apply(req)
+	} else if b.client.auth != nil {
+		b.client.auth.Apply(req)
+	}
+
+	// Set the headers from the client and the request builder
+	if b.client.Headers != nil {
+		for key := range *b.client.Headers {
+			values := (*b.client.Headers)[key]
+			for _, value := range values {
+				req.Header.Add(key, value)
+			}
+		}
+	}
+
+	if b.headers != nil {
+		for key := range *b.headers {
+			values := (*b.headers)[key]
+			for _, value := range values {
+				req.Header.Add(key, value)
+			}
+		}
+	}
+
+	// Merge cookies from the client and the request builder
+	if b.client.Cookies != nil {
+		for _, cookie := range b.client.Cookies {
+			req.AddCookie(cookie)
+		}
+	}
+
+	if b.cookies != nil {
+		for _, cookie := range b.cookies {
+			req.AddCookie(cookie)
+		}
+	}
+
+	return req
+}
+
+// Send executes the HTTP request
+func (b *RequestBuilder) Send(ctx context.Context) (*Response, error) {
+	// Prepare the request body and content type
+	body, _, err := b.setContentType()
 
 	// Parse the complete URL first to handle any modifications needed
 	parsedURL, err := url.Parse(b.client.BaseURL + b.preparePath())
@@ -648,46 +696,10 @@ func (b *RequestBuilder) Send(ctx context.Context) (*Response, error) {
 			b.client.Logger.Errorf("Error creating request: %v", err)
 		}
 
-		return nil, fmt.Errorf("%w: %v", ErrRequestCreationFailed, err) //nolint:errorlint
+		return nil, fmt.Errorf("%w: %v", ErrRequestCreationFailed, err)
 	}
 
-	if b.auth != nil {
-		b.auth.Apply(req)
-	} else if b.client.auth != nil {
-		b.client.auth.Apply(req)
-	}
-
-	// Set the headers from the client and the request builder
-	if b.client.Headers != nil {
-		for key := range *b.client.Headers {
-			values := (*b.client.Headers)[key]
-			for _, value := range values {
-				req.Header.Add(key, value)
-			}
-		}
-	}
-
-	if b.headers != nil {
-		for key := range *b.headers {
-			values := (*b.headers)[key]
-			for _, value := range values {
-				req.Header.Add(key, value)
-			}
-		}
-	}
-
-	// Merge cookies from the client and the request builder
-	if b.client.Cookies != nil {
-		for _, cookie := range b.client.Cookies {
-			req.AddCookie(cookie)
-		}
-	}
-
-	if b.cookies != nil {
-		for _, cookie := range b.cookies {
-			req.AddCookie(cookie)
-		}
-	}
+	req = b.requestChecks(req)
 
 	// Execute the HTTP request
 	resp, err := b.do(ctx, req)
@@ -708,7 +720,7 @@ func (b *RequestBuilder) Send(ctx context.Context) (*Response, error) {
 			b.client.Logger.Errorf("Response is nil")
 		}
 
-		return nil, fmt.Errorf("%w: %v", ErrResponseNil, err) //nolint:errorlint
+		return nil, fmt.Errorf("%w: %v", ErrResponseNil, err)
 	}
 
 	// Wrap and return the response

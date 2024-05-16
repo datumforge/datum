@@ -82,11 +82,11 @@ const (
 	ContentTypeForm                   = "application/x-www-form-urlencoded" // https://datatracker.ietf.org/doc/html/rfc1866
 	ContentTypeMultipart              = "multipart/form-data"               // https://datatracker.ietf.org/doc/html/rfc2388
 	ContentTypeJSON                   = "application/json"                  // https://datatracker.ietf.org/doc/html/rfc4627
-	ContentTypeJSONUTF8               = "application/json; charset=utf-8"   // https://datatracker.ietf.org/doc/html/rfc4627
+	ContentTypeJSONUTF8               = "application/json;charset=utf-8"    // https://datatracker.ietf.org/doc/html/rfc4627
 	ContentTypeXML                    = "application/xml"                   // https://datatracker.ietf.org/doc/html/rfc3023
-	ContentTypeXMLUTF8                = "application/xml; charset=utf-8"
+	ContentTypeXMLUTF8                = "application/xml;charset=utf-8"
 	ContentTypeYAML                   = "application/yaml" // https://www.rfc-editor.org/rfc/rfc9512.html
-	ContentTypeYAMLUTF8               = "application/yaml; charset=utf-8"
+	ContentTypeYAMLUTF8               = "application/yaml;charset=utf-8"
 	ContentTypeText                   = "text/plain"
 	ContentTypeApplicationOctetStream = "application/octet-stream"
 

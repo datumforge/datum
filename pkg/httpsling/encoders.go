@@ -69,7 +69,7 @@ type poolReader struct {
 
 // ContentType returns the content type for JSON data
 func (e *JSONEncoder) ContentType() string {
-	return "application/json;charset=utf-8"
+	return ContentTypeJSONUTF8
 }
 
 // Encode marshals the provided value into JSON format
@@ -182,7 +182,7 @@ func (e *XMLEncoder) Encode(v any) (io.Reader, error) {
 
 // ContentType returns the content type for XML data
 func (e *XMLEncoder) ContentType() string {
-	return "application/xml;charset=utf-8"
+	return ContentTypeXMLUTF8
 }
 
 // Decode unmarshals the XML data from the reader into the provided value
@@ -248,7 +248,7 @@ func (e *YAMLEncoder) Encode(v any) (io.Reader, error) {
 
 // ContentType returns the content type for YAML data
 func (e *YAMLEncoder) ContentType() string {
-	return "application/yaml;charset=utf-8"
+	return ContentTypeYAMLUTF8
 }
 
 // Decode reads the data from the reader and unmarshals it into the provided value

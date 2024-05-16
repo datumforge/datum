@@ -101,7 +101,7 @@ func Create(config *Config) *Client {
 		httpClient.Jar = config.CookieJar
 	}
 
-	// Return a new Client instance.
+	// Return a new Client instance
 	client := &Client{
 		BaseURL:     config.BaseURL,
 		Headers:     config.Headers,
@@ -115,7 +115,7 @@ func Create(config *Config) *Client {
 		TLSConfig:   config.TLSConfig,
 	}
 
-	// If a TLS configuration is provided, apply it to the Transport
+	// If a TLS configuration is provided, apply it
 	if client.TLSConfig != nil && httpClient.Transport != nil {
 		httpTransport := httpClient.Transport.(*http.Transport)
 		httpTransport.TLSClientConfig = client.TLSConfig
@@ -266,12 +266,12 @@ func (c *Client) AddDefaultHeader(key, value string) {
 	c.Headers.Add(key, value)
 }
 
-// DelDefaultHeader removes a default header.
+// DelDefaultHeader removes a default header
 func (c *Client) DelDefaultHeader(key string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	if c.Headers != nil { // Only attempt to delete if Headers is initialized
+	if c.Headers != nil { // only attempt to delete if initialized
 		c.Headers.Del(key)
 	}
 }

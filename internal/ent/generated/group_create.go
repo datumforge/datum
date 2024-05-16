@@ -126,6 +126,12 @@ func (gc *GroupCreate) SetNillableMappingID(s *string) *GroupCreate {
 	return gc
 }
 
+// SetTags sets the "tags" field.
+func (gc *GroupCreate) SetTags(s []string) *GroupCreate {
+	gc.mutation.SetTags(s)
+	return gc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (gc *GroupCreate) SetOwnerID(s string) *GroupCreate {
 	gc.mutation.SetOwnerID(s)
@@ -380,6 +386,10 @@ func (gc *GroupCreate) defaults() error {
 		v := group.DefaultMappingID()
 		gc.mutation.SetMappingID(v)
 	}
+	if _, ok := gc.mutation.Tags(); !ok {
+		v := group.DefaultTags
+		gc.mutation.SetTags(v)
+	}
 	if _, ok := gc.mutation.DisplayName(); !ok {
 		v := group.DefaultDisplayName
 		gc.mutation.SetDisplayName(v)
@@ -486,6 +496,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.MappingID(); ok {
 		_spec.SetField(group.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := gc.mutation.Tags(); ok {
+		_spec.SetField(group.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := gc.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

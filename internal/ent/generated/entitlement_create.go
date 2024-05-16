@@ -94,6 +94,12 @@ func (ec *EntitlementCreate) SetNillableMappingID(s *string) *EntitlementCreate 
 	return ec
 }
 
+// SetTags sets the "tags" field.
+func (ec *EntitlementCreate) SetTags(s []string) *EntitlementCreate {
+	ec.mutation.SetTags(s)
+	return ec
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ec *EntitlementCreate) SetDeletedAt(t time.Time) *EntitlementCreate {
 	ec.mutation.SetDeletedAt(t)
@@ -327,6 +333,10 @@ func (ec *EntitlementCreate) defaults() error {
 		v := entitlement.DefaultMappingID()
 		ec.mutation.SetMappingID(v)
 	}
+	if _, ok := ec.mutation.Tags(); !ok {
+		v := entitlement.DefaultTags
+		ec.mutation.SetTags(v)
+	}
 	if _, ok := ec.mutation.Tier(); !ok {
 		v := entitlement.DefaultTier
 		ec.mutation.SetTier(v)
@@ -428,6 +438,10 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.MappingID(); ok {
 		_spec.SetField(entitlement.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ec.mutation.Tags(); ok {
+		_spec.SetField(entitlement.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ec.mutation.DeletedAt(); ok {
 		_spec.SetField(entitlement.FieldDeletedAt, field.TypeTime, value)

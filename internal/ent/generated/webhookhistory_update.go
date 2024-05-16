@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/webhookhistory"
@@ -67,6 +68,24 @@ func (whu *WebhookHistoryUpdate) SetNillableUpdatedBy(s *string) *WebhookHistory
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (whu *WebhookHistoryUpdate) ClearUpdatedBy() *WebhookHistoryUpdate {
 	whu.mutation.ClearUpdatedBy()
+	return whu
+}
+
+// SetTags sets the "tags" field.
+func (whu *WebhookHistoryUpdate) SetTags(s []string) *WebhookHistoryUpdate {
+	whu.mutation.SetTags(s)
+	return whu
+}
+
+// AppendTags appends s to the "tags" field.
+func (whu *WebhookHistoryUpdate) AppendTags(s []string) *WebhookHistoryUpdate {
+	whu.mutation.AppendTags(s)
+	return whu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (whu *WebhookHistoryUpdate) ClearTags() *WebhookHistoryUpdate {
+	whu.mutation.ClearTags()
 	return whu
 }
 
@@ -373,6 +392,17 @@ func (whu *WebhookHistoryUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if whu.mutation.UpdatedByCleared() {
 		_spec.ClearField(webhookhistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := whu.mutation.Tags(); ok {
+		_spec.SetField(webhookhistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := whu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, webhookhistory.FieldTags, value)
+		})
+	}
+	if whu.mutation.TagsCleared() {
+		_spec.ClearField(webhookhistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := whu.mutation.DeletedAt(); ok {
 		_spec.SetField(webhookhistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -504,6 +534,24 @@ func (whuo *WebhookHistoryUpdateOne) SetNillableUpdatedBy(s *string) *WebhookHis
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (whuo *WebhookHistoryUpdateOne) ClearUpdatedBy() *WebhookHistoryUpdateOne {
 	whuo.mutation.ClearUpdatedBy()
+	return whuo
+}
+
+// SetTags sets the "tags" field.
+func (whuo *WebhookHistoryUpdateOne) SetTags(s []string) *WebhookHistoryUpdateOne {
+	whuo.mutation.SetTags(s)
+	return whuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (whuo *WebhookHistoryUpdateOne) AppendTags(s []string) *WebhookHistoryUpdateOne {
+	whuo.mutation.AppendTags(s)
+	return whuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (whuo *WebhookHistoryUpdateOne) ClearTags() *WebhookHistoryUpdateOne {
+	whuo.mutation.ClearTags()
 	return whuo
 }
 
@@ -839,6 +887,17 @@ func (whuo *WebhookHistoryUpdateOne) sqlSave(ctx context.Context) (_node *Webhoo
 	}
 	if whuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(webhookhistory.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := whuo.mutation.Tags(); ok {
+		_spec.SetField(webhookhistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := whuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, webhookhistory.FieldTags, value)
+		})
+	}
+	if whuo.mutation.TagsCleared() {
+		_spec.ClearField(webhookhistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := whuo.mutation.DeletedAt(); ok {
 		_spec.SetField(webhookhistory.FieldDeletedAt, field.TypeTime, value)

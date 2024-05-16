@@ -422,6 +422,16 @@ func MappingIDContainsFold(v string) predicate.DocumentData {
 	return predicate.DocumentData(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldNotNull(FieldTags))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.DocumentData {
 	return predicate.DocumentData(sql.FieldEQ(FieldDeletedAt, v))

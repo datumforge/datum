@@ -28,6 +28,8 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldMappingID holds the string denoting the mapping_id field in the database.
 	FieldMappingID = "mapping_id"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -44,8 +46,6 @@ const (
 	FieldStatus = "status"
 	// FieldEmailConfirmed holds the string denoting the email_confirmed field in the database.
 	FieldEmailConfirmed = "email_confirmed"
-	// FieldTags holds the string denoting the tags field in the database.
-	FieldTags = "tags"
 	// FieldIsWebauthnAllowed holds the string denoting the is_webauthn_allowed field in the database.
 	FieldIsWebauthnAllowed = "is_webauthn_allowed"
 	// FieldIsTfaEnabled holds the string denoting the is_tfa_enabled field in the database.
@@ -82,6 +82,7 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldMappingID,
+	FieldTags,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldUserID,
@@ -90,7 +91,6 @@ var Columns = []string{
 	FieldSuspendedAt,
 	FieldStatus,
 	FieldEmailConfirmed,
-	FieldTags,
 	FieldIsWebauthnAllowed,
 	FieldIsTfaEnabled,
 	FieldPhoneNumber,
@@ -134,6 +134,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
 	DefaultMappingID func() string
+	// DefaultTags holds the default value on creation for the "tags" field.
+	DefaultTags []string
 	// DefaultLocked holds the default value on creation for the "locked" field.
 	DefaultLocked bool
 	// DefaultEmailConfirmed holds the default value on creation for the "email_confirmed" field.

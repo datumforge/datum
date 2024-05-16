@@ -104,6 +104,12 @@ func (ec *EventCreate) SetNillableMappingID(s *string) *EventCreate {
 	return ec
 }
 
+// SetTags sets the "tags" field.
+func (ec *EventCreate) SetTags(s []string) *EventCreate {
+	ec.mutation.SetTags(s)
+	return ec
+}
+
 // SetEventID sets the "event_id" field.
 func (ec *EventCreate) SetEventID(s string) *EventCreate {
 	ec.mutation.SetEventID(s)
@@ -426,6 +432,10 @@ func (ec *EventCreate) defaults() error {
 		v := event.DefaultMappingID()
 		ec.mutation.SetMappingID(v)
 	}
+	if _, ok := ec.mutation.Tags(); !ok {
+		v := event.DefaultTags
+		ec.mutation.SetTags(v)
+	}
 	if _, ok := ec.mutation.ID(); !ok {
 		if event.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized event.DefaultID (forgotten import generated/runtime?)")
@@ -499,6 +509,10 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.MappingID(); ok {
 		_spec.SetField(event.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ec.mutation.Tags(); ok {
+		_spec.SetField(event.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ec.mutation.EventID(); ok {
 		_spec.SetField(event.FieldEventID, field.TypeString, value)

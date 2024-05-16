@@ -591,6 +591,16 @@ func MappingIDContainsFold(v string) predicate.OrganizationSettingHistory {
 	return predicate.OrganizationSettingHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.OrganizationSettingHistory {
+	return predicate.OrganizationSettingHistory(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.OrganizationSettingHistory {
+	return predicate.OrganizationSettingHistory(sql.FieldNotNull(FieldTags))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.OrganizationSettingHistory {
 	return predicate.OrganizationSettingHistory(sql.FieldEQ(FieldDeletedAt, v))
@@ -1099,16 +1109,6 @@ func TaxIdentifierEqualFold(v string) predicate.OrganizationSettingHistory {
 // TaxIdentifierContainsFold applies the ContainsFold predicate on the "tax_identifier" field.
 func TaxIdentifierContainsFold(v string) predicate.OrganizationSettingHistory {
 	return predicate.OrganizationSettingHistory(sql.FieldContainsFold(FieldTaxIdentifier, v))
-}
-
-// TagsIsNil applies the IsNil predicate on the "tags" field.
-func TagsIsNil() predicate.OrganizationSettingHistory {
-	return predicate.OrganizationSettingHistory(sql.FieldIsNull(FieldTags))
-}
-
-// TagsNotNil applies the NotNil predicate on the "tags" field.
-func TagsNotNil() predicate.OrganizationSettingHistory {
-	return predicate.OrganizationSettingHistory(sql.FieldNotNull(FieldTags))
 }
 
 // GeoLocationEQ applies the EQ predicate on the "geo_location" field.

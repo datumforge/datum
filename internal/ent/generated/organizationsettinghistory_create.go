@@ -126,6 +126,12 @@ func (oshc *OrganizationSettingHistoryCreate) SetNillableMappingID(s *string) *O
 	return oshc
 }
 
+// SetTags sets the "tags" field.
+func (oshc *OrganizationSettingHistoryCreate) SetTags(s []string) *OrganizationSettingHistoryCreate {
+	oshc.mutation.SetTags(s)
+	return oshc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (oshc *OrganizationSettingHistoryCreate) SetDeletedAt(t time.Time) *OrganizationSettingHistoryCreate {
 	oshc.mutation.SetDeletedAt(t)
@@ -227,12 +233,6 @@ func (oshc *OrganizationSettingHistoryCreate) SetNillableTaxIdentifier(s *string
 	if s != nil {
 		oshc.SetTaxIdentifier(*s)
 	}
-	return oshc
-}
-
-// SetTags sets the "tags" field.
-func (oshc *OrganizationSettingHistoryCreate) SetTags(s []string) *OrganizationSettingHistoryCreate {
-	oshc.mutation.SetTags(s)
 	return oshc
 }
 
@@ -432,6 +432,10 @@ func (oshc *OrganizationSettingHistoryCreate) createSpec() (*OrganizationSetting
 		_spec.SetField(organizationsettinghistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
 	}
+	if value, ok := oshc.mutation.Tags(); ok {
+		_spec.SetField(organizationsettinghistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
+	}
 	if value, ok := oshc.mutation.DeletedAt(); ok {
 		_spec.SetField(organizationsettinghistory.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
@@ -463,10 +467,6 @@ func (oshc *OrganizationSettingHistoryCreate) createSpec() (*OrganizationSetting
 	if value, ok := oshc.mutation.TaxIdentifier(); ok {
 		_spec.SetField(organizationsettinghistory.FieldTaxIdentifier, field.TypeString, value)
 		_node.TaxIdentifier = value
-	}
-	if value, ok := oshc.mutation.Tags(); ok {
-		_spec.SetField(organizationsettinghistory.FieldTags, field.TypeJSON, value)
-		_node.Tags = value
 	}
 	if value, ok := oshc.mutation.GeoLocation(); ok {
 		_spec.SetField(organizationsettinghistory.FieldGeoLocation, field.TypeEnum, value)

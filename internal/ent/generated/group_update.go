@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -107,6 +108,24 @@ func (gu *GroupUpdate) SetNillableDeletedBy(s *string) *GroupUpdate {
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (gu *GroupUpdate) ClearDeletedBy() *GroupUpdate {
 	gu.mutation.ClearDeletedBy()
+	return gu
+}
+
+// SetTags sets the "tags" field.
+func (gu *GroupUpdate) SetTags(s []string) *GroupUpdate {
+	gu.mutation.SetTags(s)
+	return gu
+}
+
+// AppendTags appends s to the "tags" field.
+func (gu *GroupUpdate) AppendTags(s []string) *GroupUpdate {
+	gu.mutation.AppendTags(s)
+	return gu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (gu *GroupUpdate) ClearTags() *GroupUpdate {
+	gu.mutation.ClearTags()
 	return gu
 }
 
@@ -573,6 +592,17 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if gu.mutation.DeletedByCleared() {
 		_spec.ClearField(group.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := gu.mutation.Tags(); ok {
+		_spec.SetField(group.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := gu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, group.FieldTags, value)
+		})
+	}
+	if gu.mutation.TagsCleared() {
+		_spec.ClearField(group.FieldTags, field.TypeJSON)
 	}
 	if value, ok := gu.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
@@ -1060,6 +1090,24 @@ func (guo *GroupUpdateOne) SetNillableDeletedBy(s *string) *GroupUpdateOne {
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (guo *GroupUpdateOne) ClearDeletedBy() *GroupUpdateOne {
 	guo.mutation.ClearDeletedBy()
+	return guo
+}
+
+// SetTags sets the "tags" field.
+func (guo *GroupUpdateOne) SetTags(s []string) *GroupUpdateOne {
+	guo.mutation.SetTags(s)
+	return guo
+}
+
+// AppendTags appends s to the "tags" field.
+func (guo *GroupUpdateOne) AppendTags(s []string) *GroupUpdateOne {
+	guo.mutation.AppendTags(s)
+	return guo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (guo *GroupUpdateOne) ClearTags() *GroupUpdateOne {
+	guo.mutation.ClearTags()
 	return guo
 }
 
@@ -1556,6 +1604,17 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if guo.mutation.DeletedByCleared() {
 		_spec.ClearField(group.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := guo.mutation.Tags(); ok {
+		_spec.SetField(group.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := guo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, group.FieldTags, value)
+		})
+	}
+	if guo.mutation.TagsCleared() {
+		_spec.ClearField(group.FieldTags, field.TypeJSON)
 	}
 	if value, ok := guo.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

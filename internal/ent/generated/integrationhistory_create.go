@@ -125,6 +125,12 @@ func (ihc *IntegrationHistoryCreate) SetNillableMappingID(s *string) *Integratio
 	return ihc
 }
 
+// SetTags sets the "tags" field.
+func (ihc *IntegrationHistoryCreate) SetTags(s []string) *IntegrationHistoryCreate {
+	ihc.mutation.SetTags(s)
+	return ihc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ihc *IntegrationHistoryCreate) SetDeletedAt(t time.Time) *IntegrationHistoryCreate {
 	ihc.mutation.SetDeletedAt(t)
@@ -266,6 +272,10 @@ func (ihc *IntegrationHistoryCreate) defaults() {
 		v := integrationhistory.DefaultMappingID()
 		ihc.mutation.SetMappingID(v)
 	}
+	if _, ok := ihc.mutation.Tags(); !ok {
+		v := integrationhistory.DefaultTags
+		ihc.mutation.SetTags(v)
+	}
 	if _, ok := ihc.mutation.ID(); !ok {
 		v := integrationhistory.DefaultID()
 		ihc.mutation.SetID(v)
@@ -358,6 +368,10 @@ func (ihc *IntegrationHistoryCreate) createSpec() (*IntegrationHistory, *sqlgrap
 	if value, ok := ihc.mutation.MappingID(); ok {
 		_spec.SetField(integrationhistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ihc.mutation.Tags(); ok {
+		_spec.SetField(integrationhistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ihc.mutation.DeletedAt(); ok {
 		_spec.SetField(integrationhistory.FieldDeletedAt, field.TypeTime, value)

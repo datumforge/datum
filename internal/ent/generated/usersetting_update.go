@@ -66,6 +66,24 @@ func (usu *UserSettingUpdate) ClearUpdatedBy() *UserSettingUpdate {
 	return usu
 }
 
+// SetTags sets the "tags" field.
+func (usu *UserSettingUpdate) SetTags(s []string) *UserSettingUpdate {
+	usu.mutation.SetTags(s)
+	return usu
+}
+
+// AppendTags appends s to the "tags" field.
+func (usu *UserSettingUpdate) AppendTags(s []string) *UserSettingUpdate {
+	usu.mutation.AppendTags(s)
+	return usu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (usu *UserSettingUpdate) ClearTags() *UserSettingUpdate {
+	usu.mutation.ClearTags()
+	return usu
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (usu *UserSettingUpdate) SetDeletedAt(t time.Time) *UserSettingUpdate {
 	usu.mutation.SetDeletedAt(t)
@@ -205,24 +223,6 @@ func (usu *UserSettingUpdate) SetNillableEmailConfirmed(b *bool) *UserSettingUpd
 	if b != nil {
 		usu.SetEmailConfirmed(*b)
 	}
-	return usu
-}
-
-// SetTags sets the "tags" field.
-func (usu *UserSettingUpdate) SetTags(s []string) *UserSettingUpdate {
-	usu.mutation.SetTags(s)
-	return usu
-}
-
-// AppendTags appends s to the "tags" field.
-func (usu *UserSettingUpdate) AppendTags(s []string) *UserSettingUpdate {
-	usu.mutation.AppendTags(s)
-	return usu
-}
-
-// ClearTags clears the value of the "tags" field.
-func (usu *UserSettingUpdate) ClearTags() *UserSettingUpdate {
-	usu.mutation.ClearTags()
 	return usu
 }
 
@@ -409,6 +409,17 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if usu.mutation.UpdatedByCleared() {
 		_spec.ClearField(usersetting.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := usu.mutation.Tags(); ok {
+		_spec.SetField(usersetting.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := usu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usersetting.FieldTags, value)
+		})
+	}
+	if usu.mutation.TagsCleared() {
+		_spec.ClearField(usersetting.FieldTags, field.TypeJSON)
+	}
 	if value, ok := usu.mutation.DeletedAt(); ok {
 		_spec.SetField(usersetting.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -441,17 +452,6 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := usu.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)
-	}
-	if value, ok := usu.mutation.Tags(); ok {
-		_spec.SetField(usersetting.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := usu.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, usersetting.FieldTags, value)
-		})
-	}
-	if usu.mutation.TagsCleared() {
-		_spec.ClearField(usersetting.FieldTags, field.TypeJSON)
 	}
 	if value, ok := usu.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)
@@ -584,6 +584,24 @@ func (usuo *UserSettingUpdateOne) SetNillableUpdatedBy(s *string) *UserSettingUp
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (usuo *UserSettingUpdateOne) ClearUpdatedBy() *UserSettingUpdateOne {
 	usuo.mutation.ClearUpdatedBy()
+	return usuo
+}
+
+// SetTags sets the "tags" field.
+func (usuo *UserSettingUpdateOne) SetTags(s []string) *UserSettingUpdateOne {
+	usuo.mutation.SetTags(s)
+	return usuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (usuo *UserSettingUpdateOne) AppendTags(s []string) *UserSettingUpdateOne {
+	usuo.mutation.AppendTags(s)
+	return usuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (usuo *UserSettingUpdateOne) ClearTags() *UserSettingUpdateOne {
+	usuo.mutation.ClearTags()
 	return usuo
 }
 
@@ -726,24 +744,6 @@ func (usuo *UserSettingUpdateOne) SetNillableEmailConfirmed(b *bool) *UserSettin
 	if b != nil {
 		usuo.SetEmailConfirmed(*b)
 	}
-	return usuo
-}
-
-// SetTags sets the "tags" field.
-func (usuo *UserSettingUpdateOne) SetTags(s []string) *UserSettingUpdateOne {
-	usuo.mutation.SetTags(s)
-	return usuo
-}
-
-// AppendTags appends s to the "tags" field.
-func (usuo *UserSettingUpdateOne) AppendTags(s []string) *UserSettingUpdateOne {
-	usuo.mutation.AppendTags(s)
-	return usuo
-}
-
-// ClearTags clears the value of the "tags" field.
-func (usuo *UserSettingUpdateOne) ClearTags() *UserSettingUpdateOne {
-	usuo.mutation.ClearTags()
 	return usuo
 }
 
@@ -960,6 +960,17 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	if usuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(usersetting.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := usuo.mutation.Tags(); ok {
+		_spec.SetField(usersetting.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := usuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usersetting.FieldTags, value)
+		})
+	}
+	if usuo.mutation.TagsCleared() {
+		_spec.ClearField(usersetting.FieldTags, field.TypeJSON)
+	}
 	if value, ok := usuo.mutation.DeletedAt(); ok {
 		_spec.SetField(usersetting.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -992,17 +1003,6 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	}
 	if value, ok := usuo.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)
-	}
-	if value, ok := usuo.mutation.Tags(); ok {
-		_spec.SetField(usersetting.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := usuo.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, usersetting.FieldTags, value)
-		})
-	}
-	if usuo.mutation.TagsCleared() {
-		_spec.ClearField(usersetting.FieldTags, field.TypeJSON)
 	}
 	if value, ok := usuo.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)

@@ -92,6 +92,12 @@ func (gsc *GroupSettingCreate) SetNillableMappingID(s *string) *GroupSettingCrea
 	return gsc
 }
 
+// SetTags sets the "tags" field.
+func (gsc *GroupSettingCreate) SetTags(s []string) *GroupSettingCreate {
+	gsc.mutation.SetTags(s)
+	return gsc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gsc *GroupSettingCreate) SetDeletedAt(t time.Time) *GroupSettingCreate {
 	gsc.mutation.SetDeletedAt(t)
@@ -145,12 +151,6 @@ func (gsc *GroupSettingCreate) SetNillableJoinPolicy(ep *enums.JoinPolicy) *Grou
 	if ep != nil {
 		gsc.SetJoinPolicy(*ep)
 	}
-	return gsc
-}
-
-// SetTags sets the "tags" field.
-func (gsc *GroupSettingCreate) SetTags(s []string) *GroupSettingCreate {
-	gsc.mutation.SetTags(s)
 	return gsc
 }
 
@@ -273,6 +273,10 @@ func (gsc *GroupSettingCreate) defaults() error {
 		v := groupsetting.DefaultMappingID()
 		gsc.mutation.SetMappingID(v)
 	}
+	if _, ok := gsc.mutation.Tags(); !ok {
+		v := groupsetting.DefaultTags
+		gsc.mutation.SetTags(v)
+	}
 	if _, ok := gsc.mutation.Visibility(); !ok {
 		v := groupsetting.DefaultVisibility
 		gsc.mutation.SetVisibility(v)
@@ -280,10 +284,6 @@ func (gsc *GroupSettingCreate) defaults() error {
 	if _, ok := gsc.mutation.JoinPolicy(); !ok {
 		v := groupsetting.DefaultJoinPolicy
 		gsc.mutation.SetJoinPolicy(v)
-	}
-	if _, ok := gsc.mutation.Tags(); !ok {
-		v := groupsetting.DefaultTags
-		gsc.mutation.SetTags(v)
 	}
 	if _, ok := gsc.mutation.SyncToSlack(); !ok {
 		v := groupsetting.DefaultSyncToSlack
@@ -380,6 +380,10 @@ func (gsc *GroupSettingCreate) createSpec() (*GroupSetting, *sqlgraph.CreateSpec
 		_spec.SetField(groupsetting.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
 	}
+	if value, ok := gsc.mutation.Tags(); ok {
+		_spec.SetField(groupsetting.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
+	}
 	if value, ok := gsc.mutation.DeletedAt(); ok {
 		_spec.SetField(groupsetting.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
@@ -395,10 +399,6 @@ func (gsc *GroupSettingCreate) createSpec() (*GroupSetting, *sqlgraph.CreateSpec
 	if value, ok := gsc.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsetting.FieldJoinPolicy, field.TypeEnum, value)
 		_node.JoinPolicy = value
-	}
-	if value, ok := gsc.mutation.Tags(); ok {
-		_spec.SetField(groupsetting.FieldTags, field.TypeJSON, value)
-		_node.Tags = value
 	}
 	if value, ok := gsc.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsetting.FieldSyncToSlack, field.TypeBool, value)

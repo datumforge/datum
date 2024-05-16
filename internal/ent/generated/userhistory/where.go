@@ -736,6 +736,16 @@ func MappingIDContainsFold(v string) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldNotNull(FieldTags))
+}
+
 // EmailEQ applies the EQ predicate on the "email" field.
 func EmailEQ(v string) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldEQ(FieldEmail, v))

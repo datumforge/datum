@@ -572,6 +572,16 @@ func MappingIDContainsFold(v string) predicate.APIToken {
 	return predicate.APIToken(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.APIToken {
+	return predicate.APIToken(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.APIToken {
+	return predicate.APIToken(sql.FieldNotNull(FieldTags))
+}
+
 // OwnerIDEQ applies the EQ predicate on the "owner_id" field.
 func OwnerIDEQ(v string) predicate.APIToken {
 	return predicate.APIToken(sql.FieldEQ(FieldOwnerID, v))

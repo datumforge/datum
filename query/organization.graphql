@@ -5,6 +5,7 @@ query GetOrganizationByID($organizationId: ID!) {
     displayName
     description
     personalOrg
+    tags
     parent {
       id
       name
@@ -40,8 +41,8 @@ query GetOrganizationByID($organizationId: ID!) {
       billingPhone
       billingAddress
       taxIdentifier
-      tags
       geoLocation
+      tags
     }
     createdAt
     createdBy
@@ -59,6 +60,7 @@ query GetAllOrganizations {
         displayName
         description
         personalOrg
+        tags
         parent {
           id
           name
@@ -94,8 +96,8 @@ query GetAllOrganizations {
           billingPhone
           billingAddress
           taxIdentifier
-          tags
           geoLocation
+          tags
         }
         createdAt
         updatedAt
@@ -113,6 +115,7 @@ query OrganizationsWhere($where: OrganizationWhereInput) {
         displayName
         description
         personalOrg
+        tags
         parent {
           id
           name
@@ -148,8 +151,8 @@ query OrganizationsWhere($where: OrganizationWhereInput) {
           billingPhone
           billingAddress
           taxIdentifier
-          tags
           geoLocation
+          tags
         }
         createdAt
         updatedAt
@@ -166,6 +169,7 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
       displayName
       description
       personalOrg
+      tags
       createdAt
       updatedAt
       setting {
@@ -180,8 +184,8 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
         billingPhone
         billingAddress
         taxIdentifier
-        tags
         geoLocation
+        tags
       }
       parent {
         id
@@ -208,6 +212,7 @@ mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizati
       name
       displayName
       description
+      tags
       members {
         id
         role
@@ -225,8 +230,8 @@ mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizati
         billingPhone
         billingAddress
         taxIdentifier
-        tags
         geoLocation
+        tags
       }
     }
   }

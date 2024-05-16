@@ -95,6 +95,12 @@ func (ic *IntegrationCreate) SetNillableMappingID(s *string) *IntegrationCreate 
 	return ic
 }
 
+// SetTags sets the "tags" field.
+func (ic *IntegrationCreate) SetTags(s []string) *IntegrationCreate {
+	ic.mutation.SetTags(s)
+	return ic
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ic *IntegrationCreate) SetDeletedAt(t time.Time) *IntegrationCreate {
 	ic.mutation.SetDeletedAt(t)
@@ -308,6 +314,10 @@ func (ic *IntegrationCreate) defaults() error {
 		v := integration.DefaultMappingID()
 		ic.mutation.SetMappingID(v)
 	}
+	if _, ok := ic.mutation.Tags(); !ok {
+		v := integration.DefaultTags
+		ic.mutation.SetTags(v)
+	}
 	if _, ok := ic.mutation.ID(); !ok {
 		if integration.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized integration.DefaultID (forgotten import generated/runtime?)")
@@ -391,6 +401,10 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.MappingID(); ok {
 		_spec.SetField(integration.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ic.mutation.Tags(); ok {
+		_spec.SetField(integration.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ic.mutation.DeletedAt(); ok {
 		_spec.SetField(integration.FieldDeletedAt, field.TypeTime, value)

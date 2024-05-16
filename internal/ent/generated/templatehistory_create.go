@@ -155,6 +155,12 @@ func (thc *TemplateHistoryCreate) SetNillableMappingID(s *string) *TemplateHisto
 	return thc
 }
 
+// SetTags sets the "tags" field.
+func (thc *TemplateHistoryCreate) SetTags(s []string) *TemplateHistoryCreate {
+	thc.mutation.SetTags(s)
+	return thc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (thc *TemplateHistoryCreate) SetOwnerID(s string) *TemplateHistoryCreate {
 	thc.mutation.SetOwnerID(s)
@@ -280,6 +286,10 @@ func (thc *TemplateHistoryCreate) defaults() {
 		v := templatehistory.DefaultMappingID()
 		thc.mutation.SetMappingID(v)
 	}
+	if _, ok := thc.mutation.Tags(); !ok {
+		v := templatehistory.DefaultTags
+		thc.mutation.SetTags(v)
+	}
 	if _, ok := thc.mutation.TemplateType(); !ok {
 		v := templatehistory.DefaultTemplateType
 		thc.mutation.SetTemplateType(v)
@@ -395,6 +405,10 @@ func (thc *TemplateHistoryCreate) createSpec() (*TemplateHistory, *sqlgraph.Crea
 	if value, ok := thc.mutation.MappingID(); ok {
 		_spec.SetField(templatehistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := thc.mutation.Tags(); ok {
+		_spec.SetField(templatehistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := thc.mutation.OwnerID(); ok {
 		_spec.SetField(templatehistory.FieldOwnerID, field.TypeString, value)

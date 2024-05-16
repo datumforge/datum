@@ -88,6 +88,7 @@ func (PersonalAccessToken) Mixin() []ent.Mixin {
 		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 		UserOwnedMixin{
 			Ref:             "personal_access_tokens",
 			AllowUpdate:     false,

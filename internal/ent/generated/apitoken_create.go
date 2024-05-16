@@ -119,6 +119,12 @@ func (atc *APITokenCreate) SetNillableMappingID(s *string) *APITokenCreate {
 	return atc
 }
 
+// SetTags sets the "tags" field.
+func (atc *APITokenCreate) SetTags(s []string) *APITokenCreate {
+	atc.mutation.SetTags(s)
+	return atc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (atc *APITokenCreate) SetOwnerID(s string) *APITokenCreate {
 	atc.mutation.SetOwnerID(s)
@@ -278,6 +284,10 @@ func (atc *APITokenCreate) defaults() error {
 		v := apitoken.DefaultMappingID()
 		atc.mutation.SetMappingID(v)
 	}
+	if _, ok := atc.mutation.Tags(); !ok {
+		v := apitoken.DefaultTags
+		atc.mutation.SetTags(v)
+	}
 	if _, ok := atc.mutation.Token(); !ok {
 		if apitoken.DefaultToken == nil {
 			return fmt.Errorf("generated: uninitialized apitoken.DefaultToken (forgotten import generated/runtime?)")
@@ -379,6 +389,10 @@ func (atc *APITokenCreate) createSpec() (*APIToken, *sqlgraph.CreateSpec) {
 	if value, ok := atc.mutation.MappingID(); ok {
 		_spec.SetField(apitoken.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := atc.mutation.Tags(); ok {
+		_spec.SetField(apitoken.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := atc.mutation.Name(); ok {
 		_spec.SetField(apitoken.FieldName, field.TypeString, value)

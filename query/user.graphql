@@ -10,6 +10,7 @@ query GetUserByID($userId: ID!) {
     avatarRemoteURL
     avatarLocalFile
     authProvider
+    tags
     setting {
       emailConfirmed
       defaultOrg {
@@ -17,9 +18,9 @@ query GetUserByID($userId: ID!) {
         name
         personalOrg
       }
+      tags
       locked
       status
-      tags
       suspendedAt
       createdAt
       createdBy
@@ -55,6 +56,7 @@ query GetUserByIDWithOrgs($userId: ID!) {
     avatarRemoteURL
     avatarLocalFile
     authProvider
+    tags
     setting {
       emailConfirmed
       defaultOrg {
@@ -62,9 +64,9 @@ query GetUserByIDWithOrgs($userId: ID!) {
         name
         personalOrg
       }
+      tags
       locked
       status
-      tags
       suspendedAt
       createdAt
       createdBy
@@ -101,6 +103,7 @@ query GetAllUsers {
         avatarRemoteURL
         avatarLocalFile
         authProvider
+        tags
         setting {
           emailConfirmed
           defaultOrg {
@@ -108,9 +111,9 @@ query GetAllUsers {
             name
             personalOrg
           }
+          tags
           locked
           status
-          tags
           suspendedAt
           createdAt
           createdBy
@@ -139,6 +142,7 @@ mutation CreateUser($input: CreateUserInput!) {
       avatarLocalFile
       sub
       authProvider
+      tags
       orgMemberships {
         id
         organizationID
@@ -154,9 +158,9 @@ mutation CreateUser($input: CreateUserInput!) {
           name
           personalOrg
         }
+        tags
         locked
         status
-        tags
         suspendedAt
         createdAt
         createdBy
@@ -180,6 +184,7 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
       avatarLocalFile
       sub
       authProvider
+      tags
       groupMemberships {
         id
       }
@@ -193,9 +198,9 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
           name
           personalOrg
         }
+        tags
         locked
         status
-        tags
         suspendedAt
         createdAt
         createdBy

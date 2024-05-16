@@ -123,6 +123,12 @@ func (fc *FeatureCreate) SetNillableMappingID(s *string) *FeatureCreate {
 	return fc
 }
 
+// SetTags sets the "tags" field.
+func (fc *FeatureCreate) SetTags(s []string) *FeatureCreate {
+	fc.mutation.SetTags(s)
+	return fc
+}
+
 // SetName sets the "name" field.
 func (fc *FeatureCreate) SetName(s string) *FeatureCreate {
 	fc.mutation.SetName(s)
@@ -318,6 +324,10 @@ func (fc *FeatureCreate) defaults() error {
 		v := feature.DefaultMappingID()
 		fc.mutation.SetMappingID(v)
 	}
+	if _, ok := fc.mutation.Tags(); !ok {
+		v := feature.DefaultTags
+		fc.mutation.SetTags(v)
+	}
 	if _, ok := fc.mutation.Global(); !ok {
 		v := feature.DefaultGlobal
 		fc.mutation.SetGlobal(v)
@@ -418,6 +428,10 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 	if value, ok := fc.mutation.MappingID(); ok {
 		_spec.SetField(feature.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := fc.mutation.Tags(); ok {
+		_spec.SetField(feature.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := fc.mutation.Name(); ok {
 		_spec.SetField(feature.FieldName, field.TypeString, value)

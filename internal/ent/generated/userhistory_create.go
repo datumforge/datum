@@ -154,6 +154,12 @@ func (uhc *UserHistoryCreate) SetNillableMappingID(s *string) *UserHistoryCreate
 	return uhc
 }
 
+// SetTags sets the "tags" field.
+func (uhc *UserHistoryCreate) SetTags(s []string) *UserHistoryCreate {
+	uhc.mutation.SetTags(s)
+	return uhc
+}
+
 // SetEmail sets the "email" field.
 func (uhc *UserHistoryCreate) SetEmail(s string) *UserHistoryCreate {
 	uhc.mutation.SetEmail(s)
@@ -371,6 +377,10 @@ func (uhc *UserHistoryCreate) defaults() {
 		v := userhistory.DefaultMappingID()
 		uhc.mutation.SetMappingID(v)
 	}
+	if _, ok := uhc.mutation.Tags(); !ok {
+		v := userhistory.DefaultTags
+		uhc.mutation.SetTags(v)
+	}
 	if _, ok := uhc.mutation.AuthProvider(); !ok {
 		v := userhistory.DefaultAuthProvider
 		uhc.mutation.SetAuthProvider(v)
@@ -495,6 +505,10 @@ func (uhc *UserHistoryCreate) createSpec() (*UserHistory, *sqlgraph.CreateSpec) 
 	if value, ok := uhc.mutation.MappingID(); ok {
 		_spec.SetField(userhistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := uhc.mutation.Tags(); ok {
+		_spec.SetField(userhistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := uhc.mutation.Email(); ok {
 		_spec.SetField(userhistory.FieldEmail, field.TypeString, value)

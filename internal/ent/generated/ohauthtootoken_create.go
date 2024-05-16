@@ -36,6 +36,12 @@ func (oattc *OhAuthTooTokenCreate) SetNillableMappingID(s *string) *OhAuthTooTok
 	return oattc
 }
 
+// SetTags sets the "tags" field.
+func (oattc *OhAuthTooTokenCreate) SetTags(s []string) *OhAuthTooTokenCreate {
+	oattc.mutation.SetTags(s)
+	return oattc
+}
+
 // SetClientID sets the "client_id" field.
 func (oattc *OhAuthTooTokenCreate) SetClientID(s string) *OhAuthTooTokenCreate {
 	oattc.mutation.SetClientID(s)
@@ -199,6 +205,10 @@ func (oattc *OhAuthTooTokenCreate) defaults() {
 		v := ohauthtootoken.DefaultMappingID()
 		oattc.mutation.SetMappingID(v)
 	}
+	if _, ok := oattc.mutation.Tags(); !ok {
+		v := ohauthtootoken.DefaultTags
+		oattc.mutation.SetTags(v)
+	}
 	if _, ok := oattc.mutation.LastUsed(); !ok {
 		v := ohauthtootoken.DefaultLastUsed()
 		oattc.mutation.SetLastUsed(v)
@@ -310,6 +320,10 @@ func (oattc *OhAuthTooTokenCreate) createSpec() (*OhAuthTooToken, *sqlgraph.Crea
 	if value, ok := oattc.mutation.MappingID(); ok {
 		_spec.SetField(ohauthtootoken.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := oattc.mutation.Tags(); ok {
+		_spec.SetField(ohauthtootoken.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := oattc.mutation.ClientID(); ok {
 		_spec.SetField(ohauthtootoken.FieldClientID, field.TypeString, value)

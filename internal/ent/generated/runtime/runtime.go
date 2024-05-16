@@ -73,23 +73,23 @@ func init() {
 	}
 	apitokenMixinHooks0 := apitokenMixin[0].Hooks()
 	apitokenMixinHooks1 := apitokenMixin[1].Hooks()
-	apitokenMixinHooks3 := apitokenMixin[3].Hooks()
+	apitokenMixinHooks4 := apitokenMixin[4].Hooks()
 	apitokenHooks := schema.APIToken{}.Hooks()
 
 	apitoken.Hooks[1] = apitokenMixinHooks0[0]
 
 	apitoken.Hooks[2] = apitokenMixinHooks1[0]
 
-	apitoken.Hooks[3] = apitokenMixinHooks3[0]
+	apitoken.Hooks[3] = apitokenMixinHooks4[0]
 
 	apitoken.Hooks[4] = apitokenHooks[0]
 
 	apitoken.Hooks[5] = apitokenHooks[1]
 	apitokenMixinInters1 := apitokenMixin[1].Interceptors()
-	apitokenMixinInters3 := apitokenMixin[3].Interceptors()
+	apitokenMixinInters4 := apitokenMixin[4].Interceptors()
 	apitokenInters := schema.APIToken{}.Interceptors()
 	apitoken.Interceptors[0] = apitokenMixinInters1[0]
-	apitoken.Interceptors[1] = apitokenMixinInters3[0]
+	apitoken.Interceptors[1] = apitokenMixinInters4[0]
 	apitoken.Interceptors[2] = apitokenInters[0]
 	apitokenMixinFields0 := apitokenMixin[0].Fields()
 	_ = apitokenMixinFields0
@@ -97,6 +97,8 @@ func init() {
 	_ = apitokenMixinFields2
 	apitokenMixinFields3 := apitokenMixin[3].Fields()
 	_ = apitokenMixinFields3
+	apitokenMixinFields4 := apitokenMixin[4].Fields()
+	_ = apitokenMixinFields4
 	apitokenFields := schema.APIToken{}.Fields()
 	_ = apitokenFields
 	// apitokenDescCreatedAt is the schema descriptor for created_at field.
@@ -113,8 +115,12 @@ func init() {
 	apitokenDescMappingID := apitokenMixinFields2[1].Descriptor()
 	// apitoken.DefaultMappingID holds the default value on creation for the mapping_id field.
 	apitoken.DefaultMappingID = apitokenDescMappingID.Default.(func() string)
+	// apitokenDescTags is the schema descriptor for tags field.
+	apitokenDescTags := apitokenMixinFields3[0].Descriptor()
+	// apitoken.DefaultTags holds the default value on creation for the tags field.
+	apitoken.DefaultTags = apitokenDescTags.Default.([]string)
 	// apitokenDescOwnerID is the schema descriptor for owner_id field.
-	apitokenDescOwnerID := apitokenMixinFields3[0].Descriptor()
+	apitokenDescOwnerID := apitokenMixinFields4[0].Descriptor()
 	// apitoken.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	apitoken.OwnerIDValidator = apitokenDescOwnerID.Validators[0].(func(string) error)
 	// apitokenDescName is the schema descriptor for name field.
@@ -131,15 +137,17 @@ func init() {
 	apitoken.DefaultID = apitokenDescID.Default.(func() string)
 	documentdataMixin := schema.DocumentData{}.Mixin()
 	documentdataMixinHooks0 := documentdataMixin[0].Hooks()
-	documentdataMixinHooks2 := documentdataMixin[2].Hooks()
+	documentdataMixinHooks3 := documentdataMixin[3].Hooks()
 	documentdata.Hooks[0] = documentdataMixinHooks0[0]
-	documentdata.Hooks[1] = documentdataMixinHooks2[0]
-	documentdataMixinInters2 := documentdataMixin[2].Interceptors()
-	documentdata.Interceptors[0] = documentdataMixinInters2[0]
+	documentdata.Hooks[1] = documentdataMixinHooks3[0]
+	documentdataMixinInters3 := documentdataMixin[3].Interceptors()
+	documentdata.Interceptors[0] = documentdataMixinInters3[0]
 	documentdataMixinFields0 := documentdataMixin[0].Fields()
 	_ = documentdataMixinFields0
 	documentdataMixinFields1 := documentdataMixin[1].Fields()
 	_ = documentdataMixinFields1
+	documentdataMixinFields2 := documentdataMixin[2].Fields()
+	_ = documentdataMixinFields2
 	documentdataFields := schema.DocumentData{}.Fields()
 	_ = documentdataFields
 	// documentdataDescCreatedAt is the schema descriptor for created_at field.
@@ -156,6 +164,10 @@ func init() {
 	documentdataDescMappingID := documentdataMixinFields1[1].Descriptor()
 	// documentdata.DefaultMappingID holds the default value on creation for the mapping_id field.
 	documentdata.DefaultMappingID = documentdataDescMappingID.Default.(func() string)
+	// documentdataDescTags is the schema descriptor for tags field.
+	documentdataDescTags := documentdataMixinFields2[0].Descriptor()
+	// documentdata.DefaultTags holds the default value on creation for the tags field.
+	documentdata.DefaultTags = documentdataDescTags.Default.([]string)
 	// documentdataDescID is the schema descriptor for id field.
 	documentdataDescID := documentdataMixinFields1[0].Descriptor()
 	// documentdata.DefaultID holds the default value on creation for the id field.
@@ -178,6 +190,10 @@ func init() {
 	documentdatahistoryDescMappingID := documentdatahistoryFields[8].Descriptor()
 	// documentdatahistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	documentdatahistory.DefaultMappingID = documentdatahistoryDescMappingID.Default.(func() string)
+	// documentdatahistoryDescTags is the schema descriptor for tags field.
+	documentdatahistoryDescTags := documentdatahistoryFields[9].Descriptor()
+	// documentdatahistory.DefaultTags holds the default value on creation for the tags field.
+	documentdatahistory.DefaultTags = documentdatahistoryDescTags.Default.([]string)
 	// documentdatahistoryDescID is the schema descriptor for id field.
 	documentdatahistoryDescID := documentdatahistoryFields[7].Descriptor()
 	// documentdatahistory.DefaultID holds the default value on creation for the id field.
@@ -257,21 +273,23 @@ func init() {
 	emailverificationtoken.DefaultID = emailverificationtokenDescID.Default.(func() string)
 	entitlementMixin := schema.Entitlement{}.Mixin()
 	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
-	entitlementMixinHooks2 := entitlementMixin[2].Hooks()
 	entitlementMixinHooks3 := entitlementMixin[3].Hooks()
+	entitlementMixinHooks4 := entitlementMixin[4].Hooks()
 	entitlement.Hooks[0] = entitlementMixinHooks0[0]
-	entitlement.Hooks[1] = entitlementMixinHooks2[0]
-	entitlement.Hooks[2] = entitlementMixinHooks3[0]
-	entitlementMixinInters2 := entitlementMixin[2].Interceptors()
+	entitlement.Hooks[1] = entitlementMixinHooks3[0]
+	entitlement.Hooks[2] = entitlementMixinHooks4[0]
 	entitlementMixinInters3 := entitlementMixin[3].Interceptors()
-	entitlement.Interceptors[0] = entitlementMixinInters2[0]
-	entitlement.Interceptors[1] = entitlementMixinInters3[0]
+	entitlementMixinInters4 := entitlementMixin[4].Interceptors()
+	entitlement.Interceptors[0] = entitlementMixinInters3[0]
+	entitlement.Interceptors[1] = entitlementMixinInters4[0]
 	entitlementMixinFields0 := entitlementMixin[0].Fields()
 	_ = entitlementMixinFields0
 	entitlementMixinFields1 := entitlementMixin[1].Fields()
 	_ = entitlementMixinFields1
-	entitlementMixinFields3 := entitlementMixin[3].Fields()
-	_ = entitlementMixinFields3
+	entitlementMixinFields2 := entitlementMixin[2].Fields()
+	_ = entitlementMixinFields2
+	entitlementMixinFields4 := entitlementMixin[4].Fields()
+	_ = entitlementMixinFields4
 	entitlementFields := schema.Entitlement{}.Fields()
 	_ = entitlementFields
 	// entitlementDescCreatedAt is the schema descriptor for created_at field.
@@ -288,8 +306,12 @@ func init() {
 	entitlementDescMappingID := entitlementMixinFields1[1].Descriptor()
 	// entitlement.DefaultMappingID holds the default value on creation for the mapping_id field.
 	entitlement.DefaultMappingID = entitlementDescMappingID.Default.(func() string)
+	// entitlementDescTags is the schema descriptor for tags field.
+	entitlementDescTags := entitlementMixinFields2[0].Descriptor()
+	// entitlement.DefaultTags holds the default value on creation for the tags field.
+	entitlement.DefaultTags = entitlementDescTags.Default.([]string)
 	// entitlementDescOwnerID is the schema descriptor for owner_id field.
-	entitlementDescOwnerID := entitlementMixinFields3[0].Descriptor()
+	entitlementDescOwnerID := entitlementMixinFields4[0].Descriptor()
 	// entitlement.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	entitlement.OwnerIDValidator = entitlementDescOwnerID.Validators[0].(func(string) error)
 	// entitlementDescExpires is the schema descriptor for expires field.
@@ -322,12 +344,16 @@ func init() {
 	entitlementhistoryDescMappingID := entitlementhistoryFields[8].Descriptor()
 	// entitlementhistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	entitlementhistory.DefaultMappingID = entitlementhistoryDescMappingID.Default.(func() string)
+	// entitlementhistoryDescTags is the schema descriptor for tags field.
+	entitlementhistoryDescTags := entitlementhistoryFields[9].Descriptor()
+	// entitlementhistory.DefaultTags holds the default value on creation for the tags field.
+	entitlementhistory.DefaultTags = entitlementhistoryDescTags.Default.([]string)
 	// entitlementhistoryDescExpires is the schema descriptor for expires field.
-	entitlementhistoryDescExpires := entitlementhistoryFields[15].Descriptor()
+	entitlementhistoryDescExpires := entitlementhistoryFields[16].Descriptor()
 	// entitlementhistory.DefaultExpires holds the default value on creation for the expires field.
 	entitlementhistory.DefaultExpires = entitlementhistoryDescExpires.Default.(bool)
 	// entitlementhistoryDescCancelled is the schema descriptor for cancelled field.
-	entitlementhistoryDescCancelled := entitlementhistoryFields[17].Descriptor()
+	entitlementhistoryDescCancelled := entitlementhistoryFields[18].Descriptor()
 	// entitlementhistory.DefaultCancelled holds the default value on creation for the cancelled field.
 	entitlementhistory.DefaultCancelled = entitlementhistoryDescCancelled.Default.(bool)
 	// entitlementhistoryDescID is the schema descriptor for id field.
@@ -341,6 +367,8 @@ func init() {
 	_ = eventMixinFields0
 	eventMixinFields1 := eventMixin[1].Fields()
 	_ = eventMixinFields1
+	eventMixinFields2 := eventMixin[2].Fields()
+	_ = eventMixinFields2
 	eventFields := schema.Event{}.Fields()
 	_ = eventFields
 	// eventDescCreatedAt is the schema descriptor for created_at field.
@@ -357,6 +385,10 @@ func init() {
 	eventDescMappingID := eventMixinFields1[1].Descriptor()
 	// event.DefaultMappingID holds the default value on creation for the mapping_id field.
 	event.DefaultMappingID = eventDescMappingID.Default.(func() string)
+	// eventDescTags is the schema descriptor for tags field.
+	eventDescTags := eventMixinFields2[0].Descriptor()
+	// event.DefaultTags holds the default value on creation for the tags field.
+	event.DefaultTags = eventDescTags.Default.([]string)
 	// eventDescID is the schema descriptor for id field.
 	eventDescID := eventMixinFields1[0].Descriptor()
 	// event.DefaultID holds the default value on creation for the id field.
@@ -379,6 +411,10 @@ func init() {
 	eventhistoryDescMappingID := eventhistoryFields[8].Descriptor()
 	// eventhistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	eventhistory.DefaultMappingID = eventhistoryDescMappingID.Default.(func() string)
+	// eventhistoryDescTags is the schema descriptor for tags field.
+	eventhistoryDescTags := eventhistoryFields[9].Descriptor()
+	// eventhistory.DefaultTags holds the default value on creation for the tags field.
+	eventhistory.DefaultTags = eventhistoryDescTags.Default.([]string)
 	// eventhistoryDescID is the schema descriptor for id field.
 	eventhistoryDescID := eventhistoryFields[7].Descriptor()
 	// eventhistory.DefaultID holds the default value on creation for the id field.
@@ -394,6 +430,8 @@ func init() {
 	_ = featureMixinFields0
 	featureMixinFields2 := featureMixin[2].Fields()
 	_ = featureMixinFields2
+	featureMixinFields3 := featureMixin[3].Fields()
+	_ = featureMixinFields3
 	featureFields := schema.Feature{}.Fields()
 	_ = featureFields
 	// featureDescCreatedAt is the schema descriptor for created_at field.
@@ -410,6 +448,10 @@ func init() {
 	featureDescMappingID := featureMixinFields2[1].Descriptor()
 	// feature.DefaultMappingID holds the default value on creation for the mapping_id field.
 	feature.DefaultMappingID = featureDescMappingID.Default.(func() string)
+	// featureDescTags is the schema descriptor for tags field.
+	featureDescTags := featureMixinFields3[0].Descriptor()
+	// feature.DefaultTags holds the default value on creation for the tags field.
+	feature.DefaultTags = featureDescTags.Default.([]string)
 	// featureDescName is the schema descriptor for name field.
 	featureDescName := featureFields[0].Descriptor()
 	// feature.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -444,12 +486,16 @@ func init() {
 	featurehistoryDescMappingID := featurehistoryFields[10].Descriptor()
 	// featurehistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	featurehistory.DefaultMappingID = featurehistoryDescMappingID.Default.(func() string)
+	// featurehistoryDescTags is the schema descriptor for tags field.
+	featurehistoryDescTags := featurehistoryFields[11].Descriptor()
+	// featurehistory.DefaultTags holds the default value on creation for the tags field.
+	featurehistory.DefaultTags = featurehistoryDescTags.Default.([]string)
 	// featurehistoryDescGlobal is the schema descriptor for global field.
-	featurehistoryDescGlobal := featurehistoryFields[12].Descriptor()
+	featurehistoryDescGlobal := featurehistoryFields[13].Descriptor()
 	// featurehistory.DefaultGlobal holds the default value on creation for the global field.
 	featurehistory.DefaultGlobal = featurehistoryDescGlobal.Default.(bool)
 	// featurehistoryDescEnabled is the schema descriptor for enabled field.
-	featurehistoryDescEnabled := featurehistoryFields[13].Descriptor()
+	featurehistoryDescEnabled := featurehistoryFields[14].Descriptor()
 	// featurehistory.DefaultEnabled holds the default value on creation for the enabled field.
 	featurehistory.DefaultEnabled = featurehistoryDescEnabled.Default.(bool)
 	// featurehistoryDescID is the schema descriptor for id field.
@@ -467,6 +513,8 @@ func init() {
 	_ = fileMixinFields0
 	fileMixinFields2 := fileMixin[2].Fields()
 	_ = fileMixinFields2
+	fileMixinFields3 := fileMixin[3].Fields()
+	_ = fileMixinFields3
 	fileFields := schema.File{}.Fields()
 	_ = fileFields
 	// fileDescCreatedAt is the schema descriptor for created_at field.
@@ -483,6 +531,10 @@ func init() {
 	fileDescMappingID := fileMixinFields2[1].Descriptor()
 	// file.DefaultMappingID holds the default value on creation for the mapping_id field.
 	file.DefaultMappingID = fileDescMappingID.Default.(func() string)
+	// fileDescTags is the schema descriptor for tags field.
+	fileDescTags := fileMixinFields3[0].Descriptor()
+	// file.DefaultTags holds the default value on creation for the tags field.
+	file.DefaultTags = fileDescTags.Default.([]string)
 	// fileDescFileSize is the schema descriptor for file_size field.
 	fileDescFileSize := fileFields[2].Descriptor()
 	// file.FileSizeValidator is a validator for the "file_size" field. It is called by the builders before save.
@@ -509,6 +561,10 @@ func init() {
 	filehistoryDescMappingID := filehistoryFields[10].Descriptor()
 	// filehistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	filehistory.DefaultMappingID = filehistoryDescMappingID.Default.(func() string)
+	// filehistoryDescTags is the schema descriptor for tags field.
+	filehistoryDescTags := filehistoryFields[11].Descriptor()
+	// filehistory.DefaultTags holds the default value on creation for the tags field.
+	filehistory.DefaultTags = filehistoryDescTags.Default.([]string)
 	// filehistoryDescID is the schema descriptor for id field.
 	filehistoryDescID := filehistoryFields[9].Descriptor()
 	// filehistory.DefaultID holds the default value on creation for the id field.
@@ -525,23 +581,23 @@ func init() {
 	}
 	groupMixinHooks0 := groupMixin[0].Hooks()
 	groupMixinHooks1 := groupMixin[1].Hooks()
-	groupMixinHooks3 := groupMixin[3].Hooks()
+	groupMixinHooks4 := groupMixin[4].Hooks()
 	groupHooks := schema.Group{}.Hooks()
 
 	group.Hooks[1] = groupMixinHooks0[0]
 
 	group.Hooks[2] = groupMixinHooks1[0]
 
-	group.Hooks[3] = groupMixinHooks3[0]
+	group.Hooks[3] = groupMixinHooks4[0]
 
 	group.Hooks[4] = groupHooks[0]
 
 	group.Hooks[5] = groupHooks[1]
 	groupMixinInters1 := groupMixin[1].Interceptors()
-	groupMixinInters3 := groupMixin[3].Interceptors()
+	groupMixinInters4 := groupMixin[4].Interceptors()
 	groupInters := schema.Group{}.Interceptors()
 	group.Interceptors[0] = groupMixinInters1[0]
-	group.Interceptors[1] = groupMixinInters3[0]
+	group.Interceptors[1] = groupMixinInters4[0]
 	group.Interceptors[2] = groupInters[0]
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0
@@ -549,6 +605,8 @@ func init() {
 	_ = groupMixinFields2
 	groupMixinFields3 := groupMixin[3].Fields()
 	_ = groupMixinFields3
+	groupMixinFields4 := groupMixin[4].Fields()
+	_ = groupMixinFields4
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescCreatedAt is the schema descriptor for created_at field.
@@ -565,8 +623,12 @@ func init() {
 	groupDescMappingID := groupMixinFields2[1].Descriptor()
 	// group.DefaultMappingID holds the default value on creation for the mapping_id field.
 	group.DefaultMappingID = groupDescMappingID.Default.(func() string)
+	// groupDescTags is the schema descriptor for tags field.
+	groupDescTags := groupMixinFields3[0].Descriptor()
+	// group.DefaultTags holds the default value on creation for the tags field.
+	group.DefaultTags = groupDescTags.Default.([]string)
 	// groupDescOwnerID is the schema descriptor for owner_id field.
-	groupDescOwnerID := groupMixinFields3[0].Descriptor()
+	groupDescOwnerID := groupMixinFields4[0].Descriptor()
 	// group.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	group.OwnerIDValidator = groupDescOwnerID.Validators[0].(func(string) error)
 	// groupDescName is the schema descriptor for name field.
@@ -601,8 +663,12 @@ func init() {
 	grouphistoryDescMappingID := grouphistoryFields[10].Descriptor()
 	// grouphistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	grouphistory.DefaultMappingID = grouphistoryDescMappingID.Default.(func() string)
+	// grouphistoryDescTags is the schema descriptor for tags field.
+	grouphistoryDescTags := grouphistoryFields[11].Descriptor()
+	// grouphistory.DefaultTags holds the default value on creation for the tags field.
+	grouphistory.DefaultTags = grouphistoryDescTags.Default.([]string)
 	// grouphistoryDescDisplayName is the schema descriptor for display_name field.
-	grouphistoryDescDisplayName := grouphistoryFields[16].Descriptor()
+	grouphistoryDescDisplayName := grouphistoryFields[17].Descriptor()
 	// grouphistory.DefaultDisplayName holds the default value on creation for the display_name field.
 	grouphistory.DefaultDisplayName = grouphistoryDescDisplayName.Default.(string)
 	// grouphistoryDescID is the schema descriptor for id field.
@@ -687,17 +753,19 @@ func init() {
 		})
 	}
 	groupsettingMixinHooks0 := groupsettingMixin[0].Hooks()
-	groupsettingMixinHooks2 := groupsettingMixin[2].Hooks()
+	groupsettingMixinHooks3 := groupsettingMixin[3].Hooks()
 
 	groupsetting.Hooks[1] = groupsettingMixinHooks0[0]
 
-	groupsetting.Hooks[2] = groupsettingMixinHooks2[0]
-	groupsettingMixinInters2 := groupsettingMixin[2].Interceptors()
-	groupsetting.Interceptors[0] = groupsettingMixinInters2[0]
+	groupsetting.Hooks[2] = groupsettingMixinHooks3[0]
+	groupsettingMixinInters3 := groupsettingMixin[3].Interceptors()
+	groupsetting.Interceptors[0] = groupsettingMixinInters3[0]
 	groupsettingMixinFields0 := groupsettingMixin[0].Fields()
 	_ = groupsettingMixinFields0
 	groupsettingMixinFields1 := groupsettingMixin[1].Fields()
 	_ = groupsettingMixinFields1
+	groupsettingMixinFields2 := groupsettingMixin[2].Fields()
+	_ = groupsettingMixinFields2
 	groupsettingFields := schema.GroupSetting{}.Fields()
 	_ = groupsettingFields
 	// groupsettingDescCreatedAt is the schema descriptor for created_at field.
@@ -715,15 +783,15 @@ func init() {
 	// groupsetting.DefaultMappingID holds the default value on creation for the mapping_id field.
 	groupsetting.DefaultMappingID = groupsettingDescMappingID.Default.(func() string)
 	// groupsettingDescTags is the schema descriptor for tags field.
-	groupsettingDescTags := groupsettingFields[2].Descriptor()
+	groupsettingDescTags := groupsettingMixinFields2[0].Descriptor()
 	// groupsetting.DefaultTags holds the default value on creation for the tags field.
 	groupsetting.DefaultTags = groupsettingDescTags.Default.([]string)
 	// groupsettingDescSyncToSlack is the schema descriptor for sync_to_slack field.
-	groupsettingDescSyncToSlack := groupsettingFields[3].Descriptor()
+	groupsettingDescSyncToSlack := groupsettingFields[2].Descriptor()
 	// groupsetting.DefaultSyncToSlack holds the default value on creation for the sync_to_slack field.
 	groupsetting.DefaultSyncToSlack = groupsettingDescSyncToSlack.Default.(bool)
 	// groupsettingDescSyncToGithub is the schema descriptor for sync_to_github field.
-	groupsettingDescSyncToGithub := groupsettingFields[4].Descriptor()
+	groupsettingDescSyncToGithub := groupsettingFields[3].Descriptor()
 	// groupsetting.DefaultSyncToGithub holds the default value on creation for the sync_to_github field.
 	groupsetting.DefaultSyncToGithub = groupsettingDescSyncToGithub.Default.(bool)
 	// groupsettingDescID is the schema descriptor for id field.
@@ -749,7 +817,7 @@ func init() {
 	// groupsettinghistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	groupsettinghistory.DefaultMappingID = groupsettinghistoryDescMappingID.Default.(func() string)
 	// groupsettinghistoryDescTags is the schema descriptor for tags field.
-	groupsettinghistoryDescTags := groupsettinghistoryFields[13].Descriptor()
+	groupsettinghistoryDescTags := groupsettinghistoryFields[9].Descriptor()
 	// groupsettinghistory.DefaultTags holds the default value on creation for the tags field.
 	groupsettinghistory.DefaultTags = groupsettinghistoryDescTags.Default.([]string)
 	// groupsettinghistoryDescSyncToSlack is the schema descriptor for sync_to_slack field.
@@ -836,24 +904,26 @@ func init() {
 		})
 	}
 	integrationMixinHooks0 := integrationMixin[0].Hooks()
-	integrationMixinHooks2 := integrationMixin[2].Hooks()
 	integrationMixinHooks3 := integrationMixin[3].Hooks()
+	integrationMixinHooks4 := integrationMixin[4].Hooks()
 
 	integration.Hooks[1] = integrationMixinHooks0[0]
 
-	integration.Hooks[2] = integrationMixinHooks2[0]
+	integration.Hooks[2] = integrationMixinHooks3[0]
 
-	integration.Hooks[3] = integrationMixinHooks3[0]
-	integrationMixinInters2 := integrationMixin[2].Interceptors()
+	integration.Hooks[3] = integrationMixinHooks4[0]
 	integrationMixinInters3 := integrationMixin[3].Interceptors()
-	integration.Interceptors[0] = integrationMixinInters2[0]
-	integration.Interceptors[1] = integrationMixinInters3[0]
+	integrationMixinInters4 := integrationMixin[4].Interceptors()
+	integration.Interceptors[0] = integrationMixinInters3[0]
+	integration.Interceptors[1] = integrationMixinInters4[0]
 	integrationMixinFields0 := integrationMixin[0].Fields()
 	_ = integrationMixinFields0
 	integrationMixinFields1 := integrationMixin[1].Fields()
 	_ = integrationMixinFields1
-	integrationMixinFields3 := integrationMixin[3].Fields()
-	_ = integrationMixinFields3
+	integrationMixinFields2 := integrationMixin[2].Fields()
+	_ = integrationMixinFields2
+	integrationMixinFields4 := integrationMixin[4].Fields()
+	_ = integrationMixinFields4
 	integrationFields := schema.Integration{}.Fields()
 	_ = integrationFields
 	// integrationDescCreatedAt is the schema descriptor for created_at field.
@@ -870,8 +940,12 @@ func init() {
 	integrationDescMappingID := integrationMixinFields1[1].Descriptor()
 	// integration.DefaultMappingID holds the default value on creation for the mapping_id field.
 	integration.DefaultMappingID = integrationDescMappingID.Default.(func() string)
+	// integrationDescTags is the schema descriptor for tags field.
+	integrationDescTags := integrationMixinFields2[0].Descriptor()
+	// integration.DefaultTags holds the default value on creation for the tags field.
+	integration.DefaultTags = integrationDescTags.Default.([]string)
 	// integrationDescOwnerID is the schema descriptor for owner_id field.
-	integrationDescOwnerID := integrationMixinFields3[0].Descriptor()
+	integrationDescOwnerID := integrationMixinFields4[0].Descriptor()
 	// integration.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	integration.OwnerIDValidator = integrationDescOwnerID.Validators[0].(func(string) error)
 	// integrationDescName is the schema descriptor for name field.
@@ -900,6 +974,10 @@ func init() {
 	integrationhistoryDescMappingID := integrationhistoryFields[8].Descriptor()
 	// integrationhistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	integrationhistory.DefaultMappingID = integrationhistoryDescMappingID.Default.(func() string)
+	// integrationhistoryDescTags is the schema descriptor for tags field.
+	integrationhistoryDescTags := integrationhistoryFields[9].Descriptor()
+	// integrationhistory.DefaultTags holds the default value on creation for the tags field.
+	integrationhistory.DefaultTags = integrationhistoryDescTags.Default.([]string)
 	// integrationhistoryDescID is the schema descriptor for id field.
 	integrationhistoryDescID := integrationhistoryFields[7].Descriptor()
 	// integrationhistory.DefaultID holds the default value on creation for the id field.
@@ -998,15 +1076,17 @@ func init() {
 	invite.DefaultID = inviteDescID.Default.(func() string)
 	oauthproviderMixin := schema.OauthProvider{}.Mixin()
 	oauthproviderMixinHooks0 := oauthproviderMixin[0].Hooks()
-	oauthproviderMixinHooks2 := oauthproviderMixin[2].Hooks()
+	oauthproviderMixinHooks3 := oauthproviderMixin[3].Hooks()
 	oauthprovider.Hooks[0] = oauthproviderMixinHooks0[0]
-	oauthprovider.Hooks[1] = oauthproviderMixinHooks2[0]
-	oauthproviderMixinInters2 := oauthproviderMixin[2].Interceptors()
-	oauthprovider.Interceptors[0] = oauthproviderMixinInters2[0]
+	oauthprovider.Hooks[1] = oauthproviderMixinHooks3[0]
+	oauthproviderMixinInters3 := oauthproviderMixin[3].Interceptors()
+	oauthprovider.Interceptors[0] = oauthproviderMixinInters3[0]
 	oauthproviderMixinFields0 := oauthproviderMixin[0].Fields()
 	_ = oauthproviderMixinFields0
 	oauthproviderMixinFields1 := oauthproviderMixin[1].Fields()
 	_ = oauthproviderMixinFields1
+	oauthproviderMixinFields2 := oauthproviderMixin[2].Fields()
+	_ = oauthproviderMixinFields2
 	oauthproviderFields := schema.OauthProvider{}.Fields()
 	_ = oauthproviderFields
 	// oauthproviderDescCreatedAt is the schema descriptor for created_at field.
@@ -1023,6 +1103,10 @@ func init() {
 	oauthproviderDescMappingID := oauthproviderMixinFields1[1].Descriptor()
 	// oauthprovider.DefaultMappingID holds the default value on creation for the mapping_id field.
 	oauthprovider.DefaultMappingID = oauthproviderDescMappingID.Default.(func() string)
+	// oauthproviderDescTags is the schema descriptor for tags field.
+	oauthproviderDescTags := oauthproviderMixinFields2[0].Descriptor()
+	// oauthprovider.DefaultTags holds the default value on creation for the tags field.
+	oauthprovider.DefaultTags = oauthproviderDescTags.Default.([]string)
 	// oauthproviderDescID is the schema descriptor for id field.
 	oauthproviderDescID := oauthproviderMixinFields1[0].Descriptor()
 	// oauthprovider.DefaultID holds the default value on creation for the id field.
@@ -1045,6 +1129,10 @@ func init() {
 	oauthproviderhistoryDescMappingID := oauthproviderhistoryFields[8].Descriptor()
 	// oauthproviderhistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	oauthproviderhistory.DefaultMappingID = oauthproviderhistoryDescMappingID.Default.(func() string)
+	// oauthproviderhistoryDescTags is the schema descriptor for tags field.
+	oauthproviderhistoryDescTags := oauthproviderhistoryFields[9].Descriptor()
+	// oauthproviderhistory.DefaultTags holds the default value on creation for the tags field.
+	oauthproviderhistory.DefaultTags = oauthproviderhistoryDescTags.Default.([]string)
 	// oauthproviderhistoryDescID is the schema descriptor for id field.
 	oauthproviderhistoryDescID := oauthproviderhistoryFields[7].Descriptor()
 	// oauthproviderhistory.DefaultID holds the default value on creation for the id field.
@@ -1052,12 +1140,18 @@ func init() {
 	ohauthtootokenMixin := schema.OhAuthTooToken{}.Mixin()
 	ohauthtootokenMixinFields0 := ohauthtootokenMixin[0].Fields()
 	_ = ohauthtootokenMixinFields0
+	ohauthtootokenMixinFields1 := ohauthtootokenMixin[1].Fields()
+	_ = ohauthtootokenMixinFields1
 	ohauthtootokenFields := schema.OhAuthTooToken{}.Fields()
 	_ = ohauthtootokenFields
 	// ohauthtootokenDescMappingID is the schema descriptor for mapping_id field.
 	ohauthtootokenDescMappingID := ohauthtootokenMixinFields0[1].Descriptor()
 	// ohauthtootoken.DefaultMappingID holds the default value on creation for the mapping_id field.
 	ohauthtootoken.DefaultMappingID = ohauthtootokenDescMappingID.Default.(func() string)
+	// ohauthtootokenDescTags is the schema descriptor for tags field.
+	ohauthtootokenDescTags := ohauthtootokenMixinFields1[0].Descriptor()
+	// ohauthtootoken.DefaultTags holds the default value on creation for the tags field.
+	ohauthtootoken.DefaultTags = ohauthtootokenDescTags.Default.([]string)
 	// ohauthtootokenDescClientID is the schema descriptor for client_id field.
 	ohauthtootokenDescClientID := ohauthtootokenFields[0].Descriptor()
 	// ohauthtootoken.ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
@@ -1170,22 +1264,24 @@ func init() {
 		})
 	}
 	organizationMixinHooks0 := organizationMixin[0].Hooks()
-	organizationMixinHooks2 := organizationMixin[2].Hooks()
+	organizationMixinHooks3 := organizationMixin[3].Hooks()
 	organizationHooks := schema.Organization{}.Hooks()
 
 	organization.Hooks[1] = organizationMixinHooks0[0]
 
-	organization.Hooks[2] = organizationMixinHooks2[0]
+	organization.Hooks[2] = organizationMixinHooks3[0]
 
 	organization.Hooks[3] = organizationHooks[0]
-	organizationMixinInters2 := organizationMixin[2].Interceptors()
+	organizationMixinInters3 := organizationMixin[3].Interceptors()
 	organizationInters := schema.Organization{}.Interceptors()
-	organization.Interceptors[0] = organizationMixinInters2[0]
+	organization.Interceptors[0] = organizationMixinInters3[0]
 	organization.Interceptors[1] = organizationInters[0]
 	organizationMixinFields0 := organizationMixin[0].Fields()
 	_ = organizationMixinFields0
 	organizationMixinFields1 := organizationMixin[1].Fields()
 	_ = organizationMixinFields1
+	organizationMixinFields2 := organizationMixin[2].Fields()
+	_ = organizationMixinFields2
 	organizationFields := schema.Organization{}.Fields()
 	_ = organizationFields
 	// organizationDescCreatedAt is the schema descriptor for created_at field.
@@ -1202,6 +1298,10 @@ func init() {
 	organizationDescMappingID := organizationMixinFields1[1].Descriptor()
 	// organization.DefaultMappingID holds the default value on creation for the mapping_id field.
 	organization.DefaultMappingID = organizationDescMappingID.Default.(func() string)
+	// organizationDescTags is the schema descriptor for tags field.
+	organizationDescTags := organizationMixinFields2[0].Descriptor()
+	// organization.DefaultTags holds the default value on creation for the tags field.
+	organization.DefaultTags = organizationDescTags.Default.([]string)
 	// organizationDescName is the schema descriptor for name field.
 	organizationDescName := organizationFields[0].Descriptor()
 	// organization.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -1274,16 +1374,20 @@ func init() {
 	organizationhistoryDescMappingID := organizationhistoryFields[8].Descriptor()
 	// organizationhistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	organizationhistory.DefaultMappingID = organizationhistoryDescMappingID.Default.(func() string)
+	// organizationhistoryDescTags is the schema descriptor for tags field.
+	organizationhistoryDescTags := organizationhistoryFields[9].Descriptor()
+	// organizationhistory.DefaultTags holds the default value on creation for the tags field.
+	organizationhistory.DefaultTags = organizationhistoryDescTags.Default.([]string)
 	// organizationhistoryDescDisplayName is the schema descriptor for display_name field.
-	organizationhistoryDescDisplayName := organizationhistoryFields[12].Descriptor()
+	organizationhistoryDescDisplayName := organizationhistoryFields[13].Descriptor()
 	// organizationhistory.DefaultDisplayName holds the default value on creation for the display_name field.
 	organizationhistory.DefaultDisplayName = organizationhistoryDescDisplayName.Default.(string)
 	// organizationhistoryDescPersonalOrg is the schema descriptor for personal_org field.
-	organizationhistoryDescPersonalOrg := organizationhistoryFields[15].Descriptor()
+	organizationhistoryDescPersonalOrg := organizationhistoryFields[16].Descriptor()
 	// organizationhistory.DefaultPersonalOrg holds the default value on creation for the personal_org field.
 	organizationhistory.DefaultPersonalOrg = organizationhistoryDescPersonalOrg.Default.(bool)
 	// organizationhistoryDescDedicatedDb is the schema descriptor for dedicated_db field.
-	organizationhistoryDescDedicatedDb := organizationhistoryFields[17].Descriptor()
+	organizationhistoryDescDedicatedDb := organizationhistoryFields[18].Descriptor()
 	// organizationhistory.DefaultDedicatedDb holds the default value on creation for the dedicated_db field.
 	organizationhistory.DefaultDedicatedDb = organizationhistoryDescDedicatedDb.Default.(bool)
 	// organizationhistoryDescID is the schema descriptor for id field.
@@ -1301,19 +1405,21 @@ func init() {
 		})
 	}
 	organizationsettingMixinHooks0 := organizationsettingMixin[0].Hooks()
-	organizationsettingMixinHooks2 := organizationsettingMixin[2].Hooks()
+	organizationsettingMixinHooks3 := organizationsettingMixin[3].Hooks()
 
 	organizationsetting.Hooks[1] = organizationsettingMixinHooks0[0]
 
-	organizationsetting.Hooks[2] = organizationsettingMixinHooks2[0]
-	organizationsettingMixinInters2 := organizationsettingMixin[2].Interceptors()
+	organizationsetting.Hooks[2] = organizationsettingMixinHooks3[0]
+	organizationsettingMixinInters3 := organizationsettingMixin[3].Interceptors()
 	organizationsettingInters := schema.OrganizationSetting{}.Interceptors()
-	organizationsetting.Interceptors[0] = organizationsettingMixinInters2[0]
+	organizationsetting.Interceptors[0] = organizationsettingMixinInters3[0]
 	organizationsetting.Interceptors[1] = organizationsettingInters[0]
 	organizationsettingMixinFields0 := organizationsettingMixin[0].Fields()
 	_ = organizationsettingMixinFields0
 	organizationsettingMixinFields1 := organizationsettingMixin[1].Fields()
 	_ = organizationsettingMixinFields1
+	organizationsettingMixinFields2 := organizationsettingMixin[2].Fields()
+	_ = organizationsettingMixinFields2
 	organizationsettingFields := schema.OrganizationSetting{}.Fields()
 	_ = organizationsettingFields
 	// organizationsettingDescCreatedAt is the schema descriptor for created_at field.
@@ -1330,6 +1436,10 @@ func init() {
 	organizationsettingDescMappingID := organizationsettingMixinFields1[1].Descriptor()
 	// organizationsetting.DefaultMappingID holds the default value on creation for the mapping_id field.
 	organizationsetting.DefaultMappingID = organizationsettingDescMappingID.Default.(func() string)
+	// organizationsettingDescTags is the schema descriptor for tags field.
+	organizationsettingDescTags := organizationsettingMixinFields2[0].Descriptor()
+	// organizationsetting.DefaultTags holds the default value on creation for the tags field.
+	organizationsetting.DefaultTags = organizationsettingDescTags.Default.([]string)
 	// organizationsettingDescDomains is the schema descriptor for domains field.
 	organizationsettingDescDomains := organizationsettingFields[0].Descriptor()
 	// organizationsetting.DomainsValidator is a validator for the "domains" field. It is called by the builders before save.
@@ -1342,10 +1452,6 @@ func init() {
 	organizationsettingDescBillingPhone := organizationsettingFields[3].Descriptor()
 	// organizationsetting.BillingPhoneValidator is a validator for the "billing_phone" field. It is called by the builders before save.
 	organizationsetting.BillingPhoneValidator = organizationsettingDescBillingPhone.Validators[0].(func(string) error)
-	// organizationsettingDescTags is the schema descriptor for tags field.
-	organizationsettingDescTags := organizationsettingFields[6].Descriptor()
-	// organizationsetting.DefaultTags holds the default value on creation for the tags field.
-	organizationsetting.DefaultTags = organizationsettingDescTags.Default.([]string)
 	// organizationsettingDescID is the schema descriptor for id field.
 	organizationsettingDescID := organizationsettingMixinFields1[0].Descriptor()
 	// organizationsetting.DefaultID holds the default value on creation for the id field.
@@ -1369,7 +1475,7 @@ func init() {
 	// organizationsettinghistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	organizationsettinghistory.DefaultMappingID = organizationsettinghistoryDescMappingID.Default.(func() string)
 	// organizationsettinghistoryDescTags is the schema descriptor for tags field.
-	organizationsettinghistoryDescTags := organizationsettinghistoryFields[17].Descriptor()
+	organizationsettinghistoryDescTags := organizationsettinghistoryFields[9].Descriptor()
 	// organizationsettinghistory.DefaultTags holds the default value on creation for the tags field.
 	organizationsettinghistory.DefaultTags = organizationsettinghistoryDescTags.Default.([]string)
 	// organizationsettinghistoryDescID is the schema descriptor for id field.
@@ -1471,15 +1577,17 @@ func init() {
 
 	personalaccesstoken.Hooks[4] = personalaccesstokenHooks[1]
 	personalaccesstokenMixinInters1 := personalaccesstokenMixin[1].Interceptors()
-	personalaccesstokenMixinInters3 := personalaccesstokenMixin[3].Interceptors()
+	personalaccesstokenMixinInters4 := personalaccesstokenMixin[4].Interceptors()
 	personalaccesstokenInters := schema.PersonalAccessToken{}.Interceptors()
 	personalaccesstoken.Interceptors[0] = personalaccesstokenMixinInters1[0]
-	personalaccesstoken.Interceptors[1] = personalaccesstokenMixinInters3[0]
+	personalaccesstoken.Interceptors[1] = personalaccesstokenMixinInters4[0]
 	personalaccesstoken.Interceptors[2] = personalaccesstokenInters[0]
 	personalaccesstokenMixinFields0 := personalaccesstokenMixin[0].Fields()
 	_ = personalaccesstokenMixinFields0
 	personalaccesstokenMixinFields2 := personalaccesstokenMixin[2].Fields()
 	_ = personalaccesstokenMixinFields2
+	personalaccesstokenMixinFields3 := personalaccesstokenMixin[3].Fields()
+	_ = personalaccesstokenMixinFields3
 	personalaccesstokenFields := schema.PersonalAccessToken{}.Fields()
 	_ = personalaccesstokenFields
 	// personalaccesstokenDescCreatedAt is the schema descriptor for created_at field.
@@ -1496,6 +1604,10 @@ func init() {
 	personalaccesstokenDescMappingID := personalaccesstokenMixinFields2[1].Descriptor()
 	// personalaccesstoken.DefaultMappingID holds the default value on creation for the mapping_id field.
 	personalaccesstoken.DefaultMappingID = personalaccesstokenDescMappingID.Default.(func() string)
+	// personalaccesstokenDescTags is the schema descriptor for tags field.
+	personalaccesstokenDescTags := personalaccesstokenMixinFields3[0].Descriptor()
+	// personalaccesstoken.DefaultTags holds the default value on creation for the tags field.
+	personalaccesstoken.DefaultTags = personalaccesstokenDescTags.Default.([]string)
 	// personalaccesstokenDescName is the schema descriptor for name field.
 	personalaccesstokenDescName := personalaccesstokenFields[0].Descriptor()
 	// personalaccesstoken.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -1519,27 +1631,29 @@ func init() {
 		})
 	}
 	subscriberMixinHooks0 := subscriberMixin[0].Hooks()
-	subscriberMixinHooks2 := subscriberMixin[2].Hooks()
 	subscriberMixinHooks3 := subscriberMixin[3].Hooks()
+	subscriberMixinHooks4 := subscriberMixin[4].Hooks()
 	subscriberHooks := schema.Subscriber{}.Hooks()
 
 	subscriber.Hooks[1] = subscriberMixinHooks0[0]
 
-	subscriber.Hooks[2] = subscriberMixinHooks2[0]
+	subscriber.Hooks[2] = subscriberMixinHooks3[0]
 
-	subscriber.Hooks[3] = subscriberMixinHooks3[0]
+	subscriber.Hooks[3] = subscriberMixinHooks4[0]
 
 	subscriber.Hooks[4] = subscriberHooks[0]
-	subscriberMixinInters2 := subscriberMixin[2].Interceptors()
 	subscriberMixinInters3 := subscriberMixin[3].Interceptors()
-	subscriber.Interceptors[0] = subscriberMixinInters2[0]
-	subscriber.Interceptors[1] = subscriberMixinInters3[0]
+	subscriberMixinInters4 := subscriberMixin[4].Interceptors()
+	subscriber.Interceptors[0] = subscriberMixinInters3[0]
+	subscriber.Interceptors[1] = subscriberMixinInters4[0]
 	subscriberMixinFields0 := subscriberMixin[0].Fields()
 	_ = subscriberMixinFields0
 	subscriberMixinFields1 := subscriberMixin[1].Fields()
 	_ = subscriberMixinFields1
-	subscriberMixinFields3 := subscriberMixin[3].Fields()
-	_ = subscriberMixinFields3
+	subscriberMixinFields2 := subscriberMixin[2].Fields()
+	_ = subscriberMixinFields2
+	subscriberMixinFields4 := subscriberMixin[4].Fields()
+	_ = subscriberMixinFields4
 	subscriberFields := schema.Subscriber{}.Fields()
 	_ = subscriberFields
 	// subscriberDescCreatedAt is the schema descriptor for created_at field.
@@ -1556,8 +1670,12 @@ func init() {
 	subscriberDescMappingID := subscriberMixinFields1[1].Descriptor()
 	// subscriber.DefaultMappingID holds the default value on creation for the mapping_id field.
 	subscriber.DefaultMappingID = subscriberDescMappingID.Default.(func() string)
+	// subscriberDescTags is the schema descriptor for tags field.
+	subscriberDescTags := subscriberMixinFields2[0].Descriptor()
+	// subscriber.DefaultTags holds the default value on creation for the tags field.
+	subscriber.DefaultTags = subscriberDescTags.Default.([]string)
 	// subscriberDescOwnerID is the schema descriptor for owner_id field.
-	subscriberDescOwnerID := subscriberMixinFields3[0].Descriptor()
+	subscriberDescOwnerID := subscriberMixinFields4[0].Descriptor()
 	// subscriber.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	subscriber.OwnerIDValidator = subscriberDescOwnerID.Validators[0].(func(string) error)
 	// subscriberDescEmail is the schema descriptor for email field.
@@ -1605,6 +1723,8 @@ func init() {
 	_ = tfasettingMixinFields0
 	tfasettingMixinFields1 := tfasettingMixin[1].Fields()
 	_ = tfasettingMixinFields1
+	tfasettingMixinFields3 := tfasettingMixin[3].Fields()
+	_ = tfasettingMixinFields3
 	tfasettingFields := schema.TFASetting{}.Fields()
 	_ = tfasettingFields
 	// tfasettingDescCreatedAt is the schema descriptor for created_at field.
@@ -1621,6 +1741,10 @@ func init() {
 	tfasettingDescMappingID := tfasettingMixinFields1[1].Descriptor()
 	// tfasetting.DefaultMappingID holds the default value on creation for the mapping_id field.
 	tfasetting.DefaultMappingID = tfasettingDescMappingID.Default.(func() string)
+	// tfasettingDescTags is the schema descriptor for tags field.
+	tfasettingDescTags := tfasettingMixinFields3[0].Descriptor()
+	// tfasetting.DefaultTags holds the default value on creation for the tags field.
+	tfasetting.DefaultTags = tfasettingDescTags.Default.([]string)
 	// tfasettingDescVerified is the schema descriptor for verified field.
 	tfasettingDescVerified := tfasettingFields[1].Descriptor()
 	// tfasetting.DefaultVerified holds the default value on creation for the verified field.
@@ -1644,20 +1768,22 @@ func init() {
 	templateMixin := schema.Template{}.Mixin()
 	templateMixinHooks0 := templateMixin[0].Hooks()
 	templateMixinHooks1 := templateMixin[1].Hooks()
-	templateMixinHooks3 := templateMixin[3].Hooks()
+	templateMixinHooks4 := templateMixin[4].Hooks()
 	template.Hooks[0] = templateMixinHooks0[0]
 	template.Hooks[1] = templateMixinHooks1[0]
-	template.Hooks[2] = templateMixinHooks3[0]
+	template.Hooks[2] = templateMixinHooks4[0]
 	templateMixinInters1 := templateMixin[1].Interceptors()
-	templateMixinInters3 := templateMixin[3].Interceptors()
+	templateMixinInters4 := templateMixin[4].Interceptors()
 	template.Interceptors[0] = templateMixinInters1[0]
-	template.Interceptors[1] = templateMixinInters3[0]
+	template.Interceptors[1] = templateMixinInters4[0]
 	templateMixinFields0 := templateMixin[0].Fields()
 	_ = templateMixinFields0
 	templateMixinFields2 := templateMixin[2].Fields()
 	_ = templateMixinFields2
 	templateMixinFields3 := templateMixin[3].Fields()
 	_ = templateMixinFields3
+	templateMixinFields4 := templateMixin[4].Fields()
+	_ = templateMixinFields4
 	templateFields := schema.Template{}.Fields()
 	_ = templateFields
 	// templateDescCreatedAt is the schema descriptor for created_at field.
@@ -1674,8 +1800,12 @@ func init() {
 	templateDescMappingID := templateMixinFields2[1].Descriptor()
 	// template.DefaultMappingID holds the default value on creation for the mapping_id field.
 	template.DefaultMappingID = templateDescMappingID.Default.(func() string)
+	// templateDescTags is the schema descriptor for tags field.
+	templateDescTags := templateMixinFields3[0].Descriptor()
+	// template.DefaultTags holds the default value on creation for the tags field.
+	template.DefaultTags = templateDescTags.Default.([]string)
 	// templateDescOwnerID is the schema descriptor for owner_id field.
-	templateDescOwnerID := templateMixinFields3[0].Descriptor()
+	templateDescOwnerID := templateMixinFields4[0].Descriptor()
 	// template.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	template.OwnerIDValidator = templateDescOwnerID.Validators[0].(func(string) error)
 	// templateDescName is the schema descriptor for name field.
@@ -1704,6 +1834,10 @@ func init() {
 	templatehistoryDescMappingID := templatehistoryFields[10].Descriptor()
 	// templatehistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	templatehistory.DefaultMappingID = templatehistoryDescMappingID.Default.(func() string)
+	// templatehistoryDescTags is the schema descriptor for tags field.
+	templatehistoryDescTags := templatehistoryFields[11].Descriptor()
+	// templatehistory.DefaultTags holds the default value on creation for the tags field.
+	templatehistory.DefaultTags = templatehistoryDescTags.Default.([]string)
 	// templatehistoryDescID is the schema descriptor for id field.
 	templatehistoryDescID := templatehistoryFields[9].Descriptor()
 	// templatehistory.DefaultID holds the default value on creation for the id field.
@@ -1737,6 +1871,8 @@ func init() {
 	_ = userMixinFields0
 	userMixinFields2 := userMixin[2].Fields()
 	_ = userMixinFields2
+	userMixinFields3 := userMixin[3].Fields()
+	_ = userMixinFields3
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.
@@ -1753,6 +1889,10 @@ func init() {
 	userDescMappingID := userMixinFields2[1].Descriptor()
 	// user.DefaultMappingID holds the default value on creation for the mapping_id field.
 	user.DefaultMappingID = userDescMappingID.Default.(func() string)
+	// userDescTags is the schema descriptor for tags field.
+	userDescTags := userMixinFields3[0].Descriptor()
+	// user.DefaultTags holds the default value on creation for the tags field.
+	user.DefaultTags = userDescTags.Default.([]string)
 	// userDescEmail is the schema descriptor for email field.
 	userDescEmail := userFields[0].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
@@ -1836,6 +1976,10 @@ func init() {
 	userhistoryDescMappingID := userhistoryFields[10].Descriptor()
 	// userhistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	userhistory.DefaultMappingID = userhistoryDescMappingID.Default.(func() string)
+	// userhistoryDescTags is the schema descriptor for tags field.
+	userhistoryDescTags := userhistoryFields[11].Descriptor()
+	// userhistory.DefaultTags holds the default value on creation for the tags field.
+	userhistory.DefaultTags = userhistoryDescTags.Default.([]string)
 	// userhistoryDescID is the schema descriptor for id field.
 	userhistoryDescID := userhistoryFields[9].Descriptor()
 	// userhistory.DefaultID holds the default value on creation for the id field.
@@ -1851,22 +1995,24 @@ func init() {
 		})
 	}
 	usersettingMixinHooks0 := usersettingMixin[0].Hooks()
-	usersettingMixinHooks2 := usersettingMixin[2].Hooks()
+	usersettingMixinHooks3 := usersettingMixin[3].Hooks()
 	usersettingHooks := schema.UserSetting{}.Hooks()
 
 	usersetting.Hooks[1] = usersettingMixinHooks0[0]
 
-	usersetting.Hooks[2] = usersettingMixinHooks2[0]
+	usersetting.Hooks[2] = usersettingMixinHooks3[0]
 
 	usersetting.Hooks[3] = usersettingHooks[0]
-	usersettingMixinInters2 := usersettingMixin[2].Interceptors()
+	usersettingMixinInters3 := usersettingMixin[3].Interceptors()
 	usersettingInters := schema.UserSetting{}.Interceptors()
-	usersetting.Interceptors[0] = usersettingMixinInters2[0]
+	usersetting.Interceptors[0] = usersettingMixinInters3[0]
 	usersetting.Interceptors[1] = usersettingInters[0]
 	usersettingMixinFields0 := usersettingMixin[0].Fields()
 	_ = usersettingMixinFields0
 	usersettingMixinFields1 := usersettingMixin[1].Fields()
 	_ = usersettingMixinFields1
+	usersettingMixinFields2 := usersettingMixin[2].Fields()
+	_ = usersettingMixinFields2
 	usersettingFields := schema.UserSetting{}.Fields()
 	_ = usersettingFields
 	// usersettingDescCreatedAt is the schema descriptor for created_at field.
@@ -1883,6 +2029,10 @@ func init() {
 	usersettingDescMappingID := usersettingMixinFields1[1].Descriptor()
 	// usersetting.DefaultMappingID holds the default value on creation for the mapping_id field.
 	usersetting.DefaultMappingID = usersettingDescMappingID.Default.(func() string)
+	// usersettingDescTags is the schema descriptor for tags field.
+	usersettingDescTags := usersettingMixinFields2[0].Descriptor()
+	// usersetting.DefaultTags holds the default value on creation for the tags field.
+	usersetting.DefaultTags = usersettingDescTags.Default.([]string)
 	// usersettingDescLocked is the schema descriptor for locked field.
 	usersettingDescLocked := usersettingFields[1].Descriptor()
 	// usersetting.DefaultLocked holds the default value on creation for the locked field.
@@ -1892,11 +2042,11 @@ func init() {
 	// usersetting.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
 	usersetting.DefaultEmailConfirmed = usersettingDescEmailConfirmed.Default.(bool)
 	// usersettingDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
-	usersettingDescIsWebauthnAllowed := usersettingFields[7].Descriptor()
+	usersettingDescIsWebauthnAllowed := usersettingFields[6].Descriptor()
 	// usersetting.DefaultIsWebauthnAllowed holds the default value on creation for the is_webauthn_allowed field.
 	usersetting.DefaultIsWebauthnAllowed = usersettingDescIsWebauthnAllowed.Default.(bool)
 	// usersettingDescIsTfaEnabled is the schema descriptor for is_tfa_enabled field.
-	usersettingDescIsTfaEnabled := usersettingFields[8].Descriptor()
+	usersettingDescIsTfaEnabled := usersettingFields[7].Descriptor()
 	// usersetting.DefaultIsTfaEnabled holds the default value on creation for the is_tfa_enabled field.
 	usersetting.DefaultIsTfaEnabled = usersettingDescIsTfaEnabled.Default.(bool)
 	// usersettingDescID is the schema descriptor for id field.
@@ -1921,12 +2071,16 @@ func init() {
 	usersettinghistoryDescMappingID := usersettinghistoryFields[8].Descriptor()
 	// usersettinghistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	usersettinghistory.DefaultMappingID = usersettinghistoryDescMappingID.Default.(func() string)
+	// usersettinghistoryDescTags is the schema descriptor for tags field.
+	usersettinghistoryDescTags := usersettinghistoryFields[9].Descriptor()
+	// usersettinghistory.DefaultTags holds the default value on creation for the tags field.
+	usersettinghistory.DefaultTags = usersettinghistoryDescTags.Default.([]string)
 	// usersettinghistoryDescLocked is the schema descriptor for locked field.
-	usersettinghistoryDescLocked := usersettinghistoryFields[12].Descriptor()
+	usersettinghistoryDescLocked := usersettinghistoryFields[13].Descriptor()
 	// usersettinghistory.DefaultLocked holds the default value on creation for the locked field.
 	usersettinghistory.DefaultLocked = usersettinghistoryDescLocked.Default.(bool)
 	// usersettinghistoryDescEmailConfirmed is the schema descriptor for email_confirmed field.
-	usersettinghistoryDescEmailConfirmed := usersettinghistoryFields[16].Descriptor()
+	usersettinghistoryDescEmailConfirmed := usersettinghistoryFields[17].Descriptor()
 	// usersettinghistory.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
 	usersettinghistory.DefaultEmailConfirmed = usersettinghistoryDescEmailConfirmed.Default.(bool)
 	// usersettinghistoryDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
@@ -1944,12 +2098,14 @@ func init() {
 	webauthnMixin := schema.Webauthn{}.Mixin()
 	webauthnMixinHooks0 := webauthnMixin[0].Hooks()
 	webauthn.Hooks[0] = webauthnMixinHooks0[0]
-	webauthnMixinInters2 := webauthnMixin[2].Interceptors()
-	webauthn.Interceptors[0] = webauthnMixinInters2[0]
+	webauthnMixinInters3 := webauthnMixin[3].Interceptors()
+	webauthn.Interceptors[0] = webauthnMixinInters3[0]
 	webauthnMixinFields0 := webauthnMixin[0].Fields()
 	_ = webauthnMixinFields0
 	webauthnMixinFields1 := webauthnMixin[1].Fields()
 	_ = webauthnMixinFields1
+	webauthnMixinFields2 := webauthnMixin[2].Fields()
+	_ = webauthnMixinFields2
 	webauthnFields := schema.Webauthn{}.Fields()
 	_ = webauthnFields
 	// webauthnDescCreatedAt is the schema descriptor for created_at field.
@@ -1966,6 +2122,10 @@ func init() {
 	webauthnDescMappingID := webauthnMixinFields1[1].Descriptor()
 	// webauthn.DefaultMappingID holds the default value on creation for the mapping_id field.
 	webauthn.DefaultMappingID = webauthnDescMappingID.Default.(func() string)
+	// webauthnDescTags is the schema descriptor for tags field.
+	webauthnDescTags := webauthnMixinFields2[0].Descriptor()
+	// webauthn.DefaultTags holds the default value on creation for the tags field.
+	webauthn.DefaultTags = webauthnDescTags.Default.([]string)
 	// webauthnDescBackupEligible is the schema descriptor for backup_eligible field.
 	webauthnDescBackupEligible := webauthnFields[6].Descriptor()
 	// webauthn.DefaultBackupEligible holds the default value on creation for the backup_eligible field.
@@ -1988,15 +2148,17 @@ func init() {
 	webauthn.DefaultID = webauthnDescID.Default.(func() string)
 	webhookMixin := schema.Webhook{}.Mixin()
 	webhookMixinHooks0 := webhookMixin[0].Hooks()
-	webhookMixinHooks2 := webhookMixin[2].Hooks()
+	webhookMixinHooks3 := webhookMixin[3].Hooks()
 	webhook.Hooks[0] = webhookMixinHooks0[0]
-	webhook.Hooks[1] = webhookMixinHooks2[0]
-	webhookMixinInters2 := webhookMixin[2].Interceptors()
-	webhook.Interceptors[0] = webhookMixinInters2[0]
+	webhook.Hooks[1] = webhookMixinHooks3[0]
+	webhookMixinInters3 := webhookMixin[3].Interceptors()
+	webhook.Interceptors[0] = webhookMixinInters3[0]
 	webhookMixinFields0 := webhookMixin[0].Fields()
 	_ = webhookMixinFields0
 	webhookMixinFields1 := webhookMixin[1].Fields()
 	_ = webhookMixinFields1
+	webhookMixinFields2 := webhookMixin[2].Fields()
+	_ = webhookMixinFields2
 	webhookFields := schema.Webhook{}.Fields()
 	_ = webhookFields
 	// webhookDescCreatedAt is the schema descriptor for created_at field.
@@ -2013,6 +2175,10 @@ func init() {
 	webhookDescMappingID := webhookMixinFields1[1].Descriptor()
 	// webhook.DefaultMappingID holds the default value on creation for the mapping_id field.
 	webhook.DefaultMappingID = webhookDescMappingID.Default.(func() string)
+	// webhookDescTags is the schema descriptor for tags field.
+	webhookDescTags := webhookMixinFields2[0].Descriptor()
+	// webhook.DefaultTags holds the default value on creation for the tags field.
+	webhook.DefaultTags = webhookDescTags.Default.([]string)
 	// webhookDescName is the schema descriptor for name field.
 	webhookDescName := webhookFields[0].Descriptor()
 	// webhook.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -2051,12 +2217,16 @@ func init() {
 	webhookhistoryDescMappingID := webhookhistoryFields[8].Descriptor()
 	// webhookhistory.DefaultMappingID holds the default value on creation for the mapping_id field.
 	webhookhistory.DefaultMappingID = webhookhistoryDescMappingID.Default.(func() string)
+	// webhookhistoryDescTags is the schema descriptor for tags field.
+	webhookhistoryDescTags := webhookhistoryFields[9].Descriptor()
+	// webhookhistory.DefaultTags holds the default value on creation for the tags field.
+	webhookhistory.DefaultTags = webhookhistoryDescTags.Default.([]string)
 	// webhookhistoryDescEnabled is the schema descriptor for enabled field.
-	webhookhistoryDescEnabled := webhookhistoryFields[15].Descriptor()
+	webhookhistoryDescEnabled := webhookhistoryFields[16].Descriptor()
 	// webhookhistory.DefaultEnabled holds the default value on creation for the enabled field.
 	webhookhistory.DefaultEnabled = webhookhistoryDescEnabled.Default.(bool)
 	// webhookhistoryDescFailures is the schema descriptor for failures field.
-	webhookhistoryDescFailures := webhookhistoryFields[19].Descriptor()
+	webhookhistoryDescFailures := webhookhistoryFields[20].Descriptor()
 	// webhookhistory.DefaultFailures holds the default value on creation for the failures field.
 	webhookhistory.DefaultFailures = webhookhistoryDescFailures.Default.(int)
 	// webhookhistoryDescID is the schema descriptor for id field.

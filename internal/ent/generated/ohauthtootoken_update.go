@@ -33,6 +33,24 @@ func (oattu *OhAuthTooTokenUpdate) Where(ps ...predicate.OhAuthTooToken) *OhAuth
 	return oattu
 }
 
+// SetTags sets the "tags" field.
+func (oattu *OhAuthTooTokenUpdate) SetTags(s []string) *OhAuthTooTokenUpdate {
+	oattu.mutation.SetTags(s)
+	return oattu
+}
+
+// AppendTags appends s to the "tags" field.
+func (oattu *OhAuthTooTokenUpdate) AppendTags(s []string) *OhAuthTooTokenUpdate {
+	oattu.mutation.AppendTags(s)
+	return oattu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (oattu *OhAuthTooTokenUpdate) ClearTags() *OhAuthTooTokenUpdate {
+	oattu.mutation.ClearTags()
+	return oattu
+}
+
 // SetClientID sets the "client_id" field.
 func (oattu *OhAuthTooTokenUpdate) SetClientID(s string) *OhAuthTooTokenUpdate {
 	oattu.mutation.SetClientID(s)
@@ -364,6 +382,17 @@ func (oattu *OhAuthTooTokenUpdate) sqlSave(ctx context.Context) (n int, err erro
 			}
 		}
 	}
+	if value, ok := oattu.mutation.Tags(); ok {
+		_spec.SetField(ohauthtootoken.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := oattu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, ohauthtootoken.FieldTags, value)
+		})
+	}
+	if oattu.mutation.TagsCleared() {
+		_spec.ClearField(ohauthtootoken.FieldTags, field.TypeJSON)
+	}
 	if value, ok := oattu.mutation.ClientID(); ok {
 		_spec.SetField(ohauthtootoken.FieldClientID, field.TypeString, value)
 	}
@@ -540,6 +569,24 @@ type OhAuthTooTokenUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *OhAuthTooTokenMutation
+}
+
+// SetTags sets the "tags" field.
+func (oattuo *OhAuthTooTokenUpdateOne) SetTags(s []string) *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.SetTags(s)
+	return oattuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (oattuo *OhAuthTooTokenUpdateOne) AppendTags(s []string) *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.AppendTags(s)
+	return oattuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (oattuo *OhAuthTooTokenUpdateOne) ClearTags() *OhAuthTooTokenUpdateOne {
+	oattuo.mutation.ClearTags()
+	return oattuo
 }
 
 // SetClientID sets the "client_id" field.
@@ -902,6 +949,17 @@ func (oattuo *OhAuthTooTokenUpdateOne) sqlSave(ctx context.Context) (_node *OhAu
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := oattuo.mutation.Tags(); ok {
+		_spec.SetField(ohauthtootoken.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := oattuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, ohauthtootoken.FieldTags, value)
+		})
+	}
+	if oattuo.mutation.TagsCleared() {
+		_spec.ClearField(ohauthtootoken.FieldTags, field.TypeJSON)
 	}
 	if value, ok := oattuo.mutation.ClientID(); ok {
 		_spec.SetField(ohauthtootoken.FieldClientID, field.TypeString, value)

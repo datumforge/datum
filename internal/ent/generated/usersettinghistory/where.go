@@ -601,6 +601,16 @@ func MappingIDContainsFold(v string) predicate.UserSettingHistory {
 	return predicate.UserSettingHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.UserSettingHistory {
+	return predicate.UserSettingHistory(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.UserSettingHistory {
+	return predicate.UserSettingHistory(sql.FieldNotNull(FieldTags))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.UserSettingHistory {
 	return predicate.UserSettingHistory(sql.FieldEQ(FieldDeletedAt, v))
@@ -949,16 +959,6 @@ func EmailConfirmedEQ(v bool) predicate.UserSettingHistory {
 // EmailConfirmedNEQ applies the NEQ predicate on the "email_confirmed" field.
 func EmailConfirmedNEQ(v bool) predicate.UserSettingHistory {
 	return predicate.UserSettingHistory(sql.FieldNEQ(FieldEmailConfirmed, v))
-}
-
-// TagsIsNil applies the IsNil predicate on the "tags" field.
-func TagsIsNil() predicate.UserSettingHistory {
-	return predicate.UserSettingHistory(sql.FieldIsNull(FieldTags))
-}
-
-// TagsNotNil applies the NotNil predicate on the "tags" field.
-func TagsNotNil() predicate.UserSettingHistory {
-	return predicate.UserSettingHistory(sql.FieldNotNull(FieldTags))
 }
 
 // IsWebauthnAllowedEQ applies the EQ predicate on the "is_webauthn_allowed" field.

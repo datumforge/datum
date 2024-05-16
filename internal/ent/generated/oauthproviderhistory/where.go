@@ -607,6 +607,16 @@ func MappingIDContainsFold(v string) predicate.OauthProviderHistory {
 	return predicate.OauthProviderHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.OauthProviderHistory {
+	return predicate.OauthProviderHistory(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.OauthProviderHistory {
+	return predicate.OauthProviderHistory(sql.FieldNotNull(FieldTags))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.OauthProviderHistory {
 	return predicate.OauthProviderHistory(sql.FieldEQ(FieldDeletedAt, v))

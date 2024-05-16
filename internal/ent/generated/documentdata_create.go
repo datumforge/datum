@@ -92,6 +92,12 @@ func (ddc *DocumentDataCreate) SetNillableMappingID(s *string) *DocumentDataCrea
 	return ddc
 }
 
+// SetTags sets the "tags" field.
+func (ddc *DocumentDataCreate) SetTags(s []string) *DocumentDataCreate {
+	ddc.mutation.SetTags(s)
+	return ddc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ddc *DocumentDataCreate) SetDeletedAt(t time.Time) *DocumentDataCreate {
 	ddc.mutation.SetDeletedAt(t)
@@ -209,6 +215,10 @@ func (ddc *DocumentDataCreate) defaults() error {
 		v := documentdata.DefaultMappingID()
 		ddc.mutation.SetMappingID(v)
 	}
+	if _, ok := ddc.mutation.Tags(); !ok {
+		v := documentdata.DefaultTags
+		ddc.mutation.SetTags(v)
+	}
 	if _, ok := ddc.mutation.ID(); !ok {
 		if documentdata.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized documentdata.DefaultID (forgotten import generated/runtime?)")
@@ -288,6 +298,10 @@ func (ddc *DocumentDataCreate) createSpec() (*DocumentData, *sqlgraph.CreateSpec
 	if value, ok := ddc.mutation.MappingID(); ok {
 		_spec.SetField(documentdata.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ddc.mutation.Tags(); ok {
+		_spec.SetField(documentdata.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ddc.mutation.DeletedAt(); ok {
 		_spec.SetField(documentdata.FieldDeletedAt, field.TypeTime, value)

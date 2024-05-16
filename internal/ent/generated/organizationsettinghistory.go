@@ -36,6 +36,8 @@ type OrganizationSettingHistory struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -52,8 +54,6 @@ type OrganizationSettingHistory struct {
 	BillingAddress string `json:"billing_address,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier string `json:"tax_identifier,omitempty"`
-	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
 	// geographical location of the organization
 	GeoLocation enums.Region `json:"geo_location,omitempty"`
 	// the ID of the organization the settings belong to
@@ -66,7 +66,7 @@ func (*OrganizationSettingHistory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organizationsettinghistory.FieldDomains, organizationsettinghistory.FieldTags:
+		case organizationsettinghistory.FieldTags, organizationsettinghistory.FieldDomains:
 			values[i] = new([]byte)
 		case organizationsettinghistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
@@ -143,6 +143,14 @@ func (osh *OrganizationSettingHistory) assignValues(columns []string, values []a
 			} else if value.Valid {
 				osh.MappingID = value.String
 			}
+		case organizationsettinghistory.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &osh.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
+			}
 		case organizationsettinghistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
@@ -192,14 +200,6 @@ func (osh *OrganizationSettingHistory) assignValues(columns []string, values []a
 				return fmt.Errorf("unexpected type %T for field tax_identifier", values[i])
 			} else if value.Valid {
 				osh.TaxIdentifier = value.String
-			}
-		case organizationsettinghistory.FieldTags:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field tags", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &osh.Tags); err != nil {
-					return fmt.Errorf("unmarshal field tags: %w", err)
-				}
 			}
 		case organizationsettinghistory.FieldGeoLocation:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -273,6 +273,9 @@ func (osh *OrganizationSettingHistory) String() string {
 	builder.WriteString("mapping_id=")
 	builder.WriteString(osh.MappingID)
 	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", osh.Tags))
+	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(osh.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -296,9 +299,6 @@ func (osh *OrganizationSettingHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tax_identifier=")
 	builder.WriteString(osh.TaxIdentifier)
-	builder.WriteString(", ")
-	builder.WriteString("tags=")
-	builder.WriteString(fmt.Sprintf("%v", osh.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("geo_location=")
 	builder.WriteString(fmt.Sprintf("%v", osh.GeoLocation))

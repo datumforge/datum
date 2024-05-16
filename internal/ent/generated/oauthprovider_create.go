@@ -92,6 +92,12 @@ func (opc *OauthProviderCreate) SetNillableMappingID(s *string) *OauthProviderCr
 	return opc
 }
 
+// SetTags sets the "tags" field.
+func (opc *OauthProviderCreate) SetTags(s []string) *OauthProviderCreate {
+	opc.mutation.SetTags(s)
+	return opc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (opc *OauthProviderCreate) SetDeletedAt(t time.Time) *OauthProviderCreate {
 	opc.mutation.SetDeletedAt(t)
@@ -265,6 +271,10 @@ func (opc *OauthProviderCreate) defaults() error {
 		v := oauthprovider.DefaultMappingID()
 		opc.mutation.SetMappingID(v)
 	}
+	if _, ok := opc.mutation.Tags(); !ok {
+		v := oauthprovider.DefaultTags
+		opc.mutation.SetTags(v)
+	}
 	if _, ok := opc.mutation.ID(); !ok {
 		if oauthprovider.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized oauthprovider.DefaultID (forgotten import generated/runtime?)")
@@ -362,6 +372,10 @@ func (opc *OauthProviderCreate) createSpec() (*OauthProvider, *sqlgraph.CreateSp
 	if value, ok := opc.mutation.MappingID(); ok {
 		_spec.SetField(oauthprovider.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := opc.mutation.Tags(); ok {
+		_spec.SetField(oauthprovider.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := opc.mutation.DeletedAt(); ok {
 		_spec.SetField(oauthprovider.FieldDeletedAt, field.TypeTime, value)

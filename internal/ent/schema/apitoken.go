@@ -84,6 +84,7 @@ func (APIToken) Mixin() []ent.Mixin {
 		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 		OrgOwnerMixin{
 			Ref:             "api_tokens",
 			AllowWhere:      true,

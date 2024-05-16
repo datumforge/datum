@@ -29,6 +29,7 @@ func (UserSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
 	}
 }
@@ -56,9 +57,6 @@ func (UserSetting) Fields() []ent.Field {
 		field.Bool("email_confirmed").Default(false).
 			Comment("whether the user has confirmed their email address").
 			Annotations(entoas.Annotation{ReadOnly: true}),
-		field.JSON("tags", []string{}).
-			Comment("tags associated with the user").
-			Optional(),
 		field.Bool("is_webauthn_allowed").
 			Comment("specifies a user may complete authentication by verifying a WebAuthn capable device").
 			Optional().

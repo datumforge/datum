@@ -68,10 +68,6 @@ func (OrganizationSetting) Fields() []ent.Field {
 		field.String("tax_identifier").
 			Comment("Usually government-issued tax ID or business ID such as ABN in Australia").
 			Optional(),
-		field.Strings("tags").
-			Comment("tags associated with the object").
-			Default([]string{}).
-			Optional(),
 		field.Enum("geo_location").
 			GoType(enums.Region("")).
 			Comment("geographical location of the organization").
@@ -123,6 +119,7 @@ func (OrganizationSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
 	}
 }

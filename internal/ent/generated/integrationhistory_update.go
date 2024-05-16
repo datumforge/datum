@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -67,6 +68,24 @@ func (ihu *IntegrationHistoryUpdate) SetNillableUpdatedBy(s *string) *Integratio
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (ihu *IntegrationHistoryUpdate) ClearUpdatedBy() *IntegrationHistoryUpdate {
 	ihu.mutation.ClearUpdatedBy()
+	return ihu
+}
+
+// SetTags sets the "tags" field.
+func (ihu *IntegrationHistoryUpdate) SetTags(s []string) *IntegrationHistoryUpdate {
+	ihu.mutation.SetTags(s)
+	return ihu
+}
+
+// AppendTags appends s to the "tags" field.
+func (ihu *IntegrationHistoryUpdate) AppendTags(s []string) *IntegrationHistoryUpdate {
+	ihu.mutation.AppendTags(s)
+	return ihu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ihu *IntegrationHistoryUpdate) ClearTags() *IntegrationHistoryUpdate {
+	ihu.mutation.ClearTags()
 	return ihu
 }
 
@@ -246,6 +265,17 @@ func (ihu *IntegrationHistoryUpdate) sqlSave(ctx context.Context) (n int, err er
 	if ihu.mutation.UpdatedByCleared() {
 		_spec.ClearField(integrationhistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := ihu.mutation.Tags(); ok {
+		_spec.SetField(integrationhistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ihu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, integrationhistory.FieldTags, value)
+		})
+	}
+	if ihu.mutation.TagsCleared() {
+		_spec.ClearField(integrationhistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := ihu.mutation.DeletedAt(); ok {
 		_spec.SetField(integrationhistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -338,6 +368,24 @@ func (ihuo *IntegrationHistoryUpdateOne) SetNillableUpdatedBy(s *string) *Integr
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (ihuo *IntegrationHistoryUpdateOne) ClearUpdatedBy() *IntegrationHistoryUpdateOne {
 	ihuo.mutation.ClearUpdatedBy()
+	return ihuo
+}
+
+// SetTags sets the "tags" field.
+func (ihuo *IntegrationHistoryUpdateOne) SetTags(s []string) *IntegrationHistoryUpdateOne {
+	ihuo.mutation.SetTags(s)
+	return ihuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (ihuo *IntegrationHistoryUpdateOne) AppendTags(s []string) *IntegrationHistoryUpdateOne {
+	ihuo.mutation.AppendTags(s)
+	return ihuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ihuo *IntegrationHistoryUpdateOne) ClearTags() *IntegrationHistoryUpdateOne {
+	ihuo.mutation.ClearTags()
 	return ihuo
 }
 
@@ -546,6 +594,17 @@ func (ihuo *IntegrationHistoryUpdateOne) sqlSave(ctx context.Context) (_node *In
 	}
 	if ihuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(integrationhistory.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := ihuo.mutation.Tags(); ok {
+		_spec.SetField(integrationhistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ihuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, integrationhistory.FieldTags, value)
+		})
+	}
+	if ihuo.mutation.TagsCleared() {
+		_spec.ClearField(integrationhistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := ihuo.mutation.DeletedAt(); ok {
 		_spec.SetField(integrationhistory.FieldDeletedAt, field.TypeTime, value)

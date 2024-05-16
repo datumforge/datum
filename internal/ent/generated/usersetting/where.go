@@ -458,6 +458,16 @@ func MappingIDContainsFold(v string) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNotNull(FieldTags))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldDeletedAt, v))
@@ -806,16 +816,6 @@ func EmailConfirmedEQ(v bool) predicate.UserSetting {
 // EmailConfirmedNEQ applies the NEQ predicate on the "email_confirmed" field.
 func EmailConfirmedNEQ(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldNEQ(FieldEmailConfirmed, v))
-}
-
-// TagsIsNil applies the IsNil predicate on the "tags" field.
-func TagsIsNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIsNull(FieldTags))
-}
-
-// TagsNotNil applies the NotNil predicate on the "tags" field.
-func TagsNotNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotNull(FieldTags))
 }
 
 // IsWebauthnAllowedEQ applies the EQ predicate on the "is_webauthn_allowed" field.

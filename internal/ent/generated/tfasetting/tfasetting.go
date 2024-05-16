@@ -29,6 +29,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// FieldOwnerID holds the string denoting the owner_id field in the database.
 	FieldOwnerID = "owner_id"
 	// FieldTfaSecret holds the string denoting the tfa_secret field in the database.
@@ -66,6 +68,7 @@ var Columns = []string{
 	FieldMappingID,
 	FieldDeletedAt,
 	FieldDeletedBy,
+	FieldTags,
 	FieldOwnerID,
 	FieldTfaSecret,
 	FieldVerified,
@@ -101,6 +104,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
 	DefaultMappingID func() string
+	// DefaultTags holds the default value on creation for the "tags" field.
+	DefaultTags []string
 	// DefaultVerified holds the default value on creation for the "verified" field.
 	DefaultVerified bool
 	// DefaultPhoneOtpAllowed holds the default value on creation for the "phone_otp_allowed" field.

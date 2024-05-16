@@ -41,6 +41,8 @@ type TemplateHistory struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
 	// the name of the template
@@ -61,7 +63,7 @@ func (*TemplateHistory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case templatehistory.FieldJsonconfig, templatehistory.FieldUischema:
+		case templatehistory.FieldTags, templatehistory.FieldJsonconfig, templatehistory.FieldUischema:
 			values[i] = new([]byte)
 		case templatehistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
@@ -149,6 +151,14 @@ func (th *TemplateHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				th.MappingID = value.String
+			}
+		case templatehistory.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &th.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case templatehistory.FieldOwnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -255,6 +265,9 @@ func (th *TemplateHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(th.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", th.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("owner_id=")
 	builder.WriteString(th.OwnerID)

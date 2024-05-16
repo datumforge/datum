@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -107,6 +108,24 @@ func (fhu *FeatureHistoryUpdate) SetNillableDeletedBy(s *string) *FeatureHistory
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (fhu *FeatureHistoryUpdate) ClearDeletedBy() *FeatureHistoryUpdate {
 	fhu.mutation.ClearDeletedBy()
+	return fhu
+}
+
+// SetTags sets the "tags" field.
+func (fhu *FeatureHistoryUpdate) SetTags(s []string) *FeatureHistoryUpdate {
+	fhu.mutation.SetTags(s)
+	return fhu
+}
+
+// AppendTags appends s to the "tags" field.
+func (fhu *FeatureHistoryUpdate) AppendTags(s []string) *FeatureHistoryUpdate {
+	fhu.mutation.AppendTags(s)
+	return fhu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (fhu *FeatureHistoryUpdate) ClearTags() *FeatureHistoryUpdate {
+	fhu.mutation.ClearTags()
 	return fhu
 }
 
@@ -232,6 +251,17 @@ func (fhu *FeatureHistoryUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if fhu.mutation.DeletedByCleared() {
 		_spec.ClearField(featurehistory.FieldDeletedBy, field.TypeString)
 	}
+	if value, ok := fhu.mutation.Tags(); ok {
+		_spec.SetField(featurehistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := fhu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, featurehistory.FieldTags, value)
+		})
+	}
+	if fhu.mutation.TagsCleared() {
+		_spec.ClearField(featurehistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := fhu.mutation.Global(); ok {
 		_spec.SetField(featurehistory.FieldGlobal, field.TypeBool, value)
 	}
@@ -343,6 +373,24 @@ func (fhuo *FeatureHistoryUpdateOne) SetNillableDeletedBy(s *string) *FeatureHis
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (fhuo *FeatureHistoryUpdateOne) ClearDeletedBy() *FeatureHistoryUpdateOne {
 	fhuo.mutation.ClearDeletedBy()
+	return fhuo
+}
+
+// SetTags sets the "tags" field.
+func (fhuo *FeatureHistoryUpdateOne) SetTags(s []string) *FeatureHistoryUpdateOne {
+	fhuo.mutation.SetTags(s)
+	return fhuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (fhuo *FeatureHistoryUpdateOne) AppendTags(s []string) *FeatureHistoryUpdateOne {
+	fhuo.mutation.AppendTags(s)
+	return fhuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (fhuo *FeatureHistoryUpdateOne) ClearTags() *FeatureHistoryUpdateOne {
+	fhuo.mutation.ClearTags()
 	return fhuo
 }
 
@@ -497,6 +545,17 @@ func (fhuo *FeatureHistoryUpdateOne) sqlSave(ctx context.Context) (_node *Featur
 	}
 	if fhuo.mutation.DeletedByCleared() {
 		_spec.ClearField(featurehistory.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := fhuo.mutation.Tags(); ok {
+		_spec.SetField(featurehistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := fhuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, featurehistory.FieldTags, value)
+		})
+	}
+	if fhuo.mutation.TagsCleared() {
+		_spec.ClearField(featurehistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := fhuo.mutation.Global(); ok {
 		_spec.SetField(featurehistory.FieldGlobal, field.TypeBool, value)

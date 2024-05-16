@@ -72,7 +72,9 @@ func createWorkspace(ctx context.Context) error {
 			return err
 		}
 
-		domains = strings.Split(domainString, ",")
+		if domainString != "" {
+			domains = strings.Split(domainString, ",")
+		}
 	}
 
 	input := datumclient.CreateWorkspaceInput{
@@ -87,6 +89,10 @@ func createWorkspace(ctx context.Context) error {
 		input.Domains = domains
 	}
 
+	// add an empty line
+	fmt.Println()
+
+	// create progress bar
 	bar := pbar.NewCustomSpinner(pbar.ConfigSpinner{
 		Spinner:      pbar.SPINNER_SNAKE,
 		StartMessage: "creating workspace...",
@@ -94,6 +100,7 @@ func createWorkspace(ctx context.Context) error {
 	})
 	bar.Start()
 
+	// create workspace
 	ws, err := cli.Client.CreateWorkspace(ctx, input, cli.Interceptor)
 	if err != nil {
 		return err
@@ -103,13 +110,22 @@ func createWorkspace(ctx context.Context) error {
 
 	workspace := ws.CreateWorkspace.Workspace
 
-	fmt.Println("ID: ", workspace.ID)
+	fmt.Println("\nID: ", workspace.ID)
 	fmt.Println("Name: ", workspace.DisplayName)
-	fmt.Println("Description: ", *workspace.Description)
-	fmt.Println("Domains: ", strings.Join(workspace.Setting.Domains, ","))
+
+	if workspace.Description != nil && *workspace.Description != "" {
+		fmt.Println("Description: ", *workspace.Description)
+	}
+
+	if len(workspace.Setting.Domains) > 0 {
+		fmt.Println("Domains: ", strings.Join(workspace.Setting.Domains, ","))
+	}
 
 	// switch to new workspace
-	datumswitch.SwitchOrg(ctx, workspace.ID)
+	if _, err := datumswitch.SwitchOrg(ctx, workspace.ID); err != nil {
+		return err
+	}
+
 	fmt.Println("\nSwitched to workspace: ", workspace.DisplayName)
 
 	return nil

@@ -1,15 +1,15 @@
 package prompts
 
 import (
-	"fmt"
-
 	"github.com/manifoldco/promptui"
+
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
 
 func Name() (string, error) {
 	validate := func(input string) error {
 		if len(input) == 0 {
-			return fmt.Errorf("name cannot be empty")
+			return datum.NewRequiredFieldMissingError("name")
 		}
 
 		return nil

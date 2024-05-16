@@ -59,10 +59,10 @@ You can start by creating a `Client` with specific configurations using the `Cre
 
 ```go
 client := httpsling.Create(&httpsling.Config{
-    BaseURL: "https://api.example.com",
+    BaseURL: "https://the.cats.meow.com",
     Timeout: 30 * time.Second,
     Headers: &http.Header{
-        "Authorization": []string{"Bearer YOUR_ACCESS_TOKEN"},
+        HeaderAuthorization: []string{"Bearer YOUR_ACCESS_TOKEN"},
         HeaderContentType: []string{ContentTypeJSON},
     },
     Cookies: map[string]string{
@@ -84,8 +84,8 @@ This setup creates a `Client` tailored for your API communication, including bas
 Alternatively, you can use `Set` methods for a more dynamic configuration approach:
 
 ```go
-client := httpsling.URL("https://api.example.com").
-    SetDefaultHeader("Authorization", "Bearer YOUR_ACCESS_TOKEN").
+client := httpsling.URL("https://the.cats.meow.com").
+    SetDefaultHeader(HeaderAuthorization, "Bearer YOUR_ACCESS_TOKEN").
     SetDefaultHeader(HeaderContentType, ContentTypeJSON).
     SetDefaultCookie("session_token", "YOUR_SESSION_TOKEN").
     SetTLSConfig(&tls.Config{InsecureSkipVerify: true}).
@@ -100,7 +100,7 @@ client := httpsling.URL("https://api.example.com").
 Set the base URL for all requests:
 
 ```go
-client.SetBaseURL("https://api.example.com")
+client.SetBaseURL("https://the.cats.meow.com")
 ```
 
 ### Setting Headers
@@ -108,7 +108,7 @@ client.SetBaseURL("https://api.example.com")
 Set default headers for all requests:
 
 ```go
-client.SetDefaultHeader("Authorization", "Bearer YOUR_ACCESS_TOKEN")
+client.SetDefaultHeader(HeaderAuthorization, "Bearer YOUR_ACCESS_TOKEN")
 client.SetDefaultHeader(HeaderContentType, ContentTypeJSON)
 ```
 
@@ -116,7 +116,7 @@ Bulk set default headers:
 
 ```go
 headers := &http.Header{
-    "Authorization": []string{"Bearer YOUR_ACCESS_TOKEN"},
+    HeaderAuthorization: []string{"Bearer YOUR_ACCESS_TOKEN"},
     HeaderContentType:  []string{ContentTypeJSON},
 }
 client.SetDefaultHeaders(headers)
@@ -183,7 +183,7 @@ The library provides a `RequestBuilder` to construct and dispatch HTTP httpsling
 ```go
 resp, err := client.Get("/path").
     Query("search", "query").
-    Header("Accept", ContentTypeJSON).
+    Header(HeaderAccept, ContentTypeJSON).
     Send(context.Background())
 ```
 
@@ -326,7 +326,7 @@ request.DelQuery("sort", "limit")
 Set request headers using `Header`, `Headers`, or related methods
 
 ```go
-request.Header("Authorization", "Bearer YOUR_ACCESS_TOKEN")
+request.Header(HeaderAuthorization, "Bearer YOUR_ACCESS_TOKEN")
 request.Headers(http.Header{HeaderContentType: []string{ContentTypeJSON}})
 
 // Convenient methods for common headers
@@ -501,7 +501,7 @@ Client-level middleware is applied to all requests made by a client. It's ideal 
 **Adding Middleware to a Client:**
 
 ```go
-client := httpsling.Create(&httpsling.Config{BaseURL: "https://api.example.com"})
+client := httpsling.Create(&httpsling.Config{BaseURL: "https://the.cats.meow.com"})
 client.AddMiddleware(func(next httpsling.MiddlewareHandlerFunc) httpsling.MiddlewareHandlerFunc {
     return func(req *http.Request) (*http.Response, error) {
         // Pre-request manipulation

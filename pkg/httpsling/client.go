@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// Client represents an HTTP client
+// Client represents an HTTP client and is the main control mechanism for making HTTP requests
 type Client struct {
 	// mu is a mutex to protect the client's configuration
 	mu sync.RWMutex
@@ -48,7 +48,7 @@ type Client struct {
 	auth AuthMethod
 }
 
-// Config sets up the initial configuration for the HTTP client
+// Config sets up the initial configuration for the HTTP client - you need to initialize multiple if you want the behaviors to be different
 type Config struct {
 	// The base URL for all httpsling made by this client
 	BaseURL string
@@ -83,27 +83,11 @@ func URL(baseURL string) *Client {
 
 // Create initializes a new HTTP client with the given configuration
 func Create(config *Config) *Client {
-	if config == nil {
-		config = &Config{}
-	}
-
-	httpClient := &http.Client{}
-
-	if config.Transport != nil {
-		httpClient.Transport = config.Transport
-	}
-
-	if config.Timeout != 0 {
-		httpClient.Timeout = config.Timeout
-	}
-
-	if config.CookieJar != nil {
-		httpClient.Jar = config.CookieJar
-	}
+	cfg, httpClient := setInitialClientDetails(config)
 
 	// Return a new Client instance
 	client := &Client{
-		BaseURL:     config.BaseURL,
+		BaseURL:     cfg.BaseURL,
 		Headers:     config.Headers,
 		HTTPClient:  httpClient,
 		JSONEncoder: DefaultJSONEncoder,
@@ -112,10 +96,14 @@ func Create(config *Config) *Client {
 		XMLDecoder:  DefaultXMLDecoder,
 		YAMLEncoder: DefaultYAMLEncoder,
 		YAMLDecoder: DefaultYAMLDecoder,
-		TLSConfig:   config.TLSConfig,
+		TLSConfig:   cfg.TLSConfig,
 	}
 
-	// If a TLS configuration is provided, apply it
+	return finalizeClientChecks(client, cfg, httpClient)
+}
+
+// finalizeClientChecks is a helper function to finalize the client configuration
+func finalizeClientChecks(client *Client, config *Config, httpClient *http.Client) *Client {
 	if client.TLSConfig != nil && httpClient.Transport != nil {
 		httpTransport := httpClient.Transport.(*http.Transport)
 		httpTransport.TLSClientConfig = client.TLSConfig
@@ -156,6 +144,29 @@ func Create(config *Config) *Client {
 	}
 
 	return client
+}
+
+// setInitialClientDetails is a helper function that sets the initial configuration for the client and mostly breaks up how large of a function check the Create function is
+func setInitialClientDetails(config *Config) (*Config, *http.Client) {
+	if config == nil {
+		config = &Config{}
+	}
+
+	httpClient := &http.Client{}
+
+	if config.Transport != nil {
+		httpClient.Transport = config.Transport
+	}
+
+	if config.Timeout != 0 {
+		httpClient.Timeout = config.Timeout
+	}
+
+	if config.CookieJar != nil {
+		httpClient.Jar = config.CookieJar
+	}
+
+	return config, httpClient
 }
 
 // SetBaseURL sets the base URL for the client

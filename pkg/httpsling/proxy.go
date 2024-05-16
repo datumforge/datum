@@ -1,9 +1,10 @@
 package httpsling
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
+
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // verifyProxy validates the given proxy URL, supporting http, https, and socks5 schemes
@@ -18,7 +19,7 @@ func verifyProxy(proxyURL string) (*url.URL, error) {
 	case "http", "https", "socks5":
 		return parsedURL, nil
 	default:
-		return nil, fmt.Errorf("%w: %s", ErrUnsupportedScheme, parsedURL.Scheme)
+		return nil, ErrUnsupportedScheme
 	}
 }
 
@@ -41,7 +42,7 @@ func (c *Client) SetProxy(proxyURL string) error {
 	// Assert the Transport to *http.Transport to access the Proxy field
 	transport, ok := c.HTTPClient.Transport.(*http.Transport)
 	if !ok {
-		return fmt.Errorf("%w: expected *http.Transport, got %T", ErrInvalidTransportType, c.HTTPClient.Transport)
+		return rout.HTTPErrorResponse(err)
 	}
 
 	transport.Proxy = http.ProxyURL(validatedProxyURL)

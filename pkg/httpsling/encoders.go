@@ -14,7 +14,7 @@ import (
 type Encoder interface {
 	// Encode encodes the provided value into a reader
 	Encode(v any) (io.Reader, error)
-	// ContentType returns the content type of the encoded data, e.g. 'application/json;charset=utf-8
+	// ContentType returns the content type of the encoded data
 	ContentType() string
 }
 
@@ -23,9 +23,6 @@ type Decoder interface {
 	// Decode decodes the data from the reader into the provided value
 	Decode(r io.Reader, v any) error
 }
-
-// StreamBufferSize is the size of the buffer used for streaming
-const maxStreamBufferSize = 512 * 1024
 
 // StreamCallback is a callback function that is called when data is received
 type StreamCallback func([]byte) error

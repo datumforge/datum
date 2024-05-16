@@ -171,7 +171,7 @@ func TestQueryStructWithClient(t *testing.T) {
 	}
 
 	// Send a request to the server using the client and the struct for query parameters
-	resp, err := client.NewRequestBuilder("GET", "/").QueriesStruct(exampleStruct).Send(context.Background())
+	resp, err := client.NewRequestBuilder(http.MethodGet, "/").QueriesStruct(exampleStruct).Send(context.Background())
 	assert.NoError(t, err)
 
 	// Read and verify the response

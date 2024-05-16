@@ -527,7 +527,7 @@ Request-level middleware applies only to individual httpsling. This is useful fo
 **Adding Middleware to a Request:**
 
 ```go
-request := client.NewRequestBuilder("GET", "/path").AddMiddleware(func(next httpsling.MiddlewareHandlerFunc) httpsling.MiddlewareHandlerFunc {
+request := client.NewRequestBuilder(MethodGet, "/path").AddMiddleware(func(next httpsling.MiddlewareHandlerFunc) httpsling.MiddlewareHandlerFunc {
     return func(req *http.Request) (*http.Response, error) {
         // Modify the request here
         req.Header.Add("X-Request-ID", "12345")

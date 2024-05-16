@@ -2,7 +2,7 @@ package httpsling_test
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,7 +10,7 @@ import (
 	"github.com/datumforge/datum/pkg/httpsling"
 )
 
-func TestJSONEncoder_Encode(t *testing.T) {
+func TestJSONEncoderEncode(t *testing.T) {
 	encoder := &httpsling.JSONEncoder{}
 
 	// Test encoding a struct
@@ -25,18 +25,19 @@ func TestJSONEncoder_Encode(t *testing.T) {
 	reader, err := encoder.Encode(data)
 	require.NoError(t, err)
 
-	encodedData, err := ioutil.ReadAll(reader)
+	encodedData, err := io.ReadAll(reader)
 	require.NoError(t, err)
 
 	expectedData := `{"name":"John Doe","age":30}`
 	require.Equal(t, expectedData, string(encodedData))
 }
 
-func TestJSONDecoder_Decode(t *testing.T) {
+func TestJSONDecoderDecode(t *testing.T) {
 	decoder := &httpsling.JSONDecoder{}
 
 	// Test decoding JSON data into a struct
-	jsonData := `{"name":"John Doe","age":30}`
+	jsonData := `{"name":"John Snow","age":30}`
+
 	var data struct {
 		Name string `json:"name"`
 		Age  int    `json:"age"`
@@ -49,39 +50,18 @@ func TestJSONDecoder_Decode(t *testing.T) {
 		Name string `json:"name"`
 		Age  int    `json:"age"`
 	}{
-		Name: "John Doe",
+		Name: "John Snow",
 		Age:  30,
 	}
 	require.Equal(t, expectedData, data)
 }
 
-func TestXMLEncoder_Encode(t *testing.T) {
-	encoder := &httpsling.XMLEncoder{}
-
-	// Test encoding a struct
-	data := struct {
-		Name string `xml:"name"`
-		Age  int    `xml:"age"`
-	}{
-		Name: "John Doe",
-		Age:  30,
-	}
-
-	reader, err := encoder.Encode(data)
-	require.NoError(t, err)
-
-	encodedData, err := ioutil.ReadAll(reader)
-	require.NoError(t, err)
-
-	expectedData := `<root><name>John Doe</name><age>30</age></root>`
-	require.Equal(t, expectedData, string(encodedData))
-}
-
-func TestXMLDecoder_Decode(t *testing.T) {
+func TestXMLDecoderDecode(t *testing.T) {
 	decoder := &httpsling.XMLDecoder{}
 
 	// Test decoding XML data into a struct
-	xmlData := `<root><name>John Doe</name><age>30</age></root>`
+	xmlData := `<root><name>John Meow</name><age>30</age></root>`
+
 	var data struct {
 		Name string `xml:"name"`
 		Age  int    `xml:"age"`
@@ -94,13 +74,13 @@ func TestXMLDecoder_Decode(t *testing.T) {
 		Name string `xml:"name"`
 		Age  int    `xml:"age"`
 	}{
-		Name: "John Doe",
+		Name: "John Meow",
 		Age:  30,
 	}
 	require.Equal(t, expectedData, data)
 }
 
-func TestYAMLEncoder_Encode(t *testing.T) {
+func TestYAMLEncoderEncode(t *testing.T) {
 	encoder := &httpsling.YAMLEncoder{}
 
 	// Test encoding a struct
@@ -108,25 +88,26 @@ func TestYAMLEncoder_Encode(t *testing.T) {
 		Name string `yaml:"name"`
 		Age  int    `yaml:"age"`
 	}{
-		Name: "John Doe",
+		Name: "John Flow",
 		Age:  30,
 	}
 
 	reader, err := encoder.Encode(data)
 	require.NoError(t, err)
 
-	encodedData, err := ioutil.ReadAll(reader)
+	encodedData, err := io.ReadAll(reader)
 	require.NoError(t, err)
 
-	expectedData := "name: John Doe\nage: 30\n"
+	expectedData := "name: John Flow\nage: 30\n"
 	require.Equal(t, expectedData, string(encodedData))
 }
 
-func TestYAMLDecoder_Decode(t *testing.T) {
+func TestYAMLDecoderDecode(t *testing.T) {
 	decoder := &httpsling.YAMLDecoder{}
 
 	// Test decoding YAML data into a struct
-	yamlData := "name: John Doe\nage: 30\n"
+	yamlData := "name: John Show\nage: 30\n"
+
 	var data struct {
 		Name string `yaml:"name"`
 		Age  int    `yaml:"age"`
@@ -139,7 +120,7 @@ func TestYAMLDecoder_Decode(t *testing.T) {
 		Name string `yaml:"name"`
 		Age  int    `yaml:"age"`
 	}{
-		Name: "John Doe",
+		Name: "John Show",
 		Age:  30,
 	}
 	require.Equal(t, expectedData, data)

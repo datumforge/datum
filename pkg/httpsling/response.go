@@ -12,6 +12,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // Response represents an HTTP response
@@ -54,6 +56,8 @@ func NewResponse(ctx context.Context, resp *http.Response, client *Client, strea
 
 	return response, nil
 }
+
+var maxStreamBufferSize = 512 * 1024
 
 // handleStream processes the HTTP response as a stream
 func (r *Response) handleStream() {
@@ -171,7 +175,7 @@ func (r *Response) IsEmpty() bool {
 	return r.ContentLength() == 0
 }
 
-// IsSuccess checks if the response status code indicates success (200 - 299)
+// IsSuccess checks if the response status code indicates success
 func (r *Response) IsSuccess() bool {
 	code := r.StatusCode()
 
@@ -229,7 +233,7 @@ func (r *Response) ScanYAML(v interface{}) error {
 	return r.Client.YAMLDecoder.Decode(bytes.NewReader(r.BodyBytes), v)
 }
 
-const dirPermissions = 0o750
+const dirPermissions = 755
 
 // Save saves the response body to a file or io.Writer
 func (r *Response) Save(v any) error {
@@ -241,18 +245,18 @@ func (r *Response) Save(v any) error {
 		// Create the directory if it doesn't exist
 		if _, err := os.Stat(dir); err != nil {
 			if !errors.Is(err, os.ErrNotExist) {
-				return fmt.Errorf("failed to check directory: %w", err)
+				return rout.HTTPErrorResponse(err)
 			}
 
 			if err = os.MkdirAll(dir, dirPermissions); err != nil {
-				return fmt.Errorf("failed to create directory: %w", err)
+				return rout.HTTPErrorResponse(err)
 			}
 		}
 
 		// Create and open the file for writing
 		outFile, err := os.Create(file)
 		if err != nil {
-			return fmt.Errorf("failed to create file: %w", err)
+			return rout.HTTPErrorResponse(err)
 		}
 
 		defer func() {
@@ -264,7 +268,7 @@ func (r *Response) Save(v any) error {
 		// Write the response body to the file
 		_, err = io.Copy(outFile, bytes.NewReader(r.Body()))
 		if err != nil {
-			return fmt.Errorf("failed to write response body to file: %w", err)
+			return rout.HTTPErrorResponse(err)
 		}
 
 		return nil
@@ -272,7 +276,7 @@ func (r *Response) Save(v any) error {
 		// Write the response body directly to the provided io.Writer
 		_, err := io.Copy(p, bytes.NewReader(r.Body()))
 		if err != nil {
-			return fmt.Errorf("failed to write response body to io.Writer: %w", err)
+			return rout.HTTPErrorResponse(err)
 		}
 
 		if pc, ok := p.(io.WriteCloser); ok {

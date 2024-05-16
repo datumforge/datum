@@ -9,7 +9,7 @@ import (
 )
 
 func TestBasicAuthApply(t *testing.T) {
-	req, _ := http.NewRequestWithContext(context.Background(), "GET", "http://hotdogs.com", nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "http://hotdogs.com", nil)
 
 	auth := BasicAuth{
 		Username: "user",
@@ -30,7 +30,7 @@ func TestBasicAuthValid(t *testing.T) {
 }
 
 func TestBearerAuthApply(t *testing.T) {
-	req, _ := http.NewRequestWithContext(context.Background(), "GET", "http://sarahisgreat.com", nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "http://sarahisgreat.com", nil)
 
 	auth := BearerAuth{
 		Token: "token",
@@ -49,7 +49,7 @@ func TestBearerAuthValid(t *testing.T) {
 }
 
 func TestCustomAuthApply(t *testing.T) {
-	req, _ := http.NewRequestWithContext(context.Background(), "GET", "http://meow.com", nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, "http://meow.com", nil)
 
 	auth := CustomAuth{
 		Header: "CustomValue",

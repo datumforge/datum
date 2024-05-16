@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/google/go-querystring/query"
+
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // RequestBuilder facilitates building and executing HTTP requests
@@ -57,6 +59,10 @@ type RequestBuilder struct {
 	streamErr StreamErrCallback
 	// streamDone is the done callback for the request
 	streamDone StreamDoneCallback
+	// BeforeRequest is a hook that can be used to modify the request object
+	// before the request has been fired. This is useful for adding authentication
+	// and other functionality not provided in this library
+	BeforeRequest func(req *http.Request) error
 }
 
 // NewRequestBuilder creates a new RequestBuilder with default settings
@@ -598,6 +604,7 @@ func (b *RequestBuilder) setContentType() (io.Reader, string, error) {
 
 	if err != nil {
 		if b.client.Logger != nil {
+			// surface to the client logger as well
 			b.client.Logger.Errorf("Error preparing request body: %v", err)
 		}
 
@@ -612,13 +619,14 @@ func (b *RequestBuilder) setContentType() (io.Reader, string, error) {
 }
 
 func (b *RequestBuilder) requestChecks(req *http.Request) *http.Request {
+	// apply the authentication method to the request
 	if b.auth != nil {
 		b.auth.Apply(req)
 	} else if b.client.auth != nil {
 		b.client.auth.Apply(req)
 	}
 
-	// Set the headers from the client and the request builder
+	// set the headers from the client
 	if b.client.Headers != nil {
 		for key := range *b.client.Headers {
 			values := (*b.client.Headers)[key]
@@ -627,7 +635,7 @@ func (b *RequestBuilder) requestChecks(req *http.Request) *http.Request {
 			}
 		}
 	}
-
+	// set the headers from the request builder
 	if b.headers != nil {
 		for key := range *b.headers {
 			values := (*b.headers)[key]
@@ -637,13 +645,13 @@ func (b *RequestBuilder) requestChecks(req *http.Request) *http.Request {
 		}
 	}
 
-	// Merge cookies from the client and the request builder
+	// merge cookies from the client
 	if b.client.Cookies != nil {
 		for _, cookie := range b.client.Cookies {
 			req.AddCookie(cookie)
 		}
 	}
-
+	// merge cookies from the request builder
 	if b.cookies != nil {
 		for _, cookie := range b.cookies {
 			req.AddCookie(cookie)
@@ -655,31 +663,31 @@ func (b *RequestBuilder) requestChecks(req *http.Request) *http.Request {
 
 // Send executes the HTTP request
 func (b *RequestBuilder) Send(ctx context.Context) (*Response, error) {
-	// Prepare the request body and content type
 	body, _, err := b.setContentType()
+	if err != nil {
+		return nil, err
+	}
 
-	// Parse the complete URL first to handle any modifications needed
 	parsedURL, err := url.Parse(b.client.BaseURL + b.preparePath())
 	if err != nil {
 		if b.client.Logger != nil {
+			// surface the error to the client logger as well
 			b.client.Logger.Errorf("Error parsing URL: %v", err)
 		}
 
 		return nil, err
 	}
 
-	// Combine query parameters from both the URL and the Query method
 	query := parsedURL.Query()
 
 	for key, values := range b.queries {
 		for _, value := range values {
-			query.Set(key, value) // Add new values, preserving existing ones
+			query.Set(key, value)
 		}
 	}
 
 	parsedURL.RawQuery = query.Encode()
 
-	// Create a context with a timeout if one is not already set
 	var cancel context.CancelFunc
 
 	if _, ok := ctx.Deadline(); !ok {
@@ -689,14 +697,13 @@ func (b *RequestBuilder) Send(ctx context.Context) (*Response, error) {
 		}
 	}
 
-	// Create the HTTP request with the fully prepared URL, including query parameters
 	req, err := http.NewRequestWithContext(ctx, b.method, parsedURL.String(), body)
 	if err != nil {
 		if b.client.Logger != nil {
 			b.client.Logger.Errorf("Error creating request: %v", err)
 		}
 
-		return nil, fmt.Errorf("%w: %v", ErrRequestCreationFailed, err)
+		return nil, rout.HTTPErrorResponse(err)
 	}
 
 	req = b.requestChecks(req)
@@ -734,7 +741,7 @@ func (b *RequestBuilder) prepareMultipartBody() (io.Reader, string, error) {
 	// if a custom boundary is set, use it
 	if b.boundary != "" {
 		if err := writer.SetBoundary(b.boundary); err != nil {
-			return nil, "", fmt.Errorf("setting custom boundary failed: %w", err)
+			return nil, "", rout.HTTPErrorResponse(err)
 		}
 	}
 
@@ -742,7 +749,7 @@ func (b *RequestBuilder) prepareMultipartBody() (io.Reader, string, error) {
 	for key, vals := range b.formFields {
 		for _, val := range vals {
 			if err := writer.WriteField(key, val); err != nil {
-				return nil, "", fmt.Errorf("writing form field failed: %w", err)
+				return nil, "", rout.HTTPErrorResponse(err)
 			}
 		}
 	}
@@ -753,24 +760,24 @@ func (b *RequestBuilder) prepareMultipartBody() (io.Reader, string, error) {
 		part, err := writer.CreateFormFile(file.Name, file.FileName)
 
 		if err != nil {
-			return nil, "", fmt.Errorf("creating form file failed: %w", err)
+			return nil, "", rout.HTTPErrorResponse(err)
 		}
 		// copy the file content to the part
 		if _, err = io.Copy(part, file.Content); err != nil {
-			return nil, "", fmt.Errorf("copying file content failed: %w", err)
+			return nil, "", rout.HTTPErrorResponse(err)
 		}
 
 		// close the file content if it's a closer
 		if closer, ok := file.Content.(io.Closer); ok {
 			if err = closer.Close(); err != nil {
-				return nil, "", fmt.Errorf("closing file content failed: %w", err)
+				return nil, "", rout.HTTPErrorResponse(err)
 			}
 		}
 	}
 
 	// close the multipart writer
 	if err := writer.Close(); err != nil {
-		return nil, "", fmt.Errorf("closing multipart writer failed: %w", err)
+		return nil, "", rout.HTTPErrorResponse(err)
 	}
 
 	return &buf, writer.FormDataContentType(), nil

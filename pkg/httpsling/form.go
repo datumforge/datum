@@ -61,7 +61,7 @@ func parseFormFields(fields any) (url.Values, error) {
 		if values, err := query.Values(fields); err == nil {
 			return values, nil
 		} else {
-			return nil, fmt.Errorf(ErrMapper, ErrUnsupportedFormFieldsType, err) //nolint:errorlint
+			return nil, fmt.Errorf("%w: %v", ErrUnsupportedFormFieldsType, err)
 		}
 	}
 }
@@ -111,7 +111,7 @@ func parseForm(v any) (url.Values, []*File, error) {
 		if values, err := query.Values(v); err == nil {
 			return values, nil, nil
 		} else {
-			return nil, nil, fmt.Errorf(ErrMapper, ErrUnsupportedFormFieldsType, err)
+			return nil, nil, fmt.Errorf("%w: %v", ErrUnsupportedFormFieldsType, err)
 		}
 	}
 }
@@ -141,7 +141,7 @@ func (e *FormEncoder) Encode(v any) (io.Reader, error) {
 			return strings.NewReader(values.Encode()), nil
 		} else {
 			// Return an error if encoding fails or type is unsupported
-			return nil, fmt.Errorf(ErrMapper, ErrEncodingFailed, err)
+			return nil, fmt.Errorf("%w: %v", ErrEncodingFailed, err)
 		}
 	}
 }

@@ -62,8 +62,7 @@ func startTestHTTPServer() *httptest.Server {
 	})
 
 	handler.HandleFunc("/test-empty", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK) // Send a 200 OK status
-		// Don't write any body to ensure it's empty
+		w.WriteHeader(http.StatusOK)
 	})
 
 	handler.HandleFunc("/test-json", func(w http.ResponseWriter, r *http.Request) {

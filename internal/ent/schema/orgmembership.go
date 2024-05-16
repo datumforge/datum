@@ -106,7 +106,6 @@ func (OrgMembership) Interceptors() []ent.Interceptor {
 func (OrgMembership) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
 			privacy.OrgMembershipMutationRuleFunc(func(ctx context.Context, m *generated.OrgMembershipMutation) error {
 				return m.CheckAccessForEdit(ctx)

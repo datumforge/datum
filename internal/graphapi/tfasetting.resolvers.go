@@ -11,7 +11,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 )
@@ -19,8 +18,6 @@ import (
 // CreateTFASetting is the resolver for the createTFASetting field.
 func (r *mutationResolver) CreateTFASetting(ctx context.Context, input generated.CreateTFASettingInput) (*TFASettingCreatePayload, error) {
 	// setup view context
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return nil, err
@@ -38,9 +35,6 @@ func (r *mutationResolver) CreateTFASetting(ctx context.Context, input generated
 
 // UpdateTFASetting is the resolver for the updateTFASetting field.
 func (r *mutationResolver) UpdateTFASetting(ctx context.Context, input generated.UpdateTFASettingInput) (*TFASettingUpdatePayload, error) {
-	// setup view context
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return nil, err
@@ -77,9 +71,6 @@ func (r *mutationResolver) UpdateTFASetting(ctx context.Context, input generated
 
 // TfaSetting is the resolver for the tfaSettings field.
 func (r *queryResolver) TfaSetting(ctx context.Context, id *string) (*generated.TFASetting, error) {
-	// setup view context
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return nil, err

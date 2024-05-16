@@ -11,7 +11,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -66,7 +65,9 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		Email: entUser.Email,
 	}
 
-	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(entUser.ID, true))
+	userCtx := auth.AddAuthenticatedUserContext(ctx, &auth.AuthenticatedUser{
+		SubjectID: entUser.ID,
+	})
 
 	// check to see if user is already confirmed
 	if !entUser.Edges.Setting.EmailConfirmed {
@@ -91,9 +92,9 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		// Verify the token with the stored secret
 		if err = t.Verify(user.GetVerificationToken(), user.EmailVerificationSecret); err != nil {
 			if errors.Is(err, tokens.ErrTokenExpired) {
-				viewerCtx = token.NewContextWithSignUpToken(viewerCtx, user.Email)
+				userCtx = token.NewContextWithSignUpToken(userCtx, user.Email)
 
-				meowtoken, err := h.storeAndSendEmailVerificationToken(viewerCtx, user)
+				meowtoken, err := h.storeAndSendEmailVerificationToken(userCtx, user)
 				if err != nil {
 					h.Logger.Errorw("unable to resend verification token", "error", err)
 
@@ -114,12 +115,12 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 		}
 
-		if err := h.setEmailConfirmed(viewerCtx, entUser); err != nil {
+		if err := h.setEmailConfirmed(userCtx, entUser); err != nil {
 			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 		}
 	}
 
-	if err := h.addDefaultOrgToUserQuery(viewerCtx, entUser); err != nil {
+	if err := h.addDefaultOrgToUserQuery(userCtx, entUser); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 

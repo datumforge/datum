@@ -10,14 +10,11 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
 // UpdateGroupSetting is the resolver for the updateGroupSetting field.
 func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, input generated.UpdateGroupSettingInput) (*GroupSettingUpdatePayload, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	groupSetting, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -49,13 +46,6 @@ func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, in
 
 // GroupSetting is the resolver for the groupSetting field.
 func (r *queryResolver) GroupSetting(ctx context.Context, id string) (*generated.GroupSetting, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		GroupID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	group, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get group settings", "error", err)

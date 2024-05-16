@@ -26,7 +26,6 @@ func (mixin UserOwnedMutationPolicyMixin) Policy() ent.Policy {
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(
 				utils.NewMutationPolicyWithoutNil(privacy.MutationPolicy{
-					rule.DenyIfNoViewer(),
 					rule.AllowMutationAfterApplyingOwnerFilter(),
 					privacy.AlwaysDenyRule(),
 				}),
@@ -34,7 +33,6 @@ func (mixin UserOwnedMutationPolicyMixin) Policy() ent.Policy {
 			),
 			privacy.OnMutationOperation(
 				utils.NewMutationPolicyWithoutNil(privacy.MutationPolicy{
-					rule.DenyIfNoViewer(),
 					rule.AllowMutationAfterApplyingOwnerFilter(),
 					privacy.AlwaysDenyRule(),
 				}),
@@ -48,7 +46,6 @@ func (mixin UserOwnedMutationPolicyMixin) Policy() ent.Policy {
 func (mixin UserOwnedQueryPolicyMixin) Policy() ent.Policy {
 	return privacy.Policy{
 		Query: privacy.QueryPolicy{
-			rule.DenyIfNoSubject(),
 			privacy.AlwaysAllowRule(),
 		},
 	}

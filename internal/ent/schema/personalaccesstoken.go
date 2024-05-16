@@ -127,12 +127,10 @@ func (PersonalAccessToken) Interceptors() []ent.Interceptor {
 func (PersonalAccessToken) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			rule.AllowMutationAfterApplyingOwnerFilter(),
 			privacy.AlwaysAllowRule(),
 		},
 		Query: privacy.QueryPolicy{
-			rule.DenyIfNoSubject(),
 			privacy.AlwaysAllowRule(),
 		},
 	}

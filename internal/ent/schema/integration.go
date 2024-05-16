@@ -15,7 +15,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )
 
 // Integration maps configured integrations (github, slack, etc.) to organizations
@@ -91,7 +90,6 @@ func (Integration) Mixin() []ent.Mixin {
 func (Integration) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			privacy.IntegrationMutationRuleFunc(func(ctx context.Context, m *generated.IntegrationMutation) error {
 				return m.CheckAccessForDelete(ctx)
 			}),
@@ -99,7 +97,6 @@ func (Integration) Policy() ent.Policy {
 			privacy.AlwaysDenyRule(),
 		},
 		Query: privacy.QueryPolicy{
-			rule.DenyIfNoSubject(),
 			privacy.IntegrationQueryRuleFunc(func(ctx context.Context, q *generated.IntegrationQuery) error {
 				return q.CheckAccess(ctx)
 			}),

@@ -11,45 +11,18 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error) {
-	user, err := withTransactionalMutation(ctx).User.Create().SetInput(input).Save(ctx)
-	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if generated.IsConstraintError(err) {
-			return nil, err
-		}
-
-		// the password field is encrypted so we cannot use the
-		// built in validation function/validation error
-		if errors.Is(err, auth.ErrPasswordTooWeak) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-
-		}
-
-		r.logger.Errorw("failed to create user", "error", err)
-		return nil, ErrInternalServerError
-	}
-
-	return &UserCreatePayload{User: user}, err
+	// TODO: look at allowing this resolver to invite the user instead of creating them directly
+	// for now, return permission denied
+	return nil, ErrPermissionDenied
 }
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
-	// setup view context
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	user, err := withTransactionalMutation(ctx).User.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -86,9 +59,6 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input gene
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error) {
-	// setup view context
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	if err := withTransactionalMutation(ctx).User.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -112,9 +82,6 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDele
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, error) {
-	// setup view context
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
 	user, err := withTransactionalMutation(ctx).User.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {

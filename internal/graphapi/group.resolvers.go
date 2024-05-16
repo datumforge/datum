@@ -10,7 +10,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // CreateGroup is the resolver for the createGroup field.
@@ -47,13 +46,6 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.Crea
 
 // UpdateGroup is the resolver for the updateGroup field.
 func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input generated.UpdateGroupInput) (*GroupUpdatePayload, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		GroupID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	group, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -91,13 +83,6 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input gen
 
 // DeleteGroup is the resolver for the deleteGroup field.
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDeletePayload, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		GroupID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	if err := withTransactionalMutation(ctx).Group.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -120,13 +105,6 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDe
 
 // Group is the resolver for the group field.
 func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		GroupID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	group, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get group", "error", err)

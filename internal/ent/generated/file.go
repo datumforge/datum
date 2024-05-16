@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -32,6 +33,8 @@ type File struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// FileName holds the value of the "file_name" field.
 	FileName string `json:"file_name,omitempty"`
 	// FileExtension holds the value of the "file_extension" field.
@@ -105,6 +108,8 @@ func (*File) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case file.FieldTags:
+			values[i] = new([]byte)
 		case file.FieldFileSize:
 			values[i] = new(sql.NullInt64)
 		case file.FieldID, file.FieldCreatedBy, file.FieldUpdatedBy, file.FieldDeletedBy, file.FieldMappingID, file.FieldFileName, file.FieldFileExtension, file.FieldContentType, file.FieldStoreKey, file.FieldCategory, file.FieldAnnotation:
@@ -175,6 +180,14 @@ func (f *File) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				f.MappingID = value.String
+			}
+		case file.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &f.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case file.FieldFileName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -296,6 +309,9 @@ func (f *File) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(f.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", f.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("file_name=")
 	builder.WriteString(f.FileName)

@@ -35,10 +35,6 @@ func (GroupSetting) Fields() []ent.Field {
 			Comment("the policy governing ability to freely join a group, whether it requires an invitation, application, or either").
 			GoType(enums.JoinPolicy("")).
 			Default(string(enums.JoinPolicyInviteOrApplication)),
-		field.JSON("tags", []string{}).
-			Comment("tags associated with the object").
-			Optional().
-			Default([]string{}),
 		field.Bool("sync_to_slack").
 			Comment("whether to sync group members to slack groups").
 			Optional().
@@ -86,6 +82,7 @@ func (GroupSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
 	}
 }

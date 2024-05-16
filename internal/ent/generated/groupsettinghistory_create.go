@@ -126,6 +126,12 @@ func (gshc *GroupSettingHistoryCreate) SetNillableMappingID(s *string) *GroupSet
 	return gshc
 }
 
+// SetTags sets the "tags" field.
+func (gshc *GroupSettingHistoryCreate) SetTags(s []string) *GroupSettingHistoryCreate {
+	gshc.mutation.SetTags(s)
+	return gshc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gshc *GroupSettingHistoryCreate) SetDeletedAt(t time.Time) *GroupSettingHistoryCreate {
 	gshc.mutation.SetDeletedAt(t)
@@ -179,12 +185,6 @@ func (gshc *GroupSettingHistoryCreate) SetNillableJoinPolicy(ep *enums.JoinPolic
 	if ep != nil {
 		gshc.SetJoinPolicy(*ep)
 	}
-	return gshc
-}
-
-// SetTags sets the "tags" field.
-func (gshc *GroupSettingHistoryCreate) SetTags(s []string) *GroupSettingHistoryCreate {
-	gshc.mutation.SetTags(s)
 	return gshc
 }
 
@@ -295,6 +295,10 @@ func (gshc *GroupSettingHistoryCreate) defaults() {
 		v := groupsettinghistory.DefaultMappingID()
 		gshc.mutation.SetMappingID(v)
 	}
+	if _, ok := gshc.mutation.Tags(); !ok {
+		v := groupsettinghistory.DefaultTags
+		gshc.mutation.SetTags(v)
+	}
 	if _, ok := gshc.mutation.Visibility(); !ok {
 		v := groupsettinghistory.DefaultVisibility
 		gshc.mutation.SetVisibility(v)
@@ -302,10 +306,6 @@ func (gshc *GroupSettingHistoryCreate) defaults() {
 	if _, ok := gshc.mutation.JoinPolicy(); !ok {
 		v := groupsettinghistory.DefaultJoinPolicy
 		gshc.mutation.SetJoinPolicy(v)
-	}
-	if _, ok := gshc.mutation.Tags(); !ok {
-		v := groupsettinghistory.DefaultTags
-		gshc.mutation.SetTags(v)
 	}
 	if _, ok := gshc.mutation.SyncToSlack(); !ok {
 		v := groupsettinghistory.DefaultSyncToSlack
@@ -421,6 +421,10 @@ func (gshc *GroupSettingHistoryCreate) createSpec() (*GroupSettingHistory, *sqlg
 		_spec.SetField(groupsettinghistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
 	}
+	if value, ok := gshc.mutation.Tags(); ok {
+		_spec.SetField(groupsettinghistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
+	}
 	if value, ok := gshc.mutation.DeletedAt(); ok {
 		_spec.SetField(groupsettinghistory.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
@@ -436,10 +440,6 @@ func (gshc *GroupSettingHistoryCreate) createSpec() (*GroupSettingHistory, *sqlg
 	if value, ok := gshc.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsettinghistory.FieldJoinPolicy, field.TypeEnum, value)
 		_node.JoinPolicy = value
-	}
-	if value, ok := gshc.mutation.Tags(); ok {
-		_spec.SetField(groupsettinghistory.FieldTags, field.TypeJSON, value)
-		_node.Tags = value
 	}
 	if value, ok := gshc.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsettinghistory.FieldSyncToSlack, field.TypeBool, value)

@@ -33,6 +33,8 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldMappingID holds the string denoting the mapping_id field in the database.
 	FieldMappingID = "mapping_id"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -49,8 +51,6 @@ const (
 	FieldBillingAddress = "billing_address"
 	// FieldTaxIdentifier holds the string denoting the tax_identifier field in the database.
 	FieldTaxIdentifier = "tax_identifier"
-	// FieldTags holds the string denoting the tags field in the database.
-	FieldTags = "tags"
 	// FieldGeoLocation holds the string denoting the geo_location field in the database.
 	FieldGeoLocation = "geo_location"
 	// FieldOrganizationID holds the string denoting the organization_id field in the database.
@@ -70,6 +70,7 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldMappingID,
+	FieldTags,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldDomains,
@@ -78,7 +79,6 @@ var Columns = []string{
 	FieldBillingPhone,
 	FieldBillingAddress,
 	FieldTaxIdentifier,
-	FieldTags,
 	FieldGeoLocation,
 	FieldOrganizationID,
 }

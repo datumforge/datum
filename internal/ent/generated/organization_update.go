@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
@@ -76,6 +77,24 @@ func (ou *OrganizationUpdate) SetNillableUpdatedBy(s *string) *OrganizationUpdat
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (ou *OrganizationUpdate) ClearUpdatedBy() *OrganizationUpdate {
 	ou.mutation.ClearUpdatedBy()
+	return ou
+}
+
+// SetTags sets the "tags" field.
+func (ou *OrganizationUpdate) SetTags(s []string) *OrganizationUpdate {
+	ou.mutation.SetTags(s)
+	return ou
+}
+
+// AppendTags appends s to the "tags" field.
+func (ou *OrganizationUpdate) AppendTags(s []string) *OrganizationUpdate {
+	ou.mutation.AppendTags(s)
+	return ou
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ou *OrganizationUpdate) ClearTags() *OrganizationUpdate {
+	ou.mutation.ClearTags()
 	return ou
 }
 
@@ -934,6 +953,17 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ou.mutation.UpdatedByCleared() {
 		_spec.ClearField(organization.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := ou.mutation.Tags(); ok {
+		_spec.SetField(organization.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ou.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, organization.FieldTags, value)
+		})
+	}
+	if ou.mutation.TagsCleared() {
+		_spec.ClearField(organization.FieldTags, field.TypeJSON)
 	}
 	if value, ok := ou.mutation.DeletedAt(); ok {
 		_spec.SetField(organization.FieldDeletedAt, field.TypeTime, value)
@@ -1893,6 +1923,24 @@ func (ouo *OrganizationUpdateOne) ClearUpdatedBy() *OrganizationUpdateOne {
 	return ouo
 }
 
+// SetTags sets the "tags" field.
+func (ouo *OrganizationUpdateOne) SetTags(s []string) *OrganizationUpdateOne {
+	ouo.mutation.SetTags(s)
+	return ouo
+}
+
+// AppendTags appends s to the "tags" field.
+func (ouo *OrganizationUpdateOne) AppendTags(s []string) *OrganizationUpdateOne {
+	ouo.mutation.AppendTags(s)
+	return ouo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ouo *OrganizationUpdateOne) ClearTags() *OrganizationUpdateOne {
+	ouo.mutation.ClearTags()
+	return ouo
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ouo *OrganizationUpdateOne) SetDeletedAt(t time.Time) *OrganizationUpdateOne {
 	ouo.mutation.SetDeletedAt(t)
@@ -2778,6 +2826,17 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if ouo.mutation.UpdatedByCleared() {
 		_spec.ClearField(organization.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := ouo.mutation.Tags(); ok {
+		_spec.SetField(organization.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ouo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, organization.FieldTags, value)
+		})
+	}
+	if ouo.mutation.TagsCleared() {
+		_spec.ClearField(organization.FieldTags, field.TypeJSON)
 	}
 	if value, ok := ouo.mutation.DeletedAt(); ok {
 		_spec.SetField(organization.FieldDeletedAt, field.TypeTime, value)

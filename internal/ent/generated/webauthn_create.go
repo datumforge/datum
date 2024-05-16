@@ -91,6 +91,12 @@ func (wc *WebauthnCreate) SetNillableMappingID(s *string) *WebauthnCreate {
 	return wc
 }
 
+// SetTags sets the "tags" field.
+func (wc *WebauthnCreate) SetTags(s []string) *WebauthnCreate {
+	wc.mutation.SetTags(s)
+	return wc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (wc *WebauthnCreate) SetOwnerID(s string) *WebauthnCreate {
 	wc.mutation.SetOwnerID(s)
@@ -274,6 +280,10 @@ func (wc *WebauthnCreate) defaults() error {
 		v := webauthn.DefaultMappingID()
 		wc.mutation.SetMappingID(v)
 	}
+	if _, ok := wc.mutation.Tags(); !ok {
+		v := webauthn.DefaultTags
+		wc.mutation.SetTags(v)
+	}
 	if _, ok := wc.mutation.BackupEligible(); !ok {
 		v := webauthn.DefaultBackupEligible
 		wc.mutation.SetBackupEligible(v)
@@ -387,6 +397,10 @@ func (wc *WebauthnCreate) createSpec() (*Webauthn, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.MappingID(); ok {
 		_spec.SetField(webauthn.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := wc.mutation.Tags(); ok {
+		_spec.SetField(webauthn.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := wc.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeBytes, value)

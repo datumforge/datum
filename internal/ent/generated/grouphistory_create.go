@@ -153,6 +153,12 @@ func (ghc *GroupHistoryCreate) SetNillableMappingID(s *string) *GroupHistoryCrea
 	return ghc
 }
 
+// SetTags sets the "tags" field.
+func (ghc *GroupHistoryCreate) SetTags(s []string) *GroupHistoryCreate {
+	ghc.mutation.SetTags(s)
+	return ghc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (ghc *GroupHistoryCreate) SetOwnerID(s string) *GroupHistoryCreate {
 	ghc.mutation.SetOwnerID(s)
@@ -294,6 +300,10 @@ func (ghc *GroupHistoryCreate) defaults() {
 		v := grouphistory.DefaultMappingID()
 		ghc.mutation.SetMappingID(v)
 	}
+	if _, ok := ghc.mutation.Tags(); !ok {
+		v := grouphistory.DefaultTags
+		ghc.mutation.SetTags(v)
+	}
 	if _, ok := ghc.mutation.DisplayName(); !ok {
 		v := grouphistory.DefaultDisplayName
 		ghc.mutation.SetDisplayName(v)
@@ -401,6 +411,10 @@ func (ghc *GroupHistoryCreate) createSpec() (*GroupHistory, *sqlgraph.CreateSpec
 	if value, ok := ghc.mutation.MappingID(); ok {
 		_spec.SetField(grouphistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ghc.mutation.Tags(); ok {
+		_spec.SetField(grouphistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ghc.mutation.OwnerID(); ok {
 		_spec.SetField(grouphistory.FieldOwnerID, field.TypeString, value)

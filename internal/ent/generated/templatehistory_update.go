@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -109,6 +110,24 @@ func (thu *TemplateHistoryUpdate) SetNillableDeletedBy(s *string) *TemplateHisto
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (thu *TemplateHistoryUpdate) ClearDeletedBy() *TemplateHistoryUpdate {
 	thu.mutation.ClearDeletedBy()
+	return thu
+}
+
+// SetTags sets the "tags" field.
+func (thu *TemplateHistoryUpdate) SetTags(s []string) *TemplateHistoryUpdate {
+	thu.mutation.SetTags(s)
+	return thu
+}
+
+// AppendTags appends s to the "tags" field.
+func (thu *TemplateHistoryUpdate) AppendTags(s []string) *TemplateHistoryUpdate {
+	thu.mutation.AppendTags(s)
+	return thu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (thu *TemplateHistoryUpdate) ClearTags() *TemplateHistoryUpdate {
+	thu.mutation.ClearTags()
 	return thu
 }
 
@@ -285,6 +304,17 @@ func (thu *TemplateHistoryUpdate) sqlSave(ctx context.Context) (n int, err error
 	if thu.mutation.DeletedByCleared() {
 		_spec.ClearField(templatehistory.FieldDeletedBy, field.TypeString)
 	}
+	if value, ok := thu.mutation.Tags(); ok {
+		_spec.SetField(templatehistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := thu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, templatehistory.FieldTags, value)
+		})
+	}
+	if thu.mutation.TagsCleared() {
+		_spec.ClearField(templatehistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := thu.mutation.OwnerID(); ok {
 		_spec.SetField(templatehistory.FieldOwnerID, field.TypeString, value)
 	}
@@ -411,6 +441,24 @@ func (thuo *TemplateHistoryUpdateOne) SetNillableDeletedBy(s *string) *TemplateH
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (thuo *TemplateHistoryUpdateOne) ClearDeletedBy() *TemplateHistoryUpdateOne {
 	thuo.mutation.ClearDeletedBy()
+	return thuo
+}
+
+// SetTags sets the "tags" field.
+func (thuo *TemplateHistoryUpdateOne) SetTags(s []string) *TemplateHistoryUpdateOne {
+	thuo.mutation.SetTags(s)
+	return thuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (thuo *TemplateHistoryUpdateOne) AppendTags(s []string) *TemplateHistoryUpdateOne {
+	thuo.mutation.AppendTags(s)
+	return thuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (thuo *TemplateHistoryUpdateOne) ClearTags() *TemplateHistoryUpdateOne {
+	thuo.mutation.ClearTags()
 	return thuo
 }
 
@@ -616,6 +664,17 @@ func (thuo *TemplateHistoryUpdateOne) sqlSave(ctx context.Context) (_node *Templ
 	}
 	if thuo.mutation.DeletedByCleared() {
 		_spec.ClearField(templatehistory.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := thuo.mutation.Tags(); ok {
+		_spec.SetField(templatehistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := thuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, templatehistory.FieldTags, value)
+		})
+	}
+	if thuo.mutation.TagsCleared() {
+		_spec.ClearField(templatehistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := thuo.mutation.OwnerID(); ok {
 		_spec.SetField(templatehistory.FieldOwnerID, field.TypeString, value)

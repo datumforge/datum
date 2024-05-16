@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/event"
@@ -73,6 +74,24 @@ func (eu *EventUpdate) SetNillableUpdatedBy(s *string) *EventUpdate {
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (eu *EventUpdate) ClearUpdatedBy() *EventUpdate {
 	eu.mutation.ClearUpdatedBy()
+	return eu
+}
+
+// SetTags sets the "tags" field.
+func (eu *EventUpdate) SetTags(s []string) *EventUpdate {
+	eu.mutation.SetTags(s)
+	return eu
+}
+
+// AppendTags appends s to the "tags" field.
+func (eu *EventUpdate) AppendTags(s []string) *EventUpdate {
+	eu.mutation.AppendTags(s)
+	return eu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (eu *EventUpdate) ClearTags() *EventUpdate {
+	eu.mutation.ClearTags()
 	return eu
 }
 
@@ -719,6 +738,17 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.UpdatedByCleared() {
 		_spec.ClearField(event.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := eu.mutation.Tags(); ok {
+		_spec.SetField(event.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := eu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, event.FieldTags, value)
+		})
+	}
+	if eu.mutation.TagsCleared() {
+		_spec.ClearField(event.FieldTags, field.TypeJSON)
 	}
 	if value, ok := eu.mutation.EventID(); ok {
 		_spec.SetField(event.FieldEventID, field.TypeString, value)
@@ -1467,6 +1497,24 @@ func (euo *EventUpdateOne) ClearUpdatedBy() *EventUpdateOne {
 	return euo
 }
 
+// SetTags sets the "tags" field.
+func (euo *EventUpdateOne) SetTags(s []string) *EventUpdateOne {
+	euo.mutation.SetTags(s)
+	return euo
+}
+
+// AppendTags appends s to the "tags" field.
+func (euo *EventUpdateOne) AppendTags(s []string) *EventUpdateOne {
+	euo.mutation.AppendTags(s)
+	return euo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (euo *EventUpdateOne) ClearTags() *EventUpdateOne {
+	euo.mutation.ClearTags()
+	return euo
+}
+
 // SetEventID sets the "event_id" field.
 func (euo *EventUpdateOne) SetEventID(s string) *EventUpdateOne {
 	euo.mutation.SetEventID(s)
@@ -2140,6 +2188,17 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	}
 	if euo.mutation.UpdatedByCleared() {
 		_spec.ClearField(event.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := euo.mutation.Tags(); ok {
+		_spec.SetField(event.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := euo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, event.FieldTags, value)
+		})
+	}
+	if euo.mutation.TagsCleared() {
+		_spec.ClearField(event.FieldTags, field.TypeJSON)
 	}
 	if value, ok := euo.mutation.EventID(); ok {
 		_spec.SetField(event.FieldEventID, field.TypeString, value)

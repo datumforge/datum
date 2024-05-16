@@ -107,6 +107,12 @@ func (oc *OrganizationCreate) SetNillableMappingID(s *string) *OrganizationCreat
 	return oc
 }
 
+// SetTags sets the "tags" field.
+func (oc *OrganizationCreate) SetTags(s []string) *OrganizationCreate {
+	oc.mutation.SetTags(s)
+	return oc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (oc *OrganizationCreate) SetDeletedAt(t time.Time) *OrganizationCreate {
 	oc.mutation.SetDeletedAt(t)
@@ -590,6 +596,10 @@ func (oc *OrganizationCreate) defaults() error {
 		v := organization.DefaultMappingID()
 		oc.mutation.SetMappingID(v)
 	}
+	if _, ok := oc.mutation.Tags(); !ok {
+		v := organization.DefaultTags
+		oc.mutation.SetTags(v)
+	}
 	if _, ok := oc.mutation.DisplayName(); !ok {
 		v := organization.DefaultDisplayName
 		oc.mutation.SetDisplayName(v)
@@ -696,6 +706,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := oc.mutation.MappingID(); ok {
 		_spec.SetField(organization.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := oc.mutation.Tags(); ok {
+		_spec.SetField(organization.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := oc.mutation.DeletedAt(); ok {
 		_spec.SetField(organization.FieldDeletedAt, field.TypeTime, value)

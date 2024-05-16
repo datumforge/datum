@@ -33,6 +33,8 @@ type APIToken struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
 	// the name associated with the token
@@ -80,7 +82,7 @@ func (*APIToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case apitoken.FieldScopes:
+		case apitoken.FieldTags, apitoken.FieldScopes:
 			values[i] = new([]byte)
 		case apitoken.FieldID, apitoken.FieldCreatedBy, apitoken.FieldUpdatedBy, apitoken.FieldDeletedBy, apitoken.FieldMappingID, apitoken.FieldOwnerID, apitoken.FieldName, apitoken.FieldToken, apitoken.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -148,6 +150,14 @@ func (at *APIToken) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				at.MappingID = value.String
+			}
+		case apitoken.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &at.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case apitoken.FieldOwnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -256,6 +266,9 @@ func (at *APIToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(at.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", at.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("owner_id=")
 	builder.WriteString(at.OwnerID)

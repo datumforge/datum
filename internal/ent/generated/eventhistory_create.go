@@ -125,6 +125,12 @@ func (ehc *EventHistoryCreate) SetNillableMappingID(s *string) *EventHistoryCrea
 	return ehc
 }
 
+// SetTags sets the "tags" field.
+func (ehc *EventHistoryCreate) SetTags(s []string) *EventHistoryCreate {
+	ehc.mutation.SetTags(s)
+	return ehc
+}
+
 // SetEventID sets the "event_id" field.
 func (ehc *EventHistoryCreate) SetEventID(s string) *EventHistoryCreate {
 	ehc.mutation.SetEventID(s)
@@ -230,6 +236,10 @@ func (ehc *EventHistoryCreate) defaults() {
 		v := eventhistory.DefaultMappingID()
 		ehc.mutation.SetMappingID(v)
 	}
+	if _, ok := ehc.mutation.Tags(); !ok {
+		v := eventhistory.DefaultTags
+		ehc.mutation.SetTags(v)
+	}
 	if _, ok := ehc.mutation.ID(); !ok {
 		v := eventhistory.DefaultID()
 		ehc.mutation.SetID(v)
@@ -322,6 +332,10 @@ func (ehc *EventHistoryCreate) createSpec() (*EventHistory, *sqlgraph.CreateSpec
 	if value, ok := ehc.mutation.MappingID(); ok {
 		_spec.SetField(eventhistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ehc.mutation.Tags(); ok {
+		_spec.SetField(eventhistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ehc.mutation.EventID(); ok {
 		_spec.SetField(eventhistory.FieldEventID, field.TypeString, value)

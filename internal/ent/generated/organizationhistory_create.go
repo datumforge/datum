@@ -125,6 +125,12 @@ func (ohc *OrganizationHistoryCreate) SetNillableMappingID(s *string) *Organizat
 	return ohc
 }
 
+// SetTags sets the "tags" field.
+func (ohc *OrganizationHistoryCreate) SetTags(s []string) *OrganizationHistoryCreate {
+	ohc.mutation.SetTags(s)
+	return ohc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ohc *OrganizationHistoryCreate) SetDeletedAt(t time.Time) *OrganizationHistoryCreate {
 	ohc.mutation.SetDeletedAt(t)
@@ -308,6 +314,10 @@ func (ohc *OrganizationHistoryCreate) defaults() {
 		v := organizationhistory.DefaultMappingID()
 		ohc.mutation.SetMappingID(v)
 	}
+	if _, ok := ohc.mutation.Tags(); !ok {
+		v := organizationhistory.DefaultTags
+		ohc.mutation.SetTags(v)
+	}
 	if _, ok := ohc.mutation.DisplayName(); !ok {
 		v := organizationhistory.DefaultDisplayName
 		ohc.mutation.SetDisplayName(v)
@@ -418,6 +428,10 @@ func (ohc *OrganizationHistoryCreate) createSpec() (*OrganizationHistory, *sqlgr
 	if value, ok := ohc.mutation.MappingID(); ok {
 		_spec.SetField(organizationhistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ohc.mutation.Tags(); ok {
+		_spec.SetField(organizationhistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ohc.mutation.DeletedAt(); ok {
 		_spec.SetField(organizationhistory.FieldDeletedAt, field.TypeTime, value)

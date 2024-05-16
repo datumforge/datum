@@ -122,6 +122,12 @@ func (tc *TemplateCreate) SetNillableMappingID(s *string) *TemplateCreate {
 	return tc
 }
 
+// SetTags sets the "tags" field.
+func (tc *TemplateCreate) SetTags(s []string) *TemplateCreate {
+	tc.mutation.SetTags(s)
+	return tc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (tc *TemplateCreate) SetOwnerID(s string) *TemplateCreate {
 	tc.mutation.SetOwnerID(s)
@@ -274,6 +280,10 @@ func (tc *TemplateCreate) defaults() error {
 		v := template.DefaultMappingID()
 		tc.mutation.SetMappingID(v)
 	}
+	if _, ok := tc.mutation.Tags(); !ok {
+		v := template.DefaultTags
+		tc.mutation.SetTags(v)
+	}
 	if _, ok := tc.mutation.TemplateType(); !ok {
 		v := template.DefaultTemplateType
 		tc.mutation.SetTemplateType(v)
@@ -380,6 +390,10 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.MappingID(); ok {
 		_spec.SetField(template.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := tc.mutation.Tags(); ok {
+		_spec.SetField(template.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := tc.mutation.Name(); ok {
 		_spec.SetField(template.FieldName, field.TypeString, value)

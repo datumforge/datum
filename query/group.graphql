@@ -8,6 +8,7 @@ query GetGroupByID($groupId: ID!) {
       id
     }
     logoURL
+    tags
     setting {
       id
       createdAt
@@ -48,6 +49,7 @@ query GroupsWhere($where: GroupWhereInput) {
           id
         }
         logoURL
+        tags
         setting {
           id
           createdAt
@@ -90,6 +92,7 @@ query GetAllGroups {
           id
         }
         logoURL
+        tags
         setting {
           id
           createdAt
@@ -131,6 +134,7 @@ mutation CreateGroup($input: CreateGroupInput!) {
         id
       }
       logoURL
+      tags
       setting {
         id
         createdAt
@@ -167,6 +171,7 @@ mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
       name
       displayName
       description
+      tags
       setting {
         id
         createdAt

@@ -92,6 +92,12 @@ func (sc *SubscriberCreate) SetNillableMappingID(s *string) *SubscriberCreate {
 	return sc
 }
 
+// SetTags sets the "tags" field.
+func (sc *SubscriberCreate) SetTags(s []string) *SubscriberCreate {
+	sc.mutation.SetTags(s)
+	return sc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (sc *SubscriberCreate) SetDeletedAt(t time.Time) *SubscriberCreate {
 	sc.mutation.SetDeletedAt(t)
@@ -306,6 +312,10 @@ func (sc *SubscriberCreate) defaults() error {
 		v := subscriber.DefaultMappingID()
 		sc.mutation.SetMappingID(v)
 	}
+	if _, ok := sc.mutation.Tags(); !ok {
+		v := subscriber.DefaultTags
+		sc.mutation.SetTags(v)
+	}
 	if _, ok := sc.mutation.VerifiedEmail(); !ok {
 		v := subscriber.DefaultVerifiedEmail
 		sc.mutation.SetVerifiedEmail(v)
@@ -434,6 +444,10 @@ func (sc *SubscriberCreate) createSpec() (*Subscriber, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.MappingID(); ok {
 		_spec.SetField(subscriber.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := sc.mutation.Tags(); ok {
+		_spec.SetField(subscriber.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := sc.mutation.DeletedAt(); ok {
 		_spec.SetField(subscriber.FieldDeletedAt, field.TypeTime, value)

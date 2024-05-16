@@ -59,6 +59,7 @@ func (OhAuthTooToken) Edges() []ent.Edge {
 func (OhAuthTooToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 	}
 }
 

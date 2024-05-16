@@ -576,6 +576,16 @@ func MappingIDContainsFold(v string) predicate.GroupSettingHistory {
 	return predicate.GroupSettingHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.GroupSettingHistory {
+	return predicate.GroupSettingHistory(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.GroupSettingHistory {
+	return predicate.GroupSettingHistory(sql.FieldNotNull(FieldTags))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.GroupSettingHistory {
 	return predicate.GroupSettingHistory(sql.FieldEQ(FieldDeletedAt, v))
@@ -759,16 +769,6 @@ func JoinPolicyNotIn(vs ...enums.JoinPolicy) predicate.GroupSettingHistory {
 		v[i] = vs[i]
 	}
 	return predicate.GroupSettingHistory(sql.FieldNotIn(FieldJoinPolicy, v...))
-}
-
-// TagsIsNil applies the IsNil predicate on the "tags" field.
-func TagsIsNil() predicate.GroupSettingHistory {
-	return predicate.GroupSettingHistory(sql.FieldIsNull(FieldTags))
-}
-
-// TagsNotNil applies the NotNil predicate on the "tags" field.
-func TagsNotNil() predicate.GroupSettingHistory {
-	return predicate.GroupSettingHistory(sql.FieldNotNull(FieldTags))
 }
 
 // SyncToSlackEQ applies the EQ predicate on the "sync_to_slack" field.

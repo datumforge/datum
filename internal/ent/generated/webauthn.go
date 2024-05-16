@@ -29,6 +29,8 @@ type Webauthn struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
 	// A probabilistically-unique byte sequence identifying a public key credential source and its authentication assertions
@@ -84,7 +86,7 @@ func (*Webauthn) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case webauthn.FieldCredentialID, webauthn.FieldPublicKey, webauthn.FieldAaguid, webauthn.FieldTransports:
+		case webauthn.FieldTags, webauthn.FieldCredentialID, webauthn.FieldPublicKey, webauthn.FieldAaguid, webauthn.FieldTransports:
 			values[i] = new([]byte)
 		case webauthn.FieldBackupEligible, webauthn.FieldBackupState, webauthn.FieldUserPresent, webauthn.FieldUserVerified:
 			values[i] = new(sql.NullBool)
@@ -144,6 +146,14 @@ func (w *Webauthn) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				w.MappingID = value.String
+			}
+		case webauthn.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &w.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case webauthn.FieldOwnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -268,6 +278,9 @@ func (w *Webauthn) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(w.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", w.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("owner_id=")
 	builder.WriteString(w.OwnerID)

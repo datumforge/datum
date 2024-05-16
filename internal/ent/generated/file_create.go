@@ -121,6 +121,12 @@ func (fc *FileCreate) SetNillableMappingID(s *string) *FileCreate {
 	return fc
 }
 
+// SetTags sets the "tags" field.
+func (fc *FileCreate) SetTags(s []string) *FileCreate {
+	fc.mutation.SetTags(s)
+	return fc
+}
+
 // SetFileName sets the "file_name" field.
 func (fc *FileCreate) SetFileName(s string) *FileCreate {
 	fc.mutation.SetFileName(s)
@@ -308,6 +314,10 @@ func (fc *FileCreate) defaults() error {
 		v := file.DefaultMappingID()
 		fc.mutation.SetMappingID(v)
 	}
+	if _, ok := fc.mutation.Tags(); !ok {
+		v := file.DefaultTags
+		fc.mutation.SetTags(v)
+	}
 	if _, ok := fc.mutation.ID(); !ok {
 		if file.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized file.DefaultID (forgotten import generated/runtime?)")
@@ -403,6 +413,10 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	if value, ok := fc.mutation.MappingID(); ok {
 		_spec.SetField(file.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := fc.mutation.Tags(); ok {
+		_spec.SetField(file.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := fc.mutation.FileName(); ok {
 		_spec.SetField(file.FieldFileName, field.TypeString, value)

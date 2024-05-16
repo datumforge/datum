@@ -183,6 +183,7 @@ func (Organization) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
 	}
 }

@@ -126,6 +126,12 @@ func (ophc *OauthProviderHistoryCreate) SetNillableMappingID(s *string) *OauthPr
 	return ophc
 }
 
+// SetTags sets the "tags" field.
+func (ophc *OauthProviderHistoryCreate) SetTags(s []string) *OauthProviderHistoryCreate {
+	ophc.mutation.SetTags(s)
+	return ophc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ophc *OauthProviderHistoryCreate) SetDeletedAt(t time.Time) *OauthProviderHistoryCreate {
 	ophc.mutation.SetDeletedAt(t)
@@ -273,6 +279,10 @@ func (ophc *OauthProviderHistoryCreate) defaults() {
 		v := oauthproviderhistory.DefaultMappingID()
 		ophc.mutation.SetMappingID(v)
 	}
+	if _, ok := ophc.mutation.Tags(); !ok {
+		v := oauthproviderhistory.DefaultTags
+		ophc.mutation.SetTags(v)
+	}
 	if _, ok := ophc.mutation.ID(); !ok {
 		v := oauthproviderhistory.DefaultID()
 		ophc.mutation.SetID(v)
@@ -389,6 +399,10 @@ func (ophc *OauthProviderHistoryCreate) createSpec() (*OauthProviderHistory, *sq
 	if value, ok := ophc.mutation.MappingID(); ok {
 		_spec.SetField(oauthproviderhistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ophc.mutation.Tags(); ok {
+		_spec.SetField(oauthproviderhistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ophc.mutation.DeletedAt(); ok {
 		_spec.SetField(oauthproviderhistory.FieldDeletedAt, field.TypeTime, value)

@@ -72,6 +72,24 @@ func (gshu *GroupSettingHistoryUpdate) ClearUpdatedBy() *GroupSettingHistoryUpda
 	return gshu
 }
 
+// SetTags sets the "tags" field.
+func (gshu *GroupSettingHistoryUpdate) SetTags(s []string) *GroupSettingHistoryUpdate {
+	gshu.mutation.SetTags(s)
+	return gshu
+}
+
+// AppendTags appends s to the "tags" field.
+func (gshu *GroupSettingHistoryUpdate) AppendTags(s []string) *GroupSettingHistoryUpdate {
+	gshu.mutation.AppendTags(s)
+	return gshu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (gshu *GroupSettingHistoryUpdate) ClearTags() *GroupSettingHistoryUpdate {
+	gshu.mutation.ClearTags()
+	return gshu
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gshu *GroupSettingHistoryUpdate) SetDeletedAt(t time.Time) *GroupSettingHistoryUpdate {
 	gshu.mutation.SetDeletedAt(t)
@@ -137,24 +155,6 @@ func (gshu *GroupSettingHistoryUpdate) SetNillableJoinPolicy(ep *enums.JoinPolic
 	if ep != nil {
 		gshu.SetJoinPolicy(*ep)
 	}
-	return gshu
-}
-
-// SetTags sets the "tags" field.
-func (gshu *GroupSettingHistoryUpdate) SetTags(s []string) *GroupSettingHistoryUpdate {
-	gshu.mutation.SetTags(s)
-	return gshu
-}
-
-// AppendTags appends s to the "tags" field.
-func (gshu *GroupSettingHistoryUpdate) AppendTags(s []string) *GroupSettingHistoryUpdate {
-	gshu.mutation.AppendTags(s)
-	return gshu
-}
-
-// ClearTags clears the value of the "tags" field.
-func (gshu *GroupSettingHistoryUpdate) ClearTags() *GroupSettingHistoryUpdate {
-	gshu.mutation.ClearTags()
 	return gshu
 }
 
@@ -298,6 +298,17 @@ func (gshu *GroupSettingHistoryUpdate) sqlSave(ctx context.Context) (n int, err 
 	if gshu.mutation.UpdatedByCleared() {
 		_spec.ClearField(groupsettinghistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := gshu.mutation.Tags(); ok {
+		_spec.SetField(groupsettinghistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := gshu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupsettinghistory.FieldTags, value)
+		})
+	}
+	if gshu.mutation.TagsCleared() {
+		_spec.ClearField(groupsettinghistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := gshu.mutation.DeletedAt(); ok {
 		_spec.SetField(groupsettinghistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -315,17 +326,6 @@ func (gshu *GroupSettingHistoryUpdate) sqlSave(ctx context.Context) (n int, err 
 	}
 	if value, ok := gshu.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsettinghistory.FieldJoinPolicy, field.TypeEnum, value)
-	}
-	if value, ok := gshu.mutation.Tags(); ok {
-		_spec.SetField(groupsettinghistory.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := gshu.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, groupsettinghistory.FieldTags, value)
-		})
-	}
-	if gshu.mutation.TagsCleared() {
-		_spec.ClearField(groupsettinghistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := gshu.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsettinghistory.FieldSyncToSlack, field.TypeBool, value)
@@ -407,6 +407,24 @@ func (gshuo *GroupSettingHistoryUpdateOne) ClearUpdatedBy() *GroupSettingHistory
 	return gshuo
 }
 
+// SetTags sets the "tags" field.
+func (gshuo *GroupSettingHistoryUpdateOne) SetTags(s []string) *GroupSettingHistoryUpdateOne {
+	gshuo.mutation.SetTags(s)
+	return gshuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (gshuo *GroupSettingHistoryUpdateOne) AppendTags(s []string) *GroupSettingHistoryUpdateOne {
+	gshuo.mutation.AppendTags(s)
+	return gshuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (gshuo *GroupSettingHistoryUpdateOne) ClearTags() *GroupSettingHistoryUpdateOne {
+	gshuo.mutation.ClearTags()
+	return gshuo
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gshuo *GroupSettingHistoryUpdateOne) SetDeletedAt(t time.Time) *GroupSettingHistoryUpdateOne {
 	gshuo.mutation.SetDeletedAt(t)
@@ -472,24 +490,6 @@ func (gshuo *GroupSettingHistoryUpdateOne) SetNillableJoinPolicy(ep *enums.JoinP
 	if ep != nil {
 		gshuo.SetJoinPolicy(*ep)
 	}
-	return gshuo
-}
-
-// SetTags sets the "tags" field.
-func (gshuo *GroupSettingHistoryUpdateOne) SetTags(s []string) *GroupSettingHistoryUpdateOne {
-	gshuo.mutation.SetTags(s)
-	return gshuo
-}
-
-// AppendTags appends s to the "tags" field.
-func (gshuo *GroupSettingHistoryUpdateOne) AppendTags(s []string) *GroupSettingHistoryUpdateOne {
-	gshuo.mutation.AppendTags(s)
-	return gshuo
-}
-
-// ClearTags clears the value of the "tags" field.
-func (gshuo *GroupSettingHistoryUpdateOne) ClearTags() *GroupSettingHistoryUpdateOne {
-	gshuo.mutation.ClearTags()
 	return gshuo
 }
 
@@ -663,6 +663,17 @@ func (gshuo *GroupSettingHistoryUpdateOne) sqlSave(ctx context.Context) (_node *
 	if gshuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(groupsettinghistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := gshuo.mutation.Tags(); ok {
+		_spec.SetField(groupsettinghistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := gshuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupsettinghistory.FieldTags, value)
+		})
+	}
+	if gshuo.mutation.TagsCleared() {
+		_spec.ClearField(groupsettinghistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := gshuo.mutation.DeletedAt(); ok {
 		_spec.SetField(groupsettinghistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -680,17 +691,6 @@ func (gshuo *GroupSettingHistoryUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if value, ok := gshuo.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsettinghistory.FieldJoinPolicy, field.TypeEnum, value)
-	}
-	if value, ok := gshuo.mutation.Tags(); ok {
-		_spec.SetField(groupsettinghistory.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := gshuo.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, groupsettinghistory.FieldTags, value)
-		})
-	}
-	if gshuo.mutation.TagsCleared() {
-		_spec.ClearField(groupsettinghistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := gshuo.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsettinghistory.FieldSyncToSlack, field.TypeBool, value)

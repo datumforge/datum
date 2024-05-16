@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -34,6 +35,8 @@ type IntegrationHistory struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -54,6 +57,8 @@ func (*IntegrationHistory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case integrationhistory.FieldTags:
+			values[i] = new([]byte)
 		case integrationhistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
 		case integrationhistory.FieldID, integrationhistory.FieldRef, integrationhistory.FieldCreatedBy, integrationhistory.FieldUpdatedBy, integrationhistory.FieldMappingID, integrationhistory.FieldDeletedBy, integrationhistory.FieldOwnerID, integrationhistory.FieldName, integrationhistory.FieldDescription, integrationhistory.FieldKind:
@@ -128,6 +133,14 @@ func (ih *IntegrationHistory) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				ih.MappingID = value.String
+			}
+		case integrationhistory.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &ih.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case integrationhistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -224,6 +237,9 @@ func (ih *IntegrationHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(ih.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", ih.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(ih.DeletedAt.Format(time.ANSIC))

@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -61,6 +62,24 @@ func (su *SubscriberUpdate) SetNillableUpdatedBy(s *string) *SubscriberUpdate {
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (su *SubscriberUpdate) ClearUpdatedBy() *SubscriberUpdate {
 	su.mutation.ClearUpdatedBy()
+	return su
+}
+
+// SetTags sets the "tags" field.
+func (su *SubscriberUpdate) SetTags(s []string) *SubscriberUpdate {
+	su.mutation.SetTags(s)
+	return su
+}
+
+// AppendTags appends s to the "tags" field.
+func (su *SubscriberUpdate) AppendTags(s []string) *SubscriberUpdate {
+	su.mutation.AppendTags(s)
+	return su
+}
+
+// ClearTags clears the value of the "tags" field.
+func (su *SubscriberUpdate) ClearTags() *SubscriberUpdate {
+	su.mutation.ClearTags()
 	return su
 }
 
@@ -388,6 +407,17 @@ func (su *SubscriberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if su.mutation.UpdatedByCleared() {
 		_spec.ClearField(subscriber.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := su.mutation.Tags(); ok {
+		_spec.SetField(subscriber.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := su.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, subscriber.FieldTags, value)
+		})
+	}
+	if su.mutation.TagsCleared() {
+		_spec.ClearField(subscriber.FieldTags, field.TypeJSON)
+	}
 	if value, ok := su.mutation.DeletedAt(); ok {
 		_spec.SetField(subscriber.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -557,6 +587,24 @@ func (suo *SubscriberUpdateOne) SetNillableUpdatedBy(s *string) *SubscriberUpdat
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (suo *SubscriberUpdateOne) ClearUpdatedBy() *SubscriberUpdateOne {
 	suo.mutation.ClearUpdatedBy()
+	return suo
+}
+
+// SetTags sets the "tags" field.
+func (suo *SubscriberUpdateOne) SetTags(s []string) *SubscriberUpdateOne {
+	suo.mutation.SetTags(s)
+	return suo
+}
+
+// AppendTags appends s to the "tags" field.
+func (suo *SubscriberUpdateOne) AppendTags(s []string) *SubscriberUpdateOne {
+	suo.mutation.AppendTags(s)
+	return suo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (suo *SubscriberUpdateOne) ClearTags() *SubscriberUpdateOne {
+	suo.mutation.ClearTags()
 	return suo
 }
 
@@ -913,6 +961,17 @@ func (suo *SubscriberUpdateOne) sqlSave(ctx context.Context) (_node *Subscriber,
 	}
 	if suo.mutation.UpdatedByCleared() {
 		_spec.ClearField(subscriber.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := suo.mutation.Tags(); ok {
+		_spec.SetField(subscriber.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := suo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, subscriber.FieldTags, value)
+		})
+	}
+	if suo.mutation.TagsCleared() {
+		_spec.ClearField(subscriber.FieldTags, field.TypeJSON)
 	}
 	if value, ok := suo.mutation.DeletedAt(); ok {
 		_spec.SetField(subscriber.FieldDeletedAt, field.TypeTime, value)

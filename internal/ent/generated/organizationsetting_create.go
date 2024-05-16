@@ -92,6 +92,12 @@ func (osc *OrganizationSettingCreate) SetNillableMappingID(s *string) *Organizat
 	return osc
 }
 
+// SetTags sets the "tags" field.
+func (osc *OrganizationSettingCreate) SetTags(s []string) *OrganizationSettingCreate {
+	osc.mutation.SetTags(s)
+	return osc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (osc *OrganizationSettingCreate) SetDeletedAt(t time.Time) *OrganizationSettingCreate {
 	osc.mutation.SetDeletedAt(t)
@@ -193,12 +199,6 @@ func (osc *OrganizationSettingCreate) SetNillableTaxIdentifier(s *string) *Organ
 	if s != nil {
 		osc.SetTaxIdentifier(*s)
 	}
-	return osc
-}
-
-// SetTags sets the "tags" field.
-func (osc *OrganizationSettingCreate) SetTags(s []string) *OrganizationSettingCreate {
-	osc.mutation.SetTags(s)
 	return osc
 }
 
@@ -406,6 +406,10 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 		_spec.SetField(organizationsetting.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
 	}
+	if value, ok := osc.mutation.Tags(); ok {
+		_spec.SetField(organizationsetting.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
+	}
 	if value, ok := osc.mutation.DeletedAt(); ok {
 		_spec.SetField(organizationsetting.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
@@ -437,10 +441,6 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 	if value, ok := osc.mutation.TaxIdentifier(); ok {
 		_spec.SetField(organizationsetting.FieldTaxIdentifier, field.TypeString, value)
 		_node.TaxIdentifier = value
-	}
-	if value, ok := osc.mutation.Tags(); ok {
-		_spec.SetField(organizationsetting.FieldTags, field.TypeJSON, value)
-		_node.Tags = value
 	}
 	if value, ok := osc.mutation.GeoLocation(); ok {
 		_spec.SetField(organizationsetting.FieldGeoLocation, field.TypeEnum, value)

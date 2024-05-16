@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
@@ -61,6 +62,24 @@ func (ddu *DocumentDataUpdate) SetNillableUpdatedBy(s *string) *DocumentDataUpda
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (ddu *DocumentDataUpdate) ClearUpdatedBy() *DocumentDataUpdate {
 	ddu.mutation.ClearUpdatedBy()
+	return ddu
+}
+
+// SetTags sets the "tags" field.
+func (ddu *DocumentDataUpdate) SetTags(s []string) *DocumentDataUpdate {
+	ddu.mutation.SetTags(s)
+	return ddu
+}
+
+// AppendTags appends s to the "tags" field.
+func (ddu *DocumentDataUpdate) AppendTags(s []string) *DocumentDataUpdate {
+	ddu.mutation.AppendTags(s)
+	return ddu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ddu *DocumentDataUpdate) ClearTags() *DocumentDataUpdate {
+	ddu.mutation.ClearTags()
 	return ddu
 }
 
@@ -220,6 +239,17 @@ func (ddu *DocumentDataUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ddu.mutation.UpdatedByCleared() {
 		_spec.ClearField(documentdata.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := ddu.mutation.Tags(); ok {
+		_spec.SetField(documentdata.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ddu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, documentdata.FieldTags, value)
+		})
+	}
+	if ddu.mutation.TagsCleared() {
+		_spec.ClearField(documentdata.FieldTags, field.TypeJSON)
+	}
 	if value, ok := ddu.mutation.DeletedAt(); ok {
 		_spec.SetField(documentdata.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -317,6 +347,24 @@ func (dduo *DocumentDataUpdateOne) SetNillableUpdatedBy(s *string) *DocumentData
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (dduo *DocumentDataUpdateOne) ClearUpdatedBy() *DocumentDataUpdateOne {
 	dduo.mutation.ClearUpdatedBy()
+	return dduo
+}
+
+// SetTags sets the "tags" field.
+func (dduo *DocumentDataUpdateOne) SetTags(s []string) *DocumentDataUpdateOne {
+	dduo.mutation.SetTags(s)
+	return dduo
+}
+
+// AppendTags appends s to the "tags" field.
+func (dduo *DocumentDataUpdateOne) AppendTags(s []string) *DocumentDataUpdateOne {
+	dduo.mutation.AppendTags(s)
+	return dduo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (dduo *DocumentDataUpdateOne) ClearTags() *DocumentDataUpdateOne {
+	dduo.mutation.ClearTags()
 	return dduo
 }
 
@@ -505,6 +553,17 @@ func (dduo *DocumentDataUpdateOne) sqlSave(ctx context.Context) (_node *Document
 	}
 	if dduo.mutation.UpdatedByCleared() {
 		_spec.ClearField(documentdata.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := dduo.mutation.Tags(); ok {
+		_spec.SetField(documentdata.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := dduo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, documentdata.FieldTags, value)
+		})
+	}
+	if dduo.mutation.TagsCleared() {
+		_spec.ClearField(documentdata.FieldTags, field.TypeJSON)
 	}
 	if value, ok := dduo.mutation.DeletedAt(); ok {
 		_spec.SetField(documentdata.FieldDeletedAt, field.TypeTime, value)

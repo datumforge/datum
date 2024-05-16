@@ -28,6 +28,8 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldMappingID holds the string denoting the mapping_id field in the database.
 	FieldMappingID = "mapping_id"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -36,8 +38,6 @@ const (
 	FieldVisibility = "visibility"
 	// FieldJoinPolicy holds the string denoting the join_policy field in the database.
 	FieldJoinPolicy = "join_policy"
-	// FieldTags holds the string denoting the tags field in the database.
-	FieldTags = "tags"
 	// FieldSyncToSlack holds the string denoting the sync_to_slack field in the database.
 	FieldSyncToSlack = "sync_to_slack"
 	// FieldSyncToGithub holds the string denoting the sync_to_github field in the database.
@@ -65,11 +65,11 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldMappingID,
+	FieldTags,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldVisibility,
 	FieldJoinPolicy,
-	FieldTags,
 	FieldSyncToSlack,
 	FieldSyncToGithub,
 	FieldGroupID,

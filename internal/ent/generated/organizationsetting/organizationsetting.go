@@ -28,6 +28,8 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldMappingID holds the string denoting the mapping_id field in the database.
 	FieldMappingID = "mapping_id"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -44,8 +46,6 @@ const (
 	FieldBillingAddress = "billing_address"
 	// FieldTaxIdentifier holds the string denoting the tax_identifier field in the database.
 	FieldTaxIdentifier = "tax_identifier"
-	// FieldTags holds the string denoting the tags field in the database.
-	FieldTags = "tags"
 	// FieldGeoLocation holds the string denoting the geo_location field in the database.
 	FieldGeoLocation = "geo_location"
 	// FieldOrganizationID holds the string denoting the organization_id field in the database.
@@ -71,6 +71,7 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldMappingID,
+	FieldTags,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldDomains,
@@ -79,7 +80,6 @@ var Columns = []string{
 	FieldBillingPhone,
 	FieldBillingAddress,
 	FieldTaxIdentifier,
-	FieldTags,
 	FieldGeoLocation,
 	FieldOrganizationID,
 }
@@ -111,14 +111,14 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
 	DefaultMappingID func() string
+	// DefaultTags holds the default value on creation for the "tags" field.
+	DefaultTags []string
 	// DomainsValidator is a validator for the "domains" field. It is called by the builders before save.
 	DomainsValidator func([]string) error
 	// BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.
 	BillingEmailValidator func(string) error
 	// BillingPhoneValidator is a validator for the "billing_phone" field. It is called by the builders before save.
 	BillingPhoneValidator func(string) error
-	// DefaultTags holds the default value on creation for the "tags" field.
-	DefaultTags []string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )

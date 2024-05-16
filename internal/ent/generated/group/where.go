@@ -572,6 +572,16 @@ func MappingIDContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldTags))
+}
+
 // OwnerIDEQ applies the EQ predicate on the "owner_id" field.
 func OwnerIDEQ(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldOwnerID, v))

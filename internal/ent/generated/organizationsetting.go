@@ -30,6 +30,8 @@ type OrganizationSetting struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -46,8 +48,6 @@ type OrganizationSetting struct {
 	BillingAddress string `json:"billing_address,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier string `json:"tax_identifier,omitempty"`
-	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
 	// geographical location of the organization
 	GeoLocation enums.Region `json:"geo_location,omitempty"`
 	// the ID of the organization the settings belong to
@@ -85,7 +85,7 @@ func (*OrganizationSetting) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organizationsetting.FieldDomains, organizationsetting.FieldTags:
+		case organizationsetting.FieldTags, organizationsetting.FieldDomains:
 			values[i] = new([]byte)
 		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldMappingID, organizationsetting.FieldDeletedBy, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier, organizationsetting.FieldGeoLocation, organizationsetting.FieldOrganizationID:
 			values[i] = new(sql.NullString)
@@ -142,6 +142,14 @@ func (os *OrganizationSetting) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				os.MappingID = value.String
 			}
+		case organizationsetting.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &os.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
+			}
 		case organizationsetting.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
@@ -191,14 +199,6 @@ func (os *OrganizationSetting) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field tax_identifier", values[i])
 			} else if value.Valid {
 				os.TaxIdentifier = value.String
-			}
-		case organizationsetting.FieldTags:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field tags", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &os.Tags); err != nil {
-					return fmt.Errorf("unmarshal field tags: %w", err)
-				}
 			}
 		case organizationsetting.FieldGeoLocation:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -268,6 +268,9 @@ func (os *OrganizationSetting) String() string {
 	builder.WriteString("mapping_id=")
 	builder.WriteString(os.MappingID)
 	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", os.Tags))
+	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(os.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -291,9 +294,6 @@ func (os *OrganizationSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tax_identifier=")
 	builder.WriteString(os.TaxIdentifier)
-	builder.WriteString(", ")
-	builder.WriteString("tags=")
-	builder.WriteString(fmt.Sprintf("%v", os.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("geo_location=")
 	builder.WriteString(fmt.Sprintf("%v", os.GeoLocation))

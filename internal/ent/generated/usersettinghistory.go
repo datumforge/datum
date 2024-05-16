@@ -36,6 +36,8 @@ type UserSettingHistory struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -52,8 +54,6 @@ type UserSettingHistory struct {
 	Status enums.UserStatus `json:"status,omitempty"`
 	// whether the user has confirmed their email address
 	EmailConfirmed bool `json:"email_confirmed,omitempty"`
-	// tags associated with the user
-	Tags []string `json:"tags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed bool `json:"is_webauthn_allowed,omitempty"`
 	// whether the user has two factor authentication enabled
@@ -147,6 +147,14 @@ func (ush *UserSettingHistory) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				ush.MappingID = value.String
 			}
+		case usersettinghistory.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &ush.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
+			}
 		case usersettinghistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
@@ -196,14 +204,6 @@ func (ush *UserSettingHistory) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field email_confirmed", values[i])
 			} else if value.Valid {
 				ush.EmailConfirmed = value.Bool
-			}
-		case usersettinghistory.FieldTags:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field tags", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &ush.Tags); err != nil {
-					return fmt.Errorf("unmarshal field tags: %w", err)
-				}
 			}
 		case usersettinghistory.FieldIsWebauthnAllowed:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -284,6 +284,9 @@ func (ush *UserSettingHistory) String() string {
 	builder.WriteString("mapping_id=")
 	builder.WriteString(ush.MappingID)
 	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", ush.Tags))
+	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(ush.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -311,9 +314,6 @@ func (ush *UserSettingHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("email_confirmed=")
 	builder.WriteString(fmt.Sprintf("%v", ush.EmailConfirmed))
-	builder.WriteString(", ")
-	builder.WriteString("tags=")
-	builder.WriteString(fmt.Sprintf("%v", ush.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("is_webauthn_allowed=")
 	builder.WriteString(fmt.Sprintf("%v", ush.IsWebauthnAllowed))

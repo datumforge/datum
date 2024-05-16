@@ -126,6 +126,12 @@ func (ddhc *DocumentDataHistoryCreate) SetNillableMappingID(s *string) *Document
 	return ddhc
 }
 
+// SetTags sets the "tags" field.
+func (ddhc *DocumentDataHistoryCreate) SetTags(s []string) *DocumentDataHistoryCreate {
+	ddhc.mutation.SetTags(s)
+	return ddhc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ddhc *DocumentDataHistoryCreate) SetDeletedAt(t time.Time) *DocumentDataHistoryCreate {
 	ddhc.mutation.SetDeletedAt(t)
@@ -231,6 +237,10 @@ func (ddhc *DocumentDataHistoryCreate) defaults() {
 		v := documentdatahistory.DefaultMappingID()
 		ddhc.mutation.SetMappingID(v)
 	}
+	if _, ok := ddhc.mutation.Tags(); !ok {
+		v := documentdatahistory.DefaultTags
+		ddhc.mutation.SetTags(v)
+	}
 	if _, ok := ddhc.mutation.ID(); !ok {
 		v := documentdatahistory.DefaultID()
 		ddhc.mutation.SetID(v)
@@ -326,6 +336,10 @@ func (ddhc *DocumentDataHistoryCreate) createSpec() (*DocumentDataHistory, *sqlg
 	if value, ok := ddhc.mutation.MappingID(); ok {
 		_spec.SetField(documentdatahistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ddhc.mutation.Tags(); ok {
+		_spec.SetField(documentdatahistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ddhc.mutation.DeletedAt(); ok {
 		_spec.SetField(documentdatahistory.FieldDeletedAt, field.TypeTime, value)

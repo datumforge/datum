@@ -72,6 +72,24 @@ func (ushu *UserSettingHistoryUpdate) ClearUpdatedBy() *UserSettingHistoryUpdate
 	return ushu
 }
 
+// SetTags sets the "tags" field.
+func (ushu *UserSettingHistoryUpdate) SetTags(s []string) *UserSettingHistoryUpdate {
+	ushu.mutation.SetTags(s)
+	return ushu
+}
+
+// AppendTags appends s to the "tags" field.
+func (ushu *UserSettingHistoryUpdate) AppendTags(s []string) *UserSettingHistoryUpdate {
+	ushu.mutation.AppendTags(s)
+	return ushu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ushu *UserSettingHistoryUpdate) ClearTags() *UserSettingHistoryUpdate {
+	ushu.mutation.ClearTags()
+	return ushu
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ushu *UserSettingHistoryUpdate) SetDeletedAt(t time.Time) *UserSettingHistoryUpdate {
 	ushu.mutation.SetDeletedAt(t)
@@ -214,24 +232,6 @@ func (ushu *UserSettingHistoryUpdate) SetNillableEmailConfirmed(b *bool) *UserSe
 	return ushu
 }
 
-// SetTags sets the "tags" field.
-func (ushu *UserSettingHistoryUpdate) SetTags(s []string) *UserSettingHistoryUpdate {
-	ushu.mutation.SetTags(s)
-	return ushu
-}
-
-// AppendTags appends s to the "tags" field.
-func (ushu *UserSettingHistoryUpdate) AppendTags(s []string) *UserSettingHistoryUpdate {
-	ushu.mutation.AppendTags(s)
-	return ushu
-}
-
-// ClearTags clears the value of the "tags" field.
-func (ushu *UserSettingHistoryUpdate) ClearTags() *UserSettingHistoryUpdate {
-	ushu.mutation.ClearTags()
-	return ushu
-}
-
 // SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
 func (ushu *UserSettingHistoryUpdate) SetIsWebauthnAllowed(b bool) *UserSettingHistoryUpdate {
 	ushu.mutation.SetIsWebauthnAllowed(b)
@@ -367,6 +367,17 @@ func (ushu *UserSettingHistoryUpdate) sqlSave(ctx context.Context) (n int, err e
 	if ushu.mutation.UpdatedByCleared() {
 		_spec.ClearField(usersettinghistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := ushu.mutation.Tags(); ok {
+		_spec.SetField(usersettinghistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ushu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usersettinghistory.FieldTags, value)
+		})
+	}
+	if ushu.mutation.TagsCleared() {
+		_spec.ClearField(usersettinghistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := ushu.mutation.DeletedAt(); ok {
 		_spec.SetField(usersettinghistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -405,17 +416,6 @@ func (ushu *UserSettingHistoryUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if value, ok := ushu.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersettinghistory.FieldEmailConfirmed, field.TypeBool, value)
-	}
-	if value, ok := ushu.mutation.Tags(); ok {
-		_spec.SetField(usersettinghistory.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := ushu.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, usersettinghistory.FieldTags, value)
-		})
-	}
-	if ushu.mutation.TagsCleared() {
-		_spec.ClearField(usersettinghistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := ushu.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersettinghistory.FieldIsWebauthnAllowed, field.TypeBool, value)
@@ -494,6 +494,24 @@ func (ushuo *UserSettingHistoryUpdateOne) SetNillableUpdatedBy(s *string) *UserS
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (ushuo *UserSettingHistoryUpdateOne) ClearUpdatedBy() *UserSettingHistoryUpdateOne {
 	ushuo.mutation.ClearUpdatedBy()
+	return ushuo
+}
+
+// SetTags sets the "tags" field.
+func (ushuo *UserSettingHistoryUpdateOne) SetTags(s []string) *UserSettingHistoryUpdateOne {
+	ushuo.mutation.SetTags(s)
+	return ushuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (ushuo *UserSettingHistoryUpdateOne) AppendTags(s []string) *UserSettingHistoryUpdateOne {
+	ushuo.mutation.AppendTags(s)
+	return ushuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ushuo *UserSettingHistoryUpdateOne) ClearTags() *UserSettingHistoryUpdateOne {
+	ushuo.mutation.ClearTags()
 	return ushuo
 }
 
@@ -636,24 +654,6 @@ func (ushuo *UserSettingHistoryUpdateOne) SetNillableEmailConfirmed(b *bool) *Us
 	if b != nil {
 		ushuo.SetEmailConfirmed(*b)
 	}
-	return ushuo
-}
-
-// SetTags sets the "tags" field.
-func (ushuo *UserSettingHistoryUpdateOne) SetTags(s []string) *UserSettingHistoryUpdateOne {
-	ushuo.mutation.SetTags(s)
-	return ushuo
-}
-
-// AppendTags appends s to the "tags" field.
-func (ushuo *UserSettingHistoryUpdateOne) AppendTags(s []string) *UserSettingHistoryUpdateOne {
-	ushuo.mutation.AppendTags(s)
-	return ushuo
-}
-
-// ClearTags clears the value of the "tags" field.
-func (ushuo *UserSettingHistoryUpdateOne) ClearTags() *UserSettingHistoryUpdateOne {
-	ushuo.mutation.ClearTags()
 	return ushuo
 }
 
@@ -822,6 +822,17 @@ func (ushuo *UserSettingHistoryUpdateOne) sqlSave(ctx context.Context) (_node *U
 	if ushuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(usersettinghistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := ushuo.mutation.Tags(); ok {
+		_spec.SetField(usersettinghistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ushuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usersettinghistory.FieldTags, value)
+		})
+	}
+	if ushuo.mutation.TagsCleared() {
+		_spec.ClearField(usersettinghistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := ushuo.mutation.DeletedAt(); ok {
 		_spec.SetField(usersettinghistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -860,17 +871,6 @@ func (ushuo *UserSettingHistoryUpdateOne) sqlSave(ctx context.Context) (_node *U
 	}
 	if value, ok := ushuo.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersettinghistory.FieldEmailConfirmed, field.TypeBool, value)
-	}
-	if value, ok := ushuo.mutation.Tags(); ok {
-		_spec.SetField(usersettinghistory.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := ushuo.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, usersettinghistory.FieldTags, value)
-		})
-	}
-	if ushuo.mutation.TagsCleared() {
-		_spec.ClearField(usersettinghistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := ushuo.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersettinghistory.FieldIsWebauthnAllowed, field.TypeBool, value)

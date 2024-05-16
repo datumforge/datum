@@ -36,6 +36,8 @@ type GroupSettingHistory struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -44,8 +46,6 @@ type GroupSettingHistory struct {
 	Visibility enums.Visibility `json:"visibility,omitempty"`
 	// the policy governing ability to freely join a group, whether it requires an invitation, application, or either
 	JoinPolicy enums.JoinPolicy `json:"join_policy,omitempty"`
-	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
 	// whether to sync group members to slack groups
 	SyncToSlack bool `json:"sync_to_slack,omitempty"`
 	// whether to sync group members to github groups
@@ -139,6 +139,14 @@ func (gsh *GroupSettingHistory) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				gsh.MappingID = value.String
 			}
+		case groupsettinghistory.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &gsh.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
+			}
 		case groupsettinghistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
@@ -162,14 +170,6 @@ func (gsh *GroupSettingHistory) assignValues(columns []string, values []any) err
 				return fmt.Errorf("unexpected type %T for field join_policy", values[i])
 			} else if value.Valid {
 				gsh.JoinPolicy = enums.JoinPolicy(value.String)
-			}
-		case groupsettinghistory.FieldTags:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field tags", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &gsh.Tags); err != nil {
-					return fmt.Errorf("unmarshal field tags: %w", err)
-				}
 			}
 		case groupsettinghistory.FieldSyncToSlack:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -249,6 +249,9 @@ func (gsh *GroupSettingHistory) String() string {
 	builder.WriteString("mapping_id=")
 	builder.WriteString(gsh.MappingID)
 	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", gsh.Tags))
+	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(gsh.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -260,9 +263,6 @@ func (gsh *GroupSettingHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("join_policy=")
 	builder.WriteString(fmt.Sprintf("%v", gsh.JoinPolicy))
-	builder.WriteString(", ")
-	builder.WriteString("tags=")
-	builder.WriteString(fmt.Sprintf("%v", gsh.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("sync_to_slack=")
 	builder.WriteString(fmt.Sprintf("%v", gsh.SyncToSlack))

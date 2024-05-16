@@ -577,6 +577,16 @@ func MappingIDContainsFold(v string) predicate.File {
 	return predicate.File(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.File {
+	return predicate.File(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.File {
+	return predicate.File(sql.FieldNotNull(FieldTags))
+}
+
 // FileNameEQ applies the EQ predicate on the "file_name" field.
 func FileNameEQ(v string) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldFileName, v))

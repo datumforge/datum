@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
@@ -63,6 +64,24 @@ func (eu *EntitlementUpdate) SetNillableUpdatedBy(s *string) *EntitlementUpdate 
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (eu *EntitlementUpdate) ClearUpdatedBy() *EntitlementUpdate {
 	eu.mutation.ClearUpdatedBy()
+	return eu
+}
+
+// SetTags sets the "tags" field.
+func (eu *EntitlementUpdate) SetTags(s []string) *EntitlementUpdate {
+	eu.mutation.SetTags(s)
+	return eu
+}
+
+// AppendTags appends s to the "tags" field.
+func (eu *EntitlementUpdate) AppendTags(s []string) *EntitlementUpdate {
+	eu.mutation.AppendTags(s)
+	return eu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (eu *EntitlementUpdate) ClearTags() *EntitlementUpdate {
+	eu.mutation.ClearTags()
 	return eu
 }
 
@@ -403,6 +422,17 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if eu.mutation.UpdatedByCleared() {
 		_spec.ClearField(entitlement.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := eu.mutation.Tags(); ok {
+		_spec.SetField(entitlement.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := eu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, entitlement.FieldTags, value)
+		})
+	}
+	if eu.mutation.TagsCleared() {
+		_spec.ClearField(entitlement.FieldTags, field.TypeJSON)
+	}
 	if value, ok := eu.mutation.DeletedAt(); ok {
 		_spec.SetField(entitlement.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -620,6 +650,24 @@ func (euo *EntitlementUpdateOne) SetNillableUpdatedBy(s *string) *EntitlementUpd
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (euo *EntitlementUpdateOne) ClearUpdatedBy() *EntitlementUpdateOne {
 	euo.mutation.ClearUpdatedBy()
+	return euo
+}
+
+// SetTags sets the "tags" field.
+func (euo *EntitlementUpdateOne) SetTags(s []string) *EntitlementUpdateOne {
+	euo.mutation.SetTags(s)
+	return euo
+}
+
+// AppendTags appends s to the "tags" field.
+func (euo *EntitlementUpdateOne) AppendTags(s []string) *EntitlementUpdateOne {
+	euo.mutation.AppendTags(s)
+	return euo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (euo *EntitlementUpdateOne) ClearTags() *EntitlementUpdateOne {
+	euo.mutation.ClearTags()
 	return euo
 }
 
@@ -989,6 +1037,17 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 	}
 	if euo.mutation.UpdatedByCleared() {
 		_spec.ClearField(entitlement.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := euo.mutation.Tags(); ok {
+		_spec.SetField(entitlement.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := euo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, entitlement.FieldTags, value)
+		})
+	}
+	if euo.mutation.TagsCleared() {
+		_spec.ClearField(entitlement.FieldTags, field.TypeJSON)
 	}
 	if value, ok := euo.mutation.DeletedAt(); ok {
 		_spec.SetField(entitlement.FieldDeletedAt, field.TypeTime, value)

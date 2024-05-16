@@ -121,6 +121,12 @@ func (patc *PersonalAccessTokenCreate) SetNillableMappingID(s *string) *Personal
 	return patc
 }
 
+// SetTags sets the "tags" field.
+func (patc *PersonalAccessTokenCreate) SetTags(s []string) *PersonalAccessTokenCreate {
+	patc.mutation.SetTags(s)
+	return patc
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (patc *PersonalAccessTokenCreate) SetOwnerID(s string) *PersonalAccessTokenCreate {
 	patc.mutation.SetOwnerID(s)
@@ -294,6 +300,10 @@ func (patc *PersonalAccessTokenCreate) defaults() error {
 		v := personalaccesstoken.DefaultMappingID()
 		patc.mutation.SetMappingID(v)
 	}
+	if _, ok := patc.mutation.Tags(); !ok {
+		v := personalaccesstoken.DefaultTags
+		patc.mutation.SetTags(v)
+	}
 	if _, ok := patc.mutation.Token(); !ok {
 		if personalaccesstoken.DefaultToken == nil {
 			return fmt.Errorf("generated: uninitialized personalaccesstoken.DefaultToken (forgotten import generated/runtime?)")
@@ -399,6 +409,10 @@ func (patc *PersonalAccessTokenCreate) createSpec() (*PersonalAccessToken, *sqlg
 	if value, ok := patc.mutation.MappingID(); ok {
 		_spec.SetField(personalaccesstoken.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := patc.mutation.Tags(); ok {
+		_spec.SetField(personalaccesstoken.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := patc.mutation.Name(); ok {
 		_spec.SetField(personalaccesstoken.FieldName, field.TypeString, value)

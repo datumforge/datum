@@ -422,6 +422,16 @@ func MappingIDContainsFold(v string) predicate.Event {
 	return predicate.Event(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldTags))
+}
+
 // EventIDEQ applies the EQ predicate on the "event_id" field.
 func EventIDEQ(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldEventID, v))

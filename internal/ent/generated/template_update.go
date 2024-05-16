@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -103,6 +104,24 @@ func (tu *TemplateUpdate) SetNillableDeletedBy(s *string) *TemplateUpdate {
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (tu *TemplateUpdate) ClearDeletedBy() *TemplateUpdate {
 	tu.mutation.ClearDeletedBy()
+	return tu
+}
+
+// SetTags sets the "tags" field.
+func (tu *TemplateUpdate) SetTags(s []string) *TemplateUpdate {
+	tu.mutation.SetTags(s)
+	return tu
+}
+
+// AppendTags appends s to the "tags" field.
+func (tu *TemplateUpdate) AppendTags(s []string) *TemplateUpdate {
+	tu.mutation.AppendTags(s)
+	return tu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (tu *TemplateUpdate) ClearTags() *TemplateUpdate {
+	tu.mutation.ClearTags()
 	return tu
 }
 
@@ -348,6 +367,17 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.DeletedByCleared() {
 		_spec.ClearField(template.FieldDeletedBy, field.TypeString)
 	}
+	if value, ok := tu.mutation.Tags(); ok {
+		_spec.SetField(template.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := tu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, template.FieldTags, value)
+		})
+	}
+	if tu.mutation.TagsCleared() {
+		_spec.ClearField(template.FieldTags, field.TypeJSON)
+	}
 	if value, ok := tu.mutation.Name(); ok {
 		_spec.SetField(template.FieldName, field.TypeString, value)
 	}
@@ -539,6 +569,24 @@ func (tuo *TemplateUpdateOne) SetNillableDeletedBy(s *string) *TemplateUpdateOne
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (tuo *TemplateUpdateOne) ClearDeletedBy() *TemplateUpdateOne {
 	tuo.mutation.ClearDeletedBy()
+	return tuo
+}
+
+// SetTags sets the "tags" field.
+func (tuo *TemplateUpdateOne) SetTags(s []string) *TemplateUpdateOne {
+	tuo.mutation.SetTags(s)
+	return tuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (tuo *TemplateUpdateOne) AppendTags(s []string) *TemplateUpdateOne {
+	tuo.mutation.AppendTags(s)
+	return tuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (tuo *TemplateUpdateOne) ClearTags() *TemplateUpdateOne {
+	tuo.mutation.ClearTags()
 	return tuo
 }
 
@@ -813,6 +861,17 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 	}
 	if tuo.mutation.DeletedByCleared() {
 		_spec.ClearField(template.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := tuo.mutation.Tags(); ok {
+		_spec.SetField(template.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := tuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, template.FieldTags, value)
+		})
+	}
+	if tuo.mutation.TagsCleared() {
+		_spec.ClearField(template.FieldTags, field.TypeJSON)
 	}
 	if value, ok := tuo.mutation.Name(); ok {
 		_spec.SetField(template.FieldName, field.TypeString, value)

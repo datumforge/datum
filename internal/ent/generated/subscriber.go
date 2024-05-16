@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -28,6 +29,8 @@ type Subscriber struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -96,7 +99,7 @@ func (*Subscriber) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case subscriber.FieldSecret:
+		case subscriber.FieldTags, subscriber.FieldSecret:
 			values[i] = new([]byte)
 		case subscriber.FieldVerifiedEmail, subscriber.FieldVerifiedPhone, subscriber.FieldActive:
 			values[i] = new(sql.NullBool)
@@ -154,6 +157,14 @@ func (s *Subscriber) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				s.MappingID = value.String
+			}
+		case subscriber.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &s.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case subscriber.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -282,6 +293,9 @@ func (s *Subscriber) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(s.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", s.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(s.DeletedAt.Format(time.ANSIC))

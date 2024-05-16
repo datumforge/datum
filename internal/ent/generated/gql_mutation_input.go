@@ -15,6 +15,7 @@ type CreateAPITokenInput struct {
 	UpdatedAt   *time.Time
 	CreatedBy   *string
 	UpdatedBy   *string
+	Tags        []string
 	Name        string
 	ExpiresAt   *time.Time
 	Description *string
@@ -36,6 +37,9 @@ func (i *CreateAPITokenInput) Mutate(m *APITokenMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	if v := i.ExpiresAt; v != nil {
@@ -67,6 +71,9 @@ type UpdateAPITokenInput struct {
 	UpdatedAt        *time.Time
 	ClearUpdatedBy   bool
 	UpdatedBy        *string
+	ClearTags        bool
+	Tags             []string
+	AppendTags       []string
 	Name             *string
 	ClearDescription bool
 	Description      *string
@@ -92,6 +99,15 @@ func (i *UpdateAPITokenInput) Mutate(m *APITokenMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
@@ -143,6 +159,7 @@ type CreateDocumentDataInput struct {
 	UpdatedAt  *time.Time
 	CreatedBy  *string
 	UpdatedBy  *string
+	Tags       []string
 	Data       customtypes.JSONObject
 	TemplateID string
 }
@@ -160,6 +177,9 @@ func (i *CreateDocumentDataInput) Mutate(m *DocumentDataMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	if v := i.Data; v != nil {
 		m.SetData(v)
@@ -179,6 +199,9 @@ type UpdateDocumentDataInput struct {
 	UpdatedAt      *time.Time
 	ClearUpdatedBy bool
 	UpdatedBy      *string
+	ClearTags      bool
+	Tags           []string
+	AppendTags     []string
 	Data           customtypes.JSONObject
 	TemplateID     *string
 }
@@ -196,6 +219,15 @@ func (i *UpdateDocumentDataInput) Mutate(m *DocumentDataMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Data; v != nil {
 		m.SetData(v)
@@ -223,6 +255,7 @@ type CreateEntitlementInput struct {
 	UpdatedAt              *time.Time
 	CreatedBy              *string
 	UpdatedBy              *string
+	Tags                   []string
 	Tier                   *enums.Tier
 	ExternalCustomerID     *string
 	ExternalSubscriptionID *string
@@ -247,6 +280,9 @@ func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	if v := i.Tier; v != nil {
 		m.SetTier(*v)
@@ -289,6 +325,9 @@ type UpdateEntitlementInput struct {
 	UpdatedAt                   *time.Time
 	ClearUpdatedBy              bool
 	UpdatedBy                   *string
+	ClearTags                   bool
+	Tags                        []string
+	AppendTags                  []string
 	Tier                        *enums.Tier
 	ClearExternalCustomerID     bool
 	ExternalCustomerID          *string
@@ -321,6 +360,15 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Tier; v != nil {
 		m.SetTier(*v)
@@ -393,6 +441,7 @@ type CreateEventInput struct {
 	UpdatedAt              *time.Time
 	CreatedBy              *string
 	UpdatedBy              *string
+	Tags                   []string
 	EventID                *string
 	CorrelationID          *string
 	EventType              string
@@ -424,6 +473,9 @@ func (i *CreateEventInput) Mutate(m *EventMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	if v := i.EventID; v != nil {
 		m.SetEventID(*v)
@@ -485,6 +537,9 @@ type UpdateEventInput struct {
 	UpdatedAt                    *time.Time
 	ClearUpdatedBy               bool
 	UpdatedBy                    *string
+	ClearTags                    bool
+	Tags                         []string
+	AppendTags                   []string
 	ClearEventID                 bool
 	EventID                      *string
 	ClearCorrelationID           bool
@@ -543,6 +598,15 @@ func (i *UpdateEventInput) Mutate(m *EventMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if i.ClearEventID {
 		m.ClearEventID()
@@ -693,6 +757,7 @@ type CreateFeatureInput struct {
 	UpdatedAt       *time.Time
 	CreatedBy       *string
 	UpdatedBy       *string
+	Tags            []string
 	Name            string
 	Global          *bool
 	Enabled         *bool
@@ -717,6 +782,9 @@ func (i *CreateFeatureInput) Mutate(m *FeatureMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	if v := i.Global; v != nil {
@@ -757,6 +825,9 @@ type UpdateFeatureInput struct {
 	UpdatedAt             *time.Time
 	ClearUpdatedBy        bool
 	UpdatedBy             *string
+	ClearTags             bool
+	Tags                  []string
+	AppendTags            []string
 	Global                *bool
 	Enabled               *bool
 	ClearDescription      bool
@@ -791,6 +862,15 @@ func (i *UpdateFeatureInput) Mutate(m *FeatureMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Global; v != nil {
 		m.SetGlobal(*v)
@@ -869,6 +949,7 @@ type CreateFileInput struct {
 	UpdatedAt       *time.Time
 	CreatedBy       *string
 	UpdatedBy       *string
+	Tags            []string
 	FileName        string
 	FileExtension   string
 	FileSize        *int
@@ -894,6 +975,9 @@ func (i *CreateFileInput) Mutate(m *FileMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetFileName(i.FileName)
 	m.SetFileExtension(i.FileExtension)
@@ -931,6 +1015,9 @@ type UpdateFileInput struct {
 	UpdatedAt             *time.Time
 	ClearUpdatedBy        bool
 	UpdatedBy             *string
+	ClearTags             bool
+	Tags                  []string
+	AppendTags            []string
 	FileName              *string
 	FileExtension         *string
 	ClearFileSize         bool
@@ -964,6 +1051,15 @@ func (i *UpdateFileInput) Mutate(m *FileMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.FileName; v != nil {
 		m.SetFileName(*v)
@@ -1039,6 +1135,7 @@ type CreateGroupInput struct {
 	UpdatedAt       *time.Time
 	CreatedBy       *string
 	UpdatedBy       *string
+	Tags            []string
 	Name            string
 	Description     *string
 	GravatarLogoURL *string
@@ -1066,6 +1163,9 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	if v := i.Description; v != nil {
@@ -1113,6 +1213,9 @@ type UpdateGroupInput struct {
 	UpdatedAt            *time.Time
 	ClearUpdatedBy       bool
 	UpdatedBy            *string
+	ClearTags            bool
+	Tags                 []string
+	AppendTags           []string
 	Name                 *string
 	ClearDescription     bool
 	Description          *string
@@ -1154,6 +1257,15 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
@@ -1347,9 +1459,9 @@ type CreateGroupSettingInput struct {
 	UpdatedAt    *time.Time
 	CreatedBy    *string
 	UpdatedBy    *string
+	Tags         []string
 	Visibility   *enums.Visibility
 	JoinPolicy   *enums.JoinPolicy
-	Tags         []string
 	SyncToSlack  *bool
 	SyncToGithub *bool
 	GroupID      *string
@@ -1369,14 +1481,14 @@ func (i *CreateGroupSettingInput) Mutate(m *GroupSettingMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
 	if v := i.Visibility; v != nil {
 		m.SetVisibility(*v)
 	}
 	if v := i.JoinPolicy; v != nil {
 		m.SetJoinPolicy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
 	}
 	if v := i.SyncToSlack; v != nil {
 		m.SetSyncToSlack(*v)
@@ -1401,11 +1513,11 @@ type UpdateGroupSettingInput struct {
 	UpdatedAt         *time.Time
 	ClearUpdatedBy    bool
 	UpdatedBy         *string
-	Visibility        *enums.Visibility
-	JoinPolicy        *enums.JoinPolicy
 	ClearTags         bool
 	Tags              []string
 	AppendTags        []string
+	Visibility        *enums.Visibility
+	JoinPolicy        *enums.JoinPolicy
 	ClearSyncToSlack  bool
 	SyncToSlack       *bool
 	ClearSyncToGithub bool
@@ -1428,12 +1540,6 @@ func (i *UpdateGroupSettingInput) Mutate(m *GroupSettingMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	if v := i.Visibility; v != nil {
-		m.SetVisibility(*v)
-	}
-	if v := i.JoinPolicy; v != nil {
-		m.SetJoinPolicy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -1442,6 +1548,12 @@ func (i *UpdateGroupSettingInput) Mutate(m *GroupSettingMutation) {
 	}
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
+	}
+	if v := i.Visibility; v != nil {
+		m.SetVisibility(*v)
+	}
+	if v := i.JoinPolicy; v != nil {
+		m.SetJoinPolicy(*v)
 	}
 	if i.ClearSyncToSlack {
 		m.ClearSyncToSlack()
@@ -1633,6 +1745,7 @@ type CreateIntegrationInput struct {
 	UpdatedAt      *time.Time
 	CreatedBy      *string
 	UpdatedBy      *string
+	Tags           []string
 	Name           string
 	Description    *string
 	Kind           *string
@@ -1656,6 +1769,9 @@ func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	if v := i.Description; v != nil {
@@ -1693,6 +1809,9 @@ type UpdateIntegrationInput struct {
 	UpdatedAt            *time.Time
 	ClearUpdatedBy       bool
 	UpdatedBy            *string
+	ClearTags            bool
+	Tags                 []string
+	AppendTags           []string
 	Name                 *string
 	ClearDescription     bool
 	Description          *string
@@ -1727,6 +1846,15 @@ func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
@@ -1937,6 +2065,7 @@ type CreateOauthProviderInput struct {
 	UpdatedAt    *time.Time
 	CreatedBy    *string
 	UpdatedBy    *string
+	Tags         []string
 	Name         string
 	ClientID     string
 	ClientSecret string
@@ -1962,6 +2091,9 @@ func (i *CreateOauthProviderInput) Mutate(m *OauthProviderMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	m.SetClientID(i.ClientID)
@@ -1989,6 +2121,9 @@ type UpdateOauthProviderInput struct {
 	UpdatedAt      *time.Time
 	ClearUpdatedBy bool
 	UpdatedBy      *string
+	ClearTags      bool
+	Tags           []string
+	AppendTags     []string
 	Name           *string
 	ClientID       *string
 	ClientSecret   *string
@@ -2015,6 +2150,15 @@ func (i *UpdateOauthProviderInput) Mutate(m *OauthProviderMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
@@ -2065,6 +2209,7 @@ func (c *OauthProviderUpdateOne) SetInput(i UpdateOauthProviderInput) *OauthProv
 
 // CreateOhAuthTooTokenInput represents a mutation input for creating ohauthtootokens.
 type CreateOhAuthTooTokenInput struct {
+	Tags                    []string
 	ClientID                string
 	Scopes                  []string
 	Nonce                   string
@@ -2083,6 +2228,9 @@ type CreateOhAuthTooTokenInput struct {
 
 // Mutate applies the CreateOhAuthTooTokenInput on the OhAuthTooTokenMutation builder.
 func (i *CreateOhAuthTooTokenInput) Mutate(m *OhAuthTooTokenMutation) {
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
 	m.SetClientID(i.ClientID)
 	if v := i.Scopes; v != nil {
 		m.SetScopes(v)
@@ -2119,6 +2267,9 @@ func (c *OhAuthTooTokenCreate) SetInput(i CreateOhAuthTooTokenInput) *OhAuthTooT
 
 // UpdateOhAuthTooTokenInput represents a mutation input for updating ohauthtootokens.
 type UpdateOhAuthTooTokenInput struct {
+	ClearTags               bool
+	Tags                    []string
+	AppendTags              []string
 	ClientID                *string
 	ClearScopes             bool
 	Scopes                  []string
@@ -2147,6 +2298,15 @@ type UpdateOhAuthTooTokenInput struct {
 
 // Mutate applies the UpdateOhAuthTooTokenInput on the OhAuthTooTokenMutation builder.
 func (i *UpdateOhAuthTooTokenInput) Mutate(m *OhAuthTooTokenMutation) {
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
 	if v := i.ClientID; v != nil {
 		m.SetClientID(*v)
 	}
@@ -2333,6 +2493,7 @@ type CreateOrganizationInput struct {
 	UpdatedAt              *time.Time
 	CreatedBy              *string
 	UpdatedBy              *string
+	Tags                   []string
 	Name                   string
 	DisplayName            *string
 	Description            *string
@@ -2371,6 +2532,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	if v := i.DisplayName; v != nil {
@@ -2453,6 +2617,9 @@ type UpdateOrganizationInput struct {
 	UpdatedAt                    *time.Time
 	ClearUpdatedBy               bool
 	UpdatedBy                    *string
+	ClearTags                    bool
+	Tags                         []string
+	AppendTags                   []string
 	Name                         *string
 	DisplayName                  *string
 	ClearDescription             bool
@@ -2521,6 +2688,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
@@ -2701,13 +2877,13 @@ type CreateOrganizationSettingInput struct {
 	UpdatedAt      *time.Time
 	CreatedBy      *string
 	UpdatedBy      *string
+	Tags           []string
 	Domains        []string
 	BillingContact *string
 	BillingEmail   *string
 	BillingPhone   *string
 	BillingAddress *string
 	TaxIdentifier  *string
-	Tags           []string
 	GeoLocation    *enums.Region
 	OrganizationID *string
 }
@@ -2726,6 +2902,9 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
 	if v := i.Domains; v != nil {
 		m.SetDomains(v)
 	}
@@ -2743,9 +2922,6 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	}
 	if v := i.TaxIdentifier; v != nil {
 		m.SetTaxIdentifier(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
 	}
 	if v := i.GeoLocation; v != nil {
 		m.SetGeoLocation(*v)
@@ -2767,6 +2943,9 @@ type UpdateOrganizationSettingInput struct {
 	UpdatedAt           *time.Time
 	ClearUpdatedBy      bool
 	UpdatedBy           *string
+	ClearTags           bool
+	Tags                []string
+	AppendTags          []string
 	ClearDomains        bool
 	Domains             []string
 	AppendDomains       []string
@@ -2780,9 +2959,6 @@ type UpdateOrganizationSettingInput struct {
 	BillingAddress      *string
 	ClearTaxIdentifier  bool
 	TaxIdentifier       *string
-	ClearTags           bool
-	Tags                []string
-	AppendTags          []string
 	ClearGeoLocation    bool
 	GeoLocation         *enums.Region
 	ClearOrganization   bool
@@ -2802,6 +2978,15 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if i.ClearDomains {
 		m.ClearDomains()
@@ -2842,15 +3027,6 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if v := i.TaxIdentifier; v != nil {
 		m.SetTaxIdentifier(*v)
 	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
 	if i.ClearGeoLocation {
 		m.ClearGeoLocation()
 	}
@@ -2883,6 +3059,7 @@ type CreatePersonalAccessTokenInput struct {
 	UpdatedAt       *time.Time
 	CreatedBy       *string
 	UpdatedBy       *string
+	Tags            []string
 	Name            string
 	ExpiresAt       time.Time
 	Description     *string
@@ -2906,6 +3083,9 @@ func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	m.SetExpiresAt(i.ExpiresAt)
@@ -2939,6 +3119,9 @@ type UpdatePersonalAccessTokenInput struct {
 	UpdatedAt             *time.Time
 	ClearUpdatedBy        bool
 	UpdatedBy             *string
+	ClearTags             bool
+	Tags                  []string
+	AppendTags            []string
 	Name                  *string
 	ClearDescription      bool
 	Description           *string
@@ -2968,6 +3151,15 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
@@ -3031,6 +3223,7 @@ type CreateSubscriberInput struct {
 	UpdatedAt   *time.Time
 	CreatedBy   *string
 	UpdatedBy   *string
+	Tags        []string
 	Email       string
 	PhoneNumber *string
 	OwnerID     *string
@@ -3050,6 +3243,9 @@ func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetEmail(i.Email)
 	if v := i.PhoneNumber; v != nil {
@@ -3075,6 +3271,9 @@ type UpdateSubscriberInput struct {
 	UpdatedAt        *time.Time
 	ClearUpdatedBy   bool
 	UpdatedBy        *string
+	ClearTags        bool
+	Tags             []string
+	AppendTags       []string
 	Email            *string
 	ClearPhoneNumber bool
 	PhoneNumber      *string
@@ -3098,6 +3297,15 @@ func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Email; v != nil {
 		m.SetEmail(*v)
@@ -3143,6 +3351,7 @@ type CreateTFASettingInput struct {
 	UpdatedAt   *time.Time
 	CreatedBy   *string
 	UpdatedBy   *string
+	Tags        []string
 	TotpAllowed *bool
 	OwnerID     *string
 }
@@ -3160,6 +3369,9 @@ func (i *CreateTFASettingInput) Mutate(m *TFASettingMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	if v := i.TotpAllowed; v != nil {
 		m.SetTotpAllowed(*v)
@@ -3181,6 +3393,9 @@ type UpdateTFASettingInput struct {
 	UpdatedAt        *time.Time
 	ClearUpdatedBy   bool
 	UpdatedBy        *string
+	ClearTags        bool
+	Tags             []string
+	AppendTags       []string
 	Verified         *bool
 	ClearTotpAllowed bool
 	TotpAllowed      *bool
@@ -3199,6 +3414,15 @@ func (i *UpdateTFASettingInput) Mutate(m *TFASettingMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Verified; v != nil {
 		m.SetVerified(*v)
@@ -3229,6 +3453,7 @@ type CreateTemplateInput struct {
 	UpdatedAt    *time.Time
 	CreatedBy    *string
 	UpdatedBy    *string
+	Tags         []string
 	Name         string
 	TemplateType *enums.DocumentType
 	Description  *string
@@ -3251,6 +3476,9 @@ func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	if v := i.TemplateType; v != nil {
@@ -3285,6 +3513,9 @@ type UpdateTemplateInput struct {
 	UpdatedAt         *time.Time
 	ClearUpdatedBy    bool
 	UpdatedBy         *string
+	ClearTags         bool
+	Tags              []string
+	AppendTags        []string
 	Name              *string
 	TemplateType      *enums.DocumentType
 	ClearDescription  bool
@@ -3312,6 +3543,15 @@ func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
@@ -3369,6 +3609,7 @@ type CreateUserInput struct {
 	UpdatedAt                 *time.Time
 	CreatedBy                 *string
 	UpdatedBy                 *string
+	Tags                      []string
 	Email                     string
 	FirstName                 *string
 	LastName                  *string
@@ -3407,6 +3648,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetEmail(i.Email)
 	if v := i.FirstName; v != nil {
@@ -3485,6 +3729,9 @@ type UpdateUserInput struct {
 	UpdatedAt                       *time.Time
 	ClearUpdatedBy                  bool
 	UpdatedBy                       *string
+	ClearTags                       bool
+	Tags                            []string
+	AppendTags                      []string
 	Email                           *string
 	ClearFirstName                  bool
 	FirstName                       *string
@@ -3552,6 +3799,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Email; v != nil {
 		m.SetEmail(*v)
@@ -3729,12 +3985,12 @@ type CreateUserSettingInput struct {
 	UpdatedAt         *time.Time
 	CreatedBy         *string
 	UpdatedBy         *string
+	Tags              []string
 	Locked            *bool
 	SilencedAt        *time.Time
 	SuspendedAt       *time.Time
 	Status            *enums.UserStatus
 	EmailConfirmed    *bool
-	Tags              []string
 	IsWebauthnAllowed *bool
 	IsTfaEnabled      *bool
 	UserID            *string
@@ -3755,6 +4011,9 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
 	if v := i.Locked; v != nil {
 		m.SetLocked(*v)
 	}
@@ -3769,9 +4028,6 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.EmailConfirmed; v != nil {
 		m.SetEmailConfirmed(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
 	}
 	if v := i.IsWebauthnAllowed; v != nil {
 		m.SetIsWebauthnAllowed(*v)
@@ -3799,6 +4055,9 @@ type UpdateUserSettingInput struct {
 	UpdatedAt              *time.Time
 	ClearUpdatedBy         bool
 	UpdatedBy              *string
+	ClearTags              bool
+	Tags                   []string
+	AppendTags             []string
 	Locked                 *bool
 	ClearSilencedAt        bool
 	SilencedAt             *time.Time
@@ -3806,9 +4065,6 @@ type UpdateUserSettingInput struct {
 	SuspendedAt            *time.Time
 	Status                 *enums.UserStatus
 	EmailConfirmed         *bool
-	ClearTags              bool
-	Tags                   []string
-	AppendTags             []string
 	ClearIsWebauthnAllowed bool
 	IsWebauthnAllowed      *bool
 	ClearIsTfaEnabled      bool
@@ -3833,6 +4089,15 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
 	if v := i.Locked; v != nil {
 		m.SetLocked(*v)
 	}
@@ -3853,15 +4118,6 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.EmailConfirmed; v != nil {
 		m.SetEmailConfirmed(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
 	}
 	if i.ClearIsWebauthnAllowed {
 		m.ClearIsWebauthnAllowed()
@@ -3907,6 +4163,7 @@ type CreateWebhookInput struct {
 	UpdatedAt      *time.Time
 	CreatedBy      *string
 	UpdatedBy      *string
+	Tags           []string
 	Name           string
 	Description    *string
 	DestinationURL string
@@ -3932,6 +4189,9 @@ func (i *CreateWebhookInput) Mutate(m *WebhookMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
 	}
 	m.SetName(i.Name)
 	if v := i.Description; v != nil {
@@ -3973,6 +4233,9 @@ type UpdateWebhookInput struct {
 	UpdatedAt            *time.Time
 	ClearUpdatedBy       bool
 	UpdatedBy            *string
+	ClearTags            bool
+	Tags                 []string
+	AppendTags           []string
 	Name                 *string
 	ClearDescription     bool
 	Description          *string
@@ -4007,6 +4270,15 @@ func (i *UpdateWebhookInput) Mutate(m *WebhookMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)

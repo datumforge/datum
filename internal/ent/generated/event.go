@@ -28,6 +28,8 @@ type Event struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// EventID holds the value of the "event_id" field.
 	EventID string `json:"event_id,omitempty"`
 	// CorrelationID holds the value of the "correlation_id" field.
@@ -225,7 +227,7 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case event.FieldMetadata:
+		case event.FieldTags, event.FieldMetadata:
 			values[i] = new([]byte)
 		case event.FieldID, event.FieldCreatedBy, event.FieldUpdatedBy, event.FieldMappingID, event.FieldEventID, event.FieldCorrelationID, event.FieldEventType:
 			values[i] = new(sql.NullString)
@@ -281,6 +283,14 @@ func (e *Event) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				e.MappingID = value.String
+			}
+		case event.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &e.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case event.FieldEventID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -428,6 +438,9 @@ func (e *Event) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(e.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", e.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("event_id=")
 	builder.WriteString(e.EventID)

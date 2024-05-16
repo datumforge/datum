@@ -153,6 +153,12 @@ func (fhc *FileHistoryCreate) SetNillableMappingID(s *string) *FileHistoryCreate
 	return fhc
 }
 
+// SetTags sets the "tags" field.
+func (fhc *FileHistoryCreate) SetTags(s []string) *FileHistoryCreate {
+	fhc.mutation.SetTags(s)
+	return fhc
+}
+
 // SetFileName sets the "file_name" field.
 func (fhc *FileHistoryCreate) SetFileName(s string) *FileHistoryCreate {
 	fhc.mutation.SetFileName(s)
@@ -284,6 +290,10 @@ func (fhc *FileHistoryCreate) defaults() {
 		v := filehistory.DefaultMappingID()
 		fhc.mutation.SetMappingID(v)
 	}
+	if _, ok := fhc.mutation.Tags(); !ok {
+		v := filehistory.DefaultTags
+		fhc.mutation.SetTags(v)
+	}
 	if _, ok := fhc.mutation.ID(); !ok {
 		v := filehistory.DefaultID()
 		fhc.mutation.SetID(v)
@@ -393,6 +403,10 @@ func (fhc *FileHistoryCreate) createSpec() (*FileHistory, *sqlgraph.CreateSpec) 
 	if value, ok := fhc.mutation.MappingID(); ok {
 		_spec.SetField(filehistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := fhc.mutation.Tags(); ok {
+		_spec.SetField(filehistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := fhc.mutation.FileName(); ok {
 		_spec.SetField(filehistory.FieldFileName, field.TypeString, value)

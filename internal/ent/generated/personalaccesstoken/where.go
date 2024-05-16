@@ -572,6 +572,16 @@ func MappingIDContainsFold(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldNotNull(FieldTags))
+}
+
 // OwnerIDEQ applies the EQ predicate on the "owner_id" field.
 func OwnerIDEQ(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldOwnerID, v))

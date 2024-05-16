@@ -54,6 +54,7 @@ func (Feature) Mixin() []ent.Mixin {
 		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 	}
 }
 

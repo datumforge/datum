@@ -591,6 +591,16 @@ func MappingIDContainsFold(v string) predicate.EntitlementHistory {
 	return predicate.EntitlementHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldNotNull(FieldTags))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.EntitlementHistory {
 	return predicate.EntitlementHistory(sql.FieldEQ(FieldDeletedAt, v))

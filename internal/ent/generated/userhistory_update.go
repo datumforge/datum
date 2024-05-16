@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -108,6 +109,24 @@ func (uhu *UserHistoryUpdate) SetNillableDeletedBy(s *string) *UserHistoryUpdate
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (uhu *UserHistoryUpdate) ClearDeletedBy() *UserHistoryUpdate {
 	uhu.mutation.ClearDeletedBy()
+	return uhu
+}
+
+// SetTags sets the "tags" field.
+func (uhu *UserHistoryUpdate) SetTags(s []string) *UserHistoryUpdate {
+	uhu.mutation.SetTags(s)
+	return uhu
+}
+
+// AppendTags appends s to the "tags" field.
+func (uhu *UserHistoryUpdate) AppendTags(s []string) *UserHistoryUpdate {
+	uhu.mutation.AppendTags(s)
+	return uhu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (uhu *UserHistoryUpdate) ClearTags() *UserHistoryUpdate {
+	uhu.mutation.ClearTags()
 	return uhu
 }
 
@@ -425,6 +444,17 @@ func (uhu *UserHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uhu.mutation.DeletedByCleared() {
 		_spec.ClearField(userhistory.FieldDeletedBy, field.TypeString)
 	}
+	if value, ok := uhu.mutation.Tags(); ok {
+		_spec.SetField(userhistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := uhu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, userhistory.FieldTags, value)
+		})
+	}
+	if uhu.mutation.TagsCleared() {
+		_spec.ClearField(userhistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := uhu.mutation.Email(); ok {
 		_spec.SetField(userhistory.FieldEmail, field.TypeString, value)
 	}
@@ -587,6 +617,24 @@ func (uhuo *UserHistoryUpdateOne) SetNillableDeletedBy(s *string) *UserHistoryUp
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (uhuo *UserHistoryUpdateOne) ClearDeletedBy() *UserHistoryUpdateOne {
 	uhuo.mutation.ClearDeletedBy()
+	return uhuo
+}
+
+// SetTags sets the "tags" field.
+func (uhuo *UserHistoryUpdateOne) SetTags(s []string) *UserHistoryUpdateOne {
+	uhuo.mutation.SetTags(s)
+	return uhuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (uhuo *UserHistoryUpdateOne) AppendTags(s []string) *UserHistoryUpdateOne {
+	uhuo.mutation.AppendTags(s)
+	return uhuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (uhuo *UserHistoryUpdateOne) ClearTags() *UserHistoryUpdateOne {
+	uhuo.mutation.ClearTags()
 	return uhuo
 }
 
@@ -933,6 +981,17 @@ func (uhuo *UserHistoryUpdateOne) sqlSave(ctx context.Context) (_node *UserHisto
 	}
 	if uhuo.mutation.DeletedByCleared() {
 		_spec.ClearField(userhistory.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := uhuo.mutation.Tags(); ok {
+		_spec.SetField(userhistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := uhuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, userhistory.FieldTags, value)
+		})
+	}
+	if uhuo.mutation.TagsCleared() {
+		_spec.ClearField(userhistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := uhuo.mutation.Email(); ok {
 		_spec.SetField(userhistory.FieldEmail, field.TypeString, value)

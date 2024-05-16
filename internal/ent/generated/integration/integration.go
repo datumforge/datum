@@ -25,6 +25,8 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldMappingID holds the string denoting the mapping_id field in the database.
 	FieldMappingID = "mapping_id"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -86,6 +88,7 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldMappingID,
+	FieldTags,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldOwnerID,
@@ -147,6 +150,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
 	DefaultMappingID func() string
+	// DefaultTags holds the default value on creation for the "tags" field.
+	DefaultTags []string
 	// OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	OwnerIDValidator func(string) error
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.

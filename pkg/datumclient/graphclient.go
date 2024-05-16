@@ -3905,6 +3905,7 @@ type GetGroupByID_Group struct {
 	DisplayName string                        "json:\"displayName\" graphql:\"displayName\""
 	Owner       *GetGroupByID_Group_Owner     "json:\"owner,omitempty\" graphql:\"owner\""
 	LogoURL     *string                       "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Tags        []string                      "json:\"tags,omitempty\" graphql:\"tags\""
 	Setting     GetGroupByID_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GetGroupByID_Group_Members "json:\"members,omitempty\" graphql:\"members\""
 	CreatedAt   *time.Time                    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -3948,6 +3949,12 @@ func (t *GetGroupByID_Group) GetLogoURL() *string {
 		t = &GetGroupByID_Group{}
 	}
 	return t.LogoURL
+}
+func (t *GetGroupByID_Group) GetTags() []string {
+	if t == nil {
+		t = &GetGroupByID_Group{}
+	}
+	return t.Tags
 }
 func (t *GetGroupByID_Group) GetSetting() *GetGroupByID_Group_Setting {
 	if t == nil {
@@ -4128,6 +4135,7 @@ type GroupsWhere_Groups_Edges_Node struct {
 	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
 	Owner       *GroupsWhere_Groups_Edges_Node_Owner     "json:\"owner,omitempty\" graphql:\"owner\""
 	LogoURL     *string                                  "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Tags        []string                                 "json:\"tags,omitempty\" graphql:\"tags\""
 	Setting     GroupsWhere_Groups_Edges_Node_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GroupsWhere_Groups_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
 	CreatedAt   *time.Time                               "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -4171,6 +4179,12 @@ func (t *GroupsWhere_Groups_Edges_Node) GetLogoURL() *string {
 		t = &GroupsWhere_Groups_Edges_Node{}
 	}
 	return t.LogoURL
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.Tags
 }
 func (t *GroupsWhere_Groups_Edges_Node) GetSetting() *GroupsWhere_Groups_Edges_Node_Setting {
 	if t == nil {
@@ -4373,6 +4387,7 @@ type GetAllGroups_Groups_Edges_Node struct {
 	DisplayName string                                    "json:\"displayName\" graphql:\"displayName\""
 	Owner       *GetAllGroups_Groups_Edges_Node_Owner     "json:\"owner,omitempty\" graphql:\"owner\""
 	LogoURL     *string                                   "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Tags        []string                                  "json:\"tags,omitempty\" graphql:\"tags\""
 	Setting     GetAllGroups_Groups_Edges_Node_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GetAllGroups_Groups_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
 	CreatedAt   *time.Time                                "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -4416,6 +4431,12 @@ func (t *GetAllGroups_Groups_Edges_Node) GetLogoURL() *string {
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
 	return t.LogoURL
+}
+func (t *GetAllGroups_Groups_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node{}
+	}
+	return t.Tags
 }
 func (t *GetAllGroups_Groups_Edges_Node) GetSetting() *GetAllGroups_Groups_Edges_Node_Setting {
 	if t == nil {
@@ -4618,6 +4639,7 @@ type CreateGroup_CreateGroup_Group struct {
 	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
 	Owner       *CreateGroup_CreateGroup_Group_Owner     "json:\"owner,omitempty\" graphql:\"owner\""
 	LogoURL     *string                                  "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Tags        []string                                 "json:\"tags,omitempty\" graphql:\"tags\""
 	Setting     CreateGroup_CreateGroup_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*CreateGroup_CreateGroup_Group_Members "json:\"members,omitempty\" graphql:\"members\""
 	CreatedAt   *time.Time                               "json:\"createdAt,omitempty\" graphql:\"createdAt\""
@@ -4661,6 +4683,12 @@ func (t *CreateGroup_CreateGroup_Group) GetLogoURL() *string {
 		t = &CreateGroup_CreateGroup_Group{}
 	}
 	return t.LogoURL
+}
+func (t *CreateGroup_CreateGroup_Group) GetTags() []string {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group{}
+	}
+	return t.Tags
 }
 func (t *CreateGroup_CreateGroup_Group) GetSetting() *CreateGroup_CreateGroup_Group_Setting {
 	if t == nil {
@@ -4839,6 +4867,7 @@ type UpdateGroup_UpdateGroup_Group struct {
 	Name        string                                   "json:\"name\" graphql:\"name\""
 	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
+	Tags        []string                                 "json:\"tags,omitempty\" graphql:\"tags\""
 	Setting     UpdateGroup_UpdateGroup_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*UpdateGroup_UpdateGroup_Group_Members "json:\"members,omitempty\" graphql:\"members\""
 	UpdatedAt   *time.Time                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
@@ -4868,6 +4897,12 @@ func (t *UpdateGroup_UpdateGroup_Group) GetDescription() *string {
 		t = &UpdateGroup_UpdateGroup_Group{}
 	}
 	return t.Description
+}
+func (t *UpdateGroup_UpdateGroup_Group) GetTags() []string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group{}
+	}
+	return t.Tags
 }
 func (t *UpdateGroup_UpdateGroup_Group) GetSetting() *UpdateGroup_UpdateGroup_Group_Setting {
 	if t == nil {
@@ -8000,8 +8035,8 @@ type GetOrganizationByID_Organization_Setting struct {
 	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
 	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *GetOrganizationByID_Organization_Setting) GetID() string {
@@ -8070,17 +8105,17 @@ func (t *GetOrganizationByID_Organization_Setting) GetTaxIdentifier() *string {
 	}
 	return t.TaxIdentifier
 }
-func (t *GetOrganizationByID_Organization_Setting) GetTags() []string {
-	if t == nil {
-		t = &GetOrganizationByID_Organization_Setting{}
-	}
-	return t.Tags
-}
 func (t *GetOrganizationByID_Organization_Setting) GetGeoLocation() *enums.Region {
 	if t == nil {
 		t = &GetOrganizationByID_Organization_Setting{}
 	}
 	return t.GeoLocation
+}
+func (t *GetOrganizationByID_Organization_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Setting{}
+	}
+	return t.Tags
 }
 
 type GetOrganizationByID_Organization struct {
@@ -8089,6 +8124,7 @@ type GetOrganizationByID_Organization struct {
 	DisplayName string                                      "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                     "json:\"description,omitempty\" graphql:\"description\""
 	PersonalOrg *bool                                       "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+	Tags        []string                                    "json:\"tags,omitempty\" graphql:\"tags\""
 	Parent      *GetOrganizationByID_Organization_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
 	Children    GetOrganizationByID_Organization_Children   "json:\"children\" graphql:\"children\""
 	Members     []*GetOrganizationByID_Organization_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -8128,6 +8164,12 @@ func (t *GetOrganizationByID_Organization) GetPersonalOrg() *bool {
 		t = &GetOrganizationByID_Organization{}
 	}
 	return t.PersonalOrg
+}
+func (t *GetOrganizationByID_Organization) GetTags() []string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.Tags
 }
 func (t *GetOrganizationByID_Organization) GetParent() *GetOrganizationByID_Organization_Parent {
 	if t == nil {
@@ -8312,8 +8354,8 @@ type GetAllOrganizations_Organizations_Edges_Node_Setting struct {
 	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
 	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetID() string {
@@ -8382,17 +8424,17 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetTaxIdentifier(
 	}
 	return t.TaxIdentifier
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetTags() []string {
-	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
-	}
-	return t.Tags
-}
 func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetGeoLocation() *enums.Region {
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
 	}
 	return t.GeoLocation
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
+	}
+	return t.Tags
 }
 
 type GetAllOrganizations_Organizations_Edges_Node struct {
@@ -8401,6 +8443,7 @@ type GetAllOrganizations_Organizations_Edges_Node struct {
 	DisplayName string                                                  "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                 "json:\"description,omitempty\" graphql:\"description\""
 	PersonalOrg *bool                                                   "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+	Tags        []string                                                "json:\"tags,omitempty\" graphql:\"tags\""
 	Parent      *GetAllOrganizations_Organizations_Edges_Node_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
 	Children    GetAllOrganizations_Organizations_Edges_Node_Children   "json:\"children\" graphql:\"children\""
 	Members     []*GetAllOrganizations_Organizations_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -8438,6 +8481,12 @@ func (t *GetAllOrganizations_Organizations_Edges_Node) GetPersonalOrg() *bool {
 		t = &GetAllOrganizations_Organizations_Edges_Node{}
 	}
 	return t.PersonalOrg
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return t.Tags
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetParent() *GetAllOrganizations_Organizations_Edges_Node_Parent {
 	if t == nil {
@@ -8632,8 +8681,8 @@ type OrganizationsWhere_Organizations_Edges_Node_Setting struct {
 	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
 	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetID() string {
@@ -8702,17 +8751,17 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetTaxIdentifier()
 	}
 	return t.TaxIdentifier
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetTags() []string {
-	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
-	}
-	return t.Tags
-}
 func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetGeoLocation() *enums.Region {
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
 	}
 	return t.GeoLocation
+}
+func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
+	}
+	return t.Tags
 }
 
 type OrganizationsWhere_Organizations_Edges_Node struct {
@@ -8721,6 +8770,7 @@ type OrganizationsWhere_Organizations_Edges_Node struct {
 	DisplayName string                                                 "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                "json:\"description,omitempty\" graphql:\"description\""
 	PersonalOrg *bool                                                  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+	Tags        []string                                               "json:\"tags,omitempty\" graphql:\"tags\""
 	Parent      *OrganizationsWhere_Organizations_Edges_Node_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
 	Children    OrganizationsWhere_Organizations_Edges_Node_Children   "json:\"children\" graphql:\"children\""
 	Members     []*OrganizationsWhere_Organizations_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -8758,6 +8808,12 @@ func (t *OrganizationsWhere_Organizations_Edges_Node) GetPersonalOrg() *bool {
 		t = &OrganizationsWhere_Organizations_Edges_Node{}
 	}
 	return t.PersonalOrg
+}
+func (t *OrganizationsWhere_Organizations_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node{}
+	}
+	return t.Tags
 }
 func (t *OrganizationsWhere_Organizations_Edges_Node) GetParent() *OrganizationsWhere_Organizations_Edges_Node_Parent {
 	if t == nil {
@@ -8830,8 +8886,8 @@ type CreateOrganization_CreateOrganization_Organization_Setting struct {
 	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
 	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetID() string {
@@ -8900,17 +8956,17 @@ func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetTaxIdent
 	}
 	return t.TaxIdentifier
 }
-func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetTags() []string {
-	if t == nil {
-		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
-	}
-	return t.Tags
-}
 func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetGeoLocation() *enums.Region {
 	if t == nil {
 		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
 	}
 	return t.GeoLocation
+}
+func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetTags() []string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
+	}
+	return t.Tags
 }
 
 type CreateOrganization_CreateOrganization_Organization_Parent struct {
@@ -8991,6 +9047,7 @@ type CreateOrganization_CreateOrganization_Organization struct {
 	DisplayName string                                                      "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                     "json:\"description,omitempty\" graphql:\"description\""
 	PersonalOrg *bool                                                       "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+	Tags        []string                                                    "json:\"tags,omitempty\" graphql:\"tags\""
 	CreatedAt   *time.Time                                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	UpdatedAt   *time.Time                                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	Setting     *CreateOrganization_CreateOrganization_Organization_Setting "json:\"setting,omitempty\" graphql:\"setting\""
@@ -9027,6 +9084,12 @@ func (t *CreateOrganization_CreateOrganization_Organization) GetPersonalOrg() *b
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
 	return t.PersonalOrg
+}
+func (t *CreateOrganization_CreateOrganization_Organization) GetTags() []string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization{}
+	}
+	return t.Tags
 }
 func (t *CreateOrganization_CreateOrganization_Organization) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -9107,8 +9170,8 @@ type UpdateOrganization_UpdateOrganization_Organization_Setting struct {
 	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
 	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetID() string {
@@ -9177,17 +9240,17 @@ func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetTaxIdent
 	}
 	return t.TaxIdentifier
 }
-func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetTags() []string {
-	if t == nil {
-		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
-	}
-	return t.Tags
-}
 func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetGeoLocation() *enums.Region {
 	if t == nil {
 		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
 	}
 	return t.GeoLocation
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetTags() []string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.Tags
 }
 
 type UpdateOrganization_UpdateOrganization_Organization struct {
@@ -9195,6 +9258,7 @@ type UpdateOrganization_UpdateOrganization_Organization struct {
 	Name        string                                                        "json:\"name\" graphql:\"name\""
 	DisplayName string                                                        "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                       "json:\"description,omitempty\" graphql:\"description\""
+	Tags        []string                                                      "json:\"tags,omitempty\" graphql:\"tags\""
 	Members     []*UpdateOrganization_UpdateOrganization_Organization_Members "json:\"members,omitempty\" graphql:\"members\""
 	Setting     *UpdateOrganization_UpdateOrganization_Organization_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
 }
@@ -9222,6 +9286,12 @@ func (t *UpdateOrganization_UpdateOrganization_Organization) GetDescription() *s
 		t = &UpdateOrganization_UpdateOrganization_Organization{}
 	}
 	return t.Description
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization) GetTags() []string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization{}
+	}
+	return t.Tags
 }
 func (t *UpdateOrganization_UpdateOrganization_Organization) GetMembers() []*UpdateOrganization_UpdateOrganization_Organization_Members {
 	if t == nil {
@@ -11476,9 +11546,9 @@ func (t *GetUserByID_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
 type GetUserByID_User_Setting struct {
 	EmailConfirmed bool                                 "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	DefaultOrg     *GetUserByID_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                             "json:\"tags,omitempty\" graphql:\"tags\""
 	Locked         bool                                 "json:\"locked\" graphql:\"locked\""
 	Status         enums.UserStatus                     "json:\"status\" graphql:\"status\""
-	Tags           []string                             "json:\"tags,omitempty\" graphql:\"tags\""
 	SuspendedAt    *time.Time                           "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      *time.Time                           "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -11499,6 +11569,12 @@ func (t *GetUserByID_User_Setting) GetDefaultOrg() *GetUserByID_User_Setting_Def
 	}
 	return t.DefaultOrg
 }
+func (t *GetUserByID_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.Tags
+}
 func (t *GetUserByID_User_Setting) GetLocked() bool {
 	if t == nil {
 		t = &GetUserByID_User_Setting{}
@@ -11510,12 +11586,6 @@ func (t *GetUserByID_User_Setting) GetStatus() *enums.UserStatus {
 		t = &GetUserByID_User_Setting{}
 	}
 	return &t.Status
-}
-func (t *GetUserByID_User_Setting) GetTags() []string {
-	if t == nil {
-		t = &GetUserByID_User_Setting{}
-	}
-	return t.Tags
 }
 func (t *GetUserByID_User_Setting) GetSuspendedAt() *time.Time {
 	if t == nil {
@@ -11615,6 +11685,7 @@ type GetUserByID_User struct {
 	AvatarRemoteURL *string                           "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                           "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	AuthProvider    enums.AuthProvider                "json:\"authProvider\" graphql:\"authProvider\""
+	Tags            []string                          "json:\"tags,omitempty\" graphql:\"tags\""
 	Setting         GetUserByID_User_Setting          "json:\"setting\" graphql:\"setting\""
 	Organizations   []*GetUserByID_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
 	UpdatedAt       *time.Time                        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
@@ -11683,6 +11754,12 @@ func (t *GetUserByID_User) GetAuthProvider() *enums.AuthProvider {
 	}
 	return &t.AuthProvider
 }
+func (t *GetUserByID_User) GetTags() []string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.Tags
+}
 func (t *GetUserByID_User) GetSetting() *GetUserByID_User_Setting {
 	if t == nil {
 		t = &GetUserByID_User{}
@@ -11748,9 +11825,9 @@ func (t *GetUserByIDWithOrgs_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
 type GetUserByIDWithOrgs_User_Setting struct {
 	EmailConfirmed bool                                         "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	DefaultOrg     *GetUserByIDWithOrgs_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                     "json:\"tags,omitempty\" graphql:\"tags\""
 	Locked         bool                                         "json:\"locked\" graphql:\"locked\""
 	Status         enums.UserStatus                             "json:\"status\" graphql:\"status\""
-	Tags           []string                                     "json:\"tags,omitempty\" graphql:\"tags\""
 	SuspendedAt    *time.Time                                   "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -11771,6 +11848,12 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetDefaultOrg() *GetUserByIDWithOrgs_
 	}
 	return t.DefaultOrg
 }
+func (t *GetUserByIDWithOrgs_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.Tags
+}
 func (t *GetUserByIDWithOrgs_User_Setting) GetLocked() bool {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_Setting{}
@@ -11782,12 +11865,6 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetStatus() *enums.UserStatus {
 		t = &GetUserByIDWithOrgs_User_Setting{}
 	}
 	return &t.Status
-}
-func (t *GetUserByIDWithOrgs_User_Setting) GetTags() []string {
-	if t == nil {
-		t = &GetUserByIDWithOrgs_User_Setting{}
-	}
-	return t.Tags
 }
 func (t *GetUserByIDWithOrgs_User_Setting) GetSuspendedAt() *time.Time {
 	if t == nil {
@@ -11880,6 +11957,7 @@ type GetUserByIDWithOrgs_User struct {
 	AvatarRemoteURL *string                                    "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                                    "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	AuthProvider    enums.AuthProvider                         "json:\"authProvider\" graphql:\"authProvider\""
+	Tags            []string                                   "json:\"tags,omitempty\" graphql:\"tags\""
 	Setting         GetUserByIDWithOrgs_User_Setting           "json:\"setting\" graphql:\"setting\""
 	UpdatedAt       *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy       *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
@@ -11948,6 +12026,12 @@ func (t *GetUserByIDWithOrgs_User) GetAuthProvider() *enums.AuthProvider {
 	}
 	return &t.AuthProvider
 }
+func (t *GetUserByIDWithOrgs_User) GetTags() []string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.Tags
+}
 func (t *GetUserByIDWithOrgs_User) GetSetting() *GetUserByIDWithOrgs_User_Setting {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
@@ -12013,9 +12097,9 @@ func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetPersonalOrg() *bool
 type GetAllUsers_Users_Edges_Node_Setting struct {
 	EmailConfirmed bool                                             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	DefaultOrg     *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                         "json:\"tags,omitempty\" graphql:\"tags\""
 	Locked         bool                                             "json:\"locked\" graphql:\"locked\""
 	Status         enums.UserStatus                                 "json:\"status\" graphql:\"status\""
-	Tags           []string                                         "json:\"tags,omitempty\" graphql:\"tags\""
 	SuspendedAt    *time.Time                                       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      *time.Time                                       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -12036,6 +12120,12 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetDefaultOrg() *GetAllUsers_User
 	}
 	return t.DefaultOrg
 }
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.Tags
+}
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetLocked() bool {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
@@ -12047,12 +12137,6 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *enums.UserStatus {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
 	}
 	return &t.Status
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetTags() []string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.Tags
 }
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetSuspendedAt() *time.Time {
 	if t == nil {
@@ -12102,6 +12186,7 @@ type GetAllUsers_Users_Edges_Node struct {
 	AvatarRemoteURL *string                              "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                              "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	AuthProvider    enums.AuthProvider                   "json:\"authProvider\" graphql:\"authProvider\""
+	Tags            []string                             "json:\"tags,omitempty\" graphql:\"tags\""
 	Setting         GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
 	UpdatedAt       *time.Time                           "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy       *string                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
@@ -12168,6 +12253,12 @@ func (t *GetAllUsers_Users_Edges_Node) GetAuthProvider() *enums.AuthProvider {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
 	return &t.AuthProvider
+}
+func (t *GetAllUsers_Users_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.Tags
 }
 func (t *GetAllUsers_Users_Edges_Node) GetSetting() *GetAllUsers_Users_Edges_Node_Setting {
 	if t == nil {
@@ -12286,9 +12377,9 @@ func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
 type CreateUser_CreateUser_User_Setting struct {
 	EmailConfirmed bool                                           "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	DefaultOrg     *CreateUser_CreateUser_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
 	Locked         bool                                           "json:\"locked\" graphql:\"locked\""
 	Status         enums.UserStatus                               "json:\"status\" graphql:\"status\""
-	Tags           []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
 	SuspendedAt    *time.Time                                     "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -12309,6 +12400,12 @@ func (t *CreateUser_CreateUser_User_Setting) GetDefaultOrg() *CreateUser_CreateU
 	}
 	return t.DefaultOrg
 }
+func (t *CreateUser_CreateUser_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.Tags
+}
 func (t *CreateUser_CreateUser_User_Setting) GetLocked() bool {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_Setting{}
@@ -12320,12 +12417,6 @@ func (t *CreateUser_CreateUser_User_Setting) GetStatus() *enums.UserStatus {
 		t = &CreateUser_CreateUser_User_Setting{}
 	}
 	return &t.Status
-}
-func (t *CreateUser_CreateUser_User_Setting) GetTags() []string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.Tags
 }
 func (t *CreateUser_CreateUser_User_Setting) GetSuspendedAt() *time.Time {
 	if t == nil {
@@ -12374,6 +12465,7 @@ type CreateUser_CreateUser_User struct {
 	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
 	AuthProvider     enums.AuthProvider                             "json:\"authProvider\" graphql:\"authProvider\""
+	Tags             []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
 	OrgMemberships   []*CreateUser_CreateUser_User_OrgMemberships   "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
 	GroupMemberships []*CreateUser_CreateUser_User_GroupMemberships "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
 	Setting          CreateUser_CreateUser_User_Setting             "json:\"setting\" graphql:\"setting\""
@@ -12432,6 +12524,12 @@ func (t *CreateUser_CreateUser_User) GetAuthProvider() *enums.AuthProvider {
 		t = &CreateUser_CreateUser_User{}
 	}
 	return &t.AuthProvider
+}
+func (t *CreateUser_CreateUser_User) GetTags() []string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Tags
 }
 func (t *CreateUser_CreateUser_User) GetOrgMemberships() []*CreateUser_CreateUser_User_OrgMemberships {
 	if t == nil {
@@ -12513,9 +12611,9 @@ func (t *UpdateUser_UpdateUser_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
 type UpdateUser_UpdateUser_User_Setting struct {
 	EmailConfirmed bool                                           "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	DefaultOrg     *UpdateUser_UpdateUser_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
 	Locked         bool                                           "json:\"locked\" graphql:\"locked\""
 	Status         enums.UserStatus                               "json:\"status\" graphql:\"status\""
-	Tags           []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
 	SuspendedAt    *time.Time                                     "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -12536,6 +12634,12 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetDefaultOrg() *UpdateUser_UpdateU
 	}
 	return t.DefaultOrg
 }
+func (t *UpdateUser_UpdateUser_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.Tags
+}
 func (t *UpdateUser_UpdateUser_User_Setting) GetLocked() bool {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User_Setting{}
@@ -12547,12 +12651,6 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetStatus() *enums.UserStatus {
 		t = &UpdateUser_UpdateUser_User_Setting{}
 	}
 	return &t.Status
-}
-func (t *UpdateUser_UpdateUser_User_Setting) GetTags() []string {
-	if t == nil {
-		t = &UpdateUser_UpdateUser_User_Setting{}
-	}
-	return t.Tags
 }
 func (t *UpdateUser_UpdateUser_User_Setting) GetSuspendedAt() *time.Time {
 	if t == nil {
@@ -12601,6 +12699,7 @@ type UpdateUser_UpdateUser_User struct {
 	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
 	AuthProvider     enums.AuthProvider                             "json:\"authProvider\" graphql:\"authProvider\""
+	Tags             []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
 	GroupMemberships []*UpdateUser_UpdateUser_User_GroupMemberships "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
 	OrgMemberships   []*UpdateUser_UpdateUser_User_OrgMemberships   "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
 	Setting          UpdateUser_UpdateUser_User_Setting             "json:\"setting\" graphql:\"setting\""
@@ -12659,6 +12758,12 @@ func (t *UpdateUser_UpdateUser_User) GetAuthProvider() *enums.AuthProvider {
 		t = &UpdateUser_UpdateUser_User{}
 	}
 	return &t.AuthProvider
+}
+func (t *UpdateUser_UpdateUser_User) GetTags() []string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.Tags
 }
 func (t *UpdateUser_UpdateUser_User) GetGroupMemberships() []*UpdateUser_UpdateUser_User_GroupMemberships {
 	if t == nil {
@@ -16248,6 +16353,7 @@ const GetGroupByIDDocument = `query GetGroupByID ($groupId: ID!) {
 			id
 		}
 		logoURL
+		tags
 		setting {
 			id
 			createdAt
@@ -16306,6 +16412,7 @@ const GroupsWhereDocument = `query GroupsWhere ($where: GroupWhereInput) {
 					id
 				}
 				logoURL
+				tags
 				setting {
 					id
 					createdAt
@@ -16366,6 +16473,7 @@ const GetAllGroupsDocument = `query GetAllGroups {
 					id
 				}
 				logoURL
+				tags
 				setting {
 					id
 					createdAt
@@ -16423,6 +16531,7 @@ const CreateGroupDocument = `mutation CreateGroup ($input: CreateGroupInput!) {
 				id
 			}
 			logoURL
+			tags
 			setting {
 				id
 				createdAt
@@ -16477,6 +16586,7 @@ const UpdateGroupDocument = `mutation UpdateGroup ($updateGroupId: ID!, $input: 
 			name
 			displayName
 			description
+			tags
 			setting {
 				id
 				createdAt
@@ -17593,6 +17703,7 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 		displayName
 		description
 		personalOrg
+		tags
 		parent {
 			id
 			name
@@ -17628,8 +17739,8 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 			billingPhone
 			billingAddress
 			taxIdentifier
-			tags
 			geoLocation
+			tags
 		}
 		createdAt
 		createdBy
@@ -17665,6 +17776,7 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 				displayName
 				description
 				personalOrg
+				tags
 				parent {
 					id
 					name
@@ -17700,8 +17812,8 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 					billingPhone
 					billingAddress
 					taxIdentifier
-					tags
 					geoLocation
+					tags
 				}
 				createdAt
 				updatedAt
@@ -17735,6 +17847,7 @@ const OrganizationsWhereDocument = `query OrganizationsWhere ($where: Organizati
 				displayName
 				description
 				personalOrg
+				tags
 				parent {
 					id
 					name
@@ -17770,8 +17883,8 @@ const OrganizationsWhereDocument = `query OrganizationsWhere ($where: Organizati
 					billingPhone
 					billingAddress
 					taxIdentifier
-					tags
 					geoLocation
+					tags
 				}
 				createdAt
 				updatedAt
@@ -17806,6 +17919,7 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 			displayName
 			description
 			personalOrg
+			tags
 			createdAt
 			updatedAt
 			setting {
@@ -17820,8 +17934,8 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 				billingPhone
 				billingAddress
 				taxIdentifier
-				tags
 				geoLocation
+				tags
 			}
 			parent {
 				id
@@ -17866,6 +17980,7 @@ const UpdateOrganizationDocument = `mutation UpdateOrganization ($updateOrganiza
 			name
 			displayName
 			description
+			tags
 			members {
 				id
 				role
@@ -17883,8 +17998,8 @@ const UpdateOrganizationDocument = `mutation UpdateOrganization ($updateOrganiza
 				billingPhone
 				billingAddress
 				taxIdentifier
-				tags
 				geoLocation
+				tags
 			}
 		}
 	}
@@ -18854,6 +18969,7 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 		avatarRemoteURL
 		avatarLocalFile
 		authProvider
+		tags
 		setting {
 			emailConfirmed
 			defaultOrg {
@@ -18861,9 +18977,9 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 				name
 				personalOrg
 			}
+			tags
 			locked
 			status
-			tags
 			suspendedAt
 			createdAt
 			createdBy
@@ -18917,6 +19033,7 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 		avatarRemoteURL
 		avatarLocalFile
 		authProvider
+		tags
 		setting {
 			emailConfirmed
 			defaultOrg {
@@ -18924,9 +19041,9 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 				name
 				personalOrg
 			}
+			tags
 			locked
 			status
-			tags
 			suspendedAt
 			createdAt
 			createdBy
@@ -18981,6 +19098,7 @@ const GetAllUsersDocument = `query GetAllUsers {
 				avatarRemoteURL
 				avatarLocalFile
 				authProvider
+				tags
 				setting {
 					emailConfirmed
 					defaultOrg {
@@ -18988,9 +19106,9 @@ const GetAllUsersDocument = `query GetAllUsers {
 						name
 						personalOrg
 					}
+					tags
 					locked
 					status
-					tags
 					suspendedAt
 					createdAt
 					createdBy
@@ -19035,6 +19153,7 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 			avatarLocalFile
 			sub
 			authProvider
+			tags
 			orgMemberships {
 				id
 				organizationID
@@ -19050,9 +19169,9 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 					name
 					personalOrg
 				}
+				tags
 				locked
 				status
-				tags
 				suspendedAt
 				createdAt
 				createdBy
@@ -19094,6 +19213,7 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 			avatarLocalFile
 			sub
 			authProvider
+			tags
 			groupMemberships {
 				id
 			}
@@ -19107,9 +19227,9 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 					name
 					personalOrg
 				}
+				tags
 				locked
 				status
-				tags
 				suspendedAt
 				createdAt
 				createdBy

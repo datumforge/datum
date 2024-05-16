@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -102,6 +103,24 @@ func (fu *FileUpdate) SetNillableDeletedBy(s *string) *FileUpdate {
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (fu *FileUpdate) ClearDeletedBy() *FileUpdate {
 	fu.mutation.ClearDeletedBy()
+	return fu
+}
+
+// SetTags sets the "tags" field.
+func (fu *FileUpdate) SetTags(s []string) *FileUpdate {
+	fu.mutation.SetTags(s)
+	return fu
+}
+
+// AppendTags appends s to the "tags" field.
+func (fu *FileUpdate) AppendTags(s []string) *FileUpdate {
+	fu.mutation.AppendTags(s)
+	return fu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (fu *FileUpdate) ClearTags() *FileUpdate {
+	fu.mutation.ClearTags()
 	return fu
 }
 
@@ -424,6 +443,17 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if fu.mutation.DeletedByCleared() {
 		_spec.ClearField(file.FieldDeletedBy, field.TypeString)
 	}
+	if value, ok := fu.mutation.Tags(); ok {
+		_spec.SetField(file.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := fu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, file.FieldTags, value)
+		})
+	}
+	if fu.mutation.TagsCleared() {
+		_spec.ClearField(file.FieldTags, field.TypeJSON)
+	}
 	if value, ok := fu.mutation.FileName(); ok {
 		_spec.SetField(file.FieldFileName, field.TypeString, value)
 	}
@@ -675,6 +705,24 @@ func (fuo *FileUpdateOne) SetNillableDeletedBy(s *string) *FileUpdateOne {
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (fuo *FileUpdateOne) ClearDeletedBy() *FileUpdateOne {
 	fuo.mutation.ClearDeletedBy()
+	return fuo
+}
+
+// SetTags sets the "tags" field.
+func (fuo *FileUpdateOne) SetTags(s []string) *FileUpdateOne {
+	fuo.mutation.SetTags(s)
+	return fuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (fuo *FileUpdateOne) AppendTags(s []string) *FileUpdateOne {
+	fuo.mutation.AppendTags(s)
+	return fuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (fuo *FileUpdateOne) ClearTags() *FileUpdateOne {
+	fuo.mutation.ClearTags()
 	return fuo
 }
 
@@ -1026,6 +1074,17 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 	}
 	if fuo.mutation.DeletedByCleared() {
 		_spec.ClearField(file.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := fuo.mutation.Tags(); ok {
+		_spec.SetField(file.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := fuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, file.FieldTags, value)
+		})
+	}
+	if fuo.mutation.TagsCleared() {
+		_spec.ClearField(file.FieldTags, field.TypeJSON)
 	}
 	if value, ok := fuo.mutation.FileName(); ok {
 		_spec.SetField(file.FieldFileName, field.TypeString, value)

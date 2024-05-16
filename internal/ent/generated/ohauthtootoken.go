@@ -20,6 +20,8 @@ type OhAuthTooToken struct {
 	ID string `json:"id,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// ClientID holds the value of the "client_id" field.
 	ClientID string `json:"client_id,omitempty"`
 	// Scopes holds the value of the "scopes" field.
@@ -89,7 +91,7 @@ func (*OhAuthTooToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case ohauthtootoken.FieldScopes, ohauthtootoken.FieldClaimsGroups, ohauthtootoken.FieldConnectorData:
+		case ohauthtootoken.FieldTags, ohauthtootoken.FieldScopes, ohauthtootoken.FieldClaimsGroups, ohauthtootoken.FieldConnectorData:
 			values[i] = new([]byte)
 		case ohauthtootoken.FieldClaimsEmailVerified:
 			values[i] = new(sql.NullBool)
@@ -123,6 +125,14 @@ func (oatt *OhAuthTooToken) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				oatt.MappingID = value.String
+			}
+		case ohauthtootoken.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &oatt.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case ohauthtootoken.FieldClientID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -250,6 +260,9 @@ func (oatt *OhAuthTooToken) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", oatt.ID))
 	builder.WriteString("mapping_id=")
 	builder.WriteString(oatt.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", oatt.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("client_id=")
 	builder.WriteString(oatt.ClientID)

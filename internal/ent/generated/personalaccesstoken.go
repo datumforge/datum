@@ -33,6 +33,8 @@ type PersonalAccessToken struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
 	// the name associated with the token
@@ -105,7 +107,7 @@ func (*PersonalAccessToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case personalaccesstoken.FieldScopes:
+		case personalaccesstoken.FieldTags, personalaccesstoken.FieldScopes:
 			values[i] = new([]byte)
 		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldDeletedBy, personalaccesstoken.FieldMappingID, personalaccesstoken.FieldOwnerID, personalaccesstoken.FieldName, personalaccesstoken.FieldToken, personalaccesstoken.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -173,6 +175,14 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				pat.MappingID = value.String
+			}
+		case personalaccesstoken.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &pat.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case personalaccesstoken.FieldOwnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -292,6 +302,9 @@ func (pat *PersonalAccessToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(pat.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", pat.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("owner_id=")
 	builder.WriteString(pat.OwnerID)

@@ -37,6 +37,8 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldMappingID holds the string denoting the mapping_id field in the database.
 	FieldMappingID = "mapping_id"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
 	// FieldFirstName holds the string denoting the first_name field in the database.
@@ -78,6 +80,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldMappingID,
+	FieldTags,
 	FieldEmail,
 	FieldFirstName,
 	FieldLastName,
@@ -111,6 +114,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
 	DefaultMappingID func() string
+	// DefaultTags holds the default value on creation for the "tags" field.
+	DefaultTags []string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )

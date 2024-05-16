@@ -104,6 +104,24 @@ func (atu *APITokenUpdate) ClearDeletedBy() *APITokenUpdate {
 	return atu
 }
 
+// SetTags sets the "tags" field.
+func (atu *APITokenUpdate) SetTags(s []string) *APITokenUpdate {
+	atu.mutation.SetTags(s)
+	return atu
+}
+
+// AppendTags appends s to the "tags" field.
+func (atu *APITokenUpdate) AppendTags(s []string) *APITokenUpdate {
+	atu.mutation.AppendTags(s)
+	return atu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (atu *APITokenUpdate) ClearTags() *APITokenUpdate {
+	atu.mutation.ClearTags()
+	return atu
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (atu *APITokenUpdate) SetOwnerID(s string) *APITokenUpdate {
 	atu.mutation.SetOwnerID(s)
@@ -331,6 +349,17 @@ func (atu *APITokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if atu.mutation.DeletedByCleared() {
 		_spec.ClearField(apitoken.FieldDeletedBy, field.TypeString)
 	}
+	if value, ok := atu.mutation.Tags(); ok {
+		_spec.SetField(apitoken.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := atu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, apitoken.FieldTags, value)
+		})
+	}
+	if atu.mutation.TagsCleared() {
+		_spec.ClearField(apitoken.FieldTags, field.TypeJSON)
+	}
 	if value, ok := atu.mutation.Name(); ok {
 		_spec.SetField(apitoken.FieldName, field.TypeString, value)
 	}
@@ -485,6 +514,24 @@ func (atuo *APITokenUpdateOne) SetNillableDeletedBy(s *string) *APITokenUpdateOn
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (atuo *APITokenUpdateOne) ClearDeletedBy() *APITokenUpdateOne {
 	atuo.mutation.ClearDeletedBy()
+	return atuo
+}
+
+// SetTags sets the "tags" field.
+func (atuo *APITokenUpdateOne) SetTags(s []string) *APITokenUpdateOne {
+	atuo.mutation.SetTags(s)
+	return atuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (atuo *APITokenUpdateOne) AppendTags(s []string) *APITokenUpdateOne {
+	atuo.mutation.AppendTags(s)
+	return atuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (atuo *APITokenUpdateOne) ClearTags() *APITokenUpdateOne {
+	atuo.mutation.ClearTags()
 	return atuo
 }
 
@@ -744,6 +791,17 @@ func (atuo *APITokenUpdateOne) sqlSave(ctx context.Context) (_node *APIToken, er
 	}
 	if atuo.mutation.DeletedByCleared() {
 		_spec.ClearField(apitoken.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := atuo.mutation.Tags(); ok {
+		_spec.SetField(apitoken.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := atuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, apitoken.FieldTags, value)
+		})
+	}
+	if atuo.mutation.TagsCleared() {
+		_spec.ClearField(apitoken.FieldTags, field.TypeJSON)
 	}
 	if value, ok := atuo.mutation.Name(); ok {
 		_spec.SetField(apitoken.FieldName, field.TypeString, value)

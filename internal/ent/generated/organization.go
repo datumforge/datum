@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -28,6 +29,8 @@ type Organization struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -297,6 +300,8 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case organization.FieldTags:
+			values[i] = new([]byte)
 		case organization.FieldPersonalOrg, organization.FieldDedicatedDb:
 			values[i] = new(sql.NullBool)
 		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldMappingID, organization.FieldDeletedBy, organization.FieldName, organization.FieldDisplayName, organization.FieldDescription, organization.FieldParentOrganizationID, organization.FieldAvatarRemoteURL:
@@ -353,6 +358,14 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				o.MappingID = value.String
+			}
+		case organization.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &o.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case organization.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -554,6 +567,9 @@ func (o *Organization) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(o.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", o.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(o.DeletedAt.Format(time.ANSIC))

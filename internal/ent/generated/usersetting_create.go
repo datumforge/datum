@@ -93,6 +93,12 @@ func (usc *UserSettingCreate) SetNillableMappingID(s *string) *UserSettingCreate
 	return usc
 }
 
+// SetTags sets the "tags" field.
+func (usc *UserSettingCreate) SetTags(s []string) *UserSettingCreate {
+	usc.mutation.SetTags(s)
+	return usc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (usc *UserSettingCreate) SetDeletedAt(t time.Time) *UserSettingCreate {
 	usc.mutation.SetDeletedAt(t)
@@ -202,12 +208,6 @@ func (usc *UserSettingCreate) SetNillableEmailConfirmed(b *bool) *UserSettingCre
 	if b != nil {
 		usc.SetEmailConfirmed(*b)
 	}
-	return usc
-}
-
-// SetTags sets the "tags" field.
-func (usc *UserSettingCreate) SetTags(s []string) *UserSettingCreate {
-	usc.mutation.SetTags(s)
 	return usc
 }
 
@@ -349,6 +349,10 @@ func (usc *UserSettingCreate) defaults() error {
 		v := usersetting.DefaultMappingID()
 		usc.mutation.SetMappingID(v)
 	}
+	if _, ok := usc.mutation.Tags(); !ok {
+		v := usersetting.DefaultTags
+		usc.mutation.SetTags(v)
+	}
 	if _, ok := usc.mutation.Locked(); !ok {
 		v := usersetting.DefaultLocked
 		usc.mutation.SetLocked(v)
@@ -454,6 +458,10 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 		_spec.SetField(usersetting.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
 	}
+	if value, ok := usc.mutation.Tags(); ok {
+		_spec.SetField(usersetting.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
+	}
 	if value, ok := usc.mutation.DeletedAt(); ok {
 		_spec.SetField(usersetting.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
@@ -481,10 +489,6 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 	if value, ok := usc.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)
 		_node.EmailConfirmed = value
-	}
-	if value, ok := usc.mutation.Tags(); ok {
-		_spec.SetField(usersetting.FieldTags, field.TypeJSON, value)
-		_node.Tags = value
 	}
 	if value, ok := usc.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)

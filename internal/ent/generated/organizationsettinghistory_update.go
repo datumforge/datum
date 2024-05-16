@@ -72,6 +72,24 @@ func (oshu *OrganizationSettingHistoryUpdate) ClearUpdatedBy() *OrganizationSett
 	return oshu
 }
 
+// SetTags sets the "tags" field.
+func (oshu *OrganizationSettingHistoryUpdate) SetTags(s []string) *OrganizationSettingHistoryUpdate {
+	oshu.mutation.SetTags(s)
+	return oshu
+}
+
+// AppendTags appends s to the "tags" field.
+func (oshu *OrganizationSettingHistoryUpdate) AppendTags(s []string) *OrganizationSettingHistoryUpdate {
+	oshu.mutation.AppendTags(s)
+	return oshu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (oshu *OrganizationSettingHistoryUpdate) ClearTags() *OrganizationSettingHistoryUpdate {
+	oshu.mutation.ClearTags()
+	return oshu
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (oshu *OrganizationSettingHistoryUpdate) SetDeletedAt(t time.Time) *OrganizationSettingHistoryUpdate {
 	oshu.mutation.SetDeletedAt(t)
@@ -230,24 +248,6 @@ func (oshu *OrganizationSettingHistoryUpdate) ClearTaxIdentifier() *Organization
 	return oshu
 }
 
-// SetTags sets the "tags" field.
-func (oshu *OrganizationSettingHistoryUpdate) SetTags(s []string) *OrganizationSettingHistoryUpdate {
-	oshu.mutation.SetTags(s)
-	return oshu
-}
-
-// AppendTags appends s to the "tags" field.
-func (oshu *OrganizationSettingHistoryUpdate) AppendTags(s []string) *OrganizationSettingHistoryUpdate {
-	oshu.mutation.AppendTags(s)
-	return oshu
-}
-
-// ClearTags clears the value of the "tags" field.
-func (oshu *OrganizationSettingHistoryUpdate) ClearTags() *OrganizationSettingHistoryUpdate {
-	oshu.mutation.ClearTags()
-	return oshu
-}
-
 // SetGeoLocation sets the "geo_location" field.
 func (oshu *OrganizationSettingHistoryUpdate) SetGeoLocation(e enums.Region) *OrganizationSettingHistoryUpdate {
 	oshu.mutation.SetGeoLocation(e)
@@ -363,6 +363,17 @@ func (oshu *OrganizationSettingHistoryUpdate) sqlSave(ctx context.Context) (n in
 	if oshu.mutation.UpdatedByCleared() {
 		_spec.ClearField(organizationsettinghistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := oshu.mutation.Tags(); ok {
+		_spec.SetField(organizationsettinghistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := oshu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, organizationsettinghistory.FieldTags, value)
+		})
+	}
+	if oshu.mutation.TagsCleared() {
+		_spec.ClearField(organizationsettinghistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := oshu.mutation.DeletedAt(); ok {
 		_spec.SetField(organizationsettinghistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -415,17 +426,6 @@ func (oshu *OrganizationSettingHistoryUpdate) sqlSave(ctx context.Context) (n in
 	}
 	if oshu.mutation.TaxIdentifierCleared() {
 		_spec.ClearField(organizationsettinghistory.FieldTaxIdentifier, field.TypeString)
-	}
-	if value, ok := oshu.mutation.Tags(); ok {
-		_spec.SetField(organizationsettinghistory.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := oshu.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, organizationsettinghistory.FieldTags, value)
-		})
-	}
-	if oshu.mutation.TagsCleared() {
-		_spec.ClearField(organizationsettinghistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := oshu.mutation.GeoLocation(); ok {
 		_spec.SetField(organizationsettinghistory.FieldGeoLocation, field.TypeEnum, value)
@@ -498,6 +498,24 @@ func (oshuo *OrganizationSettingHistoryUpdateOne) SetNillableUpdatedBy(s *string
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (oshuo *OrganizationSettingHistoryUpdateOne) ClearUpdatedBy() *OrganizationSettingHistoryUpdateOne {
 	oshuo.mutation.ClearUpdatedBy()
+	return oshuo
+}
+
+// SetTags sets the "tags" field.
+func (oshuo *OrganizationSettingHistoryUpdateOne) SetTags(s []string) *OrganizationSettingHistoryUpdateOne {
+	oshuo.mutation.SetTags(s)
+	return oshuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (oshuo *OrganizationSettingHistoryUpdateOne) AppendTags(s []string) *OrganizationSettingHistoryUpdateOne {
+	oshuo.mutation.AppendTags(s)
+	return oshuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (oshuo *OrganizationSettingHistoryUpdateOne) ClearTags() *OrganizationSettingHistoryUpdateOne {
+	oshuo.mutation.ClearTags()
 	return oshuo
 }
 
@@ -659,24 +677,6 @@ func (oshuo *OrganizationSettingHistoryUpdateOne) ClearTaxIdentifier() *Organiza
 	return oshuo
 }
 
-// SetTags sets the "tags" field.
-func (oshuo *OrganizationSettingHistoryUpdateOne) SetTags(s []string) *OrganizationSettingHistoryUpdateOne {
-	oshuo.mutation.SetTags(s)
-	return oshuo
-}
-
-// AppendTags appends s to the "tags" field.
-func (oshuo *OrganizationSettingHistoryUpdateOne) AppendTags(s []string) *OrganizationSettingHistoryUpdateOne {
-	oshuo.mutation.AppendTags(s)
-	return oshuo
-}
-
-// ClearTags clears the value of the "tags" field.
-func (oshuo *OrganizationSettingHistoryUpdateOne) ClearTags() *OrganizationSettingHistoryUpdateOne {
-	oshuo.mutation.ClearTags()
-	return oshuo
-}
-
 // SetGeoLocation sets the "geo_location" field.
 func (oshuo *OrganizationSettingHistoryUpdateOne) SetGeoLocation(e enums.Region) *OrganizationSettingHistoryUpdateOne {
 	oshuo.mutation.SetGeoLocation(e)
@@ -822,6 +822,17 @@ func (oshuo *OrganizationSettingHistoryUpdateOne) sqlSave(ctx context.Context) (
 	if oshuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(organizationsettinghistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := oshuo.mutation.Tags(); ok {
+		_spec.SetField(organizationsettinghistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := oshuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, organizationsettinghistory.FieldTags, value)
+		})
+	}
+	if oshuo.mutation.TagsCleared() {
+		_spec.ClearField(organizationsettinghistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := oshuo.mutation.DeletedAt(); ok {
 		_spec.SetField(organizationsettinghistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -874,17 +885,6 @@ func (oshuo *OrganizationSettingHistoryUpdateOne) sqlSave(ctx context.Context) (
 	}
 	if oshuo.mutation.TaxIdentifierCleared() {
 		_spec.ClearField(organizationsettinghistory.FieldTaxIdentifier, field.TypeString)
-	}
-	if value, ok := oshuo.mutation.Tags(); ok {
-		_spec.SetField(organizationsettinghistory.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := oshuo.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, organizationsettinghistory.FieldTags, value)
-		})
-	}
-	if oshuo.mutation.TagsCleared() {
-		_spec.ClearField(organizationsettinghistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := oshuo.mutation.GeoLocation(); ok {
 		_spec.SetField(organizationsettinghistory.FieldGeoLocation, field.TypeEnum, value)

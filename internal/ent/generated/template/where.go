@@ -558,6 +558,16 @@ func MappingIDContainsFold(v string) predicate.Template {
 	return predicate.Template(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.Template {
+	return predicate.Template(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.Template {
+	return predicate.Template(sql.FieldNotNull(FieldTags))
+}
+
 // OwnerIDEQ applies the EQ predicate on the "owner_id" field.
 func OwnerIDEQ(v string) predicate.Template {
 	return predicate.Template(sql.FieldEQ(FieldOwnerID, v))

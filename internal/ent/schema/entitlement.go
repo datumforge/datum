@@ -65,6 +65,7 @@ func (Entitlement) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
 			Ref: "entitlements",

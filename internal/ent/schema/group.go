@@ -34,6 +34,7 @@ func (Group) Mixin() []ent.Mixin {
 		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
 		emixin.IDMixin{},
+		emixin.TagMixin{},
 		OrgOwnerMixin{
 			Ref: "groups",
 		},

@@ -106,6 +106,24 @@ func (patu *PersonalAccessTokenUpdate) ClearDeletedBy() *PersonalAccessTokenUpda
 	return patu
 }
 
+// SetTags sets the "tags" field.
+func (patu *PersonalAccessTokenUpdate) SetTags(s []string) *PersonalAccessTokenUpdate {
+	patu.mutation.SetTags(s)
+	return patu
+}
+
+// AppendTags appends s to the "tags" field.
+func (patu *PersonalAccessTokenUpdate) AppendTags(s []string) *PersonalAccessTokenUpdate {
+	patu.mutation.AppendTags(s)
+	return patu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (patu *PersonalAccessTokenUpdate) ClearTags() *PersonalAccessTokenUpdate {
+	patu.mutation.ClearTags()
+	return patu
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (patu *PersonalAccessTokenUpdate) SetOwnerID(s string) *PersonalAccessTokenUpdate {
 	patu.mutation.SetOwnerID(s)
@@ -391,6 +409,17 @@ func (patu *PersonalAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err 
 	if patu.mutation.DeletedByCleared() {
 		_spec.ClearField(personalaccesstoken.FieldDeletedBy, field.TypeString)
 	}
+	if value, ok := patu.mutation.Tags(); ok {
+		_spec.SetField(personalaccesstoken.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := patu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, personalaccesstoken.FieldTags, value)
+		})
+	}
+	if patu.mutation.TagsCleared() {
+		_spec.ClearField(personalaccesstoken.FieldTags, field.TypeJSON)
+	}
 	if value, ok := patu.mutation.Name(); ok {
 		_spec.SetField(personalaccesstoken.FieldName, field.TypeString, value)
 	}
@@ -638,6 +667,24 @@ func (patuo *PersonalAccessTokenUpdateOne) SetNillableDeletedBy(s *string) *Pers
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (patuo *PersonalAccessTokenUpdateOne) ClearDeletedBy() *PersonalAccessTokenUpdateOne {
 	patuo.mutation.ClearDeletedBy()
+	return patuo
+}
+
+// SetTags sets the "tags" field.
+func (patuo *PersonalAccessTokenUpdateOne) SetTags(s []string) *PersonalAccessTokenUpdateOne {
+	patuo.mutation.SetTags(s)
+	return patuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (patuo *PersonalAccessTokenUpdateOne) AppendTags(s []string) *PersonalAccessTokenUpdateOne {
+	patuo.mutation.AppendTags(s)
+	return patuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (patuo *PersonalAccessTokenUpdateOne) ClearTags() *PersonalAccessTokenUpdateOne {
+	patuo.mutation.ClearTags()
 	return patuo
 }
 
@@ -955,6 +1002,17 @@ func (patuo *PersonalAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if patuo.mutation.DeletedByCleared() {
 		_spec.ClearField(personalaccesstoken.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := patuo.mutation.Tags(); ok {
+		_spec.SetField(personalaccesstoken.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := patuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, personalaccesstoken.FieldTags, value)
+		})
+	}
+	if patuo.mutation.TagsCleared() {
+		_spec.ClearField(personalaccesstoken.FieldTags, field.TypeJSON)
 	}
 	if value, ok := patuo.mutation.Name(); ok {
 		_spec.SetField(personalaccesstoken.FieldName, field.TypeString, value)

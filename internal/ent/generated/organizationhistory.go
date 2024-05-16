@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -34,6 +35,8 @@ type OrganizationHistory struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -60,6 +63,8 @@ func (*OrganizationHistory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case organizationhistory.FieldTags:
+			values[i] = new([]byte)
 		case organizationhistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
 		case organizationhistory.FieldPersonalOrg, organizationhistory.FieldDedicatedDb:
@@ -136,6 +141,14 @@ func (oh *OrganizationHistory) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				oh.MappingID = value.String
+			}
+		case organizationhistory.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &oh.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case organizationhistory.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -251,6 +264,9 @@ func (oh *OrganizationHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(oh.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", oh.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(oh.DeletedAt.Format(time.ANSIC))

@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
@@ -68,6 +69,24 @@ func (ehu *EntitlementHistoryUpdate) SetNillableUpdatedBy(s *string) *Entitlemen
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (ehu *EntitlementHistoryUpdate) ClearUpdatedBy() *EntitlementHistoryUpdate {
 	ehu.mutation.ClearUpdatedBy()
+	return ehu
+}
+
+// SetTags sets the "tags" field.
+func (ehu *EntitlementHistoryUpdate) SetTags(s []string) *EntitlementHistoryUpdate {
+	ehu.mutation.SetTags(s)
+	return ehu
+}
+
+// AppendTags appends s to the "tags" field.
+func (ehu *EntitlementHistoryUpdate) AppendTags(s []string) *EntitlementHistoryUpdate {
+	ehu.mutation.AppendTags(s)
+	return ehu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ehu *EntitlementHistoryUpdate) ClearTags() *EntitlementHistoryUpdate {
+	ehu.mutation.ClearTags()
 	return ehu
 }
 
@@ -308,6 +327,17 @@ func (ehu *EntitlementHistoryUpdate) sqlSave(ctx context.Context) (n int, err er
 	if ehu.mutation.UpdatedByCleared() {
 		_spec.ClearField(entitlementhistory.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := ehu.mutation.Tags(); ok {
+		_spec.SetField(entitlementhistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ehu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, entitlementhistory.FieldTags, value)
+		})
+	}
+	if ehu.mutation.TagsCleared() {
+		_spec.ClearField(entitlementhistory.FieldTags, field.TypeJSON)
+	}
 	if value, ok := ehu.mutation.DeletedAt(); ok {
 		_spec.SetField(entitlementhistory.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -412,6 +442,24 @@ func (ehuo *EntitlementHistoryUpdateOne) SetNillableUpdatedBy(s *string) *Entitl
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (ehuo *EntitlementHistoryUpdateOne) ClearUpdatedBy() *EntitlementHistoryUpdateOne {
 	ehuo.mutation.ClearUpdatedBy()
+	return ehuo
+}
+
+// SetTags sets the "tags" field.
+func (ehuo *EntitlementHistoryUpdateOne) SetTags(s []string) *EntitlementHistoryUpdateOne {
+	ehuo.mutation.SetTags(s)
+	return ehuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (ehuo *EntitlementHistoryUpdateOne) AppendTags(s []string) *EntitlementHistoryUpdateOne {
+	ehuo.mutation.AppendTags(s)
+	return ehuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (ehuo *EntitlementHistoryUpdateOne) ClearTags() *EntitlementHistoryUpdateOne {
+	ehuo.mutation.ClearTags()
 	return ehuo
 }
 
@@ -681,6 +729,17 @@ func (ehuo *EntitlementHistoryUpdateOne) sqlSave(ctx context.Context) (_node *En
 	}
 	if ehuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(entitlementhistory.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := ehuo.mutation.Tags(); ok {
+		_spec.SetField(entitlementhistory.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := ehuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, entitlementhistory.FieldTags, value)
+		})
+	}
+	if ehuo.mutation.TagsCleared() {
+		_spec.ClearField(entitlementhistory.FieldTags, field.TypeJSON)
 	}
 	if value, ok := ehuo.mutation.DeletedAt(); ok {
 		_spec.SetField(entitlementhistory.FieldDeletedAt, field.TypeTime, value)

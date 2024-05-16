@@ -132,6 +132,12 @@ func (uc *UserCreate) SetNillableMappingID(s *string) *UserCreate {
 	return uc
 }
 
+// SetTags sets the "tags" field.
+func (uc *UserCreate) SetTags(s []string) *UserCreate {
+	uc.mutation.SetTags(s)
+	return uc
+}
+
 // SetEmail sets the "email" field.
 func (uc *UserCreate) SetEmail(s string) *UserCreate {
 	uc.mutation.SetEmail(s)
@@ -547,6 +553,10 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultMappingID()
 		uc.mutation.SetMappingID(v)
 	}
+	if _, ok := uc.mutation.Tags(); !ok {
+		v := user.DefaultTags
+		uc.mutation.SetTags(v)
+	}
 	if _, ok := uc.mutation.AuthProvider(); !ok {
 		v := user.DefaultAuthProvider
 		uc.mutation.SetAuthProvider(v)
@@ -685,6 +695,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.MappingID(); ok {
 		_spec.SetField(user.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := uc.mutation.Tags(); ok {
+		_spec.SetField(user.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)

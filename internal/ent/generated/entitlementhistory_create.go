@@ -126,6 +126,12 @@ func (ehc *EntitlementHistoryCreate) SetNillableMappingID(s *string) *Entitlemen
 	return ehc
 }
 
+// SetTags sets the "tags" field.
+func (ehc *EntitlementHistoryCreate) SetTags(s []string) *EntitlementHistoryCreate {
+	ehc.mutation.SetTags(s)
+	return ehc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ehc *EntitlementHistoryCreate) SetDeletedAt(t time.Time) *EntitlementHistoryCreate {
 	ehc.mutation.SetDeletedAt(t)
@@ -317,6 +323,10 @@ func (ehc *EntitlementHistoryCreate) defaults() {
 		v := entitlementhistory.DefaultMappingID()
 		ehc.mutation.SetMappingID(v)
 	}
+	if _, ok := ehc.mutation.Tags(); !ok {
+		v := entitlementhistory.DefaultTags
+		ehc.mutation.SetTags(v)
+	}
 	if _, ok := ehc.mutation.Tier(); !ok {
 		v := entitlementhistory.DefaultTier
 		ehc.mutation.SetTier(v)
@@ -432,6 +442,10 @@ func (ehc *EntitlementHistoryCreate) createSpec() (*EntitlementHistory, *sqlgrap
 	if value, ok := ehc.mutation.MappingID(); ok {
 		_spec.SetField(entitlementhistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := ehc.mutation.Tags(); ok {
+		_spec.SetField(entitlementhistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := ehc.mutation.DeletedAt(); ok {
 		_spec.SetField(entitlementhistory.FieldDeletedAt, field.TypeTime, value)

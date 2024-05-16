@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
@@ -61,6 +62,24 @@ func (opu *OauthProviderUpdate) SetNillableUpdatedBy(s *string) *OauthProviderUp
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (opu *OauthProviderUpdate) ClearUpdatedBy() *OauthProviderUpdate {
 	opu.mutation.ClearUpdatedBy()
+	return opu
+}
+
+// SetTags sets the "tags" field.
+func (opu *OauthProviderUpdate) SetTags(s []string) *OauthProviderUpdate {
+	opu.mutation.SetTags(s)
+	return opu
+}
+
+// AppendTags appends s to the "tags" field.
+func (opu *OauthProviderUpdate) AppendTags(s []string) *OauthProviderUpdate {
+	opu.mutation.AppendTags(s)
+	return opu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (opu *OauthProviderUpdate) ClearTags() *OauthProviderUpdate {
+	opu.mutation.ClearTags()
 	return opu
 }
 
@@ -336,6 +355,17 @@ func (opu *OauthProviderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if opu.mutation.UpdatedByCleared() {
 		_spec.ClearField(oauthprovider.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := opu.mutation.Tags(); ok {
+		_spec.SetField(oauthprovider.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := opu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, oauthprovider.FieldTags, value)
+		})
+	}
+	if opu.mutation.TagsCleared() {
+		_spec.ClearField(oauthprovider.FieldTags, field.TypeJSON)
+	}
 	if value, ok := opu.mutation.DeletedAt(); ok {
 		_spec.SetField(oauthprovider.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -460,6 +490,24 @@ func (opuo *OauthProviderUpdateOne) SetNillableUpdatedBy(s *string) *OauthProvid
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (opuo *OauthProviderUpdateOne) ClearUpdatedBy() *OauthProviderUpdateOne {
 	opuo.mutation.ClearUpdatedBy()
+	return opuo
+}
+
+// SetTags sets the "tags" field.
+func (opuo *OauthProviderUpdateOne) SetTags(s []string) *OauthProviderUpdateOne {
+	opuo.mutation.SetTags(s)
+	return opuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (opuo *OauthProviderUpdateOne) AppendTags(s []string) *OauthProviderUpdateOne {
+	opuo.mutation.AppendTags(s)
+	return opuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (opuo *OauthProviderUpdateOne) ClearTags() *OauthProviderUpdateOne {
+	opuo.mutation.ClearTags()
 	return opuo
 }
 
@@ -764,6 +812,17 @@ func (opuo *OauthProviderUpdateOne) sqlSave(ctx context.Context) (_node *OauthPr
 	}
 	if opuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(oauthprovider.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := opuo.mutation.Tags(); ok {
+		_spec.SetField(oauthprovider.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := opuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, oauthprovider.FieldTags, value)
+		})
+	}
+	if opuo.mutation.TagsCleared() {
+		_spec.ClearField(oauthprovider.FieldTags, field.TypeJSON)
 	}
 	if value, ok := opuo.mutation.DeletedAt(); ok {
 		_spec.SetField(oauthprovider.FieldDeletedAt, field.TypeTime, value)

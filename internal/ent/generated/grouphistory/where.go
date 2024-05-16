@@ -715,6 +715,16 @@ func MappingIDContainsFold(v string) predicate.GroupHistory {
 	return predicate.GroupHistory(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.GroupHistory {
+	return predicate.GroupHistory(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.GroupHistory {
+	return predicate.GroupHistory(sql.FieldNotNull(FieldTags))
+}
+
 // OwnerIDEQ applies the EQ predicate on the "owner_id" field.
 func OwnerIDEQ(v string) predicate.GroupHistory {
 	return predicate.GroupHistory(sql.FieldEQ(FieldOwnerID, v))

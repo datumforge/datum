@@ -65,6 +65,24 @@ func (gsu *GroupSettingUpdate) ClearUpdatedBy() *GroupSettingUpdate {
 	return gsu
 }
 
+// SetTags sets the "tags" field.
+func (gsu *GroupSettingUpdate) SetTags(s []string) *GroupSettingUpdate {
+	gsu.mutation.SetTags(s)
+	return gsu
+}
+
+// AppendTags appends s to the "tags" field.
+func (gsu *GroupSettingUpdate) AppendTags(s []string) *GroupSettingUpdate {
+	gsu.mutation.AppendTags(s)
+	return gsu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (gsu *GroupSettingUpdate) ClearTags() *GroupSettingUpdate {
+	gsu.mutation.ClearTags()
+	return gsu
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gsu *GroupSettingUpdate) SetDeletedAt(t time.Time) *GroupSettingUpdate {
 	gsu.mutation.SetDeletedAt(t)
@@ -130,24 +148,6 @@ func (gsu *GroupSettingUpdate) SetNillableJoinPolicy(ep *enums.JoinPolicy) *Grou
 	if ep != nil {
 		gsu.SetJoinPolicy(*ep)
 	}
-	return gsu
-}
-
-// SetTags sets the "tags" field.
-func (gsu *GroupSettingUpdate) SetTags(s []string) *GroupSettingUpdate {
-	gsu.mutation.SetTags(s)
-	return gsu
-}
-
-// AppendTags appends s to the "tags" field.
-func (gsu *GroupSettingUpdate) AppendTags(s []string) *GroupSettingUpdate {
-	gsu.mutation.AppendTags(s)
-	return gsu
-}
-
-// ClearTags clears the value of the "tags" field.
-func (gsu *GroupSettingUpdate) ClearTags() *GroupSettingUpdate {
-	gsu.mutation.ClearTags()
 	return gsu
 }
 
@@ -314,6 +314,17 @@ func (gsu *GroupSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if gsu.mutation.UpdatedByCleared() {
 		_spec.ClearField(groupsetting.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := gsu.mutation.Tags(); ok {
+		_spec.SetField(groupsetting.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := gsu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupsetting.FieldTags, value)
+		})
+	}
+	if gsu.mutation.TagsCleared() {
+		_spec.ClearField(groupsetting.FieldTags, field.TypeJSON)
+	}
 	if value, ok := gsu.mutation.DeletedAt(); ok {
 		_spec.SetField(groupsetting.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -331,17 +342,6 @@ func (gsu *GroupSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gsu.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsetting.FieldJoinPolicy, field.TypeEnum, value)
-	}
-	if value, ok := gsu.mutation.Tags(); ok {
-		_spec.SetField(groupsetting.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := gsu.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, groupsetting.FieldTags, value)
-		})
-	}
-	if gsu.mutation.TagsCleared() {
-		_spec.ClearField(groupsetting.FieldTags, field.TypeJSON)
 	}
 	if value, ok := gsu.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsetting.FieldSyncToSlack, field.TypeBool, value)
@@ -440,6 +440,24 @@ func (gsuo *GroupSettingUpdateOne) ClearUpdatedBy() *GroupSettingUpdateOne {
 	return gsuo
 }
 
+// SetTags sets the "tags" field.
+func (gsuo *GroupSettingUpdateOne) SetTags(s []string) *GroupSettingUpdateOne {
+	gsuo.mutation.SetTags(s)
+	return gsuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (gsuo *GroupSettingUpdateOne) AppendTags(s []string) *GroupSettingUpdateOne {
+	gsuo.mutation.AppendTags(s)
+	return gsuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (gsuo *GroupSettingUpdateOne) ClearTags() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearTags()
+	return gsuo
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gsuo *GroupSettingUpdateOne) SetDeletedAt(t time.Time) *GroupSettingUpdateOne {
 	gsuo.mutation.SetDeletedAt(t)
@@ -505,24 +523,6 @@ func (gsuo *GroupSettingUpdateOne) SetNillableJoinPolicy(ep *enums.JoinPolicy) *
 	if ep != nil {
 		gsuo.SetJoinPolicy(*ep)
 	}
-	return gsuo
-}
-
-// SetTags sets the "tags" field.
-func (gsuo *GroupSettingUpdateOne) SetTags(s []string) *GroupSettingUpdateOne {
-	gsuo.mutation.SetTags(s)
-	return gsuo
-}
-
-// AppendTags appends s to the "tags" field.
-func (gsuo *GroupSettingUpdateOne) AppendTags(s []string) *GroupSettingUpdateOne {
-	gsuo.mutation.AppendTags(s)
-	return gsuo
-}
-
-// ClearTags clears the value of the "tags" field.
-func (gsuo *GroupSettingUpdateOne) ClearTags() *GroupSettingUpdateOne {
-	gsuo.mutation.ClearTags()
 	return gsuo
 }
 
@@ -719,6 +719,17 @@ func (gsuo *GroupSettingUpdateOne) sqlSave(ctx context.Context) (_node *GroupSet
 	if gsuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(groupsetting.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := gsuo.mutation.Tags(); ok {
+		_spec.SetField(groupsetting.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := gsuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupsetting.FieldTags, value)
+		})
+	}
+	if gsuo.mutation.TagsCleared() {
+		_spec.ClearField(groupsetting.FieldTags, field.TypeJSON)
+	}
 	if value, ok := gsuo.mutation.DeletedAt(); ok {
 		_spec.SetField(groupsetting.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -736,17 +747,6 @@ func (gsuo *GroupSettingUpdateOne) sqlSave(ctx context.Context) (_node *GroupSet
 	}
 	if value, ok := gsuo.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsetting.FieldJoinPolicy, field.TypeEnum, value)
-	}
-	if value, ok := gsuo.mutation.Tags(); ok {
-		_spec.SetField(groupsetting.FieldTags, field.TypeJSON, value)
-	}
-	if value, ok := gsuo.mutation.AppendedTags(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, groupsetting.FieldTags, value)
-		})
-	}
-	if gsuo.mutation.TagsCleared() {
-		_spec.ClearField(groupsetting.FieldTags, field.TypeJSON)
 	}
 	if value, ok := gsuo.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsetting.FieldSyncToSlack, field.TypeBool, value)

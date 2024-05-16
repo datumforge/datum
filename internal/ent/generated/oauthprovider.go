@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -29,6 +30,8 @@ type OauthProvider struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -85,6 +88,8 @@ func (*OauthProvider) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case oauthprovider.FieldTags:
+			values[i] = new([]byte)
 		case oauthprovider.FieldAuthStyle:
 			values[i] = new(sql.NullInt64)
 		case oauthprovider.FieldID, oauthprovider.FieldCreatedBy, oauthprovider.FieldUpdatedBy, oauthprovider.FieldMappingID, oauthprovider.FieldDeletedBy, oauthprovider.FieldName, oauthprovider.FieldClientID, oauthprovider.FieldClientSecret, oauthprovider.FieldRedirectURL, oauthprovider.FieldScopes, oauthprovider.FieldAuthURL, oauthprovider.FieldTokenURL, oauthprovider.FieldInfoURL:
@@ -143,6 +148,14 @@ func (op *OauthProvider) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				op.MappingID = value.String
+			}
+		case oauthprovider.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &op.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case oauthprovider.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -272,6 +285,9 @@ func (op *OauthProvider) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(op.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", op.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("deleted_at=")
 	builder.WriteString(op.DeletedAt.Format(time.ANSIC))

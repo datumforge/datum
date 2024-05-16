@@ -97,6 +97,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -257,6 +263,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -428,6 +440,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "template_id": {
                     "type": "string"
                   },
@@ -559,6 +577,12 @@
                       "UPDATE",
                       "DELETE"
                     ]
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "template_id": {
                     "type": "string"
@@ -709,6 +733,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "template_id": {
                     "type": "string"
                   },
@@ -855,6 +885,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "template_id": {
                     "type": "string"
                   },
@@ -1030,6 +1066,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -1196,6 +1238,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -1324,6 +1372,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -1503,6 +1557,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -1834,6 +1894,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "event_id": {
                     "type": "string"
                   },
@@ -1982,6 +2048,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "event_id": {
                     "type": "string"
                   },
@@ -2094,6 +2166,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "event_id": {
                     "type": "string"
                   },
@@ -2324,6 +2402,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "event_id": {
                     "type": "string"
                   },
@@ -3431,6 +3515,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -3584,6 +3674,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "global": {
                     "type": "boolean"
                   },
@@ -3696,6 +3792,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -3877,6 +3979,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "global": {
                     "type": "boolean"
                   },
@@ -4354,6 +4462,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "file_name": {
                     "type": "string"
                   },
@@ -4517,6 +4631,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "file_name": {
                     "type": "string"
                   },
@@ -4641,6 +4761,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "file_name": {
                     "type": "string"
                   },
@@ -4817,6 +4943,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "file_name": {
                     "type": "string"
                   },
@@ -5144,6 +5276,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -5299,6 +5437,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -6161,6 +6305,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "visibility": {
                     "type": "string",
                     "enum": [
@@ -6178,12 +6328,6 @@
                       "INVITE_OR_APPLICATION"
                     ],
                     "default": "INVITE_OR_APPLICATION"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   },
                   "sync_to_slack": {
                     "type": "boolean"
@@ -6334,6 +6478,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "visibility": {
                     "type": "string",
                     "enum": [
@@ -6351,12 +6501,6 @@
                       "INVITE_OR_APPLICATION"
                     ],
                     "default": "INVITE_OR_APPLICATION"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   },
                   "sync_to_slack": {
                     "type": "boolean"
@@ -6515,6 +6659,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -6711,6 +6861,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -8133,6 +8289,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -8281,6 +8443,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -8393,6 +8561,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -8566,6 +8740,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -9413,6 +9593,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -9587,6 +9773,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -9717,6 +9909,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -9892,6 +10090,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -10070,6 +10274,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "client_id": {
                     "type": "string"
                   },
@@ -10273,6 +10483,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "client_id": {
                     "type": "string"
                   },
@@ -11310,6 +11526,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -11472,6 +11694,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -11605,6 +11833,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "domains": {
                     "type": "array",
                     "items": {
@@ -11625,12 +11859,6 @@
                   },
                   "tax_identifier": {
                     "type": "string"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   },
                   "geo_location": {
                     "type": "string",
@@ -11782,6 +12010,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "domains": {
                     "type": "array",
                     "items": {
@@ -11802,12 +12036,6 @@
                   },
                   "tax_identifier": {
                     "type": "string"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   },
                   "geo_location": {
                     "type": "string",
@@ -11969,6 +12197,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -12237,6 +12471,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -13641,6 +13881,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -13815,6 +14061,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -14126,6 +14378,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "email": {
                     "type": "string"
                   },
@@ -14295,6 +14553,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "email": {
                     "type": "string"
                   },
@@ -14550,6 +14814,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -14717,6 +14987,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -14846,6 +15122,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -15020,6 +15302,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -15327,6 +15615,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "email": {
                     "type": "string"
                   },
@@ -15509,6 +15803,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "email": {
                     "type": "string"
                   },
@@ -15668,6 +15968,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "user_id": {
                     "type": "string"
                   },
@@ -15687,12 +15993,6 @@
                       "SUSPENDED"
                     ],
                     "default": "ACTIVE"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   },
                   "is_webauthn_allowed": {
                     "type": "boolean"
@@ -15840,6 +16140,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "user_id": {
                     "type": "string"
                   },
@@ -15859,12 +16165,6 @@
                       "SUSPENDED"
                     ],
                     "default": "ACTIVE"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   },
                   "is_webauthn_allowed": {
                     "type": "boolean"
@@ -16020,6 +16320,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "email": {
                     "type": "string"
                   },
@@ -16276,6 +16582,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "email": {
                     "type": "string"
                   },
@@ -17195,6 +17507,12 @@
                       "DELETE"
                     ]
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -17364,6 +17682,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -17495,6 +17819,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -17677,6 +18007,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -17955,6 +18291,12 @@
           "deleted_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "name": {
             "type": "string"
           },
@@ -18003,6 +18345,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "deleted_at": {
             "type": "string",
@@ -18065,6 +18413,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "deleted_at": {
             "type": "string",
@@ -18146,6 +18500,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "deleted_at": {
             "type": "string",
@@ -18237,6 +18597,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -18298,6 +18664,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "event_id": {
             "type": "string"
@@ -18433,6 +18805,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "event_id": {
             "type": "string"
           },
@@ -18476,6 +18854,12 @@
           },
           "deleted_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "name": {
             "type": "string"
@@ -18569,6 +18953,12 @@
           "deleted_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "name": {
             "type": "string"
           },
@@ -18617,6 +19007,12 @@
           },
           "deleted_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "file_name": {
             "type": "string"
@@ -18705,6 +19101,12 @@
           "deleted_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "file_name": {
             "type": "string"
           },
@@ -18763,6 +19165,12 @@
           },
           "deleted_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "name": {
             "type": "string"
@@ -18870,6 +19278,12 @@
           },
           "deleted_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "name": {
             "type": "string"
@@ -19046,6 +19460,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -19070,12 +19490,6 @@
               "INVITE_OR_APPLICATION"
             ],
             "default": "INVITE_OR_APPLICATION"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "sync_to_slack": {
             "type": "boolean"
@@ -19131,6 +19545,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -19155,12 +19575,6 @@
               "INVITE_OR_APPLICATION"
             ],
             "default": "INVITE_OR_APPLICATION"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "sync_to_slack": {
             "type": "boolean"
@@ -19331,6 +19745,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -19414,6 +19834,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "deleted_at": {
             "type": "string",
@@ -19537,6 +19963,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -19623,6 +20055,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -19678,6 +20116,12 @@
         "properties": {
           "id": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "client_id": {
             "type": "string"
@@ -19904,6 +20348,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -20083,6 +20533,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -20141,6 +20597,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -20168,12 +20630,6 @@
           },
           "tax_identifier": {
             "type": "string"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "geo_location": {
             "type": "string",
@@ -20230,6 +20686,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -20257,12 +20719,6 @@
           },
           "tax_identifier": {
             "type": "string"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "geo_location": {
             "type": "string",
@@ -20346,6 +20802,12 @@
           "deleted_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "name": {
             "type": "string"
           },
@@ -20407,6 +20869,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "deleted_at": {
             "type": "string",
@@ -20479,6 +20947,12 @@
           "deleted_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "verified": {
             "type": "boolean"
           },
@@ -20520,6 +20994,12 @@
           },
           "deleted_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "name": {
             "type": "string"
@@ -20606,6 +21086,12 @@
           "deleted_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "name": {
             "type": "string"
           },
@@ -20668,6 +21154,12 @@
           },
           "deleted_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "email": {
             "type": "string"
@@ -20840,6 +21332,12 @@
           "deleted_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "email": {
             "type": "string"
           },
@@ -20915,6 +21413,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -20948,12 +21452,6 @@
           },
           "email_confirmed": {
             "type": "boolean"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "is_webauthn_allowed": {
             "type": "boolean"
@@ -21010,6 +21508,12 @@
           "updated_by": {
             "type": "string"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -21043,12 +21547,6 @@
           },
           "email_confirmed": {
             "type": "boolean"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "is_webauthn_allowed": {
             "type": "boolean"
@@ -21085,6 +21583,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "credential_id": {
             "type": "string",
@@ -21158,6 +21662,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "deleted_at": {
             "type": "string",
@@ -21251,6 +21761,12 @@
           },
           "updated_by": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "deleted_at": {
             "type": "string",

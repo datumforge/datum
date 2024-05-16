@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -38,6 +39,8 @@ type FeatureHistory struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Global holds the value of the "global" field.
@@ -54,6 +57,8 @@ func (*FeatureHistory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case featurehistory.FieldTags:
+			values[i] = new([]byte)
 		case featurehistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
 		case featurehistory.FieldGlobal, featurehistory.FieldEnabled:
@@ -142,6 +147,14 @@ func (fh *FeatureHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				fh.MappingID = value.String
+			}
+		case featurehistory.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &fh.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case featurehistory.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -233,6 +246,9 @@ func (fh *FeatureHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(fh.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", fh.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(fh.Name)

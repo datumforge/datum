@@ -126,6 +126,12 @@ func (ushc *UserSettingHistoryCreate) SetNillableMappingID(s *string) *UserSetti
 	return ushc
 }
 
+// SetTags sets the "tags" field.
+func (ushc *UserSettingHistoryCreate) SetTags(s []string) *UserSettingHistoryCreate {
+	ushc.mutation.SetTags(s)
+	return ushc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ushc *UserSettingHistoryCreate) SetDeletedAt(t time.Time) *UserSettingHistoryCreate {
 	ushc.mutation.SetDeletedAt(t)
@@ -238,12 +244,6 @@ func (ushc *UserSettingHistoryCreate) SetNillableEmailConfirmed(b *bool) *UserSe
 	return ushc
 }
 
-// SetTags sets the "tags" field.
-func (ushc *UserSettingHistoryCreate) SetTags(s []string) *UserSettingHistoryCreate {
-	ushc.mutation.SetTags(s)
-	return ushc
-}
-
 // SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
 func (ushc *UserSettingHistoryCreate) SetIsWebauthnAllowed(b bool) *UserSettingHistoryCreate {
 	ushc.mutation.SetIsWebauthnAllowed(b)
@@ -350,6 +350,10 @@ func (ushc *UserSettingHistoryCreate) defaults() {
 	if _, ok := ushc.mutation.MappingID(); !ok {
 		v := usersettinghistory.DefaultMappingID()
 		ushc.mutation.SetMappingID(v)
+	}
+	if _, ok := ushc.mutation.Tags(); !ok {
+		v := usersettinghistory.DefaultTags
+		ushc.mutation.SetTags(v)
 	}
 	if _, ok := ushc.mutation.Locked(); !ok {
 		v := usersettinghistory.DefaultLocked
@@ -475,6 +479,10 @@ func (ushc *UserSettingHistoryCreate) createSpec() (*UserSettingHistory, *sqlgra
 		_spec.SetField(usersettinghistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
 	}
+	if value, ok := ushc.mutation.Tags(); ok {
+		_spec.SetField(usersettinghistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
+	}
 	if value, ok := ushc.mutation.DeletedAt(); ok {
 		_spec.SetField(usersettinghistory.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
@@ -506,10 +514,6 @@ func (ushc *UserSettingHistoryCreate) createSpec() (*UserSettingHistory, *sqlgra
 	if value, ok := ushc.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersettinghistory.FieldEmailConfirmed, field.TypeBool, value)
 		_node.EmailConfirmed = value
-	}
-	if value, ok := ushc.mutation.Tags(); ok {
-		_spec.SetField(usersettinghistory.FieldTags, field.TypeJSON, value)
-		_node.Tags = value
 	}
 	if value, ok := ushc.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersettinghistory.FieldIsWebauthnAllowed, field.TypeBool, value)

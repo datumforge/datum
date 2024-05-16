@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -39,6 +40,8 @@ type UserHistory struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// MappingID holds the value of the "mapping_id" field.
 	MappingID string `json:"mapping_id,omitempty"`
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
 	// FirstName holds the value of the "first_name" field.
@@ -71,6 +74,8 @@ func (*UserHistory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case userhistory.FieldTags:
+			values[i] = new([]byte)
 		case userhistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
 		case userhistory.FieldID, userhistory.FieldRef, userhistory.FieldCreatedBy, userhistory.FieldUpdatedBy, userhistory.FieldDeletedBy, userhistory.FieldMappingID, userhistory.FieldEmail, userhistory.FieldFirstName, userhistory.FieldLastName, userhistory.FieldDisplayName, userhistory.FieldAvatarRemoteURL, userhistory.FieldAvatarLocalFile, userhistory.FieldPassword, userhistory.FieldSub, userhistory.FieldAuthProvider, userhistory.FieldRole:
@@ -157,6 +162,14 @@ func (uh *UserHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field mapping_id", values[i])
 			} else if value.Valid {
 				uh.MappingID = value.String
+			}
+		case userhistory.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &uh.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
 			}
 		case userhistory.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -300,6 +313,9 @@ func (uh *UserHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mapping_id=")
 	builder.WriteString(uh.MappingID)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", uh.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(uh.Email)

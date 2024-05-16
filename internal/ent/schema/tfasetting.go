@@ -74,6 +74,7 @@ func (TFASetting) Mixin() []ent.Mixin {
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
+		emixin.TagMixin{},
 		UserOwnedMixin{
 			Ref:             "tfa_settings",
 			Optional:        true,

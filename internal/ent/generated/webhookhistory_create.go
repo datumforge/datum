@@ -125,6 +125,12 @@ func (whc *WebhookHistoryCreate) SetNillableMappingID(s *string) *WebhookHistory
 	return whc
 }
 
+// SetTags sets the "tags" field.
+func (whc *WebhookHistoryCreate) SetTags(s []string) *WebhookHistoryCreate {
+	whc.mutation.SetTags(s)
+	return whc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (whc *WebhookHistoryCreate) SetDeletedAt(t time.Time) *WebhookHistoryCreate {
 	whc.mutation.SetDeletedAt(t)
@@ -348,6 +354,10 @@ func (whc *WebhookHistoryCreate) defaults() {
 		v := webhookhistory.DefaultMappingID()
 		whc.mutation.SetMappingID(v)
 	}
+	if _, ok := whc.mutation.Tags(); !ok {
+		v := webhookhistory.DefaultTags
+		whc.mutation.SetTags(v)
+	}
 	if _, ok := whc.mutation.Enabled(); !ok {
 		v := webhookhistory.DefaultEnabled
 		whc.mutation.SetEnabled(v)
@@ -454,6 +464,10 @@ func (whc *WebhookHistoryCreate) createSpec() (*WebhookHistory, *sqlgraph.Create
 	if value, ok := whc.mutation.MappingID(); ok {
 		_spec.SetField(webhookhistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := whc.mutation.Tags(); ok {
+		_spec.SetField(webhookhistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := whc.mutation.DeletedAt(); ok {
 		_spec.SetField(webhookhistory.FieldDeletedAt, field.TypeTime, value)

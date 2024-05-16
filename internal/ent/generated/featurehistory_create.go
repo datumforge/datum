@@ -153,6 +153,12 @@ func (fhc *FeatureHistoryCreate) SetNillableMappingID(s *string) *FeatureHistory
 	return fhc
 }
 
+// SetTags sets the "tags" field.
+func (fhc *FeatureHistoryCreate) SetTags(s []string) *FeatureHistoryCreate {
+	fhc.mutation.SetTags(s)
+	return fhc
+}
+
 // SetName sets the "name" field.
 func (fhc *FeatureHistoryCreate) SetName(s string) *FeatureHistoryCreate {
 	fhc.mutation.SetName(s)
@@ -265,6 +271,10 @@ func (fhc *FeatureHistoryCreate) defaults() {
 	if _, ok := fhc.mutation.MappingID(); !ok {
 		v := featurehistory.DefaultMappingID()
 		fhc.mutation.SetMappingID(v)
+	}
+	if _, ok := fhc.mutation.Tags(); !ok {
+		v := featurehistory.DefaultTags
+		fhc.mutation.SetTags(v)
 	}
 	if _, ok := fhc.mutation.Global(); !ok {
 		v := featurehistory.DefaultGlobal
@@ -380,6 +390,10 @@ func (fhc *FeatureHistoryCreate) createSpec() (*FeatureHistory, *sqlgraph.Create
 	if value, ok := fhc.mutation.MappingID(); ok {
 		_spec.SetField(featurehistory.FieldMappingID, field.TypeString, value)
 		_node.MappingID = value
+	}
+	if value, ok := fhc.mutation.Tags(); ok {
+		_spec.SetField(featurehistory.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if value, ok := fhc.mutation.Name(); ok {
 		_spec.SetField(featurehistory.FieldName, field.TypeString, value)

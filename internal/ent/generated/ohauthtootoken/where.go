@@ -182,6 +182,16 @@ func MappingIDContainsFold(v string) predicate.OhAuthTooToken {
 	return predicate.OhAuthTooToken(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.OhAuthTooToken {
+	return predicate.OhAuthTooToken(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.OhAuthTooToken {
+	return predicate.OhAuthTooToken(sql.FieldNotNull(FieldTags))
+}
+
 // ClientIDEQ applies the EQ predicate on the "client_id" field.
 func ClientIDEQ(v string) predicate.OhAuthTooToken {
 	return predicate.OhAuthTooToken(sql.FieldEQ(FieldClientID, v))

@@ -472,6 +472,16 @@ func MappingIDContainsFold(v string) predicate.Webhook {
 	return predicate.Webhook(sql.FieldContainsFold(FieldMappingID, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.Webhook {
+	return predicate.Webhook(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.Webhook {
+	return predicate.Webhook(sql.FieldNotNull(FieldTags))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldDeletedAt, v))

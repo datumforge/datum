@@ -64,6 +64,24 @@ func (wu *WebauthnUpdate) ClearUpdatedBy() *WebauthnUpdate {
 	return wu
 }
 
+// SetTags sets the "tags" field.
+func (wu *WebauthnUpdate) SetTags(s []string) *WebauthnUpdate {
+	wu.mutation.SetTags(s)
+	return wu
+}
+
+// AppendTags appends s to the "tags" field.
+func (wu *WebauthnUpdate) AppendTags(s []string) *WebauthnUpdate {
+	wu.mutation.AppendTags(s)
+	return wu
+}
+
+// ClearTags clears the value of the "tags" field.
+func (wu *WebauthnUpdate) ClearTags() *WebauthnUpdate {
+	wu.mutation.ClearTags()
+	return wu
+}
+
 // SetOwnerID sets the "owner_id" field.
 func (wu *WebauthnUpdate) SetOwnerID(s string) *WebauthnUpdate {
 	wu.mutation.SetOwnerID(s)
@@ -293,6 +311,17 @@ func (wu *WebauthnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if wu.mutation.UpdatedByCleared() {
 		_spec.ClearField(webauthn.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := wu.mutation.Tags(); ok {
+		_spec.SetField(webauthn.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := wu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, webauthn.FieldTags, value)
+		})
+	}
+	if wu.mutation.TagsCleared() {
+		_spec.ClearField(webauthn.FieldTags, field.TypeJSON)
+	}
 	if value, ok := wu.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeBytes, value)
 	}
@@ -416,6 +445,24 @@ func (wuo *WebauthnUpdateOne) SetNillableUpdatedBy(s *string) *WebauthnUpdateOne
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (wuo *WebauthnUpdateOne) ClearUpdatedBy() *WebauthnUpdateOne {
 	wuo.mutation.ClearUpdatedBy()
+	return wuo
+}
+
+// SetTags sets the "tags" field.
+func (wuo *WebauthnUpdateOne) SetTags(s []string) *WebauthnUpdateOne {
+	wuo.mutation.SetTags(s)
+	return wuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (wuo *WebauthnUpdateOne) AppendTags(s []string) *WebauthnUpdateOne {
+	wuo.mutation.AppendTags(s)
+	return wuo
+}
+
+// ClearTags clears the value of the "tags" field.
+func (wuo *WebauthnUpdateOne) ClearTags() *WebauthnUpdateOne {
+	wuo.mutation.ClearTags()
 	return wuo
 }
 
@@ -677,6 +724,17 @@ func (wuo *WebauthnUpdateOne) sqlSave(ctx context.Context) (_node *Webauthn, err
 	}
 	if wuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(webauthn.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := wuo.mutation.Tags(); ok {
+		_spec.SetField(webauthn.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := wuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, webauthn.FieldTags, value)
+		})
+	}
+	if wuo.mutation.TagsCleared() {
+		_spec.ClearField(webauthn.FieldTags, field.TypeJSON)
 	}
 	if value, ok := wuo.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeBytes, value)

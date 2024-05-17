@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -59,13 +58,6 @@ func (suite *GraphTestSuite) TestQueryUser() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			if tc.errorMsg == "" {
-				// placeholder until authz is enforced on org members
-				// at which point this needs to be the correct organization id
-				listObjects := []string{"organization:test"}
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
-			}
-
 			resp, err := suite.client.datum.GetUserByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
@@ -96,14 +88,8 @@ func (suite *GraphTestSuite) TestQueryUsers() {
 	user1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 	user2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	// mock list
-	listObjects := []string{"organization:test"}
-
 	t.Run("Get Users", func(t *testing.T) {
 		defer mock_fga.ClearMocks(suite.client.fga)
-
-		// mock list for default org on user settings
-		mock_fga.ListAny(t, suite.client.fga, listObjects)
 
 		resp, err := suite.client.datum.GetAllUsers(reqCtx)
 
@@ -571,12 +557,6 @@ func (suite *GraphTestSuite) TestMutationUpdateUser() {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			// checks for member tables
-			if tc.errorMsg == "" {
-				// mock list for default org on user settings
-				mock_fga.ListAny(t, suite.client.fga, []string{"organization:test"})
-			}
-
 			// update user
 			resp, err := suite.client.datum.UpdateUser(reqCtx, user.ID, tc.updateInput)
 
@@ -623,8 +603,6 @@ func (suite *GraphTestSuite) TestMutationDeleteUser() {
 	reqCtx, err := auth.NewTestContextWithOrgID(user.ID, personalOrgID)
 	require.NoError(t, err)
 
-	listObjects := []string{fmt.Sprintf("organization:%s", personalOrgID)}
-
 	testCases := []struct {
 		name     string
 		userID   string
@@ -648,8 +626,6 @@ func (suite *GraphTestSuite) TestMutationDeleteUser() {
 			// mock check calls
 			if tc.errorMsg == "" {
 				mock_fga.CheckAny(t, suite.client.fga, true)
-
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
 
 				mock_fga.WriteAny(t, suite.client.fga)
 			}
@@ -701,14 +677,8 @@ func (suite *GraphTestSuite) TestMutationUserCascadeDelete() {
 
 	token := (&PersonalAccessTokenBuilder{client: suite.client, OwnerID: user.ID}).MustNew(reqCtx, t)
 
-	userSettings, err := user.Setting(ctx)
-	require.NoError(t, err)
-
-	listObjects := []string{fmt.Sprintf("organization:%s", userSettings.Edges.DefaultOrg.ID)}
-
 	// mock checks
 	mock_fga.CheckAny(t, suite.client.fga, true)
-	mock_fga.ListAny(t, suite.client.fga, listObjects)
 	// mock writes to clean up personal org
 	mock_fga.WriteAny(t, suite.client.fga)
 

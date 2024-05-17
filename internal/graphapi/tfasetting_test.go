@@ -203,10 +203,6 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 			}
 
 			// make sure user setting was not updated
-			// list objects is called to get the default org, but we don't care about that here
-			listObjects := []string{"organization:test"}
-			mock_fga.ListAny(t, suite.client.fga, listObjects)
-
 			userSettings, err := suite.client.datum.GetUserSettings(reqCtx)
 			require.NoError(t, err)
 			require.Len(t, userSettings.UserSettings.Edges, 1)

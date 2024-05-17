@@ -22,8 +22,8 @@ query GetOrganizationSettingByID($organizationSettingId: ID!) {
 }
 
 
-query GetOrganizationSettings() {
-  organizationSettings() {
+query GetOrganizationSettings {
+  organizationSettings {
     edges {
       node {
         id

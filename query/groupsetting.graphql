@@ -17,8 +17,8 @@ query GetGroupSettingByID($groupSettingId: ID!) {
 }
 
 
-query GetGroupSettings() {
-  groupSettings() {
+query GetGroupSettings {
+  groupSettings {
     edges {
       node {
         id

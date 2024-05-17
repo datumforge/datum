@@ -37,7 +37,6 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/ogen-go/ogen v1.1.0
 	github.com/panta/machineid v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.20.0
@@ -183,6 +182,7 @@ require (
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/natefinch/wrap v0.2.0 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
+	github.com/ogen-go/ogen v1.1.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/openfga/api/proto v0.0.0-20240318145204-66b9e5cb403c // indirect

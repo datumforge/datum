@@ -21,8 +21,13 @@ scrape_configs:
       - targets:
           - localhost:17608
           - host.docker.internal:17608
+          - host.docker.internal:2112
+          - host.docker.internal:9187
   - job_name: kafka-exporter
     static_configs:
       - targets: ['kafka-exporter:10000']
         labels:
           container: 'kafka-exporter'
+  - job_name: postgres-exporter
+    static_configs:
+      - targets: ["host.docker.internal:9187"]

@@ -139,9 +139,9 @@ func (e *FormEncoder) Encode(v any) (io.Reader, error) {
 		// Attempt to use query.Values for encoding struct types
 		if values, err := query.Values(v); err == nil {
 			return strings.NewReader(values.Encode()), nil
-		} else {
-			// Return an error if encoding fails or type is unsupported
-			return nil, fmt.Errorf("%w: %v", ErrEncodingFailed, err)
-		}
+		} 
+		
+		// Return an error if encoding fails or type is unsupported
+		return nil, fmt.Errorf("%w: %v", ErrEncodingFailed, err)
 	}
 }

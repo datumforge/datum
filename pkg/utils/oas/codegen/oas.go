@@ -1,4 +1,4 @@
-package oas
+package main
 
 import (
 	"context"
@@ -110,6 +110,8 @@ func AddErrorSchemas(gen *OAS) {
 	gen.AddResponse("Unauthorized", "The request is not authorized", path, rout.Unauthorized())
 	gen.AddResponse("InternalServerError", "The server encountered an error", path, rout.InternalServerError())
 	gen.AddResponse("Conflict", "The request conflicts with the current state of the server", path, rout.Conflict())
+	gen.AddResponse("InvalidRequest", "The request is invalid", path, rout.InvalidRequest())
+	gen.AddResponse("InternalError", "The server encountered an error", path, rout.InternalError())
 }
 
 // AddHandlers is a function that adds handlers to the OpenAPI schema. It takes a pointer to an `OAS` struct
@@ -241,7 +243,7 @@ func checkTags(rval reflect.Type) {
 }
 
 // oas is the entry point for the schemagen tool. It generates an OpenAPI schema for the Datum API
-func oas() { // nolint: unused
+func main() {
 	gen := NewSchemaGenerator()
 	AddErrorSchemas(gen)
 	AddExamples(gen)
@@ -254,7 +256,7 @@ func oas() { // nolint: unused
 		panic(err)
 	}
 
-	bufferYAML, err := os.ReadFile("./schemagen/base.yaml")
+	bufferYAML, err := os.ReadFile("pkg/utils/oas/codegen/base.yaml")
 	if err != nil {
 		panic(err)
 	}
@@ -296,12 +298,12 @@ func oas() { // nolint: unused
 	tmp = append(tmp, '\n')
 	bufferJSON = tmp
 
-	err = os.WriteFile("./oas/outputschema.gen.json", bufferJSON, 0o644) // nolint: gomnd,gosec
+	err = os.WriteFile(".outputschema.gen.json", bufferJSON, 0o644) // nolint: gomnd,gosec
 	if err != nil {
 		panic(err)
 	}
 
-	err = os.WriteFile("./oas/outputschema.gen.yaml", bufferYAML, 0o644) // nolint: gomnd,gosec
+	err = os.WriteFile(".outputschema.gen.yaml", bufferYAML, 0o644) // nolint: gomnd,gosec
 	if err != nil {
 		panic(err)
 	}

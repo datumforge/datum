@@ -51,7 +51,6 @@ tasks:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc.
     cmds:
       - go generate ./...
-      - cp ./internal/ent/generated/openapi.json ./pkg/utils/oas/specifications/openapi.json
 
   ## Go tasks
   go:lint:

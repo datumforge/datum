@@ -90,6 +90,21 @@ type Reply struct {
 	Unverified bool      `json:"unverified,omitempty" yaml:"unverified,omitempty"`
 }
 
+// InvalidRequest returns a JSON 400 response for the API
+func InvalidRequest() StatusError {
+	return StatusError{
+		StatusCode: http.StatusBadRequest,
+		Reply:      Reply{Success: false, Error: "invalid request", Unverified: false},
+	}
+}
+
+func InternalError() StatusError {
+	return StatusError{
+		StatusCode: http.StatusInternalServerError,
+		Reply:      Reply{Success: false, Error: "internal server error", Unverified: false},
+	}
+}
+
 // BadRequest returns a JSON 400 response for the API
 func BadRequest() StatusError {
 	return StatusError{

@@ -245,7 +245,7 @@ func TestClientTraceRequest(t *testing.T) {
 	defer server.Close()
 
 	client := Create(&Config{BaseURL: server.URL})
-	resp, err := client.TRACE("/test-get").Send(context.Background())
+	resp, err := client.Trace("/test-get").Send(context.Background())
 
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.RawResponse.StatusCode)

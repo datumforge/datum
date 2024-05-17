@@ -110,9 +110,9 @@ func parseForm(v any) (url.Values, []*File, error) {
 		// Attempt to use query.Values for encoding struct types
 		if values, err := query.Values(v); err == nil {
 			return values, nil, nil
-		} 
-		
-		return nil, nil, fmt.Errorf("%w: %v", ErrUnsupportedFormFieldsType, err)
+		} else {
+			return nil, nil, fmt.Errorf("%w: %v", ErrUnsupportedFormFieldsType, err)
+		}
 	}
 }
 
@@ -139,9 +139,9 @@ func (e *FormEncoder) Encode(v any) (io.Reader, error) {
 		// Attempt to use query.Values for encoding struct types
 		if values, err := query.Values(v); err == nil {
 			return strings.NewReader(values.Encode()), nil
-		} 
-		
-		// Return an error if encoding fails or type is unsupported
-		return nil, fmt.Errorf("%w: %v", ErrEncodingFailed, err)
+		} else {
+			// Return an error if encoding fails or type is unsupported
+			return nil, fmt.Errorf("%w: %v", ErrEncodingFailed, err)
+		}
 	}
 }

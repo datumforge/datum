@@ -28,6 +28,7 @@ public_key.pem
 # Sendgrid test email folders
 internal/httpserve/handlers/fixtures/emails/*
 fixtures/emails/*
+pkg/httpsling/testdata/*
 
 # Packages
 *.7z

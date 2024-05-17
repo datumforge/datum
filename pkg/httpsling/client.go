@@ -489,13 +489,13 @@ func (c *Client) Head(path string) *RequestBuilder {
 	return c.NewRequestBuilder(http.MethodHead, path)
 }
 
-// CONNECT initiates a CONNECT request
-func (c *Client) CONNECT(path string) *RequestBuilder {
+// Connect initiates a CONNECT request
+func (c *Client) Connect(path string) *RequestBuilder {
 	return c.NewRequestBuilder(http.MethodConnect, path)
 }
 
-// TRACE initiates a TRACE request
-func (c *Client) TRACE(path string) *RequestBuilder {
+// Trace initiates a TRACE request
+func (c *Client) Trace(path string) *RequestBuilder {
 	return c.NewRequestBuilder(http.MethodTrace, path)
 }
 

@@ -231,7 +231,7 @@ func (r *Response) ScanYAML(v interface{}) error {
 	return r.Client.YAMLDecoder.Decode(bytes.NewReader(r.BodyBytes), v)
 }
 
-const dirPermissions = 755
+const dirPermissions = 0755
 
 // Save saves the response body to a file or io.Writer
 func (r *Response) Save(v any) error {

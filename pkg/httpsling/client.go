@@ -45,7 +45,7 @@ type Client struct {
 	// Logger is the logger instance for the client
 	Logger Logger
 	// auth is the authentication method for the client
-	auth AuthMethod
+	Auth AuthMethod
 }
 
 // Config sets up the initial configuration for the HTTP client - you need to initialize multiple if you want the behaviors to be different
@@ -440,7 +440,7 @@ func (c *Client) SetRetryIf(retryIf RetryIfFunc) *Client {
 // SetAuth configures an authentication method for the client
 func (c *Client) SetAuth(auth AuthMethod) {
 	if auth.Valid() {
-		c.auth = auth
+		c.Auth = auth
 	}
 }
 

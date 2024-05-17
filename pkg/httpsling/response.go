@@ -48,10 +48,8 @@ func NewResponse(ctx context.Context, resp *http.Response, client *Client, strea
 
 	if response.stream != nil {
 		go response.handleStream()
-	} else {
-		if err := response.handleNonStream(); err != nil {
-			return nil, err
-		}
+	} else if err := response.handleNonStream(); err != nil {
+		return nil, err
 	}
 
 	return response, nil

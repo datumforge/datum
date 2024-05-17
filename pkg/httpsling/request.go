@@ -509,7 +509,9 @@ func (b *RequestBuilder) do(ctx context.Context, req *http.Request) (*http.Respo
 			shouldRetry := lastErr != nil || (resp != nil && retryIf != nil && retryIf(req, resp, lastErr))
 			if !shouldRetry || attempt == maxRetries {
 				if lastErr != nil {
-					b.logError("Error after %d attempts: %v", attempt+1, lastErr)
+					if b.client.Logger != nil {
+						b.client.Logger.Errorf("Error after %d attempts: %v", attempt+1, lastErr)
+					}
 				}
 
 				break
@@ -517,11 +519,15 @@ func (b *RequestBuilder) do(ctx context.Context, req *http.Request) (*http.Respo
 
 			if resp != nil {
 				if err := resp.Body.Close(); err != nil {
-					b.logError("Error closing response body: %v", 0, err)
+					if b.client.Logger != nil {
+						b.client.Logger.Errorf("Error closing response body: %v", err)
+					}
 				}
 			}
 
-			b.logError("Retrying request (attempt %d) after backoff", attempt+1, nil)
+			if b.client.Logger != nil {
+				b.client.Logger.Infof("Retrying request (attempt %d) after backoff", attempt+1)
+			}
 
 			// Logging context cancellation as an error condition
 			select {
@@ -552,12 +558,6 @@ func (b *RequestBuilder) do(ctx context.Context, req *http.Request) (*http.Respo
 	}
 
 	return finalHandler(req)
-}
-
-func (b *RequestBuilder) logError(errMsg string, attempts int, lastErr error) {
-	if b.client.Logger != nil {
-		b.client.Logger.Errorf(errMsg, attempts, lastErr)
-	}
 }
 
 // Stream sets the stream callback for the request

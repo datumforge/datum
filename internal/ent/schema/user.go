@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -105,19 +104,16 @@ func (User) Fields() []ent.Field {
 		field.Time("last_seen").
 			Comment("the time the user was last seen").
 			UpdateDefault(time.Now).
-			Annotations(entoas.Annotation{ReadOnly: true}).
 			Optional().
 			Nillable(),
 		field.String("password").
 			Comment("user password hash").
 			Nillable().
 			Sensitive().
-			Annotations(entoas.Skip(true)).
 			Optional(),
 		field.String("sub").
 			Comment("the Subject of the user JWT").
 			Unique().
-			Annotations(entoas.Skip(true)).
 			Optional(),
 		field.Enum("auth_provider").
 			Comment("auth provider used to register the account").
@@ -153,27 +149,14 @@ func (User) Edges() []ent.Edge {
 			Unique().
 			Annotations(
 				entx.CascadeAnnotationField("User"),
-				entoas.Skip(true),
 			),
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
-				entoas.Skip(true),
-				entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 			),
 		edge.To("password_reset_tokens", PasswordResetToken.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
-				entoas.Skip(true),
-				entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 			),
 		edge.To("groups", Group.Type).
 			Through("group_memberships", GroupMembership.Type),

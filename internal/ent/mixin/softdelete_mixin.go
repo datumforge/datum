@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/field"
@@ -30,13 +29,11 @@ func (SoftDeleteMixin) Fields() []ent.Field {
 			Optional().
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
-				entoas.Annotation{ReadOnly: true},
 			),
 		field.String("deleted_by").
 			Optional().
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
-				entoas.Annotation{ReadOnly: true},
 			),
 	}
 }

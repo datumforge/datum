@@ -5,7 +5,6 @@ import (
 	"net/url"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -16,7 +15,6 @@ import (
 	emixin "github.com/datumforge/entx/mixin"
 
 	"github.com/datumforge/fgax/entfga"
-	"github.com/ogen-go/ogen"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -65,7 +63,6 @@ func (Organization) Fields() []ent.Field {
 			Annotations(
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
-				entoas.Schema(ogen.String()),
 			),
 		field.Bool("personal_org").
 			Comment("orgs directly associated with a user").
@@ -126,7 +123,6 @@ func (Organization) Edges() []ent.Edge {
 			Unique().
 			Annotations(
 				entx.CascadeAnnotationField("Organization"),
-				entoas.Skip(true),
 			),
 		edge.To("entitlements", Entitlement.Type),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type),

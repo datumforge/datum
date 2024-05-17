@@ -233,114 +233,127 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 	}
 }
 
-// func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
-// 	t := suite.T()
+func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
+	t := suite.T()
 
-// 	// setup user context
-// 	reqCtx, err := userContext()
-// 	require.NoError(t, err)
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
-// 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-// 	token := (&PersonalAccessTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+	// setup a token for another user
+	user2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+	regCtx2, err := userContextWithID(user2.ID)
+	require.NoError(t, err)
+	tokenOther := (&PersonalAccessTokenBuilder{
+		client:  suite.client,
+		OwnerID: user2.ID}).
+		MustNew(regCtx2, t)
 
-// 	tokenDescription := gofakeit.Sentence(5)
-// 	tokenName := gofakeit.Word()
+	token := (&PersonalAccessTokenBuilder{
+		client:         suite.client,
+		OwnerID:        testUser.ID,
+		OrganizationID: testPersonalOrgID}).
+		MustNew(reqCtx, t)
 
-// 	testCases := []struct {
-// 		name     string
-// 		tokenID  string
-// 		input    datumclient.UpdatePersonalAccessTokenInput
-// 		errorMsg string
-// 	}{
-// 		{
-// 			name:    "happy path, update name",
-// 			tokenID: token.ID,
-// 			input: datumclient.UpdatePersonalAccessTokenInput{
-// 				Name: &tokenName,
-// 			},
-// 		},
-// 		{
-// 			name:    "happy path, update description",
-// 			tokenID: token.ID,
-// 			input: datumclient.UpdatePersonalAccessTokenInput{
-// 				Description: &tokenDescription,
-// 			},
-// 		},
-// 		{
-// 			name:    "happy path, add org",
-// 			tokenID: token.ID,
-// 			input: datumclient.UpdatePersonalAccessTokenInput{
-// 				AddOrganizationIDs: []string{org.ID},
-// 			},
-// 		},
-// 		{
-// 			name:    "happy path, remove org",
-// 			tokenID: token.ID,
-// 			input: datumclient.UpdatePersonalAccessTokenInput{
-// 				RemoveOrganizationIDs: []string{org.ID},
-// 			},
-// 		},
-// 		{
-// 			name:    "invalid token id",
-// 			tokenID: "notvalidtoken",
-// 			input: datumclient.UpdatePersonalAccessTokenInput{
-// 				Description: &tokenDescription,
-// 			},
-// 			errorMsg: notFoundErrorMsg,
-// 		},
-// 		// {
-// 		// 	name:    "not authorized",
-// 		// 	tokenID: tokenOther.ID,
-// 		// 	input: datumclient.UpdatePersonalAccessTokenInput{
-// 		// 		Description: &tokenDescription,
-// 		// 	},
-// 		// 	errorMsg: notFoundErrorMsg,
-// 		// },
-// 	}
+	tokenDescription := gofakeit.Sentence(5)
+	tokenName := gofakeit.Word()
 
-// 	for _, tc := range testCases {
-// 		t.Run("Get "+tc.name, func(t *testing.T) {
-// 			defer mock_fga.ClearMocks(suite.client.fga)
+	testCases := []struct {
+		name     string
+		tokenID  string
+		input    datumclient.UpdatePersonalAccessTokenInput
+		errorMsg string
+	}{
+		{
+			name:    "happy path, update name",
+			tokenID: token.ID,
+			input: datumclient.UpdatePersonalAccessTokenInput{
+				Name: &tokenName,
+			},
+		},
+		{
+			name:    "happy path, update description",
+			tokenID: token.ID,
+			input: datumclient.UpdatePersonalAccessTokenInput{
+				Description: &tokenDescription,
+			},
+		},
+		{
+			name:    "happy path, add org",
+			tokenID: token.ID,
+			input: datumclient.UpdatePersonalAccessTokenInput{
+				AddOrganizationIDs: []string{org.ID},
+			},
+		},
+		{
+			name:    "happy path, remove org",
+			tokenID: token.ID,
+			input: datumclient.UpdatePersonalAccessTokenInput{
+				RemoveOrganizationIDs: []string{org.ID},
+			},
+		},
+		{
+			name:    "invalid token id",
+			tokenID: "notvalidtoken",
+			input: datumclient.UpdatePersonalAccessTokenInput{
+				Description: &tokenDescription,
+			},
+			errorMsg: notFoundErrorMsg,
+		},
+		{
+			name:    "not authorized",
+			tokenID: tokenOther.ID,
+			input: datumclient.UpdatePersonalAccessTokenInput{
+				Description: &tokenDescription,
+			},
+			errorMsg: notFoundErrorMsg,
+		},
+	}
 
-// 			resp, err := suite.client.datum.UpdatePersonalAccessToken(reqCtx, tc.tokenID, tc.input)
+	for _, tc := range testCases {
+		t.Run("Get "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(suite.client.fga)
 
-// 			if tc.errorMsg != "" {
-// 				require.Error(t, err)
-// 				assert.ErrorContains(t, err, tc.errorMsg)
-// 				assert.Nil(t, resp)
+			resp, err := suite.client.datum.UpdatePersonalAccessToken(reqCtx, tc.tokenID, tc.input)
 
-// 				return
-// 			}
+			if tc.errorMsg != "" {
+				require.Error(t, err)
+				assert.ErrorContains(t, err, tc.errorMsg)
+				assert.Nil(t, resp)
 
-// 			require.NoError(t, err)
-// 			require.NotNil(t, resp)
-// 			require.NotNil(t, resp.UpdatePersonalAccessToken.PersonalAccessToken)
+				return
+			}
 
-// 			if tc.input.Name != nil {
-// 				assert.Equal(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Name, *tc.input.Name)
-// 			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
+			require.NotNil(t, resp.UpdatePersonalAccessToken.PersonalAccessToken)
 
-// 			if tc.input.Description != nil {
-// 				assert.Equal(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Description, tc.input.Description)
-// 			}
+			if tc.input.Name != nil {
+				assert.Equal(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Name, *tc.input.Name)
+			}
 
-// 			// make sure these fields did not get updated
-// 			assert.WithinDuration(t, *token.ExpiresAt, resp.UpdatePersonalAccessToken.PersonalAccessToken.ExpiresAt, 1*time.Second)
-// 			assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, len(tc.input.AddOrganizationIDs))
+			if tc.input.Description != nil {
+				assert.Equal(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Description, tc.input.Description)
+			}
 
-// 			// Ensure its removed
-// 			if tc.input.RemoveOrganizationIDs != nil {
-// 				assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, 1)
-// 			}
+			// make sure these fields did not get updated
+			assert.WithinDuration(t, *token.ExpiresAt, resp.UpdatePersonalAccessToken.PersonalAccessToken.ExpiresAt, 1*time.Second)
+			assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, len(tc.input.AddOrganizationIDs)+1)
 
-// 			assert.Equal(t, user.ID, resp.UpdatePersonalAccessToken.PersonalAccessToken.Owner.ID)
+			// Ensure its removed
+			if tc.input.RemoveOrganizationIDs != nil {
+				assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, 1)
+			}
 
-// 			// token should be redacted on update
-// 			assert.Equal(t, redacted, resp.UpdatePersonalAccessToken.PersonalAccessToken.Token)
-// 		})
-// 	}
-// }
+			assert.Equal(t, testUser.ID, resp.UpdatePersonalAccessToken.PersonalAccessToken.Owner.ID)
+
+			// token should be redacted on update
+			assert.Equal(t, redacted, resp.UpdatePersonalAccessToken.PersonalAccessToken.Token)
+		})
+	}
+}
 
 func (suite *GraphTestSuite) TestMutationDeletePersonalAccessToken() {
 	t := suite.T()

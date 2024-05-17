@@ -22,8 +22,8 @@ query GetUserSettingByID($userSettingId: ID!) {
 }
 
 
-query GetUserSettings() {
-  userSettings() {
+query GetUserSettings {
+  userSettings {
     edges {
       node {
         id

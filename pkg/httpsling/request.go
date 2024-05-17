@@ -179,7 +179,7 @@ func (b *RequestBuilder) DelQuery(key ...string) *RequestBuilder {
 
 // QueriesStruct adds query parameters to the request based on a struct tagged with url tags
 func (b *RequestBuilder) QueriesStruct(queryStruct interface{}) *RequestBuilder {
-	values, _ := query.Values(queryStruct) // wafely ignore error for simplicity
+	values, _ := query.Values(queryStruct) // safely ignore error for simplicity
 
 	for key, value := range values {
 		for _, v := range value {

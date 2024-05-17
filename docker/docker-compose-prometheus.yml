@@ -40,6 +40,8 @@ services:
       - ./configs/grafana/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/provisioning-datasources.yaml:ro
       - ./configs/grafana/dashboards/kafka-metrics.json:/var/lib/grafana/dashboards/kafka-metrics.json:ro
       - ./configs/grafana/dashboards/echo.json:/var/lib/grafana/dashboards/echo.json:ro
+      - ./configs/grafana/dashboards/postgres.json:/var/lib/grafana/dashboards/postgres.json:ro
+      - ./configs/grafana/dashboards/openfga.json:/var/lib/grafana/dashboards/openfga.json:ro
     depends_on:
       - prometheus
     ports:

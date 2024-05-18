@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // Register creates a new user in the database with the specified password, allowing the
@@ -16,15 +14,20 @@ import (
 //
 // A "personal" organization is created for the user registering based on the organization data
 // in the register request and the user is assigned the Owner role.
-func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
+func registerRegisterHandler(router *Router) (err error) {
+	path := "/register"
+	method := http.MethodPost
+
+	route := echo.Route{
 		Name:   "Register",
-		Method: http.MethodPost,
-		Path:   "/register",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.RegisterHandler(c)
+			return router.Handler.RegisterHandler(c)
 		},
-	}.ForGroup(V1Version, restrictedEndpointsMW))
+	}.ForGroup(V1Version, restrictedEndpointsMW)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }

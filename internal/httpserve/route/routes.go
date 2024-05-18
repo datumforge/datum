@@ -25,8 +25,18 @@ var (
 )
 
 type Router struct {
-	Echo *echo.Echo
-	OAS  *openapi3.T
+	Echo    *echo.Echo
+	OAS     *openapi3.T
+	Handler *handlers.Handler
+}
+
+func (r *Router) AddRoute(pattern, method string, op *openapi3.Operation, route echo.Routable) {
+	_, err := r.Echo.AddRoute(route)
+	if err != nil {
+		return
+	}
+
+	r.OAS.AddOperation(pattern, method, op)
 }
 
 // OpenAPI returns the OpenAPI specification.
@@ -35,11 +45,11 @@ func (r *Router) OpenAPI() *openapi3.T {
 }
 
 // RegisterRoutes with the echo routers
-func RegisterRoutes(router *Router, h *handlers.Handler) error {
+func RegisterRoutes(router *Router) error {
 	// add transaction middleware
 	transactionConfig := transaction.Client{
-		EntDBClient: h.DBClient,
-		Logger:      h.Logger,
+		EntDBClient: router.Handler.DBClient,
+		Logger:      router.Handler.Logger,
 	}
 
 	mw = append(mw, transactionConfig.Middleware)
@@ -51,7 +61,6 @@ func RegisterRoutes(router *Router, h *handlers.Handler) error {
 	// routeHandlers that take the router and handler as input
 	routeHandlers := []interface{}{
 		registerReadinessHandler,
-		registerLoginHandler,
 		registerForgotPasswordHandler,
 		registerVerifyHandler,
 		registerResetPasswordHandler,
@@ -59,7 +68,6 @@ func RegisterRoutes(router *Router, h *handlers.Handler) error {
 		registerRegisterHandler,
 		registerVerifySubscribeHandler,
 		registerRefreshHandler,
-		registerAuthenticateHandler,
 		registerJwksWellKnownHandler,
 		registerOIDCHandler,
 		registerInviteHandler,
@@ -75,35 +83,17 @@ func RegisterRoutes(router *Router, h *handlers.Handler) error {
 		registerOAuthRegisterHandler,
 		registerSwitchRoute,
 		registerEventPublisher,
-	}
-
-	for _, route := range routeHandlers {
-		if err := route.(func(*echo.Echo, *handlers.Handler) error)(router.Echo, h); err != nil {
-			return err
-		}
-	}
-
-	// register additional handlers that only require router input
-	additionalHandlers := []interface{}{
 		registerLivenessHandler,
 		registerOpenAPISpecHandler,
 		registerMetricsHandler,
 		registerSecurityTxtHandler,
 		registerRobotsHandler,
 		registerFaviconHandler,
-	}
-
-	for _, route := range additionalHandlers {
-		if err := route.(func(*echo.Echo) error)(router.Echo); err != nil {
-			return err
-		}
-	}
-
-	meowHandlers := []interface{}{
 		registerOpenAPIHandler,
+		registerLoginHandler,
 	}
 
-	for _, route := range meowHandlers {
+	for _, route := range routeHandlers {
 		if err := route.(func(*Router) error)(router); err != nil {
 			return err
 		}

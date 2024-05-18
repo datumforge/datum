@@ -93,7 +93,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	s.config.Handler.TM = tm
 
 	// Add base routes to the server
-	if err := route.RegisterRoutes(srv, &s.config.Handler); err != nil {
+	if err := route.RegisterRoutes(srv); err != nil {
 		return err
 	}
 

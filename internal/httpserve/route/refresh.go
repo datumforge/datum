@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // registerRefreshHandler re-authenticates users and api keys using a refresh token rather than
@@ -15,15 +13,20 @@ import (
 // last longer than the duration of an access token; e.g. long sessions on the Datum UI
 // or (especially) long running publishers and subscribers (machine users) that need to
 // stay authenticated semi-permanently.
-func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
+func registerRefreshHandler(router *Router) (err error) {
+	path := "/refresh"
+	method := http.MethodPost
+
+	route := echo.Route{
 		Name:   "Refresh",
-		Method: http.MethodPost,
-		Path:   "/refresh",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.RefreshHandler(c)
+			return router.Handler.RefreshHandler(c)
 		},
-	}.ForGroup(V1Version, mw))
+	}.ForGroup(V1Version, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }

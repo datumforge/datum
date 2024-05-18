@@ -4,23 +4,26 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // ResetPassword allows the user (after requesting a password reset) to
 // set a new password - the password reset token needs to be set in the request
 // and not expired. If the request is successful, a confirmation of the reset is sent
 // to the user and a 204 no content is returned
-func registerResetPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
+func registerResetPasswordHandler(router *Router) (err error) {
+	path := "/password-reset"
+	method := http.MethodPost
+
+	route := echo.Route{
 		Name:   "ResetPassword",
-		Method: http.MethodPost,
-		Path:   "/password-reset",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.ResetPassword(c)
+			return router.Handler.ResetPassword(c)
 		},
-	}.ForGroup(V1Version, mw))
+	}.ForGroup(V1Version, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }

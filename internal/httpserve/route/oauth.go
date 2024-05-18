@@ -10,75 +10,112 @@ import (
 
 // registerOAuthRegisterHandler registers the oauth register handler used by the UI to register
 // users logging in with an oauth provider
-func registerOAuthRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodPost,
-		Path:   "/oauth/register",
+func registerOAuthRegisterHandler(router *Router) (err error) {
+	path := "/oauth/register"
+	method := http.MethodPost
+
+	route := echo.Route{
+		Name:   "OAuthRegister",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.OauthRegister(c)
+			return router.Handler.OauthRegister(c)
 		},
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(unversioned, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }
 
 // registerUserInfoHandler registers the userinfo handler
-func registerUserInfoHandler(router *echo.Echo, h *handlers.Handler) (err error) {
+func registerUserInfoHandler(router *Router) (err error) {
 	authMW := mw
-	authMW = append(authMW, h.AuthMiddleware...)
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/oauth/userinfo",
+	authMW = append(authMW, router.Handler.AuthMiddleware...)
+
+	path := "/oauth/userinfo"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:   "UserInfo",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
 			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 
-			return h.UserInfo(c)
+			return router.Handler.UserInfo(c)
 		},
-	}.ForGroup(unversioned, authMW))
+	}.ForGroup(unversioned, authMW)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }
 
 // registerGithubLoginHandler registers the github login handler
-func registerGithubLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/github/login",
-		Handler: githubLogin(h),
-	}.ForGroup(V1Version, mw))
+func registerGithubLoginHandler(router *Router) (err error) {
+	path := "/github/login"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:    "GitHubLogin",
+		Method:  method,
+		Path:    path,
+		Handler: githubLogin(router.Handler),
+	}.ForGroup(V1Version, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }
 
 // registerGithubCallbackHandler registers the github callback handler
-func registerGithubCallbackHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/github/callback",
-		Handler: githubCallback(h),
-	}.ForGroup(V1Version, mw))
+func registerGithubCallbackHandler(router *Router) (err error) {
+	path := "/github/callback"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:    "GitHubCallback",
+		Method:  method,
+		Path:    path,
+		Handler: githubCallback(router.Handler),
+	}.ForGroup(V1Version, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }
 
 // registerGoogleLoginHandler registers the google login handler
-func registerGoogleLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/google/login",
-		Handler: googleLogin(h),
-	}.ForGroup(V1Version, mw))
+func registerGoogleLoginHandler(router *Router) (err error) {
+	path := "/google/login"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:    "GoogleLogin",
+		Method:  method,
+		Path:    path,
+		Handler: googleLogin(router.Handler),
+	}.ForGroup(V1Version, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }
 
 // registerGoogleCallbackHandler registers the google callback handler
-func registerGoogleCallbackHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/google/callback",
-		Handler: googleCallback(h),
-	}.ForGroup(V1Version, mw))
+func registerGoogleCallbackHandler(router *Router) (err error) {
+	path := "/google/callback"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:    "GoogleCallback",
+		Method:  method,
+		Path:    path,
+		Handler: googleCallback(router.Handler),
+	}.ForGroup(V1Version, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }

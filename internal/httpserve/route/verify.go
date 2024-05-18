@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // VerifyEmail verifies a user's email address by validating the token in the request.
@@ -13,15 +11,20 @@ import (
 // followed the link in the verification email. If the user is not verified and the
 // token is valid then the user is logged in. If the user is already verified then a
 // 204 response is returned.
-func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
+func registerVerifyHandler(router *Router) (err error) {
+	path := "/verify"
+	method := http.MethodGet
+
+	route := echo.Route{
 		Name:   "VerifyEmail",
-		Method: http.MethodGet,
-		Path:   "/verify",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.VerifyEmail(c)
+			return router.Handler.VerifyEmail(c)
 		},
-	}.ForGroup(V1Version, restrictedEndpointsMW))
+	}.ForGroup(V1Version, restrictedEndpointsMW)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }

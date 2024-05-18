@@ -54,7 +54,16 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 		OpenAPI: "3.1.0",
 		Info: &openapi3.Info{
 			Title:   "Datum OpenAPI 3.1.0 Specifications",
-			Version: "v0.1.0",
+			Version: "v1.0.0",
+			Contact: &openapi3.Contact{
+				Name:  "Datum",
+				Email: "support@datum.net",
+				URL:   "https://datum.net",
+			},
+			License: &openapi3.License{
+				Name: "Apache 2.0",
+				URL:  "https://www.apache.org/licenses/LICENSE-2.0",
+			},
 		},
 		Paths: openapi3.NewPaths(),
 		Servers: openapi3.Servers{
@@ -62,11 +71,16 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 				Description: "Datum API Server",
 				URL:         "https://api.datum.net/v1",
 			},
+			&openapi3.Server{
+				Description: "Datum API Server (local)",
+				URL:         "http://localhost:17608/v1",
+			},
 		},
 		ExternalDocs: &openapi3.ExternalDocs{
 			Description: "Documentation for Datum's API services",
 			URL:         "https://docs.datum.net",
 		},
+
 		Components: &openapi3.Components{
 			Schemas:    schemas,
 			Responses:  responses,

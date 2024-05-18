@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -53,11 +52,6 @@ func (suite *GraphTestSuite) TestQueryPersonalAccessToken() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			if tc.errorMsg == "" {
-				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{"organization:test"})
-			}
-
 			resp, err := suite.client.datum.GetPersonalAccessTokenByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
@@ -107,11 +101,6 @@ func (suite *GraphTestSuite) TestQueryPersonalAccessTokens() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			if tc.errorMsg == "" {
-				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{"organization:test"})
-			}
-
 			resp, err := suite.client.datum.GetAllPersonalAccessTokens(reqCtx)
 
 			if tc.errorMsg != "" {
@@ -137,13 +126,9 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 	require.NoError(t, err)
 
 	// create user to get tokens
-	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 	user2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	reqCtx, err = userContextWithID(user.ID)
-	require.NoError(t, err)
 
 	tokenDescription := gofakeit.Sentence(5)
 	expiration30Days := time.Now().Add(time.Hour * 24 * 30)
@@ -174,7 +159,7 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 				Name:            "forthethingz",
 				Description:     &tokenDescription,
 				ExpiresAt:       expiration30Days,
-				OrganizationIDs: []string{org.ID},
+				OrganizationIDs: []string{org.ID, testPersonalOrgID},
 			},
 		},
 		{
@@ -203,11 +188,6 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
-
-			if len(tc.input.OrganizationIDs) > 0 {
-				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
-			}
 
 			resp, err := suite.client.datum.CreatePersonalAccessToken(reqCtx, tc.input)
 
@@ -242,7 +222,7 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 			}
 
 			// ensure the owner is the user that made the request
-			assert.Equal(t, user.ID, resp.CreatePersonalAccessToken.PersonalAccessToken.Owner.ID)
+			assert.Equal(t, testUser.ID, resp.CreatePersonalAccessToken.PersonalAccessToken.Owner.ID)
 
 			// token should not be redacted on create
 			assert.NotEqual(t, redacted, resp.CreatePersonalAccessToken.PersonalAccessToken.Token)
@@ -260,18 +240,22 @@ func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// token for another user
-	tokenOther := (&PersonalAccessTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	// create user
-	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	reqCtx, err = userContextWithID(user.ID)
-	require.NoError(t, err)
-
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	token := (&PersonalAccessTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+	// setup a token for another user
+	user2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+	regCtx2, err := userContextWithID(user2.ID)
+	require.NoError(t, err)
+	tokenOther := (&PersonalAccessTokenBuilder{
+		client:  suite.client,
+		OwnerID: user2.ID}).
+		MustNew(regCtx2, t)
+
+	token := (&PersonalAccessTokenBuilder{
+		client:         suite.client,
+		OwnerID:        testUser.ID,
+		OrganizationID: testPersonalOrgID}).
+		MustNew(reqCtx, t)
 
 	tokenDescription := gofakeit.Sentence(5)
 	tokenName := gofakeit.Word()
@@ -283,7 +267,7 @@ func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
 		errorMsg string
 	}{
 		{
-			name:    "happy path, update name ",
+			name:    "happy path, update name",
 			tokenID: token.ID,
 			input: datumclient.UpdatePersonalAccessTokenInput{
 				Name: &tokenName,
@@ -332,11 +316,6 @@ func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			if tc.errorMsg == "" {
-				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
-			}
-
 			resp, err := suite.client.datum.UpdatePersonalAccessToken(reqCtx, tc.tokenID, tc.input)
 
 			if tc.errorMsg != "" {
@@ -361,14 +340,14 @@ func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
 
 			// make sure these fields did not get updated
 			assert.WithinDuration(t, *token.ExpiresAt, resp.UpdatePersonalAccessToken.PersonalAccessToken.ExpiresAt, 1*time.Second)
-			assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, len(tc.input.AddOrganizationIDs))
+			assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, len(tc.input.AddOrganizationIDs)+1)
 
 			// Ensure its removed
 			if tc.input.RemoveOrganizationIDs != nil {
-				assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, 0)
+				assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, 1)
 			}
 
-			assert.Equal(t, user.ID, resp.UpdatePersonalAccessToken.PersonalAccessToken.Owner.ID)
+			assert.Equal(t, testUser.ID, resp.UpdatePersonalAccessToken.PersonalAccessToken.Owner.ID)
 
 			// token should be redacted on update
 			assert.Equal(t, redacted, resp.UpdatePersonalAccessToken.PersonalAccessToken.Token)

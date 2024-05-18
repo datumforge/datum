@@ -2,7 +2,6 @@ package graphapi_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -181,10 +180,6 @@ func (suite *GraphTestSuite) TestMutationCreateSubscriber() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			mock_fga.CheckAny(t, suite.client.fga, true)
-
-			if !tc.wantErr {
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
-			}
 
 			input := datumclient.CreateSubscriberInput{
 				Email: tc.email,

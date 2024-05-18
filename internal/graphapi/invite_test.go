@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -60,7 +59,6 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 
 			if tc.shouldCheck {
 				mock_fga.CheckAny(t, suite.client.fga, true)
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", invite.OwnerID)})
 			}
 
 			resp, err := suite.client.datum.GetInvite(reqCtx, tc.queryID)
@@ -198,10 +196,6 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
-
-			if !tc.wantErr {
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})
-			}
 
 			role := tc.role
 			input := datumclient.CreateInviteInput{

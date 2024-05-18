@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"fmt"
 	"testing"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
@@ -60,13 +59,6 @@ func (suite *GraphTestSuite) TestQueryUserSetting() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			if tc.expected != nil {
-				// placeholder until authz is enforced on org members
-				// at which point this needs to be the correct organization id
-				listObjects := []string{"organization:test"}
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
-			}
-
 			resp, err := suite.client.datum.GetUserSettingByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
@@ -102,14 +94,8 @@ func (suite *GraphTestSuite) TestQueryUserSettings() {
 	// create another user to make sure we don't get their settings back
 	_ = (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	// mock list
-	listObjects := []string{"organization:test"}
-
 	t.Run("Get User Settings", func(t *testing.T) {
 		defer mock_fga.ClearMocks(suite.client.fga)
-
-		// mock list for default org on user settings
-		mock_fga.ListAny(t, suite.client.fga, listObjects)
 
 		resp, err := suite.client.datum.GetUserSettings(reqCtx)
 
@@ -145,9 +131,6 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 	// create another user to make sure we don't get their settings back
 	(&UserBuilder{client: suite.client}).MustNew(ctx, t)
 	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(ctx, t)
-
-	// mock list objects
-	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
 	// setup valid user context
 	reqCtx, err := auth.NewTestContextWithOrgID(testUser.ID, testPersonalOrgID)
@@ -214,11 +197,6 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 			// when attempting to update default org, we do a check
 			if tc.checkOrg {
 				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
-			}
-
-			// on successful update, we list the default org
-			if tc.errorMsg == "" {
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
 			// update user

@@ -31,8 +31,6 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 
 	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	listObjects := []string{fmt.Sprintf("%s:%s", organization, org1.ID)}
-
 	testCases := []struct {
 		name     string
 		queryID  string
@@ -56,10 +54,6 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			mock_fga.CheckAny(t, suite.client.fga, true)
-
-			if tc.errorMsg == "" {
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
-			}
 
 			resp, err := suite.client.datum.GetOrganizationByID(reqCtx, tc.queryID)
 
@@ -93,10 +87,6 @@ func (suite *GraphTestSuite) TestQueryOrganizations() {
 
 	t.Run("Get Organizations", func(t *testing.T) {
 		defer mock_fga.ClearMocks(suite.client.fga)
-		// check tuple per org
-		listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", org2.ID)}
-
-		mock_fga.ListTimes(t, suite.client.fga, listObjects, 1)
 
 		resp, err := suite.client.datum.GetAllOrganizations(reqCtx)
 
@@ -104,8 +94,8 @@ func (suite *GraphTestSuite) TestQueryOrganizations() {
 		require.NotNil(t, resp)
 		require.NotNil(t, resp.Organizations.Edges)
 
-		// make sure two organizations are returned
-		assert.Equal(t, 2, len(resp.Organizations.Edges))
+		// make sure two organizations are returned, the two created and the personal org
+		assert.Equal(t, 3, len(resp.Organizations.Edges))
 
 		org1Found := false
 		org2Found := false
@@ -122,17 +112,6 @@ func (suite *GraphTestSuite) TestQueryOrganizations() {
 		if !org1Found || !org2Found {
 			t.Fail()
 		}
-
-		// Check user with no relations, gets no orgs back
-		mock_fga.ListTimes(t, suite.client.fga, []string{}, 1)
-
-		resp, err = suite.client.datum.GetAllOrganizations(reqCtx)
-
-		require.NoError(t, err)
-		require.NotNil(t, resp)
-
-		// make sure no organizations are returned
-		assert.Equal(t, 0, len(resp.Organizations.Edges))
 	})
 }
 
@@ -144,9 +123,6 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 	require.NoError(t, err)
 
 	parentOrg := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-	parentPersonalOrg := (&OrganizationBuilder{client: suite.client, PersonalOrg: true}).MustNew(reqCtx, t)
-
-	listObjects := []string{fmt.Sprintf("organization:%s", parentOrg.ID), fmt.Sprintf("organization:%s", parentPersonalOrg.ID)}
 
 	// setup deleted org
 	orgToDelete := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
@@ -186,10 +162,10 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			parentOrgID:    parentOrg.ID,
 		},
 		{
-			name:           "happy path organization with parent personal org",
+			name:           "organization with parent personal org",
 			orgName:        gofakeit.Name(),
 			orgDescription: gofakeit.HipsterSentence(10),
-			parentOrgID:    parentPersonalOrg.ID,
+			parentOrgID:    testPersonalOrgID,
 			errorMsg:       "personal organizations are not allowed to have child organizations",
 		},
 		{
@@ -256,9 +232,6 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 				if tc.errorMsg != "" {
 					mock_fga.CheckAny(t, suite.client.fga, true)
 				}
-
-				// There is a check to ensure the parent org is not a parent org
-				mock_fga.ListTimes(t, suite.client.fga, listObjects, 1)
 			}
 
 			if tc.settings != nil {
@@ -269,10 +242,6 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			if tc.errorMsg == "" {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 				mock_fga.WriteAny(t, suite.client.fga)
-
-				if tc.parentOrgID != "" {
-					mock_fga.ListTimes(t, suite.client.fga, listObjects, 1)
-				}
 			}
 
 			resp, err := suite.client.datum.CreateOrganization(reqCtx, input)
@@ -316,7 +285,6 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 	}
 
 	(&OrganizationCleanup{client: suite.client, OrgID: parentOrg.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: suite.client, OrgID: parentPersonalOrg.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
@@ -333,9 +301,6 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	// setup auth
-	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
 	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
 	require.NoError(t, err)
@@ -434,11 +399,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			// mock checks of tuple
 			defer mock_fga.ClearMocks(suite.client.fga)
-			// get and update  organization
+			// get and update organization
 			mock_fga.CheckAny(t, suite.client.fga, true)
-
-			// check access
-			mock_fga.ListAny(t, suite.client.fga, listObjects)
 
 			if tc.updateInput.AddOrgMembers != nil {
 				mock_fga.WriteAny(t, suite.client.fga)
@@ -588,8 +550,6 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	// add child org
 	childOrg := (&OrganizationBuilder{client: suite.client, ParentOrgID: org.ID}).MustNew(reqCtx, t)
 
-	listOrgs := []string{fmt.Sprintf("organization:%s", org.ID), fmt.Sprintf("organization:%s", childOrg.ID)}
-
 	group1 := (&GroupBuilder{client: suite.client, Owner: org.ID}).MustNew(reqCtx, t)
 
 	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
@@ -597,10 +557,7 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	// mocks checks for all calls
 	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
-	mock_fga.ListTimes(t, suite.client.fga, listGroups, 3)
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
-	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
+	mock_fga.ListAny(t, suite.client.fga, listGroups)
 
 	// mock writes to delete member of org
 	mock_fga.WriteAny(t, suite.client.fga)

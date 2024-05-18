@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -44,9 +43,6 @@ func (suite *GraphTestSuite) TestQueryApiToken() {
 
 			if tc.errorMsg == "" {
 				mock_fga.CheckAny(t, suite.client.fga, true)
-
-				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
 			}
 
 			resp, err := suite.client.datum.GetAPITokenByID(reqCtx, tc.queryID)
@@ -90,11 +86,6 @@ func (suite *GraphTestSuite) TestQueryAPITokens() {
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
-
-			if tc.errorMsg == "" {
-				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
-			}
 
 			resp, err := suite.client.datum.GetAllAPITokens(reqCtx)
 
@@ -175,7 +166,6 @@ func (suite *GraphTestSuite) TestMutationCreateAPIToken() {
 
 			if tc.errorMsg == "" {
 				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
 				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
@@ -269,8 +259,6 @@ func (suite *GraphTestSuite) TestMutationUpdateAPIToken() {
 
 			if tc.errorMsg == "" {
 				mock_fga.CheckAny(t, suite.client.fga, true)
-				// mock a call to check orgs
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", testPersonalOrgID)})
 			}
 
 			resp, err := suite.client.datum.UpdateAPIToken(reqCtx, tc.tokenID, tc.input)

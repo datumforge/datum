@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"fmt"
 	"testing"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
@@ -109,8 +108,6 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-	personalOrg := (&OrganizationBuilder{client: suite.client, PersonalOrg: true}).MustNew(reqCtx, t)
-	listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", personalOrg.ID)}
 
 	// allow access to organization
 	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
@@ -158,7 +155,7 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 		},
 		{
 			name:      "add user to personal org not allowed",
-			orgID:     personalOrg.ID,
+			orgID:     testPersonalOrgID,
 			userID:    testUser1.ID,
 			role:      enums.RoleMember,
 			checkOrg:  true,
@@ -200,11 +197,6 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 
 			if tc.errMsg == "" {
 				mock_fga.WriteAny(t, suite.client.fga)
-			}
-
-			if tc.checkOrg {
-				// checks for adding orgs to ensure not a personal org
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
 			// checks role in org to ensure user has ability to add other members

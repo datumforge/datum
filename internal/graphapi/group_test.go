@@ -24,7 +24,6 @@ func (suite *GraphTestSuite) TestQueryGroup() {
 
 	group1 := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	listOrgs := []string{fmt.Sprintf("organization:%s", testPersonalOrgID)}
 	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
 
 	testCases := []struct {
@@ -57,9 +56,6 @@ func (suite *GraphTestSuite) TestQueryGroup() {
 			// second check won't happen if org does not exist
 			if tc.errorMsg == "" {
 				mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
-				// we need to check list objects even on a get to check the user
-				// has access to the owner (organization of the group)
-				mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 			}
 
 			resp, err := suite.client.datum.GetGroupByID(reqCtx, tc.queryID)
@@ -102,11 +98,9 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 		defer mock_fga.ClearMocks(suite.client.fga)
 
 		// check tuple per org
-		listOrgs := []string{fmt.Sprintf("organization:%s", org1.ID)}
 		listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
 
-		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
-		mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
+		mock_fga.ListAny(t, suite.client.fga, listGroups)
 
 		whereInput := &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
@@ -140,9 +134,6 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 		if !group1Found || group2Found {
 			t.Fail()
 		}
-
-		// Try to get groups for org not authorized to access
-		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 
 		whereInput = &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
@@ -190,10 +181,8 @@ func (suite *GraphTestSuite) TestQueryGroups() {
 		defer mock_fga.ClearMocks(suite.client.fga)
 
 		// check org tuples
-		listOrgs := []string{fmt.Sprintf("organization:%s", org2.ID)}
 		listGroups := []string{fmt.Sprintf("group:%s", group2.ID), fmt.Sprintf("group:%s", group3.ID)}
 
-		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1) // org check comes before group check
 		mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 
 		resp, err := suite.client.datum.GetAllGroups(reqCtx2)

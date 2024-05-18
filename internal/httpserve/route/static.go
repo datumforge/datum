@@ -46,7 +46,7 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-//go:embed openapi.json
+//go:embed openapi.yaml
 //go:embed robots.txt
 //go:embed security.txt
 var openapi embed.FS
@@ -56,7 +56,7 @@ func registerOpenAPISpecHandler(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,
 		Path:    "/api-docs",
-		Handler: echo.StaticFileHandler("joined.yaml", openapi),
+		Handler: echo.StaticFileHandler("openapi.yaml", openapi),
 	}.ForGroup(V1Version, mw))
 
 	return

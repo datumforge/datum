@@ -362,7 +362,7 @@ paths:
                 properties:
                   email:
                     type: string
-                    description: The email of the user joined to the requesting orgnization
+                    description: The email of the user joined to the requesting organization
                   user_id:
                     type: string
                     description: The Datum generated user ID of the user joined to the requesting organization

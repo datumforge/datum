@@ -92,6 +92,8 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	s.config.Handler.JWTKeys = keys
 	s.config.Handler.TM = tm
 
+	srv.Handler = &s.config.Handler
+
 	// Add base routes to the server
 	if err := route.RegisterRoutes(srv); err != nil {
 		return err

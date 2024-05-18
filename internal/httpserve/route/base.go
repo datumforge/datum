@@ -7,16 +7,22 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func registerLivenessHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/livez",
+func registerLivenessHandler(router *Router) (err error) {
+	path := "/livez"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:   "Livez",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
 			return c.JSON(http.StatusOK, echo.Map{
 				"status": "UP",
 			})
 		},
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(unversioned, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }

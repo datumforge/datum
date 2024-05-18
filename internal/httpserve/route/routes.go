@@ -5,6 +5,7 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
@@ -23,17 +24,18 @@ var (
 	restrictedEndpointsMW = []echo.MiddlewareFunc{}
 )
 
-type Route struct {
-	Method      string
-	Path        string
-	Handler     echo.HandlerFunc
-	Middlewares []echo.MiddlewareFunc
+type Router struct {
+	Echo *echo.Echo
+	OAS  *openapi3.T
+}
 
-	Name string
+// OpenAPI returns the OpenAPI specification.
+func (r *Router) OpenAPI() *openapi3.T {
+	return r.OAS
 }
 
 // RegisterRoutes with the echo routers
-func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
+func RegisterRoutes(router *Router, h *handlers.Handler) error {
 	// add transaction middleware
 	transactionConfig := transaction.Client{
 		EntDBClient: h.DBClient,
@@ -76,7 +78,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	}
 
 	for _, route := range routeHandlers {
-		if err := route.(func(*echo.Echo, *handlers.Handler) error)(router, h); err != nil {
+		if err := route.(func(*echo.Echo, *handlers.Handler) error)(router.Echo, h); err != nil {
 			return err
 		}
 	}
@@ -92,24 +94,20 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	}
 
 	for _, route := range additionalHandlers {
-		if err := route.(func(*echo.Echo) error)(router); err != nil {
+		if err := route.(func(*echo.Echo) error)(router.Echo); err != nil {
+			return err
+		}
+	}
+
+	meowHandlers := []interface{}{
+		registerOpenAPIHandler,
+	}
+
+	for _, route := range meowHandlers {
+		if err := route.(func(*Router) error)(router); err != nil {
 			return err
 		}
 	}
 
 	return nil
-}
-
-// RegisterRoute with the echo server given a method, path, and handler definition
-func (r *Route) RegisterRoute(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:      r.Method,
-		Path:        r.Path,
-		Handler:     r.Handler,
-		Middlewares: r.Middlewares,
-
-		Name: r.Name,
-	})
-
-	return
 }

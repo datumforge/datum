@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"text/template"
 
+	"github.com/datumforge/echox"
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -47,8 +48,6 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 }
 
 //go:embed openapi.yaml
-//go:embed robots.txt
-//go:embed security.txt
 var openapi embed.FS
 
 // registerOpenAPISpecHandler embeds our generated open api specs and serves it behind /api-docs
@@ -62,23 +61,42 @@ func registerOpenAPISpecHandler(router *echo.Echo) (err error) {
 	return
 }
 
+// registerOpenAPISpecHandler embeds our generated open api specs and serves it behind /api-docs
+func registerOpenAPIHandler(router *Router) (err error) {
+	_, err = router.Echo.AddRoute(echo.Route{
+		Method: http.MethodGet,
+		Path:   "/openapi",
+		Handler: echox.HandlerFunc(func(c echo.Context) error {
+			return c.JSON(http.StatusOK, router.OAS)
+		}),
+	}.ForGroup(V1Version, mw))
+
+	return
+}
+
+//go:embed security.txt
+var securityTxt embed.FS
+
 // registerSecurityTxtHandler serves up the text output of datum's security.txt
 func registerSecurityTxtHandler(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,
 		Path:    "/.well-known/security.txt",
-		Handler: echo.StaticFileHandler("security.txt", openapi),
+		Handler: echo.StaticFileHandler("security.txt", securityTxt),
 	}.ForGroup(unversioned, mw))
 
 	return
 }
+
+//go:embed robots.txt
+var robotsTxt embed.FS
 
 // registerRobotsHandler serves up the robots.txt file via the RobotsHandler
 func registerRobotsHandler(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,
 		Path:    "/robots.txt",
-		Handler: echo.StaticFileHandler("robots.txt", openapi),
+		Handler: echo.StaticFileHandler("robots.txt", robotsTxt),
 	}.ForGroup(unversioned, mw))
 
 	return

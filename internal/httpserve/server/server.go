@@ -25,6 +25,18 @@ type handler interface {
 	Routes(*echo.Group)
 }
 
+func NewRouter() (*route.Router, error) {
+	oas, err := NewOpenAPISpec()
+	if err != nil {
+		return nil, err
+	}
+
+	return &route.Router{
+		Echo: echo.New(),
+		OAS:  oas,
+	}, nil
+}
+
 // AddHandler provides the ability to add additional HTTP handlers that process
 // requests. The handler that is provided should have a Routes(*echo.Group)
 // function, which allows the routes to be added to the server.
@@ -42,7 +54,10 @@ func NewServer(c config.Config, l *zap.SugaredLogger) *Server {
 
 // StartEchoServer creates and starts the echo server with configured middleware and handlers
 func (s *Server) StartEchoServer(ctx context.Context) error {
-	srv := echo.New()
+	srv, err := NewRouter()
+	if err != nil {
+		return err
+	}
 
 	sc := echo.StartConfig{
 		HideBanner:      true,
@@ -52,14 +67,14 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		GracefulContext: ctx,
 	}
 
-	srv.Debug = s.config.Settings.Server.Debug
+	srv.Echo.Debug = s.config.Settings.Server.Debug
 
-	if srv.Debug {
-		srv.Use(echodebug.BodyDump(s.logger))
+	if srv.Echo.Debug {
+		srv.Echo.Use(echodebug.BodyDump(s.logger))
 	}
 
 	for _, m := range s.config.DefaultMiddleware {
-		srv.Use(m)
+		srv.Echo.Use(m)
 	}
 
 	// Setup token manager
@@ -84,11 +99,11 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 
 	// Registers additional routes for the graph endpoints with middleware defined
 	for _, handler := range s.handlers {
-		handler.Routes(srv.Group("", s.config.GraphMiddleware...))
+		handler.Routes(srv.Echo.Group("", s.config.GraphMiddleware...))
 	}
 
 	// Print routes on startup
-	routes := srv.Router().Routes()
+	routes := srv.Echo.Router().Routes()
 	for _, r := range routes {
 		s.logger.Infow("registered route", "route", r.Path(), "method", r.Method())
 	}
@@ -97,13 +112,13 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	if s.config.Settings.Server.TLS.Enabled {
 		s.logger.Infow("starting in https mode")
 
-		return sc.StartTLS(srv, s.config.Settings.Server.TLS.CertFile, s.config.Settings.Server.TLS.CertKey)
+		return sc.StartTLS(srv.Echo, s.config.Settings.Server.TLS.CertFile, s.config.Settings.Server.TLS.CertKey)
 	}
 
 	s.logger.Infow(datumBlock)
 
 	// otherwise, start without TLS
-	return sc.Start(srv)
+	return sc.Start(srv.Echo)
 }
 
 var datumBlock = `

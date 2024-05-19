@@ -6,7 +6,7 @@ require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
-	github.com/99designs/gqlgen v0.17.46
+	github.com/99designs/gqlgen v0.17.47
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/Yamashou/gqlgenc v0.23.1
@@ -294,7 +294,7 @@ require (
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible
 	github.com/sendgrid/sendgrid-go v3.14.0+incompatible
-	github.com/sosodev/duration v1.3.0 // indirect
+	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cast v1.6.0 // indirect

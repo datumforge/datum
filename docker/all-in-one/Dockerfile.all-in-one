@@ -18,7 +18,7 @@ COPY --from=builder /go/bin/datum /bin/datum
 COPY --from=ghcr.io/datumforge/geodetic:140-3c5d575a  /bin/geodetic /bin/geodetic
 
 # Copy reids binary
-COPY --from=redis:7.2.4 /usr/local/bin/redis-server /bin/redis-server
+COPY --from=redis:7.2.5 /usr/local/bin/redis-server /bin/redis-server
 
 # Copy FGA binary
 COPY --from=openfga/openfga:v1.5.3 /openfga /bin/openfga

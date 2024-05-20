@@ -51,7 +51,6 @@ func getGroup(ctx context.Context) error {
 		}
 
 		if datum.OutputFormat == datum.JSONOutput {
-
 			s, err := json.Marshal(group)
 			if err != nil {
 				return err

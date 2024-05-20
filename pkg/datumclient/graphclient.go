@@ -3764,7 +3764,8 @@ func (t *DeleteFile_DeleteFile) GetDeletedID() string {
 }
 
 type GetGroupByID_Group_Owner struct {
-	ID string "json:\"id\" graphql:\"id\""
+	ID          string "json:\"id\" graphql:\"id\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
 }
 
 func (t *GetGroupByID_Group_Owner) GetID() string {
@@ -3772,6 +3773,12 @@ func (t *GetGroupByID_Group_Owner) GetID() string {
 		t = &GetGroupByID_Group_Owner{}
 	}
 	return t.ID
+}
+func (t *GetGroupByID_Group_Owner) GetDisplayName() string {
+	if t == nil {
+		t = &GetGroupByID_Group_Owner{}
+	}
+	return t.DisplayName
 }
 
 type GetGroupByID_Group_Setting struct {
@@ -3994,7 +4001,8 @@ func (t *GetGroupByID_Group) GetUpdatedBy() *string {
 }
 
 type GroupsWhere_Groups_Edges_Node_Owner struct {
-	ID string "json:\"id\" graphql:\"id\""
+	ID          string "json:\"id\" graphql:\"id\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
 }
 
 func (t *GroupsWhere_Groups_Edges_Node_Owner) GetID() string {
@@ -4002,6 +4010,12 @@ func (t *GroupsWhere_Groups_Edges_Node_Owner) GetID() string {
 		t = &GroupsWhere_Groups_Edges_Node_Owner{}
 	}
 	return t.ID
+}
+func (t *GroupsWhere_Groups_Edges_Node_Owner) GetDisplayName() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Owner{}
+	}
+	return t.DisplayName
 }
 
 type GroupsWhere_Groups_Edges_Node_Setting struct {
@@ -4246,7 +4260,8 @@ func (t *GroupsWhere_Groups) GetEdges() []*GroupsWhere_Groups_Edges {
 }
 
 type GetAllGroups_Groups_Edges_Node_Owner struct {
-	ID string "json:\"id\" graphql:\"id\""
+	ID          string "json:\"id\" graphql:\"id\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
 }
 
 func (t *GetAllGroups_Groups_Edges_Node_Owner) GetID() string {
@@ -4254,6 +4269,12 @@ func (t *GetAllGroups_Groups_Edges_Node_Owner) GetID() string {
 		t = &GetAllGroups_Groups_Edges_Node_Owner{}
 	}
 	return t.ID
+}
+func (t *GetAllGroups_Groups_Edges_Node_Owner) GetDisplayName() string {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node_Owner{}
+	}
+	return t.DisplayName
 }
 
 type GetAllGroups_Groups_Edges_Node_Setting struct {
@@ -4498,7 +4519,8 @@ func (t *GetAllGroups_Groups) GetEdges() []*GetAllGroups_Groups_Edges {
 }
 
 type CreateGroup_CreateGroup_Group_Owner struct {
-	ID string "json:\"id\" graphql:\"id\""
+	ID          string "json:\"id\" graphql:\"id\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
 }
 
 func (t *CreateGroup_CreateGroup_Group_Owner) GetID() string {
@@ -4506,6 +4528,12 @@ func (t *CreateGroup_CreateGroup_Group_Owner) GetID() string {
 		t = &CreateGroup_CreateGroup_Group_Owner{}
 	}
 	return t.ID
+}
+func (t *CreateGroup_CreateGroup_Group_Owner) GetDisplayName() string {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group_Owner{}
+	}
+	return t.DisplayName
 }
 
 type CreateGroup_CreateGroup_Group_Setting struct {
@@ -16351,6 +16379,7 @@ const GetGroupByIDDocument = `query GetGroupByID ($groupId: ID!) {
 		displayName
 		owner {
 			id
+			displayName
 		}
 		logoURL
 		tags
@@ -16410,6 +16439,7 @@ const GroupsWhereDocument = `query GroupsWhere ($where: GroupWhereInput) {
 				displayName
 				owner {
 					id
+					displayName
 				}
 				logoURL
 				tags
@@ -16471,6 +16501,7 @@ const GetAllGroupsDocument = `query GetAllGroups {
 				displayName
 				owner {
 					id
+					displayName
 				}
 				logoURL
 				tags
@@ -16529,6 +16560,7 @@ const CreateGroupDocument = `mutation CreateGroup ($input: CreateGroupInput!) {
 			displayName
 			owner {
 				id
+				displayName
 			}
 			logoURL
 			tags

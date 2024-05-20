@@ -59,7 +59,7 @@ func subscribers(ctx context.Context) error {
 			return err
 		}
 
-		if datum.OutputFormat == "json" {
+		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(sub)
 			if err != nil {
 				return err
@@ -77,7 +77,7 @@ func subscribers(ctx context.Context) error {
 			return err
 		}
 
-		if datum.OutputFormat == "json" {
+		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(subs)
 			if err != nil {
 				return err

@@ -9,6 +9,7 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
 var groupGetCmd = &cobra.Command{
@@ -24,9 +25,6 @@ func init() {
 
 	groupGetCmd.Flags().StringP("id", "i", "", "group id to query")
 	datum.ViperBindFlag("group.get.id", groupGetCmd.Flags().Lookup("id"))
-
-	groupGetCmd.Flags().StringP("owner", "o", "", "get groups by owner")
-	datum.ViperBindFlag("group.get.owner", groupGetCmd.Flags().Lookup("owner"))
 }
 
 func getGroup(ctx context.Context) error {
@@ -42,54 +40,52 @@ func getGroup(ctx context.Context) error {
 
 	// filter options
 	gID := viper.GetString("group.get.id")
-	ownerID := viper.GetString("group.get.owner")
 
-	// if an group ID is provided, filter on that group, otherwise get all by owner
+	writer := tables.NewTableWriter(groupCmd.OutOrStdout(), "ID", "Name", "Description", "Visibility", "Organization", "Members")
+
+	// if an group ID is provided, filter on that group, otherwise get all
 	if gID != "" {
-		groups, err := cli.Client.GetGroupByID(ctx, gID, cli.Interceptor)
+		group, err := cli.Client.GetGroupByID(ctx, gID, cli.Interceptor)
 		if err != nil {
 			return err
 		}
 
-		s, err := json.Marshal(groups)
-		if err != nil {
-			return err
+		if datum.OutputFormat == datum.JSONOutput {
+
+			s, err := json.Marshal(group)
+			if err != nil {
+				return err
+			}
+
+			return datum.JSONPrint(s)
 		}
 
-		return datum.JSONPrint(s)
+		writer.AddRow(group.Group.ID, group.Group.DisplayName, *group.Group.Description, group.Group.Setting.Visibility, group.Group.Owner.DisplayName, len(group.Group.Members))
+		writer.Render()
+
+		return nil
 	}
 
-	if ownerID != "" {
-		whereInput := &datumclient.GroupWhereInput{
-			HasOwnerWith: []*datumclient.OrganizationWhereInput{
-				{
-					ID: &ownerID,
-				},
-			},
-		}
-
-		groups, err := cli.Client.GroupsWhere(ctx, whereInput, cli.Interceptor)
-		if err != nil {
-			return err
-		}
-
-		s, err := json.Marshal(groups)
-		if err != nil {
-			return err
-		}
-
-		return datum.JSONPrint(s)
-	}
-
+	// get all groups, will be filtered for the authorized organization(s)
 	groups, err := cli.Client.GetAllGroups(ctx, cli.Interceptor)
 	if err != nil {
 		return err
 	}
 
-	s, err := json.Marshal(groups)
-	if err != nil {
-		return err
+	if datum.OutputFormat == datum.JSONOutput {
+		s, err := json.Marshal(groups)
+		if err != nil {
+			return err
+		}
+
+		return datum.JSONPrint(s)
 	}
 
-	return datum.JSONPrint(s)
+	for _, g := range groups.Groups.Edges {
+		writer.AddRow(g.Node.ID, g.Node.DisplayName, *g.Node.Description, g.Node.Setting.Visibility, g.Node.Owner.DisplayName, len(g.Node.Members))
+	}
+
+	writer.Render()
+
+	return nil
 }

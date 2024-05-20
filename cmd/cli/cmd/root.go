@@ -31,6 +31,8 @@ const (
 	appName         = "datum"
 	defaultRootHost = "http://localhost:17608/"
 	graphEndpoint   = "query"
+	TableOutput     = "table"
+	JSONOutput      = "json"
 )
 
 var (
@@ -85,7 +87,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
 	ViperBindFlag("logging.pretty", RootCmd.PersistentFlags().Lookup("pretty"))
 
-	RootCmd.PersistentFlags().StringVarP(&OutputFormat, "format", "z", "table", "output format (json, table)")
+	RootCmd.PersistentFlags().StringVarP(&OutputFormat, "format", "z", TableOutput, "output format (json, table)")
 	ViperBindFlag("output.format", RootCmd.PersistentFlags().Lookup("format"))
 }
 

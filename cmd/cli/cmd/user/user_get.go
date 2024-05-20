@@ -52,7 +52,7 @@ func users(ctx context.Context) error {
 			return err
 		}
 
-		if datum.OutputFormat == "json" {
+		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(user.User)
 			if err != nil {
 				return err
@@ -78,7 +78,7 @@ func users(ctx context.Context) error {
 		return err
 	}
 
-	if datum.OutputFormat == "json" {
+	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)
 	}
 

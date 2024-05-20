@@ -48,7 +48,7 @@ func templates(ctx context.Context) error {
 			return err
 		}
 
-		if datum.OutputFormat == "json" {
+		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(template.Template)
 			if err != nil {
 				return err
@@ -73,7 +73,7 @@ func templates(ctx context.Context) error {
 		return err
 	}
 
-	if datum.OutputFormat == "json" {
+	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)
 	}
 	// table writer doesn't visually show details of the json (it shows as bytes) but leaving in for now

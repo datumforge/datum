@@ -9,6 +9,7 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
 var groupMembersGetCmd = &cobra.Command{
@@ -53,10 +54,29 @@ func groupMembers(ctx context.Context) error {
 		return err
 	}
 
-	s, err = json.Marshal(group)
-	if err != nil {
-		return err
+	if datum.OutputFormat == datum.JSONOutput {
+		s, err = json.Marshal(group)
+		if err != nil {
+			return err
+		}
+
+		return datum.JSONPrint(s)
 	}
 
-	return datum.JSONPrint(s)
+	writer := tables.NewTableWriter(groupMembersCmd.OutOrStdout(), "UserID", "DisplayName", "FirstName", "LastName", "Email", "Role")
+
+	for _, g := range group.GroupMemberships.Edges {
+		writer.AddRow(
+			g.Node.UserID,
+			g.Node.User.DisplayName,
+			*g.Node.User.FirstName,
+			*g.Node.User.LastName,
+			g.Node.User.Email,
+			g.Node.Role,
+		)
+	}
+
+	writer.Render()
+
+	return nil
 }

@@ -48,7 +48,7 @@ func integrations(ctx context.Context) error {
 			return err
 		}
 
-		if viper.GetString("output.format") == "json" {
+		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(integration.Integration)
 			if err != nil {
 				return err
@@ -73,7 +73,7 @@ func integrations(ctx context.Context) error {
 		return err
 	}
 
-	if viper.GetString("output.format") == "json" {
+	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)
 	}
 

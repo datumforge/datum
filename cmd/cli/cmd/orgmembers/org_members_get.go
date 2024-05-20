@@ -54,7 +54,7 @@ func orgMembers(ctx context.Context) error {
 		return err
 	}
 
-	if datum.OutputFormat == "json" {
+	if datum.OutputFormat == datum.JSONOutput {
 		s, err = json.Marshal(org)
 		if err != nil {
 			return err

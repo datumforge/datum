@@ -6,6 +6,7 @@ query GetGroupByID($groupId: ID!) {
     displayName
     owner {
       id
+      displayName
     }
     logoURL
     tags
@@ -47,6 +48,7 @@ query GroupsWhere($where: GroupWhereInput) {
         displayName
         owner {
           id
+          displayName
         }
         logoURL
         tags
@@ -90,6 +92,7 @@ query GetAllGroups {
         displayName
         owner {
           id
+          displayName
         }
         logoURL
         tags
@@ -132,6 +135,7 @@ mutation CreateGroup($input: CreateGroupInput!) {
       displayName
       owner {
         id
+        displayName
       }
       logoURL
       tags

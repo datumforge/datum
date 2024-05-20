@@ -48,7 +48,7 @@ func webhooks(ctx context.Context) error {
 			return err
 		}
 
-		if datum.OutputFormat == "json" {
+		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(webhook.Webhook)
 			if err != nil {
 				return err
@@ -73,7 +73,7 @@ func webhooks(ctx context.Context) error {
 		return err
 	}
 
-	if datum.OutputFormat == "json" {
+	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)
 	}
 

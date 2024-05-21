@@ -5,6 +5,7 @@ import (
 
 	"entgo.io/ent"
 
+	"github.com/datumforge/fgax"
 	geodeticenums "github.com/datumforge/geodetic/pkg/enums"
 	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
@@ -65,10 +66,9 @@ func HookOrganization() ent.Hook {
 
 			if mutation.Op().Is(ent.OpCreate) {
 				// create the admin organization member if not using an API token (which is not associated with a user)
-				if !auth.IsAPITokenAuthentication(ctx) {
-					if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
-						return v, err
-					}
+				// otherwise add the API toke for admin access to the newly created organization
+				if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
+					return v, err
 				}
 
 				// create the database, if the org has a dedicated db and geodetic is available
@@ -159,6 +159,11 @@ func createOrgMemberOwner(ctx context.Context, oID string, m *generated.Organiza
 		return nil
 	}
 
+	// if this was created with an API token, do not create an owner but add the service tuple to fga
+	if auth.IsAPITokenAuthentication(ctx) {
+		return createServiceTuple(ctx, oID, m)
+	}
+
 	// get userID from context
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
@@ -180,6 +185,34 @@ func createOrgMemberOwner(ctx context.Context, oID string, m *generated.Organiza
 
 		return err
 	}
+
+	return nil
+}
+
+// createServiceTuple creates a service tuple for the organization and api key so the organization can be accessed
+func createServiceTuple(ctx context.Context, oID string, m *generated.OrganizationMutation) error {
+	// get userID from context
+	subjectID, err := auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		m.Logger.Errorw("unable to get user id from echo context, unable to add user to organization")
+
+		return err
+	}
+
+	// allow the api token to edit the newly created organization, no other users will have access
+	// so this is the minimum required access
+	role := fgax.CanEdit
+
+	// get tuple key
+	tuple := fgax.GetTupleKey(subjectID, "service", oID, "organization", role)
+
+	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
+		m.Logger.Errorw("failed to create relationship tuple", "error", err)
+
+		return err
+	}
+
+	m.Logger.Debugw("created relationship tuples", "relation", role, "object", tuple.Object)
 
 	return nil
 }

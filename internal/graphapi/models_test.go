@@ -167,7 +167,7 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Or
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	if o.Name == "" {
-		o.Name = gofakeit.AppName()
+		o.Name = gofakeit.LetterN(40)
 	}
 
 	if o.DisplayName == "" {

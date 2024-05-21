@@ -37,7 +37,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/ogen-go/ogen v1.1.0
+	github.com/ogen-go/ogen v1.1.1
 	github.com/panta/machineid v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.20.0
@@ -257,7 +257,7 @@ require (
 	github.com/datumforge/echox v0.1.1
 	github.com/datumforge/entx v0.1.1
 	github.com/dlclark/regexp2 v1.11.0 // indirect
-	github.com/fatih/color v1.16.0 // indirect
+	github.com/fatih/color v1.17.0 // indirect
 	github.com/flopp/go-findfont v0.1.0
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/getkin/kin-openapi v0.124.0

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"ariga.io/entcache"
@@ -19,6 +20,11 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/pkg/testutils"
+)
+
+const (
+	// defaultDBTestImage is the default docker image to use for testing
+	defaultDBTestImage = "docker://postgres:16-alpine"
 )
 
 type client struct {
@@ -47,7 +53,10 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 		dbOpts = append(dbOpts, entx.WithSecondaryDB())
 	}
 
-	entConfig := entx.NewDBConfig(c, dbOpts...)
+	entConfig, err := entx.NewDBConfig(c, dbOpts...)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	// Decorates the sql.Driver with entcache.Driver on the primaryDB
 	drvPrimary := entcache.NewDriver(
@@ -203,16 +212,31 @@ func (c *client) createEntDBClient(db *entsql.Driver) *ent.Client {
 	return ent.NewClient(cOpts...)
 }
 
-// NewTestContainer creates a test container for testing purposes
-func NewTestContainer(ctx context.Context) *testutils.TC {
+// NewTestFixture creates a test container for testing purposes
+func NewTestFixture() *testutils.TestFixture {
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
+	testDBContainerExpiry := os.Getenv("TEST_DB_CONTAINER_EXPIRY")
 
-	return testutils.GetTestURI(ctx, testDBURI)
+	// If the DB URI is not set, use the default docker image
+	if testDBURI == "" {
+		testDBURI = defaultDBTestImage
+	}
+
+	if testDBContainerExpiry == "" {
+		testDBContainerExpiry = "5" // default expiry of 5 minutes
+	}
+
+	expiry, err := strconv.Atoi(testDBContainerExpiry)
+	if err != nil {
+		panic(fmt.Sprintf("failed to convert TEST_DB_CONTAINER_EXPIRY to int: %v", err))
+	}
+
+	return testutils.GetTestURI(testDBURI, expiry)
 }
 
 // NewTestClient creates a entdb client that can be used for TEST purposes ONLY
-func NewTestClient(ctx context.Context, ctr *testutils.TC, entOpts []ent.Option) (*ent.Client, error) {
+func NewTestClient(ctx context.Context, ctr *testutils.TestFixture, entOpts []ent.Option) (*ent.Client, error) {
 	// setup logger
 	logger := zap.NewNop().Sugar()
 
@@ -226,7 +250,27 @@ func NewTestClient(ctx context.Context, ctr *testutils.TC, entOpts []ent.Option)
 
 	entOpts = append(entOpts, ent.Logger(*logger))
 
-	db, _, err := NewMultiDriverDBClient(ctx, dbconf, logger, entOpts)
+	var db *ent.Client
+
+	// Retry the connection to the database to ensure it is up and running
+	var err error
+
+	// If a test container is used, retry the connection to the database to ensure it is up and running
+	if ctr.Pool != nil {
+		err = ctr.Pool.Retry(func() error {
+			fmt.Println("connecting to database...")
+
+			db, _, err = NewMultiDriverDBClient(ctx, dbconf, logger, entOpts)
+			if err != nil {
+				fmt.Printf("retrying connection to database: %v", err)
+			}
+
+			return err
+		})
+	} else {
+		db, _, err = NewMultiDriverDBClient(ctx, dbconf, logger, entOpts)
+	}
+
 	if err != nil {
 		return nil, err
 	}

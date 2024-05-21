@@ -97,6 +97,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -128,6 +145,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name"
                 ]
               }
@@ -263,6 +281,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -440,6 +465,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -460,6 +502,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "template_id",
                   "data",
                   "template"
@@ -578,6 +621,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -597,6 +657,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "template_id",
                   "data"
                 ]
@@ -733,6 +794,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -885,6 +953,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -1066,6 +1141,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -1101,6 +1193,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "tier",
                   "expires",
                   "cancelled"
@@ -1238,6 +1331,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -1372,6 +1472,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -1420,6 +1537,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "tier",
                   "expires",
                   "cancelled"
@@ -1557,6 +1675,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -1894,6 +2019,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -1913,6 +2055,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "event_type"
                 ]
               }
@@ -2048,6 +2191,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -2166,6 +2316,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -2267,6 +2434,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "event_type"
                 ]
               }
@@ -2402,6 +2570,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -3515,6 +3690,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -3537,6 +3729,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "name",
                   "global",
                   "enabled"
@@ -3674,6 +3867,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -3792,6 +3992,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -3842,6 +4059,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name",
                   "global",
                   "enabled"
@@ -3979,6 +4197,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -4462,6 +4687,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -4493,6 +4735,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "file_name",
                   "file_extension",
                   "content_type",
@@ -4631,6 +4874,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -4761,6 +5011,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -4805,6 +5072,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "file_name",
                   "file_extension",
                   "content_type",
@@ -4943,6 +5211,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -5276,6 +5551,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -5301,6 +5593,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "name",
                   "display_name"
                 ]
@@ -5437,6 +5730,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -5576,6 +5876,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -5595,6 +5912,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "role",
                   "group_id",
                   "user_id"
@@ -5732,6 +6050,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -5844,6 +6169,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -5873,6 +6215,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "role",
                   "group_id",
                   "user_id",
@@ -6012,6 +6355,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -6305,6 +6655,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -6342,6 +6709,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "visibility",
                   "join_policy"
                 ]
@@ -6478,6 +6846,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -6659,6 +7034,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -6724,6 +7116,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name",
                   "display_name",
                   "setting"
@@ -6861,6 +7254,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -7516,6 +7916,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -7535,6 +7952,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "name"
                 ]
               }
@@ -7670,6 +8088,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -7782,6 +8207,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -7817,6 +8259,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name"
                 ]
               }
@@ -7952,6 +8395,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -8289,6 +8739,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -8308,6 +8775,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "name"
                 ]
               }
@@ -8443,6 +8911,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -8561,6 +9036,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -8605,6 +9097,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name"
                 ]
               }
@@ -8740,6 +9233,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -9186,6 +9686,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "recipient": {
                     "type": "string"
                   },
@@ -9209,6 +9726,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "recipient",
                   "role"
                 ]
@@ -9345,6 +9863,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "recipient": {
                     "type": "string"
                   },
@@ -9593,6 +10118,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -9630,6 +10172,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "name",
                   "client_id",
                   "client_secret",
@@ -9773,6 +10316,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -9909,6 +10459,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -9947,6 +10514,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name",
                   "client_id",
                   "client_secret",
@@ -10090,6 +10658,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -10274,6 +10849,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -10340,6 +10918,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "client_id",
                   "nonce",
                   "claims_user_id",
@@ -10793,6 +11372,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -10813,6 +11409,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "role",
                   "organization_id",
                   "user_id"
@@ -10950,6 +11547,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -11063,6 +11667,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -11093,6 +11714,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "role",
                   "organization_id",
                   "user_id",
@@ -11232,6 +11854,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -11526,6 +12155,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -11557,6 +12203,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "name",
                   "display_name",
                   "dedicated_db"
@@ -11694,6 +12341,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -11833,6 +12487,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -11875,7 +12546,8 @@
                 },
                 "required": [
                   "history_time",
-                  "operation"
+                  "operation",
+                  "mapping_id"
                 ]
               }
             }
@@ -12010,6 +12682,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -12197,6 +12876,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -12334,6 +13030,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name",
                   "display_name",
                   "dedicated_db"
@@ -12471,6 +13168,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -13881,6 +14585,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -13924,6 +14645,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name",
                   "expires_at",
                   "owner"
@@ -14061,6 +14783,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -14378,6 +15107,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -14414,6 +15160,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "email",
                   "verified_email",
                   "verified_phone",
@@ -14553,6 +15300,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -14814,6 +15568,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -14850,6 +15621,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "name",
                   "template_type",
                   "jsonconfig"
@@ -14987,6 +15759,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -15122,6 +15901,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -15165,6 +15961,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name",
                   "template_type",
                   "jsonconfig"
@@ -15302,6 +16099,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -15615,6 +16419,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -15666,6 +16487,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "email",
                   "display_name",
                   "auth_provider"
@@ -15803,6 +16625,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -15968,6 +16797,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -16004,6 +16850,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "locked",
                   "status"
                 ]
@@ -16140,6 +16987,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -16320,6 +17174,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -16444,6 +17315,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "email",
                   "display_name",
                   "auth_provider",
@@ -16582,6 +17454,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -17507,6 +18386,23 @@
                       "DELETE"
                     ]
                   },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -17545,6 +18441,7 @@
                 "required": [
                   "history_time",
                   "operation",
+                  "mapping_id",
                   "name",
                   "destination_url",
                   "enabled"
@@ -17682,6 +18579,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -17819,6 +18723,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -17870,6 +18791,7 @@
                   }
                 },
                 "required": [
+                  "mapping_id",
                   "name",
                   "destination_url",
                   "enabled"
@@ -18007,6 +18929,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -18291,6 +19220,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -18323,6 +19255,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name"
         ]
       },
@@ -18344,6 +19277,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -18374,6 +19310,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "template_id",
           "data",
           "template"
@@ -18414,6 +19351,9 @@
           "updated_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -18441,6 +19381,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "template_id",
           "data"
         ]
@@ -18465,6 +19406,9 @@
           "updated_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -18478,6 +19422,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "owner"
         ]
       },
@@ -18499,6 +19444,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -18557,6 +19505,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "tier",
           "expires",
           "cancelled"
@@ -18595,6 +19544,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -18640,6 +19592,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "tier",
           "expires",
           "cancelled"
@@ -18663,6 +19616,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -18767,6 +19723,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "event_type"
         ]
       },
@@ -18805,6 +19762,9 @@
           "updated_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -18825,6 +19785,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "event_type"
         ]
       },
@@ -18853,6 +19814,9 @@
             "format": "date-time"
           },
           "deleted_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -18906,6 +19870,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name",
           "global",
           "enabled"
@@ -18953,6 +19918,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -18976,6 +19944,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "name",
           "global",
           "enabled"
@@ -19006,6 +19975,9 @@
             "format": "date-time"
           },
           "deleted_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -19053,6 +20025,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "file_name",
           "file_extension",
           "content_type",
@@ -19101,6 +20074,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -19133,6 +20109,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "file_name",
           "file_extension",
           "content_type",
@@ -19164,6 +20141,9 @@
             "format": "date-time"
           },
           "deleted_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -19232,6 +20212,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name",
           "display_name",
           "setting"
@@ -19279,6 +20260,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -19305,6 +20289,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "name",
           "display_name"
         ]
@@ -19327,6 +20312,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "deleted_at": {
@@ -19366,6 +20354,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "role",
           "group_id",
           "user_id",
@@ -19408,6 +20397,9 @@
           "updated_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -19435,6 +20427,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "role",
           "group_id",
           "user_id"
@@ -19458,6 +20451,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -19506,6 +20502,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "visibility",
           "join_policy"
         ]
@@ -19543,6 +20540,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -19590,6 +20590,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "visibility",
           "join_policy"
         ]
@@ -19612,6 +20613,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "deleted_at": {
@@ -19657,6 +20661,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name"
         ]
       },
@@ -19695,6 +20700,9 @@
           "updated_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -19722,6 +20730,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "name"
         ]
       },
@@ -19743,6 +20752,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -19797,6 +20809,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name"
         ]
       },
@@ -19835,6 +20848,9 @@
           "updated_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -19862,6 +20878,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "name"
         ]
       },
@@ -19883,6 +20900,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "deleted_at": {
@@ -19936,6 +20956,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "recipient",
           "status",
           "role",
@@ -19961,6 +20982,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20009,6 +21033,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name",
           "client_id",
           "client_secret",
@@ -20053,6 +21078,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20100,6 +21128,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "name",
           "client_id",
           "client_secret",
@@ -20115,6 +21144,9 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20184,6 +21216,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "client_id",
           "nonce",
           "claims_user_id",
@@ -20213,6 +21246,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "deleted_at": {
@@ -20253,6 +21289,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "role",
           "organization_id",
           "user_id",
@@ -20295,6 +21332,9 @@
           "updated_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -20323,6 +21363,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "role",
           "organization_id",
           "user_id"
@@ -20346,6 +21387,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20493,6 +21537,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name",
           "display_name",
           "dedicated_db"
@@ -20531,6 +21576,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20572,6 +21620,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "name",
           "display_name",
           "dedicated_db"
@@ -20595,6 +21644,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20648,7 +21700,8 @@
           }
         },
         "required": [
-          "id"
+          "id",
+          "mapping_id"
         ]
       },
       "OrganizationSettingHistory": {
@@ -20684,6 +21737,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20736,7 +21792,8 @@
         "required": [
           "id",
           "history_time",
-          "operation"
+          "operation",
+          "mapping_id"
         ]
       },
       "PasswordResetToken": {
@@ -20759,6 +21816,9 @@
           "updated_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "deleted_at": {
             "type": "string",
             "format": "date-time"
@@ -20772,6 +21832,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "owner"
         ]
       },
@@ -20800,6 +21861,9 @@
             "format": "date-time"
           },
           "deleted_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20846,6 +21910,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name",
           "owner"
         ]
@@ -20868,6 +21933,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -20914,6 +21982,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "email",
           "verified_email",
           "verified_phone",
@@ -20938,6 +22007,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "deleted_at": {
@@ -20965,6 +22037,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "verified"
         ]
       },
@@ -20993,6 +22066,9 @@
             "format": "date-time"
           },
           "deleted_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -21039,6 +22115,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name",
           "template_type",
           "jsonconfig"
@@ -21086,6 +22163,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "mapping_id": {
+            "type": "string"
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -21123,6 +22203,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "name",
           "template_type",
           "jsonconfig"
@@ -21153,6 +22234,9 @@
             "format": "date-time"
           },
           "deleted_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -21284,6 +22368,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "email",
           "display_name",
           "auth_provider",
@@ -21330,6 +22415,9 @@
             "format": "date-time"
           },
           "deleted_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -21388,6 +22476,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "email",
           "display_name",
           "auth_provider"
@@ -21411,6 +22500,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -21468,6 +22560,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "locked",
           "status",
           "email_confirmed"
@@ -21506,6 +22599,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -21559,6 +22655,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "locked",
           "status",
           "email_confirmed"
@@ -21582,6 +22679,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -21633,6 +22733,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "aaguid",
           "sign_count",
           "transports",
@@ -21661,6 +22762,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -21722,6 +22826,7 @@
         },
         "required": [
           "id",
+          "mapping_id",
           "name",
           "destination_url",
           "enabled"
@@ -21760,6 +22865,9 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "mapping_id": {
             "type": "string"
           },
           "tags": {
@@ -21808,6 +22916,7 @@
           "id",
           "history_time",
           "operation",
+          "mapping_id",
           "name",
           "destination_url",
           "enabled"

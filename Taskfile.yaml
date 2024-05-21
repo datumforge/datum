@@ -26,6 +26,7 @@ env:
   ATLAS_SQLITE_DB_URI: "sqlite://file?mode=memory&_fk=1"
   ATLAS_POSTGRES_DB_URI: "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
   TEST_DB_URL: "docker://postgres:16-alpine"
+  TEST_DB_CONTAINER_EXPIRY: "2" # in minutes
   TEST_FGA_URL: "localhost:8080"
   ENV: config
 

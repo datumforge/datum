@@ -27,13 +27,13 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/testutils"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
 	"github.com/datumforge/datum/pkg/utils/ulids"
 
 	"github.com/datumforge/datum/internal/graphapi"
-	"github.com/datumforge/datum/pkg/testutils"
 )
 
 var (
@@ -50,7 +50,7 @@ func TestGraphTestSuite(t *testing.T) {
 type GraphTestSuite struct {
 	suite.Suite
 	client *client
-	tc     *testutils.TC
+	tf     *testutils.TestFixture
 }
 
 // client contains all the clients the test need to interact with
@@ -71,9 +71,7 @@ type graphClient struct {
 }
 
 func (suite *GraphTestSuite) SetupSuite() {
-	ctx := context.Background()
-
-	suite.tc = entdb.NewTestContainer(ctx)
+	suite.tf = entdb.NewTestFixture()
 }
 
 func (suite *GraphTestSuite) SetupTest() {
@@ -137,7 +135,7 @@ func (suite *GraphTestSuite) SetupTest() {
 	}
 
 	// create database connection
-	db, err := entdb.NewTestClient(ctx, suite.tc, opts)
+	db, err := entdb.NewTestClient(ctx, suite.tf, opts)
 	require.NoError(t, err, "failed opening connection to database")
 
 	// assign values
@@ -159,17 +157,15 @@ func (suite *GraphTestSuite) TearDownTest() {
 	// clear all fga mocks
 	mock_fga.ClearMocks(suite.client.fga)
 
-	if err := suite.client.db.Close(); err != nil {
-		log.Fatalf("failed to close database: %s", err)
+	if suite.client.db != nil {
+		if err := suite.client.db.Close(); err != nil {
+			log.Fatalf("failed to close database: %s", err)
+		}
 	}
 }
 
 func (suite *GraphTestSuite) TearDownSuite() {
-	if suite.tc.Container != nil {
-		if err := suite.tc.Container.Terminate(context.Background()); err != nil {
-			log.Fatalf("failed to terminate container: %s", err)
-		}
-	}
+	testutils.TeardownFixture(suite.tf)
 }
 
 func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {

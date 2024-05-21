@@ -50,7 +50,7 @@ type HandlerTestSuite struct {
 	db  *ent.Client
 	h   *handlers.Handler
 	fga *mock_fga.MockSdkClient
-	tc  *testutils.TC
+	tf  *testutils.TestFixture
 }
 
 // TestHandlerTestSuite runs all the tests in the HandlerTestSuite
@@ -59,9 +59,7 @@ func TestHandlerTestSuite(t *testing.T) {
 }
 
 func (suite *HandlerTestSuite) SetupSuite() {
-	ctx := context.Background()
-
-	suite.tc = entdb.NewTestContainer(ctx)
+	suite.tf = entdb.NewTestFixture()
 }
 
 func (suite *HandlerTestSuite) SetupTest() {
@@ -109,13 +107,9 @@ func (suite *HandlerTestSuite) SetupTest() {
 		ent.Analytics(&analytics.EventManager{Enabled: false}),
 	}
 
-	ctr := entdb.NewTestContainer(ctx)
-
 	// create database connection
-	db, err := entdb.NewTestClient(ctx, ctr, opts)
-	if err != nil {
-		require.NoError(t, err, "failed opening connection to database")
-	}
+	db, err := entdb.NewTestClient(ctx, suite.tf, opts)
+	require.NoError(t, err, "failed opening connection to database")
 
 	// add db to test client
 	suite.db = db
@@ -131,17 +125,15 @@ func (suite *HandlerTestSuite) TearDownTest() {
 	// clear all fga mocks
 	mock_fga.ClearMocks(suite.fga)
 
-	if err := suite.db.Close(); err != nil {
-		log.Fatalf("failed to close database: %s", err)
+	if suite.db != nil {
+		if err := suite.db.Close(); err != nil {
+			log.Fatalf("failed to close database: %s", err)
+		}
 	}
 }
 
 func (suite *HandlerTestSuite) TearDownSuite() {
-	if suite.tc.Container != nil {
-		if err := suite.tc.Container.Terminate(context.Background()); err != nil {
-			log.Fatalf("failed to terminate container: %s", err)
-		}
-	}
+	testutils.TeardownFixture(suite.tf)
 }
 
 func setupEcho(entClient *ent.Client) *echo.Echo {

@@ -69,6 +69,12 @@ func getPGDockerTest(image string, expiry time.Duration) (*TestFixture, error) {
 	}
 
 	port := resource.GetPort("5432/tcp")
+
+	// when running locally, the host is localhost
+	// however, when running in a CI environment, and using docker-in-docker
+	// the host is the docker host network
+	// - `host.docker.internal` on mac
+	// - `172.17.0.1` on linux
 	host := os.Getenv("TEST_DB_HOST")
 	if host == "" {
 		host = "localhost"

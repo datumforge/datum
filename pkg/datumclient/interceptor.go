@@ -11,8 +11,8 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 )
 
-// WithAuthorization adds the authorization header and session to the client request
-func WithAuthorization(accessToken string, session string) clientv2.RequestInterceptor {
+// WithAuthorizationAndSession adds the authorization header and session to the client request
+func WithAuthorizationAndSession(accessToken string, session string) clientv2.RequestInterceptor {
 	return func(
 		ctx context.Context,
 		req *http.Request,
@@ -31,6 +31,25 @@ func WithAuthorization(accessToken string, session string) clientv2.RequestInter
 			req.AddCookie(sessions.NewDevSessionCookie(session))
 		} else {
 			req.AddCookie(sessions.NewSessionCookie(session))
+		}
+
+		return next(ctx, req, gqlInfo, res)
+	}
+}
+
+// WithAuthorization adds the authorization header and session to the client request
+func WithAuthorization(accessToken string, session string) clientv2.RequestInterceptor {
+	return func(
+		ctx context.Context,
+		req *http.Request,
+		gqlInfo *clientv2.GQLRequestInfo,
+		res interface{},
+		next clientv2.RequestInterceptorFunc,
+	) error {
+		// setting authorization header if its not already set
+		h := req.Header.Get("Authorization")
+		if h == "" {
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 		}
 
 		return next(ctx, req, gqlInfo, res)

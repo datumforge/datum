@@ -54,7 +54,7 @@ require (
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240416075003-747366ff79c4
 	github.com/vektah/gqlparser/v2 v2.5.12
 	github.com/wundergraph/graphql-go-tools v1.67.2
-	go.opentelemetry.io/otel v1.26.0
+	go.opentelemetry.io/otel v1.27.0
 	go.opentelemetry.io/otel/sdk v1.26.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.20.0
@@ -218,8 +218,8 @@ require (
 	go.opentelemetry.io/contrib v1.21.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.49.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0 // indirect
-	go.opentelemetry.io/otel/metric v1.26.0 // indirect
-	go.opentelemetry.io/otel/trace v1.26.0 // indirect
+	go.opentelemetry.io/otel/metric v1.27.0 // indirect
+	go.opentelemetry.io/otel/trace v1.27.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.2.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.7.0 // indirect
@@ -255,7 +255,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/datumforge/echox v0.1.1
-	github.com/datumforge/entx v0.1.1
+	github.com/datumforge/entx v0.2.0
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/flopp/go-findfont v0.1.0

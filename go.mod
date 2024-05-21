@@ -14,7 +14,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.15
 	github.com/brianvoe/gofakeit/v7 v7.0.3
 	github.com/bytedance/sonic v1.11.6
-	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
+	github.com/datumforge/echo-prometheus/v5 v5.0.0-20240521143548-d561656e6328
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/datumforge/enthistory v0.0.9
 	github.com/datumforge/fgax v0.2.1

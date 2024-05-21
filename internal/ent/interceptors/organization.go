@@ -29,6 +29,18 @@ func InterceptorOrganization() ent.Interceptor {
 			return nil
 		}
 
+		// if this is an API token, only allow the query if it is for the organization
+		if auth.IsAPITokenAuthentication(ctx) {
+			orgID, err := auth.GetOrganizationIDFromContext(ctx)
+			if err != nil {
+				return err
+			}
+
+			q.Where(organization.IDEQ(orgID))
+
+			return nil
+		}
+
 		userID, err := auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err

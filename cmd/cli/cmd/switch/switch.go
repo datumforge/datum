@@ -2,7 +2,6 @@ package datumswitch
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -29,8 +28,6 @@ func init() {
 }
 
 func switchorg(ctx context.Context) error {
-	var s []byte
-
 	cli, err := datum.GetRestClient(ctx)
 	if err != nil {
 		return err
@@ -53,10 +50,7 @@ func switchorg(ctx context.Context) error {
 		return err
 	}
 
-	s, err = json.Marshal(switchOrganizationReply)
-	if err != nil {
-		return err
-	}
+	fmt.Printf("Successfully switched to organization: %s!\n", targetorg)
 
 	if err := datum.StoreToken(switchOrganizationReply); err != nil {
 		return err
@@ -64,5 +58,5 @@ func switchorg(ctx context.Context) error {
 
 	fmt.Println("auth tokens successfully stored in keychain")
 
-	return datum.JSONPrint(s)
+	return nil
 }

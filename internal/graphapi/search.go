@@ -2,7 +2,6 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -12,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
+// searchResult is a generic struct to hold the result of a search operation
 type searchResult[T any] struct {
 	result T
 	err    error
@@ -61,11 +61,8 @@ func searchUsers(ctx context.Context, query string, c chan<- searchResult[[]*gen
 
 	users := make([]*generated.User, 0, len(members))
 	for _, member := range members {
-		fmt.Println("member", member.Edges.User)
 		users = append(users, member.Edges.User)
 	}
-
-	fmt.Println("users", users)
 
 	c <- searchResult[[]*generated.User]{result: users, err: err}
 }

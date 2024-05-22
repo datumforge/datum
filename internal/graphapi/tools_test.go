@@ -193,9 +193,12 @@ func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {
 	}
 
 	// setup interceptors
-	i := datumclient.WithAuthorizationAndSession(rawToken, session)
+	auth := datumclient.Authorization{
+		BearerToken: rawToken,
+		Session:     session,
+	}
 
-	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
+	return datumclient.NewClient(g.httpClient, g.srvURL, opt, auth.WithAuthorization())
 }
 
 // localRoundTripper is an http.RoundTripper that executes HTTP transactions

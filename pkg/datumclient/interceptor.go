@@ -11,8 +11,18 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 )
 
+// Authorization contains the bearer token and optional session cookie
+type Authorization struct {
+	// BearerToken is the bearer token to be used in the authorization header
+	// this can be the access token, api token, or personal access token
+	BearerToken string
+	// Session is the session cookie to be used in the request
+	// this is required for requests using the access token
+	Session string
+}
+
 // WithAuthorizationAndSession adds the authorization header and session to the client request
-func WithAuthorizationAndSession(accessToken string, session string) clientv2.RequestInterceptor {
+func (a Authorization) WithAuthorization() clientv2.RequestInterceptor {
 	return func(
 		ctx context.Context,
 		req *http.Request,
@@ -23,33 +33,16 @@ func WithAuthorizationAndSession(accessToken string, session string) clientv2.Re
 		// setting authorization header if its not already set
 		h := req.Header.Get("Authorization")
 		if h == "" {
-			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", a.BearerToken))
 		}
 
 		// add session cookie
-		if strings.Contains(req.Host, "localhost") {
-			req.AddCookie(sessions.NewDevSessionCookie(session))
-		} else {
-			req.AddCookie(sessions.NewSessionCookie(session))
-		}
-
-		return next(ctx, req, gqlInfo, res)
-	}
-}
-
-// WithAuthorization adds the authorization header to the client request
-func WithAuthorization(accessToken string) clientv2.RequestInterceptor {
-	return func(
-		ctx context.Context,
-		req *http.Request,
-		gqlInfo *clientv2.GQLRequestInfo,
-		res interface{},
-		next clientv2.RequestInterceptorFunc,
-	) error {
-		// setting authorization header if its not already set
-		h := req.Header.Get("Authorization")
-		if h == "" {
-			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+		if a.Session != "" {
+			if strings.Contains(req.Host, "localhost") {
+				req.AddCookie(sessions.NewDevSessionCookie(a.Session))
+			} else {
+				req.AddCookie(sessions.NewSessionCookie(a.Session))
+			}
 		}
 
 		return next(ctx, req, gqlInfo, res)

@@ -3,8 +3,13 @@
 package graphapi
 
 import (
+	"entgo.io/contrib/entgql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
+
+type GlobalSearchResult interface {
+	IsGlobalSearchResult()
+}
 
 // Return response for createAPIToken mutation
 type APITokenCreatePayload struct {
@@ -120,6 +125,11 @@ type FileUpdatePayload struct {
 	File *generated.File `json:"file"`
 }
 
+type GlobalSearchResultConnection struct {
+	Page  *entgql.PageInfo[string] `json:"page"`
+	Nodes []GlobalSearchResult     `json:"nodes"`
+}
+
 // Return response for createGroup mutation
 type GroupCreatePayload struct {
 	// Created group
@@ -149,6 +159,12 @@ type GroupMembershipUpdatePayload struct {
 	// Updated groupMembership
 	GroupMembership *generated.GroupMembership `json:"groupMembership"`
 }
+
+type GroupSearchResult struct {
+	Groups []*generated.Group `json:"groups,omitempty"`
+}
+
+func (GroupSearchResult) IsGlobalSearchResult() {}
 
 // Return response for createGroupSetting mutation
 type GroupSettingCreatePayload struct {
@@ -294,6 +310,12 @@ type OrganizationDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+type OrganizationSearchResult struct {
+	Organizations []*generated.Organization `json:"organizations,omitempty"`
+}
+
+func (OrganizationSearchResult) IsGlobalSearchResult() {}
+
 // Return response for createOrganizationSetting mutation
 type OrganizationSettingCreatePayload struct {
 	// Created organizationSetting
@@ -348,6 +370,12 @@ type SubscriberDeletePayload struct {
 	Email string `json:"email"`
 }
 
+type SubscriberSearchResult struct {
+	Subscribers []*generated.Subscriber `json:"subscribers,omitempty"`
+}
+
+func (SubscriberSearchResult) IsGlobalSearchResult() {}
+
 // Return response for updateSubscriber mutation
 type SubscriberUpdatePayload struct {
 	// Updated subscriber
@@ -398,6 +426,12 @@ type UserDeletePayload struct {
 	// Deleted user ID
 	DeletedID string `json:"deletedID"`
 }
+
+type UserSearchResult struct {
+	Users []*generated.User `json:"users,omitempty"`
+}
+
+func (UserSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateUserSetting mutation
 type UserSettingUpdatePayload struct {

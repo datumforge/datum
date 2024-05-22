@@ -13,6 +13,10 @@ import (
 	"github.com/datumforge/enthistory"
 )
 
+type GlobalSearchResult interface {
+	IsGlobalSearchResult()
+}
+
 type APIToken struct {
 	ID        string     `json:"id"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -2973,6 +2977,11 @@ type FileWhereInput struct {
 	HasGroupWith []*GroupWhereInput `json:"hasGroupWith,omitempty"`
 }
 
+type GlobalSearchResultConnection struct {
+	Page  *PageInfo            `json:"page"`
+	Nodes []GlobalSearchResult `json:"nodes"`
+}
+
 type Group struct {
 	ID        string     `json:"id"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -3613,6 +3622,12 @@ type GroupOrder struct {
 	// The field by which to order Groups.
 	Field GroupOrderField `json:"field"`
 }
+
+type GroupSearchResult struct {
+	Groups []*Group `json:"groups,omitempty"`
+}
+
+func (GroupSearchResult) IsGlobalSearchResult() {}
 
 type GroupSetting struct {
 	ID        string     `json:"id"`
@@ -6800,6 +6815,12 @@ type OrganizationOrder struct {
 	Field OrganizationOrderField `json:"field"`
 }
 
+type OrganizationSearchResult struct {
+	Organizations []*Organization `json:"organizations,omitempty"`
+}
+
+func (OrganizationSearchResult) IsGlobalSearchResult() {}
+
 type OrganizationSetting struct {
 	ID        string     `json:"id"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -7849,6 +7870,12 @@ type SubscriberEdge struct {
 	// A cursor for use in pagination.
 	Cursor string `json:"cursor"`
 }
+
+type SubscriberSearchResult struct {
+	Subscribers []*Subscriber `json:"subscribers,omitempty"`
+}
+
+func (SubscriberSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateSubscriber mutation
 type SubscriberUpdatePayload struct {
@@ -9843,6 +9870,12 @@ type UserOrder struct {
 	// The field by which to order Users.
 	Field UserOrderField `json:"field"`
 }
+
+type UserSearchResult struct {
+	Users []*User `json:"users,omitempty"`
+}
+
+func (UserSearchResult) IsGlobalSearchResult() {}
 
 type UserSetting struct {
 	ID        string     `json:"id"`

@@ -19,6 +19,7 @@ import (
 	_ "github.com/datumforge/datum/cmd/cli/cmd/personalaccesstokens"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/register"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/reset"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/search"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/subscriber"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/switch"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/template"

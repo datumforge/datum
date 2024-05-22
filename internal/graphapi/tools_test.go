@@ -193,7 +193,7 @@ func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {
 	}
 
 	// setup interceptors
-	i := datumclient.WithAuthorization(rawToken, session)
+	i := datumclient.WithAuthorizationAndSession(rawToken, session)
 
 	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
 }

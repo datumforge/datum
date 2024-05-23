@@ -3798,6 +3798,11 @@ input FileWhereInput {
 	hasGroup: Boolean
 	hasGroupWith: [GroupWhereInput!]
 }
+union GlobalSearchResult = OrganizationSearchResult | GroupSearchResult | UserSearchResult | SubscriberSearchResult
+type GlobalSearchResultConnection {
+	page: PageInfo!
+	nodes: [GlobalSearchResult!]!
+}
 type Group implements Node {
 	id: ID!
 	createdAt: Time
@@ -4638,6 +4643,9 @@ Properties by which Group connections can be ordered.
 enum GroupOrderField {
 	name
 	display_name
+}
+type GroupSearchResult {
+	groups: [Group!]
 }
 type GroupSetting implements Node {
 	id: ID!
@@ -9524,6 +9532,9 @@ enum OrganizationOrderField {
 	name
 	display_name
 }
+type OrganizationSearchResult {
+	organizations: [Organization!]
+}
 type OrganizationSetting implements Node {
 	id: ID!
 	createdAt: Time
@@ -12139,6 +12150,15 @@ type Query {
 		id: ID!
 	): PersonalAccessToken!
 	"""
+	Search across organizations, groups, and users
+	"""
+	search(
+		"""
+		Search query
+		"""
+		query: String!
+	): GlobalSearchResultConnection
+	"""
 	Look up subscriber by Email
 	"""
 	subscriber(
@@ -12276,6 +12296,9 @@ type SubscriberEdge {
 	A cursor for use in pagination.
 	"""
 	cursor: Cursor!
+}
+type SubscriberSearchResult {
+	subscribers: [Subscriber!]
 }
 """
 Return response for updateSubscriber mutation
@@ -14904,6 +14927,9 @@ enum UserRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Ro
 	ADMIN
 	MEMBER
 	USER
+}
+type UserSearchResult {
+	users: [User!]
 }
 type UserSetting implements Node {
 	id: ID!

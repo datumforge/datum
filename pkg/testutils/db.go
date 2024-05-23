@@ -1,72 +1,41 @@
 package testutils
 
 import (
-	"context"
 	"fmt"
+	"log"
+	"os"
 	"strings"
 	"time"
 
+	"entgo.io/ent/dialect"
 	_ "github.com/lib/pq"
+	"github.com/ory/dockertest"
+	"github.com/ory/dockertest/docker"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	_ "modernc.org/sqlite"
-
-	"github.com/docker/go-connections/nat"
-
-	"entgo.io/ent/dialect"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
-	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-type TC struct {
-	Container testcontainers.Container
-	Dialect   string
-	URI       string
+type TestFixture struct {
+	Pool     *dockertest.Pool
+	resource *dockertest.Resource
+	URI      string
+	Dialect  string
 }
 
-// TODO: troubleshoot support for cockroachdb; currently complains about dropping an index during tests
+func TeardownFixture(tf *TestFixture) {
+	if tf.Pool != nil {
+		if err := tf.Pool.Purge(tf.resource); err != nil {
+			log.Fatalf("Could not purge resource: %s", err)
+		}
+	}
+}
+func getPGDockerTest(image string, expiry time.Duration) (*TestFixture, error) {
+	pool, err := dockertest.NewPool("")
+	if err != nil {
+		return nil, err
+	}
 
-// func getCRDB(ctx context.Context, image string, opts ...testcontainers.ContainerCustomizer) (testcontainers.Container, string, error) {
-// 	defaultImg := "docker.io/cockroachdb/cockroach"
-// 	imgTag := "latest"
-
-// 	if strings.Contains(image, ":") {
-// 		p := strings.SplitN(image, ":", 2) //nolint:gomnd
-// 		imgTag = p[1]
-// 	}
-
-// 	req := testcontainers.ContainerRequest{
-// 		Image:        fmt.Sprintf("%s:%s", defaultImg, imgTag),
-// 		ExposedPorts: []string{"26257/tcp", "8080/tcp"},
-// 		WaitingFor:   wait.ForHTTP("/health").WithPort("8080"),
-// 		Cmd:          []string{"start-single-node", "--insecure"},
-// 	}
-
-// 	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-// 		ContainerRequest: req,
-// 		Started:          true,
-// 	})
-// 	if err != nil {
-// 		return nil, "", err
-// 	}
-
-// 	mappedPort, err := container.MappedPort(ctx, "26257")
-// 	if err != nil {
-// 		return nil, "", err
-// 	}
-
-// 	hostIP, err := container.Host(ctx)
-// 	if err != nil {
-// 		return nil, "", err
-// 	}
-
-// 	uri := fmt.Sprintf("postgres://root@%s:%s/defaultdb?sslmode=disable", hostIP, mappedPort.Port())
-
-// 	return container, uri, nil
-// }
-
-func getPG(ctx context.Context, image string, opts ...testcontainers.ContainerCustomizer) (postgres.PostgresContainer, string, error) {
-	defaultImg := "docker.io/postgres"
+	defaultImg := "postgres"
 	imgTag := "alpine"
 
 	if strings.Contains(image, ":") {
@@ -74,78 +43,89 @@ func getPG(ctx context.Context, image string, opts ...testcontainers.ContainerCu
 		imgTag = p[1]
 	}
 
-	dbURI := "postgres://postgres:postgres@%s:%s/postgres?sslmode=disable"
+	password := "password"
+	user := "postgres"
+	dbName := "postgres"
 
-	uriFunc := func(host string, port nat.Port) string {
-		return fmt.Sprintf(dbURI, host, port.Port())
-	}
-
-	opts = append(opts,
-		testcontainers.WithImage(fmt.Sprintf("%s:%s", defaultImg, imgTag)),
-		testcontainers.WithWaitStrategy(
-			wait.ForSQL(nat.Port("5432"), "postgres", uriFunc),
-			wait.ForExposedPort(),
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
-				WithStartupTimeout(30*time.Second)),
-		postgres.WithPassword("postgres"),
-	)
-
-	container, err := postgres.RunContainer(ctx, opts...)
+	// pulls an image, creates a container based on it and runs it
+	resource, err := pool.RunWithOptions(
+		&dockertest.RunOptions{
+			Repository: defaultImg,
+			Tag:        imgTag,
+			Env: []string{
+				fmt.Sprintf("POSTGRES_PASSWORD=%s", password),
+				fmt.Sprintf("POSTGRES_USER=%s", user),
+				fmt.Sprintf("POSTGRES_DB=%s", dbName),
+				"listen_addresses='*'",
+			},
+		}, func(config *docker.HostConfig) {
+			config.AutoRemove = true
+			config.RestartPolicy = docker.RestartPolicy{
+				Name: "no",
+			}
+		})
 	if err != nil {
-		return postgres.PostgresContainer{}, "", err
+		log.Fatalf("Could not start resource: %s", err)
 	}
 
-	mappedPort, err := container.MappedPort(ctx, "5432")
-	if err != nil {
-		return postgres.PostgresContainer{}, "", err
+	port := resource.GetPort("5432/tcp")
+
+	// when running locally, the host is localhost
+	// however, when running in a CI environment, and using docker-in-docker
+	// the host is the docker host network
+	// - `host.docker.internal` on mac
+	// - `172.17.0.1` on linux
+	host := os.Getenv("TEST_DB_HOST")
+	if host == "" {
+		host = "localhost"
 	}
 
-	hostIP, err := container.Host(ctx)
-	if err != nil {
-		return postgres.PostgresContainer{}, "", err
+	databaseURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbName)
+
+	if err := resource.Expire(uint(expiry.Seconds())); err != nil {
+		return nil, err
 	}
 
-	uri := fmt.Sprintf(dbURI, hostIP, mappedPort.Port())
-
-	return *container, uri, nil
+	return &TestFixture{
+		Pool:     pool,
+		resource: resource,
+		URI:      databaseURL,
+		Dialect:  dialect.Postgres,
+	}, nil
 }
 
-func getTestDB(ctx context.Context, u string) (TC, error) {
+func getTestDB(u string, expiry time.Duration) (*TestFixture, error) {
 	switch {
-	// case strings.HasPrefix(u, "cockroach"), strings.HasPrefix(u, "cockroachdb"), strings.HasPrefix(u, "crdb"):
-	// 	container, uri, err := getCRDB(ctx, u)
-	// 	return TC{Container: container, URI: uri, Dialect: dialect.Postgres}, err
 	case strings.HasPrefix(u, "postgres"):
-		container, uri, err := getPG(ctx, u)
-		return TC{Container: container, URI: uri, Dialect: dialect.Postgres}, err
+		return getPGDockerTest(u, expiry)
 	default:
-		return TC{}, newURIError(u)
+		return nil, newURIError(u)
 	}
 }
 
 // GetTestURI returns the dialect, connection string and if used a testcontainer for database connectivity in tests
-func GetTestURI(ctx context.Context, u string) *TC {
+func GetTestURI(u string, expiryMinutes int) *TestFixture {
 	switch {
-	case u == "":
-		// return dialect.SQLite, "file::memory:?cache=shared"
-		return &TC{Dialect: "libsql", URI: "file::memory:?cache=shared"}
 	case strings.HasPrefix(u, "sqlite://"):
 		// return dialect.SQLite, strings.TrimPrefix(u, "sqlite://")
-		return &TC{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "sqlite://")}
+		return &TestFixture{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "sqlite://")}
 	case strings.HasPrefix(u, "libsql://"):
 		// return dialect.SQLite, strings.TrimPrefix(u, "libsql://")
-		return &TC{Dialect: "libsql", URI: strings.TrimPrefix(u, "libsql://")}
+		return &TestFixture{Dialect: "libsql", URI: strings.TrimPrefix(u, "libsql://")}
 	case strings.HasPrefix(u, "postgres://"), strings.HasPrefix(u, "postgresql://"):
 		// return dialect.Postgres, u
-		return &TC{Dialect: dialect.Postgres, URI: u}
+		return &TestFixture{Dialect: dialect.Postgres, URI: u}
 	case strings.HasPrefix(u, "docker://"):
-		container, err := getTestDB(ctx, strings.TrimPrefix(u, "docker://"))
+		// set reasonable expiry for docker test containers
+		expiry := time.Duration(expiryMinutes) * time.Minute
+
+		tf, err := getTestDB(strings.TrimPrefix(u, "docker://"), expiry)
 		if err != nil {
 			panic(err)
 		}
+		tf.Dialect = dialect.Postgres
 
-		return &container
+		return tf
 	default:
 		panic("invalid DB URI, uri: " + u)
 	}

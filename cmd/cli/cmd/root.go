@@ -256,9 +256,12 @@ func createClient(ctx context.Context, baseURL string) (*CLI, error) {
 		}
 	}
 
-	accessToken := token.AccessToken
+	auth := datumclient.Authorization{
+		BearerToken: token.AccessToken,
+		Session:     session,
+	}
 
-	i := datumclient.WithAuthorization(accessToken, session)
+	i := auth.WithAuthorization()
 	interceptors := []clientv2.RequestInterceptor{i}
 
 	if viper.GetBool("logging.debug") {
@@ -268,7 +271,7 @@ func createClient(ctx context.Context, baseURL string) (*CLI, error) {
 	cli.Client = datumclient.NewClient(h, baseURL, opt, interceptors...)
 
 	cli.Interceptor = i
-	cli.AccessToken = accessToken
+	cli.AccessToken = auth.BearerToken
 
 	// new client with params
 	return &cli, nil

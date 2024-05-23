@@ -11,8 +11,18 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 )
 
-// WithAuthorization adds the authorization header and session to the client request
-func WithAuthorization(accessToken string, session string) clientv2.RequestInterceptor {
+// Authorization contains the bearer token and optional session cookie
+type Authorization struct {
+	// BearerToken is the bearer token to be used in the authorization header
+	// this can be the access token, api token, or personal access token
+	BearerToken string
+	// Session is the session cookie to be used in the request
+	// this is required for requests using the access token
+	Session string
+}
+
+// WithAuthorizationAndSession adds the authorization header and session to the client request
+func (a Authorization) WithAuthorization() clientv2.RequestInterceptor {
 	return func(
 		ctx context.Context,
 		req *http.Request,
@@ -23,14 +33,16 @@ func WithAuthorization(accessToken string, session string) clientv2.RequestInter
 		// setting authorization header if its not already set
 		h := req.Header.Get("Authorization")
 		if h == "" {
-			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", a.BearerToken))
 		}
 
 		// add session cookie
-		if strings.Contains(req.Host, "localhost") {
-			req.AddCookie(sessions.NewDevSessionCookie(session))
-		} else {
-			req.AddCookie(sessions.NewSessionCookie(session))
+		if a.Session != "" {
+			if strings.Contains(req.Host, "localhost") {
+				req.AddCookie(sessions.NewDevSessionCookie(a.Session))
+			} else {
+				req.AddCookie(sessions.NewSessionCookie(a.Session))
+			}
 		}
 
 		return next(ctx, req, gqlInfo, res)

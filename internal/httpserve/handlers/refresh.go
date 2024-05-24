@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
@@ -81,4 +82,19 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, out)
+}
+
+// BindRefreshHandler is used to bind the refresh endpoint to the OpenAPI schema
+func (h *Handler) BindRefreshHandler() *openapi3.Operation {
+	refresh := openapi3.NewOperation()
+	refresh.Description = "Refresh the access token"
+	refresh.OperationID = "RefreshHandler"
+
+	h.AddRequestBody("RefreshRequest", RefreshRequest{}, refresh)
+	h.AddResponse("RefreshReply", "success", RefreshReply{}, refresh, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), refresh, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), refresh, http.StatusBadRequest)
+	h.AddResponse("NotFound", "error", rout.NotFound(), refresh, http.StatusNotFound)
+
+	return refresh
 }

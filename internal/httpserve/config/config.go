@@ -30,26 +30,23 @@ var (
 	}
 )
 
-type (
-	// Config contains the configuration for the datum server
-	Config struct {
-		// add all the configuration settings for the datum server
-		Settings config.Config
-
-		// Logger contains the logger used by echo functions
-		Logger *zap.SugaredLogger
-		// Routes contains the handler functions
-		Routes []http.Handler
-		// DefaultMiddleware to enable on the echo server used on all requests
-		DefaultMiddleware []echo.MiddlewareFunc
-		// GraphMiddleware to enable on the echo server used on graph requests
-		GraphMiddleware []echo.MiddlewareFunc
-		// Handler contains the required settings for REST handlers including ready checks and JWT keys
-		Handler handlers.Handler
-		// SessionConfig manages sessions for users
-		SessionConfig *sessions.SessionConfig
-	}
-)
+// Config is the configuration for the http server
+type Config struct {
+	// add all the configuration settings for the datum server
+	Settings config.Config
+	// Logger contains the logger used by echo functions
+	Logger *zap.SugaredLogger
+	// Routes contains the handler functions
+	Routes []http.Handler
+	// DefaultMiddleware to enable on the echo server used on all requests
+	DefaultMiddleware []echo.MiddlewareFunc
+	// GraphMiddleware to enable on the echo server used on graph requests
+	GraphMiddleware []echo.MiddlewareFunc
+	// Handler contains the required settings for REST handlers including ready checks and JWT keys
+	Handler handlers.Handler
+	// SessionConfig manages sessions for users
+	SessionConfig *sessions.SessionConfig
+}
 
 // Ensure that *Config implements ConfigProvider interface.
 var _ ConfigProvider = &Config{}

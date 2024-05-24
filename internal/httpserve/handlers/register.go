@@ -8,6 +8,7 @@ import (
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -187,4 +188,19 @@ func (r *RegisterRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// BindRegisterHandler is used to bind the register endpoint to the OpenAPI schema
+func (h *Handler) BindRegisterHandler() *openapi3.Operation {
+	register := openapi3.NewOperation()
+	register.Description = ("Register a new user")
+	register.OperationID = "RegisterHandler"
+
+	h.AddRequestBody("RegisterRequest", RegisterRequest{}, register)
+	h.AddResponse("RegisterReply", "success", RegisterReply{}, register, http.StatusCreated)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), register, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), register, http.StatusBadRequest)
+	h.AddResponse("Conflict", "error", rout.Conflict(), register, http.StatusConflict)
+
+	return register
 }

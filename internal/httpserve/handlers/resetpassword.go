@@ -10,6 +10,7 @@ import (
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/oklog/ulid/v2"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -180,4 +181,18 @@ func (u *User) setResetTokens(user *generated.User, reqToken string) error {
 	// otherwise, since we get the user by the token, it should always
 	// be there
 	return ErrPassWordResetTokenInvalid
+}
+
+// BindResetPassword binds the reset password handler to the OpenAPI schema
+func (h *Handler) BindResetPasswordHandler() *openapi3.Operation {
+	resetPassword := openapi3.NewOperation()
+	resetPassword.Description = "Publish and Correleate Events"
+	resetPassword.OperationID = "EventPublisher"
+
+	h.AddRequestBody("PublishRequest", PublishRequest{}, resetPassword)
+	h.AddResponse("PublishReply", "success", PublishReply{}, resetPassword, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), resetPassword, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.InvalidRequest(), resetPassword, http.StatusBadRequest)
+
+	return resetPassword
 }

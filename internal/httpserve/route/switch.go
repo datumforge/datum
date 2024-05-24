@@ -4,22 +4,28 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // registerSwitchRoute registers the switch route to switch the user's logged in organization context
-func registerSwitchRoute(router *echo.Echo, h *handlers.Handler) (err error) {
+func registerSwitchRoute(router *Router) (err error) {
 	authMW := mw
-	authMW = append(authMW, h.AuthMiddleware...)
-	_, err = router.AddRoute(echo.Route{
+	authMW = append(authMW, router.Handler.AuthMiddleware...)
+
+	path := "/switch"
+	method := http.MethodPost
+
+	route := echo.Route{
 		Name:   "Switch",
-		Method: http.MethodPost,
-		Path:   "/switch",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.SwitchHandler(c)
+			return router.Handler.SwitchHandler(c)
 		},
-	}.ForGroup(V1Version, authMW))
+	}.ForGroup(V1Version, authMW)
+
+	switchOperation := router.Handler.BindSwitchHandler()
+
+	router.AddRoute(path, method, switchOperation, route)
 
 	return
 }

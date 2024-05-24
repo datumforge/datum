@@ -5,6 +5,7 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/fgax"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/golang-jwt/jwt/v5"
 	ph "github.com/posthog/posthog-go"
 
@@ -136,4 +137,18 @@ func switchClaims(u *generated.User, targetOrgMappingID string) *tokens.Claims {
 		UserID: u.MappingID,
 		OrgID:  targetOrgMappingID,
 	}
+}
+
+// BindResetPassword binds the reset password handler to the OpenAPI schema
+func (h *Handler) BindSwitchHandler() *openapi3.Operation {
+	switchHandler := openapi3.NewOperation()
+	switchHandler.Description = "Switch the user's organization context"
+	switchHandler.OperationID = "OrganizationSwitch"
+
+	h.AddRequestBody("PublishRequest", PublishRequest{}, switchHandler)
+	h.AddResponse("PublishReply", "success", PublishReply{}, switchHandler, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), switchHandler, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), switchHandler, http.StatusBadRequest)
+
+	return switchHandler
 }

@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -181,4 +182,19 @@ func (u *User) setUserTokens(user *generated.User, reqToken string) error {
 	}
 
 	return ErrNotFound
+}
+
+// BindVerifyEmailHandler binds the verify email verification endpoint to the OpenAPI schema
+func (h *Handler) BindVerifyEmailHandler() *openapi3.Operation {
+	verify := openapi3.NewOperation()
+	verify.Description = "Verify an email address"
+	verify.OperationID = "VerifyEmail"
+
+	h.AddRequestBody("VerifyEmail", VerifyRequest{}, verify)
+	h.AddResponse("VerifyReply", "success", VerifyReply{}, verify, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), verify, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), verify, http.StatusBadRequest)
+	h.AddResponse("Created", "Created", rout.Created(), verify, http.StatusCreated)
+
+	return verify
 }

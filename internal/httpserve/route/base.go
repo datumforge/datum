@@ -5,42 +5,61 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
-func registerLivenessHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/livez",
+// registerLivenessHandler registers the liveness handler
+func registerLivenessHandler(router *Router) (err error) {
+	path := "/livez"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:   "Livez",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
 			return c.JSON(http.StatusOK, echo.Map{
 				"status": "UP",
 			})
 		},
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(unversioned, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }
 
-func registerReadinessHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/ready",
+// registerReadinessHandler registers the readiness handler
+func registerReadinessHandler(router *Router) (err error) {
+	path := "/ready"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:   "Ready",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.ReadyChecks.ReadyHandler(c)
+			return router.Handler.ReadyChecks.ReadyHandler(c)
 		},
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(unversioned, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }
 
-func registerMetricsHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/metrics",
+// registerMetricsHandler registers the metrics handler
+func registerMetricsHandler(router *Router) (err error) {
+	path := "/metrics"
+	method := http.MethodGet
+
+	route := echo.Route{
+		Name:    "Metrics",
+		Method:  method,
+		Path:    path,
 		Handler: echo.WrapHandler(promhttp.Handler()),
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(unversioned, mw)
+
+	router.AddRoute(path, method, nil, route)
 
 	return
 }

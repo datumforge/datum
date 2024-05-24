@@ -6,6 +6,7 @@ import (
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -113,4 +114,18 @@ func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User
 	}
 
 	return meowtoken, nil
+}
+
+// BindForgotPassword is used to bind the forgot password endpoint to the OpenAPI schema
+func (h *Handler) BindForgotPassword() *openapi3.Operation {
+	forgotPassword := openapi3.NewOperation()
+	forgotPassword.Description = "Request a password reset email"
+	forgotPassword.OperationID = "ForgotPassword"
+
+	h.AddRequestBody("ForgotPasswordRequest", ForgotPasswordRequest{}, forgotPassword)
+	h.AddResponse("ForgotPasswordReply", "success", ForgotPasswordReply{}, forgotPassword, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), forgotPassword, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), forgotPassword, http.StatusBadRequest)
+
+	return forgotPassword
 }

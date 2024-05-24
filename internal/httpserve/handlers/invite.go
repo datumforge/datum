@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/oklog/ulid/v2"
 
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -260,4 +261,18 @@ func updateInviteStatusExpired(ctx context.Context, i *generated.Invite) error {
 	}
 
 	return nil
+}
+
+// BindOrganizationInviteAccept returns the OpenAPI3 operation for accepting an organization invite
+func (h *Handler) BindOrganizationInviteAccept() *openapi3.Operation {
+	inviteAccept := openapi3.NewOperation()
+	inviteAccept.Description = "Accept an Organization Invite"
+	inviteAccept.OperationID = "OrganizationInviteAccept"
+
+	h.AddRequestBody("InviteRequest", InviteRequest{}, inviteAccept)
+	h.AddResponse("InviteReply", "success", InviteReply{}, inviteAccept, http.StatusCreated)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), inviteAccept, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), inviteAccept, http.StatusBadRequest)
+
+	return inviteAccept
 }

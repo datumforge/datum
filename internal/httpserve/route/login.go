@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // Login is oriented towards human users who use their email and password for
@@ -19,15 +17,22 @@ import (
 // without the user having to log in again. The refresh token overlaps with the access
 // token to provide a seamless authentication experience and the user can refresh their
 // access token so long as the refresh token is valid.
-func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
+func registerLoginHandler(router *Router) (err error) {
+	path := "/login"
+	method := http.MethodPost
+
+	route := echo.Route{
 		Name:   "Login",
-		Method: http.MethodPost,
-		Path:   "/login",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.LoginHandler(c)
+			return router.Handler.LoginHandler(c)
 		},
-	}.ForGroup(V1Version, mw))
+	}.ForGroup(V1Version, mw)
+
+	loginOperation := router.Handler.BindLoginHandler()
+
+	router.AddRoute(path, method, loginOperation, route)
 
 	return
 }

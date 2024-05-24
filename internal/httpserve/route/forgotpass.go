@@ -4,43 +4,28 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // ForgotPassword is a service for users to request a password reset email. The email
 // address must be provided in the POST request and the user must exist in the
 // database. This endpoint always returns 204 regardless of whether the user exists or
 // not to avoid leaking information about users in the database.
-func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
+func registerForgotPasswordHandler(router *Router) (err error) {
+	path := "/forgot-password"
+	method := http.MethodPost
+
+	route := echo.Route{
 		Name:   "ForgotPassword",
-		Method: http.MethodPost,
-		Path:   "/forgot-password",
+		Method: method,
+		Path:   path,
 		Handler: func(c echo.Context) error {
-			return h.ForgotPassword(c)
+			return router.Handler.ForgotPassword(c)
 		},
-	}.ForGroup(V1Version, restrictedEndpointsMW))
+	}.ForGroup(V1Version, restrictedEndpointsMW)
 
-	if err != nil {
-		return err
-	}
+	forgotPasswordOperation := router.Handler.BindForgotPassword()
 
-	// we need to handle the redirect from /.well-known 302 -> /v1/forgot-password with a 200
-	_, err = router.AddRoute(echo.Route{
-		Name:   "ForgotPasswordRedirect",
-		Method: http.MethodGet,
-		Path:   "/forgot-password",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
-			return c.JSON(http.StatusOK, "OK")
-		},
-	}.ForGroup(V1Version, restrictedEndpointsMW))
-
-	if err != nil {
-		return err
-	}
+	router.AddRoute(path, method, forgotPasswordOperation, route)
 
 	return
 }

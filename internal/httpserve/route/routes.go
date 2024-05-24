@@ -6,7 +6,6 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 )
@@ -23,21 +22,12 @@ var (
 	restrictedEndpointsMW = []echo.MiddlewareFunc{}
 )
 
-type Route struct {
-	Method      string
-	Path        string
-	Handler     echo.HandlerFunc
-	Middlewares []echo.MiddlewareFunc
-
-	Name string
-}
-
-// RegisterRoutes with the echo routers
-func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
+// RegisterRoutes with the echo routers - Router is defined within openapi.go
+func RegisterRoutes(router *Router) error {
 	// add transaction middleware
 	transactionConfig := transaction.Client{
-		EntDBClient: h.DBClient,
-		Logger:      h.Logger,
+		EntDBClient: router.Handler.DBClient,
+		Logger:      router.Handler.Logger,
 	}
 
 	mw = append(mw, transactionConfig.Middleware)
@@ -49,7 +39,6 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	// routeHandlers that take the router and handler as input
 	routeHandlers := []interface{}{
 		registerReadinessHandler,
-		registerLoginHandler,
 		registerForgotPasswordHandler,
 		registerVerifyHandler,
 		registerResetPasswordHandler,
@@ -57,9 +46,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		registerRegisterHandler,
 		registerVerifySubscribeHandler,
 		registerRefreshHandler,
-		registerAuthenticateHandler,
 		registerJwksWellKnownHandler,
-		registerOIDCHandler,
 		registerInviteHandler,
 		registerGithubLoginHandler,
 		registerGithubCallbackHandler,
@@ -73,43 +60,20 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		registerOAuthRegisterHandler,
 		registerSwitchRoute,
 		registerEventPublisher,
-	}
-
-	for _, route := range routeHandlers {
-		if err := route.(func(*echo.Echo, *handlers.Handler) error)(router, h); err != nil {
-			return err
-		}
-	}
-
-	// register additional handlers that only require router input
-	additionalHandlers := []interface{}{
 		registerLivenessHandler,
-		registerOpenAPISpecHandler,
 		registerMetricsHandler,
 		registerSecurityTxtHandler,
 		registerRobotsHandler,
 		registerFaviconHandler,
+		registerOpenAPIHandler,
+		registerLoginHandler,
 	}
 
-	for _, route := range additionalHandlers {
-		if err := route.(func(*echo.Echo) error)(router); err != nil {
+	for _, route := range routeHandlers {
+		if err := route.(func(*Router) error)(router); err != nil {
 			return err
 		}
 	}
 
 	return nil
-}
-
-// RegisterRoute with the echo server given a method, path, and handler definition
-func (r *Route) RegisterRoute(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:      r.Method,
-		Path:        r.Path,
-		Handler:     r.Handler,
-		Middlewares: r.Middlewares,
-
-		Name: r.Name,
-	})
-
-	return
 }

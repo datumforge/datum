@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -204,4 +205,19 @@ func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID str
 	h.AnalyticsClient.Event("email_verification_sent", props)
 
 	return nil
+}
+
+// BindVerifySubscriberHandler creates the openapi operation for the subscription verification endpoint
+func (h *Handler) BindVerifySubscriberHandler() *openapi3.Operation {
+	verify := openapi3.NewOperation()
+	verify.Description = "Verify an email address for a subscription"
+	verify.OperationID = "VerifySubscriberEmail"
+
+	h.AddRequestBody("VerifyEmail", VerifyRequest{}, verify)
+	h.AddResponse("VerifyReply", "success", VerifyReply{}, verify, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), verify, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), verify, http.StatusBadRequest)
+	h.AddResponse("Created", "Created", rout.Created(), verify, http.StatusCreated)
+
+	return verify
 }

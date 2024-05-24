@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	"github.com/datumforge/datum/pkg/rout"
 )
@@ -29,7 +30,7 @@ func (h *Handler) EventPublisher(ctx echo.Context) error {
 	}
 
 	if err := h.EventManager.Publish(in.Topic, []byte(in.Message)); err != nil {
-		return ctx.JSON(http.StatusConflict, rout.ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	out := &PublishReply{
@@ -38,4 +39,18 @@ func (h *Handler) EventPublisher(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, out)
+}
+
+// BindEventPublisher is used to bind the event publisher endpoint to the OpenAPI schema
+func (h *Handler) BindEventPublisher() *openapi3.Operation {
+	eventCreate := openapi3.NewOperation()
+	eventCreate.Description = "Publish and Correleate Events"
+	eventCreate.OperationID = "EventPublisher"
+
+	h.AddRequestBody("PublishRequest", PublishRequest{}, eventCreate)
+	h.AddResponse("PublishReply", "success", PublishReply{}, eventCreate, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), eventCreate, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), eventCreate, http.StatusBadRequest)
+
+	return eventCreate
 }

@@ -1,0 +1,191 @@
+package route
+
+import (
+	"fmt"
+	"reflect"
+
+	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/getkin/kin-openapi/openapi3gen"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/rout"
+)
+
+// Router is a struct that holds the echo router, the OpenAPI schema, and the handler - it's a way to group these components together
+type Router struct {
+	Echo    *echo.Echo
+	OAS     *openapi3.T
+	Handler *handlers.Handler
+}
+
+// AddRoute is used to add a route to the echo router and OpenAPI schema at the same time ensuring consistency between the spec and the server
+func (r *Router) AddRoute(pattern, method string, op *openapi3.Operation, route echo.Routable) {
+	_, err := r.Echo.AddRoute(route)
+	if err != nil {
+		return
+	}
+
+	r.OAS.AddOperation(pattern, method, op)
+}
+
+func (r *Router) AddErrorSchema() error {
+	errorResponse := &openapi3.SchemaRef{
+		Ref: "#/components/schemas/ErrorResponse",
+	}
+
+	if err := r.AddSchema("ErrorResponse", rout.StatusError{}); err != nil {
+		return err
+	}
+
+	internalServerError := openapi3.NewResponse().
+		WithDescription("Internal Server Error").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
+	r.OAS.Components.Responses["InternalServerError"] = &openapi3.ResponseRef{Value: internalServerError}
+
+	badRequest := openapi3.NewResponse().
+		WithDescription("Bad Request").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
+	r.OAS.Components.Responses["BadRequest"] = &openapi3.ResponseRef{Value: badRequest}
+
+	unauthorized := openapi3.NewResponse().
+		WithDescription("Unauthorized").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
+	r.OAS.Components.Responses["Unauthorized"] = &openapi3.ResponseRef{Value: unauthorized}
+
+	conflict := openapi3.NewResponse().
+		WithDescription("Conflict").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
+	r.OAS.Components.Responses["Conflict"] = &openapi3.ResponseRef{Value: conflict}
+
+	return nil
+}
+
+var appJSON = "application/json"
+
+// AddRequestBody is used to add a request body definition to the OpenAPI schema
+func (r *Router) AddRequestBody(name string, body interface{}) {
+	request := openapi3.NewRequestBody().WithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/schemas/" + name})
+	request.Content.Get(appJSON).Examples = make(map[string]*openapi3.ExampleRef)
+	request.Content.Get(appJSON).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
+	r.OAS.Components.RequestBodies[name] = &openapi3.RequestBodyRef{Value: request}
+}
+
+// AddHeader is used to add a header definition to the OpenAPI schema
+func (r *Router) AddHeader(name string, header *openapi3.Header) {
+	r.OAS.Components.Headers[name] = &openapi3.HeaderRef{Value: header}
+}
+
+// AddResponse is used to add a response definition to the OpenAPI schema
+func (r *Router) AddResponse(name string, description string, ref string, example interface{}) {
+	response := openapi3.NewResponse().WithDescription(description).WithJSONSchemaRef(&openapi3.SchemaRef{Ref: ref})
+	response.Content.Get(appJSON).Examples = make(map[string]*openapi3.ExampleRef)
+	response.Content.Get(appJSON).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(example)}
+	r.OAS.Components.Responses[name] = &openapi3.ResponseRef{Value: response}
+}
+
+// OpenAPI returns the OpenAPI specification.
+func (r *Router) OpenAPI() *openapi3.T {
+	return r.OAS
+}
+
+func (r *Router) AddQueryParameter(name string, value Parameter) {
+	checkTags(reflect.TypeOf(value))
+
+	param := &openapi3.Parameter{
+		Name:        value.Name,
+		In:          value.In,
+		Description: value.Description,
+		Required:    value.Required,
+		Schema: &openapi3.SchemaRef{
+			Value: &openapi3.Schema{
+				Default: value.Default,
+				Type:    (*openapi3.Types)(&value.Types),
+			},
+		},
+	}
+	r.OAS.Components.Parameters[name] = &openapi3.ParameterRef{Value: param}
+}
+
+// Parameter is a struct that represents a parameter in the OpenAPI schema
+type Parameter struct {
+	Name        string      `json:"name" yaml:"name"`
+	Description string      `json:"description" yaml:"description"`
+	Required    bool        `json:"required" yaml:"required"`
+	Default     interface{} `json:"default" yaml:"default"`
+	Types       []string    `json:"type" yaml:"type"`
+	In          string      `json:"in" yaml:"in"`
+}
+
+// TokenQuery is a parameter for the token query
+var TokenQuery = Parameter{
+	Name:        "token",
+	Description: "the token to parse out of a URL",
+	Types:       []string{"integer"},
+	Required:    true,
+	In:          "query",
+}
+
+// checkTags is a helper function that checks if a struct has the required JSON or YAML tags
+func checkTags(rval reflect.Type) {
+	if rval.Kind() == reflect.Array || rval.Kind() == reflect.Slice {
+		checkTags(rval.Elem())
+		return
+	}
+
+	if rval.Kind() != reflect.Struct {
+		fmt.Printf("unable to check type %s of kind %s for struct tags, skipped\n", rval.Name(), rval.Kind().String())
+		return
+	}
+
+	for i := 0; i < rval.NumField(); i++ {
+		for _, tagName := range []string{"json", "yaml"} {
+			if _, ok := rval.Field(i).Tag.Lookup(tagName); !ok {
+				return
+			}
+		}
+	}
+}
+
+// AddExample adds an example to the OpenAPI schema
+func (r *Router) AddExample(name string, value interface{}) {
+	rval := reflect.TypeOf(value)
+	checkTags(rval)
+
+	example := openapi3.NewExample(value)
+	r.OAS.Components.Examples[name] = &openapi3.ExampleRef{Value: example}
+}
+
+// AddSchema adds a schema to the OpenAPI schema
+func (r *Router) AddSchema(name string, model interface{}) error {
+	schema, err := openapi3gen.NewSchemaRefForValue(model, r.OAS.Components.Schemas)
+	if err != nil {
+		return err
+	}
+
+	r.OAS.Components.Schemas[name] = schema
+
+	return nil
+}
+
+// SchemaGenerator is a helper function that generates a schema from a map
+// example: var openapiSchemas = map[string]any{LoginRequest: LoginRequest{}}
+func SchemaGenerator(openAPISchemas map[string]any) (openapi3.Schemas, error) {
+	schemas := make(openapi3.Schemas)
+	generator := openapi3gen.NewGenerator(openapi3gen.UseAllExportedFields())
+
+	for key, val := range openAPISchemas {
+		ref, err := generator.NewSchemaRefForValue(val, schemas)
+		if err != nil {
+			return nil, err
+		}
+
+		schemas[key] = ref
+	}
+
+	return schemas, nil
+}
+
+func (r *Router) AddSecurityScheme(name string, scheme *openapi3.SecurityScheme) {
+	r.OAS.Components.SecuritySchemes[name] = &openapi3.SecuritySchemeRef{Value: scheme}
+}

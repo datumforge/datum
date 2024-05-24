@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -100,4 +101,18 @@ func validateResendRequest(req ResendRequest) error {
 	}
 
 	return nil
+}
+
+// BindResendEmail binds the resend email verification endpoint to the OpenAPI schema
+func (h *Handler) BindResendEmailHandler() *openapi3.Operation {
+	resendEmail := openapi3.NewOperation()
+	resendEmail.Description = "Resend an email verification email"
+	resendEmail.OperationID = "ResendEmail"
+
+	h.AddRequestBody("ResendEmail", ResendRequest{}, resendEmail)
+	h.AddResponse("ResendReply", "success", ResendReply{}, resendEmail, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), resendEmail, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), resendEmail, http.StatusBadRequest)
+
+	return resendEmail
 }

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/golang-jwt/jwt/v5"
 	ph "github.com/posthog/posthog-go"
 
@@ -153,4 +154,18 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 	}
 
 	return user, nil
+}
+
+// BindLoginHandler binds the login request to the OpenAPI schema
+func (h *Handler) BindLoginHandler() *openapi3.Operation {
+	login := openapi3.NewOperation()
+	login.Description = "Authenticate with the Datum Server"
+	login.OperationID = "LoginHandler"
+
+	h.AddRequestBody("LoginRequest", LoginRequest{}, login)
+	h.AddResponse("LoginReply", "success", LoginReply{}, login, http.StatusOK)
+	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), login, http.StatusInternalServerError)
+	h.AddResponse("BadRequest", "error", rout.BadRequest(), login, http.StatusBadRequest)
+
+	return login
 }

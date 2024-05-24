@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	echo "github.com/datumforge/echox"
+
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 // ErrorCode is returned along side error messages for better error handling
@@ -82,12 +84,57 @@ type StatusError struct {
 	Reply      Reply `json:"reply" yaml:"reply" description:"the Reply generated via the internal/rout package which contains a success bool and the corresponding message"`
 }
 
+type OpenAPIErrorResponse struct {
+	schemaref   openapi3.SchemaRef
+	statuserror StatusError
+}
+
 // Reply contains standard fields that are used for generic API responses and errors
 type Reply struct {
 	Success    bool      `json:"success" yaml:"success" description:"Whether or not the request was successful or not"`
 	Error      string    `json:"error,omitempty" yaml:"error,omitempty" description:"The error message if the request was unsuccessful"`
 	ErrorCode  ErrorCode `json:"error_code,omitempty" yaml:"error_code,omitempty" description:"The error code if the request was unsuccessful"`
 	Unverified bool      `json:"unverified,omitempty" yaml:"unverified,omitempty"`
+}
+
+type Response struct {
+	Success bool    `json:"success"`
+	Message string  `json:"message"`
+	Data    any     `json:"data,omitempty"`
+	Errors  []error `json:"errors,omitempty"`
+}
+
+func (res Response) MarshalJSON() ([]byte, error) {
+	var errors []string
+	for _, err := range res.Errors {
+		errors = append(errors, err.Error())
+	}
+
+	return json.Marshal(map[string]any{"data": res.Data, "errors": errors})
+}
+
+type GraphQLRequest struct {
+	Query string `json:"query"`
+}
+
+type GraphQLResponse struct {
+	Data   any     `json:"data"`
+	Errors []error `json:"errors,omitempty"`
+}
+
+// InvalidRequest returns a JSON 400 response for the API
+func InvalidRequest() StatusError {
+	return StatusError{
+		StatusCode: http.StatusBadRequest,
+		Reply:      Reply{Success: false, Error: "invalid request", Unverified: false},
+	}
+}
+
+func InternalError() StatusError {
+	return StatusError{
+		StatusCode: http.StatusInternalServerError,
+		Reply:      Reply{Success: false, Error: "internal server error", Unverified: false},
+	}
 }
 
 // BadRequest returns a JSON 400 response for the API
@@ -119,6 +166,20 @@ func Unauthorized() StatusError {
 	return StatusError{
 		StatusCode: http.StatusUnauthorized,
 		Reply:      Reply{Success: false, Error: "unauthorized", Unverified: false},
+	}
+}
+
+func NotFound() StatusError {
+	return StatusError{
+		StatusCode: http.StatusNotFound,
+		Reply:      Reply{Success: false, Error: "not found", Unverified: false},
+	}
+}
+
+func Created() StatusError {
+	return StatusError{
+		StatusCode: http.StatusCreated,
+		Reply:      Reply{Success: true, Error: ""},
 	}
 }
 
@@ -204,10 +265,6 @@ func HTTPErrorResponse(err interface{}) *echo.HTTPError {
 	}
 
 	return &rep
-}
-
-func NotFound(c echo.Context) error {
-	return c.JSON(http.StatusNotFound, notFound) //nolint:errcheck
 }
 
 // NotAllowed returns a JSON 405 response for the API.

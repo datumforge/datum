@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -57,7 +56,7 @@ func (Webhook) Fields() []ent.Field {
 			Optional(),
 		field.Bytes("secret").
 			Comment("the comparison secret to verify the token's signature").
-			Annotations(entgql.Skip(), entoas.Skip(true)).
+			Annotations(entgql.Skip()).
 			Optional(),
 		field.Int("failures").
 			Comment("the number of failures").

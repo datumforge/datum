@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -22,7 +21,7 @@ func (Event) Fields() []ent.Field {
 		field.String("correlation_id").
 			Optional(),
 		field.String("event_type"),
-		field.JSON("metadata", map[string]interface{}{}).Optional().Annotations(entoas.Skip(true)),
+		field.JSON("metadata", map[string]interface{}{}).Optional(),
 	}
 }
 

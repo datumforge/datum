@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
@@ -38,7 +37,6 @@ func (APIToken) Fields() []ent.Field {
 			Immutable().
 			Annotations(
 				entgql.Skip(^entgql.SkipType),
-				entoas.Skip(true),
 			).
 			DefaultFunc(func() string {
 				token := keygen.PrefixedSecret("dtma") // datum api token prefix

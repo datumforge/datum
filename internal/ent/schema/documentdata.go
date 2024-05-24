@@ -2,14 +2,12 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	emixin "github.com/datumforge/entx/mixin"
-	"github.com/ogen-go/ogen"
 
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -29,7 +27,6 @@ func (DocumentData) Fields() []ent.Field {
 			Comment("the json data of the document").
 			Annotations(
 				entgql.Type("JSON"),
-				entoas.Schema(ogen.String().AsArray()),
 			),
 	}
 }

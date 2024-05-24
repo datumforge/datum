@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -11,7 +10,6 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
-	"github.com/ogen-go/ogen"
 
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -56,13 +54,11 @@ func (Template) Fields() []ent.Field {
 			Comment("the jsonschema object of the template").
 			Annotations(
 				entgql.Type("JSON"),
-				entoas.Schema(ogen.String().AsArray()),
 			),
 		field.JSON("uischema", customtypes.JSONObject{}).
 			Comment("the uischema for the template to render in the UI").
 			Annotations(
 				entgql.Type("JSON"),
-				entoas.Schema(ogen.String().AsArray()),
 			).
 			Optional(),
 	}

@@ -56,7 +56,7 @@ type GraphTestSuite struct {
 // client contains all the clients the test need to interact with
 type client struct {
 	db    *ent.Client
-	datum datumclient.DatumClient
+	datum datumclient.DatumGraphClient
 	fga   *mock_fga.MockSdkClient
 }
 
@@ -168,7 +168,7 @@ func (suite *GraphTestSuite) TearDownSuite() {
 	testutils.TeardownFixture(suite.tf)
 }
 
-func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {
+func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumGraphClient {
 	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
 
 	srv := handler.NewDefaultServer(

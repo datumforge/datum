@@ -18,6 +18,6 @@ schema: ["schema.graphql"]
 query: ["query/*.graphql"]
 generate:
   clientV2: true
-  clientInterfaceName: "DatumClient"
+  clientInterfaceName: "DatumGraphClient"
   query: false
   mutation: false

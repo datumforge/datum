@@ -55,7 +55,7 @@ var (
 )
 
 type CLI struct {
-	Client      datumclient.DatumClient
+	Client      datumclient.DatumGraphClient
 	Interceptor clientv2.RequestInterceptor
 	AccessToken string
 }

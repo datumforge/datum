@@ -6,8 +6,6 @@ db:
 # auth settings
 auth:
   enabled: true
-  token:
-    kid: "02GGBS68AM12178M0REW3CEAFF"
   supportedProviders:
     - google
     - github

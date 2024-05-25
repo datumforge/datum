@@ -27,7 +27,7 @@ const (
 // the user will not be able to authenticate until the email is verified
 // [MermaidChart: 5a357443-f959-4f16-a07f-ec504f67f0eb]
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
-	var in models.RegisterRequest
+	var in RegisterRequest
 	if err := ctx.Bind(&in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}

@@ -13,14 +13,14 @@ import (
 	echo "github.com/datumforge/echox"
 	"golang.org/x/oauth2"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/sessions"
 )
 
 // Login creates a login request to the Datum API
-func Login(c *Client, ctx context.Context, login handlers.LoginRequest) (*oauth2.Token, error) {
+func Login(c *Client, ctx context.Context, login models.LoginRequest) (*oauth2.Token, error) {
 	method := http.MethodPost
 	endpoint := "login"
 
@@ -53,7 +53,7 @@ func Login(c *Client, ctx context.Context, login handlers.LoginRequest) (*oauth2
 
 	defer resp.Body.Close()
 
-	out := handlers.LoginReply{}
+	out := models.LoginReply{}
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}

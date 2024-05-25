@@ -192,9 +192,9 @@ func (h *Handler) BindVerifyEmailHandler() *openapi3.Operation {
 
 	h.AddRequestBody("VerifyEmail", VerifyRequest{}, verify)
 	h.AddResponse("VerifyReply", "success", VerifyReply{}, verify, http.StatusOK)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), verify, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.BadRequest(), verify, http.StatusBadRequest)
-	h.AddResponse("Created", "Created", rout.Created(), verify, http.StatusCreated)
+	verify.AddResponse(http.StatusInternalServerError, internalServerError())
+	verify.AddResponse(http.StatusBadRequest, badRequest())
+	verify.AddResponse(http.StatusCreated, created())
 
 	return verify
 }

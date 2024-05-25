@@ -1,27 +1,10 @@
-package datumclient
+package models
 
 import (
-	"context"
+	"github.com/go-webauthn/webauthn/protocol"
 
 	"github.com/datumforge/datum/pkg/rout"
 )
-
-type DatumClient interface {
-	DatumGraphClient
-	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
-	Login(context.Context, *LoginRequest) (*LoginReply, error)
-	Refresh(context.Context, *RefreshRequest) (*LoginReply, error)
-	Switch(context.Context, *SwitchOrganizationRequest) (*SwitchOrganizationReply, error)
-	VerifyEmail(context.Context, *VerifyRequest) (*LoginReply, error)
-	ResendEmail(context.Context, *ResendRequest) error
-	ForgotPassword(context.Context, *ForgotPasswordRequest) error
-	ResetPassword(context.Context, *ResetPasswordRequest) error
-}
-
-// InviteRequest holds the fields that should be included on a request to the `/invite` endpoint
-type InviteRequest struct {
-	Token string `query:"token"`
-}
 
 // InviteReply holds the fields that are sent on a response to an accepted invitation
 // Note: there is no InviteRequest as this is handled via our graph interfaces
@@ -144,4 +127,94 @@ type ResetPasswordRequest struct {
 type ResetPasswordReply struct {
 	rout.Reply
 	Message string `json:"message"`
+}
+
+// WebauthnRegistrationRequest is the request to begin a webauthn login
+type WebauthnRegistrationRequest struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}
+
+// WebauthnRegistrationResponse is the response to begin a webauthn login
+// this includes the credential creation options and the session token
+type WebauthnBeginRegistrationResponse struct {
+	Reply rout.Reply
+	*protocol.CredentialCreation
+	Session string `json:"session,omitempty"`
+}
+
+// WebauthnRegistrationResponse is the response after a successful webauthn registration
+type WebauthnRegistrationResponse struct {
+	rout.Reply
+	Message      string `json:"message,omitempty"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	Session      string `json:"session,omitempty"`
+	TokenType    string `json:"token_type"`
+}
+
+// WebauthnBeginLoginResponse is the response to begin a webauthn login
+// this includes the credential assertion options and the session token
+type WebauthnBeginLoginResponse struct {
+	Reply rout.Reply
+	*protocol.CredentialAssertion
+	Session string `json:"session,omitempty"`
+}
+
+// WebauthnRegistrationResponse is the response after a successful webauthn login
+type WebauthnLoginResponse struct {
+	rout.Reply
+	Message      string `json:"message,omitempty"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	Session      string `json:"session,omitempty"`
+	TokenType    string `json:"token_type"`
+}
+
+// VerifySubscribeRequest holds the fields that should be included on a request to the `/subscribe/verify` endpoint
+type VerifySubscribeRequest struct {
+	Token string `query:"token"`
+}
+
+// VerifySubscribeReply holds the fields that are sent on a response to the `/subscribe/verify` endpoint
+type VerifySubscribeReply struct {
+	rout.Reply
+	Message string `json:"message,omitempty"`
+}
+
+// PublishRequest is the request payload for the event publisher
+type PublishRequest struct {
+	Tags    map[string]string `json:"tags"`
+	Topic   string            `json:"topic"`
+	Message string            `json:"message"`
+}
+
+// PublishReply holds the fields that are sent on a response to the `/event/publish` endpoint
+type PublishReply struct {
+	rout.Reply
+	Message string `json:"message"`
+}
+
+// InviteRequest holds the fields that should be included on a request to the `/invite` endpoint
+type InviteRequest struct {
+	Token string `query:"token"`
+}
+
+// Reply contains standard fields that are used for generic API responses and errors
+type Reply struct {
+	Success    bool   `json:"success"`
+	Error      string `json:"error,omitempty"`
+	Unverified bool   `json:"unverified,omitempty"`
+}
+
+// Returned on status requests
+type StatusReply struct {
+	Status  string `json:"status"`
+	Uptime  string `json:"uptime,omitempty"`
+	Version string `json:"version,omitempty"`
+}
+
+// SwitchRequest is the request payload for the switch organization endpoint
+type SwitchRequest struct {
+	OrgID string `json:"org_id"`
 }

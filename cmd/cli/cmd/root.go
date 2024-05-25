@@ -22,8 +22,8 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
@@ -332,7 +332,7 @@ func refreshToken(ctx context.Context, refresh string) (*oauth2.Token, error) {
 	// this allows the use of the graph client to be used for the REST endpoints
 	dc := c.(*datumclient.Client)
 
-	req := handlers.RefreshRequest{
+	req := models.RefreshRequest{
 		RefreshToken: refresh,
 	}
 

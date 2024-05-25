@@ -49,8 +49,8 @@ func (h *Handler) BindEventPublisher() *openapi3.Operation {
 
 	h.AddRequestBody("PublishRequest", PublishRequest{}, eventCreate)
 	h.AddResponse("PublishReply", "success", PublishReply{}, eventCreate, http.StatusOK)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), eventCreate, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.BadRequest(), eventCreate, http.StatusBadRequest)
+	eventCreate.AddResponse(http.StatusInternalServerError, internalServerError())
+	eventCreate.AddResponse(http.StatusBadRequest, badRequest())
 
 	return eventCreate
 }

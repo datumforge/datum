@@ -16,9 +16,9 @@ import (
 	"golang.org/x/term"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
-	"github.com/datumforge/datum/pkg/datumclient"
+	api "github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
 )
@@ -58,10 +58,10 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 	opt := &clientv2.Options{}
 
 	// new client with params
-	c := datumclient.NewClient(h, datum.DatumHost, opt, nil)
+	c := api.NewClient(h, datum.DatumHost, opt, nil)
 
 	// this allows the use of the graph client to be used for the REST endpoints
-	dc := c.(*datumclient.Client)
+	dc := c.(*api.Client)
 
 	// setup tokens
 	var tokens *oauth2.Token
@@ -114,7 +114,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 	return tokens, nil
 }
 
-func passwordAuth(ctx context.Context, client *datumclient.Client, username string) (*oauth2.Token, error) {
+func passwordAuth(ctx context.Context, client *api.Client, username string) (*oauth2.Token, error) {
 	// read password from terminal if not set in environment variable
 	password := os.Getenv("DATUM_PASSWORD")
 
@@ -129,16 +129,16 @@ func passwordAuth(ctx context.Context, client *datumclient.Client, username stri
 		password = string(bytepw)
 	}
 
-	login := handlers.LoginRequest{
+	login := models.LoginRequest{
 		Username: username,
 		Password: password,
 	}
 
-	return datumclient.Login(client, ctx, login)
+	return api.Login(client, ctx, login)
 }
 
 // validateProvider validate the provider specified is configured
-func providerAuth(ctx context.Context, client *datumclient.Client, provider string) (*oauth2.Token, string, error) {
+func providerAuth(ctx context.Context, client *api.Client, provider string) (*oauth2.Token, string, error) {
 	isDev := strings.Contains(client.Client.BaseURL, "localhost")
 
 	switch strings.ToUpper(provider) {
@@ -146,12 +146,12 @@ func providerAuth(ctx context.Context, client *datumclient.Client, provider stri
 		endpoint := "google/login"
 		u := fmt.Sprintf("%s%s/%s", client.Client.BaseURL, route.V1Version, endpoint)
 
-		return datumclient.OauthLogin(u, isDev)
+		return api.OauthLogin(u, isDev)
 	case github.ProviderName:
 		endpoint := "github/login"
 		u := fmt.Sprintf("%s%s/%s", client.Client.BaseURL, route.V1Version, endpoint)
 
-		return datumclient.OauthLogin(u, isDev)
+		return api.OauthLogin(u, isDev)
 	default:
 		return nil, "", datum.ErrUnsupportedProvider
 	}

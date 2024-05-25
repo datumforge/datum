@@ -11,12 +11,12 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 // Register a new user within Datum
-func Register(c *Client, ctx context.Context, r handlers.RegisterRequest) (*handlers.RegisterReply, error) {
+func Register(c *Client, ctx context.Context, r models.RegisterRequest) (*models.RegisterReply, error) {
 	method := http.MethodPost
 	endpoint := "register"
 
@@ -49,7 +49,7 @@ func Register(c *Client, ctx context.Context, r handlers.RegisterRequest) (*hand
 
 	defer resp.Body.Close()
 
-	out := handlers.RegisterReply{}
+	out := models.RegisterReply{}
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}

@@ -12,12 +12,12 @@ import (
 	echo "github.com/datumforge/echox"
 	"golang.org/x/oauth2"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 // Refresh the access + refresh token pair to the Datum API
-func Refresh(c *Client, ctx context.Context, r handlers.RefreshRequest) (*oauth2.Token, error) {
+func Refresh(c *Client, ctx context.Context, r models.RefreshRequest) (*oauth2.Token, error) {
 	method := http.MethodPost
 	endpoint := "refresh"
 
@@ -50,7 +50,7 @@ func Refresh(c *Client, ctx context.Context, r handlers.RefreshRequest) (*oauth2
 
 	defer resp.Body.Close()
 
-	out := handlers.RefreshReply{}
+	out := models.RefreshReply{}
 
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err

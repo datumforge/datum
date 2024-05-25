@@ -12,12 +12,12 @@ import (
 	echo "github.com/datumforge/echox"
 	"golang.org/x/oauth2"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 // OrgInvite a new user within Datum org
-func OrgInvite(c *Client, ctx context.Context, r handlers.Invite, accessToken string) (*handlers.InviteReply, *oauth2.Token, error) {
+func OrgInvite(c *Client, ctx context.Context, r models.InviteRequest, accessToken string) (*models.InviteReply, *oauth2.Token, error) {
 	method := http.MethodPost
 	endpoint := "invite"
 
@@ -51,7 +51,7 @@ func OrgInvite(c *Client, ctx context.Context, r handlers.Invite, accessToken st
 
 	defer resp.Body.Close()
 
-	out := handlers.InviteReply{}
+	out := models.InviteReply{}
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, nil, err
 	}

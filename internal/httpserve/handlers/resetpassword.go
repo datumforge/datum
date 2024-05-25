@@ -191,8 +191,8 @@ func (h *Handler) BindResetPasswordHandler() *openapi3.Operation {
 
 	h.AddRequestBody("PublishRequest", PublishRequest{}, resetPassword)
 	h.AddResponse("PublishReply", "success", PublishReply{}, resetPassword, http.StatusOK)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), resetPassword, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.InvalidRequest(), resetPassword, http.StatusBadRequest)
+	resetPassword.AddResponse(http.StatusInternalServerError, internalServerError())
+	resetPassword.AddResponse(http.StatusBadRequest, badRequest())
 
 	return resetPassword
 }

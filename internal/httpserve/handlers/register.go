@@ -198,9 +198,9 @@ func (h *Handler) BindRegisterHandler() *openapi3.Operation {
 
 	h.AddRequestBody("RegisterRequest", RegisterRequest{}, register)
 	h.AddResponse("RegisterReply", "success", RegisterReply{}, register, http.StatusCreated)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), register, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.BadRequest(), register, http.StatusBadRequest)
-	h.AddResponse("Conflict", "error", rout.Conflict(), register, http.StatusConflict)
+	register.AddResponse(http.StatusInternalServerError, internalServerError())
+	register.AddResponse(http.StatusBadRequest, badRequest())
+	register.AddResponse(http.StatusConflict, conflict())
 
 	return register
 }

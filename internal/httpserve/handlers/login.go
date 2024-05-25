@@ -164,8 +164,8 @@ func (h *Handler) BindLoginHandler() *openapi3.Operation {
 
 	h.AddRequestBody("LoginRequest", LoginRequest{}, login)
 	h.AddResponse("LoginReply", "success", LoginReply{}, login, http.StatusOK)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), login, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.BadRequest(), login, http.StatusBadRequest)
+	login.AddResponse(http.StatusInternalServerError, internalServerError())
+	login.AddResponse(http.StatusBadRequest, badRequest())
 
 	return login
 }

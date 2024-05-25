@@ -29,6 +29,13 @@ func (r *Router) AddRoute(pattern, method string, op *openapi3.Operation, route 
 	r.OAS.AddOperation(pattern, method, op)
 }
 
+func (r *Router) AddEchoOnlyRoute(pattern, method string, route echo.Routable) {
+	_, err := r.Echo.AddRoute(route)
+	if err != nil {
+		return
+	}
+}
+
 func (r *Router) AddErrorSchema() error {
 	errorResponse := &openapi3.SchemaRef{
 		Ref: "#/components/schemas/ErrorResponse",
@@ -62,27 +69,6 @@ func (r *Router) AddErrorSchema() error {
 }
 
 var appJSON = "application/json"
-
-// AddRequestBody is used to add a request body definition to the OpenAPI schema
-func (r *Router) AddRequestBody(name string, body interface{}) {
-	request := openapi3.NewRequestBody().WithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/schemas/" + name})
-	request.Content.Get(appJSON).Examples = make(map[string]*openapi3.ExampleRef)
-	request.Content.Get(appJSON).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
-	r.OAS.Components.RequestBodies[name] = &openapi3.RequestBodyRef{Value: request}
-}
-
-// AddHeader is used to add a header definition to the OpenAPI schema
-func (r *Router) AddHeader(name string, header *openapi3.Header) {
-	r.OAS.Components.Headers[name] = &openapi3.HeaderRef{Value: header}
-}
-
-// AddResponse is used to add a response definition to the OpenAPI schema
-func (r *Router) AddResponse(name string, description string, ref string, example interface{}) {
-	response := openapi3.NewResponse().WithDescription(description).WithJSONSchemaRef(&openapi3.SchemaRef{Ref: ref})
-	response.Content.Get(appJSON).Examples = make(map[string]*openapi3.ExampleRef)
-	response.Content.Get(appJSON).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(example)}
-	r.OAS.Components.Responses[name] = &openapi3.ResponseRef{Value: response}
-}
 
 // OpenAPI returns the OpenAPI specification.
 func (r *Router) OpenAPI() *openapi3.T {

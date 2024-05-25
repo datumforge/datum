@@ -111,8 +111,8 @@ func (h *Handler) BindResendEmailHandler() *openapi3.Operation {
 
 	h.AddRequestBody("ResendEmail", ResendRequest{}, resendEmail)
 	h.AddResponse("ResendReply", "success", ResendReply{}, resendEmail, http.StatusOK)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), resendEmail, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.BadRequest(), resendEmail, http.StatusBadRequest)
+	resendEmail.AddResponse(http.StatusInternalServerError, internalServerError())
+	resendEmail.AddResponse(http.StatusBadRequest, badRequest())
 
 	return resendEmail
 }

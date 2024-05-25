@@ -59,7 +59,9 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		return err
 	}
 
-	srv.AddErrorSchema()
+	if err := srv.AddErrorSchema(); err != nil {
+		return err
+	}
 
 	sc := echo.StartConfig{
 		HideBanner:      true,

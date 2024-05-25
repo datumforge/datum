@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 var loginCmd = &cobra.Command{
@@ -41,7 +41,7 @@ func switchorg(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("target organization")
 	}
 
-	input := handlers.SwitchOrganizationRequest{
+	input := models.SwitchOrganizationRequest{
 		TargetOrganizationID: targetorg,
 	}
 

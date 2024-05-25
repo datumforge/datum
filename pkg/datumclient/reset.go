@@ -11,12 +11,12 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 // Reset a user password
-func Reset(c *Client, ctx context.Context, r handlers.ResetPasswordRequest) (*handlers.ResetPasswordReply, error) {
+func Reset(c *Client, ctx context.Context, r models.ResetPasswordRequest) (*models.ResetPasswordReply, error) {
 	method := http.MethodPost
 	endpoint := "password-reset"
 
@@ -49,7 +49,7 @@ func Reset(c *Client, ctx context.Context, r handlers.ResetPasswordRequest) (*ha
 
 	defer resp.Body.Close()
 
-	out := handlers.ResetPasswordReply{}
+	out := models.ResetPasswordReply{}
 
 	if resp.StatusCode != http.StatusNoContent {
 		if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {

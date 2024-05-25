@@ -4,7 +4,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3gen"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -27,14 +27,6 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 		schemas[key] = ref
 	}
 
-	errorSchema := &openapi3.SchemaRef{
-		Ref: "#/components/schemas/ErrorResponse",
-	}
-
-	errorResponse := openapi3.NewResponse().
-		WithDescription("error").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(errorSchema))
-
 	successResponse := openapi3.NewResponse().
 		WithDescription("ok")
 
@@ -44,9 +36,6 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 	}
 	responses["success"] = &openapi3.ResponseRef{
 		Value: successResponse,
-	}
-	responses["error"] = &openapi3.ResponseRef{
-		Value: errorResponse,
 	}
 
 	return &openapi3.T{
@@ -103,31 +92,31 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 
 // openAPISchemas is a mapping of types to auto generate schemas for
 var openAPISchemas = map[string]any{
-	"LoginRequest":                 &handlers.LoginRequest{},
-	"LoginResponse":                &handlers.LoginReply{},
-	"ForgotPasswordRequest":        &handlers.ForgotPasswordRequest{},
-	"ForgotPasswordResponse":       &handlers.ForgotPasswordReply{},
-	"ResetPasswordRequest":         &handlers.ResetPasswordRequest{},
-	"ResetPasswordResponse":        &handlers.ResetPasswordReply{},
-	"RefreshRequest":               &handlers.RefreshRequest{},
-	"RefreshResponse":              &handlers.RefreshReply{},
-	"RegisterRequest":              &handlers.RegisterRequest{},
-	"RegisterResponse":             &handlers.RegisterReply{},
-	"ResendEmailRequest":           &handlers.ResendRequest{},
-	"ResendEmailResponse":          &handlers.ResendReply{},
-	"VerifyRequest":                &handlers.VerifyRequest{},
-	"VerifyResponse":               &handlers.VerifyReply{},
-	"PublishRequest":               &handlers.PublishRequest{},
-	"PublishResponse":              &handlers.PublishReply{},
-	"SwitchRequest":                &handlers.SwitchOrganizationRequest{},
-	"SwitchResponse":               &handlers.SwitchOrganizationReply{},
-	"WebauthnRegistrationRequest":  &handlers.WebauthnRegistrationRequest{},
-	"WebauthnRegistrationResponse": &handlers.WebauthnRegistrationResponse{},
-	"WebauthnLoginRequest":         &handlers.WebauthnBeginLoginResponse{},
-	"VerifySubscriptionRequest":    &handlers.VerifySubscribeRequest{},
-	"VerifySubscriptionResponse":   &handlers.VerifySubscribeReply{},
-	"InviteRequest":                &handlers.InviteRequest{},
-	"InviteResponse":               &handlers.InviteReply{},
+	"LoginRequest":                 &models.LoginRequest{},
+	"LoginResponse":                &models.LoginReply{},
+	"ForgotPasswordRequest":        &models.ForgotPasswordRequest{},
+	"ForgotPasswordResponse":       &models.ForgotPasswordReply{},
+	"ResetPasswordRequest":         &models.ResetPasswordRequest{},
+	"ResetPasswordResponse":        &models.ResetPasswordReply{},
+	"RefreshRequest":               &models.RefreshRequest{},
+	"RefreshResponse":              &models.RefreshReply{},
+	"RegisterRequest":              &models.RegisterRequest{},
+	"RegisterResponse":             &models.RegisterReply{},
+	"ResendEmailRequest":           &models.ResendRequest{},
+	"ResendEmailResponse":          &models.ResendReply{},
+	"VerifyRequest":                &models.VerifyRequest{},
+	"VerifyResponse":               &models.VerifyReply{},
+	"PublishRequest":               &models.PublishRequest{},
+	"PublishResponse":              &models.PublishReply{},
+	"SwitchRequest":                &models.SwitchOrganizationRequest{},
+	"SwitchResponse":               &models.SwitchOrganizationReply{},
+	"WebauthnRegistrationRequest":  &models.WebauthnRegistrationRequest{},
+	"WebauthnRegistrationResponse": &models.WebauthnRegistrationResponse{},
+	"WebauthnLoginRequest":         &models.WebauthnBeginLoginResponse{},
+	"VerifySubscriptionRequest":    &models.VerifySubscribeRequest{},
+	"VerifySubscriptionResponse":   &models.VerifySubscribeReply{},
+	"InviteRequest":                &models.InviteRequest{},
+	"InviteResponse":               &models.InviteReply{},
 	"ErrorResponse":                &rout.StatusError{},
 }
 
@@ -163,11 +152,11 @@ func (i *OpenID) Scheme() *openapi3.SecurityScheme {
 	}
 }
 
-type ApiKey struct {
+type APIKey struct {
 	Name string
 }
 
-func (k *ApiKey) Scheme() *openapi3.SecurityScheme {
+func (k *APIKey) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
 		Type: "http",
 		In:   "header",

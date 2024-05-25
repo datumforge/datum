@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // registerOAuthRegisterHandler registers the oauth register handler used by the UI to register
@@ -61,7 +59,7 @@ func registerGithubLoginHandler(router *Router) (err error) {
 		Name:    "GitHubLogin",
 		Method:  method,
 		Path:    path,
-		Handler: githubLogin(router.Handler),
+		Handler: githubLogin(router),
 	}.ForGroup(V1Version, mw)
 
 	router.AddRoute(path, method, nil, route)
@@ -78,7 +76,7 @@ func registerGithubCallbackHandler(router *Router) (err error) {
 		Name:    "GitHubCallback",
 		Method:  method,
 		Path:    path,
-		Handler: githubCallback(router.Handler),
+		Handler: githubCallback(router),
 	}.ForGroup(V1Version, mw)
 
 	router.AddRoute(path, method, nil, route)
@@ -95,7 +93,7 @@ func registerGoogleLoginHandler(router *Router) (err error) {
 		Name:    "GoogleLogin",
 		Method:  method,
 		Path:    path,
-		Handler: googleLogin(router.Handler),
+		Handler: googleLogin(router),
 	}.ForGroup(V1Version, mw)
 
 	router.AddRoute(path, method, nil, route)
@@ -112,7 +110,7 @@ func registerGoogleCallbackHandler(router *Router) (err error) {
 		Name:    "GoogleCallback",
 		Method:  method,
 		Path:    path,
-		Handler: googleCallback(router.Handler),
+		Handler: googleCallback(router),
 	}.ForGroup(V1Version, mw)
 
 	router.AddRoute(path, method, nil, route)
@@ -121,29 +119,29 @@ func registerGoogleCallbackHandler(router *Router) (err error) {
 }
 
 // githubLogin wraps getloginhandlers
-func githubLogin(h *handlers.Handler) echo.HandlerFunc {
-	login, _ := h.GetGitHubLoginHandlers()
+func githubLogin(h *Router) echo.HandlerFunc {
+	login, _ := h.Handler.GetGitHubLoginHandlers()
 
 	return echo.WrapHandler(login)
 }
 
 // googleLogin wraps getloginhandlers
-func googleLogin(h *handlers.Handler) echo.HandlerFunc {
-	login, _ := h.GetGoogleLoginHandlers()
+func googleLogin(h *Router) echo.HandlerFunc {
+	login, _ := h.Handler.GetGoogleLoginHandlers()
 
 	return echo.WrapHandler(login)
 }
 
 // githubCallback wraps getloginhandlers
-func githubCallback(h *handlers.Handler) echo.HandlerFunc {
-	_, callback := h.GetGitHubLoginHandlers()
+func githubCallback(h *Router) echo.HandlerFunc {
+	_, callback := h.Handler.GetGitHubLoginHandlers()
 
 	return echo.WrapHandler(callback)
 }
 
 // googleCallback wraps getloginhandlers
-func googleCallback(h *handlers.Handler) echo.HandlerFunc {
-	_, callback := h.GetGoogleLoginHandlers()
+func googleCallback(h *Router) echo.HandlerFunc {
+	_, callback := h.Handler.GetGoogleLoginHandlers()
 
 	return echo.WrapHandler(callback)
 }

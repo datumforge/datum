@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/getkin/kin-openapi/openapi3"
 )
 
 // ErrorCode is returned along side error messages for better error handling
@@ -53,7 +51,6 @@ var (
 	AllResponses = map[string]struct{}{}
 
 	unsuccessful     = Reply{Success: false}
-	notFound         = Reply{Success: false, Error: "resource not found"}
 	notAllowed       = Reply{Success: false, Error: "method not allowed"}
 	unverified       = Reply{Success: false, Unverified: true, Error: ErrVerifyEmail}
 	httpunsuccessful = echo.HTTPError{}
@@ -82,11 +79,6 @@ type FieldError struct {
 type StatusError struct {
 	StatusCode int   `json:"code" yaml:"code" description:"the response HTTP code also in the response payload for your parsing convenience"`
 	Reply      Reply `json:"reply" yaml:"reply" description:"the Reply generated via the internal/rout package which contains a success bool and the corresponding message"`
-}
-
-type OpenAPIErrorResponse struct {
-	schemaref   openapi3.SchemaRef
-	statuserror StatusError
 }
 
 // Reply contains standard fields that are used for generic API responses and errors

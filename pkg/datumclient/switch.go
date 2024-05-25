@@ -12,12 +12,12 @@ import (
 	echo "github.com/datumforge/echox"
 	"golang.org/x/oauth2"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 // Switch to a different Datum organization
-func Switch(c *Client, ctx context.Context, r handlers.SwitchOrganizationRequest, accessToken string) (*oauth2.Token, error) {
+func Switch(c *Client, ctx context.Context, r models.SwitchOrganizationRequest, accessToken string) (*oauth2.Token, error) {
 	method := http.MethodPost
 	endpoint := "switch"
 
@@ -50,7 +50,7 @@ func Switch(c *Client, ctx context.Context, r handlers.SwitchOrganizationRequest
 
 	defer resp.Body.Close()
 
-	out := handlers.SwitchOrganizationReply{}
+	out := models.SwitchOrganizationReply{}
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}

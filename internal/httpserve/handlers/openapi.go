@@ -4,42 +4,34 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-type ErrorResponse struct {
-	openapi openapi3.SchemaRef
-}
-
-func (e *ErrorResponse) schemaRef() *openapi3.SchemaRef {
-	return &openapi3.SchemaRef{Ref: "#/components/schemas/ErrorResponse"}
-}
-
-func (e *ErrorResponse) badRequest() *openapi3.Response {
+func badRequest() *openapi3.Response {
 	return openapi3.NewResponse().
 		WithDescription("Bad Request").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(e.schemaRef()))
+		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/responses/BadRequest"}))
 }
 
-func (e *ErrorResponse) internalServerError() *openapi3.Response {
+func internalServerError() *openapi3.Response {
 	return openapi3.NewResponse().
 		WithDescription("Internal Server Error").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(e.schemaRef()))
+		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/responses/InternalServerError"}))
 }
 
-func (e *ErrorResponse) notFound() *openapi3.Response {
+func notFound() *openapi3.Response {
 	return openapi3.NewResponse().
 		WithDescription("Not Found").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(e.schemaRef()))
+		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/responses/NotFound"}))
 }
 
-func (e *ErrorResponse) created() *openapi3.Response {
+func created() *openapi3.Response {
 	return openapi3.NewResponse().
 		WithDescription("Created").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(e.schemaRef()))
+		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/responses/Created"}))
 }
 
-func (e *ErrorResponse) conflict() *openapi3.Response {
+func conflict() *openapi3.Response {
 	return openapi3.NewResponse().
 		WithDescription("Conflict").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(e.schemaRef()))
+		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/responses/Conflict"}))
 }
 
 var appJSON = "application/json"

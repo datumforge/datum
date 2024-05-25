@@ -92,9 +92,9 @@ func (h *Handler) BindRefreshHandler() *openapi3.Operation {
 
 	h.AddRequestBody("RefreshRequest", RefreshRequest{}, refresh)
 	h.AddResponse("RefreshReply", "success", RefreshReply{}, refresh, http.StatusOK)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), refresh, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.BadRequest(), refresh, http.StatusBadRequest)
-	h.AddResponse("NotFound", "error", rout.NotFound(), refresh, http.StatusNotFound)
+	refresh.AddResponse(http.StatusInternalServerError, internalServerError())
+	refresh.AddResponse(http.StatusBadRequest, badRequest())
+	refresh.AddResponse(http.StatusNotFound, notFound())
 
 	return refresh
 }

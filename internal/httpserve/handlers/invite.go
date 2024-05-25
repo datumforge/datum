@@ -271,8 +271,8 @@ func (h *Handler) BindOrganizationInviteAccept() *openapi3.Operation {
 
 	h.AddRequestBody("InviteRequest", InviteRequest{}, inviteAccept)
 	h.AddResponse("InviteReply", "success", InviteReply{}, inviteAccept, http.StatusCreated)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), inviteAccept, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.BadRequest(), inviteAccept, http.StatusBadRequest)
+	inviteAccept.AddResponse(http.StatusInternalServerError, internalServerError())
+	inviteAccept.AddResponse(http.StatusBadRequest, badRequest())
 
 	return inviteAccept
 }

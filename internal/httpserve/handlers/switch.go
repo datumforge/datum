@@ -147,8 +147,8 @@ func (h *Handler) BindSwitchHandler() *openapi3.Operation {
 
 	h.AddRequestBody("PublishRequest", PublishRequest{}, switchHandler)
 	h.AddResponse("PublishReply", "success", PublishReply{}, switchHandler, http.StatusOK)
-	h.AddResponse("InternalServerError", "error", rout.InternalServerError(), switchHandler, http.StatusInternalServerError)
-	h.AddResponse("BadRequest", "error", rout.BadRequest(), switchHandler, http.StatusBadRequest)
+	switchHandler.AddResponse(http.StatusInternalServerError, internalServerError())
+	switchHandler.AddResponse(http.StatusBadRequest, badRequest())
 
 	return switchHandler
 }

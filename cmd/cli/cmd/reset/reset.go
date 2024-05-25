@@ -10,8 +10,8 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 var registerCmd = &cobra.Command{
@@ -45,7 +45,7 @@ func registerUser(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("token")
 	}
 
-	reset := handlers.ResetPasswordRequest{
+	reset := models.ResetPasswordRequest{
 		Password: password,
 		Token:    token,
 	}

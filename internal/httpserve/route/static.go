@@ -40,7 +40,7 @@ func registerOpenAPIHandler(router *Router) (err error) {
 		}),
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	router.AddEchoOnlyRoute(path, method, route)
 
 	return
 }
@@ -60,7 +60,7 @@ func registerSecurityTxtHandler(router *Router) (err error) {
 		Handler: echo.StaticFileHandler("security.txt", securityTxt),
 	}.ForGroup(unversioned, mw)
 
-	router.AddRoute(path, method, nil, route)
+	router.AddEchoOnlyRoute(path, method, route)
 
 	return
 }
@@ -80,7 +80,7 @@ func registerRobotsHandler(router *Router) (err error) {
 		Handler: echo.StaticFileHandler("robots.txt", robotsTxt),
 	}.ForGroup(unversioned, mw)
 
-	router.AddRoute(path, method, nil, route)
+	router.AddEchoOnlyRoute(path, method, route)
 
 	return
 }
@@ -100,7 +100,7 @@ func registerFaviconHandler(router *Router) (err error) {
 		Handler: echo.StaticFileHandler("assets/favicon.ico", assets),
 	}.ForGroup(unversioned, mw)
 
-	router.AddRoute(path, method, nil, route)
+	router.AddEchoOnlyRoute(path, method, route)
 
 	return
 }

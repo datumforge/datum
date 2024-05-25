@@ -16,9 +16,9 @@ func StateHandler(config sessions.CookieConfig, success http.Handler) http.Handl
 	funk := func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
 
-		cookie, err := req.Cookie(config.Name)
-		if err == nil {
-			ctx = WithState(ctx, cookie.Value)
+		queryParams := req.URL.Query()
+		if queryParams.Get("state") != "" {
+			ctx = WithState(ctx, queryParams.Get("state"))
 		} else {
 			val := keygen.GenerateRandomString(32) // nolint: gomnd
 			http.SetCookie(w, sessions.NewCookie(config.Name, val, &config))

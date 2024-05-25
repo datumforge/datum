@@ -90,6 +90,10 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 			return nil, err
 		}
 
+		if session == "" {
+			return nil, datum.ErrSessionNotFound
+		}
+
 		// because of the callback, the session is not stored in the cookie jar
 		// so we need to store it ourselves instead of using the defer
 		if err := datum.StoreSession(session); err != nil {

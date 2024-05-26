@@ -17,6 +17,9 @@ var (
 
 	// ErrSubscriberNotFound is returned when a subscriber is not found
 	ErrSubscriberNotFound = errors.New("subscriber not found")
+
+	// ErrSearchFailed is returned when the search operation fails
+	ErrSearchFailed = errors.New("search failed, please try again")
 )
 
 // PermissionDeniedError is returned when user is not authorized to perform the requested query or mutation

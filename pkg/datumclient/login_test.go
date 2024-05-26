@@ -79,8 +79,8 @@ func TestGetTokensFromCookieRequest(t *testing.T) {
 
 	accessCookie := http.Cookie{Name: "access_token", Value: "access_token"}
 	refreshCookie := http.Cookie{Name: "refresh_token", Value: "refresh_token"}
-	sessionCookie := http.Cookie{Name: sessions.DefaultCookieName, Value: "session"}
-	devSessionCookie := http.Cookie{Name: sessions.DevCookieName, Value: "session"}
+	sessionCookie := http.Cookie{Name: sessions.CLISessionCookie, Value: "session"}
+	devSessionCookie := http.Cookie{Name: sessions.CLISessionCookie, Value: "session"}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080", nil)
 	require.NoError(t, err)
@@ -97,8 +97,7 @@ func TestGetTokensFromCookieRequest(t *testing.T) {
 	devRequest.AddCookie(&devSessionCookie)
 
 	type args struct {
-		r     *http.Request
-		isDev bool
+		r *http.Request
 	}
 
 	tests := []struct {
@@ -110,8 +109,7 @@ func TestGetTokensFromCookieRequest(t *testing.T) {
 		{
 			name: "default session",
 			args: args{
-				r:     req,
-				isDev: false,
+				r: req,
 			},
 			wantToken: &oauth2.Token{
 				AccessToken:  "access_token",
@@ -122,8 +120,7 @@ func TestGetTokensFromCookieRequest(t *testing.T) {
 		{
 			name: "dev session",
 			args: args{
-				r:     devRequest,
-				isDev: true,
+				r: devRequest,
 			},
 			wantToken: &oauth2.Token{
 				AccessToken:  "access_token",
@@ -134,7 +131,7 @@ func TestGetTokensFromCookieRequest(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotToken, gotSession := getTokensFromCookieRequest(tt.args.r, tt.args.isDev)
+			gotToken, gotSession := getTokensFromCookieRequest(tt.args.r)
 			assert.Equal(t, tt.wantToken, gotToken, "getTokensFromCookieRequest() gotToken = %v, want %v", gotToken, tt.wantToken)
 			assert.Equal(t, tt.wantSession, gotSession, "getTokensFromCookieRequest() gotSession = %v, want %v", gotSession, tt.wantSession)
 		})

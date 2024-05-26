@@ -127,6 +127,7 @@ func (h *Handler) issueGoogleSession() http.Handler {
 		setSessionMap[sessions.UserTypeKey] = googleProvider
 		setSessionMap[sessions.UserIDKey] = user.ID
 
+		h.SessionConfig.CookieConfig.Name = sessions.CLISessionCookie
 		if _, err := h.SessionConfig.SaveAndStoreSession(ctxWithToken, w, setSessionMap, user.ID); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

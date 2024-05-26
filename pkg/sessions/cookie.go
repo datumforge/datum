@@ -12,7 +12,7 @@ const (
 
 var (
 	DefaultCookieName = "__Secure-SessionId"
-	DevCookieName     = "__Secure-SessionId"
+	DevCookieName     = "temporary-cookie"
 	CLISessionCookie  = "SessionId"
 )
 

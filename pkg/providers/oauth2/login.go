@@ -40,6 +40,7 @@ func StateHandler(config sessions.CookieConfig, success http.Handler) http.Handl
 				if strings.Contains(redirect, "localhost") {
 					config.Name = sessions.CLISessionCookie
 				}
+
 				http.SetCookie(w, sessions.NewCookie("redirect_to", redirect, &config))
 				ctx = WithRedirectURL(ctx, redirect)
 			}

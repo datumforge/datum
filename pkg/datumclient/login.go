@@ -92,12 +92,13 @@ func getTokensFromCookiesFromResponse(resp *http.Response) (token *oauth2.Token)
 
 // getTokensFromCookieRequest parses the HTTP Request for cookies and returns the session and access and refresh tokens
 // this is used for the oauth login flow
-func getTokensFromCookieRequest(r *http.Request, isDev bool) (token *oauth2.Token, session string) {
+func getTokensFromCookieRequest(r *http.Request) (token *oauth2.Token, session string) {
 	// parse cookies
 	cookies := r.Cookies()
 	cookieName := sessions.CLISessionCookie
 
 	for _, c := range cookies {
+		fmt.Println(c.Name, c.Value)
 		if c.Name == cookieName {
 			session = c.Value
 		}

@@ -2,7 +2,6 @@ package oauth2
 
 import (
 	"net/http"
-	"strings"
 
 	"golang.org/x/oauth2"
 
@@ -35,12 +34,6 @@ func StateHandler(config sessions.CookieConfig, success http.Handler) http.Handl
 
 			redirect := req.Form.Get("redirect_uri")
 			if redirect != "" {
-				// if redirect is localhost, set the cookie to the CLI session cookie
-				// so the cookie can be read by the CLI
-				if strings.Contains(redirect, "localhost") {
-					config.Name = sessions.CLISessionCookie
-				}
-
 				http.SetCookie(w, sessions.NewCookie("redirect_to", redirect, &config))
 				ctx = WithRedirectURL(ctx, redirect)
 			}

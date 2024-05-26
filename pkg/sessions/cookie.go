@@ -13,7 +13,6 @@ const (
 var (
 	DefaultCookieName = "__Secure-SessionId"
 	DevCookieName     = "temporary-cookie"
-	CLISessionCookie  = "SessionId"
 )
 
 // DefaultCookieConfig configures http.Cookie creation for production (AKA default secure valutes are set)

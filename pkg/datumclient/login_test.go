@@ -8,8 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
-
-	"github.com/datumforge/datum/pkg/sessions"
 )
 
 func TestGetTokensFromCookies(t *testing.T) {
@@ -79,22 +77,18 @@ func TestGetTokensFromCookieRequest(t *testing.T) {
 
 	accessCookie := http.Cookie{Name: "access_token", Value: "access_token"}
 	refreshCookie := http.Cookie{Name: "refresh_token", Value: "refresh_token"}
-	sessionCookie := http.Cookie{Name: sessions.CLISessionCookie, Value: "session"}
-	devSessionCookie := http.Cookie{Name: sessions.CLISessionCookie, Value: "session"}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080?session=sessionvalue", nil)
 	require.NoError(t, err)
 
 	req.AddCookie(&accessCookie)
 	req.AddCookie(&refreshCookie)
-	req.AddCookie(&sessionCookie)
 
-	devRequest, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080", nil)
+	devRequest, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080?session=sessionvalue", nil)
 	require.NoError(t, err)
 
 	devRequest.AddCookie(&accessCookie)
 	devRequest.AddCookie(&refreshCookie)
-	devRequest.AddCookie(&devSessionCookie)
 
 	type args struct {
 		r *http.Request
@@ -115,7 +109,7 @@ func TestGetTokensFromCookieRequest(t *testing.T) {
 				AccessToken:  "access_token",
 				RefreshToken: "refresh_token",
 			},
-			wantSession: "session",
+			wantSession: "sessionvalue",
 		},
 		{
 			name: "dev session",
@@ -126,7 +120,7 @@ func TestGetTokensFromCookieRequest(t *testing.T) {
 				AccessToken:  "access_token",
 				RefreshToken: "refresh_token",
 			},
-			wantSession: "session",
+			wantSession: "sessionvalue",
 		},
 	}
 	for _, tt := range tests {

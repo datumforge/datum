@@ -127,8 +127,8 @@ func (h *Handler) issueGoogleSession() http.Handler {
 		setSessionMap[sessions.UserTypeKey] = googleProvider
 		setSessionMap[sessions.UserIDKey] = user.ID
 
-		h.SessionConfig.CookieConfig.Name = sessions.CLISessionCookie
-		if _, err := h.SessionConfig.SaveAndStoreSession(ctxWithToken, w, setSessionMap, user.ID); err != nil {
+		ctx, err = h.SessionConfig.SaveAndStoreSession(ctxWithToken, w, setSessionMap, user.ID)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -154,7 +154,14 @@ func (h *Handler) issueGoogleSession() http.Handler {
 		// remove cookie
 		sessions.RemoveCookie(w, "redirect_to", *h.SessionConfig.CookieConfig)
 
-		http.Redirect(w, req, redirectURI, http.StatusFound)
+		// return the session value in the query string
+		s, err := sessions.SessionToken(ctx)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, req, fmt.Sprintf("%s?session=%s", redirectURI, s), http.StatusFound)
 	}
 
 	return http.HandlerFunc(fn)
@@ -226,7 +233,8 @@ func (h *Handler) issueGitHubSession() http.Handler {
 		setSessionMap[sessions.EmailKey] = *githubUser.Email
 		setSessionMap[sessions.UserIDKey] = user.ID
 
-		if _, err := h.SessionConfig.SaveAndStoreSession(ctx, w, setSessionMap, user.ID); err != nil {
+		ctx, err = h.SessionConfig.SaveAndStoreSession(ctxWithToken, w, setSessionMap, user.ID)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -234,8 +242,15 @@ func (h *Handler) issueGitHubSession() http.Handler {
 		// remove cookie now that its in the context
 		sessions.RemoveCookie(w, "redirect_to", *h.SessionConfig.CookieConfig)
 
+		// return the session value in the query string
+		s, err := sessions.SessionToken(ctx)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// redirect with context set
-		http.Redirect(w, req.WithContext(ctx), redirectURI, http.StatusFound)
+		http.Redirect(w, req, fmt.Sprintf("%s?session=%s", redirectURI, s), http.StatusFound)
 	}
 
 	return http.HandlerFunc(fn)

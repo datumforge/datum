@@ -95,14 +95,9 @@ func getTokensFromCookiesFromResponse(resp *http.Response) (token *oauth2.Token)
 func getTokensFromCookieRequest(r *http.Request) (token *oauth2.Token, session string) {
 	// parse cookies
 	cookies := r.Cookies()
-	cookieName := sessions.CLISessionCookie
 
-	for _, c := range cookies {
-		fmt.Println(c.Name, c.Value)
-		if c.Name == cookieName {
-			session = c.Value
-		}
-	}
+	// get session from query string
+	session = r.URL.Query().Get("session")
 
 	return getTokensFromCookies(cookies), session
 }

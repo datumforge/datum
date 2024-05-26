@@ -2,6 +2,7 @@ package graphapi
 
 import (
 	"context"
+	"time"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -9,6 +10,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+)
+
+var (
+	maxSearchTime = time.Duration(30 * time.Second)
 )
 
 // searchResult is a generic struct to hold the result of a search operation

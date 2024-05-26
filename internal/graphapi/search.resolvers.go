@@ -6,14 +6,9 @@ package graphapi
 
 import (
 	"context"
-	"time"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/events/soiree"
-)
-
-var (
-	maxSearchTime = time.Duration(30 * time.Second)
 )
 
 // Search is the resolver for the search field.

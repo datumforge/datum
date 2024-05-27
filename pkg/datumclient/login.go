@@ -91,21 +91,13 @@ func getTokensFromCookiesFromResponse(resp *http.Response) (token *oauth2.Token)
 }
 
 // getTokensFromCookieRequest parses the HTTP Request for cookies and returns the session and access and refresh tokens
-func getTokensFromCookieRequest(r *http.Request, isDev bool) (token *oauth2.Token, session string) {
+// this is used for the oauth login flow
+func getTokensFromCookieRequest(r *http.Request) (token *oauth2.Token, session string) {
 	// parse cookies
 	cookies := r.Cookies()
-	cookieName := sessions.DefaultCookieName
 
-	// Use the dev cookie when running on localhost
-	if isDev {
-		cookieName = sessions.DevCookieName
-	}
-
-	for _, c := range cookies {
-		if c.Name == cookieName {
-			session = c.Value
-		}
-	}
+	// get session from query string
+	session = r.URL.Query().Get("session")
 
 	return getTokensFromCookies(cookies), session
 }

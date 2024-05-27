@@ -47,5 +47,6 @@ func (c contextKey) String() string {
 	if int(c) < len(contextKeyNames) {
 		return contextKeyNames[c]
 	}
+
 	return contextKeyNames[0]
 }

@@ -17,8 +17,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
@@ -133,7 +133,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.InviteReply
+			var out *models.InviteReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

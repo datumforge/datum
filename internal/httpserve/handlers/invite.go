@@ -16,25 +16,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
 )
-
-// InviteRequest holds the fields that should be included on a request to the `/invite` endpoint
-type InviteRequest struct {
-	Token string `query:"token"`
-}
-
-// InviteReply holds the fields that are sent on a response to an accepted invitation
-// Note: there is no InviteRequest as this is handled via our graph interfaces
-type InviteReply struct {
-	rout.Reply
-	ID          string `json:"user_id"`
-	Email       string `json:"email"`
-	Message     string `json:"message"`
-	JoinedOrgID string `json:"joined_org_id"`
-	Role        string `json:"role"`
-}
 
 // Invite holds the Token, InviteToken references, and the additional user input to //
 // complete acceptance of the invitation
@@ -60,7 +45,7 @@ type InviteToken struct {
 // On success, it returns a response with the organization information
 func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	// parse the token out of the context
-	req := new(InviteRequest)
+	req := new(models.InviteRequest)
 	if err := ctx.Bind(req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
@@ -162,7 +147,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 				return err
 			}
 
-			out := &InviteReply{
+			out := &models.InviteReply{
 				Message: "invite token is expired, you will need to re-request an invite",
 			}
 
@@ -177,7 +162,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	}
 
 	// reply with the relevant details
-	out := &InviteReply{
+	out := &models.InviteReply{
 		Reply:       rout.Reply{Success: true},
 		ID:          userID,
 		Email:       invitedUser.Recipient,
@@ -269,10 +254,11 @@ func (h *Handler) BindOrganizationInviteAccept() *openapi3.Operation {
 	inviteAccept.Description = "Accept an Organization Invite"
 	inviteAccept.OperationID = "OrganizationInviteAccept"
 
-	h.AddRequestBody("InviteRequest", InviteRequest{}, inviteAccept)
-	h.AddResponse("InviteReply", "success", InviteReply{}, inviteAccept, http.StatusCreated)
+	h.AddRequestBody("InviteRequest", models.InviteRequest{}, inviteAccept)
+	h.AddResponse("InviteReply", "success", models.InviteReply{}, inviteAccept, http.StatusCreated)
 	inviteAccept.AddResponse(http.StatusInternalServerError, internalServerError())
 	inviteAccept.AddResponse(http.StatusBadRequest, badRequest())
+	inviteAccept.AddResponse(http.StatusUnauthorized, unauthorized())
 
 	return inviteAccept
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
@@ -14,7 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
-	"github.com/datumforge/datum/pkg/passwd"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
@@ -23,29 +22,12 @@ const (
 	maxEmailAttempts = 5
 )
 
-// RegisterRequest holds the fields that should be included on a request to the `/register` endpoint
-type RegisterRequest struct {
-	FirstName string `json:"first_name,omitempty"`
-	LastName  string `json:"last_name,omitempty"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-}
-
-// RegisterReply holds the fields that are sent on a response to the `/register` endpoint
-type RegisterReply struct {
-	rout.Reply
-	ID      string `json:"user_id"`
-	Email   string `json:"email"`
-	Message string `json:"message"`
-	Token   string `json:"token"`
-}
-
 // RegisterHandler handles the registration of a new datum user, creating the user, personal organization
 // and sending an email verification to the email address in the request
 // the user will not be able to authenticate until the email is verified
 // [MermaidChart: 5a357443-f959-4f16-a07f-ec504f67f0eb]
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
-	var in RegisterRequest
+	var in models.RegisterRequest
 	if err := ctx.Bind(&in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
@@ -104,7 +86,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	out := &RegisterReply{
+	out := &models.RegisterReply{
 		Reply:   rout.Reply{Success: true},
 		ID:      meowuser.ID,
 		Email:   meowuser.Email,
@@ -168,36 +150,14 @@ func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *
 	return meowtoken, nil
 }
 
-// Validate the register request ensuring that the required fields are available and
-// that the password is valid - an error is returned if the request is not correct. This
-// method also performs some basic data cleanup, trimming whitespace
-func (r *RegisterRequest) Validate() error {
-	r.FirstName = strings.TrimSpace(r.FirstName)
-	r.LastName = strings.TrimSpace(r.LastName)
-	r.Email = strings.TrimSpace(r.Email)
-	r.Password = strings.TrimSpace(r.Password)
-
-	// Required for all requests
-	switch {
-	case r.Email == "":
-		return rout.MissingField("email")
-	case r.Password == "":
-		return rout.MissingField("password")
-	case passwd.Strength(r.Password) < passwd.Moderate:
-		return rout.ErrPasswordTooWeak
-	}
-
-	return nil
-}
-
 // BindRegisterHandler is used to bind the register endpoint to the OpenAPI schema
 func (h *Handler) BindRegisterHandler() *openapi3.Operation {
 	register := openapi3.NewOperation()
 	register.Description = ("Register a new user")
 	register.OperationID = "RegisterHandler"
 
-	h.AddRequestBody("RegisterRequest", RegisterRequest{}, register)
-	h.AddResponse("RegisterReply", "success", RegisterReply{}, register, http.StatusCreated)
+	h.AddRequestBody("RegisterRequest", models.RegisterRequest{}, register)
+	h.AddResponse("RegisterReply", "success", models.RegisterReply{}, register, http.StatusCreated)
 	register.AddResponse(http.StatusInternalServerError, internalServerError())
 	register.AddResponse(http.StatusBadRequest, badRequest())
 	register.AddResponse(http.StatusConflict, conflict())

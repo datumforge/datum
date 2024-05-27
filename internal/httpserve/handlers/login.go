@@ -11,29 +11,12 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 )
-
-// LoginRequest to authenticate with the Datum Sever
-type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	OTPCode  string `json:"otp_code,omitempty"`
-}
-
-// LoginReply holds response to successful authentication
-type LoginReply struct {
-	rout.Reply
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	Session      string `json:"session,omitempty"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int64  `json:"expires_in"`
-	Message      string `json:"message"`
-}
 
 // LoginHandler validates the user credentials and returns a valid cookie
 // this handler only supports username password login
@@ -92,7 +75,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	out := LoginReply{
+	out := models.LoginReply{
 		Reply:        rout.Reply{Success: true},
 		Message:      "success",
 		AccessToken:  access,
@@ -123,7 +106,7 @@ func createClaims(u *generated.User) *tokens.Claims {
 
 // verifyUserPassword verifies the username and password are valid
 func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) {
-	var l LoginRequest
+	var l models.LoginRequest
 	if err := ctx.Bind(&l); err != nil {
 		return nil, ErrBadRequest
 	}
@@ -162,8 +145,8 @@ func (h *Handler) BindLoginHandler() *openapi3.Operation {
 	login.Description = "Authenticate with the Datum Server"
 	login.OperationID = "LoginHandler"
 
-	h.AddRequestBody("LoginRequest", LoginRequest{}, login)
-	h.AddResponse("LoginReply", "success", LoginReply{}, login, http.StatusOK)
+	h.AddRequestBody("LoginRequest", models.LoginRequest{}, login)
+	h.AddResponse("LoginReply", "success", models.LoginReply{}, login, http.StatusOK)
 	login.AddResponse(http.StatusInternalServerError, internalServerError())
 	login.AddResponse(http.StatusBadRequest, badRequest())
 

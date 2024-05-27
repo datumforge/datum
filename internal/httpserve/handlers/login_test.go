@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -121,7 +122,7 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.fga)
 
-			loginJSON := handlers.LoginRequest{
+			loginJSON := models.LoginRequest{
 				Username: tc.username,
 				Password: tc.password,
 			}
@@ -143,7 +144,7 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.LoginReply
+			var out *models.LoginReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

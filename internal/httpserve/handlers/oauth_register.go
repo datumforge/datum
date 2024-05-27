@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
 	"github.com/datumforge/datum/pkg/rout"
@@ -100,7 +101,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	out := LoginReply{
+	out := models.LoginReply{
 		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,

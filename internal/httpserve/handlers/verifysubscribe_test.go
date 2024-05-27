@@ -20,6 +20,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 	"github.com/datumforge/datum/pkg/utils/ulids"
@@ -114,7 +115,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.VerifySubscribeReply
+			var out *models.VerifySubscribeReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

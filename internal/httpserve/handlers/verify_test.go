@@ -17,6 +17,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 func (suite *HandlerTestSuite) TestVerifyHandler() {
@@ -146,7 +147,7 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			var out *handlers.VerifyReply
+			var out *models.VerifyReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

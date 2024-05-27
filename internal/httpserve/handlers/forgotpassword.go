@@ -11,32 +11,22 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
-// ForgotPasswordRequest contains fields for a forgot password request
-type ForgotPasswordRequest struct {
-	Email string `json:"email"`
-}
-
-// ForgotPasswordReply contains fields for a forgot password response
-type ForgotPasswordReply struct {
-	rout.Reply
-	Message string `json:"message,omitempty"`
-}
-
 // ForgotPassword will send an forgot password email if the provided
 // email exists
 func (h *Handler) ForgotPassword(ctx echo.Context) error {
-	out := &ForgotPasswordReply{
+	out := &models.ForgotPasswordReply{
 		Reply: rout.Reply{
 			Success: true,
 		},
 		Message: "We've received your request to have the password associated with this email reset. Please check your email.",
 	}
 
-	var in ForgotPasswordRequest
+	var in models.ForgotPasswordRequest
 	if err := ctx.Bind(&in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
@@ -78,7 +68,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 }
 
 // validateResendRequest validates the required fields are set in the user request
-func validateForgotPasswordRequest(req *ForgotPasswordRequest) error {
+func validateForgotPasswordRequest(req *models.ForgotPasswordRequest) error {
 	if req.Email == "" {
 		return rout.NewMissingRequiredFieldError("email")
 	}
@@ -122,8 +112,8 @@ func (h *Handler) BindForgotPassword() *openapi3.Operation {
 	forgotPassword.Description = "Request a password reset email"
 	forgotPassword.OperationID = "ForgotPassword"
 
-	h.AddRequestBody("ForgotPasswordRequest", ForgotPasswordRequest{}, forgotPassword)
-	h.AddResponse("ForgotPasswordReply", "success", ForgotPasswordReply{}, forgotPassword, http.StatusOK)
+	h.AddRequestBody("ForgotPasswordRequest", models.ForgotPasswordRequest{}, forgotPassword)
+	h.AddResponse("ForgotPasswordReply", "success", models.ForgotPasswordReply{}, forgotPassword, http.StatusOK)
 	forgotPassword.AddResponse(http.StatusInternalServerError, internalServerError())
 	forgotPassword.AddResponse(http.StatusBadRequest, badRequest())
 

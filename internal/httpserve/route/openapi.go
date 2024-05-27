@@ -68,8 +68,6 @@ func (r *Router) AddErrorSchema() error {
 	return nil
 }
 
-var appJSON = "application/json"
-
 // OpenAPI returns the OpenAPI specification.
 func (r *Router) OpenAPI() *openapi3.T {
 	return r.OAS

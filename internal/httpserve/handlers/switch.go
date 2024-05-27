@@ -12,27 +12,15 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
-// SwitchOrganizationRequest contains the target organization ID being switched to
-type SwitchOrganizationRequest struct {
-	TargetOrganizationID string `json:"target_organization_id"`
-}
-
-// SwitchOrganizationReply holds the new authentication and session information for the user for the new organization
-type SwitchOrganizationReply struct {
-	rout.Reply
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	Session      string `json:"session"`
-}
-
 // SwitchHandler is responsible for handling requests to the `/switch` endpoint, and changing the user's logged in organization context
 func (h *Handler) SwitchHandler(ctx echo.Context) error {
-	var req SwitchOrganizationRequest
+	var req models.SwitchOrganizationRequest
 
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
@@ -118,7 +106,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	h.AnalyticsClient.Event("organization_switched", props)
 
 	// set the out attributes we send back to the client only on success
-	out := &SwitchOrganizationReply{
+	out := &models.SwitchOrganizationReply{
 		Reply:        rout.Reply{Success: true},
 		AccessToken:  access,
 		RefreshToken: refresh,
@@ -145,8 +133,8 @@ func (h *Handler) BindSwitchHandler() *openapi3.Operation {
 	switchHandler.Description = "Switch the user's organization context"
 	switchHandler.OperationID = "OrganizationSwitch"
 
-	h.AddRequestBody("PublishRequest", PublishRequest{}, switchHandler)
-	h.AddResponse("PublishReply", "success", PublishReply{}, switchHandler, http.StatusOK)
+	h.AddRequestBody("PublishRequest", models.PublishRequest{}, switchHandler)
+	h.AddResponse("PublishReply", "success", models.PublishReply{}, switchHandler, http.StatusOK)
 	switchHandler.AddResponse(http.StatusInternalServerError, internalServerError())
 	switchHandler.AddResponse(http.StatusBadRequest, badRequest())
 

@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
@@ -16,36 +15,24 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
-// ResetPasswordRequest contains user input required to reset a user's password
-type ResetPasswordRequest struct {
-	Password string `json:"password"`
-	Token    string `json:"token"`
-}
-
-// ResetPasswordReply is the response returned from a non-successful password reset request
-// on success, no content is returned (204)
-type ResetPasswordReply struct {
-	rout.Reply
-	Message string `json:"message"`
-}
-
 // ResetPassword allows the user (after requesting a password reset) to
 // set a new password - the password reset token needs to be set in the request
 // and not expired. If the request is successful, a confirmation of the reset is sent
 // to the user and a 204 no content is returned
 func (h *Handler) ResetPassword(ctx echo.Context) error {
-	var req ResetPasswordRequest
+	var req models.ResetPasswordRequest
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	if err := req.validateResetRequest(); err != nil {
+	if err := req.ValidateResetRequest(); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
@@ -140,28 +127,12 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
-	out := &ResetPasswordReply{
+	out := &models.ResetPasswordReply{
 		Reply:   rout.Reply{Success: true},
 		Message: "password has been re-set successfully",
 	}
 
 	return ctx.JSON(http.StatusOK, out)
-}
-
-// validateVerifyRequest validates the required fields are set in the user request
-func (r *ResetPasswordRequest) validateResetRequest() error {
-	r.Password = strings.TrimSpace(r.Password)
-
-	switch {
-	case r.Token == "":
-		return rout.NewMissingRequiredFieldError("token")
-	case r.Password == "":
-		return rout.NewMissingRequiredFieldError("password")
-	case passwd.Strength(r.Password) < passwd.Moderate:
-		return ErrPasswordTooWeak
-	}
-
-	return nil
 }
 
 // setResetTokens sets the fields for the password reset
@@ -189,8 +160,8 @@ func (h *Handler) BindResetPasswordHandler() *openapi3.Operation {
 	resetPassword.Description = "Publish and Correleate Events"
 	resetPassword.OperationID = "EventPublisher"
 
-	h.AddRequestBody("PublishRequest", PublishRequest{}, resetPassword)
-	h.AddResponse("PublishReply", "success", PublishReply{}, resetPassword, http.StatusOK)
+	h.AddRequestBody("PublishRequest", models.PublishRequest{}, resetPassword)
+	h.AddResponse("PublishReply", "success", models.PublishReply{}, resetPassword, http.StatusOK)
 	resetPassword.AddResponse(http.StatusInternalServerError, internalServerError())
 	resetPassword.AddResponse(http.StatusBadRequest, badRequest())
 

@@ -15,8 +15,8 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 func (suite *HandlerTestSuite) TestResendHandler() {
@@ -121,7 +121,7 @@ func (suite *HandlerTestSuite) TestResendHandler() {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			resendJSON := handlers.ResendRequest{
+			resendJSON := models.ResendRequest{
 				Email: tc.email,
 			}
 
@@ -142,7 +142,7 @@ func (suite *HandlerTestSuite) TestResendHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.ResendReply
+			var out *models.ResendReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

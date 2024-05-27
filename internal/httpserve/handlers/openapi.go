@@ -34,6 +34,12 @@ func conflict() *openapi3.Response {
 		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/responses/Conflict"}))
 }
 
+func unauthorized() *openapi3.Response {
+	return openapi3.NewResponse().
+		WithDescription("Unauthorized").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/responses/Unauthorized"}))
+}
+
 var appJSON = "application/json"
 
 func (h *Handler) AddRequestBody(name string, body interface{}, op *openapi3.Operation) {

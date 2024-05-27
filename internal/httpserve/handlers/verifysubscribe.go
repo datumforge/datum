@@ -15,25 +15,15 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
-// VerifySubscribeRequest holds the fields that should be included on a request to the `/subscribe/verify` endpoint
-type VerifySubscribeRequest struct {
-	Token string `query:"token"`
-}
-
-// VerifySubscribeReply holds the fields that are sent on a response to the `/subscribe/verify` endpoint
-type VerifySubscribeReply struct {
-	rout.Reply
-	Message string `json:"message,omitempty"`
-}
-
 // VerifySubscriptionHandler is the handler for the subscription verification endpoint
 func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
-	var req VerifySubscribeRequest
+	var req models.VerifySubscribeRequest
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
@@ -67,7 +57,7 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 	if !entSubscriber.VerifiedEmail {
 		if err := h.verifySubscriberToken(ctxWithToken, entSubscriber); err != nil {
 			if errors.Is(err, ErrExpiredToken) {
-				out := &VerifySubscribeReply{
+				out := &models.VerifySubscribeReply{
 					Reply:   rout.Reply{Success: false},
 					Message: "The verification link has expired, a new one has been sent to your email.",
 				}
@@ -96,7 +86,7 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 
 	h.AnalyticsClient.Event("subscriber_verified", props)
 
-	out := &VerifySubscribeReply{
+	out := &models.VerifySubscribeReply{
 		Reply:   rout.Reply{Success: true},
 		Message: "Subscription confirmed, looking forward to sending you updates!",
 	}
@@ -213,8 +203,8 @@ func (h *Handler) BindVerifySubscriberHandler() *openapi3.Operation {
 	verify.Description = "Verify an email address for a subscription"
 	verify.OperationID = "VerifySubscriberEmail"
 
-	h.AddRequestBody("VerifyEmail", VerifyRequest{}, verify)
-	h.AddResponse("VerifyReply", "success", VerifyReply{}, verify, http.StatusOK)
+	h.AddRequestBody("VerifyEmail", models.VerifyRequest{}, verify)
+	h.AddResponse("VerifyReply", "success", models.VerifyReply{}, verify, http.StatusOK)
 	verify.AddResponse(http.StatusInternalServerError, internalServerError())
 	verify.AddResponse(http.StatusBadRequest, badRequest())
 	verify.AddResponse(http.StatusCreated, created())

@@ -8,13 +8,12 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
-	"time"
 
-	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/require"
 
 	api "github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/models"
+	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
@@ -26,6 +25,7 @@ func TestClient(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintln(w, "{\"hello\":\"world\"}")
+
 			return
 		}
 
@@ -34,6 +34,7 @@ func TestClient(t *testing.T) {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintln(w, "{\"error\":\"bad request\"}")
 	}))
+
 	defer ts.Close()
 
 	// Create a Client that makes requests to the test server
@@ -103,66 +104,6 @@ func TestClient(t *testing.T) {
 	req, err = apiv1.NewRequest(ctx, http.MethodPost, "/bar", data, nil)
 	require.NoError(t, err, "could not create request")
 	require.Equal(t, "Bearer newtoken", req.Header.Get("Authorization"), "expected the authorization header to be set to newtoken")
-}
-
-// ===========================================================================
-// Client Methods
-// ===========================================================================
-
-func TestStatus(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
-		fixture := &models.StatusReply{
-			Status:  "fine",
-			Uptime:  (2 * time.Second).String(),
-			Version: "1.0.test",
-		}
-
-		// Create a Test Server
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			require.Equal(t, http.MethodGet, r.Method)
-			require.Equal(t, "/v1/status", r.URL.Path)
-
-			w.Header().Add("Content-Type", "application/json; charset=utf-8")
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(fixture)
-		}))
-		defer ts.Close()
-
-		// Create a client to execute tests against the test server
-		client, err := api.New(ts.URL)
-		require.NoError(t, err)
-
-		out, err := client.Status(context.Background())
-		require.NoError(t, err, "could not execute status request")
-		require.Equal(t, fixture, out, "expected the fixture to be returned")
-	})
-
-	t.Run("Unavailable", func(t *testing.T) {
-		fixture := &models.StatusReply{
-			Status:  "ack!",
-			Uptime:  (9 * time.Second).String(),
-			Version: "1.0.panic",
-		}
-
-		// Create a Test Server
-		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			require.Equal(t, http.MethodGet, r.Method)
-			require.Equal(t, "/v1/status", r.URL.Path)
-
-			w.Header().Add("Content-Type", "application/json; charset=utf-8")
-			w.WriteHeader(http.StatusServiceUnavailable)
-			json.NewEncoder(w).Encode(fixture)
-		}))
-		defer ts.Close()
-
-		// Create a client to execute tests against the test server
-		client, err := api.New(ts.URL)
-		require.NoError(t, err)
-
-		out, err := client.Status(context.Background())
-		require.NoError(t, err, "could not execute status request")
-		require.Equal(t, fixture, out, "expected the fixture to be returned")
-	})
 }
 
 func TestRegister(t *testing.T) {
@@ -308,7 +249,8 @@ func TestResetPassword(t *testing.T) {
 	fixture := &models.ResetPasswordReply{
 		Message: "password reset",
 	}
-	ts := httptest.NewServer(testhandler(fixture, http.MethodPost, "/v1/reset-password"))
+	ts := httptest.NewServer(testhandler(fixture, http.MethodPost, "/v1/password-reset"))
+
 	defer ts.Close()
 
 	// Create a client and execute endpoint request
@@ -373,94 +315,19 @@ func TestInviteAccept(t *testing.T) {
 	require.Equal(t, fixture, reply, "unexpected response returned")
 }
 
-func TestWaitForReady(t *testing.T) {
-	// This is a long running test, skip if in short mode
-	if testing.Short() {
-		t.Skip("skipping long running test in short mode")
-	}
-
-	// Backoff Interval should be as follows:
-	// Request #   Retry Interval (sec)     Randomized Interval (sec)
-	//   1          0.5                     [0.25,   0.75]
-	//   2          0.75                    [0.375,  1.125]
-	//   3          1.125                   [0.562,  1.687]
-	//   4          1.687                   [0.8435, 2.53]
-	//   5          2.53                    [1.265,  3.795]
-	//   6          3.795                   [1.897,  5.692]
-	//   7          5.692                   [2.846,  8.538]
-	//   8          8.538                   [4.269, 12.807]
-	//   9         12.807                   [6.403, 19.210]
-	//  10         19.210                   backoff.Stop
-
-	fixture := &models.StatusReply{
-		Version: "1.0.test",
-	}
-
-	// Create a Test Server
-	tries := 0
-	started := time.Now()
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/v1/status" {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		tries++
-		var status int
-		if tries < 4 {
-			status = http.StatusServiceUnavailable
-			fixture.Status = "maintenance"
-		} else {
-			status = http.StatusOK
-			fixture.Status = "fine"
-		}
-
-		fixture.Uptime = time.Since(started).String()
-
-		log.Info().Int("status", status).Int("tries", tries).Msg("responding to status request")
-		w.Header().Add("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(status)
-		json.NewEncoder(w).Encode(fixture)
-	}))
-	defer ts.Close()
-
-	// Create a client to execute tests against the test server
-	client, err := api.New(ts.URL)
-	require.NoError(t, err)
-
-	// We expect it takes 5 tries before a good response is returned that means that
-	// the minimum delay according to the above table is 1.187 seconds
-	err = client.WaitForReady(context.Background())
-	require.NoError(t, err)
-	require.GreaterOrEqual(t, time.Since(started), 1187*time.Millisecond)
-
-	// Should not have any wait since the test server will respond true
-	started = time.Now()
-	err = client.WaitForReady(context.Background())
-	require.NoError(t, err)
-	require.LessOrEqual(t, time.Since(started), 250*time.Millisecond)
-
-	// Test timeout
-	tries = 0
-	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
-	defer cancel()
-	err = client.WaitForReady(ctx)
-	require.ErrorIs(t, err, context.DeadlineExceeded)
-}
-
 func testhandler(fixture interface{}, expectedMethod, expectedPath string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json; charset=utf-8")
 
 		if r.Method != expectedMethod {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(api.ErrorResponse("unexpected http method"))
+			json.NewEncoder(w).Encode(rout.ErrorResponse("unexpected http method"))
 			return
 		}
 
 		if r.URL.Path != expectedPath {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(api.ErrorResponse("unexpected endpoint path"))
+			json.NewEncoder(w).Encode(rout.ErrorResponse("unexpected endpoint path"))
 			return
 		}
 

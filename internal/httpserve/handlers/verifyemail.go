@@ -13,31 +13,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
-// VerifyRequest holds the fields that should be included on a request to the `/verify` endpoint
-type VerifyRequest struct {
-	Token string `query:"token"`
-}
-
-// VerifyReply holds the fields that are sent on a response to the `/verify` endpoint
-type VerifyReply struct {
-	rout.Reply
-	ID           string `json:"user_id"`
-	Email        string `json:"email"`
-	Token        string `json:"token"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int64  `json:"expires_in"`
-	Message      string `json:"message,omitempty"`
-}
-
 // VerifyEmail is the handler for the email verification endpoint
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
-	var req VerifyRequest
+	var req models.VerifyRequest
 	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
@@ -102,7 +85,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 					return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
 				}
 
-				out := &VerifyReply{
+				out := &models.VerifyReply{
 					Reply:   rout.Reply{Success: false},
 					ID:      meowtoken.ID,
 					Email:   user.Email,
@@ -145,7 +128,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 	h.AnalyticsClient.Event("email_verified", props)
 
-	out := &VerifyReply{
+	out := &models.VerifyReply{
 		ID:           entUser.ID,
 		Email:        entUser.Email,
 		Reply:        rout.Reply{Success: true},
@@ -190,8 +173,8 @@ func (h *Handler) BindVerifyEmailHandler() *openapi3.Operation {
 	verify.Description = "Verify an email address"
 	verify.OperationID = "VerifyEmail"
 
-	h.AddRequestBody("VerifyEmail", VerifyRequest{}, verify)
-	h.AddResponse("VerifyReply", "success", VerifyReply{}, verify, http.StatusOK)
+	h.AddRequestBody("VerifyEmail", models.VerifyRequest{}, verify)
+	h.AddResponse("VerifyReply", "success", models.VerifyReply{}, verify, http.StatusOK)
 	verify.AddResponse(http.StatusInternalServerError, internalServerError())
 	verify.AddResponse(http.StatusBadRequest, badRequest())
 	verify.AddResponse(http.StatusCreated, created())

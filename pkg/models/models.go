@@ -1,8 +1,11 @@
 package models
 
 import (
+	"strings"
+
 	"github.com/go-webauthn/webauthn/protocol"
 
+	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -207,14 +210,45 @@ type Reply struct {
 	Unverified bool   `json:"unverified,omitempty"`
 }
 
-// Returned on status requests
-type StatusReply struct {
-	Status  string `json:"status"`
-	Uptime  string `json:"uptime,omitempty"`
-	Version string `json:"version,omitempty"`
-}
-
 // SwitchRequest is the request payload for the switch organization endpoint
 type SwitchRequest struct {
 	OrgID string `json:"org_id"`
+}
+
+// Validate the register request ensuring that the required fields are available and
+// that the password is valid - an error is returned if the request is not correct. This
+// method also performs some basic data cleanup, trimming whitespace
+func (r *RegisterRequest) Validate() error {
+	r.FirstName = strings.TrimSpace(r.FirstName)
+	r.LastName = strings.TrimSpace(r.LastName)
+	r.Email = strings.TrimSpace(r.Email)
+	r.Password = strings.TrimSpace(r.Password)
+
+	// Required for all requests
+	switch {
+	case r.Email == "":
+		return rout.MissingField("email")
+	case r.Password == "":
+		return rout.MissingField("password")
+	case passwd.Strength(r.Password) < passwd.Moderate:
+		return rout.ErrPasswordTooWeak
+	}
+
+	return nil
+}
+
+// validateVerifyRequest validates the required fields are set in the user request
+func (r *ResetPasswordRequest) ValidateResetRequest() error {
+	r.Password = strings.TrimSpace(r.Password)
+
+	switch {
+	case r.Token == "":
+		return rout.NewMissingRequiredFieldError("token")
+	case r.Password == "":
+		return rout.NewMissingRequiredFieldError("password")
+	case passwd.Strength(r.Password) < passwd.Moderate:
+		return rout.ErrPasswordTooWeak
+	}
+
+	return nil
 }

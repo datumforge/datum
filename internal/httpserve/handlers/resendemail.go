@@ -11,29 +11,19 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )
-
-// ResendRequest contains fields for a resend email verification request
-type ResendRequest struct {
-	Email string `json:"email"`
-}
-
-// ResendReply holds the fields that are sent on a response to the `/resend` endpoint
-type ResendReply struct {
-	rout.Reply
-	Message string `json:"message"`
-}
 
 // ResendEmail will resend an email verification email if the provided
 // email exists
 func (h *Handler) ResendEmail(ctx echo.Context) error {
-	out := &ResendReply{
+	out := &models.ResendReply{
 		Reply:   rout.Reply{Success: true},
 		Message: "We've received your request to be resent an email to complete verification. Please check your email.",
 	}
 
-	var in ResendRequest
+	var in models.ResendRequest
 	if err := ctx.Bind(&in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
@@ -95,7 +85,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 }
 
 // validateResendRequest validates the required fields are set in the user request
-func validateResendRequest(req ResendRequest) error {
+func validateResendRequest(req models.ResendRequest) error {
 	if req.Email == "" {
 		return rout.NewMissingRequiredFieldError("email")
 	}
@@ -109,8 +99,8 @@ func (h *Handler) BindResendEmailHandler() *openapi3.Operation {
 	resendEmail.Description = "Resend an email verification email"
 	resendEmail.OperationID = "ResendEmail"
 
-	h.AddRequestBody("ResendEmail", ResendRequest{}, resendEmail)
-	h.AddResponse("ResendReply", "success", ResendReply{}, resendEmail, http.StatusOK)
+	h.AddRequestBody("ResendEmail", models.ResendRequest{}, resendEmail)
+	h.AddResponse("ResendReply", "success", models.ResendReply{}, resendEmail, http.StatusOK)
 	resendEmail.AddResponse(http.StatusInternalServerError, internalServerError())
 	resendEmail.AddResponse(http.StatusBadRequest, badRequest())
 

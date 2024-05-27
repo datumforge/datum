@@ -8,23 +8,13 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// RefreshRequest holds the fields that should be included on a request to the `/refresh` endpoint
-type RefreshRequest struct {
-	RefreshToken string `json:"refresh_token"`
-}
-
-// RefreshReply holds the fields that are sent on a response to the `/refresh` endpoint
-type RefreshReply struct {
-	rout.Reply
-	Message string `json:"message,omitempty"`
-}
-
 // RefreshHandler allows users to refresh their access token using their refresh token.
 func (h *Handler) RefreshHandler(ctx echo.Context) error {
-	var r RefreshRequest
+	var r models.RefreshRequest
 	if err := ctx.Bind(&r); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
@@ -76,7 +66,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return err
 	}
 
-	out := &RefreshReply{
+	out := &models.RefreshReply{
 		Reply:   rout.Reply{Success: true},
 		Message: "success",
 	}
@@ -90,8 +80,8 @@ func (h *Handler) BindRefreshHandler() *openapi3.Operation {
 	refresh.Description = "Refresh the access token"
 	refresh.OperationID = "RefreshHandler"
 
-	h.AddRequestBody("RefreshRequest", RefreshRequest{}, refresh)
-	h.AddResponse("RefreshReply", "success", RefreshReply{}, refresh, http.StatusOK)
+	h.AddRequestBody("RefreshRequest", models.RefreshRequest{}, refresh)
+	h.AddResponse("RefreshReply", "success", models.RefreshReply{}, refresh, http.StatusOK)
 	refresh.AddResponse(http.StatusInternalServerError, internalServerError())
 	refresh.AddResponse(http.StatusBadRequest, badRequest())
 	refresh.AddResponse(http.StatusNotFound, notFound())

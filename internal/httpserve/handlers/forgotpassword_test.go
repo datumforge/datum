@@ -17,8 +17,8 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
@@ -89,7 +89,7 @@ func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
 
 			mock.ResetEmailMock()
 
-			resendJSON := handlers.ForgotPasswordRequest{
+			resendJSON := models.ForgotPasswordRequest{
 				Email: tc.email,
 			}
 
@@ -113,7 +113,7 @@ func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus != http.StatusOK {
-				var out *handlers.ForgotPasswordReply
+				var out *models.ForgotPasswordReply
 
 				// parse request body
 				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

@@ -25,6 +25,7 @@ func TestClient(t *testing.T) {
 			w.Header().Add("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintln(w, "{\"hello\":\"world\"}")
+
 			return
 		}
 
@@ -33,6 +34,7 @@ func TestClient(t *testing.T) {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintln(w, "{\"error\":\"bad request\"}")
 	}))
+
 	defer ts.Close()
 
 	// Create a Client that makes requests to the test server

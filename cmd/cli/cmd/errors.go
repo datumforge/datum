@@ -20,6 +20,9 @@ var (
 
 	// ErrNotFound is returned when a resource is not found
 	ErrNotFound = errors.New("resource not found")
+
+	// ErrSessionNotFound is returned when a session is not found
+	ErrSessionNotFound = errors.New("session not found")
 )
 
 // RequiredFieldMissingError is returned when a field is required but not provided

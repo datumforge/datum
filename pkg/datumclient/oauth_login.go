@@ -40,7 +40,7 @@ func OauthLogin(u string, isDev bool) (*oauth2.Token, string, error) {
 
 	serveMux := http.NewServeMux()
 	serveMux.HandleFunc(callback, func(w http.ResponseWriter, r *http.Request) {
-		token, session := getTokensFromCookieRequest(r, isDev)
+		token, session := getTokensFromCookieRequest(r)
 
 		_, _ = w.Write([]byte("Success. You can now close this window.")) //nolint
 

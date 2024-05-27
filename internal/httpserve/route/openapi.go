@@ -20,20 +20,24 @@ type Router struct {
 }
 
 // AddRoute is used to add a route to the echo router and OpenAPI schema at the same time ensuring consistency between the spec and the server
-func (r *Router) AddRoute(pattern, method string, op *openapi3.Operation, route echo.Routable) {
+func (r *Router) AddRoute(pattern, method string, op *openapi3.Operation, route echo.Routable) error {
 	_, err := r.Echo.AddRoute(route)
 	if err != nil {
-		return
+		return err
 	}
 
 	r.OAS.AddOperation(pattern, method, op)
+
+	return nil
 }
 
-func (r *Router) AddEchoOnlyRoute(pattern, method string, route echo.Routable) {
+func (r *Router) AddEchoOnlyRoute(pattern, method string, route echo.Routable) error {
 	_, err := r.Echo.AddRoute(route)
 	if err != nil {
-		return
+		return err
 	}
+
+	return nil
 }
 
 func (r *Router) AddErrorSchema() error {

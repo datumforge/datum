@@ -26,7 +26,9 @@ func registerVerifyHandler(router *Router) (err error) {
 
 	verifyOperation := router.Handler.BindVerifyEmailHandler()
 
-	router.AddRoute(path, method, verifyOperation, route)
+	if err := router.AddRoute(path, method, verifyOperation, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }

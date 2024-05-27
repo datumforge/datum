@@ -23,7 +23,9 @@ func registerEventPublisher(router *Router) (err error) {
 
 	eventOperation := router.Handler.BindEventPublisher()
 
-	router.AddRoute(path, method, eventOperation, route)
+	if err := router.AddRoute(path, method, eventOperation, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }

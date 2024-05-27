@@ -20,9 +20,11 @@ func registerWebauthnRegistrationHandler(router *Router) (err error) {
 		},
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerWebauthnVerificationsHandler registers the webauthn registration verification handler
@@ -39,9 +41,11 @@ func registerWebauthnVerificationsHandler(router *Router) (err error) {
 		},
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerWebauthnAuthenticationHandler registers the webauthn authentication handler
@@ -58,9 +62,11 @@ func registerWebauthnAuthenticationHandler(router *Router) (err error) {
 		},
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerWebauthnAuthVerificationHandler registers the webauthn authentication verification handler
@@ -77,7 +83,9 @@ func registerWebauthnAuthVerificationHandler(router *Router) (err error) {
 		},
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }

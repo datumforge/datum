@@ -25,7 +25,9 @@ func registerResetPasswordHandler(router *Router) (err error) {
 
 	resetOperation := router.Handler.BindResetPasswordHandler()
 
-	router.AddRoute(path, method, resetOperation, route)
+	if err := router.AddRoute(path, method, resetOperation, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }

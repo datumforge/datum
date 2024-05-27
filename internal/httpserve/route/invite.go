@@ -25,7 +25,9 @@ func registerInviteHandler(router *Router) (err error) {
 
 	inviteOperation := router.Handler.BindOrganizationInviteAccept()
 
-	router.AddRoute(path, method, inviteOperation, route)
+	if err := router.AddRoute(path, method, inviteOperation, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }

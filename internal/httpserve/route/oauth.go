@@ -21,9 +21,11 @@ func registerOAuthRegisterHandler(router *Router) (err error) {
 		},
 	}.ForGroup(unversioned, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerUserInfoHandler registers the userinfo handler
@@ -45,9 +47,11 @@ func registerUserInfoHandler(router *Router) (err error) {
 		},
 	}.ForGroup(unversioned, authMW)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerGithubLoginHandler registers the github login handler
@@ -62,9 +66,11 @@ func registerGithubLoginHandler(router *Router) (err error) {
 		Handler: githubLogin(router),
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerGithubCallbackHandler registers the github callback handler
@@ -79,9 +85,11 @@ func registerGithubCallbackHandler(router *Router) (err error) {
 		Handler: githubCallback(router),
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerGoogleLoginHandler registers the google login handler
@@ -96,9 +104,11 @@ func registerGoogleLoginHandler(router *Router) (err error) {
 		Handler: googleLogin(router),
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerGoogleCallbackHandler registers the google callback handler
@@ -113,9 +123,11 @@ func registerGoogleCallbackHandler(router *Router) (err error) {
 		Handler: googleCallback(router),
 	}.ForGroup(V1Version, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // githubLogin wraps getloginhandlers

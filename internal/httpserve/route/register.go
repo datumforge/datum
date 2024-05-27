@@ -29,7 +29,9 @@ func registerRegisterHandler(router *Router) (err error) {
 
 	registerOperation := router.Handler.BindRegisterHandler()
 
-	router.AddRoute(path, method, registerOperation, route)
+	if err := router.AddRoute(path, method, registerOperation, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }

@@ -22,9 +22,11 @@ func registerJwksWellKnownHandler(router *Router) (err error) {
 		},
 	}.ForGroup(unversioned, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerOpenAPISpecHandler embeds our generated open api specs and serves it behind /api-docs
@@ -40,9 +42,11 @@ func registerOpenAPIHandler(router *Router) (err error) {
 		}),
 	}.ForGroup(V1Version, mw)
 
-	router.AddEchoOnlyRoute(path, method, route)
+	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 //go:embed security.txt
@@ -60,9 +64,11 @@ func registerSecurityTxtHandler(router *Router) (err error) {
 		Handler: echo.StaticFileHandler("security.txt", securityTxt),
 	}.ForGroup(unversioned, mw)
 
-	router.AddEchoOnlyRoute(path, method, route)
+	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 //go:embed robots.txt
@@ -80,9 +86,11 @@ func registerRobotsHandler(router *Router) (err error) {
 		Handler: echo.StaticFileHandler("robots.txt", robotsTxt),
 	}.ForGroup(unversioned, mw)
 
-	router.AddEchoOnlyRoute(path, method, route)
+	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 //go:embed assets/*
@@ -100,7 +108,9 @@ func registerFaviconHandler(router *Router) (err error) {
 		Handler: echo.StaticFileHandler("assets/favicon.ico", assets),
 	}.ForGroup(unversioned, mw)
 
-	router.AddEchoOnlyRoute(path, method, route)
+	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }

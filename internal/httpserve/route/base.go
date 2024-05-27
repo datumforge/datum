@@ -23,9 +23,11 @@ func registerLivenessHandler(router *Router) (err error) {
 		},
 	}.ForGroup(unversioned, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerReadinessHandler registers the readiness handler
@@ -42,9 +44,11 @@ func registerReadinessHandler(router *Router) (err error) {
 		},
 	}.ForGroup(unversioned, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }
 
 // registerMetricsHandler registers the metrics handler
@@ -59,7 +63,9 @@ func registerMetricsHandler(router *Router) (err error) {
 		Handler: echo.WrapHandler(promhttp.Handler()),
 	}.ForGroup(unversioned, mw)
 
-	router.AddRoute(path, method, nil, route)
+	if err := router.AddRoute(path, method, nil, route); err != nil {
+		return err
+	}
 
-	return
+	return nil
 }

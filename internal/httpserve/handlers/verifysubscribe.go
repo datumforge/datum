@@ -23,19 +23,19 @@ import (
 
 // VerifySubscriptionHandler is the handler for the subscription verification endpoint
 func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
-	var req models.VerifySubscribeRequest
-	if err := ctx.Bind(&req); err != nil {
+	var in models.VerifySubscribeRequest
+	if err := ctx.Bind(&in); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
-	if err := validateVerifySubscriptionRequest(req.Token); err != nil {
+	if err := validateVerifySubscriptionRequest(in.Token); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), req.Token)
+	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), in.Token)
 
-	entSubscriber, err := h.getSubscriberByToken(ctxWithToken, req.Token)
+	entSubscriber, err := h.getSubscriberByToken(ctxWithToken, in.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return h.BadRequest(ctx, err)
@@ -52,7 +52,7 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 		OrganizationIDs: []string{entSubscriber.OwnerID},
 	})
 
-	ctxWithToken = token.NewContextWithVerifyToken(reqCtx, req.Token)
+	ctxWithToken = token.NewContextWithVerifyToken(reqCtx, in.Token)
 
 	if !entSubscriber.VerifiedEmail {
 		if err := h.verifySubscriberToken(ctxWithToken, entSubscriber); err != nil {

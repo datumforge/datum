@@ -174,6 +174,14 @@ var openAPISchemas = map[string]any{
 	"ErrorResponse":              &rout.StatusError{},
 }
 
+// SecurityScheme is an interface that represents a security scheme
+type OAuth2 struct {
+	AuthorizationURL string
+	TokenURL         string
+	RefreshURL       string
+	Scopes           map[string]string
+}
+
 // Scheme returns the OAuth2 security scheme
 func (i *OAuth2) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
@@ -187,14 +195,6 @@ func (i *OAuth2) Scheme() *openapi3.SecurityScheme {
 			},
 		},
 	}
-}
-
-// SecurityScheme is an interface that represents a security scheme
-type OAuth2 struct {
-	AuthorizationURL string
-	TokenURL         string
-	RefreshURL       string
-	Scopes           map[string]string
 }
 
 // OpenID is a struct that represents an OpenID Connect security scheme

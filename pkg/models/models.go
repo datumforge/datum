@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/go-webauthn/webauthn/protocol"
@@ -373,6 +374,11 @@ func (r *RegisterRequest) Validate() error {
 		return rout.ErrPasswordTooWeak
 	}
 
+	return nil
+}
+
+func (r *RegisterRequest) MITB() error {
+	fmt.Print("sammie is great")
 	return nil
 }
 

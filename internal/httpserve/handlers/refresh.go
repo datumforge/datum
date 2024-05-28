@@ -14,17 +14,17 @@ import (
 
 // RefreshHandler allows users to refresh their access token using their refresh token.
 func (h *Handler) RefreshHandler(ctx echo.Context) error {
-	var r models.RefreshRequest
-	if err := ctx.Bind(&r); err != nil {
+	var in models.RefreshRequest
+	if err := ctx.Bind(&in); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
-	if r.RefreshToken == "" {
+	if in.RefreshToken == "" {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(rout.NewMissingRequiredFieldError("refresh_token")))
 	}
 
 	// verify the refresh token
-	claims, err := h.TM.Verify(r.RefreshToken)
+	claims, err := h.TM.Verify(in.RefreshToken)
 	if err != nil {
 		h.Logger.Errorw("error verifying token", "error", err)
 

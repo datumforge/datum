@@ -27,20 +27,20 @@ import (
 // and not expired. If the request is successful, a confirmation of the reset is sent
 // to the user and a 204 no content is returned
 func (h *Handler) ResetPassword(ctx echo.Context) error {
-	var req models.ResetPasswordRequest
-	if err := ctx.Bind(&req); err != nil {
+	var in models.ResetPasswordRequest
+	if err := ctx.Bind(&in); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
-	if err := req.ValidateResetRequest(); err != nil {
+	if err := in.ValidateResetRequest(); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithResetToken(ctx.Request().Context(), req.Token)
+	ctxWithToken := token.NewContextWithResetToken(ctx.Request().Context(), in.Token)
 
 	// lookup user from db based on provided token
-	entUser, err := h.getUserByResetToken(ctxWithToken, req.Token)
+	entUser, err := h.getUserByResetToken(ctxWithToken, in.Token)
 	if err != nil {
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
@@ -58,7 +58,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	}
 
 	// set tokens for request
-	if err := user.setResetTokens(entUser, req.Token); err != nil {
+	if err := user.setResetTokens(entUser, in.Token); err != nil {
 		h.Logger.Errorw("unable to set reset tokens for request", "error", err)
 
 		return h.BadRequest(ctx, err)
@@ -94,7 +94,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	}
 
 	// make sure its not the same password as current
-	valid, err := passwd.VerifyDerivedKey(*entUser.Password, req.Password)
+	valid, err := passwd.VerifyDerivedKey(*entUser.Password, in.Password)
 	if err != nil || valid {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrNonUniquePassword))
 	}
@@ -104,7 +104,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		SubjectID: entUser.ID,
 	})
 
-	if err := h.updateUserPassword(userCtx, entUser.ID, req.Password); err != nil {
+	if err := h.updateUserPassword(userCtx, entUser.ID, in.Password); err != nil {
 		h.Logger.Errorw("error updating user password", "error", err)
 
 		return h.BadRequest(ctx, err)

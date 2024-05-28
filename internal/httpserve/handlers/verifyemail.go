@@ -20,19 +20,19 @@ import (
 
 // VerifyEmail is the handler for the email verification endpoint
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
-	var req models.VerifyRequest
-	if err := ctx.Bind(&req); err != nil {
+	var in models.VerifyRequest
+	if err := ctx.Bind(&in); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
-	if err := validateVerifyRequest(req.Token); err != nil {
+	if err := validateVerifyRequest(in.Token); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), req.Token)
+	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), in.Token)
 
-	entUser, err := h.getUserByEVToken(ctxWithToken, req.Token)
+	entUser, err := h.getUserByEVToken(ctxWithToken, in.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return h.BadRequest(ctx, err)
@@ -56,7 +56,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	// check to see if user is already confirmed
 	if !entUser.Edges.Setting.EmailConfirmed {
 		// set tokens for request
-		if err := user.setUserTokens(entUser, req.Token); err != nil {
+		if err := user.setUserTokens(entUser, in.Token); err != nil {
 			h.Logger.Errorw("unable to set user tokens for request", "error", err)
 
 			return h.BadRequest(ctx, err)

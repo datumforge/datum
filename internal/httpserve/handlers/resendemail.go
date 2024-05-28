@@ -18,12 +18,8 @@ import (
 // ResendEmail will resend an email verification email if the provided
 // email exists
 func (h *Handler) ResendEmail(ctx echo.Context) error {
-	out := &models.ResendReply{
-		Reply:   rout.Reply{Success: true},
-		Message: "We've received your request to be resent an email to complete verification. Please check your email.",
-	}
-
 	var in models.ResendRequest
+
 	if err := ctx.Bind(&in); err != nil {
 		return h.BadRequest(ctx, err)
 	}
@@ -36,6 +32,11 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 
 	// set viewer context
 	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), in.Email)
+
+	out := &models.ResendReply{
+		Reply:   rout.Reply{Success: true},
+		Message: "We've received your request to be resent an email to complete verification. Please check your email.",
+	}
 
 	// email verifications only come to users that were created with username/password logins
 	entUser, err := h.getUserByEmail(ctxWithToken, in.Email, enums.AuthProviderCredentials)

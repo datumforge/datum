@@ -20,9 +20,9 @@ import (
 
 // SwitchHandler is responsible for handling requests to the `/switch` endpoint, and changing the user's logged in organization context
 func (h *Handler) SwitchHandler(ctx echo.Context) error {
-	var req models.SwitchOrganizationRequest
+	var in models.SwitchOrganizationRequest
 
-	if err := ctx.Bind(&req); err != nil {
+	if err := ctx.Bind(&in); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
@@ -51,7 +51,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// ensure the user is not already in the target organization
-	if orgID == req.TargetOrganizationID {
+	if orgID == in.TargetOrganizationID {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("already switched to organization"))
 	}
 
@@ -65,7 +65,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	// get the target organization
 	orgGetCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
-	org, err := h.getOrgByID(orgGetCtx, req.TargetOrganizationID)
+	org, err := h.getOrgByID(orgGetCtx, in.TargetOrganizationID)
 	if err != nil {
 		h.Logger.Errorw("unable to get target organization by id", "error", err)
 	}

@@ -44,8 +44,8 @@ type InviteToken struct {
 // On success, it returns a response with the organization information
 func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	// parse the token out of the context
-	req := new(models.InviteRequest)
-	if err := ctx.Bind(req); err != nil {
+	in := new(models.InviteRequest)
+	if err := ctx.Bind(in); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
@@ -60,7 +60,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	}
 
 	inv := &Invite{
-		Token: req.Token,
+		Token: in.Token,
 	}
 
 	// ensure the user that is logged in, matches the invited user

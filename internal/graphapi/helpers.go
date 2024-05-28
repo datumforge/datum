@@ -8,7 +8,15 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/events/soiree"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+)
+
+const (
+	// defaultMaxWorkers is the default number of workers in the pond pool when the pool was not created on server startup
+	defaultMaxWorkers = 10
+	// defaultMaxCapacity is the default capacity of the pond pool when the pool was not created on server startup
+	defaultMaxCapacity = 100
 )
 
 // withTransactionalMutation automatically wrap the GraphQL mutations with a database transaction.
@@ -23,6 +31,17 @@ func injectClient(client *ent.Client) graphql.OperationMiddleware {
 		ctx = ent.NewContext(ctx, client)
 		return next(ctx)
 	}
+}
+
+// withPool returns the existing pool or creates a new one if it does not exist
+func (r *queryResolver) withPool() *soiree.PondPool {
+	if r.pool != nil {
+		return r.pool
+	}
+
+	r.pool = soiree.NewPondPool(defaultMaxWorkers, defaultMaxCapacity)
+
+	return r.pool
 }
 
 // setOrganizationInAuthContext sets the organization in the auth context based on the input if it is not already set

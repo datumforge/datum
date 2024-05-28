@@ -130,6 +130,8 @@ type Server struct {
 	CacheControl cachecontrol.Config `json:"cacheControl" koanf:"cacheControl"`
 	// Mime contains settings for the mime middleware
 	Mime mime.Config `json:"mime" koanf:"mime"`
+	// GraphPool contains settings for the goroutine pool used by the graph resolvers
+	GraphPool PondPool `json:"graphPool" koanf:"graphPool"`
 }
 
 // Auth settings including oauth2 providers and datum token configuration
@@ -156,6 +158,14 @@ type TLS struct {
 	CertKey string `json:"certKey" koanf:"certKey" default:"server.key"`
 	// AutoCert generates the cert with letsencrypt, this does not work on localhost
 	AutoCert bool `json:"autoCert" koanf:"autoCert" default:"false"`
+}
+
+// PondPool contains the settings for the goroutine pool
+type PondPool struct {
+	// MaxWorkers is the maximum number of workers in the pool
+	MaxWorkers int `json:"maxWorkers" koanf:"maxWorkers" default:"100"`
+	// MaxCapacity is the maximum number of tasks that can be queued
+	MaxCapacity int `json:"maxCapacity" koanf:"maxCapacity" default:"1000"`
 }
 
 // Load is responsible for loading the configuration from a YAML file and environment variables.

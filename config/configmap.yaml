@@ -45,6 +45,8 @@ data:
   DATUM_SERVER_MIME_ENABLED: {{ .Values.datum.server.mime.enabled | default true }}
   DATUM_SERVER_MIME_MIMETYPESFILE: {{ .Values.datum.server.mime.mimeTypesFile }}
   DATUM_SERVER_MIME_DEFAULTCONTENTTYPE: {{ .Values.datum.server.mime.defaultContentType | default "application/data" }}
+  DATUM_SERVER_GRAPHPOOL_MAXWORKERS: {{ .Values.datum.server.graphPool.maxWorkers | default 100 }}
+  DATUM_SERVER_GRAPHPOOL_MAXCAPACITY: {{ .Values.datum.server.graphPool.maxCapacity | default 1000 }}
   DATUM_AUTH_ENABLED: {{ .Values.datum.auth.enabled | default true }}
   DATUM_AUTH_TOKEN_KID: {{ .Values.datum.auth.token.kid }}
   DATUM_AUTH_TOKEN_AUDIENCE: {{ .Values.datum.auth.token.audience | default "https://datum.net" }}

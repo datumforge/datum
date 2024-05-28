@@ -46,8 +46,9 @@ func (h *Handler) AddRequestBody(name string, body interface{}, op *openapi3.Ope
 	request := openapi3.NewRequestBody().
 		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/schemas/" + name}))
 	op.RequestBody = &openapi3.RequestBodyRef{Value: request}
+
 	request.Content.Get(appJSON).Examples = make(map[string]*openapi3.ExampleRef)
-	request.Content.Get(appJSON).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
+	request.Content.Get(appJSON).Examples["success"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
 }
 
 // AddResponse is used to add a response definition to the OpenAPI schema
@@ -58,5 +59,5 @@ func (h *Handler) AddResponse(name string, description string, body interface{},
 	op.AddResponse(status, response)
 
 	response.Content.Get(appJSON).Examples = make(map[string]*openapi3.ExampleRef)
-	response.Content.Get(appJSON).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
+	response.Content.Get(appJSON).Examples["success"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
 }

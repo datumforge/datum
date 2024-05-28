@@ -44,6 +44,7 @@ func (r *Router) OpenAPI() *openapi3.T {
 	return r.OAS
 }
 
+// AddQueryParameter adds a query parameter to the OpenAPI schema
 func (r *Router) AddQueryParameter(name string, value Parameter) {
 	checkTags(reflect.TypeOf(value))
 
@@ -102,15 +103,6 @@ func checkTags(rval reflect.Type) {
 	}
 }
 
-// AddExample adds an example to the OpenAPI schema
-func (r *Router) AddExample(name string, value interface{}) {
-	rval := reflect.TypeOf(value)
-	checkTags(rval)
-
-	example := openapi3.NewExample(value)
-	r.OAS.Components.Examples[name] = &openapi3.ExampleRef{Value: example}
-}
-
 // AddSchema adds a schema to the OpenAPI schema
 func (r *Router) AddSchema(name string, model interface{}) error {
 	schema, err := openapi3gen.NewSchemaRefForValue(model, r.OAS.Components.Schemas)
@@ -139,8 +131,4 @@ func SchemaGenerator(openAPISchemas map[string]any) (openapi3.Schemas, error) {
 	}
 
 	return schemas, nil
-}
-
-func (r *Router) AddSecurityScheme(name string, scheme *openapi3.SecurityScheme) {
-	r.OAS.Components.SecuritySchemes[name] = &openapi3.SecuritySchemeRef{Value: scheme}
 }

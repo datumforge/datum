@@ -7,18 +7,8 @@ import (
 
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
-
-// InviteReply holds the fields that are sent on a response to an accepted invitation
-// Note: there is no InviteRequest as this is handled via our graph interfaces
-type InviteReply struct {
-	rout.Reply
-	ID          string `json:"user_id"`
-	Email       string `json:"email"`
-	Message     string `json:"message"`
-	JoinedOrgID string `json:"joined_org_id"`
-	Role        string `json:"role"`
-}
 
 // LoginRequest to authenticate with the Datum Sever
 type LoginRequest struct {
@@ -203,6 +193,16 @@ type InviteRequest struct {
 	Token string `query:"token"`
 }
 
+// InviteReply holds the fields that are sent on a response to an accepted invitation
+type InviteReply struct {
+	rout.Reply
+	ID          string `json:"user_id"`
+	Email       string `json:"email"`
+	Message     string `json:"message"`
+	JoinedOrgID string `json:"joined_org_id"`
+	Role        string `json:"role"`
+}
+
 // Reply contains standard fields that are used for generic API responses and errors
 type Reply struct {
 	Success    bool   `json:"success"`
@@ -210,9 +210,147 @@ type Reply struct {
 	Unverified bool   `json:"unverified,omitempty"`
 }
 
-// SwitchRequest is the request payload for the switch organization endpoint
-type SwitchRequest struct {
-	OrgID string `json:"org_id"`
+var ExampleLoginSuccessRequest = LoginRequest{
+	Username: "sfunky@datum.net",
+	Password: "mitb!",
+	OTPCode:  "123456",
+}
+
+var ExampleLoginSuccessResponse = LoginReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	AccessToken:  "token",
+	RefreshToken: "token",
+	Session:      "session",
+	TokenType:    "access_token",
+}
+
+var ExampleForgotPasswordSuccessRequest = ForgotPasswordRequest{
+	Email: "sfunky@datum.net",
+}
+
+var ExampleForgotPasswordSuccessResponse = ForgotPasswordReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	Message: "We've received your request to have the password associated with this email reset. Please check your email.",
+}
+
+var ExampleResetPasswordSuccessRequest = ResetPasswordRequest{
+	Password: "mitb!",
+	Token:    "token",
+}
+
+var ExampleResetPasswordSuccessResponse = ResetPasswordReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	Message: "Password has been reset",
+}
+
+var ExampleRefreshRequest = RefreshRequest{
+	RefreshToken: "token",
+}
+
+var ExampleRefreshSuccessResponse = RefreshReply{
+	Reply:   rout.Reply{Success: true},
+	Message: "success",
+}
+
+var ExampleRegisterSuccessRequest = RegisterRequest{
+	FirstName: "Matt",
+	LastName:  "Anderson",
+	Email:     "sfunky@datum.net",
+	Password:  "mitb!",
+}
+
+var ExampleRegisterSuccessResponse = RegisterReply{
+	Reply:   rout.Reply{Success: true},
+	ID:      "1234",
+	Email:   "",
+	Message: "Welcome to Datum!",
+	Token:   "",
+}
+
+var ExampleResendEmailSuccessRequest = ResendRequest{
+	Email: "sfunky@datum.net",
+}
+
+var ExampleResendEmailSuccessResponse = ResendReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	Message: "Email has been resent",
+}
+
+var ExampleVerifySuccessRequest = VerifyRequest{
+	Token: "token",
+}
+
+var ExampleVerifySuccessResponse = VerifyReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	ID:           ulids.New().String(),
+	Email:        "sfunky@datum.net",
+	Token:        "token",
+	Message:      "Email has been verified",
+	AccessToken:  "token",
+	RefreshToken: "token",
+}
+
+var ExamplePublishSuccessRequest = PublishRequest{
+	Tags:    map[string]string{"tag1": "meow", "tag2": "meowzer"},
+	Topic:   "meow",
+	Message: "hot diggity dog",
+}
+
+var ExamplePublishSuccessResponse = PublishReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	Message: "success!",
+}
+
+var ExampleSwitchSuccessRequest = SwitchOrganizationRequest{
+	TargetOrganizationID: ulids.New().String(),
+}
+
+var ExampleSwitchSuccessReply = SwitchOrganizationReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	AccessToken:  "token",
+	RefreshToken: "token",
+	Session:      "session",
+}
+
+var ExampleVerifySubscriptionSuccessRequest = VerifySubscribeRequest{
+	Token: "token",
+}
+
+var ExampleVerifySubscriptionResponse = VerifySubscribeReply{
+	Reply:   rout.Reply{Success: true},
+	Message: "Subscription confirmed, looking forward to sending you updates!",
+}
+
+var ExampleInviteRequest = InviteRequest{
+	Token: "token",
+}
+
+var ExampleInviteResponse = InviteReply{
+	Reply:       rout.Reply{Success: true},
+	ID:          "1234",
+	Email:       "",
+	JoinedOrgID: "1234",
+	Role:        "admin",
+	Message:     "Welcome to your new organization!",
+}
+
+var ExampleErrorResponse = rout.StatusError{
+	StatusCode: 400, // nolint: gomnd
+	Reply:      rout.Reply{Success: false, Error: "error"},
 }
 
 // Validate the register request ensuring that the required fields are available and
@@ -227,6 +365,7 @@ func (r *RegisterRequest) Validate() error {
 	// Required for all requests
 	switch {
 	case r.Email == "":
+
 		return rout.MissingField("email")
 	case r.Password == "":
 		return rout.MissingField("password")

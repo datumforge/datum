@@ -56,6 +56,14 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
 	responses["Conflict"] = &openapi3.ResponseRef{Value: conflict}
 
+	securityschemes["bearer"] = &openapi3.SecuritySchemeRef{
+		Value: openapi3.NewSecurityScheme().
+			WithType("http").
+			WithScheme("bearer").
+			WithIn("header").
+			WithDescription("Bearer authnetication, the token must be a valid Datum API token"),
+	}
+
 	securityschemes["oauth2"] = &openapi3.SecuritySchemeRef{
 		Value: (*OAuth2)(&OAuth2{
 			AuthorizationURL: "https://auth.datum.net/oauth2/authorize",
@@ -70,7 +78,7 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 
 	securityschemes["openid"] = &openapi3.SecuritySchemeRef{
 		Value: (*OpenID)(&OpenID{
-			ConnectURL: "https://auth.datum.net/.well-known/openid-configuration",
+			ConnectURL: "https://api.datum.net/.well-known/openid-configuration",
 		}).Scheme(),
 	}
 
@@ -84,12 +92,6 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 		Value: (*Basic)(&Basic{
 			Username: "username",
 			Password: "password",
-		}).Scheme(),
-	}
-
-	securityschemes["bearer"] = &openapi3.SecuritySchemeRef{
-		Value: (*Bearer)(&Bearer{
-			Token: "token",
 		}).Scheme(),
 	}
 
@@ -147,40 +149,29 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 
 // openAPISchemas is a mapping of types to auto generate schemas for
 var openAPISchemas = map[string]any{
-	"LoginRequest":                 &models.LoginRequest{},
-	"LoginResponse":                &models.LoginReply{},
-	"ForgotPasswordRequest":        &models.ForgotPasswordRequest{},
-	"ForgotPasswordResponse":       &models.ForgotPasswordReply{},
-	"ResetPasswordRequest":         &models.ResetPasswordRequest{},
-	"ResetPasswordResponse":        &models.ResetPasswordReply{},
-	"RefreshRequest":               &models.RefreshRequest{},
-	"RefreshResponse":              &models.RefreshReply{},
-	"RegisterRequest":              &models.RegisterRequest{},
-	"RegisterResponse":             &models.RegisterReply{},
-	"ResendEmailRequest":           &models.ResendRequest{},
-	"ResendEmailResponse":          &models.ResendReply{},
-	"VerifyRequest":                &models.VerifyRequest{},
-	"VerifyResponse":               &models.VerifyReply{},
-	"PublishRequest":               &models.PublishRequest{},
-	"PublishResponse":              &models.PublishReply{},
-	"SwitchRequest":                &models.SwitchOrganizationRequest{},
-	"SwitchResponse":               &models.SwitchOrganizationReply{},
-	"WebauthnRegistrationRequest":  &models.WebauthnRegistrationRequest{},
-	"WebauthnRegistrationResponse": &models.WebauthnRegistrationResponse{},
-	"WebauthnLoginRequest":         &models.WebauthnBeginLoginResponse{},
-	"VerifySubscriptionRequest":    &models.VerifySubscribeRequest{},
-	"VerifySubscriptionResponse":   &models.VerifySubscribeReply{},
-	"InviteRequest":                &models.InviteRequest{},
-	"InviteResponse":               &models.InviteReply{},
-	"ErrorResponse":                &rout.StatusError{},
-}
-
-// SecurityScheme is an interface that represents a security scheme
-type OAuth2 struct {
-	AuthorizationURL string
-	TokenURL         string
-	RefreshURL       string
-	Scopes           map[string]string
+	"LoginRequest":               &models.LoginRequest{},
+	"LoginResponse":              &models.LoginReply{},
+	"ForgotPasswordRequest":      &models.ForgotPasswordRequest{},
+	"ForgotPasswordResponse":     &models.ForgotPasswordReply{},
+	"ResetPasswordRequest":       &models.ResetPasswordRequest{},
+	"ResetPasswordResponse":      &models.ResetPasswordReply{},
+	"RefreshRequest":             &models.RefreshRequest{},
+	"RefreshResponse":            &models.RefreshReply{},
+	"RegisterRequest":            &models.RegisterRequest{},
+	"RegisterResponse":           &models.RegisterReply{},
+	"ResendEmailRequest":         &models.ResendRequest{},
+	"ResendEmailResponse":        &models.ResendReply{},
+	"VerifyRequest":              &models.VerifyRequest{},
+	"VerifyResponse":             &models.VerifyReply{},
+	"PublishRequest":             &models.PublishRequest{},
+	"PublishResponse":            &models.PublishReply{},
+	"SwitchRequest":              &models.SwitchOrganizationRequest{},
+	"SwitchResponse":             &models.SwitchOrganizationReply{},
+	"VerifySubscriptionRequest":  &models.VerifySubscribeRequest{},
+	"VerifySubscriptionResponse": &models.VerifySubscribeReply{},
+	"InviteRequest":              &models.InviteRequest{},
+	"InviteResponse":             &models.InviteReply{},
+	"ErrorResponse":              &rout.StatusError{},
 }
 
 // Scheme returns the OAuth2 security scheme
@@ -196,6 +187,14 @@ func (i *OAuth2) Scheme() *openapi3.SecurityScheme {
 			},
 		},
 	}
+}
+
+// SecurityScheme is an interface that represents a security scheme
+type OAuth2 struct {
+	AuthorizationURL string
+	TokenURL         string
+	RefreshURL       string
+	Scopes           map[string]string
 }
 
 // OpenID is a struct that represents an OpenID Connect security scheme

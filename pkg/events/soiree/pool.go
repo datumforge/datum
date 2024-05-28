@@ -1,6 +1,7 @@
 package soiree
 
 import (
+	"sync"
 	"time"
 
 	"github.com/alitto/pond"
@@ -40,7 +41,10 @@ type Pool interface {
 
 // PondPool is a worker pool implementation using the pond library
 type PondPool struct {
+	// pool is the worker pool
 	pool *pond.WorkerPool
+	// name is the name of the pool used in metrics
+	name string
 }
 
 // NewPondPool creates a new instance of PondPool with the passed options
@@ -50,14 +54,40 @@ func NewPondPool(maxWorkers, maxCapacity int, options ...pond.Option) *PondPool 
 	}
 }
 
+// NewNamedPondPool creates a new instance of PondPool with the passed options and name
+func NewNamedPondPool(maxWorkers, maxCapacity int, name string, options ...pond.Option) *PondPool {
+	return &PondPool{
+		pool: pond.New(maxWorkers, maxCapacity, options...),
+		name: name,
+	}
+}
+
 // Submit submits a task to the worker pool
 func (p *PondPool) Submit(task func()) {
 	p.pool.Submit(task)
 }
 
-// SubmitandWait submits a task to the worker pool and waits for it to finish
+// SubmitAndWait submits a task to the worker pool and waits for it to finish
 func (p *PondPool) SubmitAndWait(task func()) {
 	p.pool.SubmitAndWait(task)
+}
+
+// SubmitMultipleAndWait submits multiple tasks to the worker pool and waits for all them to finish
+func (p *PondPool) SubmitMultipleAndWait(task []func()) {
+	wg := new(sync.WaitGroup)
+
+	for _, t := range task {
+		wg.Add(1)
+
+		p.pool.Submit(func() {
+			// Decrement the counter when the goroutine completes.
+			defer wg.Done()
+			// Execute the task
+			t()
+		})
+	}
+
+	wg.Wait()
 }
 
 // SubmitBefore submits a task to the worker pool before a specified task

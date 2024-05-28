@@ -49,6 +49,7 @@ Server settings for the echo server
 |[**redirects**](#serverredirects)|`object`|Config contains the types used in executing redirects via the redirect middleware<br/>|no|
 |[**cacheControl**](#servercachecontrol)|`object`|Config is the config values for the cache-control middleware<br/>|no|
 |[**mime**](#servermime)|`object`|Config defines the config for Mime middleware<br/>|no|
+|[**graphPool**](#servergraphpool)|`object`|PondPool contains the settings for the goroutine pool<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="servertls"></a>
@@ -183,6 +184,20 @@ Config defines the config for Mime middleware
 |**enabled**|`boolean`|Enabled indicates if the mime middleware should be enabled<br/>||
 |**mimeTypesFile**|`string`|MimeTypesFile is the file to load mime types from<br/>||
 |**defaultContentType**|`string`|DefaultContentType is the default content type to set if no mime type is found<br/>||
+
+**Additional Properties:** not allowed  
+<a name="servergraphpool"></a>
+### server\.graphPool: object
+
+PondPool contains the settings for the goroutine pool
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**maxWorkers**|`integer`|MaxWorkers is the maximum number of workers in the pool<br/>||
+|**maxCapacity**|`integer`|MaxCapacity is the maximum number of tasks that can be queued<br/>||
 
 **Additional Properties:** not allowed  
 <a name="auth"></a>

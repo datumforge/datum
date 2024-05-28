@@ -130,6 +130,21 @@
       "type": "object",
       "description": "ObjectStorage contains the configuration for the object storage provider"
     },
+    "config.PondPool": {
+      "properties": {
+        "maxWorkers": {
+          "type": "integer",
+          "description": "MaxWorkers is the maximum number of workers in the pool"
+        },
+        "maxCapacity": {
+          "type": "integer",
+          "description": "MaxCapacity is the maximum number of tasks that can be queued"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "PondPool contains the settings for the goroutine pool"
+    },
     "config.Server": {
       "properties": {
         "debug": {
@@ -187,6 +202,10 @@
         "mime": {
           "$ref": "#/$defs/mime.Config",
           "description": "Mime contains settings for the mime middleware"
+        },
+        "graphPool": {
+          "$ref": "#/$defs/config.PondPool",
+          "description": "GraphPool contains settings for the goroutine pool used by the graph resolvers"
         }
       },
       "additionalProperties": false,

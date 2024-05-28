@@ -8,14 +8,10 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/pkg/events/soiree"
 )
 
 // Search is the resolver for the search field.
 func (r *queryResolver) Search(ctx context.Context, query string) (*GlobalSearchResultConnection, error) {
-	// Initialize a goroutine pool with 5 workers and a maximum capacity of 10 tasks
-	pool := soiree.NewPondPool(5, 10)
-
 	var (
 		orgResults []*generated.Organization
 		orgErr     error
@@ -28,25 +24,20 @@ func (r *queryResolver) Search(ctx context.Context, query string) (*GlobalSearch
 		subscriberErr     error
 	)
 
-	pool.Submit(func() {
-		orgResults, orgErr = searchOrganizations(ctx, query)
+	r.withPool().SubmitMultipleAndWait([]func(){
+		func() {
+			orgResults, orgErr = searchOrganizations(ctx, query)
+		},
+		func() {
+			groupResults, groupErr = searchGroups(ctx, query)
+		},
+		func() {
+			userResults, userErr = searchUsers(ctx, query)
+		},
+		func() {
+			subscriberResults, subscriberErr = searchSubscriber(ctx, query)
+		},
 	})
-
-	pool.Submit(func() {
-		groupResults, groupErr = searchGroups(ctx, query)
-	})
-
-	pool.Submit(func() {
-		userResults, userErr = searchUsers(ctx, query)
-	})
-
-	pool.Submit(func() {
-		subscriberResults, subscriberErr = searchSubscriber(ctx, query)
-	})
-
-	pool.StopAndWaitFor(maxSearchTime)
-
-	pool.Release()
 
 	// Check all errors and return a single error if any of the searches failed
 	if orgErr != nil || groupErr != nil || userErr != nil || subscriberErr != nil {

@@ -11,6 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/alitto/pond"
 	echo "github.com/datumforge/echox"
 	"github.com/gorilla/websocket"
 	"github.com/ravilushqa/otelgqlgen"
@@ -18,6 +19,7 @@ import (
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/events/soiree"
 )
 
 // This file will not be regenerated automatically.
@@ -41,6 +43,7 @@ var (
 // Resolver provides a graph response resolver
 type Resolver struct {
 	client *ent.Client
+	pool   *soiree.PondPool
 	logger *zap.SugaredLogger
 }
 
@@ -142,6 +145,13 @@ func WithTransactions(h *handler.Server, c *ent.Client) {
 	// setup transactional db client
 	h.AroundOperations(injectClient(c))
 	h.Use(entgql.Transactioner{TxOpener: c})
+}
+
+func (r *Resolver) WithPool(maxWorkers int, maxCapacity int, options ...pond.Option) {
+	// create the pool
+	r.pool = soiree.NewNamedPondPool(maxWorkers, maxCapacity, "graph", options...)
+	// add metrics
+	r.pool.NewStatsCollector()
 }
 
 // Handler returns the http.HandlerFunc for the GraphAPI

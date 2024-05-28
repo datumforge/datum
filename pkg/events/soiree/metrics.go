@@ -1,11 +1,21 @@
 package soiree
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"fmt"
+
+	"github.com/prometheus/client_golang/prometheus"
+)
 
 func (p *PondPool) NewStatsCollector() {
+	// add a default name if none is provided
+	name := p.name
+	if name == "" {
+		name = "default"
+	}
+
 	prometheus.MustRegister(prometheus.NewGaugeFunc(
 		prometheus.GaugeOpts{
-			Name: "p_workers_running",
+			Name: fmt.Sprintf("pool_%s_workers_running", name),
 			Help: "Number of running worker goroutines",
 		},
 		func() float64 {
@@ -13,7 +23,7 @@ func (p *PondPool) NewStatsCollector() {
 		}))
 	prometheus.MustRegister(prometheus.NewGaugeFunc(
 		prometheus.GaugeOpts{
-			Name: "p_workers_idle",
+			Name: fmt.Sprintf("pool_%s_workers_idle", name),
 			Help: "Number of idle worker goroutines",
 		},
 		func() float64 {
@@ -23,7 +33,7 @@ func (p *PondPool) NewStatsCollector() {
 	// Task metrics
 	prometheus.MustRegister(prometheus.NewCounterFunc(
 		prometheus.CounterOpts{
-			Name: "p_tasks_submitted_total",
+			Name: fmt.Sprintf("pool_%s_tasks_submitted_total", name),
 			Help: "Number of tasks submitted",
 		},
 		func() float64 {
@@ -31,7 +41,7 @@ func (p *PondPool) NewStatsCollector() {
 		}))
 	prometheus.MustRegister(prometheus.NewGaugeFunc(
 		prometheus.GaugeOpts{
-			Name: "p_tasks_waiting_total",
+			Name: fmt.Sprintf("pool_%s_tasks_waiting_total", name),
 			Help: "Number of tasks waiting in the queue",
 		},
 		func() float64 {
@@ -39,7 +49,7 @@ func (p *PondPool) NewStatsCollector() {
 		}))
 	prometheus.MustRegister(prometheus.NewCounterFunc(
 		prometheus.CounterOpts{
-			Name: "p_tasks_successful_total",
+			Name: fmt.Sprintf("pool_%s_tasks_successful_total", name),
 			Help: "Number of tasks that completed successfully",
 		},
 		func() float64 {
@@ -47,7 +57,7 @@ func (p *PondPool) NewStatsCollector() {
 		}))
 	prometheus.MustRegister(prometheus.NewCounterFunc(
 		prometheus.CounterOpts{
-			Name: "p_tasks_failed_total",
+			Name: fmt.Sprintf("pool_%s_tasks_failed_total", name),
 			Help: "Number of tasks that completed with panic",
 		},
 		func() float64 {
@@ -55,7 +65,7 @@ func (p *PondPool) NewStatsCollector() {
 		}))
 	prometheus.MustRegister(prometheus.NewCounterFunc(
 		prometheus.CounterOpts{
-			Name: "p_tasks_completed_total",
+			Name: fmt.Sprintf("pool_%s_tasks_completed_total", name),
 			Help: "Number of tasks that completed either successfully or with panic",
 		},
 		func() float64 {

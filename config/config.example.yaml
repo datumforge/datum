@@ -147,6 +147,9 @@ server:
         prefixes: null
     debug: false
     dev: false
+    graphPool:
+        maxCapacity: 1000
+        maxWorkers: 100
     idleTimeout: 30000000000
     listen: :17608
     mime:

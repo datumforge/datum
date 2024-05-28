@@ -7,11 +7,22 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
 )
+
+// CreateGroupSetting is the resolver for the createGroupSetting field.
+func (r *mutationResolver) CreateGroupSetting(ctx context.Context, input generated.CreateGroupSettingInput) (*GroupSettingCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateGroupSetting - createGroupSetting"))
+}
+
+// CreateBulkGroupSetting is the resolver for the createBulkGroupSetting field.
+func (r *mutationResolver) CreateBulkGroupSetting(ctx context.Context, input []*generated.CreateGroupSettingInput) (*GroupSettingBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkGroupSetting - createBulkGroupSetting"))
+}
 
 // UpdateGroupSetting is the resolver for the updateGroupSetting field.
 func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, input generated.UpdateGroupSettingInput) (*GroupSettingUpdatePayload, error) {
@@ -42,6 +53,11 @@ func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, in
 	}
 
 	return &GroupSettingUpdatePayload{GroupSetting: groupSetting}, nil
+}
+
+// DeleteGroupSetting is the resolver for the deleteGroupSetting field.
+func (r *mutationResolver) DeleteGroupSetting(ctx context.Context, id string) (*GroupSettingDeletePayload, error) {
+	panic(fmt.Errorf("not implemented: DeleteGroupSetting - deleteGroupSetting"))
 }
 
 // GroupSetting is the resolver for the groupSetting field.

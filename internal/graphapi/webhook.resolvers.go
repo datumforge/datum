@@ -7,6 +7,7 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -42,6 +43,11 @@ func (r *mutationResolver) CreateWebhook(ctx context.Context, input generated.Cr
 	}
 
 	return &WebhookCreatePayload{Webhook: t}, nil
+}
+
+// CreateBulkWebhook is the resolver for the createBulkWebhook field.
+func (r *mutationResolver) CreateBulkWebhook(ctx context.Context, input []*generated.CreateWebhookInput) (*WebhookBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkWebhook - createBulkWebhook"))
 }
 
 // UpdateWebhook is the resolver for the updateWebhook field

@@ -7,6 +7,7 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -50,6 +51,11 @@ func (r *mutationResolver) CreateInvite(ctx context.Context, input generated.Cre
 	}
 
 	return &InviteCreatePayload{Invite: om}, nil
+}
+
+// CreateBulkInvite is the resolver for the createBulkInvite field.
+func (r *mutationResolver) CreateBulkInvite(ctx context.Context, input []*generated.CreateInviteInput) (*InviteBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkInvite - createBulkInvite"))
 }
 
 // UpdateInvite is the resolver for the updateInvite field.

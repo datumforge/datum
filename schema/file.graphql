@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateFileInput!
     ): FileCreatePayload!
     """
+    Create multiple new files
+    """
+    createBulkFile(
+        """
+        values of the file
+        """
+        input: [CreateFileInput!]
+    ): FileBulkCreatePayload!
+    """
     Update an existing file
     """
     updateFile(
@@ -72,4 +81,14 @@ type FileDeletePayload {
     Deleted file ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkFile mutation
+"""
+type FileBulkCreatePayload {
+    """
+    Created files
+    """
+    files: [File!]
 }

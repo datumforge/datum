@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateWebhookInput!
     ): WebhookCreatePayload!
     """
+    Create multiple new webhooks
+    """
+    createBulkWebhook(
+        """
+        values of the webhook
+        """
+        input: [CreateWebhookInput!]
+    ): WebhookBulkCreatePayload!
+    """
     Update an existing webhook
     """
     updateWebhook(
@@ -72,4 +81,14 @@ type WebhookDeletePayload {
     Deleted webhook ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkWebhook mutation
+"""
+type WebhookBulkCreatePayload {
+    """
+    Created webhooks
+    """
+    webhooks: [Webhook!]
 }

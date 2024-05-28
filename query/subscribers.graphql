@@ -22,6 +22,28 @@ query GetSubscriber($email: String!) {
   }
 }
 
+mutation CreateBulkSubscriber($input: [CreateSubscriberInput!]) {
+  createBulkSubscriber(input: $input) {
+    subscribers {
+      id
+      email
+      active
+      verifiedEmail
+    }
+  }
+}
+
+mutation CreateBulkCSVSubscriber($input: Upload!) {
+  createBulkCSVSubscriber(input: $input) {
+    subscribers {
+      id
+      email
+      active
+      verifiedEmail
+    }
+  }
+}
+
 mutation CreateSubscriber($input: CreateSubscriberInput!) {
   createSubscriber(input: $input) {
     subscriber {

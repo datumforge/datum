@@ -21,6 +21,24 @@ extend type Mutation{
         input: CreateSubscriberInput!
     ): SubscriberCreatePayload!
     """
+    Create new subscribers
+    """
+    createBulkSubscriber(
+        """
+        values of the subscriber
+        """
+        input: [CreateSubscriberInput!]
+    ): SubscriberBulkCreatePayload!
+        """
+    Create new subscribers via CSV file
+    """
+    createBulkCSVSubscriber(
+        """
+        values of the subscriber
+        """
+        input: Upload!
+    ): SubscriberBulkCreatePayload!
+    """
     Update an existing subscriber
     """
     updateSubscriber(
@@ -77,3 +95,14 @@ type SubscriberDeletePayload {
     """
     email: String!
 }
+
+"""
+Return response for createBulkSubscriber mutation
+"""
+type SubscriberBulkCreatePayload {
+    """
+    Created subscribers
+    """
+    subscribers: [Subscriber!]
+}
+

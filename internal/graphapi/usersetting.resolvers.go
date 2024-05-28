@@ -7,11 +7,22 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
 )
+
+// CreateUserSetting is the resolver for the createUserSetting field.
+func (r *mutationResolver) CreateUserSetting(ctx context.Context, input generated.CreateUserSettingInput) (*UserSettingCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateUserSetting - createUserSetting"))
+}
+
+// CreateBulkUserSetting is the resolver for the createBulkUserSetting field.
+func (r *mutationResolver) CreateBulkUserSetting(ctx context.Context, input []*generated.CreateUserSettingInput) (*UserSettingBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkUserSetting - createBulkUserSetting"))
+}
 
 // UpdateUserSetting is the resolver for the updateUserSetting field.
 func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, input generated.UpdateUserSettingInput) (*UserSettingUpdatePayload, error) {
@@ -42,6 +53,11 @@ func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, inp
 	}
 
 	return &UserSettingUpdatePayload{UserSetting: userSetting}, nil
+}
+
+// DeleteUserSetting is the resolver for the deleteUserSetting field.
+func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*UserSettingDeletePayload, error) {
+	panic(fmt.Errorf("not implemented: DeleteUserSetting - deleteUserSetting"))
 }
 
 // UserSetting is the resolver for the UserSetting field.

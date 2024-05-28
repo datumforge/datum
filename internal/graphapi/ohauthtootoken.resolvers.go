@@ -16,6 +16,11 @@ func (r *mutationResolver) CreateOhAuthTooToken(ctx context.Context, input gener
 	panic(fmt.Errorf("not implemented: CreateOhAuthTooToken - createOhAuthTooToken"))
 }
 
+// CreateBulkOhAuthTooToken is the resolver for the createBulkOhAuthTooToken field.
+func (r *mutationResolver) CreateBulkOhAuthTooToken(ctx context.Context, input []*generated.CreateOhAuthTooTokenInput) (*OhAuthTooTokenBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkOhAuthTooToken - createBulkOhAuthTooToken"))
+}
+
 // UpdateOhAuthTooToken is the resolver for the updateOhAuthTooToken field.
 func (r *mutationResolver) UpdateOhAuthTooToken(ctx context.Context, id string, input generated.UpdateOhAuthTooTokenInput) (*OhAuthTooTokenUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateOhAuthTooToken - updateOhAuthTooToken"))

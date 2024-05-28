@@ -7,6 +7,7 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -42,6 +43,11 @@ func (r *mutationResolver) CreateDocumentData(ctx context.Context, input generat
 	}
 
 	return &DocumentDataCreatePayload{DocumentData: data}, nil
+}
+
+// CreateBulkDocumentData is the resolver for the createBulkDocumentData field.
+func (r *mutationResolver) CreateBulkDocumentData(ctx context.Context, input []*generated.CreateDocumentDataInput) (*DocumentDataBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkDocumentData - createBulkDocumentData"))
 }
 
 // UpdateDocumentData is the resolver for the updateDocumentData field.

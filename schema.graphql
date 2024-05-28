@@ -1090,6 +1090,15 @@ type DocumentData implements Node {
 	template: Template!
 }
 """
+Return response for createBulkDocumentData mutation
+"""
+type DocumentDataBulkCreatePayload {
+	"""
+	Created documentData
+	"""
+	documentData: [DocumentData!]
+}
+"""
 A connection to a list of items.
 """
 type DocumentDataConnection {
@@ -1552,6 +1561,15 @@ type Entitlement implements Node {
 	owner: Organization
 	features: [Feature!]
 	events: [Event!]
+}
+"""
+Return response for createBulkEntitlement mutation
+"""
+type EntitlementBulkCreatePayload {
+	"""
+	Created entitlements
+	"""
+	entitlements: [Entitlement!]
 }
 """
 A connection to a list of items.
@@ -2144,6 +2162,15 @@ type Event implements Node {
 	subscriber: [Subscriber!]
 }
 """
+Return response for createBulkEvent mutation
+"""
+type EventBulkCreatePayload {
+	"""
+	Created events
+	"""
+	events: [Event!]
+}
+"""
 A connection to a list of items.
 """
 type EventConnection {
@@ -2655,6 +2682,15 @@ type Feature implements Node {
 	entitlements: [Entitlement!]
 	organizations: [Organization!]
 	events: [Event!]
+}
+"""
+Return response for createBulkFeature mutation
+"""
+type FeatureBulkCreatePayload {
+	"""
+	Created features
+	"""
+	features: [Feature!]
 }
 """
 A connection to a list of items.
@@ -3172,6 +3208,15 @@ type File implements Node {
 	user: User
 	organization: [Organization!]
 	group: [Group!]
+}
+"""
+Return response for createBulkFile mutation
+"""
+type FileBulkCreatePayload {
+	"""
+	Created files
+	"""
+	files: [File!]
 }
 """
 A connection to a list of items.
@@ -3843,6 +3888,15 @@ type Group implements Node {
 	integrations: [Integration!]
 	files: [File!]
 	members: [GroupMembership!]
+}
+"""
+Return response for createBulkGroup mutation
+"""
+type GroupBulkCreatePayload {
+	"""
+	Created groups
+	"""
+	groups: [Group!]
 }
 """
 A connection to a list of items.
@@ -4682,6 +4736,15 @@ type GroupSetting implements Node {
 	group: Group
 }
 """
+Return response for createBulkGroupSetting mutation
+"""
+type GroupSettingBulkCreatePayload {
+	"""
+	Created groupSettings
+	"""
+	groupSettings: [GroupSetting!]
+}
+"""
 A connection to a list of items.
 """
 type GroupSettingConnection {
@@ -5435,6 +5498,15 @@ type Hush implements Node {
 	events: [Event!]
 }
 """
+Return response for createBulkHush mutation
+"""
+type HushBulkCreatePayload {
+	"""
+	Created hushs
+	"""
+	hushs: [Hush!]
+}
+"""
 A connection to a list of items.
 """
 type HushConnection {
@@ -6015,6 +6087,15 @@ type Integration implements Node {
 	oauth2tokens: [OhAuthTooToken!]
 	events: [Event!]
 	webhooks: [Webhook!]
+}
+"""
+Return response for createBulkIntegration mutation
+"""
+type IntegrationBulkCreatePayload {
+	"""
+	Created integrations
+	"""
+	integrations: [Integration!]
 }
 """
 A connection to a list of items.
@@ -6606,6 +6687,15 @@ type Invite implements Node {
 	events: [Event!]
 }
 """
+Return response for createBulkInvite mutation
+"""
+type InviteBulkCreatePayload {
+	"""
+	Created invites
+	"""
+	invites: [Invite!]
+}
+"""
 A connection to a list of items.
 """
 type InviteConnection {
@@ -6941,6 +7031,15 @@ type Mutation {
 		input: CreateDocumentDataInput!
 	): DocumentDataCreatePayload!
 	"""
+	Create a multiple new documentData
+	"""
+	createBulkDocumentData(
+		"""
+		values of the documentData
+		"""
+		input: [CreateDocumentDataInput!]
+	): DocumentDataBulkCreatePayload!
+	"""
 	Update an existing documentData
 	"""
 	updateDocumentData(
@@ -6972,6 +7071,15 @@ type Mutation {
 		"""
 		input: CreateEntitlementInput!
 	): EntitlementCreatePayload!
+	"""
+	Create multiple new entitlements
+	"""
+	createBulkEntitlement(
+		"""
+		values of the entitlement
+		"""
+		input: [CreateEntitlementInput!]
+	): EntitlementBulkCreatePayload!
 	"""
 	Update an existing entitlement
 	"""
@@ -7005,6 +7113,15 @@ type Mutation {
 		input: CreateEventInput!
 	): EventCreatePayload!
 	"""
+	Create multiple new events
+	"""
+	createBulkEvent(
+		"""
+		values of the event
+		"""
+		input: [CreateEventInput!]
+	): EventBulkCreatePayload!
+	"""
 	Update an existing event
 	"""
 	updateEvent(
@@ -7036,6 +7153,15 @@ type Mutation {
 		"""
 		input: CreateFeatureInput!
 	): FeatureCreatePayload!
+	"""
+	Create multiple new features
+	"""
+	createBulkFeature(
+		"""
+		values of the feature
+		"""
+		input: [CreateFeatureInput!]
+	): FeatureBulkCreatePayload!
 	"""
 	Update an existing feature
 	"""
@@ -7069,6 +7195,15 @@ type Mutation {
 		input: CreateFileInput!
 	): FileCreatePayload!
 	"""
+	Create multiple new files
+	"""
+	createBulkFile(
+		"""
+		values of the file
+		"""
+		input: [CreateFileInput!]
+	): FileBulkCreatePayload!
+	"""
 	Update an existing file
 	"""
 	updateFile(
@@ -7100,6 +7235,24 @@ type Mutation {
 		"""
 		input: CreateGroupInput!
 	): GroupCreatePayload!
+	"""
+	Create multiple new groups
+	"""
+	createBulkGroup(
+		"""
+		values of the group
+		"""
+		input: [CreateGroupInput!]
+	): GroupBulkCreatePayload!
+	"""
+	Create multiple new groups via file upload
+	"""
+	createBulkCSVGroup(
+		"""
+		csv file containing values of the group
+		"""
+		input: Upload!
+	): GroupBulkCreatePayload!
 	"""
 	Update an existing group
 	"""
@@ -7156,6 +7309,24 @@ type Mutation {
 		id: ID!
 	): GroupMembershipDeletePayload!
 	"""
+	Create a new groupSetting
+	"""
+	createGroupSetting(
+		"""
+		values of the groupSetting
+		"""
+		input: CreateGroupSettingInput!
+	): GroupSettingCreatePayload!
+	"""
+	Create multiple new groupSettings
+	"""
+	createBulkGroupSetting(
+		"""
+		values of the groupSetting
+		"""
+		input: [CreateGroupSettingInput!]
+	): GroupSettingBulkCreatePayload!
+	"""
 	Update an existing groupSetting
 	"""
 	updateGroupSetting(
@@ -7170,6 +7341,15 @@ type Mutation {
 		input: UpdateGroupSettingInput!
 	): GroupSettingUpdatePayload!
 	"""
+	Delete an existing groupSetting
+	"""
+	deleteGroupSetting(
+		"""
+		ID of the groupSetting
+		"""
+		id: ID!
+	): GroupSettingDeletePayload!
+	"""
 	Create a new hush
 	"""
 	createHush(
@@ -7178,6 +7358,15 @@ type Mutation {
 		"""
 		input: CreateHushInput!
 	): HushCreatePayload!
+	"""
+	Create multiple new hushs
+	"""
+	createBulkHush(
+		"""
+		values of the hush
+		"""
+		input: [CreateHushInput!]
+	): HushBulkCreatePayload!
 	"""
 	Update an existing hush
 	"""
@@ -7211,6 +7400,15 @@ type Mutation {
 		input: CreateIntegrationInput!
 	): IntegrationCreatePayload!
 	"""
+	Create multiple new integrations
+	"""
+	createBulkIntegration(
+		"""
+		values of the integration
+		"""
+		input: [CreateIntegrationInput!]
+	): IntegrationBulkCreatePayload!
+	"""
 	Update an existing integration
 	"""
 	updateIntegration(
@@ -7242,6 +7440,15 @@ type Mutation {
 		"""
 		input: CreateInviteInput!
 	): InviteCreatePayload!
+	"""
+	Create multiple new invites
+	"""
+	createBulkInvite(
+		"""
+		values of the invite
+		"""
+		input: [CreateInviteInput!]
+	): InviteBulkCreatePayload!
 	"""
 	Update an existing invite
 	"""
@@ -7275,6 +7482,15 @@ type Mutation {
 		input: CreateOauthProviderInput!
 	): OauthProviderCreatePayload!
 	"""
+	Create multiple new oauthProviders
+	"""
+	createBulkOauthProvider(
+		"""
+		values of the oauthProvider
+		"""
+		input: [CreateOauthProviderInput!]
+	): OauthProviderBulkCreatePayload!
+	"""
 	Update an existing oauthProvider
 	"""
 	updateOauthProvider(
@@ -7306,6 +7522,15 @@ type Mutation {
 		"""
 		input: CreateOhAuthTooTokenInput!
 	): OhAuthTooTokenCreatePayload!
+	"""
+	Create multiple new ohAuthTooTokens
+	"""
+	createBulkOhAuthTooToken(
+		"""
+		values of the ohAuthTooToken
+		"""
+		input: [CreateOhAuthTooTokenInput!]
+	): OhAuthTooTokenBulkCreatePayload!
 	"""
 	Update an existing ohAuthTooToken
 	"""
@@ -7339,6 +7564,15 @@ type Mutation {
 		input: CreateOrganizationInput!
 	): OrganizationCreatePayload!
 	"""
+	Create multiple new organizations
+	"""
+	createBulkOrganization(
+		"""
+		values of the organization
+		"""
+		input: [CreateOrganizationInput!]
+	): OrganizationBulkCreatePayload!
+	"""
 	Update an existing organization
 	"""
 	updateOrganization(
@@ -7362,6 +7596,24 @@ type Mutation {
 		id: ID!
 	): OrganizationDeletePayload!
 	"""
+	Create a new organizationSetting
+	"""
+	createOrganizationSetting(
+		"""
+		values of the organizationSetting
+		"""
+		input: CreateOrganizationSettingInput!
+	): OrganizationSettingCreatePayload!
+	"""
+	Create multiple new organizationSettings
+	"""
+	createBulkOrganizationSetting(
+		"""
+		values of the organizationSetting
+		"""
+		input: [CreateOrganizationSettingInput!]
+	): OrganizationSettingBulkCreatePayload!
+	"""
 	Update an existing organizationSetting
 	"""
 	updateOrganizationSetting(
@@ -7375,6 +7627,15 @@ type Mutation {
 		"""
 		input: UpdateOrganizationSettingInput!
 	): OrganizationSettingUpdatePayload!
+	"""
+	Delete an existing organizationSetting
+	"""
+	deleteOrganizationSetting(
+		"""
+		ID of the organizationSetting
+		"""
+		id: ID!
+	): OrganizationSettingDeletePayload!
 	"""
 	Create a new orgMembership
 	"""
@@ -7417,6 +7678,15 @@ type Mutation {
 		input: CreatePersonalAccessTokenInput!
 	): PersonalAccessTokenCreatePayload!
 	"""
+	Create multiple new personalAccessTokens
+	"""
+	createBulkPersonalAccessToken(
+		"""
+		values of the personalAccessToken
+		"""
+		input: [CreatePersonalAccessTokenInput!]
+	): PersonalAccessTokenBulkCreatePayload!
+	"""
 	Update an existing personalAccessToken
 	"""
 	updatePersonalAccessToken(
@@ -7448,6 +7718,24 @@ type Mutation {
 		"""
 		input: CreateSubscriberInput!
 	): SubscriberCreatePayload!
+	"""
+	Create new subscribers
+	"""
+	createBulkSubscriber(
+		"""
+		values of the subscriber
+		"""
+		input: [CreateSubscriberInput!]
+	): SubscriberBulkCreatePayload!
+	"""
+	Create new subscribers via CSV file
+	"""
+	createBulkCSVSubscriber(
+		"""
+		values of the subscriber
+		"""
+		input: Upload!
+	): SubscriberBulkCreatePayload!
 	"""
 	Update an existing subscriber
 	"""
@@ -7485,6 +7773,15 @@ type Mutation {
 		"""
 		input: CreateTemplateInput!
 	): TemplateCreatePayload!
+	"""
+	Create multiple new templates
+	"""
+	createBulkTemplate(
+		"""
+		values of the template
+		"""
+		input: [CreateTemplateInput!]
+	): TemplateBulkCreatePayload!
 	"""
 	Update an existing template
 	"""
@@ -7536,6 +7833,15 @@ type Mutation {
 		input: CreateUserInput!
 	): UserCreatePayload!
 	"""
+	Create multiple new users
+	"""
+	createBulkUser(
+		"""
+		values of the user
+		"""
+		input: [CreateUserInput!]
+	): UserBulkCreatePayload!
+	"""
 	Update an existing user
 	"""
 	updateUser(
@@ -7559,6 +7865,24 @@ type Mutation {
 		id: ID!
 	): UserDeletePayload!
 	"""
+	Create a new userSetting
+	"""
+	createUserSetting(
+		"""
+		values of the userSetting
+		"""
+		input: CreateUserSettingInput!
+	): UserSettingCreatePayload!
+	"""
+	Create multiple new userSettings
+	"""
+	createBulkUserSetting(
+		"""
+		values of the userSetting
+		"""
+		input: [CreateUserSettingInput!]
+	): UserSettingBulkCreatePayload!
+	"""
 	Update an existing userSetting
 	"""
 	updateUserSetting(
@@ -7573,6 +7897,15 @@ type Mutation {
 		input: UpdateUserSettingInput!
 	): UserSettingUpdatePayload!
 	"""
+	Delete an existing userSetting
+	"""
+	deleteUserSetting(
+		"""
+		ID of the userSetting
+		"""
+		id: ID!
+	): UserSettingDeletePayload!
+	"""
 	Create a new webhook
 	"""
 	createWebhook(
@@ -7581,6 +7914,15 @@ type Mutation {
 		"""
 		input: CreateWebhookInput!
 	): WebhookCreatePayload!
+	"""
+	Create multiple new webhooks
+	"""
+	createBulkWebhook(
+		"""
+		values of the webhook
+		"""
+		input: [CreateWebhookInput!]
+	): WebhookBulkCreatePayload!
 	"""
 	Update an existing webhook
 	"""
@@ -7665,6 +8007,15 @@ type OauthProvider implements Node {
 	"""
 	infoURL: String!
 	owner: Organization
+}
+"""
+Return response for createBulkOauthProvider mutation
+"""
+type OauthProviderBulkCreatePayload {
+	"""
+	Created oauthProviders
+	"""
+	oauthProviders: [OauthProvider!]
 }
 """
 A connection to a list of items.
@@ -8382,6 +8733,15 @@ type OhAuthTooToken implements Node {
 	lastUsed: Time!
 	integration: [Integration!]
 	events: [Event!]
+}
+"""
+Return response for createBulkOhAuthTooToken mutation
+"""
+type OhAuthTooTokenBulkCreatePayload {
+	"""
+	Created ohAuthTooTokens
+	"""
+	ohAuthTooTokens: [OhAuthTooToken!]
 }
 """
 A connection to a list of items.
@@ -9157,6 +9517,15 @@ type Organization implements Node {
 	members: [OrgMembership!]
 }
 """
+Return response for createBulkOrganization mutation
+"""
+type OrganizationBulkCreatePayload {
+	"""
+	Created organizations
+	"""
+	organizations: [Organization!]
+}
+"""
 A connection to a list of items.
 """
 type OrganizationConnection {
@@ -9580,6 +9949,15 @@ type OrganizationSetting implements Node {
 	"""
 	organizationID: ID
 	organization: Organization
+}
+"""
+Return response for createBulkOrganizationSetting mutation
+"""
+type OrganizationSettingBulkCreatePayload {
+	"""
+	Created organizationSettings
+	"""
+	organizationSettings: [OrganizationSetting!]
 }
 """
 A connection to a list of items.
@@ -10578,6 +10956,15 @@ type PersonalAccessToken implements Node {
 	"""
 	organizations: [Organization!]
 	events: [Event!]
+}
+"""
+Return response for createBulkPersonalAccessToken mutation
+"""
+type PersonalAccessTokenBulkCreatePayload {
+	"""
+	Created personalAccessTokens
+	"""
+	personalAccessTokens: [PersonalAccessToken!]
 }
 """
 A connection to a list of items.
@@ -12250,6 +12637,15 @@ type Subscriber implements Node {
 	events: [Event!]
 }
 """
+Return response for createBulkSubscriber mutation
+"""
+type SubscriberBulkCreatePayload {
+	"""
+	Created subscribers
+	"""
+	subscribers: [Subscriber!]
+}
+"""
 A connection to a list of items.
 """
 type SubscriberConnection {
@@ -12766,6 +13162,15 @@ type Template implements Node {
 	uischema: JSON
 	owner: Organization
 	documents: [DocumentData!]
+}
+"""
+Return response for createBulkTemplate mutation
+"""
+type TemplateBulkCreatePayload {
+	"""
+	Created templates
+	"""
+	templates: [Template!]
 }
 """
 A connection to a list of items.
@@ -14342,6 +14747,7 @@ input UpdateWebhookInput {
 	removeIntegrationIDs: [ID!]
 	clearIntegrations: Boolean
 }
+scalar Upload
 type User implements Node {
 	id: ID!
 	createdAt: Time
@@ -14408,6 +14814,15 @@ enum UserAuthProvider @goModel(model: "github.com/datumforge/datum/internal/ent/
 	GOOGLE
 	GITHUB
 	WEBAUTHN
+}
+"""
+Return response for createBulkUser mutation
+"""
+type UserBulkCreatePayload {
+	"""
+	Created users
+	"""
+	users: [User!]
 }
 """
 A connection to a list of items.
@@ -14979,6 +15394,15 @@ type UserSetting implements Node {
 	defaultOrg: Organization
 }
 """
+Return response for createBulkUserSetting mutation
+"""
+type UserSettingBulkCreatePayload {
+	"""
+	Created userSettings
+	"""
+	userSettings: [UserSetting!]
+}
+"""
 A connection to a list of items.
 """
 type UserSettingConnection {
@@ -14994,6 +15418,24 @@ type UserSettingConnection {
 	Identifies the total count of items in the connection.
 	"""
 	totalCount: Int!
+}
+"""
+Return response for createUserSetting mutation
+"""
+type UserSettingCreatePayload {
+	"""
+	Created userSetting
+	"""
+	userSetting: UserSetting!
+}
+"""
+Return response for deleteUserSetting mutation
+"""
+type UserSettingDeletePayload {
+	"""
+	Deleted userSetting ID
+	"""
+	deletedID: ID!
 }
 """
 An edge in a connection.
@@ -15926,6 +16368,15 @@ type Webhook implements Node {
 	owner: Organization
 	events: [Event!]
 	integrations: [Integration!]
+}
+"""
+Return response for createBulkWebhook mutation
+"""
+type WebhookBulkCreatePayload {
+	"""
+	Created webhooks
+	"""
+	webhooks: [Webhook!]
 }
 """
 A connection to a list of items.

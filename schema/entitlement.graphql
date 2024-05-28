@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateEntitlementInput!
     ): EntitlementCreatePayload!
     """
+    Create multiple new entitlements
+    """
+    createBulkEntitlement(
+        """
+        values of the entitlement
+        """
+        input: [CreateEntitlementInput!]
+    ): EntitlementBulkCreatePayload!
+    """
     Update an existing entitlement
     """
     updateEntitlement(
@@ -72,4 +81,14 @@ type EntitlementDeletePayload {
     Deleted entitlement ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkEntitlement mutation
+"""
+type EntitlementBulkCreatePayload {
+    """
+    Created entitlements
+    """
+    entitlements: [Entitlement!]
 }

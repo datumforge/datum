@@ -7,6 +7,7 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -42,6 +43,11 @@ func (r *mutationResolver) CreateFeature(ctx context.Context, input generated.Cr
 	}
 
 	return &FeatureCreatePayload{Feature: t}, nil
+}
+
+// CreateBulkFeature is the resolver for the createBulkFeature field.
+func (r *mutationResolver) CreateBulkFeature(ctx context.Context, input []*generated.CreateFeatureInput) (*FeatureBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkFeature - createBulkFeature"))
 }
 
 // UpdateFeature is the resolver for the updateFeature field

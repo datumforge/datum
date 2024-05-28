@@ -7,6 +7,7 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -42,6 +43,11 @@ func (r *mutationResolver) CreateTemplate(ctx context.Context, input generated.C
 	}
 
 	return &TemplateCreatePayload{Template: t}, nil
+}
+
+// CreateBulkTemplate is the resolver for the createBulkTemplate field.
+func (r *mutationResolver) CreateBulkTemplate(ctx context.Context, input []*generated.CreateTemplateInput) (*TemplateBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkTemplate - createBulkTemplate"))
 }
 
 // UpdateTemplate is the resolver for the updateTemplate field.

@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateOrganizationInput!
     ): OrganizationCreatePayload!
     """
+    Create multiple new organizations
+    """
+    createBulkOrganization(
+        """
+        values of the organization
+        """
+        input: [CreateOrganizationInput!]
+    ): OrganizationBulkCreatePayload!
+    """
     Update an existing organization
     """
     updateOrganization(
@@ -72,4 +81,14 @@ type OrganizationDeletePayload {
     Deleted organization ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkOrganization mutation
+"""
+type OrganizationBulkCreatePayload {
+    """
+    Created organizations
+    """
+    organizations: [Organization!]
 }

@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateHushInput!
     ): HushCreatePayload!
     """
+    Create multiple new hushs
+    """
+    createBulkHush(
+        """
+        values of the hush
+        """
+        input: [CreateHushInput!]
+    ): HushBulkCreatePayload!
+    """
     Update an existing hush
     """
     updateHush(
@@ -72,4 +81,14 @@ type HushDeletePayload {
     Deleted hush ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkHush mutation
+"""
+type HushBulkCreatePayload {
+    """
+    Created hushs
+    """
+    hushs: [Hush!]
 }

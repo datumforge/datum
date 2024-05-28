@@ -12,6 +12,24 @@ extend type Query {
 
 extend type Mutation{
     """
+    Create a new organizationSetting
+    """
+    createOrganizationSetting(
+        """
+        values of the organizationSetting
+        """
+        input: CreateOrganizationSettingInput!
+    ): OrganizationSettingCreatePayload!
+    """
+    Create multiple new organizationSettings
+    """
+    createBulkOrganizationSetting(
+        """
+        values of the organizationSetting
+        """
+        input: [CreateOrganizationSettingInput!]
+    ): OrganizationSettingBulkCreatePayload!
+    """
     Update an existing organizationSetting
     """
     updateOrganizationSetting(
@@ -24,6 +42,15 @@ extend type Mutation{
         """
         input: UpdateOrganizationSettingInput!
     ): OrganizationSettingUpdatePayload!
+    """
+    Delete an existing organizationSetting
+    """
+    deleteOrganizationSetting(
+        """
+        ID of the organizationSetting
+        """
+        id: ID!
+    ): OrganizationSettingDeletePayload!
 }
 
 """
@@ -54,4 +81,14 @@ type OrganizationSettingDeletePayload {
     Deleted organizationSetting ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkOrganizationSetting mutation
+"""
+type OrganizationSettingBulkCreatePayload {
+    """
+    Created organizationSettings
+    """
+    organizationSettings: [OrganizationSetting!]
 }

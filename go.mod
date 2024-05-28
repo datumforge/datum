@@ -21,6 +21,7 @@ require (
 	github.com/datumforge/geodetic v0.0.3
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 	github.com/gabriel-vasile/mimetype v1.4.4
+	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/go-github/v62 v62.0.0
 	github.com/google/go-querystring v1.1.0

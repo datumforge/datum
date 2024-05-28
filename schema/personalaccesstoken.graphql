@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreatePersonalAccessTokenInput!
     ): PersonalAccessTokenCreatePayload!
     """
+    Create multiple new personalAccessTokens
+    """
+    createBulkPersonalAccessToken(
+        """
+        values of the personalAccessToken
+        """
+        input: [CreatePersonalAccessTokenInput!]
+    ): PersonalAccessTokenBulkCreatePayload!
+    """
     Update an existing personalAccessToken
     """
     updatePersonalAccessToken(
@@ -72,4 +81,14 @@ type PersonalAccessTokenDeletePayload {
     Deleted personalAccessToken ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkPersonalAccessToken mutation
+"""
+type PersonalAccessTokenBulkCreatePayload {
+    """
+    Created personalAccessTokens
+    """
+    personalAccessTokens: [PersonalAccessToken!]
 }

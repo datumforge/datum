@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateUserInput!
     ): UserCreatePayload!
     """
+    Create multiple new users
+    """
+    createBulkUser(
+        """
+        values of the user
+        """
+        input: [CreateUserInput!]
+    ): UserBulkCreatePayload!
+    """
     Update an existing user
     """
     updateUser(
@@ -72,4 +81,14 @@ type UserDeletePayload {
     Deleted user ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkUser mutation
+"""
+type UserBulkCreatePayload {
+    """
+    Created users
+    """
+    users: [User!]
 }

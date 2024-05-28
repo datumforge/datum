@@ -29,6 +29,12 @@ type APITokenUpdatePayload struct {
 	APIToken *generated.APIToken `json:"apiToken"`
 }
 
+// Return response for createBulkDocumentData mutation
+type DocumentDataBulkCreatePayload struct {
+	// Created documentData
+	DocumentData []*generated.DocumentData `json:"documentData,omitempty"`
+}
+
 // Return response for createDocumentData mutation
 type DocumentDataCreatePayload struct {
 	// Created documentData
@@ -53,6 +59,12 @@ type Dummy struct {
 	Done bool   `json:"done"`
 }
 
+// Return response for createBulkEntitlement mutation
+type EntitlementBulkCreatePayload struct {
+	// Created entitlements
+	Entitlements []*generated.Entitlement `json:"entitlements,omitempty"`
+}
+
 // Return response for createEntitlement mutation
 type EntitlementCreatePayload struct {
 	// Created entitlement
@@ -69,6 +81,12 @@ type EntitlementDeletePayload struct {
 type EntitlementUpdatePayload struct {
 	// Updated entitlement
 	Entitlement *generated.Entitlement `json:"entitlement"`
+}
+
+// Return response for createBulkEvent mutation
+type EventBulkCreatePayload struct {
+	// Created events
+	Events []*generated.Event `json:"events,omitempty"`
 }
 
 // Return response for createEvent mutation
@@ -89,6 +107,12 @@ type EventUpdatePayload struct {
 	Event *generated.Event `json:"event"`
 }
 
+// Return response for createBulkFeature mutation
+type FeatureBulkCreatePayload struct {
+	// Created features
+	Features []*generated.Feature `json:"features,omitempty"`
+}
+
 // Return response for createFeature mutation
 type FeatureCreatePayload struct {
 	// Created feature
@@ -105,6 +129,12 @@ type FeatureDeletePayload struct {
 type FeatureUpdatePayload struct {
 	// Updated feature
 	Feature *generated.Feature `json:"feature"`
+}
+
+// Return response for createBulkFile mutation
+type FileBulkCreatePayload struct {
+	// Created files
+	Files []*generated.File `json:"files,omitempty"`
 }
 
 // Return response for createFile mutation
@@ -128,6 +158,12 @@ type FileUpdatePayload struct {
 type GlobalSearchResultConnection struct {
 	Page  *entgql.PageInfo[string] `json:"page"`
 	Nodes []GlobalSearchResult     `json:"nodes"`
+}
+
+// Return response for createBulkGroup mutation
+type GroupBulkCreatePayload struct {
+	// Created groups
+	Groups []*generated.Group `json:"groups,omitempty"`
 }
 
 // Return response for createGroup mutation
@@ -166,6 +202,12 @@ type GroupSearchResult struct {
 
 func (GroupSearchResult) IsGlobalSearchResult() {}
 
+// Return response for createBulkGroupSetting mutation
+type GroupSettingBulkCreatePayload struct {
+	// Created groupSettings
+	GroupSettings []*generated.GroupSetting `json:"groupSettings,omitempty"`
+}
+
 // Return response for createGroupSetting mutation
 type GroupSettingCreatePayload struct {
 	// Created groupSetting
@@ -190,6 +232,12 @@ type GroupUpdatePayload struct {
 	Group *generated.Group `json:"group"`
 }
 
+// Return response for createBulkHush mutation
+type HushBulkCreatePayload struct {
+	// Created hushs
+	Hushs []*generated.Hush `json:"hushs,omitempty"`
+}
+
 // Return response for createHush mutation
 type HushCreatePayload struct {
 	// Created hush
@@ -206,6 +254,12 @@ type HushDeletePayload struct {
 type HushUpdatePayload struct {
 	// Updated hush
 	Hush *generated.Hush `json:"hush"`
+}
+
+// Return response for createBulkIntegration mutation
+type IntegrationBulkCreatePayload struct {
+	// Created integrations
+	Integrations []*generated.Integration `json:"integrations,omitempty"`
 }
 
 // Return response for createIntegration mutation
@@ -226,6 +280,12 @@ type IntegrationUpdatePayload struct {
 	Integration *generated.Integration `json:"integration"`
 }
 
+// Return response for createBulkInvite mutation
+type InviteBulkCreatePayload struct {
+	// Created invites
+	Invites []*generated.Invite `json:"invites,omitempty"`
+}
+
 // Return response for createInvite mutation
 type InviteCreatePayload struct {
 	// Created invite
@@ -244,6 +304,12 @@ type InviteUpdatePayload struct {
 	Invite *generated.Invite `json:"invite"`
 }
 
+// Return response for createBulkOauthProvider mutation
+type OauthProviderBulkCreatePayload struct {
+	// Created oauthProviders
+	OauthProviders []*generated.OauthProvider `json:"oauthProviders,omitempty"`
+}
+
 // Return response for createOauthProvider mutation
 type OauthProviderCreatePayload struct {
 	// Created oauthProvider
@@ -260,6 +326,12 @@ type OauthProviderDeletePayload struct {
 type OauthProviderUpdatePayload struct {
 	// Updated oauthProvider
 	OauthProvider *generated.OauthProvider `json:"oauthProvider"`
+}
+
+// Return response for createBulkOhAuthTooToken mutation
+type OhAuthTooTokenBulkCreatePayload struct {
+	// Created ohAuthTooTokens
+	OhAuthTooTokens []*generated.OhAuthTooToken `json:"ohAuthTooTokens,omitempty"`
 }
 
 // Return response for createOhAuthTooToken mutation
@@ -298,6 +370,12 @@ type OrgMembershipUpdatePayload struct {
 	OrgMembership *generated.OrgMembership `json:"orgMembership"`
 }
 
+// Return response for createBulkOrganization mutation
+type OrganizationBulkCreatePayload struct {
+	// Created organizations
+	Organizations []*generated.Organization `json:"organizations,omitempty"`
+}
+
 // Return response for createOrganization mutation
 type OrganizationCreatePayload struct {
 	// Created organization
@@ -315,6 +393,12 @@ type OrganizationSearchResult struct {
 }
 
 func (OrganizationSearchResult) IsGlobalSearchResult() {}
+
+// Return response for createBulkOrganizationSetting mutation
+type OrganizationSettingBulkCreatePayload struct {
+	// Created organizationSettings
+	OrganizationSettings []*generated.OrganizationSetting `json:"organizationSettings,omitempty"`
+}
 
 // Return response for createOrganizationSetting mutation
 type OrganizationSettingCreatePayload struct {
@@ -340,6 +424,12 @@ type OrganizationUpdatePayload struct {
 	Organization *generated.Organization `json:"organization"`
 }
 
+// Return response for createBulkPersonalAccessToken mutation
+type PersonalAccessTokenBulkCreatePayload struct {
+	// Created personalAccessTokens
+	PersonalAccessTokens []*generated.PersonalAccessToken `json:"personalAccessTokens,omitempty"`
+}
+
 // Return response for createPersonalAccessToken mutation
 type PersonalAccessTokenCreatePayload struct {
 	// Created personalAccessToken
@@ -356,6 +446,12 @@ type PersonalAccessTokenDeletePayload struct {
 type PersonalAccessTokenUpdatePayload struct {
 	// Updated personalAccessToken
 	PersonalAccessToken *generated.PersonalAccessToken `json:"personalAccessToken"`
+}
+
+// Return response for createBulkSubscriber mutation
+type SubscriberBulkCreatePayload struct {
+	// Created subscribers
+	Subscribers []*generated.Subscriber `json:"subscribers,omitempty"`
 }
 
 // Return response for createSubscriber mutation
@@ -397,6 +493,12 @@ type TFASettingUpdatePayload struct {
 	TfaSetting *generated.TFASetting `json:"tfaSetting"`
 }
 
+// Return response for createBulkTemplate mutation
+type TemplateBulkCreatePayload struct {
+	// Created templates
+	Templates []*generated.Template `json:"templates,omitempty"`
+}
+
 // Return response for createTemplate mutation
 type TemplateCreatePayload struct {
 	// Created template
@@ -413,6 +515,12 @@ type TemplateDeletePayload struct {
 type TemplateUpdatePayload struct {
 	// Updated template
 	Template *generated.Template `json:"template"`
+}
+
+// Return response for createBulkUser mutation
+type UserBulkCreatePayload struct {
+	// Created users
+	Users []*generated.User `json:"users,omitempty"`
 }
 
 // Return response for createUser mutation
@@ -433,6 +541,24 @@ type UserSearchResult struct {
 
 func (UserSearchResult) IsGlobalSearchResult() {}
 
+// Return response for createBulkUserSetting mutation
+type UserSettingBulkCreatePayload struct {
+	// Created userSettings
+	UserSettings []*generated.UserSetting `json:"userSettings,omitempty"`
+}
+
+// Return response for createUserSetting mutation
+type UserSettingCreatePayload struct {
+	// Created userSetting
+	UserSetting *generated.UserSetting `json:"userSetting"`
+}
+
+// Return response for deleteUserSetting mutation
+type UserSettingDeletePayload struct {
+	// Deleted userSetting ID
+	DeletedID string `json:"deletedID"`
+}
+
 // Return response for updateUserSetting mutation
 type UserSettingUpdatePayload struct {
 	// Updated userSetting
@@ -443,6 +569,12 @@ type UserSettingUpdatePayload struct {
 type UserUpdatePayload struct {
 	// Updated user
 	User *generated.User `json:"user"`
+}
+
+// Return response for createBulkWebhook mutation
+type WebhookBulkCreatePayload struct {
+	// Created webhooks
+	Webhooks []*generated.Webhook `json:"webhooks,omitempty"`
 }
 
 // Return response for createWebhook mutation

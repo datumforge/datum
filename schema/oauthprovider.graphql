@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateOauthProviderInput!
     ): OauthProviderCreatePayload!
     """
+    Create multiple new oauthProviders
+    """
+    createBulkOauthProvider(
+        """
+        values of the oauthProvider
+        """
+        input: [CreateOauthProviderInput!]
+    ): OauthProviderBulkCreatePayload!
+    """
     Update an existing oauthProvider
     """
     updateOauthProvider(
@@ -72,4 +81,14 @@ type OauthProviderDeletePayload {
     Deleted oauthProvider ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkOauthProvider mutation
+"""
+type OauthProviderBulkCreatePayload {
+    """
+    Created oauthProviders
+    """
+    oauthProviders: [OauthProvider!]
 }

@@ -7,6 +7,7 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -42,6 +43,11 @@ func (r *mutationResolver) CreateHush(ctx context.Context, input generated.Creat
 	}
 
 	return &HushCreatePayload{Hush: t}, nil
+}
+
+// CreateBulkHush is the resolver for the createBulkHush field.
+func (r *mutationResolver) CreateBulkHush(ctx context.Context, input []*generated.CreateHushInput) (*HushBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkHush - createBulkHush"))
 }
 
 // UpdateHush is the resolver for the updateHush field

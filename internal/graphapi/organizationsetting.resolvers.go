@@ -7,11 +7,22 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
 )
+
+// CreateOrganizationSetting is the resolver for the createOrganizationSetting field.
+func (r *mutationResolver) CreateOrganizationSetting(ctx context.Context, input generated.CreateOrganizationSettingInput) (*OrganizationSettingCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateOrganizationSetting - createOrganizationSetting"))
+}
+
+// CreateBulkOrganizationSetting is the resolver for the createBulkOrganizationSetting field.
+func (r *mutationResolver) CreateBulkOrganizationSetting(ctx context.Context, input []*generated.CreateOrganizationSettingInput) (*OrganizationSettingBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkOrganizationSetting - createBulkOrganizationSetting"))
+}
 
 // UpdateOrganizationSetting is the resolver for the updateOrganizationSetting field.
 func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id string, input generated.UpdateOrganizationSettingInput) (*OrganizationSettingUpdatePayload, error) {
@@ -42,6 +53,11 @@ func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id str
 	}
 
 	return &OrganizationSettingUpdatePayload{OrganizationSetting: organizationSetting}, nil
+}
+
+// DeleteOrganizationSetting is the resolver for the deleteOrganizationSetting field.
+func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id string) (*OrganizationSettingDeletePayload, error) {
+	panic(fmt.Errorf("not implemented: DeleteOrganizationSetting - deleteOrganizationSetting"))
 }
 
 // OrganizationSetting is the resolver for the organizationSetting field.

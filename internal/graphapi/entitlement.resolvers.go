@@ -16,6 +16,11 @@ func (r *mutationResolver) CreateEntitlement(ctx context.Context, input generate
 	panic(fmt.Errorf("not implemented: CreateEntitlement - createEntitlement"))
 }
 
+// CreateBulkEntitlement is the resolver for the createBulkEntitlement field.
+func (r *mutationResolver) CreateBulkEntitlement(ctx context.Context, input []*generated.CreateEntitlementInput) (*EntitlementBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkEntitlement - createBulkEntitlement"))
+}
+
 // UpdateEntitlement is the resolver for the updateEntitlement field.
 func (r *mutationResolver) UpdateEntitlement(ctx context.Context, id string, input generated.UpdateEntitlementInput) (*EntitlementUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateEntitlement - updateEntitlement"))

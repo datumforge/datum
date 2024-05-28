@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
@@ -47,6 +48,63 @@ func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated
 	}
 
 	return &SubscriberCreatePayload{Subscriber: sub}, nil
+}
+
+// CreateBulkSubscriber is the resolver for the createBulkSubscriber field.
+func (r *mutationResolver) CreateBulkSubscriber(ctx context.Context, input []*generated.CreateSubscriberInput) (*SubscriberBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+
+	builders := make([]*generated.SubscriberCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.Subscriber.Create().SetInput(*data)
+	}
+
+	subs, err := withTransactionalMutation(ctx).Subscriber.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "subscribers")
+		}
+
+		r.logger.Errorw("failed to bulk create subscribers", "error", err)
+		return nil, err
+	}
+
+	return &SubscriberBulkCreatePayload{
+		Subscribers: subs,
+	}, nil
+}
+
+// CreateBulkCSVSubscriber is the resolver for the createBulkCSVSubscriber field.
+func (r *mutationResolver) CreateBulkCSVSubscriber(ctx context.Context, input graphql.Upload) (*SubscriberBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+
+	subscriberInput, err := unmarshalBulkData[generated.CreateSubscriberInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	// bulk create subscribers
+	builders := make([]*generated.SubscriberCreate, len(subscriberInput))
+	for i, data := range subscriberInput {
+		builders[i] = c.Subscriber.Create().SetInput(*data)
+	}
+
+	subs, err := c.Subscriber.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "subscribers")
+		}
+
+		r.logger.Errorw("failed to bulk create subscribers", "error", err)
+		return nil, err
+	}
+
+	// return response
+	return &SubscriberBulkCreatePayload{
+		Subscribers: subs,
+	}, nil
 }
 
 // UpdateSubscriber is the resolver for the updateSubscriber field.

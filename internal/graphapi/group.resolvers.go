@@ -7,7 +7,9 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -42,6 +44,16 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.Crea
 	}
 
 	return &GroupCreatePayload{Group: group}, nil
+}
+
+// CreateBulkGroup is the resolver for the createBulkGroup field.
+func (r *mutationResolver) CreateBulkGroup(ctx context.Context, input []*generated.CreateGroupInput) (*GroupBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkGroup - createBulkGroup"))
+}
+
+// CreateBulkCSVGroup is the resolver for the createBulkCSVGroup field.
+func (r *mutationResolver) CreateBulkCSVGroup(ctx context.Context, input graphql.Upload) (*GroupBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVGroup - createBulkCSVGroup"))
 }
 
 // UpdateGroup is the resolver for the updateGroup field.

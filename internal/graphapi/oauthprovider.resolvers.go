@@ -16,6 +16,11 @@ func (r *mutationResolver) CreateOauthProvider(ctx context.Context, input genera
 	panic(fmt.Errorf("not implemented: CreateOauthProvider - createOauthProvider"))
 }
 
+// CreateBulkOauthProvider is the resolver for the createBulkOauthProvider field.
+func (r *mutationResolver) CreateBulkOauthProvider(ctx context.Context, input []*generated.CreateOauthProviderInput) (*OauthProviderBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkOauthProvider - createBulkOauthProvider"))
+}
+
 // UpdateOauthProvider is the resolver for the updateOauthProvider field.
 func (r *mutationResolver) UpdateOauthProvider(ctx context.Context, id string, input generated.UpdateOauthProviderInput) (*OauthProviderUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateOauthProvider - updateOauthProvider"))

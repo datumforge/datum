@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/datumforge/datum/internal/ent/enums"
 )
@@ -94,6 +95,8 @@ type DatumClient interface {
 	Search(ctx context.Context, query string, interceptors ...clientv2.RequestInterceptor) (*Search, error)
 	Subscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*Subscribers, error)
 	GetSubscriber(ctx context.Context, email string, interceptors ...clientv2.RequestInterceptor) (*GetSubscriber, error)
+	CreateBulkSubscriber(ctx context.Context, input []*CreateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkSubscriber, error)
+	CreateBulkCSVSubscriber(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVSubscriber, error)
 	CreateSubscriber(ctx context.Context, input CreateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*CreateSubscriber, error)
 	UpdateSubscriber(ctx context.Context, email string, input UpdateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*UpdateSubscriber, error)
 	DeleteSubscriber(ctx context.Context, deleteSubscriberEmail string, interceptors ...clientv2.RequestInterceptor) (*DeleteSubscriber, error)
@@ -11011,6 +11014,92 @@ func (t *GetSubscriber_Subscriber) GetOwnerID() *string {
 	return t.OwnerID
 }
 
+type CreateBulkSubscriber_CreateBulkSubscriber_Subscribers struct {
+	ID            string "json:\"id\" graphql:\"id\""
+	Email         string "json:\"email\" graphql:\"email\""
+	Active        bool   "json:\"active\" graphql:\"active\""
+	VerifiedEmail bool   "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+}
+
+func (t *CreateBulkSubscriber_CreateBulkSubscriber_Subscribers) GetID() string {
+	if t == nil {
+		t = &CreateBulkSubscriber_CreateBulkSubscriber_Subscribers{}
+	}
+	return t.ID
+}
+func (t *CreateBulkSubscriber_CreateBulkSubscriber_Subscribers) GetEmail() string {
+	if t == nil {
+		t = &CreateBulkSubscriber_CreateBulkSubscriber_Subscribers{}
+	}
+	return t.Email
+}
+func (t *CreateBulkSubscriber_CreateBulkSubscriber_Subscribers) GetActive() bool {
+	if t == nil {
+		t = &CreateBulkSubscriber_CreateBulkSubscriber_Subscribers{}
+	}
+	return t.Active
+}
+func (t *CreateBulkSubscriber_CreateBulkSubscriber_Subscribers) GetVerifiedEmail() bool {
+	if t == nil {
+		t = &CreateBulkSubscriber_CreateBulkSubscriber_Subscribers{}
+	}
+	return t.VerifiedEmail
+}
+
+type CreateBulkSubscriber_CreateBulkSubscriber struct {
+	Subscribers []*CreateBulkSubscriber_CreateBulkSubscriber_Subscribers "json:\"subscribers,omitempty\" graphql:\"subscribers\""
+}
+
+func (t *CreateBulkSubscriber_CreateBulkSubscriber) GetSubscribers() []*CreateBulkSubscriber_CreateBulkSubscriber_Subscribers {
+	if t == nil {
+		t = &CreateBulkSubscriber_CreateBulkSubscriber{}
+	}
+	return t.Subscribers
+}
+
+type CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers struct {
+	ID            string "json:\"id\" graphql:\"id\""
+	Email         string "json:\"email\" graphql:\"email\""
+	Active        bool   "json:\"active\" graphql:\"active\""
+	VerifiedEmail bool   "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+}
+
+func (t *CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers) GetID() string {
+	if t == nil {
+		t = &CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers{}
+	}
+	return t.ID
+}
+func (t *CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers) GetEmail() string {
+	if t == nil {
+		t = &CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers{}
+	}
+	return t.Email
+}
+func (t *CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers) GetActive() bool {
+	if t == nil {
+		t = &CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers{}
+	}
+	return t.Active
+}
+func (t *CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers) GetVerifiedEmail() bool {
+	if t == nil {
+		t = &CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers{}
+	}
+	return t.VerifiedEmail
+}
+
+type CreateBulkCSVSubscriber_CreateBulkCSVSubscriber struct {
+	Subscribers []*CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers "json:\"subscribers,omitempty\" graphql:\"subscribers\""
+}
+
+func (t *CreateBulkCSVSubscriber_CreateBulkCSVSubscriber) GetSubscribers() []*CreateBulkCSVSubscriber_CreateBulkCSVSubscriber_Subscribers {
+	if t == nil {
+		t = &CreateBulkCSVSubscriber_CreateBulkCSVSubscriber{}
+	}
+	return t.Subscribers
+}
+
 type CreateSubscriber_CreateSubscriber_Subscriber struct {
 	ID            string     "json:\"id\" graphql:\"id\""
 	Email         string     "json:\"email\" graphql:\"email\""
@@ -15139,6 +15228,28 @@ func (t *GetSubscriber) GetSubscriber() *GetSubscriber_Subscriber {
 	return &t.Subscriber
 }
 
+type CreateBulkSubscriber struct {
+	CreateBulkSubscriber CreateBulkSubscriber_CreateBulkSubscriber "json:\"createBulkSubscriber\" graphql:\"createBulkSubscriber\""
+}
+
+func (t *CreateBulkSubscriber) GetCreateBulkSubscriber() *CreateBulkSubscriber_CreateBulkSubscriber {
+	if t == nil {
+		t = &CreateBulkSubscriber{}
+	}
+	return &t.CreateBulkSubscriber
+}
+
+type CreateBulkCSVSubscriber struct {
+	CreateBulkCSVSubscriber CreateBulkCSVSubscriber_CreateBulkCSVSubscriber "json:\"createBulkCSVSubscriber\" graphql:\"createBulkCSVSubscriber\""
+}
+
+func (t *CreateBulkCSVSubscriber) GetCreateBulkCSVSubscriber() *CreateBulkCSVSubscriber_CreateBulkCSVSubscriber {
+	if t == nil {
+		t = &CreateBulkCSVSubscriber{}
+	}
+	return &t.CreateBulkCSVSubscriber
+}
+
 type CreateSubscriber struct {
 	CreateSubscriber CreateSubscriber_CreateSubscriber "json:\"createSubscriber\" graphql:\"createSubscriber\""
 }
@@ -18917,6 +19028,64 @@ func (c *Client) GetSubscriber(ctx context.Context, email string, interceptors .
 	return &res, nil
 }
 
+const CreateBulkSubscriberDocument = `mutation CreateBulkSubscriber ($input: [CreateSubscriberInput!]) {
+	createBulkSubscriber(input: $input) {
+		subscribers {
+			id
+			email
+			active
+			verifiedEmail
+		}
+	}
+}
+`
+
+func (c *Client) CreateBulkSubscriber(ctx context.Context, input []*CreateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkSubscriber, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateBulkSubscriber
+	if err := c.Client.Post(ctx, "CreateBulkSubscriber", CreateBulkSubscriberDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateBulkCSVSubscriberDocument = `mutation CreateBulkCSVSubscriber ($input: Upload!) {
+	createBulkCSVSubscriber(input: $input) {
+		subscribers {
+			id
+			email
+			active
+			verifiedEmail
+		}
+	}
+}
+`
+
+func (c *Client) CreateBulkCSVSubscriber(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVSubscriber, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateBulkCSVSubscriber
+	if err := c.Client.Post(ctx, "CreateBulkCSVSubscriber", CreateBulkCSVSubscriberDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const CreateSubscriberDocument = `mutation CreateSubscriber ($input: CreateSubscriberInput!) {
 	createSubscriber(input: $input) {
 		subscriber {
@@ -20062,6 +20231,8 @@ var DocumentOperationNames = map[string]string{
 	SearchDocument:                      "Search",
 	SubscribersDocument:                 "Subscribers",
 	GetSubscriberDocument:               "GetSubscriber",
+	CreateBulkSubscriberDocument:        "CreateBulkSubscriber",
+	CreateBulkCSVSubscriberDocument:     "CreateBulkCSVSubscriber",
 	CreateSubscriberDocument:            "CreateSubscriber",
 	UpdateSubscriberDocument:            "UpdateSubscriber",
 	DeleteSubscriberDocument:            "DeleteSubscriber",

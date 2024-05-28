@@ -7,6 +7,7 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -42,6 +43,11 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, input generated.Crea
 	}
 
 	return &EventCreatePayload{Event: t}, nil
+}
+
+// CreateBulkEvent is the resolver for the createBulkEvent field.
+func (r *mutationResolver) CreateBulkEvent(ctx context.Context, input []*generated.CreateEventInput) (*EventBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkEvent - createBulkEvent"))
 }
 
 // UpdateEvent is the resolver for the updateEvent field

@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateIntegrationInput!
     ): IntegrationCreatePayload!
     """
+    Create multiple new integrations
+    """
+    createBulkIntegration(
+        """
+        values of the integration
+        """
+        input: [CreateIntegrationInput!]
+    ): IntegrationBulkCreatePayload!
+    """
     Update an existing integration
     """
     updateIntegration(
@@ -72,4 +81,14 @@ type IntegrationDeletePayload {
     Deleted integration ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkIntegration mutation
+"""
+type IntegrationBulkCreatePayload {
+    """
+    Created integrations
+    """
+    integrations: [Integration!]
 }

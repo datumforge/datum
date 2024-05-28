@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateInviteInput!
     ): InviteCreatePayload!
     """
+    Create multiple new invites
+    """
+    createBulkInvite(
+        """
+        values of the invite
+        """
+        input: [CreateInviteInput!]
+    ): InviteBulkCreatePayload!
+    """
     Update an existing invite
     """
     updateInvite(
@@ -72,4 +81,14 @@ type InviteDeletePayload {
     Deleted invite ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkInvite mutation
+"""
+type InviteBulkCreatePayload {
+    """
+    Created invites
+    """
+    invites: [Invite!]
 }

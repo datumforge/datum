@@ -6,6 +6,7 @@ package graphapi
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
@@ -32,6 +33,11 @@ func (r *mutationResolver) CreateIntegration(ctx context.Context, input generate
 	}
 
 	return &IntegrationCreatePayload{Integration: i}, nil
+}
+
+// CreateBulkIntegration is the resolver for the createBulkIntegration field.
+func (r *mutationResolver) CreateBulkIntegration(ctx context.Context, input []*generated.CreateIntegrationInput) (*IntegrationBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkIntegration - createBulkIntegration"))
 }
 
 // UpdateIntegration is the resolver for the updateIntegration field.

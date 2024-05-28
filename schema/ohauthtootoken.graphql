@@ -21,6 +21,15 @@ extend type Mutation{
         input: CreateOhAuthTooTokenInput!
     ): OhAuthTooTokenCreatePayload!
     """
+    Create multiple new ohAuthTooTokens
+    """
+    createBulkOhAuthTooToken(
+        """
+        values of the ohAuthTooToken
+        """
+        input: [CreateOhAuthTooTokenInput!]
+    ): OhAuthTooTokenBulkCreatePayload!
+    """
     Update an existing ohAuthTooToken
     """
     updateOhAuthTooToken(
@@ -72,4 +81,14 @@ type OhAuthTooTokenDeletePayload {
     Deleted ohAuthTooToken ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkOhAuthTooToken mutation
+"""
+type OhAuthTooTokenBulkCreatePayload {
+    """
+    Created ohAuthTooTokens
+    """
+    ohAuthTooTokens: [OhAuthTooToken!]
 }

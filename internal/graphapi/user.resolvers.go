@@ -7,6 +7,7 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -19,6 +20,11 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 	// TODO: look at allowing this resolver to invite the user instead of creating them directly
 	// for now, return permission denied
 	return nil, ErrPermissionDenied
+}
+
+// CreateBulkUser is the resolver for the createBulkUser field.
+func (r *mutationResolver) CreateBulkUser(ctx context.Context, input []*generated.CreateUserInput) (*UserBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkUser - createBulkUser"))
 }
 
 // UpdateUser is the resolver for the updateUser field.

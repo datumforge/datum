@@ -45,6 +45,30 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 	return &OrganizationCreatePayload{Organization: org}, nil
 }
 
+// CreateBulkOrganization is the resolver for the createBulkOrganization field.
+func (r *mutationResolver) CreateBulkOrganization(ctx context.Context, input []*generated.CreateOrganizationInput) (*OrganizationBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+
+	builders := make([]*generated.OrganizationCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.Organization.Create().SetInput(*data)
+	}
+
+	orgs, err := withTransactionalMutation(ctx).Organization.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "organization")
+		}
+
+		r.logger.Errorw("failed to bulk create organizations", "error", err)
+		return nil, err
+	}
+
+	return &OrganizationBulkCreatePayload{
+		Organizations: orgs,
+	}, nil
+}
+
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
 	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)

@@ -9,7 +9,6 @@ import (
 	"github.com/getkin/kin-openapi/openapi3gen"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/pkg/rout"
 )
 
 // Router is a struct that holds the echo router, the OpenAPI schema, and the handler - it's a way to group these components together
@@ -36,38 +35,6 @@ func (r *Router) AddEchoOnlyRoute(pattern, method string, route echo.Routable) e
 	if err != nil {
 		return err
 	}
-
-	return nil
-}
-
-func (r *Router) AddErrorSchema() error {
-	errorResponse := &openapi3.SchemaRef{
-		Ref: "#/components/schemas/ErrorResponse",
-	}
-
-	if err := r.AddSchema("ErrorResponse", rout.StatusError{}); err != nil {
-		return err
-	}
-
-	internalServerError := openapi3.NewResponse().
-		WithDescription("Internal Server Error").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
-	r.OAS.Components.Responses["InternalServerError"] = &openapi3.ResponseRef{Value: internalServerError}
-
-	badRequest := openapi3.NewResponse().
-		WithDescription("Bad Request").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
-	r.OAS.Components.Responses["BadRequest"] = &openapi3.ResponseRef{Value: badRequest}
-
-	unauthorized := openapi3.NewResponse().
-		WithDescription("Unauthorized").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
-	r.OAS.Components.Responses["Unauthorized"] = &openapi3.ResponseRef{Value: unauthorized}
-
-	conflict := openapi3.NewResponse().
-		WithDescription("Conflict").
-		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
-	r.OAS.Components.Responses["Conflict"] = &openapi3.ResponseRef{Value: conflict}
 
 	return nil
 }

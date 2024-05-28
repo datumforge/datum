@@ -7,8 +7,7 @@ import (
 	echo "github.com/datumforge/echox"
 )
 
-// registerJwksWellKnownHandler supplies the JWKS endpoint.
-// This endpoint will contain the JWK used to verify all Datum JWTs
+// registerJwksWellKnownHandler supplies the JWKS endpoint
 func registerJwksWellKnownHandler(router *Router) (err error) {
 	path := "/.well-known/jwks.json"
 	method := http.MethodGet

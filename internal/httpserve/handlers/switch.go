@@ -23,7 +23,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	var req models.SwitchOrganizationRequest
 
 	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	reqCtx := ctx.Request().Context()
@@ -32,7 +32,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get user id from context", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// get user from database by subject
@@ -40,14 +40,14 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get user by subject", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	orgID, err := auth.GetOrganizationIDFromContext(reqCtx)
 	if err != nil {
 		h.Logger.Errorw("unable to get organization id from context", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// ensure the user is not already in the target organization
@@ -76,7 +76,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	// create a new token pair for the user
 	access, refresh, err := h.TM.CreateTokenPair(newClaims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set cookies on request with the access and refresh token
@@ -86,13 +86,13 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// return the session value for the UI to use
 	session, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// track the organization switch event
@@ -113,7 +113,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 		Session:      session,
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // switchClaims creates a new set of claims for the user based on the target organization and returns them
@@ -133,10 +133,11 @@ func (h *Handler) BindSwitchHandler() *openapi3.Operation {
 	switchHandler.Description = "Switch the user's organization context"
 	switchHandler.OperationID = "OrganizationSwitch"
 
-	h.AddRequestBody("PublishRequest", models.PublishRequest{}, switchHandler)
-	h.AddResponse("PublishReply", "success", models.PublishReply{}, switchHandler, http.StatusOK)
+	h.AddRequestBody("SwitchOrganizationRequest", models.PublishRequest{}, switchHandler)
+	h.AddResponse("SwitchOrganizationReply", "success", models.PublishReply{}, switchHandler, http.StatusOK)
 	switchHandler.AddResponse(http.StatusInternalServerError, internalServerError())
 	switchHandler.AddResponse(http.StatusBadRequest, badRequest())
+	switchHandler.AddResponse(http.StatusUnauthorized, unauthorized())
 
 	return switchHandler
 }

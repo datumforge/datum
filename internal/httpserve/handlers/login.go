@@ -23,7 +23,7 @@ import (
 func (h *Handler) LoginHandler(ctx echo.Context) error {
 	user, err := h.verifyUserPassword(ctx)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// set context for remaining request based on logged in user
@@ -32,14 +32,14 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	})
 
 	if err := h.addDefaultOrgToUserQuery(userCtx, user); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	claims := createClaims(user)
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set cookies on request with the access and refresh token
@@ -49,13 +49,13 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	if err := h.updateUserLastSeen(userCtx, user.ID); err != nil {
 		h.Logger.Errorw("unable to update last seen", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	props := ph.NewProperties().
@@ -72,7 +72,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	// server side
 	s, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	out := models.LoginReply{
@@ -85,7 +85,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		ExpiresIn:    claims.ExpiresAt.Unix(),
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // createClaims creates the claims for the JWT token using the mapping ids for the user and organization
@@ -142,7 +142,7 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 // BindLoginHandler binds the login request to the OpenAPI schema
 func (h *Handler) BindLoginHandler() *openapi3.Operation {
 	login := openapi3.NewOperation()
-	login.Description = "Authenticate with the Datum Server"
+	login.Description = "Login is oriented towards human users who use their email and password for authentication (whereas authenticate is used for machine access using API keys). Login verifies the password submitted for the user is correct by looking up the user by email and using the argon2 derived key verification process to confirm the password matches. Upon authentication an access token and a refresh token with the authorized claims of the user are returned. The user can use the access token to authenticate to Datum systems. The access token has an expiration and the refresh token can be used with the refresh endpoint to get a new access token without the user having to log in again. The refresh token overlaps with the access token to provide a seamless authentication experience and the user can refresh their access token so long as the refresh token is valid"
 	login.OperationID = "LoginHandler"
 
 	h.AddRequestBody("LoginRequest", models.LoginRequest{}, login)

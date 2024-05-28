@@ -149,7 +149,6 @@ func (h *Handler) BadRequest(ctx echo.Context, err error) error {
 	return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 }
 
-func (h *Handler) Success(ctx echo.Context, message string, rep interface{}) error {
-	out := rout.ErrorResponse(rep)
-	return ctx.JSON(http.StatusOK, out)
+func (h *Handler) Success(ctx echo.Context, rep interface{}) error {
+	return ctx.JSON(http.StatusOK, rep)
 }

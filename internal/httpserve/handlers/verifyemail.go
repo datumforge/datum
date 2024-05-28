@@ -22,11 +22,11 @@ import (
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	var req models.VerifyRequest
 	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := validateVerifyRequest(req.Token); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// setup viewer context
@@ -35,7 +35,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	entUser, err := h.getUserByEVToken(ctxWithToken, req.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+			return h.BadRequest(ctx, err)
 		}
 
 		h.Logger.Errorf("error retrieving user token", "error", err)
@@ -59,7 +59,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		if err := user.setUserTokens(entUser, req.Token); err != nil {
 			h.Logger.Errorw("unable to set user tokens for request", "error", err)
 
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+			return h.BadRequest(ctx, err)
 		}
 
 		// Construct the user token from the database fields
@@ -96,16 +96,16 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				return ctx.JSON(http.StatusCreated, out)
 			}
 
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+			return h.BadRequest(ctx, err)
 		}
 
 		if err := h.setEmailConfirmed(userCtx, entUser); err != nil {
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+			return h.BadRequest(ctx, err)
 		}
 	}
 
 	if err := h.addDefaultOrgToUserQuery(userCtx, entUser); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	claims := createClaims(entUser)
@@ -114,7 +114,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("error creating token pair", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// set cookies on request with the access and refresh token
@@ -139,7 +139,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		ExpiresIn:    claims.ExpiresAt.Unix(),
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // validateVerifyRequest validates the required fields are set in the user request
@@ -170,11 +170,11 @@ func (u *User) setUserTokens(user *generated.User, reqToken string) error {
 // BindVerifyEmailHandler binds the verify email verification endpoint to the OpenAPI schema
 func (h *Handler) BindVerifyEmailHandler() *openapi3.Operation {
 	verify := openapi3.NewOperation()
-	verify.Description = "Verify an email address"
+	verify.Description = "VerifyEmail verifies a user's email address by validating the token in the request and setting the user's validated field in the database to true. This endpoint is intended to be called by frontend applications after the user has followed the link in the verification email"
 	verify.OperationID = "VerifyEmail"
 
-	h.AddRequestBody("VerifyEmail", models.VerifyRequest{}, verify)
-	h.AddResponse("VerifyReply", "success", models.VerifyReply{}, verify, http.StatusOK)
+	h.AddRequestBody("VerifyEmailRequest", models.VerifyRequest{}, verify)
+	h.AddResponse("VerifyEmailReply", "success", models.VerifyReply{}, verify, http.StatusOK)
 	verify.AddResponse(http.StatusInternalServerError, internalServerError())
 	verify.AddResponse(http.StatusBadRequest, badRequest())
 	verify.AddResponse(http.StatusCreated, created())

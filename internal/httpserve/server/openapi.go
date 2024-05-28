@@ -27,15 +27,70 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 		schemas[key] = ref
 	}
 
-	successResponse := openapi3.NewResponse().
-		WithDescription("ok")
-
-	// add common schemas, responses, and params so we can reference them
-	schemas["document"] = &openapi3.SchemaRef{
-		Value: openapi3.NewObjectSchema().WithAnyAdditionalProperties(),
+	errorResponse := &openapi3.SchemaRef{
+		Ref: "#/components/schemas/ErrorResponse",
 	}
-	responses["success"] = &openapi3.ResponseRef{
-		Value: successResponse,
+
+	_, err := openapi3gen.NewSchemaRefForValue(&rout.StatusError{}, schemas)
+	if err != nil {
+		return nil, err
+	}
+
+	internalServerError := openapi3.NewResponse().
+		WithDescription("Internal Server Error").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
+	responses["InternalServerError"] = &openapi3.ResponseRef{Value: internalServerError}
+
+	badRequest := openapi3.NewResponse().
+		WithDescription("Bad Request").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
+	responses["BadRequest"] = &openapi3.ResponseRef{Value: badRequest}
+
+	unauthorized := openapi3.NewResponse().
+		WithDescription("Unauthorized").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
+	responses["Unauthorized"] = &openapi3.ResponseRef{Value: unauthorized}
+
+	conflict := openapi3.NewResponse().
+		WithDescription("Conflict").
+		WithContent(openapi3.NewContentWithJSONSchemaRef(errorResponse))
+	responses["Conflict"] = &openapi3.ResponseRef{Value: conflict}
+
+	securityschemes["oauth2"] = &openapi3.SecuritySchemeRef{
+		Value: (*OAuth2)(&OAuth2{
+			AuthorizationURL: "https://auth.datum.net/oauth2/authorize",
+			TokenURL:         "https://auth.datum.net/oauth2/token",
+			RefreshURL:       "https://auth.datum.net/oauth2/refresh",
+			Scopes: map[string]string{
+				"read":  "Read access",
+				"write": "Write access",
+			},
+		}).Scheme(),
+	}
+
+	securityschemes["openid"] = &openapi3.SecuritySchemeRef{
+		Value: (*OpenID)(&OpenID{
+			ConnectURL: "https://auth.datum.net/.well-known/openid-configuration",
+		}).Scheme(),
+	}
+
+	securityschemes["apikey"] = &openapi3.SecuritySchemeRef{
+		Value: (*APIKey)(&APIKey{
+			Name: "X-API-Key",
+		}).Scheme(),
+	}
+
+	securityschemes["basic"] = &openapi3.SecuritySchemeRef{
+		Value: (*Basic)(&Basic{
+			Username: "username",
+			Password: "password",
+		}).Scheme(),
+	}
+
+	securityschemes["bearer"] = &openapi3.SecuritySchemeRef{
+		Value: (*Bearer)(&Bearer{
+			Token: "token",
+		}).Scheme(),
 	}
 
 	return &openapi3.T{
@@ -120,6 +175,7 @@ var openAPISchemas = map[string]any{
 	"ErrorResponse":                &rout.StatusError{},
 }
 
+// SecurityScheme is an interface that represents a security scheme
 type OAuth2 struct {
 	AuthorizationURL string
 	TokenURL         string
@@ -127,6 +183,7 @@ type OAuth2 struct {
 	Scopes           map[string]string
 }
 
+// Scheme returns the OAuth2 security scheme
 func (i *OAuth2) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
 		Type: "oauth2",
@@ -141,21 +198,25 @@ func (i *OAuth2) Scheme() *openapi3.SecurityScheme {
 	}
 }
 
+// OpenID is a struct that represents an OpenID Connect security scheme
 type OpenID struct {
-	ConnectUrl string
+	ConnectURL string
 }
 
+// Scheme returns the OpenID Connect security scheme
 func (i *OpenID) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
 		Type:             "openIdConnect",
-		OpenIdConnectUrl: i.ConnectUrl,
+		OpenIdConnectUrl: i.ConnectURL,
 	}
 }
 
+// APIKey is a struct that represents an API Key security scheme
 type APIKey struct {
 	Name string
 }
 
+// Scheme returns the API Key security scheme
 func (k *APIKey) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
 		Type: "http",
@@ -164,16 +225,13 @@ func (k *APIKey) Scheme() *openapi3.SecurityScheme {
 	}
 }
 
+// Basic is a struct that represents a Basic Auth security scheme
 type Basic struct {
 	Username string
 	Password string
 }
 
-type User struct {
-	Username string
-	Password string
-}
-
+// Scheme returns the Basic Auth security scheme
 func (b *Basic) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
 		Type:   "http",
@@ -181,10 +239,12 @@ func (b *Basic) Scheme() *openapi3.SecurityScheme {
 	}
 }
 
+// Bearer is a struct that represents a Bearer Token security scheme
 type Bearer struct {
 	Token string
 }
 
+// Scheme returns the Bearer Token security scheme
 func (b *Bearer) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
 		Type:         "http",

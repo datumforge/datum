@@ -52,11 +52,11 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	// check if users exists and create if not, updates last seen of existing user
 	user, err := h.CheckAndCreateUser(ctxWithToken, r.Name, r.Email, enums.AuthProvider(strings.ToUpper(r.AuthProvider)))
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	if err := h.addDefaultOrgToUserQuery(ctxWithToken, user); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// create claims for verified user
@@ -64,7 +64,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set cookies for the user
@@ -79,7 +79,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 
 	c, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	ctx.SetRequest(ctx.Request().WithContext(c))
@@ -98,7 +98,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	// server side
 	s, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	out := models.LoginReply{
@@ -111,7 +111,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	}
 
 	// Return the access token
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // verifyClientToken verifies the provided access token from an external oauth2 provider is valid and matches the user's email

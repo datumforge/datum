@@ -28,11 +28,11 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 
 	var in models.ForgotPasswordRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := validateForgotPasswordRequest(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email, enums.AuthProviderCredentials)
@@ -40,12 +40,12 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		if ent.IsNotFound(err) {
 			// return a 200 response even if user is not found to avoid
 			// exposing confidential information
-			return ctx.JSON(http.StatusOK, out)
+			return h.Success(ctx, out)
 		}
 
 		h.Logger.Errorf("error retrieving user email", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// create password reset email token
@@ -61,10 +61,10 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	})
 
 	if _, err = h.storeAndSendPasswordResetToken(authCtx, user); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, err)
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // validateResendRequest validates the required fields are set in the user request
@@ -109,8 +109,9 @@ func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User
 // BindForgotPassword is used to bind the forgot password endpoint to the OpenAPI schema
 func (h *Handler) BindForgotPassword() *openapi3.Operation {
 	forgotPassword := openapi3.NewOperation()
-	forgotPassword.Description = "Request a password reset email"
+	forgotPassword.Description = "ForgotPassword is a service for users to request a password reset email. The email address must be provided in the POST request and the user must exist in the database. This endpoint always returns 200 regardless of whether the user exists or not to avoid leaking information about users in the database"
 	forgotPassword.OperationID = "ForgotPassword"
+	forgotPassword.Security = &openapi3.SecurityRequirements{}
 
 	h.AddRequestBody("ForgotPasswordRequest", models.ForgotPasswordRequest{}, forgotPassword)
 	h.AddResponse("ForgotPasswordReply", "success", models.ForgotPasswordReply{}, forgotPassword, http.StatusOK)

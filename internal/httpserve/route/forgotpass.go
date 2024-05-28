@@ -6,10 +6,7 @@ import (
 	echo "github.com/datumforge/echox"
 )
 
-// ForgotPassword is a service for users to request a password reset email. The email
-// address must be provided in the POST request and the user must exist in the
-// database. This endpoint always returns 204 regardless of whether the user exists or
-// not to avoid leaking information about users in the database.
+// registerForgotPasswordHandler registers the forgot password handler and route
 func registerForgotPasswordHandler(router *Router) (err error) {
 	path := "/forgot-password"
 	method := http.MethodPost

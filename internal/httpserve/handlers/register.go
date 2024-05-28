@@ -83,7 +83,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("error storing token", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	out := &models.RegisterReply{
@@ -153,8 +153,9 @@ func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *
 // BindRegisterHandler is used to bind the register endpoint to the OpenAPI schema
 func (h *Handler) BindRegisterHandler() *openapi3.Operation {
 	register := openapi3.NewOperation()
-	register.Description = ("Register a new user")
+	register.Description = "Register creates a new user in the database with the specified password, allowing the user to login to Datum. This endpoint requires a 'strong' password and a valid register request, otherwise a 400 reply is returned. The password is stored in the database as an argon2 derived key so it is impossible for a hacker to get access to raw passwordsf for that good good security. A personal organization is created for the user registering based on the organization data in the register request and the user is assigned the Owner role."
 	register.OperationID = "RegisterHandler"
+	register.Security = &openapi3.SecurityRequirements{}
 
 	h.AddRequestBody("RegisterRequest", models.RegisterRequest{}, register)
 	h.AddResponse("RegisterReply", "success", models.RegisterReply{}, register, http.StatusCreated)

@@ -21,8 +21,7 @@ import (
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
-// Invite holds the Token, InviteToken references, and the additional user input to //
-// complete acceptance of the invitation
+// Invite holds the Token, InviteToken references, and the additional user input to complete acceptance of the invitation
 type Invite struct {
 	Token     string
 	UserID    ulid.ULID
@@ -47,7 +46,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	// parse the token out of the context
 	req := new(models.InviteRequest)
 	if err := ctx.Bind(req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	reqCtx := ctx.Request().Context()
@@ -57,7 +56,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get user id from context", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	inv := &Invite{
@@ -66,7 +65,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 
 	// ensure the user that is logged in, matches the invited user
 	if err := inv.validateInviteRequest(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// set the initial context based on the token
@@ -76,7 +75,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	invitedUser, err := h.getUserByInviteToken(ctxWithToken, inv.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+			return h.BadRequest(ctx, err)
 		}
 
 		h.Logger.Errorf("error retrieving invite token", "error", err)
@@ -97,19 +96,19 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 
 	// ensure the user that is logged in, matches the invited user
 	if err := inv.validateUser(user.Email); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// string to ulid so we can match the token input
 	oid, err := ulid.Parse(invitedUser.OwnerID)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// string to ulid so we can match the token input
 	uid, err := ulid.Parse(userID)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// construct the invite details but set email to the original recipient, and the joining organization ID as the current owner of the invitation
@@ -124,7 +123,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	if err := invite.setOrgInviteTokens(invitedUser, inv.Token); err != nil {
 		h.Logger.Errorw("unable to set invite token for request", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// reconstruct the token based on recipient & owning organization so we can compare it to the one were receiving
@@ -154,11 +153,11 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 			return ctx.JSON(http.StatusBadRequest, out)
 		}
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := updateInviteStatusAccepted(ctxWithToken, invitedUser); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// reply with the relevant details

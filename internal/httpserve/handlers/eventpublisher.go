@@ -14,11 +14,11 @@ import (
 func (h *Handler) EventPublisher(ctx echo.Context) error {
 	var in models.PublishRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := h.EventManager.Publish(in.Topic, []byte(in.Message)); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	out := &models.PublishReply{
@@ -26,7 +26,7 @@ func (h *Handler) EventPublisher(ctx echo.Context) error {
 		Message: "success!",
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // BindEventPublisher is used to bind the event publisher endpoint to the OpenAPI schema
@@ -35,8 +35,8 @@ func (h *Handler) BindEventPublisher() *openapi3.Operation {
 	eventCreate.Description = "Publish and Correleate Events"
 	eventCreate.OperationID = "EventPublisher"
 
-	h.AddRequestBody("PublishRequest", models.PublishRequest{}, eventCreate)
-	h.AddResponse("PublishReply", "success", models.PublishReply{}, eventCreate, http.StatusOK)
+	h.AddRequestBody("EventPublishRequest", models.PublishRequest{}, eventCreate)
+	h.AddResponse("EventPublishReply", "success", models.PublishReply{}, eventCreate, http.StatusOK)
 	eventCreate.AddResponse(http.StatusInternalServerError, internalServerError())
 	eventCreate.AddResponse(http.StatusBadRequest, badRequest())
 

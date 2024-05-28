@@ -80,7 +80,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	// user is created first, no credential method is set / they are unable to login until the credential flow is finished
 	entUser, err := h.CheckAndCreateUser(ctxWithToken, r.Name, r.Email, enums.AuthProvider(webauthnProvider))
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set context for remaining request based on logged in user
@@ -90,11 +90,11 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 
 	// set webauthn allowed
 	if err := h.setWebauthnAllowed(userCtx, entUser); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	if err := h.addDefaultOrgToUserQuery(userCtx, entUser); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	user := &provider.User{
@@ -122,7 +122,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 
 	sessionCtx, err := h.SessionConfig.SaveAndStoreSession(userCtx, ctx.Response().Writer, setSessionMap, user.ID)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// return the session value for the UI to use
@@ -130,7 +130,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	// server side
 	s, err := sessions.SessionToken(sessionCtx)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	out := &WebauthnBeginRegistrationResponse{
@@ -139,7 +139,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 		Session:            s,
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // FinishWebauthnRegistration is the request to finish a webauthn registration - this is where we get the credential created by the user back
@@ -147,7 +147,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	// lookup userID in cache to ensure cookie and tokens match
 	session, err := h.SessionConfig.SessionManager.Get(ctx.Request(), h.SessionConfig.CookieConfig.Name)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// Get sessionID from cookie and check against redis
@@ -155,7 +155,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 
 	userID, err := h.SessionConfig.RedisStore.GetSession(ctx.Request().Context(), sessionID)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// get session data from cookie to get the user id stored
@@ -165,13 +165,13 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 
 	// ensure the user is the same as the one who started the registration
 	if userIDFromCookie != userID {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// get user from the database
 	entUser, err := h.getUserByID(ctx.Request().Context(), userID, enums.AuthProvider(webauthnProvider))
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set user in the viewer context for the rest of the request
@@ -182,7 +182,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	// follows https://www.w3.org/TR/webauthn/#sctn-registering-a-new-credential
 	response, err := protocol.ParseCredentialCreationResponseBody(ctx.Request().Body)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// get webauthn session data from the session
@@ -202,7 +202,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	// validate the credential
 	credential, err := h.WebAuthn.CreateCredential(user, wd, response)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// save the credential to the database
@@ -211,7 +211,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(ErrDeviceAlreadyRegistered, DeviceRegisteredErrCode))
 		}
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// create claims for verified user
@@ -219,7 +219,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set cookies for the user
@@ -229,7 +229,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// return the session value for the UI to use
@@ -237,7 +237,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	// server side
 	s, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	out := &WebauthnRegistrationResponse{
@@ -249,7 +249,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 		Session:      s,
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // BeginWebauthnLogin is the request to begin a webauthn login
@@ -265,7 +265,7 @@ func (h *Handler) BeginWebauthnLogin(ctx echo.Context) error {
 
 	sessionCtx, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, "")
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// return the session value for the UI to use
@@ -273,7 +273,7 @@ func (h *Handler) BeginWebauthnLogin(ctx echo.Context) error {
 	// server side
 	s, err := sessions.SessionToken(sessionCtx)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	out := &WebauthnBeginLoginResponse{
@@ -282,14 +282,14 @@ func (h *Handler) BeginWebauthnLogin(ctx echo.Context) error {
 		Session:             s,
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // FinishWebauthnLogin is the request to finish a webauthn login
 func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 	session, err := h.SessionConfig.SessionManager.Get(ctx.Request(), h.SessionConfig.CookieConfig.Name)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	sessionData := h.SessionConfig.SessionManager.GetSessionDataFromCookie(session)
@@ -302,17 +302,17 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 
 	response, err := protocol.ParseCredentialRequestResponseBody(ctx.Request().Body)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if _, err = h.WebAuthn.ValidateDiscoverableLogin(h.userHandler(ctx.Request().Context()), wd, response); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// get user from the database
 	entUser, err := h.getUserByID(ctx.Request().Context(), string(response.Response.UserHandle), enums.AuthProvider(webauthnProvider))
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// create claims for verified user
@@ -320,7 +320,7 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set cookies for the user
@@ -330,7 +330,7 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 	if err := h.SessionConfig.CreateAndStoreSession(ctx, entUser.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// return the session value for the UI to use
@@ -338,7 +338,7 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 	// server side
 	s, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	out := &WebauthnLoginResponse{
@@ -350,7 +350,7 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 		Session:      s,
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // userHandler returns a webauthn.DiscoverableUserHandler that can be used to look up a user by their userHandle

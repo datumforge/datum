@@ -16,7 +16,7 @@ import (
 func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	var r models.RefreshRequest
 	if err := ctx.Bind(&r); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if r.RefreshToken == "" {
@@ -28,7 +28,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("error verifying token", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// check user in the database, sub == claims subject and ensure only one record is returned
@@ -71,13 +71,13 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		Message: "success",
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // BindRefreshHandler is used to bind the refresh endpoint to the OpenAPI schema
 func (h *Handler) BindRefreshHandler() *openapi3.Operation {
 	refresh := openapi3.NewOperation()
-	refresh.Description = "Refresh the access token"
+	refresh.Description = "The Refresh endpoint re-authenticates users and API keys using a refresh token rather than requiring a username and password or API key credentials a second time and returns a new access and refresh token pair with the current credentials of the user. This endpoint is intended to facilitate long-running connections to datum systems that last longer than the duration of an access token; e.g. long sessions on the Datum UI or (especially) long running publishers and subscribers (machine users) that need to stay authenticated semi-permanently."
 	refresh.OperationID = "RefreshHandler"
 
 	h.AddRequestBody("RefreshRequest", models.RefreshRequest{}, refresh)

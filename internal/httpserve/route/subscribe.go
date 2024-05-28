@@ -6,6 +6,7 @@ import (
 	echo "github.com/datumforge/echox"
 )
 
+// registerVerifySubscribeHandler registers the verify subscription handler and route
 func registerVerifySubscribeHandler(router *Router) (err error) {
 	path := "/subscribe/verify"
 	method := http.MethodGet

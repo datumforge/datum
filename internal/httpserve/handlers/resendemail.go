@@ -25,13 +25,13 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 
 	var in models.ResendRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := validateResendRequest(in); err != nil {
 		h.Logger.Errorw("error validating request", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// set viewer context
@@ -43,7 +43,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		if ent.IsNotFound(err) {
 			// return a 200 response even if user is not found to avoid
 			// exposing confidential information
-			return ctx.JSON(http.StatusOK, out)
+			return h.Success(ctx, out)
 		}
 
 		h.Logger.Errorf("error retrieving user email", "error", err)
@@ -55,7 +55,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	if entUser.Edges.Setting.EmailConfirmed {
 		out.Message = "email is already confirmed"
 
-		return ctx.JSON(http.StatusOK, out)
+		return h.Success(ctx, out)
 	}
 
 	// setup user context
@@ -81,7 +81,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // validateResendRequest validates the required fields are set in the user request
@@ -96,7 +96,7 @@ func validateResendRequest(req models.ResendRequest) error {
 // BindResendEmail binds the resend email verification endpoint to the OpenAPI schema
 func (h *Handler) BindResendEmailHandler() *openapi3.Operation {
 	resendEmail := openapi3.NewOperation()
-	resendEmail.Description = "Resend an email verification email"
+	resendEmail.Description = "ResendEmail accepts an email address via a POST request and always returns a 200 Status OK response, no matter the input or result of the processing. This is to ensure that no secure information is leaked from this unauthenticated endpoint. If the email address belongs to a user who has not been verified, another verification email is sent. If the post request contains an orgID and the user is invited to that organization but hasn't accepted the invite, then the invite is resent."
 	resendEmail.OperationID = "ResendEmail"
 
 	h.AddRequestBody("ResendEmail", models.ResendRequest{}, resendEmail)

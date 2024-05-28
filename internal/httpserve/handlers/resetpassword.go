@@ -29,11 +29,11 @@ import (
 func (h *Handler) ResetPassword(ctx echo.Context) error {
 	var req models.ResetPasswordRequest
 	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := req.ValidateResetRequest(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// setup viewer context
@@ -61,7 +61,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	if err := user.setResetTokens(entUser, req.Token); err != nil {
 		h.Logger.Errorw("unable to set reset tokens for request", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// Construct the user token from the database fields
@@ -90,7 +90,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(errMsg))
 		}
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// make sure its not the same password as current
@@ -107,13 +107,13 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	if err := h.updateUserPassword(userCtx, entUser.ID, req.Password); err != nil {
 		h.Logger.Errorw("error updating user password", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := h.expireAllResetTokensUserByEmail(userCtx, user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
@@ -132,7 +132,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		Message: "password has been re-set successfully",
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // setResetTokens sets the fields for the password reset
@@ -157,11 +157,11 @@ func (u *User) setResetTokens(user *generated.User, reqToken string) error {
 // BindResetPassword binds the reset password handler to the OpenAPI schema
 func (h *Handler) BindResetPasswordHandler() *openapi3.Operation {
 	resetPassword := openapi3.NewOperation()
-	resetPassword.Description = "Publish and Correleate Events"
-	resetPassword.OperationID = "EventPublisher"
+	resetPassword.Description = "ResetPassword allows the user (after requesting a password reset) to set a new password - the password reset token needs to be set in the request and not expired. If the request is successful, a confirmation of the reset is sent to the user and a 200 StatusOK is returned"
+	resetPassword.OperationID = "PasswordReset"
 
-	h.AddRequestBody("PublishRequest", models.PublishRequest{}, resetPassword)
-	h.AddResponse("PublishReply", "success", models.PublishReply{}, resetPassword, http.StatusOK)
+	h.AddRequestBody("ResetPasswordRequest", models.ResetPasswordRequest{}, resetPassword)
+	h.AddResponse("ResetPasswordReply", "success", models.ResetPasswordReply{}, resetPassword, http.StatusOK)
 	resetPassword.AddResponse(http.StatusInternalServerError, internalServerError())
 	resetPassword.AddResponse(http.StatusBadRequest, badRequest())
 

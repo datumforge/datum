@@ -25,11 +25,11 @@ import (
 func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 	var req models.VerifySubscribeRequest
 	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := validateVerifySubscriptionRequest(req.Token); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// setup viewer context
@@ -38,7 +38,7 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 	entSubscriber, err := h.getSubscriberByToken(ctxWithToken, req.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+			return h.BadRequest(ctx, err)
 		}
 
 		h.Logger.Errorf("error retrieving subscriber", "error", err)
@@ -91,7 +91,7 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 		Message: "Subscription confirmed, looking forward to sending you updates!",
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // validateVerifySubscriptionRequest validates the required fields are set in the user request
@@ -203,8 +203,8 @@ func (h *Handler) BindVerifySubscriberHandler() *openapi3.Operation {
 	verify.Description = "Verify an email address for a subscription"
 	verify.OperationID = "VerifySubscriberEmail"
 
-	h.AddRequestBody("VerifyEmail", models.VerifyRequest{}, verify)
-	h.AddResponse("VerifyReply", "success", models.VerifyReply{}, verify, http.StatusOK)
+	h.AddRequestBody("VerifySubscriptionEmail", models.VerifyRequest{}, verify)
+	h.AddResponse("VerifySubscriptionReply", "success", models.VerifyReply{}, verify, http.StatusOK)
 	verify.AddResponse(http.StatusInternalServerError, internalServerError())
 	verify.AddResponse(http.StatusBadRequest, badRequest())
 	verify.AddResponse(http.StatusCreated, created())

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/go-webauthn/webauthn/protocol"
@@ -367,49 +366,6 @@ func (r *RegisterRequest) Validate() error {
 	switch {
 	case r.Email == "":
 
-		return rout.MissingField("email")
-	case r.Password == "":
-		return rout.MissingField("password")
-	case passwd.Strength(r.Password) < passwd.Moderate:
-		return rout.ErrPasswordTooWeak
-	}
-
-	return nil
-}
-
-func (r *RegisterRequest) MITB() error {
-	fmt.Print("sammie is great")
-	return nil
-}
-
-// validateVerifyRequest validates the required fields are set in the user request
-func (r *ResetPasswordRequest) ValidateResetRequest() error {
-	r.Password = strings.TrimSpace(r.Password)
-
-	switch {
-	case r.Token == "":
-		return rout.NewMissingRequiredFieldError("token")
-	case r.Password == "":
-		return rout.NewMissingRequiredFieldError("password")
-	case passwd.Strength(r.Password) < passwd.Moderate:
-		return rout.ErrPasswordTooWeak
-	}
-
-	return nil
-}
-
-// Validate the register request ensuring that the required fields are available and
-// that the password is valid - an error is returned if the request is not correct. This
-// method also performs some basic data cleanup, trimming whitespace
-func (r *RegisterRequest) Validate() error {
-	r.FirstName = strings.TrimSpace(r.FirstName)
-	r.LastName = strings.TrimSpace(r.LastName)
-	r.Email = strings.TrimSpace(r.Email)
-	r.Password = strings.TrimSpace(r.Password)
-
-	// Required for all requests
-	switch {
-	case r.Email == "":
 		return rout.MissingField("email")
 	case r.Password == "":
 		return rout.MissingField("password")

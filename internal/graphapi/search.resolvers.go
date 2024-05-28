@@ -8,58 +8,72 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/events/soiree"
 )
 
 // Search is the resolver for the search field.
 func (r *queryResolver) Search(ctx context.Context, query string) (*GlobalSearchResultConnection, error) {
-	orgResults := make(chan searchResult[[]*generated.Organization])
-	go searchOrganizations(ctx, query, orgResults)
+	// Initialize a goroutine pool with 5 workers and a maximum capacity of 10 tasks
+	pool := soiree.NewPondPool(5, 10)
 
-	groupResults := make(chan searchResult[[]*generated.Group])
-	go searchGroups(ctx, query, groupResults)
+	var (
+		orgResults []*generated.Organization
+		orgErr     error
 
-	userResults := make(chan searchResult[[]*generated.User])
-	go searchUsers(ctx, query, userResults)
+		groupResults      []*generated.Group
+		groupErr          error
+		userResults       []*generated.User
+		userErr           error
+		subscriberResults []*generated.Subscriber
+		subscriberErr     error
+	)
 
-	subscriberResults := make(chan searchResult[[]*generated.Subscriber])
-	go searchSubscriber(ctx, query, subscriberResults)
+	pool.Submit(func() {
+		orgResults, orgErr = searchOrganizations(ctx, query)
+	})
 
-	// Wait for all results to be returned
-	// first check for errors
-	or := <-orgResults
-	if or.err != nil {
-		return nil, or.err
-	}
+	pool.Submit(func() {
+		groupResults, groupErr = searchGroups(ctx, query)
+	})
 
-	gr := <-groupResults
-	if gr.err != nil {
-		return nil, gr.err
-	}
+	pool.Submit(func() {
+		userResults, userErr = searchUsers(ctx, query)
+	})
 
-	ur := <-userResults
-	if ur.err != nil {
-		return nil, ur.err
-	}
+	pool.Submit(func() {
+		subscriberResults, subscriberErr = searchSubscriber(ctx, query)
+	})
 
-	sr := <-subscriberResults
-	if sr.err != nil {
-		return nil, sr.err
+	pool.StopAndWaitFor(maxSearchTime)
+
+	pool.Release()
+
+	// Check all errors and return a single error if any of the searches failed
+	if orgErr != nil || groupErr != nil || userErr != nil || subscriberErr != nil {
+		r.logger.Errorw("search failed", "error",
+			"org", orgErr,
+			"group", groupErr,
+			"user", userErr,
+			"subscriber", subscriberErr,
+		)
+
+		return nil, ErrSearchFailed
 	}
 
 	// return the results
 	return &GlobalSearchResultConnection{
 		Nodes: []GlobalSearchResult{
 			OrganizationSearchResult{
-				Organizations: or.result,
+				Organizations: orgResults,
 			},
 			GroupSearchResult{
-				Groups: gr.result,
+				Groups: groupResults,
 			},
 			UserSearchResult{
-				Users: ur.result,
+				Users: userResults,
 			},
 			SubscriberSearchResult{
-				Subscribers: sr.result,
+				Subscribers: subscriberResults,
 			},
 		},
 	}, nil

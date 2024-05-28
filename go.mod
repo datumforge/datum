@@ -23,7 +23,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.4
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
-	github.com/gin-gonic/gin v1.9.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/go-github/v62 v62.0.0
 	github.com/google/go-querystring v1.1.0
@@ -113,6 +112,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fxamacker/cbor/v2 v2.6.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/gin-gonic/gin v1.9.1 // indirect
 	github.com/go-faster/errors v0.7.1 // indirect
 	github.com/go-faster/jx v1.1.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.1 // indirect

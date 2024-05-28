@@ -365,7 +365,6 @@ func (r *RegisterRequest) Validate() error {
 	// Required for all requests
 	switch {
 	case r.Email == "":
-
 		return rout.MissingField("email")
 	case r.Password == "":
 		return rout.MissingField("password")

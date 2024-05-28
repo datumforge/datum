@@ -67,6 +67,9 @@ func TestClient(t *testing.T) {
 	data := make(map[string]string)
 	rep, err := apiv1.Do(req, &data, true)
 	require.NoError(t, err)
+
+	defer rep.Body.Close()
+
 	require.Equal(t, http.StatusOK, rep.StatusCode)
 	require.Contains(t, data, "hello")
 	require.Equal(t, "world", data["hello"])
@@ -76,16 +79,22 @@ func TestClient(t *testing.T) {
 	require.NoError(t, err)
 	rep, err = apiv1.Do(req, nil, false)
 	require.NoError(t, err)
+
+	defer rep.Body.Close()
+
 	require.Equal(t, http.StatusBadRequest, rep.StatusCode)
 
 	req, err = apiv1.NewRequest(context.TODO(), http.MethodPost, "/bar", data, nil)
 	require.NoError(t, err)
-	_, err = apiv1.Do(req, nil, true)
+
+	rep, err = apiv1.Do(req, nil, true)
 	require.EqualError(t, err, "[400] bad request")
+	defer rep.Body.Close()
 
 	// Test supplying an authentication override token in the request context
 	ctx := api.ContextWithToken(context.Background(), "newtoken")
 	req, err = apiv1.NewRequest(ctx, http.MethodPost, "/bar", data, nil)
+
 	require.NoError(t, err, "could not create request")
 	require.Equal(t, "Bearer newtoken", req.Header.Get("Authorization"), "expected the authorization header to be set")
 
@@ -93,9 +102,13 @@ func TestClient(t *testing.T) {
 	defaultCreds := api.Token("default")
 	client, err = api.New(ts.URL, api.WithCredentials(defaultCreds))
 	require.NoError(t, err, "could not create client")
+
 	apiv1, ok = client.(*api.APIv1)
+
 	require.True(t, ok, "could not cast client to APIv1")
+
 	req, err = apiv1.NewRequest(context.Background(), http.MethodPost, "/bar", data, nil)
+
 	require.NoError(t, err, "could not create request")
 	require.Equal(t, "Bearer default", req.Header.Get("Authorization"), "expected the authorization header to be set to default")
 
@@ -196,7 +209,9 @@ func TestVerifyEmail(t *testing.T) {
 		AccessToken:  "access",
 		RefreshToken: "refresh",
 	}
+
 	ts := httptest.NewServer(testhandler(fixture, http.MethodPost, "/v1/verify"))
+
 	defer ts.Close()
 
 	// Create a client and execute endpoint request
@@ -214,7 +229,9 @@ func TestResendEmail(t *testing.T) {
 	fixture := &models.ResendReply{
 		Message: "email sent",
 	}
+
 	ts := httptest.NewServer(testhandler(fixture, http.MethodPost, "/v1/resend"))
+
 	defer ts.Close()
 
 	// Create a client and execute endpoint request
@@ -239,7 +256,9 @@ func TestForgotPassword(t *testing.T) {
 	// Create a client and execute endpoint request
 	client, err := api.New(ts.URL)
 	require.NoError(t, err, "could not create api client")
+
 	req := &models.ForgotPasswordRequest{Email: "leopold.wentzel@gmail.com"}
+
 	rep, err := client.ForgotPassword(context.Background(), req)
 	require.NoError(t, err, "could not execute api request")
 	require.Equal(t, fixture, rep, "unexpected response returned")
@@ -256,10 +275,12 @@ func TestResetPassword(t *testing.T) {
 	// Create a client and execute endpoint request
 	client, err := api.New(ts.URL)
 	require.NoError(t, err, "could not create api client")
+
 	req := &models.ResetPasswordRequest{
 		Token:    "token",
 		Password: "password",
 	}
+
 	rep, err := client.ResetPassword(context.Background(), req)
 	require.NoError(t, err, "could not execute api request")
 	require.Equal(t, fixture, rep, "unexpected response returned")
@@ -321,17 +342,28 @@ func testhandler(fixture interface{}, expectedMethod, expectedPath string) http.
 
 		if r.Method != expectedMethod {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(rout.ErrorResponse("unexpected http method"))
+
+			if err := json.NewEncoder(w).Encode(rout.ErrorResponse("unexpected http method")); err != nil {
+				return
+			}
+
 			return
 		}
 
 		if r.URL.Path != expectedPath {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(rout.ErrorResponse("unexpected endpoint path"))
+
+			if err := json.NewEncoder(w).Encode(rout.ErrorResponse("unexpected endpoint path")); err != nil {
+				return
+			}
+
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(fixture)
+
+		if err := json.NewEncoder(w).Encode(fixture); err != nil {
+			return
+		}
 	})
 }

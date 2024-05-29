@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateGroupSettingInput!]
     ): GroupSettingBulkCreatePayload!
     """
+    Create multiple new groupSettings via file upload
+    """
+    createBulkCSVGroupSetting(
+        """
+        csv file containing values of the groupSetting
+        """
+        input: Upload!
+    ): GroupSettingBulkCreatePayload!
+    """
     Update an existing groupSetting
     """
     updateGroupSetting(

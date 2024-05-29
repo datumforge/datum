@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
@@ -22,6 +23,11 @@ func (r *mutationResolver) CreateUserSetting(ctx context.Context, input generate
 // CreateBulkUserSetting is the resolver for the createBulkUserSetting field.
 func (r *mutationResolver) CreateBulkUserSetting(ctx context.Context, input []*generated.CreateUserSettingInput) (*UserSettingBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkUserSetting - createBulkUserSetting"))
+}
+
+// CreateBulkCSVUserSetting is the resolver for the createBulkCSVUserSetting field.
+func (r *mutationResolver) CreateBulkCSVUserSetting(ctx context.Context, input graphql.Upload) (*UserSettingBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVUserSetting - createBulkCSVUserSetting"))
 }
 
 // UpdateUserSetting is the resolver for the updateUserSetting field.

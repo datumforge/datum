@@ -1,0 +1,34 @@
+{{ reserveImport "context"  }}
+{{ reserveImport "errors"  }}
+
+{{reserveImport "github.com/datumforge/datum/internal/ent/generated" }}
+{{reserveImport "github.com/datumforge/datum/internal/ent/generated/privacy"}}
+
+{{ $root := . }}
+
+{{ range $object := .Objects }}
+
+func (r *mutationResolver) bulkCreate{{ $object.Name }} (ctx context.Context, input []*generated.Create{{ $object.Name }}Input) (*{{ $object.Name }}BulkCreatePayload, error) {
+    c := withTransactionalMutation(ctx)
+	builders := make([]*generated.{{ $object.Name }}Create, len(input))
+	for i, data := range input {
+		builders[i] = c.{{ $object.Name }}.Create().SetInput(*data)
+	}
+
+	res, err := c.{{ $object.Name }}.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "{{ $object.Name }}")
+		}
+
+		r.logger.Errorw("failed to bulk create {{ $object.Name }}", "error", err)
+		return nil, err
+	}
+
+	// return response
+	return &{{ $object.Name }}BulkCreatePayload{
+		{{ $object.PluralName }}: res,
+	}, nil
+}
+
+{{ end }}

@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
@@ -19,6 +20,11 @@ func (r *mutationResolver) CreateOauthProvider(ctx context.Context, input genera
 // CreateBulkOauthProvider is the resolver for the createBulkOauthProvider field.
 func (r *mutationResolver) CreateBulkOauthProvider(ctx context.Context, input []*generated.CreateOauthProviderInput) (*OauthProviderBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkOauthProvider - createBulkOauthProvider"))
+}
+
+// CreateBulkCSVOauthProvider is the resolver for the createBulkCSVOauthProvider field.
+func (r *mutationResolver) CreateBulkCSVOauthProvider(ctx context.Context, input graphql.Upload) (*OauthProviderBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVOauthProvider - createBulkCSVOauthProvider"))
 }
 
 // UpdateOauthProvider is the resolver for the updateOauthProvider field.

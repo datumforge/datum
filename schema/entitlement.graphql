@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateEntitlementInput!]
     ): EntitlementBulkCreatePayload!
     """
+    Create multiple new entitlements via file upload
+    """
+    createBulkCSVEntitlement(
+        """
+        csv file containing values of the entitlement
+        """
+        input: Upload!
+    ): EntitlementBulkCreatePayload!
+    """
     Update an existing entitlement
     """
     updateEntitlement(

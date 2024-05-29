@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateUserSettingInput!]
     ): UserSettingBulkCreatePayload!
     """
+    Create multiple new userSettings via file upload
+    """
+    createBulkCSVUserSetting(
+        """
+        csv file containing values of the userSetting
+        """
+        input: Upload!
+    ): UserSettingBulkCreatePayload!
+    """
     Update an existing userSetting
     """
     updateUserSetting(

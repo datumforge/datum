@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateIntegrationInput!]
     ): IntegrationBulkCreatePayload!
     """
+    Create multiple new integrations via file upload
+    """
+    createBulkCSVIntegration(
+        """
+        csv file containing values of the integration
+        """
+        input: Upload!
+    ): IntegrationBulkCreatePayload!
+    """
     Update an existing integration
     """
     updateIntegration(

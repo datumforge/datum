@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -48,6 +49,11 @@ func (r *mutationResolver) CreateHush(ctx context.Context, input generated.Creat
 // CreateBulkHush is the resolver for the createBulkHush field.
 func (r *mutationResolver) CreateBulkHush(ctx context.Context, input []*generated.CreateHushInput) (*HushBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkHush - createBulkHush"))
+}
+
+// CreateBulkCSVHush is the resolver for the createBulkCSVHush field.
+func (r *mutationResolver) CreateBulkCSVHush(ctx context.Context, input graphql.Upload) (*HushBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVHush - createBulkCSVHush"))
 }
 
 // UpdateHush is the resolver for the updateHush field

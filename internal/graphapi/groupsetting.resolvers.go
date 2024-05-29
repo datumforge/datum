@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
@@ -22,6 +23,11 @@ func (r *mutationResolver) CreateGroupSetting(ctx context.Context, input generat
 // CreateBulkGroupSetting is the resolver for the createBulkGroupSetting field.
 func (r *mutationResolver) CreateBulkGroupSetting(ctx context.Context, input []*generated.CreateGroupSettingInput) (*GroupSettingBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkGroupSetting - createBulkGroupSetting"))
+}
+
+// CreateBulkCSVGroupSetting is the resolver for the createBulkCSVGroupSetting field.
+func (r *mutationResolver) CreateBulkCSVGroupSetting(ctx context.Context, input graphql.Upload) (*GroupSettingBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVGroupSetting - createBulkCSVGroupSetting"))
 }
 
 // UpdateGroupSetting is the resolver for the updateGroupSetting field.

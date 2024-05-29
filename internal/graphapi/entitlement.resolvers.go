@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
@@ -19,6 +20,11 @@ func (r *mutationResolver) CreateEntitlement(ctx context.Context, input generate
 // CreateBulkEntitlement is the resolver for the createBulkEntitlement field.
 func (r *mutationResolver) CreateBulkEntitlement(ctx context.Context, input []*generated.CreateEntitlementInput) (*EntitlementBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkEntitlement - createBulkEntitlement"))
+}
+
+// CreateBulkCSVEntitlement is the resolver for the createBulkCSVEntitlement field.
+func (r *mutationResolver) CreateBulkCSVEntitlement(ctx context.Context, input graphql.Upload) (*EntitlementBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVEntitlement - createBulkCSVEntitlement"))
 }
 
 // UpdateEntitlement is the resolver for the updateEntitlement field.

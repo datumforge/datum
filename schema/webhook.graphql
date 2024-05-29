@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateWebhookInput!]
     ): WebhookBulkCreatePayload!
     """
+    Create multiple new webhooks via file upload
+    """
+    createBulkCSVWebhook(
+        """
+        csv file containing values of the webhook
+        """
+        input: Upload!
+    ): WebhookBulkCreatePayload!
+    """
     Update an existing webhook
     """
     updateWebhook(

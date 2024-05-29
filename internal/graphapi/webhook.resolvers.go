@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -48,6 +49,11 @@ func (r *mutationResolver) CreateWebhook(ctx context.Context, input generated.Cr
 // CreateBulkWebhook is the resolver for the createBulkWebhook field.
 func (r *mutationResolver) CreateBulkWebhook(ctx context.Context, input []*generated.CreateWebhookInput) (*WebhookBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkWebhook - createBulkWebhook"))
+}
+
+// CreateBulkCSVWebhook is the resolver for the createBulkCSVWebhook field.
+func (r *mutationResolver) CreateBulkCSVWebhook(ctx context.Context, input graphql.Upload) (*WebhookBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVWebhook - createBulkCSVWebhook"))
 }
 
 // UpdateWebhook is the resolver for the updateWebhook field

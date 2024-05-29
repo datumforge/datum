@@ -151,8 +151,6 @@ github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PB
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
 github.com/datumforge/enthistory v0.0.9 h1:jA1zvzoqTXfBtPhuWrZhqoeCUB6gGMpBXSA1MO8923U=
 github.com/datumforge/enthistory v0.0.9/go.mod h1:QVPj2xf/7bSWf8iXsyHKR5j8r+CKYGSbHYeS6lwg28U=
-github.com/datumforge/entx v0.2.0 h1:sAsT2kTz6bs0DAxP985gh7NQvEo7dgfY4Y9L6M5Yq6U=
-github.com/datumforge/entx v0.2.0/go.mod h1:XTjcSFoo9kBI1urerP6u1SRtw2ks93yOy9vwnuwGRz4=
 github.com/datumforge/fgax v0.2.1 h1:Vs/0gNn2MgwKfv1rPBuahODnBw0c2MQ2fgeKr+hT6/o=
 github.com/datumforge/fgax v0.2.1/go.mod h1:VkpU3zTzL3f8p0FKYQtKkiYaA3lqs+jSirO8vKyNaew=
 github.com/datumforge/geodetic v0.0.3 h1:nyUJhUh3+jeezlUoPvUEUQFQI8n5vlb1FuKOhTI3tow=
@@ -207,6 +205,8 @@ github.com/fxamacker/cbor/v2 v2.6.0 h1:sU6J2usfADwWlYDAFhZBQ6TnLFBHxgesMrQfQgk1t
 github.com/fxamacker/cbor/v2 v2.6.0/go.mod h1:pxXPTn3joSm21Gbwsv0w9OSA2y1HFR9qXEeXQVeNoDQ=
 github.com/gabriel-vasile/mimetype v1.4.4 h1:QjV6pZ7/XZ7ryI2KuyeEDE8wnh7fHP9YnQy+R0LnH8I=
 github.com/gabriel-vasile/mimetype v1.4.4/go.mod h1:JwLei5XPtWdGiMFB5Pjle1oEeoSeEuJfJE+TtfvdB/s=
+github.com/gertd/go-pluralize v0.2.1 h1:M3uASbVjMnTsPb0PNqg+E/24Vwigyo/tvyMTtAlLgiA=
+github.com/gertd/go-pluralize v0.2.1/go.mod h1:rbYaKDbsXxmRfr8uygAEKhOWsjyrrqrkHVpZvoOp8zk=
 github.com/getkin/kin-openapi v0.124.0 h1:VSFNMB9C9rTKBnQ/fpyDU8ytMTr4dWI9QovSKj9kz/M=
 github.com/getkin/kin-openapi v0.124.0/go.mod h1:wb1aSZA/iWmorQP9KTAS/phLj/t17B5jT7+fS8ed9NM=
 github.com/getsentry/sentry-go v0.28.0 h1:7Rqx9M3ythTKy2J6uZLHmc8Sz9OGgIlseuO1iBX/s0M=

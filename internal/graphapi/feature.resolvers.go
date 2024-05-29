@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -48,6 +49,11 @@ func (r *mutationResolver) CreateFeature(ctx context.Context, input generated.Cr
 // CreateBulkFeature is the resolver for the createBulkFeature field.
 func (r *mutationResolver) CreateBulkFeature(ctx context.Context, input []*generated.CreateFeatureInput) (*FeatureBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkFeature - createBulkFeature"))
+}
+
+// CreateBulkCSVFeature is the resolver for the createBulkCSVFeature field.
+func (r *mutationResolver) CreateBulkCSVFeature(ctx context.Context, input graphql.Upload) (*FeatureBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVFeature - createBulkCSVFeature"))
 }
 
 // UpdateFeature is the resolver for the updateFeature field

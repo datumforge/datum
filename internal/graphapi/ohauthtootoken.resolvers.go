@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
@@ -19,6 +20,11 @@ func (r *mutationResolver) CreateOhAuthTooToken(ctx context.Context, input gener
 // CreateBulkOhAuthTooToken is the resolver for the createBulkOhAuthTooToken field.
 func (r *mutationResolver) CreateBulkOhAuthTooToken(ctx context.Context, input []*generated.CreateOhAuthTooTokenInput) (*OhAuthTooTokenBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkOhAuthTooToken - createBulkOhAuthTooToken"))
+}
+
+// CreateBulkCSVOhAuthTooToken is the resolver for the createBulkCSVOhAuthTooToken field.
+func (r *mutationResolver) CreateBulkCSVOhAuthTooToken(ctx context.Context, input graphql.Upload) (*OhAuthTooTokenBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVOhAuthTooToken - createBulkCSVOhAuthTooToken"))
 }
 
 // UpdateOhAuthTooToken is the resolver for the updateOhAuthTooToken field.

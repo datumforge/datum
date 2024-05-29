@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateInviteInput!]
     ): InviteBulkCreatePayload!
     """
+    Create multiple new invites via file upload
+    """
+    createBulkCSVInvite(
+        """
+        csv file containing values of the invite
+        """
+        input: Upload!
+    ): InviteBulkCreatePayload!
+    """
     Update an existing invite
     """
     updateInvite(

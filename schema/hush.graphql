@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateHushInput!]
     ): HushBulkCreatePayload!
     """
+    Create multiple new hushs via file upload
+    """
+    createBulkCSVHush(
+        """
+        csv file containing values of the hush
+        """
+        input: Upload!
+    ): HushBulkCreatePayload!
+    """
     Update an existing hush
     """
     updateHush(
@@ -90,5 +99,5 @@ type HushBulkCreatePayload {
     """
     Created hushs
     """
-    hushs: [Hush!]
+    hushes: [Hush!]
 }

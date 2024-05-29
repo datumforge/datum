@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateOhAuthTooTokenInput!]
     ): OhAuthTooTokenBulkCreatePayload!
     """
+    Create multiple new ohAuthTooTokens via file upload
+    """
+    createBulkCSVOhAuthTooToken(
+        """
+        csv file containing values of the ohAuthTooToken
+        """
+        input: Upload!
+    ): OhAuthTooTokenBulkCreatePayload!
+    """
     Update an existing ohAuthTooToken
     """
     updateOhAuthTooToken(

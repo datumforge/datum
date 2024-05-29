@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateFileInput!]
     ): FileBulkCreatePayload!
     """
+    Create multiple new files via file upload
+    """
+    createBulkCSVFile(
+        """
+        csv file containing values of the file
+        """
+        input: Upload!
+    ): FileBulkCreatePayload!
+    """
     Update an existing file
     """
     updateFile(

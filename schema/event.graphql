@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateEventInput!]
     ): EventBulkCreatePayload!
     """
+    Create multiple new events via file upload
+    """
+    createBulkCSVEvent(
+        """
+        csv file containing values of the event
+        """
+        input: Upload!
+    ): EventBulkCreatePayload!
+    """
     Update an existing event
     """
     updateEvent(

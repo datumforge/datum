@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateOrganizationInput!]
     ): OrganizationBulkCreatePayload!
     """
+    Create multiple new organizations via file upload
+    """
+    createBulkCSVOrganization(
+        """
+        csv file containing values of the organization
+        """
+        input: Upload!
+    ): OrganizationBulkCreatePayload!
+    """
     Update an existing organization
     """
     updateOrganization(

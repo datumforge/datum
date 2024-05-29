@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateFeatureInput!]
     ): FeatureBulkCreatePayload!
     """
+    Create multiple new features via file upload
+    """
+    createBulkCSVFeature(
+        """
+        csv file containing values of the feature
+        """
+        input: Upload!
+    ): FeatureBulkCreatePayload!
+    """
     Update an existing feature
     """
     updateFeature(

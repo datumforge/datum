@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
@@ -22,6 +23,11 @@ func (r *mutationResolver) CreateOrganizationSetting(ctx context.Context, input 
 // CreateBulkOrganizationSetting is the resolver for the createBulkOrganizationSetting field.
 func (r *mutationResolver) CreateBulkOrganizationSetting(ctx context.Context, input []*generated.CreateOrganizationSettingInput) (*OrganizationSettingBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkOrganizationSetting - createBulkOrganizationSetting"))
+}
+
+// CreateBulkCSVOrganizationSetting is the resolver for the createBulkCSVOrganizationSetting field.
+func (r *mutationResolver) CreateBulkCSVOrganizationSetting(ctx context.Context, input graphql.Upload) (*OrganizationSettingBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVOrganizationSetting - createBulkCSVOrganizationSetting"))
 }
 
 // UpdateOrganizationSetting is the resolver for the updateOrganizationSetting field.

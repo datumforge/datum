@@ -21,13 +21,22 @@ extend type Mutation{
         input: CreateDocumentDataInput!
     ): DocumentDataCreatePayload!
     """
-    Create a multiple new documentData
+    Create multiple new documentData
     """
     createBulkDocumentData(
         """
         values of the documentData
         """
         input: [CreateDocumentDataInput!]
+    ): DocumentDataBulkCreatePayload!
+    """
+    Create multiple new documentData via file upload
+    """
+    createBulkCSVDocumentData(
+        """
+        csv file containing values of the documentData
+        """
+        input: Upload!
     ): DocumentDataBulkCreatePayload!
     """
     Update an existing documentData
@@ -87,8 +96,8 @@ type DocumentDataDeletePayload {
 Return response for createBulkDocumentData mutation
 """
 type DocumentDataBulkCreatePayload {
-	"""
-	Created documentData
-	"""
-	documentData: [DocumentData!]
+    """
+    Created documentData
+    """
+    documentData: [DocumentData!]
 }

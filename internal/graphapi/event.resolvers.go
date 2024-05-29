@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -48,6 +49,11 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, input generated.Crea
 // CreateBulkEvent is the resolver for the createBulkEvent field.
 func (r *mutationResolver) CreateBulkEvent(ctx context.Context, input []*generated.CreateEventInput) (*EventBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkEvent - createBulkEvent"))
+}
+
+// CreateBulkCSVEvent is the resolver for the createBulkCSVEvent field.
+func (r *mutationResolver) CreateBulkCSVEvent(ctx context.Context, input graphql.Upload) (*EventBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVEvent - createBulkCSVEvent"))
 }
 
 // UpdateEvent is the resolver for the updateEvent field

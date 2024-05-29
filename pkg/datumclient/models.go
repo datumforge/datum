@@ -3309,6 +3309,12 @@ type GroupMembership struct {
 
 func (GroupMembership) IsNode() {}
 
+// Return response for createBulkGroupMembership mutation
+type GroupMembershipBulkCreatePayload struct {
+	// Created groupMemberships
+	GroupMemberships []*GroupMembership `json:"groupMemberships,omitempty"`
+}
+
 // A connection to a list of items.
 type GroupMembershipConnection struct {
 	// A list of edges.
@@ -4267,7 +4273,7 @@ func (Hush) IsNode() {}
 // Return response for createBulkHush mutation
 type HushBulkCreatePayload struct {
 	// Created hushs
-	Hushs []*Hush `json:"hushs,omitempty"`
+	Hushes []*Hush `json:"hushes,omitempty"`
 }
 
 // A connection to a list of items.
@@ -6225,6 +6231,12 @@ type OrgMembership struct {
 }
 
 func (OrgMembership) IsNode() {}
+
+// Return response for createBulkOrgMembership mutation
+type OrgMembershipBulkCreatePayload struct {
+	// Created orgMemberships
+	OrgMemberships []*OrgMembership `json:"orgMemberships,omitempty"`
+}
 
 // A connection to a list of items.
 type OrgMembershipConnection struct {

@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateOauthProviderInput!]
     ): OauthProviderBulkCreatePayload!
     """
+    Create multiple new oauthProviders via file upload
+    """
+    createBulkCSVOauthProvider(
+        """
+        csv file containing values of the oauthProvider
+        """
+        input: Upload!
+    ): OauthProviderBulkCreatePayload!
+    """
     Update an existing oauthProvider
     """
     updateOauthProvider(

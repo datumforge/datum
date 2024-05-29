@@ -7,7 +7,9 @@ package graphapi
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
@@ -67,6 +69,11 @@ func (r *mutationResolver) CreateBulkOrganization(ctx context.Context, input []*
 	return &OrganizationBulkCreatePayload{
 		Organizations: orgs,
 	}, nil
+}
+
+// CreateBulkCSVOrganization is the resolver for the createBulkCSVOrganization field.
+func (r *mutationResolver) CreateBulkCSVOrganization(ctx context.Context, input graphql.Upload) (*OrganizationBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVOrganization - createBulkCSVOrganization"))
 }
 
 // UpdateOrganization is the resolver for the updateOrganization field.

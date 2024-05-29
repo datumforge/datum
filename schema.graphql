@@ -4239,6 +4239,15 @@ type GroupMembership implements Node {
 	events: [Event!]
 }
 """
+Return response for createBulkGroupMembership mutation
+"""
+type GroupMembershipBulkCreatePayload {
+	"""
+	Created groupMemberships
+	"""
+	groupMemberships: [GroupMembership!]
+}
+"""
 A connection to a list of items.
 """
 type GroupMembershipConnection {
@@ -5504,7 +5513,7 @@ type HushBulkCreatePayload {
 	"""
 	Created hushs
 	"""
-	hushs: [Hush!]
+	hushes: [Hush!]
 }
 """
 A connection to a list of items.
@@ -7031,13 +7040,22 @@ type Mutation {
 		input: CreateDocumentDataInput!
 	): DocumentDataCreatePayload!
 	"""
-	Create a multiple new documentData
+	Create multiple new documentData
 	"""
 	createBulkDocumentData(
 		"""
 		values of the documentData
 		"""
 		input: [CreateDocumentDataInput!]
+	): DocumentDataBulkCreatePayload!
+	"""
+	Create multiple new documentData via file upload
+	"""
+	createBulkCSVDocumentData(
+		"""
+		csv file containing values of the documentData
+		"""
+		input: Upload!
 	): DocumentDataBulkCreatePayload!
 	"""
 	Update an existing documentData
@@ -7081,6 +7099,15 @@ type Mutation {
 		input: [CreateEntitlementInput!]
 	): EntitlementBulkCreatePayload!
 	"""
+	Create multiple new entitlements via file upload
+	"""
+	createBulkCSVEntitlement(
+		"""
+		csv file containing values of the entitlement
+		"""
+		input: Upload!
+	): EntitlementBulkCreatePayload!
+	"""
 	Update an existing entitlement
 	"""
 	updateEntitlement(
@@ -7120,6 +7147,15 @@ type Mutation {
 		values of the event
 		"""
 		input: [CreateEventInput!]
+	): EventBulkCreatePayload!
+	"""
+	Create multiple new events via file upload
+	"""
+	createBulkCSVEvent(
+		"""
+		csv file containing values of the event
+		"""
+		input: Upload!
 	): EventBulkCreatePayload!
 	"""
 	Update an existing event
@@ -7163,6 +7199,15 @@ type Mutation {
 		input: [CreateFeatureInput!]
 	): FeatureBulkCreatePayload!
 	"""
+	Create multiple new features via file upload
+	"""
+	createBulkCSVFeature(
+		"""
+		csv file containing values of the feature
+		"""
+		input: Upload!
+	): FeatureBulkCreatePayload!
+	"""
 	Update an existing feature
 	"""
 	updateFeature(
@@ -7202,6 +7247,15 @@ type Mutation {
 		values of the file
 		"""
 		input: [CreateFileInput!]
+	): FileBulkCreatePayload!
+	"""
+	Create multiple new files via file upload
+	"""
+	createBulkCSVFile(
+		"""
+		csv file containing values of the file
+		"""
+		input: Upload!
 	): FileBulkCreatePayload!
 	"""
 	Update an existing file
@@ -7286,6 +7340,24 @@ type Mutation {
 		input: CreateGroupMembershipInput!
 	): GroupMembershipCreatePayload!
 	"""
+	Create multiple new groupMemberships
+	"""
+	createBulkGroupMembership(
+		"""
+		values of the groupMembership
+		"""
+		input: [CreateGroupMembershipInput!]
+	): GroupMembershipBulkCreatePayload!
+	"""
+	Create multiple new groupMemberships via file upload
+	"""
+	createBulkCSVGroupMembership(
+		"""
+		csv file containing values of the groupMembership
+		"""
+		input: Upload!
+	): GroupMembershipBulkCreatePayload!
+	"""
 	Update an existing groupMembership
 	"""
 	updateGroupMembership(
@@ -7325,6 +7397,15 @@ type Mutation {
 		values of the groupSetting
 		"""
 		input: [CreateGroupSettingInput!]
+	): GroupSettingBulkCreatePayload!
+	"""
+	Create multiple new groupSettings via file upload
+	"""
+	createBulkCSVGroupSetting(
+		"""
+		csv file containing values of the groupSetting
+		"""
+		input: Upload!
 	): GroupSettingBulkCreatePayload!
 	"""
 	Update an existing groupSetting
@@ -7368,6 +7449,15 @@ type Mutation {
 		input: [CreateHushInput!]
 	): HushBulkCreatePayload!
 	"""
+	Create multiple new hushs via file upload
+	"""
+	createBulkCSVHush(
+		"""
+		csv file containing values of the hush
+		"""
+		input: Upload!
+	): HushBulkCreatePayload!
+	"""
 	Update an existing hush
 	"""
 	updateHush(
@@ -7407,6 +7497,15 @@ type Mutation {
 		values of the integration
 		"""
 		input: [CreateIntegrationInput!]
+	): IntegrationBulkCreatePayload!
+	"""
+	Create multiple new integrations via file upload
+	"""
+	createBulkCSVIntegration(
+		"""
+		csv file containing values of the integration
+		"""
+		input: Upload!
 	): IntegrationBulkCreatePayload!
 	"""
 	Update an existing integration
@@ -7450,6 +7549,15 @@ type Mutation {
 		input: [CreateInviteInput!]
 	): InviteBulkCreatePayload!
 	"""
+	Create multiple new invites via file upload
+	"""
+	createBulkCSVInvite(
+		"""
+		csv file containing values of the invite
+		"""
+		input: Upload!
+	): InviteBulkCreatePayload!
+	"""
 	Update an existing invite
 	"""
 	updateInvite(
@@ -7489,6 +7597,15 @@ type Mutation {
 		values of the oauthProvider
 		"""
 		input: [CreateOauthProviderInput!]
+	): OauthProviderBulkCreatePayload!
+	"""
+	Create multiple new oauthProviders via file upload
+	"""
+	createBulkCSVOauthProvider(
+		"""
+		csv file containing values of the oauthProvider
+		"""
+		input: Upload!
 	): OauthProviderBulkCreatePayload!
 	"""
 	Update an existing oauthProvider
@@ -7532,6 +7649,15 @@ type Mutation {
 		input: [CreateOhAuthTooTokenInput!]
 	): OhAuthTooTokenBulkCreatePayload!
 	"""
+	Create multiple new ohAuthTooTokens via file upload
+	"""
+	createBulkCSVOhAuthTooToken(
+		"""
+		csv file containing values of the ohAuthTooToken
+		"""
+		input: Upload!
+	): OhAuthTooTokenBulkCreatePayload!
+	"""
 	Update an existing ohAuthTooToken
 	"""
 	updateOhAuthTooToken(
@@ -7571,6 +7697,15 @@ type Mutation {
 		values of the organization
 		"""
 		input: [CreateOrganizationInput!]
+	): OrganizationBulkCreatePayload!
+	"""
+	Create multiple new organizations via file upload
+	"""
+	createBulkCSVOrganization(
+		"""
+		csv file containing values of the organization
+		"""
+		input: Upload!
 	): OrganizationBulkCreatePayload!
 	"""
 	Update an existing organization
@@ -7614,6 +7749,15 @@ type Mutation {
 		input: [CreateOrganizationSettingInput!]
 	): OrganizationSettingBulkCreatePayload!
 	"""
+	Create multiple new organizationSettings via file upload
+	"""
+	createBulkCSVOrganizationSetting(
+		"""
+		csv file containing values of the organizationSetting
+		"""
+		input: Upload!
+	): OrganizationSettingBulkCreatePayload!
+	"""
 	Update an existing organizationSetting
 	"""
 	updateOrganizationSetting(
@@ -7645,6 +7789,24 @@ type Mutation {
 		"""
 		input: CreateOrgMembershipInput!
 	): OrgMembershipCreatePayload!
+	"""
+	Create multiple new orgMemberships
+	"""
+	createBulkOrgMembership(
+		"""
+		values of the orgMembership
+		"""
+		input: [CreateOrgMembershipInput!]
+	): OrgMembershipBulkCreatePayload!
+	"""
+	Create multiple new orgMemberships via file upload
+	"""
+	createBulkCSVOrgMembership(
+		"""
+		csv file containing values of the orgMembership
+		"""
+		input: Upload!
+	): OrgMembershipBulkCreatePayload!
 	"""
 	Update an existing orgMembership
 	"""
@@ -7842,6 +8004,15 @@ type Mutation {
 		input: [CreateUserInput!]
 	): UserBulkCreatePayload!
 	"""
+	Create multiple new users via file upload
+	"""
+	createBulkCSVUser(
+		"""
+		csv file containing values of the user
+		"""
+		input: Upload!
+	): UserBulkCreatePayload!
+	"""
 	Update an existing user
 	"""
 	updateUser(
@@ -7883,6 +8054,15 @@ type Mutation {
 		input: [CreateUserSettingInput!]
 	): UserSettingBulkCreatePayload!
 	"""
+	Create multiple new userSettings via file upload
+	"""
+	createBulkCSVUserSetting(
+		"""
+		csv file containing values of the userSetting
+		"""
+		input: Upload!
+	): UserSettingBulkCreatePayload!
+	"""
 	Update an existing userSetting
 	"""
 	updateUserSetting(
@@ -7922,6 +8102,15 @@ type Mutation {
 		values of the webhook
 		"""
 		input: [CreateWebhookInput!]
+	): WebhookBulkCreatePayload!
+	"""
+	Create multiple new webhooks via file upload
+	"""
+	createBulkCSVWebhook(
+		"""
+		csv file containing values of the webhook
+		"""
+		input: Upload!
 	): WebhookBulkCreatePayload!
 	"""
 	Update an existing webhook
@@ -8987,6 +9176,15 @@ type OrgMembership implements Node {
 	organization: Organization!
 	user: User!
 	events: [Event!]
+}
+"""
+Return response for createBulkOrgMembership mutation
+"""
+type OrgMembershipBulkCreatePayload {
+	"""
+	Created orgMemberships
+	"""
+	orgMemberships: [OrgMembership!]
 }
 """
 A connection to a list of items.

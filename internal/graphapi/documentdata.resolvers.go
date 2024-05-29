@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -48,6 +49,11 @@ func (r *mutationResolver) CreateDocumentData(ctx context.Context, input generat
 // CreateBulkDocumentData is the resolver for the createBulkDocumentData field.
 func (r *mutationResolver) CreateBulkDocumentData(ctx context.Context, input []*generated.CreateDocumentDataInput) (*DocumentDataBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkDocumentData - createBulkDocumentData"))
+}
+
+// CreateBulkCSVDocumentData is the resolver for the createBulkCSVDocumentData field.
+func (r *mutationResolver) CreateBulkCSVDocumentData(ctx context.Context, input graphql.Upload) (*DocumentDataBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVDocumentData - createBulkCSVDocumentData"))
 }
 
 // UpdateDocumentData is the resolver for the updateDocumentData field.

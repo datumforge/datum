@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/pkg/rout"
@@ -38,6 +39,11 @@ func (r *mutationResolver) CreateIntegration(ctx context.Context, input generate
 // CreateBulkIntegration is the resolver for the createBulkIntegration field.
 func (r *mutationResolver) CreateBulkIntegration(ctx context.Context, input []*generated.CreateIntegrationInput) (*IntegrationBulkCreatePayload, error) {
 	panic(fmt.Errorf("not implemented: CreateBulkIntegration - createBulkIntegration"))
+}
+
+// CreateBulkCSVIntegration is the resolver for the createBulkCSVIntegration field.
+func (r *mutationResolver) CreateBulkCSVIntegration(ctx context.Context, input graphql.Upload) (*IntegrationBulkCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateBulkCSVIntegration - createBulkCSVIntegration"))
 }
 
 // UpdateIntegration is the resolver for the updateIntegration field.

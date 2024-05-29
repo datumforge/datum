@@ -2,6 +2,8 @@ module github.com/datumforge/datum
 
 go 1.22.2
 
+replace github.com/datumforge/entx => ../entx
+
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.5.0
@@ -21,6 +23,7 @@ require (
 	github.com/datumforge/geodetic v0.0.3
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 	github.com/gabriel-vasile/mimetype v1.4.4
+	github.com/gertd/go-pluralize v0.2.1
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/go-github/v62 v62.0.0

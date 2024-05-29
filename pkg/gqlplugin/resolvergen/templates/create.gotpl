@@ -1,4 +1,4 @@
-{{ $entity := .Field.GoFieldName | getEntityName  -}}
+{{ $entity := .Field.TypeReference.Definition.Name | getEntityName  -}}
 
 res, err := withTransactionalMutation(ctx).{{ $entity }}.Create().SetInput(input).Save(ctx)
 if err != nil {

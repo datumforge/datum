@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -130,5 +129,16 @@ func (r *mutationResolver) DeleteOhAuthTooToken(ctx context.Context, id string) 
 
 // OhAuthTooToken is the resolver for the ohAuthTooToken field.
 func (r *queryResolver) OhAuthTooToken(ctx context.Context, id string) (*generated.OhAuthTooToken, error) {
-	panic(fmt.Errorf("not implemented: OhAuthTooToken - ohAuthTooToken"))
+	res, err := withTransactionalMutation(ctx).OhAuthTooToken.Get(ctx, id)
+	if err != nil {
+		r.logger.Errorw("failed to get ohauthtootoken", "error", err)
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "ohauthtootoken")
+		}
+
+		return nil, err
+	}
+
+	return res, nil
 }

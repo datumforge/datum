@@ -50,20 +50,23 @@ func (r ResolverPlugin) GenerateCode(data *codegen.Data) error {
 	return r.Plugin.GenerateCode(data)
 }
 
+// isMutation returns true if the field is a mutation
 func isMutation(f *codegen.Field) bool {
 	return f.Object.Definition.Name == "Mutation"
 }
 
+// isQuery returns true if the field is a query
 func isQuery(f *codegen.Field) bool {
 	return f.Object.Definition.Name == "Query"
 }
 
+// mutationImplementer returns the implementation for the mutation
 func mutationImplementer(f *codegen.Field) string {
 	switch crudType(f) {
 	case "BulkCSV":
 		return renderBulkUpload(f)
 	case "Bulk":
-		return fmt.Sprintf("return r.bulkCreate%s(ctx, input)", strings.Replace(f.GoFieldName, "CreateBulk", "", 1))
+		return renderBulk(f)
 	case "Create":
 		return renderCreate(f)
 	case "Update":
@@ -75,10 +78,16 @@ func mutationImplementer(f *codegen.Field) string {
 	}
 }
 
+// queryImplementer returns the implementation for the query
 func queryImplementer(f *codegen.Field) string {
-	return fmt.Sprintf("panic(fmt.Errorf(\"not implemented: %v - %v\"))", f.GoFieldName, f.Name)
+	if strings.Contains(f.TypeReference.Definition.Name, "Connection") {
+		return renderList(f)
+	}
+
+	return renderQuery(f)
 }
 
+// crudType returns the type of CRUD operation
 func crudType(f *codegen.Field) string {
 	switch {
 	case strings.Contains(f.GoFieldName, "CSV"):

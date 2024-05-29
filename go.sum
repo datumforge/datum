@@ -151,6 +151,8 @@ github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PB
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
 github.com/datumforge/enthistory v0.0.9 h1:jA1zvzoqTXfBtPhuWrZhqoeCUB6gGMpBXSA1MO8923U=
 github.com/datumforge/enthistory v0.0.9/go.mod h1:QVPj2xf/7bSWf8iXsyHKR5j8r+CKYGSbHYeS6lwg28U=
+github.com/datumforge/entx v0.2.0 h1:sAsT2kTz6bs0DAxP985gh7NQvEo7dgfY4Y9L6M5Yq6U=
+github.com/datumforge/entx v0.2.0/go.mod h1:XTjcSFoo9kBI1urerP6u1SRtw2ks93yOy9vwnuwGRz4=
 github.com/datumforge/fgax v0.2.1 h1:Vs/0gNn2MgwKfv1rPBuahODnBw0c2MQ2fgeKr+hT6/o=
 github.com/datumforge/fgax v0.2.1/go.mod h1:VkpU3zTzL3f8p0FKYQtKkiYaA3lqs+jSirO8vKyNaew=
 github.com/datumforge/geodetic v0.0.3 h1:nyUJhUh3+jeezlUoPvUEUQFQI8n5vlb1FuKOhTI3tow=

@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -130,5 +129,16 @@ func (r *mutationResolver) DeleteEntitlement(ctx context.Context, id string) (*E
 
 // Entitlement is the resolver for the entitlement field.
 func (r *queryResolver) Entitlement(ctx context.Context, id string) (*generated.Entitlement, error) {
-	panic(fmt.Errorf("not implemented: Entitlement - entitlement"))
+	res, err := withTransactionalMutation(ctx).Entitlement.Get(ctx, id)
+	if err != nil {
+		r.logger.Errorw("failed to get entitlement", "error", err)
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "entitlement")
+		}
+
+		return nil, err
+	}
+
+	return res, nil
 }

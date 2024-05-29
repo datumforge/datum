@@ -1,4 +1,4 @@
-{{ $entity := .Field.GoFieldName | getEntityName  -}}
+{{ $entity := .Field.TypeReference.Definition.Name | getEntityName  -}}
 
 if err := withTransactionalMutation(ctx).{{ $entity }}.DeleteOneID(id).Exec(ctx); err != nil {
 	if generated.IsNotFound(err) {

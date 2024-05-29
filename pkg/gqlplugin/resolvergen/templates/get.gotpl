@@ -1,0 +1,14 @@
+{{ $entity := .Field.TypeReference.Definition.Name | getEntityName  -}}
+
+res, err := withTransactionalMutation(ctx).{{ $entity }}.Get(ctx, id)
+if err != nil {
+	r.logger.Errorw("failed to get {{ $entity | toLower }}", "error", err)
+
+	if errors.Is(err, privacy.Deny) {
+		return nil, newPermissionDeniedError(ActionGet, "{{ $entity | toLower }}")
+	}
+
+	return nil, err
+}
+
+return res, nil

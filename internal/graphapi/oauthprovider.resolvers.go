@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -130,5 +129,16 @@ func (r *mutationResolver) DeleteOauthProvider(ctx context.Context, id string) (
 
 // OauthProvider is the resolver for the OauthProvider field.
 func (r *queryResolver) OauthProvider(ctx context.Context, id string) (*generated.OauthProvider, error) {
-	panic(fmt.Errorf("not implemented: OauthProvider - oauthProvider"))
+	res, err := withTransactionalMutation(ctx).OauthProvider.Get(ctx, id)
+	if err != nil {
+		r.logger.Errorw("failed to get oauthprovider", "error", err)
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "oauthprovider")
+		}
+
+		return nil, err
+	}
+
+	return res, nil
 }

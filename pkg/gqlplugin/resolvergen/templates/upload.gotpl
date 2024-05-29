@@ -1,4 +1,4 @@
-{{ $entity := .Field.GoFieldName | getEntityName  -}}
+{{ $entity := .Field.TypeReference.Definition.Name | getEntityName  -}}
 
 data, err := unmarshalBulkData[generated.Create{{ $entity }}Input](input)
 if err != nil {

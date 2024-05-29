@@ -72,7 +72,7 @@ type action struct {
 	action string
 }
 
-// parseRequestError logs ad parses the error and returns the appropriate error type for the client
+// parseRequestError logs and parses the error and returns the appropriate error type for the client
 // TODO: cleanup return error messages
 func parseRequestError(err error, a action, logger *zap.SugaredLogger) error {
 	// log the error for debugging

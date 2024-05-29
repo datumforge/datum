@@ -13,10 +13,17 @@ var (
 	_ plugin.ResolverImplementer = (*ResolverPlugin)(nil)
 )
 
+const (
+	defaultImplementation = "panic(fmt.Errorf(\"not implemented: %v - %v\"))"
+)
+
+// ResolverPlugin is a gqlgen plugin to generate resolver functions
 type ResolverPlugin struct {
 	*resolvergen.Plugin
 }
 
+// Name returns the name of the plugin
+// This name must match the upstream resolvergen to replace during code generation
 func (r ResolverPlugin) Name() string {
 	return "resolvergen"
 }
@@ -40,7 +47,7 @@ func (r ResolverPlugin) Implement(s string, f *codegen.Field) (val string) {
 	case isQuery(f):
 		return queryImplementer(f)
 	default:
-		return fmt.Sprintf("panic(fmt.Errorf(\"not implemented: %v - %v\"))", f.GoFieldName, f.Name)
+		return fmt.Sprintf(defaultImplementation, f.GoFieldName, f.Name)
 	}
 }
 
@@ -74,7 +81,7 @@ func mutationImplementer(f *codegen.Field) string {
 	case "Delete":
 		return renderDelete(f)
 	default:
-		return fmt.Sprintf("panic(fmt.Errorf(\"not implemented: %v - %v\"))", f.GoFieldName, f.Name)
+		return fmt.Sprintf(defaultImplementation, f.GoFieldName, f.Name)
 	}
 }
 

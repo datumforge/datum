@@ -15,6 +15,7 @@ import (
 //go:embed templates/**.gotpl
 var templates embed.FS
 
+// crudResolver is a struct to hold the field for the CRUD resolver
 type crudResolver struct {
 	Field *codegen.Field
 }

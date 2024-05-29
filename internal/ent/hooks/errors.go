@@ -38,6 +38,9 @@ var (
 
 	// ErrMaxAttempts is returned when a user has reached the max attempts to resend an invitation to an org
 	ErrMaxAttempts = errors.New("too many attempts to resend org invitation")
+
+	// ErrMissingRecipientEmail is returned when an email is required but not provided
+	ErrMissingRecipientEmail = errors.New("recipient email is required but not provided")
 )
 
 // IsUniqueConstraintError reports if the error resulted from a DB uniqueness constraint violation.

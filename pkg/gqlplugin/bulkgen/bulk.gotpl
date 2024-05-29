@@ -8,6 +8,7 @@
 
 {{ range $object := .Objects }}
 
+// bulkCreate{{ $object.Name }} uses the CreateBulk function to create multiple {{ $object.Name }} entities
 func (r *mutationResolver) bulkCreate{{ $object.Name }} (ctx context.Context, input []*generated.Create{{ $object.Name }}Input) (*{{ $object.Name }}BulkCreatePayload, error) {
     c := withTransactionalMutation(ctx)
 	builders := make([]*generated.{{ $object.Name }}Create, len(input))

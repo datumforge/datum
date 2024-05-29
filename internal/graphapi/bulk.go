@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
+// bulkCreateDocumentData uses the CreateBulk function to create multiple DocumentData entities
 func (r *mutationResolver) bulkCreateDocumentData(ctx context.Context, input []*generated.CreateDocumentDataInput) (*DocumentDataBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.DocumentDataCreate, len(input))
@@ -33,6 +34,7 @@ func (r *mutationResolver) bulkCreateDocumentData(ctx context.Context, input []*
 	}, nil
 }
 
+// bulkCreateEntitlement uses the CreateBulk function to create multiple Entitlement entities
 func (r *mutationResolver) bulkCreateEntitlement(ctx context.Context, input []*generated.CreateEntitlementInput) (*EntitlementBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.EntitlementCreate, len(input))
@@ -56,6 +58,7 @@ func (r *mutationResolver) bulkCreateEntitlement(ctx context.Context, input []*g
 	}, nil
 }
 
+// bulkCreateEvent uses the CreateBulk function to create multiple Event entities
 func (r *mutationResolver) bulkCreateEvent(ctx context.Context, input []*generated.CreateEventInput) (*EventBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.EventCreate, len(input))
@@ -79,6 +82,7 @@ func (r *mutationResolver) bulkCreateEvent(ctx context.Context, input []*generat
 	}, nil
 }
 
+// bulkCreateFeature uses the CreateBulk function to create multiple Feature entities
 func (r *mutationResolver) bulkCreateFeature(ctx context.Context, input []*generated.CreateFeatureInput) (*FeatureBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.FeatureCreate, len(input))
@@ -102,6 +106,7 @@ func (r *mutationResolver) bulkCreateFeature(ctx context.Context, input []*gener
 	}, nil
 }
 
+// bulkCreateFile uses the CreateBulk function to create multiple File entities
 func (r *mutationResolver) bulkCreateFile(ctx context.Context, input []*generated.CreateFileInput) (*FileBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.FileCreate, len(input))
@@ -125,6 +130,7 @@ func (r *mutationResolver) bulkCreateFile(ctx context.Context, input []*generate
 	}, nil
 }
 
+// bulkCreateGroup uses the CreateBulk function to create multiple Group entities
 func (r *mutationResolver) bulkCreateGroup(ctx context.Context, input []*generated.CreateGroupInput) (*GroupBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.GroupCreate, len(input))
@@ -148,6 +154,7 @@ func (r *mutationResolver) bulkCreateGroup(ctx context.Context, input []*generat
 	}, nil
 }
 
+// bulkCreateGroupMembership uses the CreateBulk function to create multiple GroupMembership entities
 func (r *mutationResolver) bulkCreateGroupMembership(ctx context.Context, input []*generated.CreateGroupMembershipInput) (*GroupMembershipBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.GroupMembershipCreate, len(input))
@@ -171,6 +178,7 @@ func (r *mutationResolver) bulkCreateGroupMembership(ctx context.Context, input 
 	}, nil
 }
 
+// bulkCreateGroupSetting uses the CreateBulk function to create multiple GroupSetting entities
 func (r *mutationResolver) bulkCreateGroupSetting(ctx context.Context, input []*generated.CreateGroupSettingInput) (*GroupSettingBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.GroupSettingCreate, len(input))
@@ -194,6 +202,7 @@ func (r *mutationResolver) bulkCreateGroupSetting(ctx context.Context, input []*
 	}, nil
 }
 
+// bulkCreateHush uses the CreateBulk function to create multiple Hush entities
 func (r *mutationResolver) bulkCreateHush(ctx context.Context, input []*generated.CreateHushInput) (*HushBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.HushCreate, len(input))
@@ -217,6 +226,7 @@ func (r *mutationResolver) bulkCreateHush(ctx context.Context, input []*generate
 	}, nil
 }
 
+// bulkCreateIntegration uses the CreateBulk function to create multiple Integration entities
 func (r *mutationResolver) bulkCreateIntegration(ctx context.Context, input []*generated.CreateIntegrationInput) (*IntegrationBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.IntegrationCreate, len(input))
@@ -240,6 +250,7 @@ func (r *mutationResolver) bulkCreateIntegration(ctx context.Context, input []*g
 	}, nil
 }
 
+// bulkCreateInvite uses the CreateBulk function to create multiple Invite entities
 func (r *mutationResolver) bulkCreateInvite(ctx context.Context, input []*generated.CreateInviteInput) (*InviteBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.InviteCreate, len(input))
@@ -263,6 +274,7 @@ func (r *mutationResolver) bulkCreateInvite(ctx context.Context, input []*genera
 	}, nil
 }
 
+// bulkCreateOauthProvider uses the CreateBulk function to create multiple OauthProvider entities
 func (r *mutationResolver) bulkCreateOauthProvider(ctx context.Context, input []*generated.CreateOauthProviderInput) (*OauthProviderBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.OauthProviderCreate, len(input))
@@ -286,6 +298,7 @@ func (r *mutationResolver) bulkCreateOauthProvider(ctx context.Context, input []
 	}, nil
 }
 
+// bulkCreateOhAuthTooToken uses the CreateBulk function to create multiple OhAuthTooToken entities
 func (r *mutationResolver) bulkCreateOhAuthTooToken(ctx context.Context, input []*generated.CreateOhAuthTooTokenInput) (*OhAuthTooTokenBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.OhAuthTooTokenCreate, len(input))
@@ -309,6 +322,7 @@ func (r *mutationResolver) bulkCreateOhAuthTooToken(ctx context.Context, input [
 	}, nil
 }
 
+// bulkCreateOrganization uses the CreateBulk function to create multiple Organization entities
 func (r *mutationResolver) bulkCreateOrganization(ctx context.Context, input []*generated.CreateOrganizationInput) (*OrganizationBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.OrganizationCreate, len(input))
@@ -332,6 +346,7 @@ func (r *mutationResolver) bulkCreateOrganization(ctx context.Context, input []*
 	}, nil
 }
 
+// bulkCreateOrganizationSetting uses the CreateBulk function to create multiple OrganizationSetting entities
 func (r *mutationResolver) bulkCreateOrganizationSetting(ctx context.Context, input []*generated.CreateOrganizationSettingInput) (*OrganizationSettingBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.OrganizationSettingCreate, len(input))
@@ -355,6 +370,7 @@ func (r *mutationResolver) bulkCreateOrganizationSetting(ctx context.Context, in
 	}, nil
 }
 
+// bulkCreateOrgMembership uses the CreateBulk function to create multiple OrgMembership entities
 func (r *mutationResolver) bulkCreateOrgMembership(ctx context.Context, input []*generated.CreateOrgMembershipInput) (*OrgMembershipBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.OrgMembershipCreate, len(input))
@@ -378,6 +394,7 @@ func (r *mutationResolver) bulkCreateOrgMembership(ctx context.Context, input []
 	}, nil
 }
 
+// bulkCreatePersonalAccessToken uses the CreateBulk function to create multiple PersonalAccessToken entities
 func (r *mutationResolver) bulkCreatePersonalAccessToken(ctx context.Context, input []*generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.PersonalAccessTokenCreate, len(input))
@@ -401,6 +418,7 @@ func (r *mutationResolver) bulkCreatePersonalAccessToken(ctx context.Context, in
 	}, nil
 }
 
+// bulkCreateSubscriber uses the CreateBulk function to create multiple Subscriber entities
 func (r *mutationResolver) bulkCreateSubscriber(ctx context.Context, input []*generated.CreateSubscriberInput) (*SubscriberBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.SubscriberCreate, len(input))
@@ -424,6 +442,7 @@ func (r *mutationResolver) bulkCreateSubscriber(ctx context.Context, input []*ge
 	}, nil
 }
 
+// bulkCreateTemplate uses the CreateBulk function to create multiple Template entities
 func (r *mutationResolver) bulkCreateTemplate(ctx context.Context, input []*generated.CreateTemplateInput) (*TemplateBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.TemplateCreate, len(input))
@@ -447,6 +466,7 @@ func (r *mutationResolver) bulkCreateTemplate(ctx context.Context, input []*gene
 	}, nil
 }
 
+// bulkCreateUser uses the CreateBulk function to create multiple User entities
 func (r *mutationResolver) bulkCreateUser(ctx context.Context, input []*generated.CreateUserInput) (*UserBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.UserCreate, len(input))
@@ -470,6 +490,7 @@ func (r *mutationResolver) bulkCreateUser(ctx context.Context, input []*generate
 	}, nil
 }
 
+// bulkCreateUserSetting uses the CreateBulk function to create multiple UserSetting entities
 func (r *mutationResolver) bulkCreateUserSetting(ctx context.Context, input []*generated.CreateUserSettingInput) (*UserSettingBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.UserSettingCreate, len(input))
@@ -493,6 +514,7 @@ func (r *mutationResolver) bulkCreateUserSetting(ctx context.Context, input []*g
 	}, nil
 }
 
+// bulkCreateWebhook uses the CreateBulk function to create multiple Webhook entities
 func (r *mutationResolver) bulkCreateWebhook(ctx context.Context, input []*generated.CreateWebhookInput) (*WebhookBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.WebhookCreate, len(input))

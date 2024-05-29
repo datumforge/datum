@@ -6,41 +6,16 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateOrganizationSetting is the resolver for the createOrganizationSetting field.
 func (r *mutationResolver) CreateOrganizationSetting(ctx context.Context, input generated.CreateOrganizationSettingInput) (*OrganizationSettingCreatePayload, error) {
 	res, err := withTransactionalMutation(ctx).OrganizationSetting.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "organizationsetting")
-		}
-
-		r.logger.Errorw("failed to create organizationsetting", "error", err)
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "organizationsetting"}, r.logger)
 	}
 
 	return &OrganizationSettingCreatePayload{
@@ -69,28 +44,12 @@ func (r *mutationResolver) CreateBulkCSVOrganizationSetting(ctx context.Context,
 func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id string, input generated.UpdateOrganizationSettingInput) (*OrganizationSettingUpdatePayload, error) {
 	organizationSetting, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-		}
-
-		r.logger.Errorw("failed to get user setting", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "organizationsetting"}, r.logger)
 	}
 
 	organizationSetting, err = organizationSetting.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			ve := err.(*generated.ValidationError)
-
-			return nil, rout.InvalidField(ve.Name)
-		}
-
-		r.logger.Errorw("failed to update user setting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "organizationsetting"}, r.logger)
 	}
 
 	return &OrganizationSettingUpdatePayload{OrganizationSetting: organizationSetting}, nil
@@ -99,16 +58,7 @@ func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id str
 // DeleteOrganizationSetting is the resolver for the deleteOrganizationSetting field.
 func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id string) (*OrganizationSettingDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).OrganizationSetting.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "organizationsetting")
-		}
-
-		r.logger.Errorw("failed to delete organizationsetting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "organizationsetting"}, r.logger)
 	}
 
 	if err := generated.OrganizationSettingEdgeCleanup(ctx, id); err != nil {
@@ -124,17 +74,7 @@ func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id str
 func (r *queryResolver) OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error) {
 	org, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get organization settings", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "organization")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "organizationsetting"}, r.logger)
 	}
 
 	return org, nil

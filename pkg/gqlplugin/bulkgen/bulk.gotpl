@@ -18,12 +18,7 @@ func (r *mutationResolver) bulkCreate{{ $object.Name }} (ctx context.Context, in
 
 	res, err := c.{{ $object.Name }}.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "{{ $object.Name }}")
-		}
-
-		r.logger.Errorw("failed to bulk create {{ $object.Name }}", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "{{ $object.Name | toLower }}"}, r.logger)
 	}
 
 	// return response

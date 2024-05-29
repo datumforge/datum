@@ -4,10 +4,8 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // bulkCreateAPIToken uses the CreateBulk function to create multiple APIToken entities
@@ -20,12 +18,7 @@ func (r *mutationResolver) bulkCreateAPIToken(ctx context.Context, input []*gene
 
 	res, err := c.APIToken.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "APIToken")
-		}
-
-		r.logger.Errorw("failed to bulk create APIToken", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "apitoken"}, r.logger)
 	}
 
 	// return response
@@ -44,12 +37,7 @@ func (r *mutationResolver) bulkCreateDocumentData(ctx context.Context, input []*
 
 	res, err := c.DocumentData.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "DocumentData")
-		}
-
-		r.logger.Errorw("failed to bulk create DocumentData", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "documentdata"}, r.logger)
 	}
 
 	// return response
@@ -68,12 +56,7 @@ func (r *mutationResolver) bulkCreateEntitlement(ctx context.Context, input []*g
 
 	res, err := c.Entitlement.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Entitlement")
-		}
-
-		r.logger.Errorw("failed to bulk create Entitlement", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "entitlement"}, r.logger)
 	}
 
 	// return response
@@ -92,12 +75,7 @@ func (r *mutationResolver) bulkCreateEvent(ctx context.Context, input []*generat
 
 	res, err := c.Event.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Event")
-		}
-
-		r.logger.Errorw("failed to bulk create Event", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "event"}, r.logger)
 	}
 
 	// return response
@@ -116,12 +94,7 @@ func (r *mutationResolver) bulkCreateFeature(ctx context.Context, input []*gener
 
 	res, err := c.Feature.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Feature")
-		}
-
-		r.logger.Errorw("failed to bulk create Feature", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "feature"}, r.logger)
 	}
 
 	// return response
@@ -140,12 +113,7 @@ func (r *mutationResolver) bulkCreateFile(ctx context.Context, input []*generate
 
 	res, err := c.File.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "File")
-		}
-
-		r.logger.Errorw("failed to bulk create File", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "file"}, r.logger)
 	}
 
 	// return response
@@ -164,12 +132,7 @@ func (r *mutationResolver) bulkCreateGroup(ctx context.Context, input []*generat
 
 	res, err := c.Group.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Group")
-		}
-
-		r.logger.Errorw("failed to bulk create Group", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "group"}, r.logger)
 	}
 
 	// return response
@@ -188,12 +151,7 @@ func (r *mutationResolver) bulkCreateGroupMembership(ctx context.Context, input 
 
 	res, err := c.GroupMembership.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "GroupMembership")
-		}
-
-		r.logger.Errorw("failed to bulk create GroupMembership", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "groupmembership"}, r.logger)
 	}
 
 	// return response
@@ -212,12 +170,7 @@ func (r *mutationResolver) bulkCreateGroupSetting(ctx context.Context, input []*
 
 	res, err := c.GroupSetting.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "GroupSetting")
-		}
-
-		r.logger.Errorw("failed to bulk create GroupSetting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "groupsetting"}, r.logger)
 	}
 
 	// return response
@@ -236,12 +189,7 @@ func (r *mutationResolver) bulkCreateHush(ctx context.Context, input []*generate
 
 	res, err := c.Hush.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Hush")
-		}
-
-		r.logger.Errorw("failed to bulk create Hush", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "hush"}, r.logger)
 	}
 
 	// return response
@@ -260,12 +208,7 @@ func (r *mutationResolver) bulkCreateIntegration(ctx context.Context, input []*g
 
 	res, err := c.Integration.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Integration")
-		}
-
-		r.logger.Errorw("failed to bulk create Integration", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "integration"}, r.logger)
 	}
 
 	// return response
@@ -284,12 +227,7 @@ func (r *mutationResolver) bulkCreateInvite(ctx context.Context, input []*genera
 
 	res, err := c.Invite.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Invite")
-		}
-
-		r.logger.Errorw("failed to bulk create Invite", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "invite"}, r.logger)
 	}
 
 	// return response
@@ -308,12 +246,7 @@ func (r *mutationResolver) bulkCreateOauthProvider(ctx context.Context, input []
 
 	res, err := c.OauthProvider.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "OauthProvider")
-		}
-
-		r.logger.Errorw("failed to bulk create OauthProvider", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "oauthprovider"}, r.logger)
 	}
 
 	// return response
@@ -332,12 +265,7 @@ func (r *mutationResolver) bulkCreateOhAuthTooToken(ctx context.Context, input [
 
 	res, err := c.OhAuthTooToken.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "OhAuthTooToken")
-		}
-
-		r.logger.Errorw("failed to bulk create OhAuthTooToken", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "ohauthtootoken"}, r.logger)
 	}
 
 	// return response
@@ -356,12 +284,7 @@ func (r *mutationResolver) bulkCreateOrganization(ctx context.Context, input []*
 
 	res, err := c.Organization.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Organization")
-		}
-
-		r.logger.Errorw("failed to bulk create Organization", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "organization"}, r.logger)
 	}
 
 	// return response
@@ -380,12 +303,7 @@ func (r *mutationResolver) bulkCreateOrganizationSetting(ctx context.Context, in
 
 	res, err := c.OrganizationSetting.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "OrganizationSetting")
-		}
-
-		r.logger.Errorw("failed to bulk create OrganizationSetting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "organizationsetting"}, r.logger)
 	}
 
 	// return response
@@ -404,12 +322,7 @@ func (r *mutationResolver) bulkCreateOrgMembership(ctx context.Context, input []
 
 	res, err := c.OrgMembership.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "OrgMembership")
-		}
-
-		r.logger.Errorw("failed to bulk create OrgMembership", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "orgmembership"}, r.logger)
 	}
 
 	// return response
@@ -428,12 +341,7 @@ func (r *mutationResolver) bulkCreatePersonalAccessToken(ctx context.Context, in
 
 	res, err := c.PersonalAccessToken.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "PersonalAccessToken")
-		}
-
-		r.logger.Errorw("failed to bulk create PersonalAccessToken", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "personalaccesstoken"}, r.logger)
 	}
 
 	// return response
@@ -452,12 +360,7 @@ func (r *mutationResolver) bulkCreateSubscriber(ctx context.Context, input []*ge
 
 	res, err := c.Subscriber.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Subscriber")
-		}
-
-		r.logger.Errorw("failed to bulk create Subscriber", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "subscriber"}, r.logger)
 	}
 
 	// return response
@@ -476,12 +379,7 @@ func (r *mutationResolver) bulkCreateTemplate(ctx context.Context, input []*gene
 
 	res, err := c.Template.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Template")
-		}
-
-		r.logger.Errorw("failed to bulk create Template", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "template"}, r.logger)
 	}
 
 	// return response
@@ -500,12 +398,7 @@ func (r *mutationResolver) bulkCreateUser(ctx context.Context, input []*generate
 
 	res, err := c.User.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "User")
-		}
-
-		r.logger.Errorw("failed to bulk create User", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "user"}, r.logger)
 	}
 
 	// return response
@@ -524,12 +417,7 @@ func (r *mutationResolver) bulkCreateUserSetting(ctx context.Context, input []*g
 
 	res, err := c.UserSetting.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "UserSetting")
-		}
-
-		r.logger.Errorw("failed to bulk create UserSetting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "usersetting"}, r.logger)
 	}
 
 	// return response
@@ -548,12 +436,7 @@ func (r *mutationResolver) bulkCreateWebhook(ctx context.Context, input []*gener
 
 	res, err := c.Webhook.CreateBulk(builders...).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "Webhook")
-		}
-
-		r.logger.Errorw("failed to bulk create Webhook", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "webhook"}, r.logger)
 	}
 
 	// return response

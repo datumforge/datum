@@ -6,41 +6,16 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateGroupSetting is the resolver for the createGroupSetting field.
 func (r *mutationResolver) CreateGroupSetting(ctx context.Context, input generated.CreateGroupSettingInput) (*GroupSettingCreatePayload, error) {
 	res, err := withTransactionalMutation(ctx).GroupSetting.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "groupsetting")
-		}
-
-		r.logger.Errorw("failed to create groupsetting", "error", err)
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "groupsetting"}, r.logger)
 	}
 
 	return &GroupSettingCreatePayload{
@@ -69,28 +44,12 @@ func (r *mutationResolver) CreateBulkCSVGroupSetting(ctx context.Context, input 
 func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, input generated.UpdateGroupSettingInput) (*GroupSettingUpdatePayload, error) {
 	groupSetting, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-		}
-
-		r.logger.Errorw("failed to get user setting", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupsetting"}, r.logger)
 	}
 
 	groupSetting, err = groupSetting.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			ve := err.(*generated.ValidationError)
-
-			return nil, rout.InvalidField(ve.Name)
-		}
-
-		r.logger.Errorw("failed to update user setting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupsetting"}, r.logger)
 	}
 
 	return &GroupSettingUpdatePayload{GroupSetting: groupSetting}, nil
@@ -99,16 +58,7 @@ func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, in
 // DeleteGroupSetting is the resolver for the deleteGroupSetting field.
 func (r *mutationResolver) DeleteGroupSetting(ctx context.Context, id string) (*GroupSettingDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).GroupSetting.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "groupsetting")
-		}
-
-		r.logger.Errorw("failed to delete groupsetting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "groupsetting"}, r.logger)
 	}
 
 	if err := generated.GroupSettingEdgeCleanup(ctx, id); err != nil {
@@ -124,17 +74,7 @@ func (r *mutationResolver) DeleteGroupSetting(ctx context.Context, id string) (*
 func (r *queryResolver) GroupSetting(ctx context.Context, id string) (*generated.GroupSetting, error) {
 	group, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get group settings", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "organization")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "groupsetting"}, r.logger)
 	}
 
 	return group, nil

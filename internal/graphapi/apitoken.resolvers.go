@@ -25,16 +25,9 @@ func (r *mutationResolver) CreateAPIToken(ctx context.Context, input generated.C
 
 	apiToken, err := withTransactionalMutation(ctx).APIToken.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if generated.IsConstraintError(err) {
-			return nil, err
-		}
-
 		r.logger.Errorw("failed to create api token", "error", err)
-		return nil, ErrInternalServerError
+
+		return nil, err
 	}
 
 	return &APITokenCreatePayload{APIToken: apiToken}, err

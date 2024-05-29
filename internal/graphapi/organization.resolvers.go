@@ -6,11 +6,9 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 )
 
@@ -18,29 +16,7 @@ import (
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
 	org, err := withTransactionalMutation(ctx).Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "organization")
-		}
-
-		r.logger.Errorw("failed to create organization", "error", err)
-
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "organization"}, r.logger)
 	}
 
 	return &OrganizationCreatePayload{Organization: org}, nil
@@ -48,26 +24,7 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 
 // CreateBulkOrganization is the resolver for the createBulkOrganization field.
 func (r *mutationResolver) CreateBulkOrganization(ctx context.Context, input []*generated.CreateOrganizationInput) (*OrganizationBulkCreatePayload, error) {
-	c := withTransactionalMutation(ctx)
-
-	builders := make([]*generated.OrganizationCreate, len(input))
-	for i, data := range input {
-		builders[i] = c.Organization.Create().SetInput(*data)
-	}
-
-	orgs, err := withTransactionalMutation(ctx).Organization.CreateBulk(builders...).Save(ctx)
-	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "organization")
-		}
-
-		r.logger.Errorw("failed to bulk create organizations", "error", err)
-		return nil, err
-	}
-
-	return &OrganizationBulkCreatePayload{
-		Organizations: orgs,
-	}, nil
+	return r.bulkCreateOrganization(ctx, input)
 }
 
 // CreateBulkCSVOrganization is the resolver for the createBulkCSVOrganization field.
@@ -86,34 +43,12 @@ func (r *mutationResolver) CreateBulkCSVOrganization(ctx context.Context, input 
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
 	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get organization on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "organization")
-		}
-
-		r.logger.Errorw("failed to get organization", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "organization"}, r.logger)
 	}
 
 	org, err = org.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update organization", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "organization")
-		}
-
-		r.logger.Errorw("failed to update organization", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "organization"}, r.logger)
 	}
 
 	return &OrganizationUpdatePayload{Organization: org}, nil
@@ -122,16 +57,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 // DeleteOrganization is the resolver for the deleteOrganization field.
 func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Organization.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "organization")
-		}
-
-		r.logger.Errorw("failed to delete organization", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "organization"}, r.logger)
 	}
 
 	if err := generated.OrganizationEdgeCleanup(ctx, id); err != nil {
@@ -145,17 +71,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
 	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get organization", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "organization")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "organization"}, r.logger)
 	}
 
 	return org, nil

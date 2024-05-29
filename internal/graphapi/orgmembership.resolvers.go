@@ -6,11 +6,9 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -25,29 +23,7 @@ func (r *mutationResolver) CreateOrgMembership(ctx context.Context, input genera
 
 	om, err := withTransactionalMutation(ctx).OrgMembership.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "org member")
-		}
-
-		r.logger.Errorw("failed to create org member", "error", err)
-
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "orgmembership"}, r.logger)
 	}
 
 	return &OrgMembershipCreatePayload{OrgMembership: om}, nil
@@ -74,18 +50,7 @@ func (r *mutationResolver) CreateBulkCSVOrgMembership(ctx context.Context, input
 func (r *mutationResolver) UpdateOrgMembership(ctx context.Context, id string, input generated.UpdateOrgMembershipInput) (*OrgMembershipUpdatePayload, error) {
 	orgMember, err := withTransactionalMutation(ctx).OrgMembership.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get org member on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "org member")
-		}
-
-		r.logger.Errorw("failed to get org member", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "orgmembership"}, r.logger)
 	}
 
 	// set the organization in the auth context if its not done for us
@@ -97,18 +62,7 @@ func (r *mutationResolver) UpdateOrgMembership(ctx context.Context, id string, i
 
 	orgMember, err = orgMember.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update org member", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "org member")
-		}
-
-		r.logger.Errorw("failed to update org member role", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "orgmembership"}, r.logger)
 	}
 
 	return &OrgMembershipUpdatePayload{OrgMembership: orgMember}, nil
@@ -117,16 +71,7 @@ func (r *mutationResolver) UpdateOrgMembership(ctx context.Context, id string, i
 // DeleteOrgMembership is the resolver for the deleteOrgMembership field.
 func (r *mutationResolver) DeleteOrgMembership(ctx context.Context, id string) (*OrgMembershipDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).OrgMembership.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "org member")
-		}
-
-		r.logger.Errorw("failed to delete org member", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "orgmembership"}, r.logger)
 	}
 
 	if err := generated.OrgMembershipEdgeCleanup(ctx, id); err != nil {
@@ -140,17 +85,7 @@ func (r *mutationResolver) DeleteOrgMembership(ctx context.Context, id string) (
 func (r *queryResolver) OrgMembership(ctx context.Context, id string) (*generated.OrgMembership, error) {
 	org, err := withTransactionalMutation(ctx).OrgMembership.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get members of organization", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "org members")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "orgmembership"}, r.logger)
 	}
 
 	return org, nil

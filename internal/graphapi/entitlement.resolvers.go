@@ -6,40 +6,16 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateEntitlement is the resolver for the createEntitlement field.
 func (r *mutationResolver) CreateEntitlement(ctx context.Context, input generated.CreateEntitlementInput) (*EntitlementCreatePayload, error) {
 	res, err := withTransactionalMutation(ctx).Entitlement.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "entitlement")
-		}
-
-		r.logger.Errorw("failed to create entitlement", "error", err)
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "entitlement"}, r.logger)
 	}
 
 	return &EntitlementCreatePayload{
@@ -68,34 +44,12 @@ func (r *mutationResolver) CreateBulkCSVEntitlement(ctx context.Context, input g
 func (r *mutationResolver) UpdateEntitlement(ctx context.Context, id string, input generated.UpdateEntitlementInput) (*EntitlementUpdatePayload, error) {
 	res, err := withTransactionalMutation(ctx).Entitlement.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get entitlement on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "entitlement")
-		}
-
-		r.logger.Errorw("failed to get entitlement", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "entitlement"}, r.logger)
 	}
 
 	res, err = res.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update entitlement", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "entitlement")
-		}
-
-		r.logger.Errorw("failed to update entitlement", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "entitlement"}, r.logger)
 	}
 
 	return &EntitlementUpdatePayload{
@@ -106,16 +60,7 @@ func (r *mutationResolver) UpdateEntitlement(ctx context.Context, id string, inp
 // DeleteEntitlement is the resolver for the deleteEntitlement field.
 func (r *mutationResolver) DeleteEntitlement(ctx context.Context, id string) (*EntitlementDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Entitlement.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "entitlement")
-		}
-
-		r.logger.Errorw("failed to delete entitlement", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "entitlement"}, r.logger)
 	}
 
 	if err := generated.EntitlementEdgeCleanup(ctx, id); err != nil {
@@ -131,13 +76,7 @@ func (r *mutationResolver) DeleteEntitlement(ctx context.Context, id string) (*E
 func (r *queryResolver) Entitlement(ctx context.Context, id string) (*generated.Entitlement, error) {
 	res, err := withTransactionalMutation(ctx).Entitlement.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get entitlement", "error", err)
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "entitlement")
-		}
-
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionGet, object: "entitlement"}, r.logger)
 	}
 
 	return res, nil

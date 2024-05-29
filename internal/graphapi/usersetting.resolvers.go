@@ -6,41 +6,16 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateUserSetting is the resolver for the createUserSetting field.
 func (r *mutationResolver) CreateUserSetting(ctx context.Context, input generated.CreateUserSettingInput) (*UserSettingCreatePayload, error) {
 	res, err := withTransactionalMutation(ctx).UserSetting.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "usersetting")
-		}
-
-		r.logger.Errorw("failed to create usersetting", "error", err)
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "usersetting"}, r.logger)
 	}
 
 	return &UserSettingCreatePayload{
@@ -69,28 +44,12 @@ func (r *mutationResolver) CreateBulkCSVUserSetting(ctx context.Context, input g
 func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, input generated.UpdateUserSettingInput) (*UserSettingUpdatePayload, error) {
 	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-		}
-
-		r.logger.Errorw("failed to get user setting", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "usersetting"}, r.logger)
 	}
 
 	userSetting, err = userSetting.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			ve := err.(*generated.ValidationError)
-
-			return nil, rout.InvalidField(ve.Name)
-		}
-
-		r.logger.Errorw("failed to update user setting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "usersetting"}, r.logger)
 	}
 
 	return &UserSettingUpdatePayload{UserSetting: userSetting}, nil
@@ -99,16 +58,7 @@ func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, inp
 // DeleteUserSetting is the resolver for the deleteUserSetting field.
 func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*UserSettingDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).UserSetting.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "usersetting")
-		}
-
-		r.logger.Errorw("failed to delete usersetting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "usersetting"}, r.logger)
 	}
 
 	if err := generated.UserSettingEdgeCleanup(ctx, id); err != nil {
@@ -124,12 +74,7 @@ func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*U
 func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.UserSetting, error) {
 	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		r.logger.Errorw("failed to get user setting", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "usersetting"}, r.logger)
 	}
 
 	if err := generated.UserSettingEdgeCleanup(ctx, id); err != nil {

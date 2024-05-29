@@ -6,40 +6,16 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateHush is the resolver for the createHush field
 func (r *mutationResolver) CreateHush(ctx context.Context, input generated.CreateHushInput) (*HushCreatePayload, error) {
 	t, err := withTransactionalMutation(ctx).Hush.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "hush")
-		}
-
-		r.logger.Errorw("failed to create hush", "error", err)
-
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "hush"}, r.logger)
 	}
 
 	return &HushCreatePayload{Hush: t}, nil
@@ -54,8 +30,6 @@ func (r *mutationResolver) CreateBulkHush(ctx context.Context, input []*generate
 func (r *mutationResolver) CreateBulkCSVHush(ctx context.Context, input graphql.Upload) (*HushBulkCreatePayload, error) {
 	data, err := unmarshalBulkData[generated.CreateHushInput](input)
 	if err != nil {
-		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
-
 		return nil, err
 	}
 
@@ -66,34 +40,12 @@ func (r *mutationResolver) CreateBulkCSVHush(ctx context.Context, input graphql.
 func (r *mutationResolver) UpdateHush(ctx context.Context, id string, input generated.UpdateHushInput) (*HushUpdatePayload, error) {
 	hush, err := withTransactionalMutation(ctx).Hush.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get hush on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "hush")
-		}
-
-		r.logger.Errorw("failed to get hush", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "hush"}, r.logger)
 	}
 
 	hush, err = hush.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update hush", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "hush")
-		}
-
-		r.logger.Errorw("failed to update hush", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "hush"}, r.logger)
 	}
 
 	return &HushUpdatePayload{Hush: hush}, nil
@@ -102,16 +54,7 @@ func (r *mutationResolver) UpdateHush(ctx context.Context, id string, input gene
 // DeleteHush is the resolver for the deleteHush field
 func (r *mutationResolver) DeleteHush(ctx context.Context, id string) (*HushDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Hush.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "hush")
-		}
-
-		r.logger.Errorw("failed to delete hush", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "hush"}, r.logger)
 	}
 
 	if err := generated.HushEdgeCleanup(ctx, id); err != nil {
@@ -125,17 +68,7 @@ func (r *mutationResolver) DeleteHush(ctx context.Context, id string) (*HushDele
 func (r *queryResolver) Hush(ctx context.Context, id string) (*generated.Hush, error) {
 	hush, err := withTransactionalMutation(ctx).Hush.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get hush", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "hush")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "hush"}, r.logger)
 	}
 
 	return hush, nil

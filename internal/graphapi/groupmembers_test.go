@@ -176,7 +176,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 			allowed: true,
 			check:   true,
 			list:    true,
-			errMsg:  "constraint failed",
+			errMsg:  "already exists",
 		},
 		{
 			name:    "invalid user",

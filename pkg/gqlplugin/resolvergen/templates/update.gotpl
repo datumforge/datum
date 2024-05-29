@@ -2,34 +2,12 @@
 
 res, err := withTransactionalMutation(ctx).{{ $entity }}.Get(ctx, id)
 if err != nil {
-	if generated.IsNotFound(err) {
-		return nil, err
-	}
-
-	if errors.Is(err, privacy.Deny) {
-		r.logger.Errorw("failed to get {{ $entity | toLower }} on update", "error", err)
-
-		return nil, newPermissionDeniedError(ActionGet, "{{ $entity | toLower }}")
-	}
-
-	r.logger.Errorw("failed to get {{ $entity | toLower }}", "error", err)
-	return nil, ErrInternalServerError
+	return nil, parseRequestError(err, action{action: ActionUpdate, object: "{{ $entity | toLower }}"}, r.logger)
 }
 
 res, err = res.Update().SetInput(input).Save(ctx)
 if err != nil {
-	if generated.IsValidationError(err) {
-		return nil, err
-	}
-
-	if errors.Is(err, privacy.Deny) {
-		r.logger.Errorw("failed to update {{ $entity | toLower }}", "error", err)
-
-		return nil, newPermissionDeniedError(ActionUpdate, "{{ $entity | toLower }}")
-	}
-
-	r.logger.Errorw("failed to update {{ $entity | toLower }}", "error", err)
-	return nil, ErrInternalServerError
+	return nil, parseRequestError(err, action{action: ActionUpdate, object: "{{ $entity | toLower }}"}, r.logger)
 }
 
 return &{{ $entity }}UpdatePayload{

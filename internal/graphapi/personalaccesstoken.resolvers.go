@@ -6,27 +6,16 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreatePersonalAccessToken is the resolver for the createPersonalAccessToken field.
 func (r *mutationResolver) CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error) {
 	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if generated.IsConstraintError(err) {
-			return nil, err
-		}
-
-		r.logger.Errorw("failed to create personal access token", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "personalaccesstoken"}, r.logger)
 	}
 
 	return &PersonalAccessTokenCreatePayload{PersonalAccessToken: pat}, err
@@ -53,32 +42,12 @@ func (r *mutationResolver) CreateBulkCSVPersonalAccessToken(ctx context.Context,
 func (r *mutationResolver) UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error) {
 	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-
-		}
-
-		r.logger.Errorw("failed to get personal access token", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "personalaccesstoken"}, r.logger)
 	}
 
 	pat, err = pat.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if generated.IsConstraintError(err) {
-			return nil, err
-		}
-
-		r.logger.Errorw("failed to update personal access token", "error", err)
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "personalaccesstoken"}, r.logger)
 	}
 
 	return &PersonalAccessTokenUpdatePayload{PersonalAccessToken: pat}, err
@@ -87,12 +56,7 @@ func (r *mutationResolver) UpdatePersonalAccessToken(ctx context.Context, id str
 // DeletePersonalAccessToken is the resolver for the deletePersonalAccessToken field.
 func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).PersonalAccessToken.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		r.logger.Errorw("failed to delete personal access token", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "personalaccesstoken"}, r.logger)
 	}
 
 	if err := generated.PersonalAccessTokenEdgeCleanup(ctx, id); err != nil {
@@ -106,13 +70,7 @@ func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id str
 func (r *queryResolver) PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error) {
 	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		r.logger.Errorw("failed to get personal access token", "error", err)
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "personalaccesstoken"}, r.logger)
 	}
 
 	return pat, nil

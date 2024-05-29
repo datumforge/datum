@@ -6,11 +6,9 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -25,29 +23,7 @@ func (r *mutationResolver) CreateInvite(ctx context.Context, input generated.Cre
 
 	om, err := withTransactionalMutation(ctx).Invite.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "invite")
-		}
-
-		r.logger.Errorw("failed to create invitation", "error", err)
-
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "invite"}, r.logger)
 	}
 
 	return &InviteCreatePayload{Invite: om}, nil
@@ -74,18 +50,7 @@ func (r *mutationResolver) CreateBulkCSVInvite(ctx context.Context, input graphq
 func (r *mutationResolver) UpdateInvite(ctx context.Context, id string, input generated.UpdateInviteInput) (*InviteUpdatePayload, error) {
 	invite, err := withTransactionalMutation(ctx).Invite.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get invite on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "invite")
-		}
-
-		r.logger.Errorw("failed to get invite", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "invite"}, r.logger)
 	}
 
 	if err := setOrganizationInAuthContext(ctx, &invite.OwnerID); err != nil {
@@ -96,18 +61,7 @@ func (r *mutationResolver) UpdateInvite(ctx context.Context, id string, input ge
 
 	invite, err = invite.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update invitation", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "invite")
-		}
-
-		r.logger.Errorw("failed to update invitation", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "invite"}, r.logger)
 	}
 
 	return &InviteUpdatePayload{Invite: invite}, nil
@@ -116,16 +70,7 @@ func (r *mutationResolver) UpdateInvite(ctx context.Context, id string, input ge
 // DeleteInvite is the resolver for the deleteInvite field.
 func (r *mutationResolver) DeleteInvite(ctx context.Context, id string) (*InviteDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Invite.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "invite")
-		}
-
-		r.logger.Errorw("failed to delete invitation", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "invite"}, r.logger)
 	}
 
 	if err := generated.InviteEdgeCleanup(ctx, id); err != nil {
@@ -139,17 +84,7 @@ func (r *mutationResolver) DeleteInvite(ctx context.Context, id string) (*Invite
 func (r *queryResolver) Invite(ctx context.Context, id string) (*generated.Invite, error) {
 	inv, err := withTransactionalMutation(ctx).Invite.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get invitation", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "invite")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "invite"}, r.logger)
 	}
 
 	return inv, nil

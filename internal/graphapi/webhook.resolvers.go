@@ -6,43 +6,19 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateWebhook is the resolver for the createWebhook field
 func (r *mutationResolver) CreateWebhook(ctx context.Context, input generated.CreateWebhookInput) (*WebhookCreatePayload, error) {
-	t, err := withTransactionalMutation(ctx).Webhook.Create().SetInput(input).Save(ctx)
+	webhook, err := withTransactionalMutation(ctx).Webhook.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "webhook")
-		}
-
-		r.logger.Errorw("failed to create webhook", "error", err)
-
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "webhook"}, r.logger)
 	}
 
-	return &WebhookCreatePayload{Webhook: t}, nil
+	return &WebhookCreatePayload{Webhook: webhook}, nil
 }
 
 // CreateBulkWebhook is the resolver for the createBulkWebhook field.
@@ -66,34 +42,12 @@ func (r *mutationResolver) CreateBulkCSVWebhook(ctx context.Context, input graph
 func (r *mutationResolver) UpdateWebhook(ctx context.Context, id string, input generated.UpdateWebhookInput) (*WebhookUpdatePayload, error) {
 	webhook, err := withTransactionalMutation(ctx).Webhook.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get webhook on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "webhook")
-		}
-
-		r.logger.Errorw("failed to get webhook", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "webhook"}, r.logger)
 	}
 
 	webhook, err = webhook.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update webhook", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "webhook")
-		}
-
-		r.logger.Errorw("failed to update webhook", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "webhook"}, r.logger)
 	}
 
 	return &WebhookUpdatePayload{Webhook: webhook}, nil
@@ -102,16 +56,7 @@ func (r *mutationResolver) UpdateWebhook(ctx context.Context, id string, input g
 // DeleteWebhook is the resolver for the deleteWebhook field
 func (r *mutationResolver) DeleteWebhook(ctx context.Context, id string) (*WebhookDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Webhook.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "webhook")
-		}
-
-		r.logger.Errorw("failed to delete webhook", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "webhook"}, r.logger)
 	}
 
 	if err := generated.WebhookEdgeCleanup(ctx, id); err != nil {
@@ -125,17 +70,7 @@ func (r *mutationResolver) DeleteWebhook(ctx context.Context, id string) (*Webho
 func (r *queryResolver) Webhook(ctx context.Context, id string) (*generated.Webhook, error) {
 	webhook, err := withTransactionalMutation(ctx).Webhook.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get webhook", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "webhook")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "webhook"}, r.logger)
 	}
 
 	return webhook, nil

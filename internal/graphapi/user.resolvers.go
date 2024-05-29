@@ -10,7 +10,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/pkg/auth"
 )
@@ -43,33 +42,18 @@ func (r *mutationResolver) CreateBulkCSVUser(ctx context.Context, input graphql.
 func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
 	user, err := withTransactionalMutation(ctx).User.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-
-		}
-
-		r.logger.Errorw("failed to get user", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "user"}, r.logger)
 	}
 
 	user, err = user.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
 		// the password field is encrypted so we cannot use the
 		// built in validation function/validation error
 		if errors.Is(err, auth.ErrPasswordTooWeak) {
 			return nil, err
 		}
 
-		r.logger.Errorw("failed to update user", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "user"}, r.logger)
 	}
 
 	return &UserUpdatePayload{User: user}, nil
@@ -78,17 +62,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input gene
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).User.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-
-		}
-
-		r.logger.Errorw("failed to delete user", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "user"}, r.logger)
 	}
 
 	if err := generated.UserEdgeCleanup(ctx, id); err != nil {
@@ -102,17 +76,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDele
 func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, error) {
 	user, err := withTransactionalMutation(ctx).User.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-
-		}
-
-		r.logger.Errorw("failed to get user", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "user"}, r.logger)
 	}
 
 	return user, nil

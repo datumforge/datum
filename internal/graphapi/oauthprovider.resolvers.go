@@ -6,40 +6,16 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateOauthProvider is the resolver for the createOauthProvider field.
 func (r *mutationResolver) CreateOauthProvider(ctx context.Context, input generated.CreateOauthProviderInput) (*OauthProviderCreatePayload, error) {
 	res, err := withTransactionalMutation(ctx).OauthProvider.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "oauthprovider")
-		}
-
-		r.logger.Errorw("failed to create oauthprovider", "error", err)
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "oauthprovider"}, r.logger)
 	}
 
 	return &OauthProviderCreatePayload{
@@ -68,34 +44,12 @@ func (r *mutationResolver) CreateBulkCSVOauthProvider(ctx context.Context, input
 func (r *mutationResolver) UpdateOauthProvider(ctx context.Context, id string, input generated.UpdateOauthProviderInput) (*OauthProviderUpdatePayload, error) {
 	res, err := withTransactionalMutation(ctx).OauthProvider.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get oauthprovider on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "oauthprovider")
-		}
-
-		r.logger.Errorw("failed to get oauthprovider", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "oauthprovider"}, r.logger)
 	}
 
 	res, err = res.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update oauthprovider", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "oauthprovider")
-		}
-
-		r.logger.Errorw("failed to update oauthprovider", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "oauthprovider"}, r.logger)
 	}
 
 	return &OauthProviderUpdatePayload{
@@ -106,16 +60,7 @@ func (r *mutationResolver) UpdateOauthProvider(ctx context.Context, id string, i
 // DeleteOauthProvider is the resolver for the deleteOauthProvider field.
 func (r *mutationResolver) DeleteOauthProvider(ctx context.Context, id string) (*OauthProviderDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).OauthProvider.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "oauthprovider")
-		}
-
-		r.logger.Errorw("failed to delete oauthprovider", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "oauthprovider"}, r.logger)
 	}
 
 	if err := generated.OauthProviderEdgeCleanup(ctx, id); err != nil {
@@ -127,17 +72,11 @@ func (r *mutationResolver) DeleteOauthProvider(ctx context.Context, id string) (
 	}, nil
 }
 
-// OauthProvider is the resolver for the OauthProvider field.
+// OauthProvider is the resolver for the oauthProvider field.
 func (r *queryResolver) OauthProvider(ctx context.Context, id string) (*generated.OauthProvider, error) {
 	res, err := withTransactionalMutation(ctx).OauthProvider.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get oauthprovider", "error", err)
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "oauthprovider")
-		}
-
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionGet, object: "oauthprovider"}, r.logger)
 	}
 
 	return res, nil

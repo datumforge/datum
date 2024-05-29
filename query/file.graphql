@@ -1,52 +1,14 @@
-query GetFiles($where: FileWhereInput) {
-  files(where: $where) {
-    edges {
-      node {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        fileName
-        fileExtension
-        fileSize
-        contentType
-        storeKey
-        category
-        annotation
-        user {
-          id
-        }
-        organization {
-          id
-        }
-        group {
-          id
-        }
-      }
-    }
-  }
-}
-
-mutation CreateFile($input: CreateFileInput!) {
-  createFile(input: $input) {
-    file {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      fileName
-      fileExtension
-      fileSize
-      contentType
-      storeKey
-      category
+mutation CreateBulkCSVFile($input: Upload!) {
+  createBulkCSVFile(input: $input) {
+    files {
       annotation
+      category
+      contentType
+      fileExtension
+      fileName
+      fileSize
+      id
+      storeKey
       user {
         id
       }
@@ -60,23 +22,41 @@ mutation CreateFile($input: CreateFileInput!) {
   }
 }
 
-mutation UpdateFile($updateFileId: ID!, $input: UpdateFileInput!) {
-  updateFile(id: $updateFileId, input: $input) {
-    file {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      fileName
-      fileExtension
-      fileSize
-      contentType
-      storeKey
-      category
+mutation CreateBulkFile($input: [CreateFileInput!]) {
+  createBulkFile(input: $input) {
+    files {
       annotation
+      category
+      contentType
+      fileExtension
+      fileName
+      fileSize
+      id
+      storeKey
+      user {
+        id
+      }
+      organization {
+        id
+      }
+      group {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateFile($input: CreateFileInput!) {
+  createFile(input: $input) {
+    file {
+      annotation
+      category
+      contentType
+      fileExtension
+      fileName
+      fileSize
+      id
+      storeKey
       user {
         id
       }
@@ -93,5 +73,59 @@ mutation UpdateFile($updateFileId: ID!, $input: UpdateFileInput!) {
 mutation DeleteFile($deleteFileId: ID!) {
   deleteFile(id: $deleteFileId) {
     deletedID
+  }
+}
+
+query GetFiles($where: FileWhereInput) {
+  files(where: $where) {
+    edges {
+      node {
+        annotation
+        category
+        contentType
+        createdAt
+        createdBy
+        fileExtension
+        fileName
+        fileSize
+        id
+        storeKey
+        updatedAt
+        updatedBy
+        user {
+          id
+        }
+        organization {
+          id
+        }
+        group {
+          id
+        }
+      }
+    }
+  }
+}
+
+mutation UpdateFile($updateFileId: ID!, $input: UpdateFileInput!) {
+  updateFile(id: $updateFileId, input: $input) {
+    file {
+      id
+      fileName
+      fileExtension
+      fileSize
+      contentType
+      storeKey
+      category
+      annotation
+      user {
+        id
+      }
+      organization {
+        id
+      }
+      group {
+        id
+      }
+    }
   }
 }

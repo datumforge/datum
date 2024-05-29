@@ -1,63 +1,60 @@
 query GetGroupSettingByID($groupSettingId: ID!) {
   groupSetting(id: $groupSettingId) {
     id
-    createdAt
-    updatedAt
-    createdBy
-    updatedBy
-    visibility
     joinPolicy
-    tags
-    syncToSlack
     syncToGithub
+    syncToSlack
+    tags
+    visibility
     group {
       id
     }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
   }
 }
-
 
 query GetGroupSettings {
   groupSettings {
     edges {
       node {
         id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        visibility
         joinPolicy
-        tags
-        syncToSlack
         syncToGithub
+        syncToSlack
+        tags
+        visibility
         group {
           id
         }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
       }
     }
   }
 }
-
-
 
 query GetGroupSettingWhere($where: GroupSettingWhereInput!) {
   groupSettings(where: $where) {
     edges {
       node {
         id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        visibility
         joinPolicy
-        tags
-        syncToSlack
         syncToGithub
+        syncToSlack
+        tags
+        visibility
         group {
           id
         }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
       }
     }
   }
@@ -67,18 +64,18 @@ mutation UpdateGroupSetting($updateGroupSettingId: ID!, $input: UpdateGroupSetti
   updateGroupSetting(id: $updateGroupSettingId, input: $input) {
     groupSetting {
       id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      visibility
       joinPolicy
-      tags
-      syncToSlack
       syncToGithub
+      syncToSlack
+      tags
+      visibility
       group {
         id
       }
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
     }
   }
 }

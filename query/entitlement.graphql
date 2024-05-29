@@ -1,30 +1,18 @@
 mutation CreateEntitlement($input: CreateEntitlementInput!) {
   createEntitlement(input: $input) {
     entitlement {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      tier
-      externalCustomerID
-      externalSubscriptionID
+      cancelled
       expires
       expiresAt
-      cancelled
+      externalCustomerID
+      externalSubscriptionID
+      id
+      tier
       owner {
         id
       }
       features {
         id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
         name
         global
         enabled
@@ -34,37 +22,53 @@ mutation CreateEntitlement($input: CreateEntitlementInput!) {
   }
 }
 
-mutation UpdateEntitlement($updateEntitlementId: ID!, $input: UpdateEntitlementInput!) {
-  updateEntitlement(id: $updateEntitlementId, input: $input) {
-entitlement {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      tier
-      externalCustomerID
-      externalSubscriptionID
+mutation CreateBulkEntitlement($input: [CreateEntitlementInput!]) {
+  createBulkEntitlement(input: $input) {
+    entitlements {
+      cancelled
       expires
       expiresAt
+      externalCustomerID
+      externalSubscriptionID
+      id
+      tier
+    }
+  }
+}
+
+mutation CreateBulkCSVEntitlement($input: Upload!) {
+  createBulkCSVEntitlement(input: $input) {
+   entitlements {
       cancelled
+      expires
+      expiresAt
+      externalCustomerID
+      externalSubscriptionID
+      id
+      tier
+    }
+  }
+}
+
+mutation UpdateEntitlement($updateEntitlementId: ID!, $input: UpdateEntitlementInput!) {
+  updateEntitlement(id: $updateEntitlementId, input: $input) {
+    entitlement {
+      cancelled
+      expires
+      expiresAt
+      externalCustomerID
+      externalSubscriptionID
+      id
+      tier
       owner {
         id
       }
       features {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        name
-        global
-        enabled
         description
+        enabled
+        global
+        id
+        name
       }
     }
   }
@@ -80,27 +84,25 @@ query GetEntitlements($where: EntitlementWhereInput) {
   entitlements(where: $where) {
     edges {
       node {
-        id
+        cancelled
         createdAt
-        updatedAt
         createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        tier
-        externalCustomerID
-        externalSubscriptionID
         expires
         expiresAt
-        cancelled
+        externalCustomerID
+        externalSubscriptionID
+        id
+        tier
+        updatedAt
+        updatedBy
         owner {
           id
           name
         }
         features {
+          enabled
           id
           name
-          enabled
         }
         events {
           eventType

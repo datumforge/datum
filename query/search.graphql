@@ -3,34 +3,34 @@ query Search($query: String!) {
     nodes {
       ... on OrganizationSearchResult {
         organizations {
+          description
+          displayName
           id
           name
-          displayName
-          description
         }
       }
       ... on GroupSearchResult {
         groups {
+          description
+          displayName
           id
           name
-          displayName
-          description
         }
       }
       ... on UserSearchResult {
         users {
-          id
-          email
           displayName
+          email
           firstName
+          id
           lastName
         }
       }
       ... on SubscriberSearchResult {
         subscribers {
-          id
-          email
           active
+          email
+          id
         }
       }
     }

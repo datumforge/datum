@@ -30,7 +30,7 @@ mutation AddUserToGroupWithRole($input: CreateGroupMembershipInput!) {
 }
 
 mutation CreateBulkGroupMembers($input: [CreateGroupMembershipInput!]) {
-  createBulkGroupMembers(input: $input) {
+  createBulkGroupMembership(input: $input) {
     groupMemberships {
       groupID
       id
@@ -41,7 +41,7 @@ mutation CreateBulkGroupMembers($input: [CreateGroupMembershipInput!]) {
 }
 
 mutation CreateBulkCSVGroupMembers($input: Upload!) {
-  createBulkCSVGroupMembers(input: $input) {
+  createBulkCSVGroupMembership(input: $input) {
    groupMemberships {
       groupID
       id

@@ -1,46 +1,41 @@
 query GetOrganizationSettingByID($organizationSettingId: ID!) {
   organizationSetting(id: $organizationSettingId) {
-    id
-    createdAt
-    updatedAt
-    createdBy
-    updatedBy
-    deletedAt
-    deletedBy
-    domains
+    billingAddress
     billingContact
     billingEmail
     billingPhone
-    billingAddress
-    taxIdentifier
-    tags
+    createdAt
+    createdBy
+    domains
     geoLocation
+    id
+    tags
+    taxIdentifier
+    updatedAt
+    updatedBy
     organization {
       id
     }
   }
 }
 
-
 query GetOrganizationSettings {
   organizationSettings {
     edges {
       node {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        domains
+        billingAddress
         billingContact
         billingEmail
         billingPhone
-        billingAddress
-        taxIdentifier
-        tags
+        createdAt
+        createdBy
+        domains
         geoLocation
+        id
+        tags
+        taxIdentifier
+        updatedAt
+        updatedBy
         organization {
           id
         }
@@ -49,27 +44,23 @@ query GetOrganizationSettings {
   }
 }
 
-
-
 query GetOrganizationSettingWhere($where: OrganizationSettingWhereInput!) {
   organizationSettings(where: $where) {
     edges {
       node {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        domains
+        billingAddress
         billingContact
         billingEmail
         billingPhone
-        billingAddress
-        taxIdentifier
-        tags
+        createdAt
+        createdBy
+        domains
         geoLocation
+        id
+        tags
+        taxIdentifier
+        updatedAt
+        updatedBy
         organization {
           id
         }
@@ -81,21 +72,19 @@ query GetOrganizationSettingWhere($where: OrganizationSettingWhereInput!) {
 mutation UpdateOrganizationSetting($updateOrganizationSettingId: ID!, $input: UpdateOrganizationSettingInput!) {
   updateOrganizationSetting(id: $updateOrganizationSettingId, input: $input) {
     organizationSetting {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      domains
+      billingAddress
       billingContact
       billingEmail
       billingPhone
-      billingAddress
-      taxIdentifier
-      tags
+      createdAt
+      createdBy
+      domains
       geoLocation
+      id
+      tags
+      taxIdentifier
+      updatedAt
+      updatedBy
       organization {
         id
       }

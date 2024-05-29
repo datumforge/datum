@@ -10,6 +10,30 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
+// bulkCreateAPIToken uses the CreateBulk function to create multiple APIToken entities
+func (r *mutationResolver) bulkCreateAPIToken(ctx context.Context, input []*generated.CreateAPITokenInput) (*APITokenBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+	builders := make([]*generated.APITokenCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.APIToken.Create().SetInput(*data)
+	}
+
+	res, err := c.APIToken.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "APIToken")
+		}
+
+		r.logger.Errorw("failed to bulk create APIToken", "error", err)
+		return nil, err
+	}
+
+	// return response
+	return &APITokenBulkCreatePayload{
+		APITokens: res,
+	}, nil
+}
+
 // bulkCreateDocumentData uses the CreateBulk function to create multiple DocumentData entities
 func (r *mutationResolver) bulkCreateDocumentData(ctx context.Context, input []*generated.CreateDocumentDataInput) (*DocumentDataBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)

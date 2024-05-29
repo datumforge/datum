@@ -241,7 +241,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/datumforge/echox v0.1.1
-	github.com/datumforge/entx v0.2.0
+	github.com/datumforge/entx v0.2.1
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/flopp/go-findfont v0.1.0

@@ -42,6 +42,12 @@ type APIToken struct {
 
 func (APIToken) IsNode() {}
 
+// Return response for createBulkAPIToken mutation
+type APITokenBulkCreatePayload struct {
+	// Created apiTokens
+	APITokens []*APIToken `json:"apiTokens,omitempty"`
+}
+
 // A connection to a list of items.
 type APITokenConnection struct {
 	// A list of edges.

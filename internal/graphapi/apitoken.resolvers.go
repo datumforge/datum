@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/rout"
@@ -37,6 +38,23 @@ func (r *mutationResolver) CreateAPIToken(ctx context.Context, input generated.C
 	}
 
 	return &APITokenCreatePayload{APIToken: apiToken}, err
+}
+
+// CreateBulkAPIToken is the resolver for the createBulkAPIToken field.
+func (r *mutationResolver) CreateBulkAPIToken(ctx context.Context, input []*generated.CreateAPITokenInput) (*APITokenBulkCreatePayload, error) {
+	return r.bulkCreateAPIToken(ctx, input)
+}
+
+// CreateBulkCSVAPIToken is the resolver for the createBulkCSVAPIToken field.
+func (r *mutationResolver) CreateBulkCSVAPIToken(ctx context.Context, input graphql.Upload) (*APITokenBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateAPITokenInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateAPIToken(ctx, data)
 }
 
 // UpdateAPIToken is the resolver for the updateAPIToken field.

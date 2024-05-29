@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreatePersonalAccessTokenInput!]
     ): PersonalAccessTokenBulkCreatePayload!
     """
+    Create multiple new personalAccessTokens via file upload
+    """
+    createBulkCSVPersonalAccessToken(
+        """
+        csv file containing values of the personalAccessToken
+        """
+        input: Upload!
+    ): PersonalAccessTokenBulkCreatePayload!
+    """
     Update an existing personalAccessToken
     """
     updatePersonalAccessToken(

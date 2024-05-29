@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -47,6 +48,18 @@ func (r *mutationResolver) CreateTemplate(ctx context.Context, input generated.C
 // CreateBulkTemplate is the resolver for the createBulkTemplate field.
 func (r *mutationResolver) CreateBulkTemplate(ctx context.Context, input []*generated.CreateTemplateInput) (*TemplateBulkCreatePayload, error) {
 	return r.bulkCreateTemplate(ctx, input)
+}
+
+// CreateBulkCSVTemplate is the resolver for the createBulkCSVTemplate field.
+func (r *mutationResolver) CreateBulkCSVTemplate(ctx context.Context, input graphql.Upload) (*TemplateBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateTemplateInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateTemplate(ctx, data)
 }
 
 // UpdateTemplate is the resolver for the updateTemplate field.

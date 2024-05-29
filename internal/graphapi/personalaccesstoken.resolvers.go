@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -34,6 +35,18 @@ func (r *mutationResolver) CreatePersonalAccessToken(ctx context.Context, input 
 // CreateBulkPersonalAccessToken is the resolver for the createBulkPersonalAccessToken field.
 func (r *mutationResolver) CreateBulkPersonalAccessToken(ctx context.Context, input []*generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenBulkCreatePayload, error) {
 	return r.bulkCreatePersonalAccessToken(ctx, input)
+}
+
+// CreateBulkCSVPersonalAccessToken is the resolver for the createBulkCSVPersonalAccessToken field.
+func (r *mutationResolver) CreateBulkCSVPersonalAccessToken(ctx context.Context, input graphql.Upload) (*PersonalAccessTokenBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreatePersonalAccessTokenInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreatePersonalAccessToken(ctx, data)
 }
 
 // UpdatePersonalAccessToken is the resolver for the updatePersonalAccessToken field.

@@ -21,6 +21,24 @@ extend type Mutation{
         input: CreateAPITokenInput!
     ): APITokenCreatePayload!
     """
+    Create multiple new apiTokens
+    """
+    createBulkAPIToken(
+        """
+        values of the apiToken
+        """
+        input: [CreateAPITokenInput!]
+    ): APITokenBulkCreatePayload!
+    """
+    Create multiple new apiTokens via file upload
+    """
+    createBulkCSVAPIToken(
+        """
+        csv file containing values of the apiToken
+        """
+        input: Upload!
+    ): APITokenBulkCreatePayload!
+    """
     Update an existing apiToken
     """
     updateAPIToken(
@@ -72,4 +90,14 @@ type APITokenDeletePayload {
     Deleted apiToken ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkAPIToken mutation
+"""
+type APITokenBulkCreatePayload {
+    """
+    Created apiTokens
+    """
+    apiTokens: [APIToken!]
 }

@@ -11,6 +11,12 @@ type GlobalSearchResult interface {
 	IsGlobalSearchResult()
 }
 
+// Return response for createBulkAPIToken mutation
+type APITokenBulkCreatePayload struct {
+	// Created apiTokens
+	APITokens []*generated.APIToken `json:"apiTokens,omitempty"`
+}
+
 // Return response for createAPIToken mutation
 type APITokenCreatePayload struct {
 	// Created apiToken

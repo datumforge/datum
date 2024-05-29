@@ -30,6 +30,15 @@ extend type Mutation{
         input: [CreateTemplateInput!]
     ): TemplateBulkCreatePayload!
     """
+    Create multiple new templates via file upload
+    """
+    createBulkCSVTemplate(
+        """
+        csv file containing values of the template
+        """
+        input: Upload!
+    ): TemplateBulkCreatePayload!
+    """
     Update an existing template
     """
     updateTemplate(

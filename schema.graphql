@@ -31,6 +31,15 @@ type APIToken implements Node {
 	owner: Organization
 }
 """
+Return response for createBulkAPIToken mutation
+"""
+type APITokenBulkCreatePayload {
+	"""
+	Created apiTokens
+	"""
+	apiTokens: [APIToken!]
+}
+"""
 A connection to a list of items.
 """
 type APITokenConnection {
@@ -7008,6 +7017,24 @@ type Mutation {
 		input: CreateAPITokenInput!
 	): APITokenCreatePayload!
 	"""
+	Create multiple new apiTokens
+	"""
+	createBulkAPIToken(
+		"""
+		values of the apiToken
+		"""
+		input: [CreateAPITokenInput!]
+	): APITokenBulkCreatePayload!
+	"""
+	Create multiple new apiTokens via file upload
+	"""
+	createBulkCSVAPIToken(
+		"""
+		csv file containing values of the apiToken
+		"""
+		input: Upload!
+	): APITokenBulkCreatePayload!
+	"""
 	Update an existing apiToken
 	"""
 	updateAPIToken(
@@ -7849,6 +7876,15 @@ type Mutation {
 		input: [CreatePersonalAccessTokenInput!]
 	): PersonalAccessTokenBulkCreatePayload!
 	"""
+	Create multiple new personalAccessTokens via file upload
+	"""
+	createBulkCSVPersonalAccessToken(
+		"""
+		csv file containing values of the personalAccessToken
+		"""
+		input: Upload!
+	): PersonalAccessTokenBulkCreatePayload!
+	"""
 	Update an existing personalAccessToken
 	"""
 	updatePersonalAccessToken(
@@ -7943,6 +7979,15 @@ type Mutation {
 		values of the template
 		"""
 		input: [CreateTemplateInput!]
+	): TemplateBulkCreatePayload!
+	"""
+	Create multiple new templates via file upload
+	"""
+	createBulkCSVTemplate(
+		"""
+		csv file containing values of the template
+		"""
+		input: Upload!
 	): TemplateBulkCreatePayload!
 	"""
 	Update an existing template

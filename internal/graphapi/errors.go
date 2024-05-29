@@ -90,7 +90,8 @@ func parseRequestError(err error, a action, logger *zap.SugaredLogger) error {
 
 		logger.Debugw("constraint error", "error", constraintError.Error())
 
-		if strings.Contains(constraintError.Error(), "unique") {
+		// Check for unique (or UNIQUE in sqlite) constraint error
+		if strings.Contains(strings.ToLower(constraintError.Error()), "unique") {
 			return newAlreadyExistsError(a.object)
 		}
 

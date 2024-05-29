@@ -105,19 +105,19 @@ type DatumClient interface {
 	GetOrganizationSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettings, error)
 	GetOrganizationSettingWhere(ctx context.Context, where OrganizationSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettingWhere, error)
 	UpdateOrganizationSetting(ctx context.Context, updateOrganizationSettingID string, input UpdateOrganizationSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganizationSetting, error)
-	GetOrgMembersByOrgID(ctx context.Context, where *OrgMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrgMembersByOrgID, error)
 	AddUserToOrgWithRole(ctx context.Context, input CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToOrgWithRole, error)
-	CreateBulkOrgMembers(ctx context.Context, input []*CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkOrgMembers, error)
 	CreateBulkCSVOrgMembers(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVOrgMembers, error)
-	UpdateUserRoleInOrg(ctx context.Context, updateOrgMemberID string, input UpdateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInOrg, error)
+	CreateBulkOrgMembers(ctx context.Context, input []*CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkOrgMembers, error)
+	GetOrgMembersByOrgID(ctx context.Context, where *OrgMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrgMembersByOrgID, error)
 	RemoveUserFromOrg(ctx context.Context, deleteOrgMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromOrg, error)
+	UpdateUserRoleInOrg(ctx context.Context, updateOrgMemberID string, input UpdateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInOrg, error)
 	CreateBulkCSVPersonalAccessToken(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVPersonalAccessToken, error)
 	CreateBulkPersonalAccessToken(ctx context.Context, input []*CreatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkPersonalAccessToken, error)
 	CreatePersonalAccessToken(ctx context.Context, input CreatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreatePersonalAccessToken, error)
-	UpdatePersonalAccessToken(ctx context.Context, updatePersonalAccessTokenID string, input UpdatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*UpdatePersonalAccessToken, error)
+	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
 	GetAllPersonalAccessTokens(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllPersonalAccessTokens, error)
 	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
-	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
+	UpdatePersonalAccessToken(ctx context.Context, updatePersonalAccessTokenID string, input UpdatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*UpdatePersonalAccessToken, error)
 	Search(ctx context.Context, query string, interceptors ...clientv2.RequestInterceptor) (*Search, error)
 	Subscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*Subscribers, error)
 	GetSubscriber(ctx context.Context, email string, interceptors ...clientv2.RequestInterceptor) (*GetSubscriber, error)
@@ -132,9 +132,9 @@ type DatumClient interface {
 	UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error)
 	GetAllTemplates(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTemplates, error)
 	GetTemplate(ctx context.Context, getTemplateID string, interceptors ...clientv2.RequestInterceptor) (*GetTemplate, error)
+	CreateTFASetting(ctx context.Context, input CreateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASetting, error)
 	GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error)
 	GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error)
-	CreateTFASetting(ctx context.Context, input CreateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASetting, error)
 	UpdateTFASetting(ctx context.Context, input UpdateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASetting, error)
 	GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error)
 	GetUserByIDWithOrgs(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByIDWithOrgs, error)
@@ -11919,6 +11919,135 @@ func (t *UpdateOrganizationSetting_UpdateOrganizationSetting) GetOrganizationSet
 	return &t.OrganizationSetting
 }
 
+type AddUserToOrgWithRole_CreateOrgMembership_OrgMembership struct {
+	ID             string     "json:\"id\" graphql:\"id\""
+	Role           enums.Role "json:\"role\" graphql:\"role\""
+	UserID         string     "json:\"userID\" graphql:\"userID\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
+}
+
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetID() string {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+	}
+	return t.ID
+}
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetRole() *enums.Role {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+	}
+	return &t.Role
+}
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetUserID() string {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+	}
+	return t.UserID
+}
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetOrganizationID() string {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+	}
+	return t.OrganizationID
+}
+
+type AddUserToOrgWithRole_CreateOrgMembership struct {
+	OrgMembership AddUserToOrgWithRole_CreateOrgMembership_OrgMembership "json:\"orgMembership\" graphql:\"orgMembership\""
+}
+
+func (t *AddUserToOrgWithRole_CreateOrgMembership) GetOrgMembership() *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership{}
+	}
+	return &t.OrgMembership
+}
+
+type CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships struct {
+	ID             string     "json:\"id\" graphql:\"id\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
+	Role           enums.Role "json:\"role\" graphql:\"role\""
+	UserID         string     "json:\"userID\" graphql:\"userID\""
+}
+
+func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships) GetID() string {
+	if t == nil {
+		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships{}
+	}
+	return t.ID
+}
+func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships) GetOrganizationID() string {
+	if t == nil {
+		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships{}
+	}
+	return t.OrganizationID
+}
+func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships) GetRole() *enums.Role {
+	if t == nil {
+		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships{}
+	}
+	return &t.Role
+}
+func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships) GetUserID() string {
+	if t == nil {
+		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships{}
+	}
+	return t.UserID
+}
+
+type CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership struct {
+	OrgMemberships []*CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+}
+
+func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership) GetOrgMemberships() []*CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships {
+	if t == nil {
+		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership{}
+	}
+	return t.OrgMemberships
+}
+
+type CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships struct {
+	ID             string     "json:\"id\" graphql:\"id\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
+	Role           enums.Role "json:\"role\" graphql:\"role\""
+	UserID         string     "json:\"userID\" graphql:\"userID\""
+}
+
+func (t *CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships) GetID() string {
+	if t == nil {
+		t = &CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships{}
+	}
+	return t.ID
+}
+func (t *CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships) GetOrganizationID() string {
+	if t == nil {
+		t = &CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships{}
+	}
+	return t.OrganizationID
+}
+func (t *CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships) GetRole() *enums.Role {
+	if t == nil {
+		t = &CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships{}
+	}
+	return &t.Role
+}
+func (t *CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships) GetUserID() string {
+	if t == nil {
+		t = &CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships{}
+	}
+	return t.UserID
+}
+
+type CreateBulkOrgMembers_CreateBulkOrgMembership struct {
+	OrgMemberships []*CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+}
+
+func (t *CreateBulkOrgMembers_CreateBulkOrgMembership) GetOrgMemberships() []*CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships {
+	if t == nil {
+		t = &CreateBulkOrgMembers_CreateBulkOrgMembership{}
+	}
+	return t.OrgMemberships
+}
+
 type GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User struct {
 	FirstName   *string "json:\"firstName,omitempty\" graphql:\"firstName\""
 	LastName    *string "json:\"lastName,omitempty\" graphql:\"lastName\""
@@ -12019,133 +12148,15 @@ func (t *GetOrgMembersByOrgID_OrgMemberships) GetEdges() []*GetOrgMembersByOrgID
 	return t.Edges
 }
 
-type AddUserToOrgWithRole_CreateOrgMembership_OrgMembership struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	Role           enums.Role "json:\"role\" graphql:\"role\""
-	UserID         string     "json:\"userID\" graphql:\"userID\""
-	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
+type RemoveUserFromOrg_DeleteOrgMembership struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
 }
 
-func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetID() string {
+func (t *RemoveUserFromOrg_DeleteOrgMembership) GetDeletedID() string {
 	if t == nil {
-		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+		t = &RemoveUserFromOrg_DeleteOrgMembership{}
 	}
-	return t.ID
-}
-func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetRole() *enums.Role {
-	if t == nil {
-		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
-	}
-	return &t.Role
-}
-func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetUserID() string {
-	if t == nil {
-		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
-	}
-	return t.UserID
-}
-func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetOrganizationID() string {
-	if t == nil {
-		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
-	}
-	return t.OrganizationID
-}
-
-type AddUserToOrgWithRole_CreateOrgMembership struct {
-	OrgMembership AddUserToOrgWithRole_CreateOrgMembership_OrgMembership "json:\"orgMembership\" graphql:\"orgMembership\""
-}
-
-func (t *AddUserToOrgWithRole_CreateOrgMembership) GetOrgMembership() *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership {
-	if t == nil {
-		t = &AddUserToOrgWithRole_CreateOrgMembership{}
-	}
-	return &t.OrgMembership
-}
-
-type CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
-	Role           enums.Role "json:\"role\" graphql:\"role\""
-	UserID         string     "json:\"userID\" graphql:\"userID\""
-}
-
-func (t *CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships) GetID() string {
-	if t == nil {
-		t = &CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships{}
-	}
-	return t.ID
-}
-func (t *CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships) GetOrganizationID() string {
-	if t == nil {
-		t = &CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships{}
-	}
-	return t.OrganizationID
-}
-func (t *CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships) GetRole() *enums.Role {
-	if t == nil {
-		t = &CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships{}
-	}
-	return &t.Role
-}
-func (t *CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships) GetUserID() string {
-	if t == nil {
-		t = &CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships{}
-	}
-	return t.UserID
-}
-
-type CreateBulkOrgMembers_CreateBulkOrgMembership struct {
-	OrgMemberships []*CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
-}
-
-func (t *CreateBulkOrgMembers_CreateBulkOrgMembership) GetOrgMemberships() []*CreateBulkOrgMembers_CreateBulkOrgMembership_OrgMemberships {
-	if t == nil {
-		t = &CreateBulkOrgMembers_CreateBulkOrgMembership{}
-	}
-	return t.OrgMemberships
-}
-
-type CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
-	Role           enums.Role "json:\"role\" graphql:\"role\""
-	UserID         string     "json:\"userID\" graphql:\"userID\""
-}
-
-func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships) GetID() string {
-	if t == nil {
-		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships{}
-	}
-	return t.ID
-}
-func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships) GetOrganizationID() string {
-	if t == nil {
-		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships{}
-	}
-	return t.OrganizationID
-}
-func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships) GetRole() *enums.Role {
-	if t == nil {
-		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships{}
-	}
-	return &t.Role
-}
-func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships) GetUserID() string {
-	if t == nil {
-		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships{}
-	}
-	return t.UserID
-}
-
-type CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership struct {
-	OrgMemberships []*CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
-}
-
-func (t *CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership) GetOrgMemberships() []*CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership_OrgMemberships {
-	if t == nil {
-		t = &CreateBulkCSVOrgMembers_CreateBulkCSVOrgMembership{}
-	}
-	return t.OrgMemberships
+	return t.DeletedID
 }
 
 type UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership struct {
@@ -12189,17 +12200,6 @@ func (t *UpdateUserRoleInOrg_UpdateOrgMembership) GetOrgMembership() *UpdateUser
 		t = &UpdateUserRoleInOrg_UpdateOrgMembership{}
 	}
 	return &t.OrgMembership
-}
-
-type RemoveUserFromOrg_DeleteOrgMembership struct {
-	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
-}
-
-func (t *RemoveUserFromOrg_DeleteOrgMembership) GetDeletedID() string {
-	if t == nil {
-		t = &RemoveUserFromOrg_DeleteOrgMembership{}
-	}
-	return t.DeletedID
 }
 
 type CreateBulkCSVPersonalAccessToken_CreateBulkCSVPersonalAccessToken_PersonalAccessTokens_Organizations struct {
@@ -12426,6 +12426,17 @@ func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken
 	return t.Name
 }
 
+type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner) GetID() string {
+	if t == nil {
+		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner{}
+	}
+	return t.ID
+}
+
 type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken struct {
 	Description   *string                                                                                  "json:\"description,omitempty\" graphql:\"description\""
 	ExpiresAt     time.Time                                                                                "json:\"expiresAt\" graphql:\"expiresAt\""
@@ -12437,6 +12448,7 @@ type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken str
 	UpdatedAt     *time.Time                                                                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy     *string                                                                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Organizations []*CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
+	Owner         CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner            "json:\"owner\" graphql:\"owner\""
 }
 
 func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetDescription() *string {
@@ -12499,6 +12511,12 @@ func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken
 	}
 	return t.Organizations
 }
+func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetOwner() *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner {
+	if t == nil {
+		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return &t.Owner
+}
 
 type CreatePersonalAccessToken_CreatePersonalAccessToken struct {
 	PersonalAccessToken CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken "json:\"personalAccessToken\" graphql:\"personalAccessToken\""
@@ -12511,107 +12529,15 @@ func (t *CreatePersonalAccessToken_CreatePersonalAccessToken) GetPersonalAccessT
 	return &t.PersonalAccessToken
 }
 
-type UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations struct {
-	ID   string "json:\"id\" graphql:\"id\""
-	Name string "json:\"name\" graphql:\"name\""
+type DeletePersonalAccessToken_DeletePersonalAccessToken struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
 }
 
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations) GetID() string {
+func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() string {
 	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations{}
+		t = &DeletePersonalAccessToken_DeletePersonalAccessToken{}
 	}
-	return t.ID
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations) GetName() string {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations{}
-	}
-	return t.Name
-}
-
-type UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken struct {
-	Description   *string                                                                                  "json:\"description,omitempty\" graphql:\"description\""
-	ExpiresAt     time.Time                                                                                "json:\"expiresAt\" graphql:\"expiresAt\""
-	ID            string                                                                                   "json:\"id\" graphql:\"id\""
-	LastUsedAt    *time.Time                                                                               "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
-	Name          string                                                                                   "json:\"name\" graphql:\"name\""
-	Scopes        []string                                                                                 "json:\"scopes,omitempty\" graphql:\"scopes\""
-	Token         string                                                                                   "json:\"token\" graphql:\"token\""
-	UpdatedAt     *time.Time                                                                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy     *string                                                                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Organizations []*UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
-}
-
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetDescription() *string {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.Description
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetExpiresAt() *time.Time {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return &t.ExpiresAt
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetID() string {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.ID
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetLastUsedAt() *time.Time {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.LastUsedAt
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetName() string {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.Name
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetScopes() []string {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.Scopes
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetToken() string {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.Token
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.UpdatedAt
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetUpdatedBy() *string {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.UpdatedBy
-}
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetOrganizations() []*UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
-	}
-	return t.Organizations
-}
-
-type UpdatePersonalAccessToken_UpdatePersonalAccessToken struct {
-	PersonalAccessToken UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken "json:\"personalAccessToken\" graphql:\"personalAccessToken\""
-}
-
-func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken) GetPersonalAccessToken() *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken {
-	if t == nil {
-		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken{}
-	}
-	return &t.PersonalAccessToken
+	return t.DeletedID
 }
 
 type GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node_Organizations struct {
@@ -12820,15 +12746,125 @@ func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetOrganizations() []*G
 	return t.Organizations
 }
 
-type DeletePersonalAccessToken_DeletePersonalAccessToken struct {
-	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+type UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations struct {
+	ID   string "json:\"id\" graphql:\"id\""
+	Name string "json:\"name\" graphql:\"name\""
 }
 
-func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() string {
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations) GetID() string {
 	if t == nil {
-		t = &DeletePersonalAccessToken_DeletePersonalAccessToken{}
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations{}
 	}
-	return t.DeletedID
+	return t.ID
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations) GetName() string {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations{}
+	}
+	return t.Name
+}
+
+type UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Owner) GetID() string {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Owner{}
+	}
+	return t.ID
+}
+
+type UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken struct {
+	Description   *string                                                                                  "json:\"description,omitempty\" graphql:\"description\""
+	ExpiresAt     time.Time                                                                                "json:\"expiresAt\" graphql:\"expiresAt\""
+	ID            string                                                                                   "json:\"id\" graphql:\"id\""
+	LastUsedAt    *time.Time                                                                               "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	Name          string                                                                                   "json:\"name\" graphql:\"name\""
+	Scopes        []string                                                                                 "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Token         string                                                                                   "json:\"token\" graphql:\"token\""
+	UpdatedAt     *time.Time                                                                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy     *string                                                                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Organizations []*UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
+	Owner         UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Owner            "json:\"owner\" graphql:\"owner\""
+}
+
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetDescription() *string {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.Description
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetExpiresAt() *time.Time {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return &t.ExpiresAt
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetID() string {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.ID
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetLastUsedAt() *time.Time {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.LastUsedAt
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetName() string {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.Name
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetScopes() []string {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.Scopes
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetToken() string {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.Token
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.UpdatedBy
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetOrganizations() []*UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.Organizations
+}
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetOwner() *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Owner {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return &t.Owner
+}
+
+type UpdatePersonalAccessToken_UpdatePersonalAccessToken struct {
+	PersonalAccessToken UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken "json:\"personalAccessToken\" graphql:\"personalAccessToken\""
+}
+
+func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken) GetPersonalAccessToken() *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken {
+	if t == nil {
+		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken{}
+	}
+	return &t.PersonalAccessToken
 }
 
 type Search_Search_Nodes_OrganizationSearchResult_Organizations struct {
@@ -13891,6 +13927,42 @@ func (t *GetTemplate_Template) GetOwner() *GetTemplate_Template_Owner {
 	return t.Owner
 }
 
+type CreateTFASetting_CreateTFASetting_TfaSetting struct {
+	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	Verified      bool     "json:\"verified\" graphql:\"verified\""
+}
+
+func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetRecoveryCodes() []string {
+	if t == nil {
+		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
+	}
+	return t.RecoveryCodes
+}
+func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetTotpAllowed() *bool {
+	if t == nil {
+		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
+	}
+	return t.TotpAllowed
+}
+func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetVerified() bool {
+	if t == nil {
+		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
+	}
+	return t.Verified
+}
+
+type CreateTFASetting_CreateTFASetting struct {
+	TfaSetting CreateTFASetting_CreateTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
+}
+
+func (t *CreateTFASetting_CreateTFASetting) GetTfaSetting() *CreateTFASetting_CreateTFASetting_TfaSetting {
+	if t == nil {
+		t = &CreateTFASetting_CreateTFASetting{}
+	}
+	return &t.TfaSetting
+}
+
 type GetTFASetting_TfaSetting struct {
 	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
 	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
@@ -13961,42 +14033,6 @@ func (t *GetTFASettings_TfaSettings) GetEdges() []*GetTFASettings_TfaSettings_Ed
 		t = &GetTFASettings_TfaSettings{}
 	}
 	return t.Edges
-}
-
-type CreateTFASetting_CreateTFASetting_TfaSetting struct {
-	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
-	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
-	Verified      bool     "json:\"verified\" graphql:\"verified\""
-}
-
-func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetRecoveryCodes() []string {
-	if t == nil {
-		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
-	}
-	return t.RecoveryCodes
-}
-func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetTotpAllowed() *bool {
-	if t == nil {
-		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
-	}
-	return t.TotpAllowed
-}
-func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetVerified() bool {
-	if t == nil {
-		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
-	}
-	return t.Verified
-}
-
-type CreateTFASetting_CreateTFASetting struct {
-	TfaSetting CreateTFASetting_CreateTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
-}
-
-func (t *CreateTFASetting_CreateTFASetting) GetTfaSetting() *CreateTFASetting_CreateTFASetting_TfaSetting {
-	if t == nil {
-		t = &CreateTFASetting_CreateTFASetting{}
-	}
-	return &t.TfaSetting
 }
 
 type UpdateTFASetting_UpdateTFASetting_TfaSetting struct {
@@ -17692,17 +17728,6 @@ func (t *UpdateOrganizationSetting) GetUpdateOrganizationSetting() *UpdateOrgani
 	return &t.UpdateOrganizationSetting
 }
 
-type GetOrgMembersByOrgID struct {
-	OrgMemberships GetOrgMembersByOrgID_OrgMemberships "json:\"orgMemberships\" graphql:\"orgMemberships\""
-}
-
-func (t *GetOrgMembersByOrgID) GetOrgMemberships() *GetOrgMembersByOrgID_OrgMemberships {
-	if t == nil {
-		t = &GetOrgMembersByOrgID{}
-	}
-	return &t.OrgMemberships
-}
-
 type AddUserToOrgWithRole struct {
 	CreateOrgMembership AddUserToOrgWithRole_CreateOrgMembership "json:\"createOrgMembership\" graphql:\"createOrgMembership\""
 }
@@ -17712,17 +17737,6 @@ func (t *AddUserToOrgWithRole) GetCreateOrgMembership() *AddUserToOrgWithRole_Cr
 		t = &AddUserToOrgWithRole{}
 	}
 	return &t.CreateOrgMembership
-}
-
-type CreateBulkOrgMembers struct {
-	CreateBulkOrgMembership CreateBulkOrgMembers_CreateBulkOrgMembership "json:\"createBulkOrgMembership\" graphql:\"createBulkOrgMembership\""
-}
-
-func (t *CreateBulkOrgMembers) GetCreateBulkOrgMembership() *CreateBulkOrgMembers_CreateBulkOrgMembership {
-	if t == nil {
-		t = &CreateBulkOrgMembers{}
-	}
-	return &t.CreateBulkOrgMembership
 }
 
 type CreateBulkCSVOrgMembers struct {
@@ -17736,15 +17750,26 @@ func (t *CreateBulkCSVOrgMembers) GetCreateBulkCSVOrgMembership() *CreateBulkCSV
 	return &t.CreateBulkCSVOrgMembership
 }
 
-type UpdateUserRoleInOrg struct {
-	UpdateOrgMembership UpdateUserRoleInOrg_UpdateOrgMembership "json:\"updateOrgMembership\" graphql:\"updateOrgMembership\""
+type CreateBulkOrgMembers struct {
+	CreateBulkOrgMembership CreateBulkOrgMembers_CreateBulkOrgMembership "json:\"createBulkOrgMembership\" graphql:\"createBulkOrgMembership\""
 }
 
-func (t *UpdateUserRoleInOrg) GetUpdateOrgMembership() *UpdateUserRoleInOrg_UpdateOrgMembership {
+func (t *CreateBulkOrgMembers) GetCreateBulkOrgMembership() *CreateBulkOrgMembers_CreateBulkOrgMembership {
 	if t == nil {
-		t = &UpdateUserRoleInOrg{}
+		t = &CreateBulkOrgMembers{}
 	}
-	return &t.UpdateOrgMembership
+	return &t.CreateBulkOrgMembership
+}
+
+type GetOrgMembersByOrgID struct {
+	OrgMemberships GetOrgMembersByOrgID_OrgMemberships "json:\"orgMemberships\" graphql:\"orgMemberships\""
+}
+
+func (t *GetOrgMembersByOrgID) GetOrgMemberships() *GetOrgMembersByOrgID_OrgMemberships {
+	if t == nil {
+		t = &GetOrgMembersByOrgID{}
+	}
+	return &t.OrgMemberships
 }
 
 type RemoveUserFromOrg struct {
@@ -17756,6 +17781,17 @@ func (t *RemoveUserFromOrg) GetDeleteOrgMembership() *RemoveUserFromOrg_DeleteOr
 		t = &RemoveUserFromOrg{}
 	}
 	return &t.DeleteOrgMembership
+}
+
+type UpdateUserRoleInOrg struct {
+	UpdateOrgMembership UpdateUserRoleInOrg_UpdateOrgMembership "json:\"updateOrgMembership\" graphql:\"updateOrgMembership\""
+}
+
+func (t *UpdateUserRoleInOrg) GetUpdateOrgMembership() *UpdateUserRoleInOrg_UpdateOrgMembership {
+	if t == nil {
+		t = &UpdateUserRoleInOrg{}
+	}
+	return &t.UpdateOrgMembership
 }
 
 type CreateBulkCSVPersonalAccessToken struct {
@@ -17791,15 +17827,15 @@ func (t *CreatePersonalAccessToken) GetCreatePersonalAccessToken() *CreatePerson
 	return &t.CreatePersonalAccessToken
 }
 
-type UpdatePersonalAccessToken struct {
-	UpdatePersonalAccessToken UpdatePersonalAccessToken_UpdatePersonalAccessToken "json:\"updatePersonalAccessToken\" graphql:\"updatePersonalAccessToken\""
+type DeletePersonalAccessToken struct {
+	DeletePersonalAccessToken DeletePersonalAccessToken_DeletePersonalAccessToken "json:\"deletePersonalAccessToken\" graphql:\"deletePersonalAccessToken\""
 }
 
-func (t *UpdatePersonalAccessToken) GetUpdatePersonalAccessToken() *UpdatePersonalAccessToken_UpdatePersonalAccessToken {
+func (t *DeletePersonalAccessToken) GetDeletePersonalAccessToken() *DeletePersonalAccessToken_DeletePersonalAccessToken {
 	if t == nil {
-		t = &UpdatePersonalAccessToken{}
+		t = &DeletePersonalAccessToken{}
 	}
-	return &t.UpdatePersonalAccessToken
+	return &t.DeletePersonalAccessToken
 }
 
 type GetAllPersonalAccessTokens struct {
@@ -17824,15 +17860,15 @@ func (t *GetPersonalAccessTokenByID) GetPersonalAccessToken() *GetPersonalAccess
 	return &t.PersonalAccessToken
 }
 
-type DeletePersonalAccessToken struct {
-	DeletePersonalAccessToken DeletePersonalAccessToken_DeletePersonalAccessToken "json:\"deletePersonalAccessToken\" graphql:\"deletePersonalAccessToken\""
+type UpdatePersonalAccessToken struct {
+	UpdatePersonalAccessToken UpdatePersonalAccessToken_UpdatePersonalAccessToken "json:\"updatePersonalAccessToken\" graphql:\"updatePersonalAccessToken\""
 }
 
-func (t *DeletePersonalAccessToken) GetDeletePersonalAccessToken() *DeletePersonalAccessToken_DeletePersonalAccessToken {
+func (t *UpdatePersonalAccessToken) GetUpdatePersonalAccessToken() *UpdatePersonalAccessToken_UpdatePersonalAccessToken {
 	if t == nil {
-		t = &DeletePersonalAccessToken{}
+		t = &UpdatePersonalAccessToken{}
 	}
-	return &t.DeletePersonalAccessToken
+	return &t.UpdatePersonalAccessToken
 }
 
 type Search struct {
@@ -17989,6 +18025,17 @@ func (t *GetTemplate) GetTemplate() *GetTemplate_Template {
 	return &t.Template
 }
 
+type CreateTFASetting struct {
+	CreateTFASetting CreateTFASetting_CreateTFASetting "json:\"createTFASetting\" graphql:\"createTFASetting\""
+}
+
+func (t *CreateTFASetting) GetCreateTFASetting() *CreateTFASetting_CreateTFASetting {
+	if t == nil {
+		t = &CreateTFASetting{}
+	}
+	return &t.CreateTFASetting
+}
+
 type GetTFASetting struct {
 	TfaSetting GetTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
 }
@@ -18009,17 +18056,6 @@ func (t *GetTFASettings) GetTfaSettings() *GetTFASettings_TfaSettings {
 		t = &GetTFASettings{}
 	}
 	return &t.TfaSettings
-}
-
-type CreateTFASetting struct {
-	CreateTFASetting CreateTFASetting_CreateTFASetting "json:\"createTFASetting\" graphql:\"createTFASetting\""
-}
-
-func (t *CreateTFASetting) GetCreateTFASetting() *CreateTFASetting_CreateTFASetting {
-	if t == nil {
-		t = &CreateTFASetting{}
-	}
-	return &t.CreateTFASetting
 }
 
 type UpdateTFASetting struct {
@@ -22110,44 +22146,6 @@ func (c *Client) UpdateOrganizationSetting(ctx context.Context, updateOrganizati
 	return &res, nil
 }
 
-const GetOrgMembersByOrgIDDocument = `query GetOrgMembersByOrgID ($where: OrgMembershipWhereInput) {
-	orgMemberships(where: $where) {
-		edges {
-			node {
-				id
-				organizationID
-				userID
-				role
-				user {
-					firstName
-					lastName
-					id
-					displayName
-					email
-				}
-			}
-		}
-	}
-}
-`
-
-func (c *Client) GetOrgMembersByOrgID(ctx context.Context, where *OrgMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrgMembersByOrgID, error) {
-	vars := map[string]any{
-		"where": where,
-	}
-
-	var res GetOrgMembersByOrgID
-	if err := c.Client.Post(ctx, "GetOrgMembersByOrgID", GetOrgMembersByOrgIDDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
 const AddUserToOrgWithRoleDocument = `mutation AddUserToOrgWithRole ($input: CreateOrgMembershipInput!) {
 	createOrgMembership(input: $input) {
 		orgMembership {
@@ -22167,35 +22165,6 @@ func (c *Client) AddUserToOrgWithRole(ctx context.Context, input CreateOrgMember
 
 	var res AddUserToOrgWithRole
 	if err := c.Client.Post(ctx, "AddUserToOrgWithRole", AddUserToOrgWithRoleDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const CreateBulkOrgMembersDocument = `mutation CreateBulkOrgMembers ($input: [CreateOrgMembershipInput!]) {
-	createBulkOrgMembership(input: $input) {
-		orgMemberships {
-			id
-			organizationID
-			role
-			userID
-		}
-	}
-}
-`
-
-func (c *Client) CreateBulkOrgMembers(ctx context.Context, input []*CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkOrgMembers, error) {
-	vars := map[string]any{
-		"input": input,
-	}
-
-	var res CreateBulkOrgMembers
-	if err := c.Client.Post(ctx, "CreateBulkOrgMembers", CreateBulkOrgMembersDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -22235,26 +22204,63 @@ func (c *Client) CreateBulkCSVOrgMembers(ctx context.Context, input graphql.Uplo
 	return &res, nil
 }
 
-const UpdateUserRoleInOrgDocument = `mutation UpdateUserRoleInOrg ($updateOrgMemberId: ID!, $input: UpdateOrgMembershipInput!) {
-	updateOrgMembership(id: $updateOrgMemberId, input: $input) {
-		orgMembership {
+const CreateBulkOrgMembersDocument = `mutation CreateBulkOrgMembers ($input: [CreateOrgMembershipInput!]) {
+	createBulkOrgMembership(input: $input) {
+		orgMemberships {
 			id
+			organizationID
 			role
 			userID
-			organizationID
 		}
 	}
 }
 `
 
-func (c *Client) UpdateUserRoleInOrg(ctx context.Context, updateOrgMemberID string, input UpdateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInOrg, error) {
+func (c *Client) CreateBulkOrgMembers(ctx context.Context, input []*CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkOrgMembers, error) {
 	vars := map[string]any{
-		"updateOrgMemberId": updateOrgMemberID,
-		"input":             input,
+		"input": input,
 	}
 
-	var res UpdateUserRoleInOrg
-	if err := c.Client.Post(ctx, "UpdateUserRoleInOrg", UpdateUserRoleInOrgDocument, &res, vars, interceptors...); err != nil {
+	var res CreateBulkOrgMembers
+	if err := c.Client.Post(ctx, "CreateBulkOrgMembers", CreateBulkOrgMembersDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetOrgMembersByOrgIDDocument = `query GetOrgMembersByOrgID ($where: OrgMembershipWhereInput) {
+	orgMemberships(where: $where) {
+		edges {
+			node {
+				id
+				organizationID
+				userID
+				role
+				user {
+					firstName
+					lastName
+					id
+					displayName
+					email
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetOrgMembersByOrgID(ctx context.Context, where *OrgMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrgMembersByOrgID, error) {
+	vars := map[string]any{
+		"where": where,
+	}
+
+	var res GetOrgMembersByOrgID
+	if err := c.Client.Post(ctx, "GetOrgMembersByOrgID", GetOrgMembersByOrgIDDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -22279,6 +22285,36 @@ func (c *Client) RemoveUserFromOrg(ctx context.Context, deleteOrgMembershipID st
 
 	var res RemoveUserFromOrg
 	if err := c.Client.Post(ctx, "RemoveUserFromOrg", RemoveUserFromOrgDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateUserRoleInOrgDocument = `mutation UpdateUserRoleInOrg ($updateOrgMemberId: ID!, $input: UpdateOrgMembershipInput!) {
+	updateOrgMembership(id: $updateOrgMemberId, input: $input) {
+		orgMembership {
+			id
+			role
+			userID
+			organizationID
+		}
+	}
+}
+`
+
+func (c *Client) UpdateUserRoleInOrg(ctx context.Context, updateOrgMemberID string, input UpdateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInOrg, error) {
+	vars := map[string]any{
+		"updateOrgMemberId": updateOrgMemberID,
+		"input":             input,
+	}
+
+	var res UpdateUserRoleInOrg
+	if err := c.Client.Post(ctx, "UpdateUserRoleInOrg", UpdateUserRoleInOrgDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -22381,6 +22417,9 @@ const CreatePersonalAccessTokenDocument = `mutation CreatePersonalAccessToken ($
 				id
 				name
 			}
+			owner {
+				id
+			}
 		}
 	}
 }
@@ -22403,35 +22442,20 @@ func (c *Client) CreatePersonalAccessToken(ctx context.Context, input CreatePers
 	return &res, nil
 }
 
-const UpdatePersonalAccessTokenDocument = `mutation UpdatePersonalAccessToken ($updatePersonalAccessTokenId: ID!, $input: UpdatePersonalAccessTokenInput!) {
-	updatePersonalAccessToken(id: $updatePersonalAccessTokenId, input: $input) {
-		personalAccessToken {
-			description
-			expiresAt
-			id
-			lastUsedAt
-			name
-			scopes
-			token
-			updatedAt
-			updatedBy
-			organizations {
-				id
-				name
-			}
-		}
+const DeletePersonalAccessTokenDocument = `mutation DeletePersonalAccessToken ($deletePersonalAccessTokenId: ID!) {
+	deletePersonalAccessToken(id: $deletePersonalAccessTokenId) {
+		deletedID
 	}
 }
 `
 
-func (c *Client) UpdatePersonalAccessToken(ctx context.Context, updatePersonalAccessTokenID string, input UpdatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*UpdatePersonalAccessToken, error) {
+func (c *Client) DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error) {
 	vars := map[string]any{
-		"updatePersonalAccessTokenId": updatePersonalAccessTokenID,
-		"input":                       input,
+		"deletePersonalAccessTokenId": deletePersonalAccessTokenID,
 	}
 
-	var res UpdatePersonalAccessToken
-	if err := c.Client.Post(ctx, "UpdatePersonalAccessToken", UpdatePersonalAccessTokenDocument, &res, vars, interceptors...); err != nil {
+	var res DeletePersonalAccessToken
+	if err := c.Client.Post(ctx, "DeletePersonalAccessToken", DeletePersonalAccessTokenDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -22516,20 +22540,38 @@ func (c *Client) GetPersonalAccessTokenByID(ctx context.Context, personalAccessT
 	return &res, nil
 }
 
-const DeletePersonalAccessTokenDocument = `mutation DeletePersonalAccessToken ($deletePersonalAccessTokenId: ID!) {
-	deletePersonalAccessToken(id: $deletePersonalAccessTokenId) {
-		deletedID
+const UpdatePersonalAccessTokenDocument = `mutation UpdatePersonalAccessToken ($updatePersonalAccessTokenId: ID!, $input: UpdatePersonalAccessTokenInput!) {
+	updatePersonalAccessToken(id: $updatePersonalAccessTokenId, input: $input) {
+		personalAccessToken {
+			description
+			expiresAt
+			id
+			lastUsedAt
+			name
+			scopes
+			token
+			updatedAt
+			updatedBy
+			organizations {
+				id
+				name
+			}
+			owner {
+				id
+			}
+		}
 	}
 }
 `
 
-func (c *Client) DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error) {
+func (c *Client) UpdatePersonalAccessToken(ctx context.Context, updatePersonalAccessTokenID string, input UpdatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*UpdatePersonalAccessToken, error) {
 	vars := map[string]any{
-		"deletePersonalAccessTokenId": deletePersonalAccessTokenID,
+		"updatePersonalAccessTokenId": updatePersonalAccessTokenID,
+		"input":                       input,
 	}
 
-	var res DeletePersonalAccessToken
-	if err := c.Client.Post(ctx, "DeletePersonalAccessToken", DeletePersonalAccessTokenDocument, &res, vars, interceptors...); err != nil {
+	var res UpdatePersonalAccessToken
+	if err := c.Client.Post(ctx, "UpdatePersonalAccessToken", UpdatePersonalAccessTokenDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -23017,6 +23059,34 @@ func (c *Client) GetTemplate(ctx context.Context, getTemplateID string, intercep
 	return &res, nil
 }
 
+const CreateTFASettingDocument = `mutation CreateTFASetting ($input: CreateTFASettingInput!) {
+	createTFASetting(input: $input) {
+		tfaSetting {
+			recoveryCodes
+			totpAllowed
+			verified
+		}
+	}
+}
+`
+
+func (c *Client) CreateTFASetting(ctx context.Context, input CreateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASetting, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateTFASetting
+	if err := c.Client.Post(ctx, "CreateTFASetting", CreateTFASettingDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const GetTFASettingDocument = `query GetTFASetting {
 	tfaSetting {
 		recoveryCodes
@@ -23059,34 +23129,6 @@ func (c *Client) GetTFASettings(ctx context.Context, interceptors ...clientv2.Re
 
 	var res GetTFASettings
 	if err := c.Client.Post(ctx, "GetTFASettings", GetTFASettingsDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const CreateTFASettingDocument = `mutation CreateTFASetting ($input: CreateTFASettingInput!) {
-	createTFASetting(input: $input) {
-		tfaSetting {
-			recoveryCodes
-			totpAllowed
-			verified
-		}
-	}
-}
-`
-
-func (c *Client) CreateTFASetting(ctx context.Context, input CreateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASetting, error) {
-	vars := map[string]any{
-		"input": input,
-	}
-
-	var res CreateTFASetting
-	if err := c.Client.Post(ctx, "CreateTFASetting", CreateTFASettingDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -24038,19 +24080,19 @@ var DocumentOperationNames = map[string]string{
 	GetOrganizationSettingsDocument:          "GetOrganizationSettings",
 	GetOrganizationSettingWhereDocument:      "GetOrganizationSettingWhere",
 	UpdateOrganizationSettingDocument:        "UpdateOrganizationSetting",
-	GetOrgMembersByOrgIDDocument:             "GetOrgMembersByOrgID",
 	AddUserToOrgWithRoleDocument:             "AddUserToOrgWithRole",
-	CreateBulkOrgMembersDocument:             "CreateBulkOrgMembers",
 	CreateBulkCSVOrgMembersDocument:          "CreateBulkCSVOrgMembers",
-	UpdateUserRoleInOrgDocument:              "UpdateUserRoleInOrg",
+	CreateBulkOrgMembersDocument:             "CreateBulkOrgMembers",
+	GetOrgMembersByOrgIDDocument:             "GetOrgMembersByOrgID",
 	RemoveUserFromOrgDocument:                "RemoveUserFromOrg",
+	UpdateUserRoleInOrgDocument:              "UpdateUserRoleInOrg",
 	CreateBulkCSVPersonalAccessTokenDocument: "CreateBulkCSVPersonalAccessToken",
 	CreateBulkPersonalAccessTokenDocument:    "CreateBulkPersonalAccessToken",
 	CreatePersonalAccessTokenDocument:        "CreatePersonalAccessToken",
-	UpdatePersonalAccessTokenDocument:        "UpdatePersonalAccessToken",
+	DeletePersonalAccessTokenDocument:        "DeletePersonalAccessToken",
 	GetAllPersonalAccessTokensDocument:       "GetAllPersonalAccessTokens",
 	GetPersonalAccessTokenByIDDocument:       "GetPersonalAccessTokenByID",
-	DeletePersonalAccessTokenDocument:        "DeletePersonalAccessToken",
+	UpdatePersonalAccessTokenDocument:        "UpdatePersonalAccessToken",
 	SearchDocument:                           "Search",
 	SubscribersDocument:                      "Subscribers",
 	GetSubscriberDocument:                    "GetSubscriber",
@@ -24065,9 +24107,9 @@ var DocumentOperationNames = map[string]string{
 	UpdateTemplateDocument:                   "UpdateTemplate",
 	GetAllTemplatesDocument:                  "GetAllTemplates",
 	GetTemplateDocument:                      "GetTemplate",
+	CreateTFASettingDocument:                 "CreateTFASetting",
 	GetTFASettingDocument:                    "GetTFASetting",
 	GetTFASettingsDocument:                   "GetTFASettings",
-	CreateTFASettingDocument:                 "CreateTFASetting",
 	UpdateTFASettingDocument:                 "UpdateTFASetting",
 	GetUserByIDDocument:                      "GetUserByID",
 	GetUserByIDWithOrgsDocument:              "GetUserByIDWithOrgs",

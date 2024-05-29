@@ -54,6 +54,9 @@ mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
         id
         name
       }
+      owner {
+        id
+      }
     }
   }
 }
@@ -119,6 +122,9 @@ mutation UpdatePersonalAccessToken($updatePersonalAccessTokenId: ID!, $input: Up
       organizations {
         id
         name
+      }
+      owner {
+        id
       }
     }
   }

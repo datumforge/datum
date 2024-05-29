@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -17,17 +16,53 @@ import (
 
 // CreateOrganizationSetting is the resolver for the createOrganizationSetting field.
 func (r *mutationResolver) CreateOrganizationSetting(ctx context.Context, input generated.CreateOrganizationSettingInput) (*OrganizationSettingCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateOrganizationSetting - createOrganizationSetting"))
+	res, err := withTransactionalMutation(ctx).OrganizationSetting.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "organizationsetting")
+		}
+
+		r.logger.Errorw("failed to create organizationsetting", "error", err)
+
+		return nil, ErrInternalServerError
+	}
+
+	return &OrganizationSettingCreatePayload{
+		OrganizationSetting: res,
+	}, nil
 }
 
 // CreateBulkOrganizationSetting is the resolver for the createBulkOrganizationSetting field.
 func (r *mutationResolver) CreateBulkOrganizationSetting(ctx context.Context, input []*generated.CreateOrganizationSettingInput) (*OrganizationSettingBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkOrganizationSetting - createBulkOrganizationSetting"))
+	return r.bulkCreateOrganizationSetting(ctx, input)
 }
 
 // CreateBulkCSVOrganizationSetting is the resolver for the createBulkCSVOrganizationSetting field.
 func (r *mutationResolver) CreateBulkCSVOrganizationSetting(ctx context.Context, input graphql.Upload) (*OrganizationSettingBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVOrganizationSetting - createBulkCSVOrganizationSetting"))
+	data, err := unmarshalBulkData[generated.CreateOrganizationSettingInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateOrganizationSetting(ctx, data)
 }
 
 // UpdateOrganizationSetting is the resolver for the updateOrganizationSetting field.
@@ -63,7 +98,26 @@ func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id str
 
 // DeleteOrganizationSetting is the resolver for the deleteOrganizationSetting field.
 func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id string) (*OrganizationSettingDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteOrganizationSetting - deleteOrganizationSetting"))
+	if err := withTransactionalMutation(ctx).OrganizationSetting.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionDelete, "organizationsetting")
+		}
+
+		r.logger.Errorw("failed to delete organizationsetting", "error", err)
+		return nil, err
+	}
+
+	if err := generated.OrganizationSettingEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &OrganizationSettingDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // OrganizationSetting is the resolver for the organizationSetting field.

@@ -6,7 +6,6 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -38,12 +37,19 @@ func (r *mutationResolver) CreateIntegration(ctx context.Context, input generate
 
 // CreateBulkIntegration is the resolver for the createBulkIntegration field.
 func (r *mutationResolver) CreateBulkIntegration(ctx context.Context, input []*generated.CreateIntegrationInput) (*IntegrationBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkIntegration - createBulkIntegration"))
+	return r.bulkCreateIntegration(ctx, input)
 }
 
 // CreateBulkCSVIntegration is the resolver for the createBulkCSVIntegration field.
 func (r *mutationResolver) CreateBulkCSVIntegration(ctx context.Context, input graphql.Upload) (*IntegrationBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVIntegration - createBulkCSVIntegration"))
+	data, err := unmarshalBulkData[generated.CreateIntegrationInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateIntegration(ctx, data)
 }
 
 // UpdateIntegration is the resolver for the updateIntegration field.

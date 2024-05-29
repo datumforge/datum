@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -48,12 +47,19 @@ func (r *mutationResolver) CreateHush(ctx context.Context, input generated.Creat
 
 // CreateBulkHush is the resolver for the createBulkHush field.
 func (r *mutationResolver) CreateBulkHush(ctx context.Context, input []*generated.CreateHushInput) (*HushBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkHush - createBulkHush"))
+	return r.bulkCreateHush(ctx, input)
 }
 
 // CreateBulkCSVHush is the resolver for the createBulkCSVHush field.
 func (r *mutationResolver) CreateBulkCSVHush(ctx context.Context, input graphql.Upload) (*HushBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVHush - createBulkCSVHush"))
+	data, err := unmarshalBulkData[generated.CreateHushInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateHush(ctx, data)
 }
 
 // UpdateHush is the resolver for the updateHush field

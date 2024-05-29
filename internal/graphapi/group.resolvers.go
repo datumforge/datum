@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -48,12 +47,19 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.Crea
 
 // CreateBulkGroup is the resolver for the createBulkGroup field.
 func (r *mutationResolver) CreateBulkGroup(ctx context.Context, input []*generated.CreateGroupInput) (*GroupBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkGroup - createBulkGroup"))
+	return r.bulkCreateGroup(ctx, input)
 }
 
 // CreateBulkCSVGroup is the resolver for the createBulkCSVGroup field.
 func (r *mutationResolver) CreateBulkCSVGroup(ctx context.Context, input graphql.Upload) (*GroupBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVGroup - createBulkCSVGroup"))
+	data, err := unmarshalBulkData[generated.CreateGroupInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateGroup(ctx, data)
 }
 
 // UpdateGroup is the resolver for the updateGroup field.

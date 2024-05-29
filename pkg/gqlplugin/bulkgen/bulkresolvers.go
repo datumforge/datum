@@ -2,7 +2,6 @@ package bulkgen
 
 import (
 	_ "embed"
-	"fmt"
 	"strings"
 
 	"github.com/99designs/gqlgen/codegen"
@@ -47,8 +46,6 @@ func (m *Plugin) GenerateCode(data *codegen.Data) error {
 }
 
 func (m *Plugin) generateSingleFile(data codegen.Data) error {
-	fmt.Println("Generating bulk resolvers")
-
 	inputData := BulkResolverBuild{
 		Objects: []Object{},
 	}

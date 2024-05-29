@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -48,12 +47,19 @@ func (r *mutationResolver) CreateWebhook(ctx context.Context, input generated.Cr
 
 // CreateBulkWebhook is the resolver for the createBulkWebhook field.
 func (r *mutationResolver) CreateBulkWebhook(ctx context.Context, input []*generated.CreateWebhookInput) (*WebhookBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkWebhook - createBulkWebhook"))
+	return r.bulkCreateWebhook(ctx, input)
 }
 
 // CreateBulkCSVWebhook is the resolver for the createBulkCSVWebhook field.
 func (r *mutationResolver) CreateBulkCSVWebhook(ctx context.Context, input graphql.Upload) (*WebhookBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVWebhook - createBulkCSVWebhook"))
+	data, err := unmarshalBulkData[generated.CreateWebhookInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateWebhook(ctx, data)
 }
 
 // UpdateWebhook is the resolver for the updateWebhook field

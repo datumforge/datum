@@ -6,35 +6,126 @@ package graphapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateEntitlement is the resolver for the createEntitlement field.
 func (r *mutationResolver) CreateEntitlement(ctx context.Context, input generated.CreateEntitlementInput) (*EntitlementCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateEntitlement - createEntitlement"))
+	res, err := withTransactionalMutation(ctx).Entitlement.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "entitlement")
+		}
+
+		r.logger.Errorw("failed to create entitlement", "error", err)
+
+		return nil, ErrInternalServerError
+	}
+
+	return &EntitlementCreatePayload{
+		Entitlement: res,
+	}, nil
 }
 
 // CreateBulkEntitlement is the resolver for the createBulkEntitlement field.
 func (r *mutationResolver) CreateBulkEntitlement(ctx context.Context, input []*generated.CreateEntitlementInput) (*EntitlementBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkEntitlement - createBulkEntitlement"))
+	return r.bulkCreateEntitlement(ctx, input)
 }
 
 // CreateBulkCSVEntitlement is the resolver for the createBulkCSVEntitlement field.
 func (r *mutationResolver) CreateBulkCSVEntitlement(ctx context.Context, input graphql.Upload) (*EntitlementBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVEntitlement - createBulkCSVEntitlement"))
+	data, err := unmarshalBulkData[generated.CreateEntitlementInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateEntitlement(ctx, data)
 }
 
 // UpdateEntitlement is the resolver for the updateEntitlement field.
 func (r *mutationResolver) UpdateEntitlement(ctx context.Context, id string, input generated.UpdateEntitlementInput) (*EntitlementUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateEntitlement - updateEntitlement"))
+	res, err := withTransactionalMutation(ctx).Entitlement.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to get entitlement on update", "error", err)
+
+			return nil, newPermissionDeniedError(ActionGet, "entitlement")
+		}
+
+		r.logger.Errorw("failed to get entitlement", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	res, err = res.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to update entitlement", "error", err)
+
+			return nil, newPermissionDeniedError(ActionUpdate, "entitlement")
+		}
+
+		r.logger.Errorw("failed to update entitlement", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &EntitlementUpdatePayload{
+		Entitlement: res,
+	}, nil
 }
 
 // DeleteEntitlement is the resolver for the deleteEntitlement field.
 func (r *mutationResolver) DeleteEntitlement(ctx context.Context, id string) (*EntitlementDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteEntitlement - deleteEntitlement"))
+	if err := withTransactionalMutation(ctx).Entitlement.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionDelete, "entitlement")
+		}
+
+		r.logger.Errorw("failed to delete entitlement", "error", err)
+		return nil, err
+	}
+
+	if err := generated.EntitlementEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &EntitlementDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // Entitlement is the resolver for the entitlement field.

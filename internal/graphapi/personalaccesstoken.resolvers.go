@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -34,7 +33,7 @@ func (r *mutationResolver) CreatePersonalAccessToken(ctx context.Context, input 
 
 // CreateBulkPersonalAccessToken is the resolver for the createBulkPersonalAccessToken field.
 func (r *mutationResolver) CreateBulkPersonalAccessToken(ctx context.Context, input []*generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkPersonalAccessToken - createBulkPersonalAccessToken"))
+	return r.bulkCreatePersonalAccessToken(ctx, input)
 }
 
 // UpdatePersonalAccessToken is the resolver for the updatePersonalAccessToken field.

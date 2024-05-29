@@ -1,0 +1,22 @@
+{{ $entity := .Field.GoFieldName | getEntityName  -}}
+
+if err := withTransactionalMutation(ctx).{{ $entity }}.DeleteOneID(id).Exec(ctx); err != nil {
+	if generated.IsNotFound(err) {
+		return nil, err
+	}
+
+	if errors.Is(err, privacy.Deny) {
+		return nil, newPermissionDeniedError(ActionDelete, "{{ $entity | toLower }}")
+	}
+
+	r.logger.Errorw("failed to delete {{ $entity | toLower }}", "error", err)
+	return nil, err
+}
+
+if err := generated.{{ $entity }}EdgeCleanup(ctx, id); err != nil {
+	return nil, newCascadeDeleteError(err)
+}
+
+return &{{ $entity }}DeletePayload{
+	DeletedID: id,
+}, nil

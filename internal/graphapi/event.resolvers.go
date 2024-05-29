@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -48,12 +47,19 @@ func (r *mutationResolver) CreateEvent(ctx context.Context, input generated.Crea
 
 // CreateBulkEvent is the resolver for the createBulkEvent field.
 func (r *mutationResolver) CreateBulkEvent(ctx context.Context, input []*generated.CreateEventInput) (*EventBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkEvent - createBulkEvent"))
+	return r.bulkCreateEvent(ctx, input)
 }
 
 // CreateBulkCSVEvent is the resolver for the createBulkCSVEvent field.
 func (r *mutationResolver) CreateBulkCSVEvent(ctx context.Context, input graphql.Upload) (*EventBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVEvent - createBulkCSVEvent"))
+	data, err := unmarshalBulkData[generated.CreateEventInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateEvent(ctx, data)
 }
 
 // UpdateEvent is the resolver for the updateEvent field

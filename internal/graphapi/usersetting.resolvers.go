@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -17,17 +16,53 @@ import (
 
 // CreateUserSetting is the resolver for the createUserSetting field.
 func (r *mutationResolver) CreateUserSetting(ctx context.Context, input generated.CreateUserSettingInput) (*UserSettingCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateUserSetting - createUserSetting"))
+	res, err := withTransactionalMutation(ctx).UserSetting.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "usersetting")
+		}
+
+		r.logger.Errorw("failed to create usersetting", "error", err)
+
+		return nil, ErrInternalServerError
+	}
+
+	return &UserSettingCreatePayload{
+		UserSetting: res,
+	}, nil
 }
 
 // CreateBulkUserSetting is the resolver for the createBulkUserSetting field.
 func (r *mutationResolver) CreateBulkUserSetting(ctx context.Context, input []*generated.CreateUserSettingInput) (*UserSettingBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkUserSetting - createBulkUserSetting"))
+	return r.bulkCreateUserSetting(ctx, input)
 }
 
 // CreateBulkCSVUserSetting is the resolver for the createBulkCSVUserSetting field.
 func (r *mutationResolver) CreateBulkCSVUserSetting(ctx context.Context, input graphql.Upload) (*UserSettingBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVUserSetting - createBulkCSVUserSetting"))
+	data, err := unmarshalBulkData[generated.CreateUserSettingInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateUserSetting(ctx, data)
 }
 
 // UpdateUserSetting is the resolver for the updateUserSetting field.
@@ -63,7 +98,26 @@ func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, inp
 
 // DeleteUserSetting is the resolver for the deleteUserSetting field.
 func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*UserSettingDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteUserSetting - deleteUserSetting"))
+	if err := withTransactionalMutation(ctx).UserSetting.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionDelete, "usersetting")
+		}
+
+		r.logger.Errorw("failed to delete usersetting", "error", err)
+		return nil, err
+	}
+
+	if err := generated.UserSettingEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &UserSettingDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // UserSetting is the resolver for the UserSetting field.

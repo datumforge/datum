@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -17,17 +16,53 @@ import (
 
 // CreateGroupSetting is the resolver for the createGroupSetting field.
 func (r *mutationResolver) CreateGroupSetting(ctx context.Context, input generated.CreateGroupSettingInput) (*GroupSettingCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateGroupSetting - createGroupSetting"))
+	res, err := withTransactionalMutation(ctx).GroupSetting.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "groupsetting")
+		}
+
+		r.logger.Errorw("failed to create groupsetting", "error", err)
+
+		return nil, ErrInternalServerError
+	}
+
+	return &GroupSettingCreatePayload{
+		GroupSetting: res,
+	}, nil
 }
 
 // CreateBulkGroupSetting is the resolver for the createBulkGroupSetting field.
 func (r *mutationResolver) CreateBulkGroupSetting(ctx context.Context, input []*generated.CreateGroupSettingInput) (*GroupSettingBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkGroupSetting - createBulkGroupSetting"))
+	return r.bulkCreateGroupSetting(ctx, input)
 }
 
 // CreateBulkCSVGroupSetting is the resolver for the createBulkCSVGroupSetting field.
 func (r *mutationResolver) CreateBulkCSVGroupSetting(ctx context.Context, input graphql.Upload) (*GroupSettingBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVGroupSetting - createBulkCSVGroupSetting"))
+	data, err := unmarshalBulkData[generated.CreateGroupSettingInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateGroupSetting(ctx, data)
 }
 
 // UpdateGroupSetting is the resolver for the updateGroupSetting field.
@@ -63,7 +98,26 @@ func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, in
 
 // DeleteGroupSetting is the resolver for the deleteGroupSetting field.
 func (r *mutationResolver) DeleteGroupSetting(ctx context.Context, id string) (*GroupSettingDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteGroupSetting - deleteGroupSetting"))
+	if err := withTransactionalMutation(ctx).GroupSetting.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionDelete, "groupsetting")
+		}
+
+		r.logger.Errorw("failed to delete groupsetting", "error", err)
+		return nil, err
+	}
+
+	if err := generated.GroupSettingEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &GroupSettingDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // GroupSetting is the resolver for the groupSetting field.

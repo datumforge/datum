@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -56,12 +55,19 @@ func (r *mutationResolver) CreateOrgMembership(ctx context.Context, input genera
 
 // CreateBulkOrgMembership is the resolver for the createBulkOrgMembership field.
 func (r *mutationResolver) CreateBulkOrgMembership(ctx context.Context, input []*generated.CreateOrgMembershipInput) (*OrgMembershipBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkOrgMembership - createBulkOrgMembership"))
+	return r.bulkCreateOrgMembership(ctx, input)
 }
 
 // CreateBulkCSVOrgMembership is the resolver for the createBulkCSVOrgMembership field.
 func (r *mutationResolver) CreateBulkCSVOrgMembership(ctx context.Context, input graphql.Upload) (*OrgMembershipBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVOrgMembership - createBulkCSVOrgMembership"))
+	data, err := unmarshalBulkData[generated.CreateOrgMembershipInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateOrgMembership(ctx, data)
 }
 
 // UpdateOrgMembership is the resolver for the updateOrgMembership field.

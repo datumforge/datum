@@ -9,6 +9,8 @@ import (
 	"github.com/99designs/gqlgen/api"
 	"github.com/99designs/gqlgen/codegen/config"
 	"github.com/datumforge/datum/pkg/gqlplugin/bulkgen"
+
+	"github.com/datumforge/datum/pkg/gqlplugin/resolvergen"
 )
 
 func main() {
@@ -18,10 +20,10 @@ func main() {
 		os.Exit(2)
 	}
 
-	err = api.Generate(cfg,
-		api.AddPlugin(bulkgen.New()), // add the bulkgen plugin
-	)
-	if err != nil {
+	if err := api.Generate(cfg,
+		api.ReplacePlugin(resolvergen.New()), // replace the resolvergen plugin
+		api.AddPlugin(bulkgen.New()),         // add the bulkgen plugin
+	); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(3)
 	}

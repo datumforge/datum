@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -48,12 +47,19 @@ func (r *mutationResolver) CreateFeature(ctx context.Context, input generated.Cr
 
 // CreateBulkFeature is the resolver for the createBulkFeature field.
 func (r *mutationResolver) CreateBulkFeature(ctx context.Context, input []*generated.CreateFeatureInput) (*FeatureBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkFeature - createBulkFeature"))
+	return r.bulkCreateFeature(ctx, input)
 }
 
 // CreateBulkCSVFeature is the resolver for the createBulkCSVFeature field.
 func (r *mutationResolver) CreateBulkCSVFeature(ctx context.Context, input graphql.Upload) (*FeatureBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVFeature - createBulkCSVFeature"))
+	data, err := unmarshalBulkData[generated.CreateFeatureInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateFeature(ctx, data)
 }
 
 // UpdateFeature is the resolver for the updateFeature field

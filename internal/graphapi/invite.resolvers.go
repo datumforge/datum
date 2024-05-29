@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -56,12 +55,19 @@ func (r *mutationResolver) CreateInvite(ctx context.Context, input generated.Cre
 
 // CreateBulkInvite is the resolver for the createBulkInvite field.
 func (r *mutationResolver) CreateBulkInvite(ctx context.Context, input []*generated.CreateInviteInput) (*InviteBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkInvite - createBulkInvite"))
+	return r.bulkCreateInvite(ctx, input)
 }
 
 // CreateBulkCSVInvite is the resolver for the createBulkCSVInvite field.
 func (r *mutationResolver) CreateBulkCSVInvite(ctx context.Context, input graphql.Upload) (*InviteBulkCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateBulkCSVInvite - createBulkCSVInvite"))
+	data, err := unmarshalBulkData[generated.CreateInviteInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateInvite(ctx, data)
 }
 
 // UpdateInvite is the resolver for the updateInvite field.

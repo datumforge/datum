@@ -48,7 +48,6 @@ func invites(ctx context.Context) error {
 		}
 
 		return printInvite(invite)
-
 	}
 
 	invites, err := cli.Client.GetInvites(ctx, cli.Interceptor)

@@ -66,9 +66,9 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 
 	securityschemes["oauth2"] = &openapi3.SecuritySchemeRef{
 		Value: (*OAuth2)(&OAuth2{
-			AuthorizationURL: "https://auth.datum.net/oauth2/authorize",
-			TokenURL:         "https://auth.datum.net/oauth2/token",
-			RefreshURL:       "https://auth.datum.net/oauth2/refresh",
+			AuthorizationURL: "https://api.datum.net/oauth2/authorize",
+			TokenURL:         "https://api.datum.net/oauth2/token",
+			RefreshURL:       "https://api.datum.net/oauth2/refresh",
 			Scopes: map[string]string{
 				"read":  "Read access",
 				"write": "Write access",
@@ -235,19 +235,5 @@ func (b *Basic) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
 		Type:   "http",
 		Scheme: "basic",
-	}
-}
-
-// Bearer is a struct that represents a Bearer Token security scheme
-type Bearer struct {
-	Token string
-}
-
-// Scheme returns the Bearer Token security scheme
-func (b *Bearer) Scheme() *openapi3.SecurityScheme {
-	return &openapi3.SecurityScheme{
-		Type:         "http",
-		Scheme:       "bearer",
-		BearerFormat: "JWT",
 	}
 }

@@ -35,7 +35,12 @@ func (h *Handler) BindEventPublisher() *openapi3.Operation {
 	eventCreate.Description = "Publish and Correleate Events"
 	eventCreate.OperationID = "EventPublisher"
 
-	eventCreate.Security = &openapi3.SecurityRequirements{openapi3.NewSecurityRequirement()}
+	eventCreate.Security = &openapi3.SecurityRequirements{
+		openapi3.SecurityRequirement{
+			"apiKey": []string{},
+		},
+	}
+
 	h.AddRequestBody("EventPublishRequest", models.ExamplePublishSuccessRequest, eventCreate)
 	h.AddResponse("EventPublishReply", "success", models.ExamplePublishSuccessResponse, eventCreate, http.StatusOK)
 	eventCreate.AddResponse(http.StatusInternalServerError, internalServerError())

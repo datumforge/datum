@@ -172,9 +172,10 @@ func (h *Handler) BindVerifyEmailHandler() *openapi3.Operation {
 	verify := openapi3.NewOperation()
 	verify.Description = "VerifyEmail verifies a user's email address by validating the token in the request and setting the user's validated field in the database to true. This endpoint is intended to be called by frontend applications after the user has followed the link in the verification email"
 	verify.OperationID = "VerifyEmail"
+	verify.Security = &openapi3.SecurityRequirements{}
 
-	h.AddRequestBody("VerifyEmailRequest", models.VerifyRequest{}, verify)
-	h.AddResponse("VerifyEmailReply", "success", models.VerifyReply{}, verify, http.StatusOK)
+	h.AddRequestBody("VerifyEmailRequest", models.ExampleVerifySuccessRequest, verify)
+	h.AddResponse("VerifyEmailReply", "success", models.ExampleVerifySuccessResponse, verify, http.StatusOK)
 	verify.AddResponse(http.StatusInternalServerError, internalServerError())
 	verify.AddResponse(http.StatusBadRequest, badRequest())
 	verify.AddResponse(http.StatusCreated, created())

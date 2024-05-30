@@ -79,6 +79,14 @@ func (h *Handler) BindRefreshHandler() *openapi3.Operation {
 	refresh := openapi3.NewOperation()
 	refresh.Description = "The Refresh endpoint re-authenticates users and API keys using a refresh token rather than requiring a username and password or API key credentials a second time and returns a new access and refresh token pair with the current credentials of the user. This endpoint is intended to facilitate long-running connections to datum systems that last longer than the duration of an access token; e.g. long sessions on the Datum UI or (especially) long running publishers and subscribers (machine users) that need to stay authenticated semi-permanently."
 	refresh.OperationID = "RefreshHandler"
+	refresh.Security = &openapi3.SecurityRequirements{
+		openapi3.SecurityRequirement{
+			"bearerAuth": []string{},
+		},
+		openapi3.SecurityRequirement{
+			"basicAuth": []string{},
+		},
+	}
 
 	h.AddRequestBody("RefreshRequest", models.RefreshRequest{}, refresh)
 	h.AddResponse("RefreshReply", "success", models.RefreshReply{}, refresh, http.StatusOK)

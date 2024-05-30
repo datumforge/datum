@@ -252,9 +252,10 @@ func (h *Handler) BindOrganizationInviteAccept() *openapi3.Operation {
 	inviteAccept := openapi3.NewOperation()
 	inviteAccept.Description = "Accept an Organization Invite"
 	inviteAccept.OperationID = "OrganizationInviteAccept"
+	inviteAccept.Security = &openapi3.SecurityRequirements{}
 
-	h.AddRequestBody("InviteRequest", models.InviteRequest{}, inviteAccept)
-	h.AddResponse("InviteReply", "success", models.InviteReply{}, inviteAccept, http.StatusCreated)
+	h.AddRequestBody("InviteRequest", models.ExampleInviteRequest, inviteAccept)
+	h.AddResponse("InviteReply", "success", models.ExampleInviteResponse, inviteAccept, http.StatusCreated)
 	inviteAccept.AddResponse(http.StatusInternalServerError, internalServerError())
 	inviteAccept.AddResponse(http.StatusBadRequest, badRequest())
 	inviteAccept.AddResponse(http.StatusUnauthorized, unauthorized())

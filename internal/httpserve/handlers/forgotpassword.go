@@ -113,8 +113,8 @@ func (h *Handler) BindForgotPassword() *openapi3.Operation {
 	forgotPassword.OperationID = "ForgotPassword"
 	forgotPassword.Security = &openapi3.SecurityRequirements{}
 
-	h.AddRequestBody("ForgotPasswordRequest", models.ForgotPasswordRequest{}, forgotPassword)
-	h.AddResponse("ForgotPasswordReply", "success", models.ForgotPasswordReply{}, forgotPassword, http.StatusOK)
+	h.AddRequestBody("ForgotPasswordRequest", models.ExampleForgotPasswordSuccessRequest, forgotPassword)
+	h.AddResponse("ForgotPasswordReply", "success", models.ExampleForgotPasswordSuccessResponse, forgotPassword, http.StatusOK)
 	forgotPassword.AddResponse(http.StatusInternalServerError, internalServerError())
 	forgotPassword.AddResponse(http.StatusBadRequest, badRequest())
 

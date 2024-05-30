@@ -2,16 +2,10 @@ query GetHushes($where: HushWhereInput) {
   hushes(where: $where) {
     edges {
       node {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        name
         description
+        id
         kind
+        name
         secretName
         integrations {
           id
@@ -22,6 +16,10 @@ query GetHushes($where: HushWhereInput) {
         events {
           id
         }
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
       }
     }
   }
@@ -29,16 +27,10 @@ query GetHushes($where: HushWhereInput) {
 
 query GetHush($hushId: ID!) {
   hush(id: $hushId) {
-    id
-    createdAt
-    updatedAt
-    createdBy
-    updatedBy
-    deletedAt
-    deletedBy
-    name
     description
+    id
     kind
+    name
     secretName
     integrations {
       id
@@ -49,22 +41,62 @@ query GetHush($hushId: ID!) {
     events {
       id
     }
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
   }
 }
 
 mutation CreateHush($input: CreateHushInput!) {
   createHush(input: $input) {
     hush {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      name
       description
+      id
       kind
+      name
+      secretName
+      integrations {
+        id
+      }
+      organization {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateBulkHush($input: [CreateHushInput!]) {
+  createBulkHush(input: $input) {
+    hushes {
+      description
+      id
+      kind
+      name
+      secretName
+      integrations {
+        id
+      }
+      organization {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateBulkCSVHush($input: Upload!) {
+  createBulkCSVHush(input: $input) {
+   hushes {
+      description
+      id
+      kind
+      name
       secretName
       integrations {
         id
@@ -82,16 +114,10 @@ mutation CreateHush($input: CreateHushInput!) {
 mutation UpdateHush($updateHushId: ID!, $input: UpdateHushInput!) {
   updateHush(id: $updateHushId, input: $input) {
     hush {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      name
       description
+      id
       kind
+      name
       secretName
       integrations {
         id

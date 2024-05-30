@@ -6,7 +6,6 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/contrib/entgql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -134,12 +133,24 @@ func (r *queryResolver) Invites(ctx context.Context, after *entgql.Cursor[string
 
 // OauthProviders is the resolver for the oauthProviders field.
 func (r *queryResolver) OauthProviders(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) (*generated.OauthProviderConnection, error) {
-	panic(fmt.Errorf("not implemented: OauthProviders - oauthProviders"))
+	return withTransactionalMutation(ctx).OauthProvider.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithOauthProviderFilter(where.Filter))
 }
 
 // OauthProviderHistories is the resolver for the oauthProviderHistories field.
 func (r *queryResolver) OauthProviderHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderHistoryWhereInput) (*generated.OauthProviderHistoryConnection, error) {
-	panic(fmt.Errorf("not implemented: OauthProviderHistories - oauthProviderHistories"))
+	return withTransactionalMutation(ctx).OauthProviderHistory.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithOauthProviderHistoryFilter(where.Filter))
 }
 
 // OhAuthTooTokens is the resolver for the ohAuthTooTokens field.

@@ -6,27 +6,78 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
 // CreateEntitlement is the resolver for the createEntitlement field.
 func (r *mutationResolver) CreateEntitlement(ctx context.Context, input generated.CreateEntitlementInput) (*EntitlementCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateEntitlement - createEntitlement"))
+	res, err := withTransactionalMutation(ctx).Entitlement.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "entitlement"}, r.logger)
+	}
+
+	return &EntitlementCreatePayload{
+		Entitlement: res,
+	}, nil
+}
+
+// CreateBulkEntitlement is the resolver for the createBulkEntitlement field.
+func (r *mutationResolver) CreateBulkEntitlement(ctx context.Context, input []*generated.CreateEntitlementInput) (*EntitlementBulkCreatePayload, error) {
+	return r.bulkCreateEntitlement(ctx, input)
+}
+
+// CreateBulkCSVEntitlement is the resolver for the createBulkCSVEntitlement field.
+func (r *mutationResolver) CreateBulkCSVEntitlement(ctx context.Context, input graphql.Upload) (*EntitlementBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateEntitlementInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateEntitlement(ctx, data)
 }
 
 // UpdateEntitlement is the resolver for the updateEntitlement field.
 func (r *mutationResolver) UpdateEntitlement(ctx context.Context, id string, input generated.UpdateEntitlementInput) (*EntitlementUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateEntitlement - updateEntitlement"))
+	res, err := withTransactionalMutation(ctx).Entitlement.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "entitlement"}, r.logger)
+	}
+
+	res, err = res.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "entitlement"}, r.logger)
+	}
+
+	return &EntitlementUpdatePayload{
+		Entitlement: res,
+	}, nil
 }
 
 // DeleteEntitlement is the resolver for the deleteEntitlement field.
 func (r *mutationResolver) DeleteEntitlement(ctx context.Context, id string) (*EntitlementDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteEntitlement - deleteEntitlement"))
+	if err := withTransactionalMutation(ctx).Entitlement.DeleteOneID(id).Exec(ctx); err != nil {
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "entitlement"}, r.logger)
+	}
+
+	if err := generated.EntitlementEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &EntitlementDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // Entitlement is the resolver for the entitlement field.
 func (r *queryResolver) Entitlement(ctx context.Context, id string) (*generated.Entitlement, error) {
-	panic(fmt.Errorf("not implemented: Entitlement - entitlement"))
+	res, err := withTransactionalMutation(ctx).Entitlement.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionGet, object: "entitlement"}, r.logger)
+	}
+
+	return res, nil
 }

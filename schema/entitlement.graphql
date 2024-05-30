@@ -21,6 +21,24 @@ extend type Mutation{
         input: CreateEntitlementInput!
     ): EntitlementCreatePayload!
     """
+    Create multiple new entitlements
+    """
+    createBulkEntitlement(
+        """
+        values of the entitlement
+        """
+        input: [CreateEntitlementInput!]
+    ): EntitlementBulkCreatePayload!
+    """
+    Create multiple new entitlements via file upload
+    """
+    createBulkCSVEntitlement(
+        """
+        csv file containing values of the entitlement
+        """
+        input: Upload!
+    ): EntitlementBulkCreatePayload!
+    """
     Update an existing entitlement
     """
     updateEntitlement(
@@ -72,4 +90,14 @@ type EntitlementDeletePayload {
     Deleted entitlement ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkEntitlement mutation
+"""
+type EntitlementBulkCreatePayload {
+    """
+    Created entitlements
+    """
+    entitlements: [Entitlement!]
 }

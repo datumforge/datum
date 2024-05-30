@@ -6,27 +6,78 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
 // CreateOauthProvider is the resolver for the createOauthProvider field.
 func (r *mutationResolver) CreateOauthProvider(ctx context.Context, input generated.CreateOauthProviderInput) (*OauthProviderCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateOauthProvider - createOauthProvider"))
+	res, err := withTransactionalMutation(ctx).OauthProvider.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "oauthprovider"}, r.logger)
+	}
+
+	return &OauthProviderCreatePayload{
+		OauthProvider: res,
+	}, nil
+}
+
+// CreateBulkOauthProvider is the resolver for the createBulkOauthProvider field.
+func (r *mutationResolver) CreateBulkOauthProvider(ctx context.Context, input []*generated.CreateOauthProviderInput) (*OauthProviderBulkCreatePayload, error) {
+	return r.bulkCreateOauthProvider(ctx, input)
+}
+
+// CreateBulkCSVOauthProvider is the resolver for the createBulkCSVOauthProvider field.
+func (r *mutationResolver) CreateBulkCSVOauthProvider(ctx context.Context, input graphql.Upload) (*OauthProviderBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateOauthProviderInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateOauthProvider(ctx, data)
 }
 
 // UpdateOauthProvider is the resolver for the updateOauthProvider field.
 func (r *mutationResolver) UpdateOauthProvider(ctx context.Context, id string, input generated.UpdateOauthProviderInput) (*OauthProviderUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateOauthProvider - updateOauthProvider"))
+	res, err := withTransactionalMutation(ctx).OauthProvider.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "oauthprovider"}, r.logger)
+	}
+
+	res, err = res.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "oauthprovider"}, r.logger)
+	}
+
+	return &OauthProviderUpdatePayload{
+		OauthProvider: res,
+	}, nil
 }
 
 // DeleteOauthProvider is the resolver for the deleteOauthProvider field.
 func (r *mutationResolver) DeleteOauthProvider(ctx context.Context, id string) (*OauthProviderDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteOauthProvider - deleteOauthProvider"))
+	if err := withTransactionalMutation(ctx).OauthProvider.DeleteOneID(id).Exec(ctx); err != nil {
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "oauthprovider"}, r.logger)
+	}
+
+	if err := generated.OauthProviderEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &OauthProviderDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
-// OauthProvider is the resolver for the OauthProvider field.
+// OauthProvider is the resolver for the oauthProvider field.
 func (r *queryResolver) OauthProvider(ctx context.Context, id string) (*generated.OauthProvider, error) {
-	panic(fmt.Errorf("not implemented: OauthProvider - OauthProvider"))
+	res, err := withTransactionalMutation(ctx).OauthProvider.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionGet, object: "oauthprovider"}, r.logger)
+	}
+
+	return res, nil
 }

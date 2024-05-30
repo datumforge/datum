@@ -205,6 +205,32 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
   }
 }
 
+mutation CreateBulkOrganization($input: [CreateOrganizationInput!]) {
+  createBulkOrganization(input: $input) {
+    organizations {
+      id
+      name
+      displayName
+      description
+      personalOrg
+      tags
+    }
+  }
+}
+
+mutation CreateBulkCSVOrganization($input: Upload!) {
+  createBulkCSVOrganization(input: $input) {
+   organizations {
+      id
+      name
+      displayName
+      description
+      personalOrg
+      tags
+    }
+  }
+}
+
 mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizationInput!) {
   updateOrganization(id: $updateOrganizationId, input: $input) {
     organization {

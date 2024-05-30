@@ -1,32 +1,32 @@
 query GetUserByID($userId: ID!) {
   user(id: $userId) {
-    id
-    firstName
-    lastName
+    authProvider
+    avatarLocalFile
+    avatarRemoteURL
     displayName
     email
+    firstName
+    id
+    lastName
     lastSeen
     sub
-    avatarRemoteURL
-    avatarLocalFile
-    authProvider
     tags
     setting {
-      emailConfirmed
       defaultOrg {
         id
         name
         personalOrg
       }
-      tags
-      locked
-      status
-      suspendedAt
       createdAt
       createdBy
+      emailConfirmed
+      locked
+      silencedAt
+      status
+      suspendedAt
+      tags
       updatedAt
       updatedBy
-      silencedAt
     }
     organizations{
       id
@@ -46,38 +46,34 @@ query GetUserByID($userId: ID!) {
 
 query GetUserByIDWithOrgs($userId: ID!) {
   user(id: $userId) {
-    id
-    firstName
-    lastName
+    authProvider
+    avatarLocalFile
+    avatarRemoteURL
     displayName
     email
+    firstName
+    id
+    lastName
     lastSeen
     sub
-    avatarRemoteURL
-    avatarLocalFile
-    authProvider
     tags
     setting {
-      emailConfirmed
       defaultOrg {
         id
         name
         personalOrg
       }
-      tags
-      locked
-      status
-      suspendedAt
       createdAt
       createdBy
+      emailConfirmed
+      locked
+      silencedAt
+      status
+      suspendedAt
+      tags
       updatedAt
       updatedBy
-      silencedAt
     }
-    updatedAt
-    updatedBy
-    createdAt
-    createdBy
     orgMemberships{
       id
       role
@@ -86,6 +82,10 @@ query GetUserByIDWithOrgs($userId: ID!) {
         lastName
       }
     }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
   }
 }
 
@@ -93,38 +93,38 @@ query GetAllUsers {
   users {
     edges {
       node {
-        id
-        firstName
-        lastName
+        authProvider
+        avatarLocalFile
+        avatarRemoteURL
         displayName
         email
+        firstName
+        id
+        lastName
         lastSeen
         sub
-        avatarRemoteURL
-        avatarLocalFile
-        authProvider
         tags
         setting {
-          emailConfirmed
           defaultOrg {
             id
             name
             personalOrg
           }
-          tags
-          locked
-          status
-          suspendedAt
           createdAt
           createdBy
+          emailConfirmed
+          locked
+          silencedAt
+          status
+          suspendedAt
+          tags
           updatedAt
           updatedBy
-          silencedAt
         }
-        updatedAt
-        updatedBy
         createdAt
         createdBy
+        updatedAt
+        updatedBy
       }
     }
   }
@@ -133,15 +133,15 @@ query GetAllUsers {
 mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
     user {
-      id
+      authProvider
+      avatarLocalFile
+      avatarRemoteURL
+      displayName
       email
       firstName
+      id
       lastName
-      displayName
-      avatarRemoteURL
-      avatarLocalFile
       sub
-      authProvider
       tags
       orgMemberships {
         id
@@ -152,22 +152,56 @@ mutation CreateUser($input: CreateUserInput!) {
         groupID
       }
       setting {
-        emailConfirmed
         defaultOrg {
           id
           name
           personalOrg
         }
-        tags
-        locked
-        status
-        suspendedAt
         createdAt
         createdBy
+        emailConfirmed
+        locked
+        silencedAt
+        status
+        suspendedAt
+        tags
         updatedAt
         updatedBy
-        silencedAt
       }
+    }
+  }
+}
+
+mutation CreateBulkUser($input: [CreateUserInput!]) {
+  createBulkUser(input: $input) {
+    users {
+      authProvider
+      avatarLocalFile
+      avatarRemoteURL
+      displayName
+      email
+      firstName
+      id
+      lastName
+      sub
+      tags
+    }
+  }
+}
+
+mutation CreateBulkCSVUser($input: Upload!) {
+  createBulkCSVUser(input: $input) {
+   users {
+      authProvider
+      avatarLocalFile
+      avatarRemoteURL
+      displayName
+      email
+      firstName
+      id
+      lastName
+      sub
+      tags
     }
   }
 }
@@ -175,15 +209,15 @@ mutation CreateUser($input: CreateUserInput!) {
 mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
   updateUser(id: $updateUserId, input: $input) {
     user {
-      id
+      authProvider
+      avatarLocalFile
+      avatarRemoteURL
+      displayName
       email
       firstName
+      id
       lastName
-      displayName
-      avatarRemoteURL
-      avatarLocalFile
       sub
-      authProvider
       tags
       groupMemberships {
         id
@@ -192,21 +226,21 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
         id
       }
       setting {
-        emailConfirmed
         defaultOrg {
           id
           name
           personalOrg
         }
-        tags
-        locked
-        status
-        suspendedAt
         createdAt
         createdBy
+        emailConfirmed
+        locked
+        silencedAt
+        status
+        suspendedAt
+        tags
         updatedAt
         updatedBy
-        silencedAt
       }
     }
   }

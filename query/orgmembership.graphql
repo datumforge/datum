@@ -1,3 +1,36 @@
+mutation AddUserToOrgWithRole($input: CreateOrgMembershipInput!) {
+  createOrgMembership(input: $input) {
+    orgMembership {
+      id
+      role
+      userID
+      organizationID
+    }
+  }
+}
+
+mutation CreateBulkCSVOrgMembers($input: Upload!) {
+  createBulkCSVOrgMembership(input: $input) {
+    orgMemberships {
+      id
+      organizationID
+      role
+      userID
+    }
+  }
+}
+
+mutation CreateBulkOrgMembers($input: [CreateOrgMembershipInput!]) {
+  createBulkOrgMembership(input: $input) {
+    orgMemberships {
+      id
+      organizationID
+      role
+      userID
+    }
+  }
+}
+
 query GetOrgMembersByOrgID($where: OrgMembershipWhereInput) {
   orgMemberships(where: $where) {
     edges {
@@ -18,14 +51,9 @@ query GetOrgMembersByOrgID($where: OrgMembershipWhereInput) {
   }
 }
 
-mutation AddUserToOrgWithRole($input: CreateOrgMembershipInput!) {
-  createOrgMembership(input: $input) {
-    orgMembership {
-      id
-      role
-      userID
-      organizationID
-    }
+mutation RemoveUserFromOrg($deleteOrgMembershipId: ID!) {
+  deleteOrgMembership(id: $deleteOrgMembershipId) {
+    deletedID
   }
 }
 
@@ -37,11 +65,5 @@ mutation UpdateUserRoleInOrg($updateOrgMemberId: ID!, $input: UpdateOrgMembershi
       userID
       organizationID
     }
-  }
-}
-
-mutation RemoveUserFromOrg($deleteOrgMembershipId: ID!) {
-  deleteOrgMembership(id: $deleteOrgMembershipId) {
-    deletedID
   }
 }

@@ -1,103 +1,62 @@
+mutation CreateBulkCSVPersonalAccessToken($input: Upload!) {
+  createBulkCSVPersonalAccessToken(input: $input) {
+    personalAccessTokens {
+      description
+      expiresAt
+      id
+      lastUsedAt
+      name
+      scopes
+      token
+      updatedAt
+      updatedBy
+      organizations {
+        id
+        name
+      }
+    }
+  }
+}
+
+mutation CreateBulkPersonalAccessToken($input: [CreatePersonalAccessTokenInput!]) {
+  createBulkPersonalAccessToken(input: $input) {
+    personalAccessTokens {
+      description
+      expiresAt
+      id
+      lastUsedAt
+      name
+      scopes
+      token
+      updatedAt
+      updatedBy
+      organizations {
+        id
+        name
+      }
+    }
+  }
+}
+
 mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
   createPersonalAccessToken(input: $input) {
     personalAccessToken {
+      description
+      expiresAt
       id
-      token
+      lastUsedAt
+      name
       scopes
+      token
+      updatedAt
+      updatedBy
       organizations {
         id
         name
       }
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      name
-      expiresAt
-      description
-      lastUsedAt
       owner {
         id
-        displayName
       }
-    }
-  }
-}
-
-mutation UpdatePersonalAccessToken($updatePersonalAccessTokenId: ID!, $input: UpdatePersonalAccessTokenInput!) {
-  updatePersonalAccessToken(id: $updatePersonalAccessTokenId, input: $input) {
-     personalAccessToken {
-      id
-      token
-      scopes
-      organizations {
-        id
-        name
-      }
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      name
-      expiresAt
-      description
-      lastUsedAt
-      owner {
-        id
-        displayName
-      }
-    }
-  }
-}
-
-query GetAllPersonalAccessTokens {
-  personalAccessTokens {
-    edges {
-      node {
-        id
-        token
-        scopes
-        organizations {
-          id
-          name
-        }
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        name
-        expiresAt
-        description
-        lastUsedAt
-        owner {
-          id
-          displayName
-        }
-      }
-    }
-  }
-}
-
-query GetPersonalAccessTokenByID($personalAccessTokenId: ID!) {
-  personalAccessToken(id: $personalAccessTokenId) {
-    id
-    token
-    scopes
-    organizations {
-      id
-      name
-    }
-    createdAt
-    updatedAt
-    createdBy
-    updatedBy
-    name
-    expiresAt
-    description
-    lastUsedAt
-    owner {
-      id
-      displayName
     }
   }
 }
@@ -108,3 +67,65 @@ mutation DeletePersonalAccessToken($deletePersonalAccessTokenId: ID!) {
   }
 }
 
+query GetAllPersonalAccessTokens {
+  personalAccessTokens {
+    edges {
+      node {
+        description
+        expiresAt
+        id
+        lastUsedAt
+        name
+        scopes
+        token
+        updatedAt
+        updatedBy
+        organizations {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+query GetPersonalAccessTokenByID($personalAccessTokenId: ID!) {
+  personalAccessToken(id: $personalAccessTokenId) {
+    description
+    expiresAt
+    id
+    lastUsedAt
+    name
+    scopes
+    token
+    updatedAt
+    updatedBy
+    organizations {
+      id
+      name
+    }
+  }
+}
+
+mutation UpdatePersonalAccessToken($updatePersonalAccessTokenId: ID!, $input: UpdatePersonalAccessTokenInput!) {
+  updatePersonalAccessToken(id: $updatePersonalAccessTokenId, input: $input) {
+    personalAccessToken {
+      description
+      expiresAt
+      id
+      lastUsedAt
+      name
+      scopes
+      token
+      updatedAt
+      updatedBy
+      organizations {
+        id
+        name
+      }
+      owner {
+        id
+      }
+    }
+  }
+}

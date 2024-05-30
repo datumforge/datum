@@ -6,13 +6,10 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/pkg/auth"
-	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateTFASetting is the resolver for the createTFASetting field.
@@ -27,7 +24,7 @@ func (r *mutationResolver) CreateTFASetting(ctx context.Context, input generated
 
 	settings, err := withTransactionalMutation(ctx).TFASetting.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "tfasetting"}, r.logger)
 	}
 
 	return &TFASettingCreatePayload{TfaSetting: settings}, nil
@@ -42,28 +39,12 @@ func (r *mutationResolver) UpdateTFASetting(ctx context.Context, input generated
 
 	settings, err := withTransactionalMutation(ctx).TFASetting.Query().Where(tfasetting.OwnerID(userID)).Only(ctx)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-		}
-
-		r.logger.Errorw("failed to get tfa settings", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "tfasetting"}, r.logger)
 	}
 
 	settings, err = settings.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			ve := err.(*generated.ValidationError)
-
-			return nil, rout.InvalidField(ve.Name)
-		}
-
-		r.logger.Errorw("failed to update tfa settings", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "tfasetting"}, r.logger)
 	}
 
 	return &TFASettingUpdatePayload{TfaSetting: settings}, nil
@@ -83,12 +64,12 @@ func (r *queryResolver) TfaSetting(ctx context.Context, id *string) (*generated.
 	if id != nil && *id != "" {
 		settings, err = withTransactionalMutation(ctx).TFASetting.Get(ctx, *id)
 		if err != nil {
-			return nil, err
+			return nil, parseRequestError(err, action{action: ActionGet, object: "tfasetting"}, r.logger)
 		}
 	} else {
 		settings, err = withTransactionalMutation(ctx).TFASetting.Query().Where(tfasetting.OwnerID(userID)).Only(ctx)
 		if err != nil {
-			return nil, err
+			return nil, parseRequestError(err, action{action: ActionGet, object: "tfasetting"}, r.logger)
 		}
 	}
 

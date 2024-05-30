@@ -6,27 +6,78 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
 // CreateOhAuthTooToken is the resolver for the createOhAuthTooToken field.
 func (r *mutationResolver) CreateOhAuthTooToken(ctx context.Context, input generated.CreateOhAuthTooTokenInput) (*OhAuthTooTokenCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateOhAuthTooToken - createOhAuthTooToken"))
+	res, err := withTransactionalMutation(ctx).OhAuthTooToken.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "ohauthtootoken"}, r.logger)
+	}
+
+	return &OhAuthTooTokenCreatePayload{
+		OhAuthTooToken: res,
+	}, nil
+}
+
+// CreateBulkOhAuthTooToken is the resolver for the createBulkOhAuthTooToken field.
+func (r *mutationResolver) CreateBulkOhAuthTooToken(ctx context.Context, input []*generated.CreateOhAuthTooTokenInput) (*OhAuthTooTokenBulkCreatePayload, error) {
+	return r.bulkCreateOhAuthTooToken(ctx, input)
+}
+
+// CreateBulkCSVOhAuthTooToken is the resolver for the createBulkCSVOhAuthTooToken field.
+func (r *mutationResolver) CreateBulkCSVOhAuthTooToken(ctx context.Context, input graphql.Upload) (*OhAuthTooTokenBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateOhAuthTooTokenInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateOhAuthTooToken(ctx, data)
 }
 
 // UpdateOhAuthTooToken is the resolver for the updateOhAuthTooToken field.
 func (r *mutationResolver) UpdateOhAuthTooToken(ctx context.Context, id string, input generated.UpdateOhAuthTooTokenInput) (*OhAuthTooTokenUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateOhAuthTooToken - updateOhAuthTooToken"))
+	res, err := withTransactionalMutation(ctx).OhAuthTooToken.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "ohauthtootoken"}, r.logger)
+	}
+
+	res, err = res.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "ohauthtootoken"}, r.logger)
+	}
+
+	return &OhAuthTooTokenUpdatePayload{
+		OhAuthTooToken: res,
+	}, nil
 }
 
 // DeleteOhAuthTooToken is the resolver for the deleteOhAuthTooToken field.
 func (r *mutationResolver) DeleteOhAuthTooToken(ctx context.Context, id string) (*OhAuthTooTokenDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteOhAuthTooToken - deleteOhAuthTooToken"))
+	if err := withTransactionalMutation(ctx).OhAuthTooToken.DeleteOneID(id).Exec(ctx); err != nil {
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "ohauthtootoken"}, r.logger)
+	}
+
+	if err := generated.OhAuthTooTokenEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &OhAuthTooTokenDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // OhAuthTooToken is the resolver for the ohAuthTooToken field.
 func (r *queryResolver) OhAuthTooToken(ctx context.Context, id string) (*generated.OhAuthTooToken, error) {
-	panic(fmt.Errorf("not implemented: OhAuthTooToken - ohAuthTooToken"))
+	res, err := withTransactionalMutation(ctx).OhAuthTooToken.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionGet, object: "ohauthtootoken"}, r.logger)
+	}
+
+	return res, nil
 }

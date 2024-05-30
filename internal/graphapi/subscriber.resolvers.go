@@ -6,10 +6,9 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/pkg/rout"
 )
@@ -25,28 +24,27 @@ func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated
 
 	sub, err := withTransactionalMutation(ctx).Subscriber.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "subscriber"}, r.logger)
+	}
 
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+	return &SubscriberCreatePayload{Subscriber: sub}, nil
+}
 
-			return nil, validationError
-		}
+// CreateBulkSubscriber is the resolver for the createBulkSubscriber field.
+func (r *mutationResolver) CreateBulkSubscriber(ctx context.Context, input []*generated.CreateSubscriberInput) (*SubscriberBulkCreatePayload, error) {
+	return r.bulkCreateSubscriber(ctx, input)
+}
 
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, newAlreadyExistsError("subscriber", input.Email)
-		}
-
-		r.logger.Errorw("failed to create subscriber", "error", err)
+// CreateBulkCSVSubscriber is the resolver for the createBulkCSVSubscriber field.
+func (r *mutationResolver) CreateBulkCSVSubscriber(ctx context.Context, input graphql.Upload) (*SubscriberBulkCreatePayload, error) {
+	subscriberInput, err := unmarshalBulkData[generated.CreateSubscriberInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
 
 		return nil, err
 	}
 
-	return &SubscriberCreatePayload{Subscriber: sub}, nil
+	return r.bulkCreateSubscriber(ctx, subscriberInput)
 }
 
 // UpdateSubscriber is the resolver for the updateSubscriber field.
@@ -56,14 +54,7 @@ func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, i
 			subscriber.EmailEQ(email),
 		).Only(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get subscriber on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "subscriber")
-		}
-
-		r.logger.Errorw("failed to get subscriber", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "subscriber"}, r.logger)
 	}
 
 	if err := setOrganizationInAuthContext(ctx, &subscriber.OwnerID); err != nil {
@@ -74,14 +65,7 @@ func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, i
 
 	subscriber, err = subscriber.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update subscriber", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "group")
-		}
-
-		r.logger.Errorw("failed to update subscriber", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "subscriber"}, r.logger)
 	}
 
 	return &SubscriberUpdatePayload{Subscriber: subscriber}, nil
@@ -101,9 +85,7 @@ func (r *mutationResolver) DeleteSubscriber(ctx context.Context, email string, o
 			subscriber.EmailEQ(email),
 		).Exec(ctx)
 	if err != nil {
-		r.logger.Errorw("failed to delete subscriber", "error", err)
-
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "subscriber"}, r.logger)
 	}
 
 	if num == 0 {
@@ -120,14 +102,7 @@ func (r *queryResolver) Subscriber(ctx context.Context, email string) (*generate
 			subscriber.EmailEQ(email),
 		).Only(ctx)
 	if err != nil {
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get subscriber on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "subscriber")
-		}
-
-		r.logger.Errorw("failed to get subscriber", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionGet, object: "subscriber"}, r.logger)
 	}
 
 	return subscriber, nil

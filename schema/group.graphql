@@ -21,6 +21,24 @@ extend type Mutation{
         input: CreateGroupInput!
     ): GroupCreatePayload!
     """
+    Create multiple new groups
+    """
+    createBulkGroup(
+        """
+        values of the group
+        """
+        input: [CreateGroupInput!]
+    ): GroupBulkCreatePayload!
+    """
+    Create multiple new groups via file upload
+    """
+    createBulkCSVGroup(
+        """
+        csv file containing values of the group
+        """
+        input: Upload!
+    ): GroupBulkCreatePayload!
+    """
     Update an existing group
     """
     updateGroup(
@@ -72,4 +90,14 @@ type GroupDeletePayload {
     Deleted group ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkGroup mutation
+"""
+type GroupBulkCreatePayload {
+    """
+    Created groups
+    """
+    groups: [Group!]
 }

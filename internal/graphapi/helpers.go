@@ -3,8 +3,10 @@ package graphapi
 import (
 	"context"
 	"fmt"
+	"io"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/gocarina/gocsv"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
@@ -42,6 +44,23 @@ func (r *queryResolver) withPool() *soiree.PondPool {
 	r.pool = soiree.NewPondPool(defaultMaxWorkers, defaultMaxCapacity)
 
 	return r.pool
+}
+
+// unmarshalBulkData unmarshals the input bulk data into a slice of the given type
+func unmarshalBulkData[T any](input graphql.Upload) ([]*T, error) {
+	// read the csv file
+	var data []*T
+	stream, readErr := io.ReadAll(input.File)
+	if readErr != nil {
+		return nil, readErr
+	}
+
+	// parse the csv
+	if err := gocsv.UnmarshalBytes(stream, &data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
 
 // setOrganizationInAuthContext sets the organization in the auth context based on the input if it is not already set

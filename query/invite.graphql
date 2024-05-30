@@ -1,16 +1,44 @@
 mutation CreateInvite($input: CreateInviteInput!) {
   createInvite(input: $input) {
     invite {
+      expires
       id
       recipient
-      status
       requestorID
-      expires
       role
       sendAttempts
+      status
       owner {
         id
       }
+    }
+  }
+}
+
+mutation CreateBulkInvite($input: [CreateInviteInput!]) {
+  createBulkInvite(input: $input) {
+    invites {
+      expires
+      id
+      recipient
+      requestorID
+      role
+      sendAttempts
+      status
+    }
+  }
+}
+
+mutation CreateBulkCSVInvite($input: Upload!) {
+  createBulkCSVInvite(input: $input) {
+   invites {
+      expires
+      id
+      recipient
+      requestorID
+      role
+      sendAttempts
+      status
     }
   }
 }
@@ -23,24 +51,22 @@ mutation DeleteInvite($deleteInviteId: ID!) {
 
 query GetInvite($inviteId: ID!) {
   invite(id: $inviteId) {
-    id
-    createdAt
-    updatedAt
-    createdBy
-    updatedBy
-    deletedAt
-    deletedBy
     expires
+    id
     recipient
-    status
     requestorID
     role
     sendAttempts
+    status
     owner {
-      id
       displayName
+      id
       name
     }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
   }
 }
 
@@ -52,10 +78,10 @@ query InvitesByOrgID($where: InviteWhereInput) {
           id
           invites {
             recipient
-            status
             requestorID
             role
             sendAttempts
+            status
           }
         }
       }

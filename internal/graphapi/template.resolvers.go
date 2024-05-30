@@ -6,76 +6,48 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateTemplate is the resolver for the createTemplate field.
 func (r *mutationResolver) CreateTemplate(ctx context.Context, input generated.CreateTemplateInput) (*TemplateCreatePayload, error) {
 	t, err := withTransactionalMutation(ctx).Template.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "template"}, r.logger)
+	}
 
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+	return &TemplateCreatePayload{Template: t}, nil
+}
 
-			return nil, validationError
-		}
+// CreateBulkTemplate is the resolver for the createBulkTemplate field.
+func (r *mutationResolver) CreateBulkTemplate(ctx context.Context, input []*generated.CreateTemplateInput) (*TemplateBulkCreatePayload, error) {
+	return r.bulkCreateTemplate(ctx, input)
+}
 
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "template")
-		}
-
-		r.logger.Errorw("failed to create template", "error", err)
+// CreateBulkCSVTemplate is the resolver for the createBulkCSVTemplate field.
+func (r *mutationResolver) CreateBulkCSVTemplate(ctx context.Context, input graphql.Upload) (*TemplateBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateTemplateInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
 
 		return nil, err
 	}
 
-	return &TemplateCreatePayload{Template: t}, nil
+	return r.bulkCreateTemplate(ctx, data)
 }
 
 // UpdateTemplate is the resolver for the updateTemplate field.
 func (r *mutationResolver) UpdateTemplate(ctx context.Context, id string, input generated.UpdateTemplateInput) (*TemplateUpdatePayload, error) {
 	template, err := withTransactionalMutation(ctx).Template.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get template on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "template")
-		}
-
-		r.logger.Errorw("failed to get template", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "template"}, r.logger)
 	}
 
 	template, err = template.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update template", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "template")
-		}
-
-		r.logger.Errorw("failed to update template", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "template"}, r.logger)
 	}
 
 	return &TemplateUpdatePayload{Template: template}, nil
@@ -84,16 +56,7 @@ func (r *mutationResolver) UpdateTemplate(ctx context.Context, id string, input 
 // DeleteTemplate is the resolver for the deleteTemplate field.
 func (r *mutationResolver) DeleteTemplate(ctx context.Context, id string) (*TemplateDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Template.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "template")
-		}
-
-		r.logger.Errorw("failed to delete template", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "template"}, r.logger)
 	}
 
 	if err := generated.TemplateEdgeCleanup(ctx, id); err != nil {
@@ -107,17 +70,7 @@ func (r *mutationResolver) DeleteTemplate(ctx context.Context, id string) (*Temp
 func (r *queryResolver) Template(ctx context.Context, id string) (*generated.Template, error) {
 	template, err := withTransactionalMutation(ctx).Template.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get template", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "template")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "template"}, r.logger)
 	}
 
 	return template, nil

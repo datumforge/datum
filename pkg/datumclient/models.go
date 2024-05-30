@@ -42,6 +42,12 @@ type APIToken struct {
 
 func (APIToken) IsNode() {}
 
+// Return response for createBulkAPIToken mutation
+type APITokenBulkCreatePayload struct {
+	// Created apiTokens
+	APITokens []*APIToken `json:"apiTokens,omitempty"`
+}
+
 // A connection to a list of items.
 type APITokenConnection struct {
 	// A list of edges.
@@ -811,6 +817,12 @@ type DocumentData struct {
 
 func (DocumentData) IsNode() {}
 
+// Return response for createBulkDocumentData mutation
+type DocumentDataBulkCreatePayload struct {
+	// Created documentData
+	DocumentData []*DocumentData `json:"documentData,omitempty"`
+}
+
 // A connection to a list of items.
 type DocumentDataConnection struct {
 	// A list of edges.
@@ -1180,6 +1192,12 @@ type Entitlement struct {
 }
 
 func (Entitlement) IsNode() {}
+
+// Return response for createBulkEntitlement mutation
+type EntitlementBulkCreatePayload struct {
+	// Created entitlements
+	Entitlements []*Entitlement `json:"entitlements,omitempty"`
+}
 
 // A connection to a list of items.
 type EntitlementConnection struct {
@@ -1640,6 +1658,12 @@ type Event struct {
 
 func (Event) IsNode() {}
 
+// Return response for createBulkEvent mutation
+type EventBulkCreatePayload struct {
+	// Created events
+	Events []*Event `json:"events,omitempty"`
+}
+
 // A connection to a list of items.
 type EventConnection struct {
 	// A list of edges.
@@ -2045,6 +2069,12 @@ type Feature struct {
 }
 
 func (Feature) IsNode() {}
+
+// Return response for createBulkFeature mutation
+type FeatureBulkCreatePayload struct {
+	// Created features
+	Features []*Feature `json:"features,omitempty"`
+}
 
 // A connection to a list of items.
 type FeatureConnection struct {
@@ -2461,6 +2491,12 @@ type File struct {
 }
 
 func (File) IsNode() {}
+
+// Return response for createBulkFile mutation
+type FileBulkCreatePayload struct {
+	// Created files
+	Files []*File `json:"files,omitempty"`
+}
 
 // A connection to a list of items.
 type FileConnection struct {
@@ -3014,6 +3050,12 @@ type Group struct {
 
 func (Group) IsNode() {}
 
+// Return response for createBulkGroup mutation
+type GroupBulkCreatePayload struct {
+	// Created groups
+	Groups []*Group `json:"groups,omitempty"`
+}
+
 // A connection to a list of items.
 type GroupConnection struct {
 	// A list of edges.
@@ -3272,6 +3314,12 @@ type GroupMembership struct {
 }
 
 func (GroupMembership) IsNode() {}
+
+// Return response for createBulkGroupMembership mutation
+type GroupMembershipBulkCreatePayload struct {
+	// Created groupMemberships
+	GroupMemberships []*GroupMembership `json:"groupMemberships,omitempty"`
+}
 
 // A connection to a list of items.
 type GroupMembershipConnection struct {
@@ -3653,6 +3701,12 @@ type GroupSetting struct {
 }
 
 func (GroupSetting) IsNode() {}
+
+// Return response for createBulkGroupSetting mutation
+type GroupSettingBulkCreatePayload struct {
+	// Created groupSettings
+	GroupSettings []*GroupSetting `json:"groupSettings,omitempty"`
+}
 
 // A connection to a list of items.
 type GroupSettingConnection struct {
@@ -4222,6 +4276,12 @@ type Hush struct {
 
 func (Hush) IsNode() {}
 
+// Return response for createBulkHush mutation
+type HushBulkCreatePayload struct {
+	// Created hushs
+	Hushes []*Hush `json:"hushes,omitempty"`
+}
+
 // A connection to a list of items.
 type HushConnection struct {
 	// A list of edges.
@@ -4672,6 +4732,12 @@ type Integration struct {
 }
 
 func (Integration) IsNode() {}
+
+// Return response for createBulkIntegration mutation
+type IntegrationBulkCreatePayload struct {
+	// Created integrations
+	Integrations []*Integration `json:"integrations,omitempty"`
+}
 
 // A connection to a list of items.
 type IntegrationConnection struct {
@@ -5129,6 +5195,12 @@ type Invite struct {
 
 func (Invite) IsNode() {}
 
+// Return response for createBulkInvite mutation
+type InviteBulkCreatePayload struct {
+	// Created invites
+	Invites []*Invite `json:"invites,omitempty"`
+}
+
 // A connection to a list of items.
 type InviteConnection struct {
 	// A list of edges.
@@ -5378,6 +5450,12 @@ type OauthProvider struct {
 }
 
 func (OauthProvider) IsNode() {}
+
+// Return response for createBulkOauthProvider mutation
+type OauthProviderBulkCreatePayload struct {
+	// Created oauthProviders
+	OauthProviders []*OauthProvider `json:"oauthProviders,omitempty"`
+}
 
 // A connection to a list of items.
 type OauthProviderConnection struct {
@@ -5965,6 +6043,12 @@ type OhAuthTooToken struct {
 
 func (OhAuthTooToken) IsNode() {}
 
+// Return response for createBulkOhAuthTooToken mutation
+type OhAuthTooTokenBulkCreatePayload struct {
+	// Created ohAuthTooTokens
+	OhAuthTooTokens []*OhAuthTooToken `json:"ohAuthTooTokens,omitempty"`
+}
+
 // A connection to a list of items.
 type OhAuthTooTokenConnection struct {
 	// A list of edges.
@@ -6153,6 +6237,12 @@ type OrgMembership struct {
 }
 
 func (OrgMembership) IsNode() {}
+
+// Return response for createBulkOrgMembership mutation
+type OrgMembershipBulkCreatePayload struct {
+	// Created orgMemberships
+	OrgMemberships []*OrgMembership `json:"orgMemberships,omitempty"`
+}
 
 // A connection to a list of items.
 type OrgMembershipConnection struct {
@@ -6541,6 +6631,12 @@ type Organization struct {
 
 func (Organization) IsNode() {}
 
+// Return response for createBulkOrganization mutation
+type OrganizationBulkCreatePayload struct {
+	// Created organizations
+	Organizations []*Organization `json:"organizations,omitempty"`
+}
+
 // A connection to a list of items.
 type OrganizationConnection struct {
 	// A list of edges.
@@ -6851,6 +6947,12 @@ type OrganizationSetting struct {
 }
 
 func (OrganizationSetting) IsNode() {}
+
+// Return response for createBulkOrganizationSetting mutation
+type OrganizationSettingBulkCreatePayload struct {
+	// Created organizationSettings
+	OrganizationSettings []*OrganizationSetting `json:"organizationSettings,omitempty"`
+}
 
 // A connection to a list of items.
 type OrganizationSettingConnection struct {
@@ -7632,6 +7734,12 @@ type PersonalAccessToken struct {
 
 func (PersonalAccessToken) IsNode() {}
 
+// Return response for createBulkPersonalAccessToken mutation
+type PersonalAccessTokenBulkCreatePayload struct {
+	// Created personalAccessTokens
+	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
+}
+
 // A connection to a list of items.
 type PersonalAccessTokenConnection struct {
 	// A list of edges.
@@ -7840,6 +7948,12 @@ type Subscriber struct {
 }
 
 func (Subscriber) IsNode() {}
+
+// Return response for createBulkSubscriber mutation
+type SubscriberBulkCreatePayload struct {
+	// Created subscribers
+	Subscribers []*Subscriber `json:"subscribers,omitempty"`
+}
 
 // A connection to a list of items.
 type SubscriberConnection struct {
@@ -8252,6 +8366,12 @@ type Template struct {
 }
 
 func (Template) IsNode() {}
+
+// Return response for createBulkTemplate mutation
+type TemplateBulkCreatePayload struct {
+	// Created templates
+	Templates []*Template `json:"templates,omitempty"`
+}
 
 // A connection to a list of items.
 type TemplateConnection struct {
@@ -9499,6 +9619,12 @@ type User struct {
 
 func (User) IsNode() {}
 
+// Return response for createBulkUser mutation
+type UserBulkCreatePayload struct {
+	// Created users
+	Users []*User `json:"users,omitempty"`
+}
+
 // A connection to a list of items.
 type UserConnection struct {
 	// A list of edges.
@@ -9909,6 +10035,12 @@ type UserSetting struct {
 
 func (UserSetting) IsNode() {}
 
+// Return response for createBulkUserSetting mutation
+type UserSettingBulkCreatePayload struct {
+	// Created userSettings
+	UserSettings []*UserSetting `json:"userSettings,omitempty"`
+}
+
 // A connection to a list of items.
 type UserSettingConnection struct {
 	// A list of edges.
@@ -9917,6 +10049,18 @@ type UserSettingConnection struct {
 	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
+}
+
+// Return response for createUserSetting mutation
+type UserSettingCreatePayload struct {
+	// Created userSetting
+	UserSetting *UserSetting `json:"userSetting"`
+}
+
+// Return response for deleteUserSetting mutation
+type UserSettingDeletePayload struct {
+	// Deleted userSetting ID
+	DeletedID string `json:"deletedID"`
 }
 
 // An edge in a connection.
@@ -10646,6 +10790,12 @@ type Webhook struct {
 }
 
 func (Webhook) IsNode() {}
+
+// Return response for createBulkWebhook mutation
+type WebhookBulkCreatePayload struct {
+	// Created webhooks
+	Webhooks []*Webhook `json:"webhooks,omitempty"`
+}
 
 // A connection to a list of items.
 type WebhookConnection struct {

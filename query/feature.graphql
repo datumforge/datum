@@ -1,17 +1,59 @@
 mutation CreateFeature($input: CreateFeatureInput!) {
   createFeature(input: $input) {
     feature {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      name
-      global
-      enabled
       description
+      enabled
+      global
+      id
+      name
+      users {
+        id
+      }
+      groups {
+        id
+      }
+      entitlements {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateBulkFeature($input: [CreateFeatureInput!]) {
+  createBulkFeature(input: $input) {
+    features {
+      description
+      enabled
+      global
+      id
+      name
+      users {
+        id
+      }
+      groups {
+        id
+      }
+      entitlements {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateBulkCSVFeature($input: Upload!) {
+  createBulkCSVFeature(input: $input) {
+   features {
+      description
+      enabled
+      global
+      id
+      name
       users {
         id
       }
@@ -32,17 +74,11 @@ query GetFeatures($where: FeatureWhereInput) {
   features(where: $where) {
     edges {
       node {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        name
-        global
-        enabled
         description
+        enabled
+        global
+        id
+        name
         users {
           id
           email
@@ -67,17 +103,11 @@ query GetFeatures($where: FeatureWhereInput) {
 mutation UpdateFeature($updateFeatureId: ID!, $input: UpdateFeatureInput!) {
   updateFeature(id: $updateFeatureId, input: $input) {
     feature {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      name
-      global
-      enabled
       description
+      enabled
+      global
+      id
+      name
       users {
         id
       }

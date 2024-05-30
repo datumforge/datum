@@ -21,6 +21,24 @@ extend type Mutation{
         input: CreateEventInput!
     ): EventCreatePayload!
     """
+    Create multiple new events
+    """
+    createBulkEvent(
+        """
+        values of the event
+        """
+        input: [CreateEventInput!]
+    ): EventBulkCreatePayload!
+    """
+    Create multiple new events via file upload
+    """
+    createBulkCSVEvent(
+        """
+        csv file containing values of the event
+        """
+        input: Upload!
+    ): EventBulkCreatePayload!
+    """
     Update an existing event
     """
     updateEvent(
@@ -72,4 +90,14 @@ type EventDeletePayload {
     Deleted event ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkEvent mutation
+"""
+type EventBulkCreatePayload {
+    """
+    Created events
+    """
+    events: [Event!]
 }

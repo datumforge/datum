@@ -21,6 +21,24 @@ extend type Mutation{
         input: CreateGroupMembershipInput!
     ): GroupMembershipCreatePayload!
     """
+    Create multiple new groupMemberships
+    """
+    createBulkGroupMembership(
+        """
+        values of the groupMembership
+        """
+        input: [CreateGroupMembershipInput!]
+    ): GroupMembershipBulkCreatePayload!
+    """
+    Create multiple new groupMemberships via file upload
+    """
+    createBulkCSVGroupMembership(
+        """
+        csv file containing values of the groupMembership
+        """
+        input: Upload!
+    ): GroupMembershipBulkCreatePayload!
+    """
     Update an existing groupMembership
     """
     updateGroupMembership(
@@ -72,4 +90,14 @@ type GroupMembershipDeletePayload {
     Deleted groupMembership ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkGroupMembership mutation
+"""
+type GroupMembershipBulkCreatePayload {
+    """
+    Created groupMemberships
+    """
+    groupMemberships: [GroupMembership!]
 }

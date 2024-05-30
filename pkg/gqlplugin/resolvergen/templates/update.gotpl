@@ -1,0 +1,15 @@
+{{ $entity := .Field.TypeReference.Definition.Name | getEntityName  -}}
+
+res, err := withTransactionalMutation(ctx).{{ $entity }}.Get(ctx, id)
+if err != nil {
+	return nil, parseRequestError(err, action{action: ActionUpdate, object: "{{ $entity | toLower }}"}, r.logger)
+}
+
+res, err = res.Update().SetInput(input).Save(ctx)
+if err != nil {
+	return nil, parseRequestError(err, action{action: ActionUpdate, object: "{{ $entity | toLower }}"}, r.logger)
+}
+
+return &{{ $entity }}UpdatePayload{
+	{{ $entity }}: res,
+	}, nil

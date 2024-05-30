@@ -1,6 +1,6 @@
-mutation CreateInvite($input: CreateInviteInput!) {
-  createInvite(input: $input) {
-    invite {
+mutation CreateBulkCSVInvite($input: Upload!) {
+  createBulkCSVInvite(input: $input) {
+    invites {
       expires
       id
       recipient
@@ -8,9 +8,6 @@ mutation CreateInvite($input: CreateInviteInput!) {
       role
       sendAttempts
       status
-      owner {
-        id
-      }
     }
   }
 }
@@ -29,9 +26,9 @@ mutation CreateBulkInvite($input: [CreateInviteInput!]) {
   }
 }
 
-mutation CreateBulkCSVInvite($input: Upload!) {
-  createBulkCSVInvite(input: $input) {
-   invites {
+mutation CreateInvite($input: CreateInviteInput!) {
+  createInvite(input: $input) {
+    invite {
       expires
       id
       recipient
@@ -39,6 +36,9 @@ mutation CreateBulkCSVInvite($input: Upload!) {
       role
       sendAttempts
       status
+      owner {
+        id
+      }
     }
   }
 }
@@ -67,6 +67,19 @@ query GetInvite($inviteId: ID!) {
     createdBy
     updatedAt
     updatedBy
+  }
+}
+
+query GetInvites {
+  invites {
+    edges {
+      node {
+        id
+        recipient
+        role
+        status
+      }
+    }
   }
 }
 

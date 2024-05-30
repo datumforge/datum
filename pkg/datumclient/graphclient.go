@@ -86,6 +86,7 @@ type DatumClient interface {
 	CreateBulkCSVInvite(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVInvite, error)
 	DeleteInvite(ctx context.Context, deleteInviteID string, interceptors ...clientv2.RequestInterceptor) (*DeleteInvite, error)
 	GetInvite(ctx context.Context, inviteID string, interceptors ...clientv2.RequestInterceptor) (*GetInvite, error)
+	GetInvites(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetInvites, error)
 	InvitesByOrgID(ctx context.Context, where *InviteWhereInput, interceptors ...clientv2.RequestInterceptor) (*InvitesByOrgID, error)
 	CreateBulkCSVOhAuthTooToken(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVOhAuthTooToken, error)
 	CreateBulkOhAuthTooToken(ctx context.Context, input []*CreateOhAuthTooTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkOhAuthTooToken, error)
@@ -9049,6 +9050,60 @@ func (t *GetInvite_Invite) GetUpdatedBy() *string {
 	return t.UpdatedBy
 }
 
+type GetInvites_Invites_Edges_Node struct {
+	ID        string             "json:\"id\" graphql:\"id\""
+	Recipient string             "json:\"recipient\" graphql:\"recipient\""
+	Role      enums.Role         "json:\"role\" graphql:\"role\""
+	Status    enums.InviteStatus "json:\"status\" graphql:\"status\""
+}
+
+func (t *GetInvites_Invites_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetInvites_Invites_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetInvites_Invites_Edges_Node) GetRecipient() string {
+	if t == nil {
+		t = &GetInvites_Invites_Edges_Node{}
+	}
+	return t.Recipient
+}
+func (t *GetInvites_Invites_Edges_Node) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetInvites_Invites_Edges_Node{}
+	}
+	return &t.Role
+}
+func (t *GetInvites_Invites_Edges_Node) GetStatus() *enums.InviteStatus {
+	if t == nil {
+		t = &GetInvites_Invites_Edges_Node{}
+	}
+	return &t.Status
+}
+
+type GetInvites_Invites_Edges struct {
+	Node *GetInvites_Invites_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetInvites_Invites_Edges) GetNode() *GetInvites_Invites_Edges_Node {
+	if t == nil {
+		t = &GetInvites_Invites_Edges{}
+	}
+	return t.Node
+}
+
+type GetInvites_Invites struct {
+	Edges []*GetInvites_Invites_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetInvites_Invites) GetEdges() []*GetInvites_Invites_Edges {
+	if t == nil {
+		t = &GetInvites_Invites{}
+	}
+	return t.Edges
+}
+
 type InvitesByOrgID_Invites_Edges_Node_Owner_Invites struct {
 	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
 	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
@@ -17519,6 +17574,17 @@ func (t *GetInvite) GetInvite() *GetInvite_Invite {
 	return &t.Invite
 }
 
+type GetInvites struct {
+	Invites GetInvites_Invites "json:\"invites\" graphql:\"invites\""
+}
+
+func (t *GetInvites) GetInvites() *GetInvites_Invites {
+	if t == nil {
+		t = &GetInvites{}
+	}
+	return &t.Invites
+}
+
 type InvitesByOrgID struct {
 	Invites InvitesByOrgID_Invites "json:\"invites\" graphql:\"invites\""
 }
@@ -21283,6 +21349,35 @@ func (c *Client) GetInvite(ctx context.Context, inviteID string, interceptors ..
 	return &res, nil
 }
 
+const GetInvitesDocument = `query GetInvites {
+	invites {
+		edges {
+			node {
+				id
+				recipient
+				role
+				status
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetInvites(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetInvites, error) {
+	vars := map[string]any{}
+
+	var res GetInvites
+	if err := c.Client.Post(ctx, "GetInvites", GetInvitesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const InvitesByOrgIDDocument = `query InvitesByOrgID ($where: InviteWhereInput) {
 	invites(where: $where) {
 		edges {
@@ -24061,6 +24156,7 @@ var DocumentOperationNames = map[string]string{
 	CreateBulkCSVInviteDocument:              "CreateBulkCSVInvite",
 	DeleteInviteDocument:                     "DeleteInvite",
 	GetInviteDocument:                        "GetInvite",
+	GetInvitesDocument:                       "GetInvites",
 	InvitesByOrgIDDocument:                   "InvitesByOrgID",
 	CreateBulkCSVOhAuthTooTokenDocument:      "CreateBulkCSVOhAuthTooToken",
 	CreateBulkOhAuthTooTokenDocument:         "CreateBulkOhAuthTooToken",

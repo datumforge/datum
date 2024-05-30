@@ -39,7 +39,7 @@ func HookInvite() ent.Hook {
 			}
 
 			// generate token based on recipient + target org ID
-			m, err = setRecipientAndToken(ctx, m)
+			m, err = setRecipientAndToken(m)
 			if err != nil {
 				m.Logger.Errorw("error creating verification token", "error", err)
 
@@ -87,10 +87,14 @@ func HookInvite() ent.Hook {
 				Set("organization_id", orgID).
 				Set("organization_name", org.Name).
 				Set("requestor_id", reqID).
-				Set("requestor_name", requestor.FirstName).
-				Set("requestor_email", requestor.Email).
 				Set("recipient_email", email).
 				Set("recipient_role", role)
+
+			// if we have the requestor, add their name and email to the properties
+			if requestor != nil {
+				props.Set("requestor_name", requestor.FirstName).
+					Set("requestor_email", requestor.Email)
+			}
 
 			m.Analytics.Event("organization_invite_created", props)
 
@@ -219,8 +223,12 @@ func personalOrgNoInvite(ctx context.Context, m *generated.InviteMutation) error
 
 // setRecipientAndToken function is responsible for generating a invite token based on the
 // recipient's email and the target organization ID
-func setRecipientAndToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
-	email, _ := m.Recipient()
+func setRecipientAndToken(m *generated.InviteMutation) (*generated.InviteMutation, error) {
+	email, ok := m.Recipient()
+	if !ok || email == "" {
+		return nil, ErrMissingRecipientEmail
+	}
+
 	owner, _ := m.OwnerID()
 
 	oid, err := ulids.Parse(owner)

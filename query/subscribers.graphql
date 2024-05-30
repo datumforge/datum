@@ -2,11 +2,11 @@ query Subscribers($where: SubscriberWhereInput) {
   subscribers(where: $where) {
     edges {
       node {
-        id
-        email
-        verifiedEmail
         active
+        email
+        id
         ownerID
+        verifiedEmail
       }
     }
   }
@@ -14,25 +14,47 @@ query Subscribers($where: SubscriberWhereInput) {
 
 query GetSubscriber($email: String!) {
   subscriber(email: $email) {
-    id
-    email
-    verifiedEmail
     active
+    email
+    id
     ownerID
+    verifiedEmail
+  }
+}
+
+mutation CreateBulkSubscriber($input: [CreateSubscriberInput!]) {
+  createBulkSubscriber(input: $input) {
+    subscribers {
+      active
+      email
+      id
+      verifiedEmail
+    }
+  }
+}
+
+mutation CreateBulkCSVSubscriber($input: Upload!) {
+  createBulkCSVSubscriber(input: $input) {
+    subscribers {
+      active
+      email
+      id
+      verifiedEmail
+    }
   }
 }
 
 mutation CreateSubscriber($input: CreateSubscriberInput!) {
   createSubscriber(input: $input) {
     subscriber {
-      id
-      email
       active
-      verifiedEmail
       createdAt
       createdBy
+      email
+      id
       updatedAt
       updatedBy
+      verifiedEmail
     }
   }
 }
@@ -40,16 +62,16 @@ mutation CreateSubscriber($input: CreateSubscriberInput!) {
 mutation UpdateSubscriber($email: String!, $input: UpdateSubscriberInput!) {
   updateSubscriber(email: $email, input: $input) {
     subscriber {
-      id
-      email
-      phoneNumber
-      verifiedEmail
-      verifiedPhone
       active
       createdAt
       createdBy
+      email
+      id
+      phoneNumber
       updatedAt
       updatedBy
+      verifiedEmail
+      verifiedPhone
     }
   }
 }

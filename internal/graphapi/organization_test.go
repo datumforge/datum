@@ -190,7 +190,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			name:           "duplicate organization name",
 			orgName:        parentOrg.Name,
 			orgDescription: gofakeit.HipsterSentence(10),
-			errorMsg:       "constraint failed",
+			errorMsg:       "already exists",
 		},
 		{
 			name:           "duplicate organization name, but other was deleted, should pass",

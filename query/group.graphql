@@ -1,26 +1,178 @@
+mutation CreateBulkCSVGroup($input: Upload!) {
+  createBulkCSVGroup(input: $input) {
+    groups {
+      description
+      displayName
+      id
+      logoURL
+      name
+      tags
+      owner {
+        id
+        displayName
+      }
+      setting {
+        id
+        joinPolicy
+        syncToGithub
+        syncToSlack
+        tags
+        visibility
+      }
+      members {
+        id
+        role
+        user {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+}
+
+mutation CreateBulkGroup($input: [CreateGroupInput!]) {
+  createBulkGroup(input: $input) {
+    groups {
+      description
+      displayName
+      id
+      logoURL
+      name
+      tags
+      owner {
+        id
+        displayName
+      }
+      setting {
+        id
+        joinPolicy
+        syncToGithub
+        syncToSlack
+        tags
+        visibility
+      }
+      members {
+        id
+        role
+        user {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+}
+
+mutation CreateGroup($input: CreateGroupInput!) {
+  createGroup(input: $input) {
+    group {
+      description
+      displayName
+      id
+      logoURL
+      name
+      tags
+      owner {
+        id
+        displayName
+      }
+      setting {
+        id
+        joinPolicy
+        syncToGithub
+        syncToSlack
+        tags
+        visibility
+      }
+      members {
+        id
+        role
+        user {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+}
+
+mutation DeleteGroup($deleteGroupId: ID!) {
+  deleteGroup(id: $deleteGroupId) {
+    deletedID
+  }
+}
+
+query GetAllGroups {
+  groups {
+    edges {
+      node {
+        description
+        displayName
+        id
+        logoURL
+        name
+        tags
+        owner {
+          id
+          displayName
+        }
+        setting {
+          createdAt
+          createdBy
+          id
+          joinPolicy
+          syncToGithub
+          syncToSlack
+          tags
+          updatedAt
+          updatedBy
+          visibility
+        }
+        members {
+          id
+          role
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+
 query GetGroupByID($groupId: ID!) {
   group(id: $groupId) {
-    id
-    name
     description
     displayName
+    id
+    logoURL
+    name
+    tags
     owner {
       id
       displayName
     }
-    logoURL
-    tags
     setting {
-      id
       createdAt
-      updatedAt
       createdBy
+      id
+      joinPolicy
+      syncToGithub
+      syncToSlack
+      tags
+      updatedAt
       updatedBy
       visibility
-      joinPolicy
-      syncToSlack
-      syncToGithub
-      tags
     }
     members {
       id
@@ -40,73 +192,29 @@ query GetGroupByID($groupId: ID!) {
 
 query GroupsWhere($where: GroupWhereInput) {
   groups(where: $where) {
-      edges {
-      node {
-        id
-        name
-        description
-        displayName
-        owner {
-          id
-          displayName
-        }
-        logoURL
-        tags
-        setting {
-          id
-          createdAt
-          updatedAt
-          createdBy
-          updatedBy
-          visibility
-          joinPolicy
-          syncToSlack
-          syncToGithub
-          tags
-        }
-        members {
-          id
-          role
-          user {
-            id
-            firstName
-            lastName
-          }
-        }
-        createdAt
-        createdBy
-        updatedAt
-        updatedBy
-      }
-    }
-  }
-}
-
-query GetAllGroups {
-  groups {
     edges {
       node {
-        id
-        name
         description
         displayName
+        id
+        logoURL
+        name
+        tags
         owner {
           id
           displayName
         }
-        logoURL
-        tags
         setting {
-          id
           createdAt
-          updatedAt
           createdBy
+          id
+          joinPolicy
+          syncToGithub
+          syncToSlack
+          tags
+          updatedAt
           updatedBy
           visibility
-          joinPolicy
-          syncToSlack
-          syncToGithub
-          tags
         }
         members {
           id
@@ -122,48 +230,6 @@ query GetAllGroups {
         updatedAt
         updatedBy
       }
-    }
-  }
-}
-
-mutation CreateGroup($input: CreateGroupInput!) {
-  createGroup(input: $input) {
-    group {
-      id
-      name
-      description
-      displayName
-      owner {
-        id
-        displayName
-      }
-      logoURL
-      tags
-      setting {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        visibility
-        joinPolicy
-        syncToSlack
-        syncToGithub
-        tags
-      }
-      members {
-        id
-        role
-        user {
-          id
-          firstName
-          lastName
-        }
-      }
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
     }
   }
 }
@@ -171,22 +237,27 @@ mutation CreateGroup($input: CreateGroupInput!) {
 mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
   updateGroup(id: $updateGroupId, input: $input) {
     group {
-      id
-      name
-      displayName
       description
+      displayName
+      id
+      logoURL
+      name
       tags
-      setting {
+      owner {
         id
+        displayName
+      }
+      setting {
         createdAt
-        updatedAt
         createdBy
+        id
+        joinPolicy
+        syncToGithub
+        syncToSlack
+        tags
+        updatedAt
         updatedBy
         visibility
-        joinPolicy
-        syncToSlack
-        syncToGithub
-        tags
       }
       members {
         id
@@ -197,14 +268,6 @@ mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
           lastName
         }
       }
-      updatedAt
-      updatedBy
     }
-  }
-}
-
-mutation DeleteGroup($deleteGroupId: ID!) {
-  deleteGroup(id: $deleteGroupId) {
-    deletedID
   }
 }

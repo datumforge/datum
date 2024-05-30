@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -42,6 +43,23 @@ func (r *mutationResolver) CreateDocumentData(ctx context.Context, input generat
 	}
 
 	return &DocumentDataCreatePayload{DocumentData: data}, nil
+}
+
+// CreateBulkDocumentData is the resolver for the createBulkDocumentData field.
+func (r *mutationResolver) CreateBulkDocumentData(ctx context.Context, input []*generated.CreateDocumentDataInput) (*DocumentDataBulkCreatePayload, error) {
+	return r.bulkCreateDocumentData(ctx, input)
+}
+
+// CreateBulkCSVDocumentData is the resolver for the createBulkCSVDocumentData field.
+func (r *mutationResolver) CreateBulkCSVDocumentData(ctx context.Context, input graphql.Upload) (*DocumentDataBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateDocumentDataInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateDocumentData(ctx, data)
 }
 
 // UpdateDocumentData is the resolver for the updateDocumentData field.

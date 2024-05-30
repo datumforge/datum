@@ -6,54 +6,75 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/pkg/rout"
 )
+
+// CreateUserSetting is the resolver for the createUserSetting field.
+func (r *mutationResolver) CreateUserSetting(ctx context.Context, input generated.CreateUserSettingInput) (*UserSettingCreatePayload, error) {
+	res, err := withTransactionalMutation(ctx).UserSetting.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "usersetting"}, r.logger)
+	}
+
+	return &UserSettingCreatePayload{
+		UserSetting: res,
+	}, nil
+}
+
+// CreateBulkUserSetting is the resolver for the createBulkUserSetting field.
+func (r *mutationResolver) CreateBulkUserSetting(ctx context.Context, input []*generated.CreateUserSettingInput) (*UserSettingBulkCreatePayload, error) {
+	return r.bulkCreateUserSetting(ctx, input)
+}
+
+// CreateBulkCSVUserSetting is the resolver for the createBulkCSVUserSetting field.
+func (r *mutationResolver) CreateBulkCSVUserSetting(ctx context.Context, input graphql.Upload) (*UserSettingBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateUserSettingInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
+
+		return nil, err
+	}
+
+	return r.bulkCreateUserSetting(ctx, data)
+}
 
 // UpdateUserSetting is the resolver for the updateUserSetting field.
 func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, input generated.UpdateUserSettingInput) (*UserSettingUpdatePayload, error) {
 	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-		}
-
-		r.logger.Errorw("failed to get user setting", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "usersetting"}, r.logger)
 	}
 
 	userSetting, err = userSetting.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			ve := err.(*generated.ValidationError)
-
-			return nil, rout.InvalidField(ve.Name)
-		}
-
-		r.logger.Errorw("failed to update user setting", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "usersetting"}, r.logger)
 	}
 
 	return &UserSettingUpdatePayload{UserSetting: userSetting}, nil
+}
+
+// DeleteUserSetting is the resolver for the deleteUserSetting field.
+func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*UserSettingDeletePayload, error) {
+	if err := withTransactionalMutation(ctx).UserSetting.DeleteOneID(id).Exec(ctx); err != nil {
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "usersetting"}, r.logger)
+	}
+
+	if err := generated.UserSettingEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &UserSettingDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // UserSetting is the resolver for the UserSetting field.
 func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.UserSetting, error) {
 	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		r.logger.Errorw("failed to get user setting", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "usersetting"}, r.logger)
 	}
 
 	if err := generated.UserSettingEdgeCleanup(ctx, id); err != nil {

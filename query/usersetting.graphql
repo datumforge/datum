@@ -21,7 +21,6 @@ query GetUserSettingByID($userSettingId: ID!) {
   }
 }
 
-
 query GetUserSettings {
   userSettings {
     edges {
@@ -48,7 +47,6 @@ query GetUserSettings {
     }
   }
 }
-
 
 query GetUserSettingWhere($where: UserSettingWhereInput!) {
   userSettings(where: $where) {

@@ -21,6 +21,24 @@ extend type Mutation{
         input: CreateTemplateInput!
     ): TemplateCreatePayload!
     """
+    Create multiple new templates
+    """
+    createBulkTemplate(
+        """
+        values of the template
+        """
+        input: [CreateTemplateInput!]
+    ): TemplateBulkCreatePayload!
+    """
+    Create multiple new templates via file upload
+    """
+    createBulkCSVTemplate(
+        """
+        csv file containing values of the template
+        """
+        input: Upload!
+    ): TemplateBulkCreatePayload!
+    """
     Update an existing template
     """
     updateTemplate(
@@ -72,4 +90,14 @@ type TemplateDeletePayload {
     Deleted template ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkTemplate mutation
+"""
+type TemplateBulkCreatePayload {
+    """
+    Created templates
+    """
+    templates: [Template!]
 }

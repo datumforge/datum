@@ -38,6 +38,7 @@ const (
 var (
 	cfgFile      string
 	OutputFormat string
+	InputFile    string
 	Logger       *zap.SugaredLogger
 )
 
@@ -89,6 +90,9 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVarP(&OutputFormat, "format", "z", TableOutput, "output format (json, table)")
 	ViperBindFlag("output.format", RootCmd.PersistentFlags().Lookup("format"))
+
+	RootCmd.PersistentFlags().StringVar(&InputFile, "csv", "", "csv input file instead of stdin")
+	ViperBindFlag("input.csv", RootCmd.PersistentFlags().Lookup("csv"))
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -1,125 +1,11 @@
-query GetIntegrations($where: IntegrationWhereInput) {
-  integrations(where: $where) {
-    edges {
-      node {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        ownerID
-        name
-        description
-        kind
-        owner {
-          id
-        }
-        secrets {
-          id
-        }
-        oauth2tokens {
-          id
-        }
-        events {
-          id
-        }
-        webhooks {
-          id
-          destinationURL
-          enabled
-        }
-      }
-    }
-  }
-}
-
-query GetIntegrationByID($integrationId: ID!) {
-  integration(id: $integrationId) {
-    id
-    createdAt
-    updatedAt
-    createdBy
-    updatedBy
-    deletedAt
-    deletedBy
-    ownerID
-    name
-    description
-    kind
-    owner {
-      id
-    }
-    secrets {
-      id
-    }
-    oauth2tokens {
-      id
-    }
-    events {
-      id
-    }
-    webhooks {
-      id
-      destinationURL
-      enabled
-    }
-  }
-}
-
-query GetAllIntegrations {
-  integrations {
-    edges {
-      node {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        ownerID
-        name
-        description
-        kind
-        owner {
-          id
-        }
-        secrets {
-          id
-        }
-        oauth2tokens {
-          id
-        }
-        events {
-          id
-        }
-        webhooks {
-          id
-          destinationURL
-          enabled
-        }
-      }
-    }
-  }
-}
-
-
-mutation CreateIntegration($input: CreateIntegrationInput!) {
-  createIntegration(input: $input) {
-    integration {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      ownerID
-      name
+mutation CreateBulkCSVIntegration($input: Upload!) {
+  createBulkCSVIntegration(input: $input) {
+    integrations {
       description
+      id
       kind
+      name
+      ownerID
       owner {
         id
       }
@@ -141,20 +27,14 @@ mutation CreateIntegration($input: CreateIntegrationInput!) {
   }
 }
 
-mutation UpdateIntegration($updateIntegrationId: ID!, $input: UpdateIntegrationInput!) {
-  updateIntegration(id: $updateIntegrationId, input: $input) {
-    integration {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      ownerID
-      name
+mutation CreateBulkIntegration($input: [CreateIntegrationInput!]) {
+  createBulkIntegration(input: $input) {
+    integrations {
       description
+      id
       kind
+      name
+      ownerID
       owner {
         id
       }
@@ -169,6 +49,37 @@ mutation UpdateIntegration($updateIntegrationId: ID!, $input: UpdateIntegrationI
       }
       webhooks {
         id
+        destinationURL
+        enabled
+      }
+    }
+  }
+}
+
+mutation CreateIntegration($input: CreateIntegrationInput!) {
+  createIntegration(input: $input) {
+    integration {
+      description
+      id
+      kind
+      name
+      ownerID
+      owner {
+        id
+      }
+      secrets {
+        id
+      }
+      oauth2tokens {
+        id
+      }
+      events {
+        id
+      }
+      webhooks {
+        id
+        destinationURL
+        enabled
       }
     }
   }
@@ -177,5 +88,135 @@ mutation UpdateIntegration($updateIntegrationId: ID!, $input: UpdateIntegrationI
 mutation DeleteIntegration($deleteIntegrationId: ID!) {
   deleteIntegration(id: $deleteIntegrationId) {
     deletedID
+  }
+}
+
+query GetAllIntegrations {
+  integrations {
+    edges {
+      node {
+        description
+        id
+        kind
+        name
+        ownerID
+        owner {
+          id
+        }
+        secrets {
+          id
+        }
+        oauth2tokens {
+          id
+        }
+        events {
+          id
+        }
+        webhooks {
+          id
+          destinationURL
+          enabled
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+
+query GetIntegrationByID($integrationId: ID!) {
+  integration(id: $integrationId) {
+    description
+    id
+    kind
+    name
+    ownerID
+    owner {
+      id
+    }
+    secrets {
+      id
+    }
+    oauth2tokens {
+      id
+    }
+    events {
+      id
+    }
+    webhooks {
+      id
+      destinationURL
+      enabled
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+
+query GetIntegrations($where: IntegrationWhereInput) {
+  integrations(where: $where) {
+    edges {
+      node {
+        description
+        id
+        kind
+        name
+        ownerID
+        owner {
+          id
+        }
+        secrets {
+          id
+        }
+        oauth2tokens {
+          id
+        }
+        events {
+          id
+        }
+        webhooks {
+          id
+          destinationURL
+          enabled
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+
+mutation UpdateIntegration($updateIntegrationId: ID!, $input: UpdateIntegrationInput!) {
+  updateIntegration(id: $updateIntegrationId, input: $input) {
+    integration {
+      description
+      id
+      kind
+      name
+      ownerID
+      owner {
+        id
+      }
+      secrets {
+        id
+      }
+      oauth2tokens {
+        id
+      }
+      events {
+        id
+      }
+      webhooks {
+        id
+        destinationURL
+        enabled
+      }
+    }
   }
 }

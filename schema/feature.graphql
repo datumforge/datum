@@ -21,6 +21,24 @@ extend type Mutation{
         input: CreateFeatureInput!
     ): FeatureCreatePayload!
     """
+    Create multiple new features
+    """
+    createBulkFeature(
+        """
+        values of the feature
+        """
+        input: [CreateFeatureInput!]
+    ): FeatureBulkCreatePayload!
+    """
+    Create multiple new features via file upload
+    """
+    createBulkCSVFeature(
+        """
+        csv file containing values of the feature
+        """
+        input: Upload!
+    ): FeatureBulkCreatePayload!
+    """
     Update an existing feature
     """
     updateFeature(
@@ -72,4 +90,14 @@ type FeatureDeletePayload {
     Deleted feature ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkFeature mutation
+"""
+type FeatureBulkCreatePayload {
+    """
+    Created features
+    """
+    features: [Feature!]
 }

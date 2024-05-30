@@ -151,7 +151,7 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 			role:      enums.RoleMember,
 			checkOrg:  true,
 			checkRole: true,
-			errMsg:    "constraint failed",
+			errMsg:    "already exists",
 		},
 		{
 			name:      "add user to personal org not allowed",

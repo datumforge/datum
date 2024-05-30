@@ -1,0 +1,10 @@
+{{ $entity := .Field.TypeReference.Definition.Name | getEntityName  -}}
+
+res, err := withTransactionalMutation(ctx).{{ $entity }}.Create().SetInput(input).Save(ctx)
+if err != nil {
+	return nil, parseRequestError(err, action{action: ActionCreate, object: "{{ $entity | toLower }}"}, r.logger)
+}
+
+return &{{ $entity }}CreatePayload{
+	{{ $entity }}: res,
+}, nil

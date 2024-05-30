@@ -6,76 +6,48 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateFeature is the resolver for the createFeature field
 func (r *mutationResolver) CreateFeature(ctx context.Context, input generated.CreateFeatureInput) (*FeatureCreatePayload, error) {
 	t, err := withTransactionalMutation(ctx).Feature.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "feature"}, r.logger)
+	}
 
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+	return &FeatureCreatePayload{Feature: t}, nil
+}
 
-			return nil, validationError
-		}
+// CreateBulkFeature is the resolver for the createBulkFeature field.
+func (r *mutationResolver) CreateBulkFeature(ctx context.Context, input []*generated.CreateFeatureInput) (*FeatureBulkCreatePayload, error) {
+	return r.bulkCreateFeature(ctx, input)
+}
 
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "feature")
-		}
-
-		r.logger.Errorw("failed to create feature", "error", err)
+// CreateBulkCSVFeature is the resolver for the createBulkCSVFeature field.
+func (r *mutationResolver) CreateBulkCSVFeature(ctx context.Context, input graphql.Upload) (*FeatureBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateFeatureInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
 
 		return nil, err
 	}
 
-	return &FeatureCreatePayload{Feature: t}, nil
+	return r.bulkCreateFeature(ctx, data)
 }
 
 // UpdateFeature is the resolver for the updateFeature field
 func (r *mutationResolver) UpdateFeature(ctx context.Context, id string, input generated.UpdateFeatureInput) (*FeatureUpdatePayload, error) {
 	feature, err := withTransactionalMutation(ctx).Feature.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get feature on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "feature")
-		}
-
-		r.logger.Errorw("failed to get feature", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "feature"}, r.logger)
 	}
 
 	feature, err = feature.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update feature", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "feature")
-		}
-
-		r.logger.Errorw("failed to update feature", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "feature"}, r.logger)
 	}
 
 	return &FeatureUpdatePayload{Feature: feature}, nil
@@ -84,16 +56,7 @@ func (r *mutationResolver) UpdateFeature(ctx context.Context, id string, input g
 // DeleteFeature is the resolver for the deleteFeature field
 func (r *mutationResolver) DeleteFeature(ctx context.Context, id string) (*FeatureDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Feature.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "feature")
-		}
-
-		r.logger.Errorw("failed to delete feature", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "feature"}, r.logger)
 	}
 
 	if err := generated.FeatureEdgeCleanup(ctx, id); err != nil {
@@ -107,17 +70,7 @@ func (r *mutationResolver) DeleteFeature(ctx context.Context, id string) (*Featu
 func (r *queryResolver) Feature(ctx context.Context, id string) (*generated.Feature, error) {
 	feature, err := withTransactionalMutation(ctx).Feature.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get feature", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "feature")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "feature"}, r.logger)
 	}
 
 	return feature, nil

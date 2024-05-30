@@ -12,6 +12,33 @@ extend type Query {
 
 extend type Mutation{
     """
+    Create a new groupSetting
+    """
+    createGroupSetting(
+        """
+        values of the groupSetting
+        """
+        input: CreateGroupSettingInput!
+    ): GroupSettingCreatePayload!
+    """
+    Create multiple new groupSettings
+    """
+    createBulkGroupSetting(
+        """
+        values of the groupSetting
+        """
+        input: [CreateGroupSettingInput!]
+    ): GroupSettingBulkCreatePayload!
+    """
+    Create multiple new groupSettings via file upload
+    """
+    createBulkCSVGroupSetting(
+        """
+        csv file containing values of the groupSetting
+        """
+        input: Upload!
+    ): GroupSettingBulkCreatePayload!
+    """
     Update an existing groupSetting
     """
     updateGroupSetting(
@@ -24,6 +51,15 @@ extend type Mutation{
         """
         input: UpdateGroupSettingInput!
     ): GroupSettingUpdatePayload!
+    """
+    Delete an existing groupSetting
+    """
+    deleteGroupSetting(
+        """
+        ID of the groupSetting
+        """
+        id: ID!
+    ): GroupSettingDeletePayload!
 }
 
 """
@@ -54,4 +90,14 @@ type GroupSettingDeletePayload {
     Deleted groupSetting ID
     """
     deletedID: ID!
+}
+
+"""
+Return response for createBulkGroupSetting mutation
+"""
+type GroupSettingBulkCreatePayload {
+    """
+    Created groupSettings
+    """
+    groupSettings: [GroupSetting!]
 }

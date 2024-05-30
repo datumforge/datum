@@ -6,76 +6,48 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateGroupMembership is the resolver for the createGroupMembership field.
 func (r *mutationResolver) CreateGroupMembership(ctx context.Context, input generated.CreateGroupMembershipInput) (*GroupMembershipCreatePayload, error) {
 	om, err := withTransactionalMutation(ctx).GroupMembership.Create().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "groupmembership"}, r.logger)
+	}
 
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+	return &GroupMembershipCreatePayload{GroupMembership: om}, nil
+}
 
-			return nil, validationError
-		}
+// CreateBulkGroupMembership is the resolver for the createBulkGroupMembership field.
+func (r *mutationResolver) CreateBulkGroupMembership(ctx context.Context, input []*generated.CreateGroupMembershipInput) (*GroupMembershipBulkCreatePayload, error) {
+	return r.bulkCreateGroupMembership(ctx, input)
+}
 
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "group member")
-		}
-
-		r.logger.Errorw("failed to create group member", "error", err)
+// CreateBulkCSVGroupMembership is the resolver for the createBulkCSVGroupMembership field.
+func (r *mutationResolver) CreateBulkCSVGroupMembership(ctx context.Context, input graphql.Upload) (*GroupMembershipBulkCreatePayload, error) {
+	data, err := unmarshalBulkData[generated.CreateGroupMembershipInput](input)
+	if err != nil {
+		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
 
 		return nil, err
 	}
 
-	return &GroupMembershipCreatePayload{GroupMembership: om}, nil
+	return r.bulkCreateGroupMembership(ctx, data)
 }
 
 // UpdateGroupMembership is the resolver for the updateGroupMembership field.
 func (r *mutationResolver) UpdateGroupMembership(ctx context.Context, id string, input generated.UpdateGroupMembershipInput) (*GroupMembershipUpdatePayload, error) {
 	groupMember, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get group member on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "group member")
-		}
-
-		r.logger.Errorw("failed to get group member", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupmember"}, r.logger)
 	}
 
 	groupMember, err = groupMember.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update group member", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "group member")
-		}
-
-		r.logger.Errorw("failed to update group member role", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupmembership"}, r.logger)
 	}
 
 	return &GroupMembershipUpdatePayload{GroupMembership: groupMember}, nil
@@ -84,16 +56,7 @@ func (r *mutationResolver) UpdateGroupMembership(ctx context.Context, id string,
 // DeleteGroupMembership is the resolver for the deleteGroupMembership field.
 func (r *mutationResolver) DeleteGroupMembership(ctx context.Context, id string) (*GroupMembershipDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).GroupMembership.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "group member")
-		}
-
-		r.logger.Errorw("failed to delete group member", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "groupmembership"}, r.logger)
 	}
 
 	if err := generated.GroupMembershipEdgeCleanup(ctx, id); err != nil {
@@ -107,17 +70,7 @@ func (r *mutationResolver) DeleteGroupMembership(ctx context.Context, id string)
 func (r *queryResolver) GroupMembership(ctx context.Context, id string) (*generated.GroupMembership, error) {
 	gm, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get members of group", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "group members")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "groupmembership"}, r.logger)
 	}
 
 	return gm, nil

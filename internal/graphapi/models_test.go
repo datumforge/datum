@@ -462,7 +462,9 @@ func (at *APITokenTokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	// mock writes
-	mock_fga.WriteOnce(t, at.client.fga)
+	if len(at.Scopes) > 0 {
+		mock_fga.WriteOnce(t, at.client.fga)
+	}
 
 	if at.Name == "" {
 		at.Name = gofakeit.AppName()

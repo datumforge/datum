@@ -49,17 +49,17 @@ func invites(ctx context.Context) error {
 
 		return printInvite(invite)
 
-	} else {
-		invites, err := cli.Client.GetInvites(ctx, cli.Interceptor)
-		if err != nil {
-			return err
-		}
-
-		return printInvite(invites)
 	}
 
+	invites, err := cli.Client.GetInvites(ctx, cli.Interceptor)
+	if err != nil {
+		return err
+	}
+
+	return printInvite(invites)
 }
 
+// printInviteTable prints the invite table to the console
 func printInviteTable(i interface{}) {
 	writer := tables.NewTableWriter(inviteCmd.OutOrStdout(), "ID", "Recipient", "Role", "Status")
 
@@ -75,6 +75,7 @@ func printInviteTable(i interface{}) {
 	writer.Render()
 }
 
+// printInvite prints the invite to the console either in table or json format
 func printInvite(i interface{}) error {
 	if datum.OutputFormat == datum.JSONOutput {
 		s, err := json.Marshal(i)

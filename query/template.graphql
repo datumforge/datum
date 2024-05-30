@@ -1,16 +1,40 @@
 mutation CreateTemplate($input: CreateTemplateInput!) {
   createTemplate(input: $input) {
     template {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      name
       description
+      id
       jsonconfig
+      name
+      uischema
+      owner {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateBulkTemplate($input: [CreateTemplateInput!]) {
+  createBulkTemplate(input: $input) {
+    templates {
+      description
+      id
+      jsonconfig
+      name
+      uischema
+      owner {
+        id
+      }
+    }
+  }
+}
+
+mutation CreateBulkCSVTemplate($input: Upload!) {
+  createBulkCSVTemplate(input: $input) {
+   templates {
+      description
+      id
+      jsonconfig
+      name
       uischema
       owner {
         id
@@ -22,17 +46,15 @@ mutation CreateTemplate($input: CreateTemplateInput!) {
 mutation UpdateTemplate($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
   updateTemplate(id: $updateTemplateId, input: $input) {
     template {
-      id
       createdAt
-      updatedAt
       createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      name
       description
+      id
       jsonconfig
+      name
       uischema
+      updatedAt
+      updatedBy
       owner {
         id
       }
@@ -44,17 +66,15 @@ query GetAllTemplates {
   templates {
     edges {
       node {
-        id
         createdAt
-        updatedAt
         createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        name
         description
+        id
         jsonconfig
+        name
         uischema
+        updatedAt
+        updatedBy
         owner {
           id
         }
@@ -65,17 +85,15 @@ query GetAllTemplates {
 
 query GetTemplate($getTemplateId: ID!) {
   template(id: $getTemplateId) {
-    id
     createdAt
-    updatedAt
     createdBy
-    updatedBy
-    deletedAt
-    deletedBy
-    name
     description
+    id
     jsonconfig
+    name
     uischema
+    updatedAt
+    updatedBy
     owner {
       id
     }

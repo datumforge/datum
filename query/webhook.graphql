@@ -1,23 +1,18 @@
 query GetWebhookByID($webhookId: ID!) {
   webhook(id: $webhookId) {
-    id
     createdAt
-    updatedAt
     createdBy
-    updatedBy
-    deletedAt
-    deletedBy
-    ownerID
-    name
     description
     destinationURL
     enabled
     failures
+    id
     lastError
     lastResponse
-    owner {
-      id
-    }
+    name
+    ownerID
+    updatedAt
+    updatedBy
     events {
       id
     }
@@ -28,24 +23,19 @@ query GetAllWebhooks {
   webhooks {
     edges {
       node {
-        id
         createdAt
-        updatedAt
         createdBy
-        updatedBy
-        deletedAt
-        deletedBy
-        ownerID
-        name
         description
         destinationURL
         enabled
         failures
+        id
         lastError
         lastResponse
-        owner {
-          id
-        }
+        name
+        ownerID
+        updatedAt
+        updatedBy
         events {
           id
         }
@@ -57,24 +47,15 @@ query GetAllWebhooks {
 mutation CreateWebhook($input: CreateWebhookInput!) {
   createWebhook(input: $input) {
     webhook {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      ownerID
-      name
       description
       destinationURL
       enabled
       failures
+      id
       lastError
       lastResponse
-      owner {
-        id
-      }
+      name
+      ownerID
       events {
         id
       }
@@ -82,27 +63,54 @@ mutation CreateWebhook($input: CreateWebhookInput!) {
   }
 }
 
-mutation UpdateWebhook($updateWebhookId: ID!, $input: UpdateWebhookInput!) {
-  updateWebhook(id: $updateWebhookId, input: $input) {
-    webhook {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      deletedAt
-      deletedBy
-      ownerID
-      name
+mutation CreateBulkWebhook($input: [CreateWebhookInput!]) {
+  createBulkWebhook(input: $input) {
+    webhooks {
       description
       destinationURL
       enabled
       failures
+      id
       lastError
       lastResponse
-      owner {
-        id
-      }
+      name
+      ownerID
+    }
+  }
+}
+
+mutation CreateBulkCSVWebhook($input: Upload!) {
+  createBulkCSVWebhook(input: $input) {
+   webhooks {
+      description
+      destinationURL
+      enabled
+      failures
+      id
+      lastError
+      lastResponse
+      name
+      ownerID
+    }
+  }
+}
+
+mutation UpdateWebhook($updateWebhookId: ID!, $input: UpdateWebhookInput!) {
+  updateWebhook(id: $updateWebhookId, input: $input) {
+    webhook {
+      createdAt
+      createdBy
+      description
+      destinationURL
+      enabled
+      failures
+      id
+      lastError
+      lastResponse
+      name
+      ownerID
+      updatedAt
+      updatedBy
       events {
         id
       }

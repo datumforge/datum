@@ -78,8 +78,6 @@ func HookUpdateAPIToken() ent.Hook {
 				return at, err
 			}
 
-			mutation.Logger.Debugw("scopes", "scopes", newScopes)
-
 			tuples, err := createScopeTuples(newScopes, at.OwnerID, at.ID)
 			if err != nil {
 				return retVal, err
@@ -87,7 +85,6 @@ func HookUpdateAPIToken() ent.Hook {
 
 			// create the relationship tuples if we have any
 			if len(tuples) > 0 {
-				mutation.Logger.Debugw("tuples", "tuples", tuples)
 				if _, err := mutation.Authz.WriteTupleKeys(ctx, tuples, nil); err != nil {
 					mutation.Logger.Errorw("failed to create relationship tuple", "error", err)
 
@@ -100,6 +97,7 @@ func HookUpdateAPIToken() ent.Hook {
 	}, ent.OpUpdate|ent.OpUpdateOne)
 }
 
+// createScopeTuples creates the relationship tuples for the token
 func createScopeTuples(scopes []string, orgID, tokenID string) (tuples []fgax.TupleKey, err error) {
 	// create the relationship tuples in fga for the token
 	// TODO (sfunk): this shouldn't be a static list
@@ -128,6 +126,9 @@ func createScopeTuples(scopes []string, orgID, tokenID string) (tuples []fgax.Tu
 	return
 }
 
+// getNewScopes returns the new scopes that were added to the token during an update
+// NOTE: there is an AppendedScopes on the mutation, but this is not populated
+// so calculating the new scopes for now
 func getNewScopes(ctx context.Context, mutation *generated.APITokenMutation) ([]string, error) {
 	scopes, ok := mutation.Scopes()
 	if !ok {

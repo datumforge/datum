@@ -3,7 +3,6 @@ package datumapitokens
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -68,7 +67,6 @@ func updateAPIToken(ctx context.Context) error {
 	}
 
 	scopes := viper.GetStringSlice("apitoken.update.scopes")
-	fmt.Println(scopes)
 	if len(scopes) > 0 {
 		input.Scopes = scopes
 	}

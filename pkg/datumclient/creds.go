@@ -2,9 +2,7 @@ package datumclient
 
 import "github.com/datumforge/datum/pkg/rout"
 
-// Credentials provides a basic interface for loading an access token from Datum
-// into the Datum API client. Credentials can be loaded from disk, generated, or
-// feched from a passthrough request
+// Credentials provides a basic interface for loading an access token
 type Credentials interface {
 	AccessToken() (string, error)
 }

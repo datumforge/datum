@@ -8,7 +8,7 @@ import (
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// NewOpenAPISpec creates a new OpenAPI 3.1.0 specification
+// NewOpenAPISpec creates a new OpenAPI 3.1.0 specification based on the configured go interfaces and the operation types appended within the individual handlers
 func NewOpenAPISpec() (*openapi3.T, error) {
 	schemas := make(openapi3.Schemas)
 	responses := make(openapi3.ResponseBodies)
@@ -147,7 +147,7 @@ func NewOpenAPISpec() (*openapi3.T, error) {
 	}, nil
 }
 
-// openAPISchemas is a mapping of types to auto generate schemas for
+// openAPISchemas is a mapping of types to auto generate schemas for - these specifically live under the OAS "schema" type so that we can simply make schemaRef's to them and not have to define them all individually in the OAS paths
 var openAPISchemas = map[string]any{
 	"LoginRequest":               &models.LoginRequest{},
 	"LoginResponse":              &models.LoginReply{},

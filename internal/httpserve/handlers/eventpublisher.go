@@ -34,7 +34,6 @@ func (h *Handler) BindEventPublisher() *openapi3.Operation {
 	eventCreate := openapi3.NewOperation()
 	eventCreate.Description = "Publish and Correleate Events"
 	eventCreate.OperationID = "EventPublisher"
-
 	eventCreate.Security = &openapi3.SecurityRequirements{
 		openapi3.SecurityRequirement{
 			"apiKey": []string{},

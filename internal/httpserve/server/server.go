@@ -25,6 +25,7 @@ type handler interface {
 	Routes(*echo.Group)
 }
 
+// NewRouter creates a wrapper router so that the echo server and OAS specification can be generated simultaneously
 func NewRouter() (*route.Router, error) {
 	oas, err := NewOpenAPISpec()
 	if err != nil {

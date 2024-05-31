@@ -8,7 +8,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/pkg/auth"
@@ -19,23 +18,6 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 	// TODO: look at allowing this resolver to invite the user instead of creating them directly
 	// for now, return permission denied
 	return nil, ErrPermissionDenied
-}
-
-// CreateBulkUser is the resolver for the createBulkUser field.
-func (r *mutationResolver) CreateBulkUser(ctx context.Context, input []*generated.CreateUserInput) (*UserBulkCreatePayload, error) {
-	return r.bulkCreateUser(ctx, input)
-}
-
-// CreateBulkCSVUser is the resolver for the createBulkCSVUser field.
-func (r *mutationResolver) CreateBulkCSVUser(ctx context.Context, input graphql.Upload) (*UserBulkCreatePayload, error) {
-	data, err := unmarshalBulkData[generated.CreateUserInput](input)
-	if err != nil {
-		r.logger.Errorw("failed to unmarshal bulk data", "error", err)
-
-		return nil, err
-	}
-
-	return r.bulkCreateUser(ctx, data)
 }
 
 // UpdateUser is the resolver for the updateUser field.

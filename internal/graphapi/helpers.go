@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/events/soiree"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	sliceutil "github.com/datumforge/datum/pkg/utils/slice"
 )
 
 const (
@@ -83,7 +84,7 @@ func setOrganizationInAuthContext(ctx context.Context, inputOrgID *string) error
 		return err
 	}
 
-	if !orgContains(orgIDs, *inputOrgID) {
+	if !sliceutil.Contains(orgIDs, *inputOrgID) {
 		return fmt.Errorf("organization id %s not found in the authenticated organizations", orgID)
 	}
 
@@ -102,14 +103,4 @@ func setOrganizationInAuthContext(ctx context.Context, inputOrgID *string) error
 	auth.SetAuthenticatedUserContext(ec, au)
 
 	return nil
-}
-
-func orgContains(orgIDs []string, orgID string) bool {
-	for _, id := range orgIDs {
-		if id == orgID {
-			return true
-		}
-	}
-
-	return false
 }

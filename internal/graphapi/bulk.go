@@ -388,25 +388,6 @@ func (r *mutationResolver) bulkCreateTemplate(ctx context.Context, input []*gene
 	}, nil
 }
 
-// bulkCreateUser uses the CreateBulk function to create multiple User entities
-func (r *mutationResolver) bulkCreateUser(ctx context.Context, input []*generated.CreateUserInput) (*UserBulkCreatePayload, error) {
-	c := withTransactionalMutation(ctx)
-	builders := make([]*generated.UserCreate, len(input))
-	for i, data := range input {
-		builders[i] = c.User.Create().SetInput(*data)
-	}
-
-	res, err := c.User.CreateBulk(builders...).Save(ctx)
-	if err != nil {
-		return nil, parseRequestError(err, action{action: ActionCreate, object: "user"}, r.logger)
-	}
-
-	// return response
-	return &UserBulkCreatePayload{
-		Users: res,
-	}, nil
-}
-
 // bulkCreateUserSetting uses the CreateBulk function to create multiple UserSetting entities
 func (r *mutationResolver) bulkCreateUserSetting(ctx context.Context, input []*generated.CreateUserSettingInput) (*UserSettingBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)

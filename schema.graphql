@@ -8040,24 +8040,6 @@ type Mutation {
 		input: CreateUserInput!
 	): UserCreatePayload!
 	"""
-	Create multiple new users
-	"""
-	createBulkUser(
-		"""
-		values of the user
-		"""
-		input: [CreateUserInput!]
-	): UserBulkCreatePayload!
-	"""
-	Create multiple new users via file upload
-	"""
-	createBulkCSVUser(
-		"""
-		csv file containing values of the user
-		"""
-		input: Upload!
-	): UserBulkCreatePayload!
-	"""
 	Update an existing user
 	"""
 	updateUser(

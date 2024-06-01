@@ -8,6 +8,7 @@ import (
 
 	"github.com/Yamashou/gqlgenc/clientv2"
 
+	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/sessions"
 )
 
@@ -31,9 +32,13 @@ func (a Authorization) WithAuthorization() clientv2.RequestInterceptor {
 		next clientv2.RequestInterceptorFunc,
 	) error {
 		// setting authorization header if its not already set
-		h := req.Header.Get("Authorization")
+		h := req.Header.Get(httpsling.HeaderAuthorization)
 		if h == "" {
-			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", a.BearerToken))
+			auth := httpsling.BearerAuth{
+				Token: a.BearerToken,
+			}
+
+			auth.Apply(req)
 		}
 
 		// add session cookie

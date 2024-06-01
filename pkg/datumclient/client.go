@@ -7,11 +7,17 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/datumforge/datum/pkg/httpsling"
 	api "github.com/datumforge/datum/pkg/models"
 )
 
-type DatumClient interface {
+type DatumClient struct {
+	DatumRestClient
+	DatumGraphClient
+}
+
+type DatumRestClient interface {
 	Register(context.Context, *api.RegisterRequest) (*api.RegisterReply, error)
 	Login(context.Context, *api.LoginRequest) (*api.LoginReply, error)
 	Refresh(context.Context, *api.RefreshRequest) (*api.RefreshReply, error)
@@ -28,16 +34,59 @@ type Reauthenticator interface {
 	Refresh(context.Context, *api.RefreshRequest) (*api.RefreshReply, error)
 }
 
-// New creates a new API v1 client that implements the Datum Client interface
-func New(endpoint string, opts ...ClientOption) (_ DatumClient, err error) {
-	c := &APIv1{}
+// TODO: we should provide a default graph query endpoint, but allow it to be overridden with options instead of this
+type Config struct {
+	BaseURL            string
+	GraphQueryEndpoint string
+}
 
-	ep, err := url.Parse(endpoint)
+// New creates a new API v1 client that implements the Datum Client interface
+func New(config Config, opts ...ClientOption) (*DatumClient, error) {
+	// configure rest client
+	c, err := NewRestClient(config.BaseURL, opts...)
 	if err != nil {
 		return nil, err
 	}
 
-	c.endpoint = ep
+	api := c.(*APIv1)
+
+	// configure graph client
+	interceptors := []clientv2.RequestInterceptor{}
+
+	token, err := api.creds.AccessToken()
+	if err == nil {
+		auth := Authorization{
+			BearerToken: token,
+		}
+
+		interceptors = append(interceptors, auth.WithAuthorization())
+	}
+
+	// TODO: update the Options and interceptors as options to the client instead of hardcoding
+	graphClient := NewClient(
+		api.client.HTTPClient,                    // httpclient
+		config.BaseURL+config.GraphQueryEndpoint, // full request path for graph
+		&clientv2.Options{
+			ParseDataAlongWithErrors: false,
+		}, interceptors...,
+	)
+
+	return &DatumClient{
+		c,
+		graphClient,
+	}, nil
+}
+
+// New creates a new API v1 client that implements the Datum Client interface
+func NewRestClient(baseurl string, opts ...ClientOption) (DatumRestClient, error) {
+	c := &APIv1{}
+
+	ep, err := url.Parse(baseurl)
+	if err != nil {
+		return nil, err
+	}
+
+	c.baseurl = ep
 
 	if c.client == nil {
 		jar, err := cookiejar.New(nil)
@@ -46,7 +95,7 @@ func New(endpoint string, opts ...ClientOption) (_ DatumClient, err error) {
 		}
 
 		c.client = httpsling.Create(&httpsling.Config{
-			BaseURL:    endpoint,
+			BaseURL:    baseurl,
 			Timeout:    5 * time.Second, // nolint: gomnd
 			MaxRetries: 3,               // nolint: gomnd
 		})
@@ -55,10 +104,10 @@ func New(endpoint string, opts ...ClientOption) (_ DatumClient, err error) {
 	}
 
 	c.client.SetDefaultUserAgent("Datum API Client/v1")
-	c.client.SetDefaultHeader("Accept", "application/json")
-	c.client.SetDefaultHeader("Accept-Language", "en-US,en")
-	c.client.SetDefaultHeader("Accept-Encoding", "gzip, deflate, br")
-	c.client.SetDefaultHeader("Content-Type", "application/json; charset=utf-8")
+	c.client.SetDefaultHeader(httpsling.HeaderAccept, httpsling.ContentTypeJSON)
+	c.client.SetDefaultHeader(httpsling.HeaderAcceptLanguage, "en-US,en")
+	c.client.SetDefaultHeader(httpsling.HeaderAcceptEncoding, "gzip, deflate, br")
+	c.client.SetDefaultHeader(httpsling.HeaderContentType, httpsling.ContentTypeJSONUTF8)
 
 	// Apply our options
 	for _, opt := range opts {
@@ -72,26 +121,25 @@ func New(endpoint string, opts ...ClientOption) (_ DatumClient, err error) {
 
 // APIv1 implements the DatumClient interface and provides methods to interact with the Datum API
 type APIv1 struct {
-	// endpoint is the base URL for requests
-	endpoint *url.URL
+	// baseurl is the base URL for requests
+	baseurl *url.URL
 	// config holds the httpsling configuration parameters to initialize the client
 	config *httpsling.Config
 	// creds is the default credentials used to authorize requests
 	creds Credentials
 	// client is the underlying HTTP client used to make requests provided by the httpsling library
 	client *httpsling.Client
-	// graphClient DatumGraphClient
 }
 
 // Ensure the APIv1 implements the DatumClient interface
-var _ DatumClient = &APIv1{}
+var _ DatumRestClient = &APIv1{}
 
 // Register a new user with the Datum API
 func (s *APIv1) Register(ctx context.Context, in *api.RegisterRequest) (out *api.RegisterReply, err error) {
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/register")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +156,7 @@ func (s *APIv1) Login(ctx context.Context, in *api.LoginRequest) (out *api.Login
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/login")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +173,7 @@ func (s *APIv1) Refresh(ctx context.Context, in *api.RefreshRequest) (out *api.R
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/refresh")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +190,7 @@ func (s *APIv1) Switch(ctx context.Context, in *api.SwitchOrganizationRequest) (
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/switch")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +207,7 @@ func (s *APIv1) VerifyEmail(ctx context.Context, in *api.VerifyRequest) (out *ap
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/verify")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +224,7 @@ func (s *APIv1) ResendEmail(ctx context.Context, in *api.ResendRequest) (out *ap
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/resend")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +241,7 @@ func (s *APIv1) ForgotPassword(ctx context.Context, in *api.ForgotPasswordReques
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/forgot-password")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +258,7 @@ func (s *APIv1) ResetPassword(ctx context.Context, in *api.ResetPasswordRequest)
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/password-reset")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +275,7 @@ func (s *APIv1) Invite(ctx context.Context, in *api.InviteRequest) (out *api.Inv
 	req := s.client.NewRequestBuilder(http.MethodPost, "/v1/invite")
 	req.Body(in)
 
-	resp, err := req.Send(context.Background())
+	resp, err := req.Send(ctx)
 	if err != nil {
 		return nil, err
 	}

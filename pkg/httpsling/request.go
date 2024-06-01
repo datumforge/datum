@@ -72,7 +72,7 @@ func (c *Client) NewRequestBuilder(method, path string) *RequestBuilder {
 		method:  method,
 		path:    path,
 		queries: url.Values{},
-		headers: &http.Header{},
+		headers: c.Headers,
 	}
 }
 
@@ -809,7 +809,7 @@ func (b *RequestBuilder) prepareBodyBasedOnContentType() (io.Reader, string, err
 	var err error
 
 	switch contentType {
-	case ContentTypeJSON:
+	case ContentTypeJSON, ContentTypeJSONUTF8:
 		body, err = b.client.JSONEncoder.Encode(b.bodyData)
 	case ContentTypeXML:
 		body, err = b.client.XMLEncoder.Encode(b.bodyData)

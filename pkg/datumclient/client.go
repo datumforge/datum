@@ -3,20 +3,21 @@ package datumclient
 import (
 	"context"
 	"net/http"
-	"net/http/cookiejar"
 	"net/url"
-	"time"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
+
 	"github.com/datumforge/datum/pkg/httpsling"
 	api "github.com/datumforge/datum/pkg/models"
 )
 
+// DatumClient is the interface that wraps the Datum API client methods
 type DatumClient struct {
 	DatumRestClient
 	DatumGraphClient
 }
 
+// DatumRestClient is the interface that wraps the Datum API REST client methods
 type DatumRestClient interface {
 	Register(context.Context, *api.RegisterRequest) (*api.RegisterReply, error)
 	Login(context.Context, *api.LoginRequest) (*api.LoginReply, error)
@@ -34,24 +35,15 @@ type Reauthenticator interface {
 	Refresh(context.Context, *api.RefreshRequest) (*api.RefreshReply, error)
 }
 
-// TODO: we should provide a default graph query endpoint, but allow it to be overridden with options instead of this
-type Config struct {
-	BaseURL            string
-	GraphQueryEndpoint string
-}
-
 // New creates a new API v1 client that implements the Datum Client interface
 func New(config Config, opts ...ClientOption) (*DatumClient, error) {
 	// configure rest client
-	c, err := NewRestClient(config.BaseURL, opts...)
+	c, err := NewRestClient(config, opts...)
 	if err != nil {
 		return nil, err
 	}
 
 	api := c.(*APIv1)
-
-	// configure graph client
-	interceptors := []clientv2.RequestInterceptor{}
 
 	token, err := api.creds.AccessToken()
 	if err == nil {
@@ -59,17 +51,10 @@ func New(config Config, opts ...ClientOption) (*DatumClient, error) {
 			BearerToken: token,
 		}
 
-		interceptors = append(interceptors, auth.WithAuthorization())
+		config.Interceptors = append(config.Interceptors, auth.WithAuthorization())
 	}
 
-	// TODO: update the Options and interceptors as options to the client instead of hardcoding
-	graphClient := NewClient(
-		api.client.HTTPClient,                    // httpclient
-		config.BaseURL+config.GraphQueryEndpoint, // full request path for graph
-		&clientv2.Options{
-			ParseDataAlongWithErrors: false,
-		}, interceptors...,
-	)
+	graphClient := NewClient(api.client.HTTPClient, config.BaseURL+config.GraphQLPath, &config.Clientv2Options, config.Interceptors...)
 
 	return &DatumClient{
 		c,
@@ -78,31 +63,16 @@ func New(config Config, opts ...ClientOption) (*DatumClient, error) {
 }
 
 // New creates a new API v1 client that implements the Datum Client interface
-func NewRestClient(baseurl string, opts ...ClientOption) (DatumRestClient, error) {
+func NewRestClient(config Config, opts ...ClientOption) (DatumRestClient, error) {
 	c := &APIv1{}
 
-	ep, err := url.Parse(baseurl)
+	ep, err := url.Parse(config.BaseURL)
 	if err != nil {
 		return nil, err
 	}
 
 	c.baseurl = ep
-
-	if c.client == nil {
-		jar, err := cookiejar.New(nil)
-		if err != nil {
-			return nil, err
-		}
-
-		c.client = httpsling.Create(&httpsling.Config{
-			BaseURL:    baseurl,
-			Timeout:    5 * time.Second, // nolint: gomnd
-			MaxRetries: 3,               // nolint: gomnd
-		})
-
-		c.client.HTTPClient.Jar = jar
-	}
-
+	c.client = httpsling.Create(c.config)
 	c.client.SetDefaultUserAgent("Datum API Client/v1")
 	c.client.SetDefaultHeader(httpsling.HeaderAccept, httpsling.ContentTypeJSON)
 	c.client.SetDefaultHeader(httpsling.HeaderAcceptLanguage, "en-US,en")
@@ -129,6 +99,18 @@ type APIv1 struct {
 	creds Credentials
 	// client is the underlying HTTP client used to make requests provided by the httpsling library
 	client *httpsling.Client
+	// interceptors are the request interceptors used to modify requests before they are sent
+	interceptors []clientv2.RequestInterceptor
+	// graphQueryEndpoint is the endpoint for the graph query API
+	graphQueryEndpoint string
+	// token is the access token used to authorize requests
+	token string
+	// tokenRefresh is the refresh token used to refresh the access token
+	tokenRefresh string
+	// clientv2Options are the options used to configure the clientv2
+	clientv2Options clientv2.Options
+
+	Config Config
 }
 
 // Ensure the APIv1 implements the DatumClient interface

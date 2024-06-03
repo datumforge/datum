@@ -24,7 +24,7 @@ includes:
 
 env:
   ATLAS_SQLITE_DB_URI: "sqlite://file?mode=memory&_fk=1"
-  ATLAS_POSTGRES_DB_URI: "docker://postgres:16-alpine"
+  ATLAS_POSTGRES_DB_URI: "postgres:16-alpine"
   TEST_DB_URL: "docker://postgres:16-alpine"
   TEST_DB_CONTAINER_EXPIRY: "2" # in minutes
   TEST_FGA_URL: "localhost:8080"

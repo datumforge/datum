@@ -4,14 +4,13 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"log"
 	"os"
+	"time"
 
 	// supported ent database drivers
-	_ "github.com/datumforge/entx" // overlay for sqlite
-	_ "github.com/lib/pq"          // postgres driver
-	"github.com/ory/dockertest"
+	_ "github.com/datumforge/entx"                       // overlay for sqlite
+	_ "github.com/lib/pq"                                // postgres driver
 	_ "github.com/tursodatabase/libsql-client-go/libsql" // libsql driver
 	_ "modernc.org/sqlite"                               // sqlite driver (non-cgo)
 
@@ -62,7 +61,16 @@ func main() {
 		log.Fatalln("failed to load the ATLAS_SQLITE_DB_URI env var")
 	}
 
-	tf := createPostgresTestContainer()
+	pgDBURI, ok := os.LookupEnv("ATLAS_POSTGRES_DB_URI")
+	if !ok {
+		log.Fatalln("failed to load the ATLAS_POSTGRES_DB_URI env var")
+	}
+
+	tf, err := testutils.GetPostgresDockerTest(pgDBURI, 5*time.Minute)
+	if err != nil {
+		log.Fatalf("failed creating postgres test container: %v", err)
+	}
+
 	defer testutils.TeardownFixture(tf)
 
 	// Generate migrations using Atlas support for sqlite (note the Ent dialect option passed above).
@@ -89,39 +97,4 @@ func main() {
 	if err = migrate.NamedDiff(ctx, tf.URI, os.Args[1], gooseOptsPG...); err != nil {
 		log.Fatalf("failed generating goose migration file for postgres: %v", err)
 	}
-}
-
-// createPostgresTestContainer creates a test postgres container and waits for it to be ready to accept connections
-func createPostgresTestContainer() *testutils.TestFixture {
-	pool, err := dockertest.NewPool("")
-	if err != nil {
-		log.Fatalf("could not construct pool: %s", err)
-	}
-
-	// uses pool to try to connect to Docker
-	err = pool.Client.Ping()
-	if err != nil {
-		log.Fatalf("could not connect to docker: %s", err)
-	}
-
-	pgDBURI, ok := os.LookupEnv("ATLAS_POSTGRES_DB_URI")
-	if !ok {
-		log.Fatalln("failed to load the ATLAS_POSTGRES_DB_URI env var")
-	}
-
-	// create a test postgres container
-	tf := testutils.GetTestURI(pgDBURI, 5) // allow the container to live for 5 minutes
-
-	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	if err := pool.Retry(func() error {
-		db, err := sql.Open("postgres", tf.URI)
-		if err != nil {
-			return err
-		}
-		return db.Ping()
-	}); err != nil {
-		log.Fatalf("Could not connect to database: %s", err)
-	}
-
-	return tf
 }

@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
@@ -11,10 +13,13 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
+	"github.com/datumforge/fgax/entfga"
 	"github.com/ogen-go/ogen"
 
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -93,5 +98,31 @@ func (Template) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			NillableIDField: true,
+			OrgOwnedField:   true,
+			IDField:         "OwnerID",
+		},
+	}
+}
+
+// Policy of the Template
+func (Template) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			privacy.TemplateMutationRuleFunc(func(ctx context.Context, m *generated.TemplateMutation) error {
+				return m.CheckAccessForEdit(ctx)
+			}),
+
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.TemplateQueryRuleFunc(func(ctx context.Context, q *generated.TemplateQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

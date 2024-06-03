@@ -497,6 +497,9 @@
                       "type": "string"
                     }
                   },
+                  "owner": {
+                    "type": "string"
+                  },
                   "template": {
                     "type": "string"
                   }
@@ -975,6 +978,9 @@
                       "type": "string"
                     }
                   },
+                  "owner": {
+                    "type": "string"
+                  },
                   "template": {
                     "type": "string"
                   }
@@ -991,6 +997,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DocumentData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/document-data/{id}/owner": {
+      "get": {
+        "tags": [
+          "DocumentData"
+        ],
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the DocumentData with the given ID",
+        "operationId": "readDocumentDataOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the DocumentData",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to DocumentData with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
                 }
               }
             }
@@ -12950,6 +13001,12 @@
                   "setting": {
                     "type": "string"
                   },
+                  "documentdata": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "entitlements": {
                     "type": "array",
                     "items": {
@@ -13226,6 +13283,12 @@
                   "setting": {
                     "type": "string"
                   },
+                  "documentdata": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "entitlements": {
                     "type": "array",
                     "items": {
@@ -13444,6 +13507,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Organization"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/documentdata": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Documentdata",
+        "description": "List attached Documentdata.",
+        "operationId": "listOrganizationDocumentdata",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentData"
                   }
                 }
               }
@@ -19304,6 +19431,9 @@
               "type": "string"
             }
           },
+          "owner": {
+            "$ref": "#/components/schemas/Organization"
+          },
           "template": {
             "$ref": "#/components/schemas/Template"
           }
@@ -21455,6 +21585,12 @@
           },
           "setting": {
             "$ref": "#/components/schemas/OrganizationSetting"
+          },
+          "documentdata": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentData"
+            }
           },
           "entitlements": {
             "type": "array",

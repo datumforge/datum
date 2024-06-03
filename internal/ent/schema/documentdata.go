@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
@@ -9,9 +11,12 @@ import (
 	"entgo.io/ent/schema/field"
 
 	emixin "github.com/datumforge/entx/mixin"
+	"github.com/datumforge/fgax/entfga"
 	"github.com/ogen-go/ogen"
 
 	"github.com/datumforge/datum/internal/ent/customtypes"
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -41,6 +46,9 @@ func (DocumentData) Mixin() []ent.Mixin {
 		emixin.IDMixin{},
 		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
+		OrgOwnerMixin{
+			Ref: "documentdata",
+		},
 	}
 }
 
@@ -61,5 +69,31 @@ func (DocumentData) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			NillableIDField: true,
+			OrgOwnedField:   true,
+			IDField:         "OwnerID",
+		},
+	}
+}
+
+// Policy of the DocumentData
+func (DocumentData) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			privacy.DocumentDataMutationRuleFunc(func(ctx context.Context, m *generated.DocumentDataMutation) error {
+				return m.CheckAccessForEdit(ctx)
+			}),
+
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.DocumentDataQueryRuleFunc(func(ctx context.Context, q *generated.DocumentDataQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

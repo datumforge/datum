@@ -5,6 +5,7 @@ package generated
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -409,6 +410,12 @@ func (tq *TemplateQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		tq.sql = prev
+	}
+	if template.Policy == nil {
+		return errors.New("generated: uninitialized template.Policy (forgotten import generated/runtime?)")
+	}
+	if err := template.Policy.EvalQuery(ctx, tq); err != nil {
+		return err
 	}
 	return nil
 }

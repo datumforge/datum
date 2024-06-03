@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -272,6 +273,20 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	if exists, err := FromContext(ctx).OrganizationSetting.Query().Where((organizationsetting.HasOrganizationWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
 		if organizationsettingCount, err := FromContext(ctx).OrganizationSetting.Delete().Where(organizationsetting.HasOrganizationWith(organization.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting organizationsetting", "count", organizationsettingCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).DocumentData.Query().Where((documentdata.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if documentdataCount, err := FromContext(ctx).DocumentData.Delete().Where(documentdata.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting documentdata", "count", documentdataCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).Entitlement.Query().Where((entitlement.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if entitlementCount, err := FromContext(ctx).Entitlement.Delete().Where(entitlement.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting entitlement", "count", entitlementCount, "err", err)
 			return err
 		}
 	}

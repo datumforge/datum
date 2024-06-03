@@ -87,7 +87,6 @@ func (Subscriber) Mixin() []ent.Mixin {
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
 			Ref:             "subscribers",
-			AllowWhere:      true,
 			SkipInterceptor: interceptors.SkipOnlyQuery,
 		},
 	}

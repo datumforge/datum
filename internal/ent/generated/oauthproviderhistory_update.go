@@ -130,6 +130,26 @@ func (ophu *OauthProviderHistoryUpdate) ClearDeletedBy() *OauthProviderHistoryUp
 	return ophu
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (ophu *OauthProviderHistoryUpdate) SetOwnerID(s string) *OauthProviderHistoryUpdate {
+	ophu.mutation.SetOwnerID(s)
+	return ophu
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ophu *OauthProviderHistoryUpdate) SetNillableOwnerID(s *string) *OauthProviderHistoryUpdate {
+	if s != nil {
+		ophu.SetOwnerID(*s)
+	}
+	return ophu
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ophu *OauthProviderHistoryUpdate) ClearOwnerID() *OauthProviderHistoryUpdate {
+	ophu.mutation.ClearOwnerID()
+	return ophu
+}
+
 // SetName sets the "name" field.
 func (ophu *OauthProviderHistoryUpdate) SetName(s string) *OauthProviderHistoryUpdate {
 	ophu.mutation.SetName(s)
@@ -348,6 +368,12 @@ func (ophu *OauthProviderHistoryUpdate) sqlSave(ctx context.Context) (n int, err
 	if ophu.mutation.DeletedByCleared() {
 		_spec.ClearField(oauthproviderhistory.FieldDeletedBy, field.TypeString)
 	}
+	if value, ok := ophu.mutation.OwnerID(); ok {
+		_spec.SetField(oauthproviderhistory.FieldOwnerID, field.TypeString, value)
+	}
+	if ophu.mutation.OwnerIDCleared() {
+		_spec.ClearField(oauthproviderhistory.FieldOwnerID, field.TypeString)
+	}
 	if value, ok := ophu.mutation.Name(); ok {
 		_spec.SetField(oauthproviderhistory.FieldName, field.TypeString, value)
 	}
@@ -495,6 +521,26 @@ func (ophuo *OauthProviderHistoryUpdateOne) SetNillableDeletedBy(s *string) *Oau
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (ophuo *OauthProviderHistoryUpdateOne) ClearDeletedBy() *OauthProviderHistoryUpdateOne {
 	ophuo.mutation.ClearDeletedBy()
+	return ophuo
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (ophuo *OauthProviderHistoryUpdateOne) SetOwnerID(s string) *OauthProviderHistoryUpdateOne {
+	ophuo.mutation.SetOwnerID(s)
+	return ophuo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ophuo *OauthProviderHistoryUpdateOne) SetNillableOwnerID(s *string) *OauthProviderHistoryUpdateOne {
+	if s != nil {
+		ophuo.SetOwnerID(*s)
+	}
+	return ophuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ophuo *OauthProviderHistoryUpdateOne) ClearOwnerID() *OauthProviderHistoryUpdateOne {
+	ophuo.mutation.ClearOwnerID()
 	return ophuo
 }
 
@@ -745,6 +791,12 @@ func (ophuo *OauthProviderHistoryUpdateOne) sqlSave(ctx context.Context) (_node 
 	}
 	if ophuo.mutation.DeletedByCleared() {
 		_spec.ClearField(oauthproviderhistory.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := ophuo.mutation.OwnerID(); ok {
+		_spec.SetField(oauthproviderhistory.FieldOwnerID, field.TypeString, value)
+	}
+	if ophuo.mutation.OwnerIDCleared() {
+		_spec.ClearField(oauthproviderhistory.FieldOwnerID, field.TypeString)
 	}
 	if value, ok := ophuo.mutation.Name(); ok {
 		_spec.SetField(oauthproviderhistory.FieldName, field.TypeString, value)

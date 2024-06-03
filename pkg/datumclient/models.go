@@ -270,6 +270,7 @@ type CreateDocumentDataInput struct {
 	Tags []string `json:"tags,omitempty"`
 	// the json data of the document
 	Data       json.RawMessage `json:"data"`
+	OwnerID    *string         `json:"ownerID,omitempty"`
 	TemplateID string          `json:"templateID"`
 }
 
@@ -583,6 +584,7 @@ type CreateOrganizationInput struct {
 	TemplateIDs            []string                        `json:"templateIDs,omitempty"`
 	IntegrationIDs         []string                        `json:"integrationIDs,omitempty"`
 	SettingID              *string                         `json:"settingID,omitempty"`
+	DocumentdatumIDs       []string                        `json:"documentdatumIDs,omitempty"`
 	EntitlementIDs         []string                        `json:"entitlementIDs,omitempty"`
 	PersonalAccessTokenIDs []string                        `json:"personalAccessTokenIDs,omitempty"`
 	APITokenIDs            []string                        `json:"apiTokenIDs,omitempty"`
@@ -808,10 +810,12 @@ type DocumentData struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	// the template id of the document
 	TemplateID string `json:"templateID"`
 	// the json data of the document
 	Data     json.RawMessage `json:"data"`
+	Owner    *Organization   `json:"owner,omitempty"`
 	Template *Template       `json:"template"`
 }
 
@@ -866,6 +870,7 @@ type DocumentDataHistory struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	// the template id of the document
 	TemplateID string `json:"templateID"`
 	// the json data of the document
@@ -1020,6 +1025,22 @@ type DocumentDataHistoryWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// template_id field predicates
 	TemplateID             *string  `json:"templateID,omitempty"`
 	TemplateIDNeq          *string  `json:"templateIDNEQ,omitempty"`
@@ -1140,6 +1161,22 @@ type DocumentDataWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// template_id field predicates
 	TemplateID             *string  `json:"templateID,omitempty"`
 	TemplateIDNeq          *string  `json:"templateIDNEQ,omitempty"`
@@ -1154,6 +1191,9 @@ type DocumentDataWhereInput struct {
 	TemplateIDHasSuffix    *string  `json:"templateIDHasSuffix,omitempty"`
 	TemplateIDEqualFold    *string  `json:"templateIDEqualFold,omitempty"`
 	TemplateIDContainsFold *string  `json:"templateIDContainsFold,omitempty"`
+	// owner edge predicates
+	HasOwner     *bool                     `json:"hasOwner,omitempty"`
+	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
 	// template edge predicates
 	HasTemplate     *bool                 `json:"hasTemplate,omitempty"`
 	HasTemplateWith []*TemplateWhereInput `json:"hasTemplateWith,omitempty"`
@@ -1175,6 +1215,7 @@ type Entitlement struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	Tier      enums.Tier `json:"tier"`
 	// used to store references to external systems, e.g. Stripe
 	ExternalCustomerID *string `json:"externalCustomerID,omitempty"`
@@ -1242,6 +1283,7 @@ type EntitlementHistory struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	Tier      enums.Tier `json:"tier"`
 	// used to store references to external systems, e.g. Stripe
 	ExternalCustomerID *string `json:"externalCustomerID,omitempty"`
@@ -1403,6 +1445,22 @@ type EntitlementHistoryWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// tier field predicates
 	Tier      *enums.Tier  `json:"tier,omitempty"`
 	TierNeq   *enums.Tier  `json:"tierNEQ,omitempty"`
@@ -1563,6 +1621,22 @@ type EntitlementWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// tier field predicates
 	Tier      *enums.Tier  `json:"tier,omitempty"`
 	TierNeq   *enums.Tier  `json:"tierNEQ,omitempty"`
@@ -3027,7 +3101,8 @@ type Group struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
+	Tags    []string `json:"tags,omitempty"`
+	OwnerID *string  `json:"ownerID,omitempty"`
 	// the name of the group - must be unique within the organization
 	Name string `json:"name"`
 	// the groups description
@@ -3098,7 +3173,8 @@ type GroupHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
+	Tags    []string `json:"tags,omitempty"`
+	OwnerID *string  `json:"ownerID,omitempty"`
 	// the name of the group - must be unique within the organization
 	Name string `json:"name"`
 	// the groups description
@@ -3267,6 +3343,22 @@ type GroupHistoryWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -4198,6 +4290,22 @@ type GroupWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -5428,6 +5536,7 @@ type OauthProvider struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	// the oauth provider's name
 	Name string `json:"name"`
 	// the client id for the oauth provider
@@ -5500,6 +5609,7 @@ type OauthProviderHistory struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   *string    `json:"ownerID,omitempty"`
 	// the oauth provider's name
 	Name string `json:"name"`
 	// the client id for the oauth provider
@@ -5668,6 +5778,22 @@ type OauthProviderHistoryWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -5895,6 +6021,22 @@ type OauthProviderWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -6614,6 +6756,7 @@ type Organization struct {
 	Templates            []*Template             `json:"templates,omitempty"`
 	Integrations         []*Integration          `json:"integrations,omitempty"`
 	Setting              *OrganizationSetting    `json:"setting,omitempty"`
+	Documentdata         []*DocumentData         `json:"documentdata,omitempty"`
 	Entitlements         []*Entitlement          `json:"entitlements,omitempty"`
 	PersonalAccessTokens []*PersonalAccessToken  `json:"personalAccessTokens,omitempty"`
 	APITokens            []*APIToken             `json:"apiTokens,omitempty"`
@@ -7653,6 +7796,9 @@ type OrganizationWhereInput struct {
 	// setting edge predicates
 	HasSetting     *bool                            `json:"hasSetting,omitempty"`
 	HasSettingWith []*OrganizationSettingWhereInput `json:"hasSettingWith,omitempty"`
+	// documentdata edge predicates
+	HasDocumentdata     *bool                     `json:"hasDocumentdata,omitempty"`
+	HasDocumentdataWith []*DocumentDataWhereInput `json:"hasDocumentdataWith,omitempty"`
 	// entitlements edge predicates
 	HasEntitlements     *bool                    `json:"hasEntitlements,omitempty"`
 	HasEntitlementsWith []*EntitlementWhereInput `json:"hasEntitlementsWith,omitempty"`
@@ -8350,7 +8496,8 @@ type Template struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
+	Tags    []string `json:"tags,omitempty"`
+	OwnerID *string  `json:"ownerID,omitempty"`
 	// the name of the template
 	Name string `json:"name"`
 	// the type of the template, either a provided template or an implementation (document)
@@ -8415,7 +8562,8 @@ type TemplateHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
+	Tags    []string `json:"tags,omitempty"`
+	OwnerID *string  `json:"ownerID,omitempty"`
 	// the name of the template
 	Name string `json:"name"`
 	// the type of the template, either a provided template or an implementation (document)
@@ -8584,6 +8732,22 @@ type TemplateHistoryWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -8733,6 +8897,22 @@ type TemplateWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -8814,6 +8994,8 @@ type UpdateDocumentDataInput struct {
 	ClearTags  *bool    `json:"clearTags,omitempty"`
 	// the json data of the document
 	Data       json.RawMessage `json:"data,omitempty"`
+	OwnerID    *string         `json:"ownerID,omitempty"`
+	ClearOwner *bool           `json:"clearOwner,omitempty"`
 	TemplateID *string         `json:"templateID,omitempty"`
 }
 
@@ -9249,6 +9431,9 @@ type UpdateOrganizationInput struct {
 	ClearIntegrations            *bool                           `json:"clearIntegrations,omitempty"`
 	SettingID                    *string                         `json:"settingID,omitempty"`
 	ClearSetting                 *bool                           `json:"clearSetting,omitempty"`
+	AddDocumentdatumIDs          []string                        `json:"addDocumentdatumIDs,omitempty"`
+	RemoveDocumentdatumIDs       []string                        `json:"removeDocumentdatumIDs,omitempty"`
+	ClearDocumentdata            *bool                           `json:"clearDocumentdata,omitempty"`
 	AddEntitlementIDs            []string                        `json:"addEntitlementIDs,omitempty"`
 	RemoveEntitlementIDs         []string                        `json:"removeEntitlementIDs,omitempty"`
 	ClearEntitlements            *bool                           `json:"clearEntitlements,omitempty"`

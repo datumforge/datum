@@ -82,7 +82,6 @@ func (Webhook) Mixin() []ent.Mixin {
 		OrgOwnerMixin{
 			Ref:        "webhooks",
 			AllowEmpty: true,
-			AllowWhere: true,
 		},
 	}
 }

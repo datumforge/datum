@@ -61,6 +61,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "data", Type: field.TypeJSON},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 		{Name: "template_id", Type: field.TypeString},
 	}
 	// DocumentDataTable holds the schema information for the "document_data" table.
@@ -70,8 +71,14 @@ var (
 		PrimaryKey: []*schema.Column{DocumentDataColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "document_data_templates_documents",
+				Symbol:     "document_data_organizations_documentdata",
 				Columns:    []*schema.Column{DocumentDataColumns[10]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "document_data_templates_documents",
+				Columns:    []*schema.Column{DocumentDataColumns[11]},
 				RefColumns: []*schema.Column{TemplatesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -91,6 +98,7 @@ var (
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 		{Name: "template_id", Type: field.TypeString},
 		{Name: "data", Type: field.TypeJSON},
 	}
@@ -789,7 +797,7 @@ var (
 		{Name: "token_url", Type: field.TypeString},
 		{Name: "auth_style", Type: field.TypeUint8},
 		{Name: "info_url", Type: field.TypeString},
-		{Name: "organization_oauthprovider", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// OauthProvidersTable holds the schema information for the "oauth_providers" table.
 	OauthProvidersTable = &schema.Table{
@@ -819,6 +827,7 @@ var (
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "client_id", Type: field.TypeString},
 		{Name: "client_secret", Type: field.TypeString},
@@ -2319,7 +2328,8 @@ var (
 
 func init() {
 	APITokensTable.ForeignKeys[0].RefTable = OrganizationsTable
-	DocumentDataTable.ForeignKeys[0].RefTable = TemplatesTable
+	DocumentDataTable.ForeignKeys[0].RefTable = OrganizationsTable
+	DocumentDataTable.ForeignKeys[1].RefTable = TemplatesTable
 	DocumentDataHistoryTable.Annotation = &entsql.Annotation{
 		Table: "document_data_history",
 	}

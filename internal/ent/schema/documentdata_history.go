@@ -71,3 +71,4 @@ func (DocumentDataHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

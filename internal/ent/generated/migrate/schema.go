@@ -49,6 +49,64 @@ var (
 			},
 		},
 	}
+	// DocumentDataColumns holds the columns for the "document_data" table.
+	DocumentDataColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "data", Type: field.TypeJSON},
+		{Name: "template_id", Type: field.TypeString},
+	}
+	// DocumentDataTable holds the schema information for the "document_data" table.
+	DocumentDataTable = &schema.Table{
+		Name:       "document_data",
+		Columns:    DocumentDataColumns,
+		PrimaryKey: []*schema.Column{DocumentDataColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "document_data_templates_documents",
+				Columns:    []*schema.Column{DocumentDataColumns[10]},
+				RefColumns: []*schema.Column{TemplatesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// DocumentDataHistoryColumns holds the columns for the "document_data_history" table.
+	DocumentDataHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "template_id", Type: field.TypeString},
+		{Name: "data", Type: field.TypeJSON},
+	}
+	// DocumentDataHistoryTable holds the schema information for the "document_data_history" table.
+	DocumentDataHistoryTable = &schema.Table{
+		Name:       "document_data_history",
+		Columns:    DocumentDataHistoryColumns,
+		PrimaryKey: []*schema.Column{DocumentDataHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "documentdatahistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{DocumentDataHistoryColumns[1]},
+			},
+		},
+	}
 	// EmailVerificationTokensColumns holds the columns for the "email_verification_tokens" table.
 	EmailVerificationTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -89,199 +147,8 @@ var (
 			},
 		},
 	}
-	// InvitesColumns holds the columns for the "invites" table.
-	InvitesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "token", Type: field.TypeString, Unique: true},
-		{Name: "expires", Type: field.TypeTime},
-		{Name: "recipient", Type: field.TypeString},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED"}, Default: "INVITATION_SENT"},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER"}, Default: "MEMBER"},
-		{Name: "send_attempts", Type: field.TypeInt, Default: 0},
-		{Name: "requestor_id", Type: field.TypeString},
-		{Name: "secret", Type: field.TypeBytes},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-	}
-	// InvitesTable holds the schema information for the "invites" table.
-	InvitesTable = &schema.Table{
-		Name:       "invites",
-		Columns:    InvitesColumns,
-		PrimaryKey: []*schema.Column{InvitesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "invites_organizations_invites",
-				Columns:    []*schema.Column{InvitesColumns[16]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "invite_recipient_owner_id",
-				Unique:  true,
-				Columns: []*schema.Column{InvitesColumns[10], InvitesColumns[16]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
-			},
-		},
-	}
-	// OhAuthTooTokensColumns holds the columns for the "oh_auth_too_tokens" table.
-	OhAuthTooTokensColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "client_id", Type: field.TypeString, Size: 2147483647},
-		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
-		{Name: "nonce", Type: field.TypeString, Size: 2147483647},
-		{Name: "claims_user_id", Type: field.TypeString, Size: 2147483647},
-		{Name: "claims_username", Type: field.TypeString, Size: 2147483647},
-		{Name: "claims_email", Type: field.TypeString, Size: 2147483647},
-		{Name: "claims_email_verified", Type: field.TypeBool},
-		{Name: "claims_groups", Type: field.TypeJSON, Nullable: true},
-		{Name: "claims_preferred_username", Type: field.TypeString, Size: 2147483647},
-		{Name: "connector_id", Type: field.TypeString, Size: 2147483647},
-		{Name: "connector_data", Type: field.TypeJSON, Nullable: true},
-		{Name: "last_used", Type: field.TypeTime},
-	}
-	// OhAuthTooTokensTable holds the schema information for the "oh_auth_too_tokens" table.
-	OhAuthTooTokensTable = &schema.Table{
-		Name:       "oh_auth_too_tokens",
-		Columns:    OhAuthTooTokensColumns,
-		PrimaryKey: []*schema.Column{OhAuthTooTokensColumns[0]},
-	}
-	// PersonalAccessTokensColumns holds the columns for the "personal_access_tokens" table.
-	PersonalAccessTokensColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "token", Type: field.TypeString, Unique: true},
-		{Name: "expires_at", Type: field.TypeTime},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
-		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString},
-	}
-	// PersonalAccessTokensTable holds the schema information for the "personal_access_tokens" table.
-	PersonalAccessTokensTable = &schema.Table{
-		Name:       "personal_access_tokens",
-		Columns:    PersonalAccessTokensColumns,
-		PrimaryKey: []*schema.Column{PersonalAccessTokensColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "personal_access_tokens_users_personal_access_tokens",
-				Columns:    []*schema.Column{PersonalAccessTokensColumns[15]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "personalaccesstoken_token",
-				Unique:  false,
-				Columns: []*schema.Column{PersonalAccessTokensColumns[10]},
-			},
-		},
-	}
-	// PasswordResetTokensColumns holds the columns for the "password_reset_tokens" table.
-	PasswordResetTokensColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "token", Type: field.TypeString, Unique: true},
-		{Name: "ttl", Type: field.TypeTime},
-		{Name: "email", Type: field.TypeString},
-		{Name: "secret", Type: field.TypeBytes},
-		{Name: "owner_id", Type: field.TypeString},
-	}
-	// PasswordResetTokensTable holds the schema information for the "password_reset_tokens" table.
-	PasswordResetTokensTable = &schema.Table{
-		Name:       "password_reset_tokens",
-		Columns:    PasswordResetTokensColumns,
-		PrimaryKey: []*schema.Column{PasswordResetTokensColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "password_reset_tokens_users_password_reset_tokens",
-				Columns:    []*schema.Column{PasswordResetTokensColumns[12]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "passwordresettoken_token",
-				Unique:  true,
-				Columns: []*schema.Column{PasswordResetTokensColumns[8]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
-			},
-		},
-	}
-	// TfaSettingsColumns holds the columns for the "tfa_settings" table.
-	TfaSettingsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
-		{Name: "verified", Type: field.TypeBool, Default: false},
-		{Name: "recovery_codes", Type: field.TypeJSON, Nullable: true},
-		{Name: "phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "totp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-	}
-	// TfaSettingsTable holds the schema information for the "tfa_settings" table.
-	TfaSettingsTable = &schema.Table{
-		Name:       "tfa_settings",
-		Columns:    TfaSettingsColumns,
-		PrimaryKey: []*schema.Column{TfaSettingsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "tfa_settings_users_tfa_settings",
-				Columns:    []*schema.Column{TfaSettingsColumns[15]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "tfasetting_owner_id",
-				Unique:  true,
-				Columns: []*schema.Column{TfaSettingsColumns[15]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
-			},
-		},
-	}
-	// SubscribersColumns holds the columns for the "subscribers" table.
-	SubscribersColumns = []*schema.Column{
+	// EntitlementsColumns holds the columns for the "entitlements" table.
+	EntitlementsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
@@ -291,124 +158,30 @@ var (
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "email", Type: field.TypeString},
-		{Name: "phone_number", Type: field.TypeString, Nullable: true},
-		{Name: "verified_email", Type: field.TypeBool, Default: false},
-		{Name: "verified_phone", Type: field.TypeBool, Default: false},
-		{Name: "active", Type: field.TypeBool, Default: false},
-		{Name: "token", Type: field.TypeString, Unique: true},
-		{Name: "ttl", Type: field.TypeTime},
-		{Name: "secret", Type: field.TypeBytes},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-	}
-	// SubscribersTable holds the schema information for the "subscribers" table.
-	SubscribersTable = &schema.Table{
-		Name:       "subscribers",
-		Columns:    SubscribersColumns,
-		PrimaryKey: []*schema.Column{SubscribersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "subscribers_organizations_subscribers",
-				Columns:    []*schema.Column{SubscribersColumns[17]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "subscriber_email_owner_id",
-				Unique:  true,
-				Columns: []*schema.Column{SubscribersColumns[9], SubscribersColumns[17]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
-			},
-		},
-	}
-	// WebauthnsColumns holds the columns for the "webauthns" table.
-	WebauthnsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "credential_id", Type: field.TypeBytes, Unique: true, Nullable: true},
-		{Name: "public_key", Type: field.TypeBytes, Nullable: true},
-		{Name: "attestation_type", Type: field.TypeString, Nullable: true},
-		{Name: "aaguid", Type: field.TypeBytes, Unique: true},
-		{Name: "sign_count", Type: field.TypeInt32},
-		{Name: "transports", Type: field.TypeJSON},
-		{Name: "backup_eligible", Type: field.TypeBool, Default: false},
-		{Name: "backup_state", Type: field.TypeBool, Default: false},
-		{Name: "user_present", Type: field.TypeBool, Default: false},
-		{Name: "user_verified", Type: field.TypeBool, Default: false},
-		{Name: "owner_id", Type: field.TypeString},
-	}
-	// WebauthnsTable holds the schema information for the "webauthns" table.
-	WebauthnsTable = &schema.Table{
-		Name:       "webauthns",
-		Columns:    WebauthnsColumns,
-		PrimaryKey: []*schema.Column{WebauthnsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "webauthns_users_webauthn",
-				Columns:    []*schema.Column{WebauthnsColumns[17]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-	}
-	// WebhooksColumns holds the columns for the "webhooks" table.
-	WebhooksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "destination_url", Type: field.TypeString},
-		{Name: "enabled", Type: field.TypeBool, Default: true},
-		{Name: "callback", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "tier", Type: field.TypeEnum, Enums: []string{"FREE", "PRO", "ENTERPRISE"}, Default: "FREE"},
+		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
+		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
+		{Name: "expires", Type: field.TypeBool, Default: false},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
-		{Name: "secret", Type: field.TypeBytes, Nullable: true},
-		{Name: "failures", Type: field.TypeInt, Nullable: true, Default: 0},
-		{Name: "last_error", Type: field.TypeString, Nullable: true},
-		{Name: "last_response", Type: field.TypeString, Nullable: true},
+		{Name: "cancelled", Type: field.TypeBool, Default: false},
 		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
-	// WebhooksTable holds the schema information for the "webhooks" table.
-	WebhooksTable = &schema.Table{
-		Name:       "webhooks",
-		Columns:    WebhooksColumns,
-		PrimaryKey: []*schema.Column{WebhooksColumns[0]},
+	// EntitlementsTable holds the schema information for the "entitlements" table.
+	EntitlementsTable = &schema.Table{
+		Name:       "entitlements",
+		Columns:    EntitlementsColumns,
+		PrimaryKey: []*schema.Column{EntitlementsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "webhooks_organizations_webhooks",
-				Columns:    []*schema.Column{WebhooksColumns[19]},
+				Symbol:     "entitlements_organizations_entitlements",
+				Columns:    []*schema.Column{EntitlementsColumns[15]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "webhook_name_owner_id",
-				Unique:  true,
-				Columns: []*schema.Column{WebhooksColumns[9], WebhooksColumns[19]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
-			},
-		},
 	}
-	// WebhookHistoryColumns holds the columns for the "webhook_history" table.
-	WebhookHistoryColumns = []*schema.Column{
+	// EntitlementHistoryColumns holds the columns for the "entitlement_history" table.
+	EntitlementHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
 		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
@@ -422,27 +195,73 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "destination_url", Type: field.TypeString},
-		{Name: "enabled", Type: field.TypeBool, Default: true},
-		{Name: "callback", Type: field.TypeString, Nullable: true},
+		{Name: "tier", Type: field.TypeEnum, Enums: []string{"FREE", "PRO", "ENTERPRISE"}, Default: "FREE"},
+		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
+		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
+		{Name: "expires", Type: field.TypeBool, Default: false},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
-		{Name: "secret", Type: field.TypeBytes, Nullable: true},
-		{Name: "failures", Type: field.TypeInt, Nullable: true, Default: 0},
-		{Name: "last_error", Type: field.TypeString, Nullable: true},
-		{Name: "last_response", Type: field.TypeString, Nullable: true},
+		{Name: "cancelled", Type: field.TypeBool, Default: false},
 	}
-	// WebhookHistoryTable holds the schema information for the "webhook_history" table.
-	WebhookHistoryTable = &schema.Table{
-		Name:       "webhook_history",
-		Columns:    WebhookHistoryColumns,
-		PrimaryKey: []*schema.Column{WebhookHistoryColumns[0]},
+	// EntitlementHistoryTable holds the schema information for the "entitlement_history" table.
+	EntitlementHistoryTable = &schema.Table{
+		Name:       "entitlement_history",
+		Columns:    EntitlementHistoryColumns,
+		PrimaryKey: []*schema.Column{EntitlementHistoryColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "webhookhistory_history_time",
+				Name:    "entitlementhistory_history_time",
 				Unique:  false,
-				Columns: []*schema.Column{WebhookHistoryColumns[1]},
+				Columns: []*schema.Column{EntitlementHistoryColumns[1]},
+			},
+		},
+	}
+	// EventsColumns holds the columns for the "events" table.
+	EventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "event_id", Type: field.TypeString, Nullable: true},
+		{Name: "correlation_id", Type: field.TypeString, Nullable: true},
+		{Name: "event_type", Type: field.TypeString},
+		{Name: "metadata", Type: field.TypeJSON, Nullable: true},
+	}
+	// EventsTable holds the schema information for the "events" table.
+	EventsTable = &schema.Table{
+		Name:       "events",
+		Columns:    EventsColumns,
+		PrimaryKey: []*schema.Column{EventsColumns[0]},
+	}
+	// EventHistoryColumns holds the columns for the "event_history" table.
+	EventHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "event_id", Type: field.TypeString, Nullable: true},
+		{Name: "correlation_id", Type: field.TypeString, Nullable: true},
+		{Name: "event_type", Type: field.TypeString},
+		{Name: "metadata", Type: field.TypeJSON, Nullable: true},
+	}
+	// EventHistoryTable holds the schema information for the "event_history" table.
+	EventHistoryTable = &schema.Table{
+		Name:       "event_history",
+		Columns:    EventHistoryColumns,
+		PrimaryKey: []*schema.Column{EventHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "eventhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{EventHistoryColumns[1]},
 			},
 		},
 	}
@@ -569,6 +388,558 @@ var (
 			},
 		},
 	}
+	// GroupsColumns holds the columns for the "groups" table.
+	GroupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
+		{Name: "logo_url", Type: field.TypeString, Nullable: true},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// GroupsTable holds the schema information for the "groups" table.
+	GroupsTable = &schema.Table{
+		Name:       "groups",
+		Columns:    GroupsColumns,
+		PrimaryKey: []*schema.Column{GroupsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "groups_organizations_groups",
+				Columns:    []*schema.Column{GroupsColumns[14]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "group_name_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{GroupsColumns[9], GroupsColumns[14]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// GroupHistoryColumns holds the columns for the "group_history" table.
+	GroupHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
+		{Name: "logo_url", Type: field.TypeString, Nullable: true},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+	}
+	// GroupHistoryTable holds the schema information for the "group_history" table.
+	GroupHistoryTable = &schema.Table{
+		Name:       "group_history",
+		Columns:    GroupHistoryColumns,
+		PrimaryKey: []*schema.Column{GroupHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "grouphistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{GroupHistoryColumns[1]},
+			},
+		},
+	}
+	// GroupMembershipsColumns holds the columns for the "group_memberships" table.
+	GroupMembershipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER"}, Default: "MEMBER"},
+		{Name: "group_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// GroupMembershipsTable holds the schema information for the "group_memberships" table.
+	GroupMembershipsTable = &schema.Table{
+		Name:       "group_memberships",
+		Columns:    GroupMembershipsColumns,
+		PrimaryKey: []*schema.Column{GroupMembershipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "group_memberships_groups_group",
+				Columns:    []*schema.Column{GroupMembershipsColumns[9]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "group_memberships_users_user",
+				Columns:    []*schema.Column{GroupMembershipsColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "groupmembership_user_id_group_id",
+				Unique:  true,
+				Columns: []*schema.Column{GroupMembershipsColumns[10], GroupMembershipsColumns[9]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// GroupMembershipHistoryColumns holds the columns for the "group_membership_history" table.
+	GroupMembershipHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER"}, Default: "MEMBER"},
+		{Name: "group_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// GroupMembershipHistoryTable holds the schema information for the "group_membership_history" table.
+	GroupMembershipHistoryTable = &schema.Table{
+		Name:       "group_membership_history",
+		Columns:    GroupMembershipHistoryColumns,
+		PrimaryKey: []*schema.Column{GroupMembershipHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "groupmembershiphistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{GroupMembershipHistoryColumns[1]},
+			},
+		},
+	}
+	// GroupSettingsColumns holds the columns for the "group_settings" table.
+	GroupSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
+		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "INVITE_OR_APPLICATION"},
+		{Name: "sync_to_slack", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "sync_to_github", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "group_id", Type: field.TypeString, Unique: true, Nullable: true},
+	}
+	// GroupSettingsTable holds the schema information for the "group_settings" table.
+	GroupSettingsTable = &schema.Table{
+		Name:       "group_settings",
+		Columns:    GroupSettingsColumns,
+		PrimaryKey: []*schema.Column{GroupSettingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "group_settings_groups_setting",
+				Columns:    []*schema.Column{GroupSettingsColumns[13]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// GroupSettingHistoryColumns holds the columns for the "group_setting_history" table.
+	GroupSettingHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
+		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "INVITE_OR_APPLICATION"},
+		{Name: "sync_to_slack", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "sync_to_github", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "group_id", Type: field.TypeString, Nullable: true},
+	}
+	// GroupSettingHistoryTable holds the schema information for the "group_setting_history" table.
+	GroupSettingHistoryTable = &schema.Table{
+		Name:       "group_setting_history",
+		Columns:    GroupSettingHistoryColumns,
+		PrimaryKey: []*schema.Column{GroupSettingHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "groupsettinghistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{GroupSettingHistoryColumns[1]},
+			},
+		},
+	}
+	// HushesColumns holds the columns for the "hushes" table.
+	HushesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "kind", Type: field.TypeString, Nullable: true},
+		{Name: "secret_name", Type: field.TypeString, Nullable: true},
+		{Name: "secret_value", Type: field.TypeString, Nullable: true},
+	}
+	// HushesTable holds the schema information for the "hushes" table.
+	HushesTable = &schema.Table{
+		Name:       "hushes",
+		Columns:    HushesColumns,
+		PrimaryKey: []*schema.Column{HushesColumns[0]},
+	}
+	// HushHistoryColumns holds the columns for the "hush_history" table.
+	HushHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "kind", Type: field.TypeString, Nullable: true},
+		{Name: "secret_name", Type: field.TypeString, Nullable: true},
+		{Name: "secret_value", Type: field.TypeString, Nullable: true},
+	}
+	// HushHistoryTable holds the schema information for the "hush_history" table.
+	HushHistoryTable = &schema.Table{
+		Name:       "hush_history",
+		Columns:    HushHistoryColumns,
+		PrimaryKey: []*schema.Column{HushHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "hushhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{HushHistoryColumns[1]},
+			},
+		},
+	}
+	// IntegrationsColumns holds the columns for the "integrations" table.
+	IntegrationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "kind", Type: field.TypeString, Nullable: true},
+		{Name: "group_integrations", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// IntegrationsTable holds the schema information for the "integrations" table.
+	IntegrationsTable = &schema.Table{
+		Name:       "integrations",
+		Columns:    IntegrationsColumns,
+		PrimaryKey: []*schema.Column{IntegrationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "integrations_groups_integrations",
+				Columns:    []*schema.Column{IntegrationsColumns[12]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "integrations_organizations_integrations",
+				Columns:    []*schema.Column{IntegrationsColumns[13]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// IntegrationHistoryColumns holds the columns for the "integration_history" table.
+	IntegrationHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "kind", Type: field.TypeString, Nullable: true},
+	}
+	// IntegrationHistoryTable holds the schema information for the "integration_history" table.
+	IntegrationHistoryTable = &schema.Table{
+		Name:       "integration_history",
+		Columns:    IntegrationHistoryColumns,
+		PrimaryKey: []*schema.Column{IntegrationHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "integrationhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{IntegrationHistoryColumns[1]},
+			},
+		},
+	}
+	// InvitesColumns holds the columns for the "invites" table.
+	InvitesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "token", Type: field.TypeString, Unique: true},
+		{Name: "expires", Type: field.TypeTime},
+		{Name: "recipient", Type: field.TypeString},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED"}, Default: "INVITATION_SENT"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER"}, Default: "MEMBER"},
+		{Name: "send_attempts", Type: field.TypeInt, Default: 0},
+		{Name: "requestor_id", Type: field.TypeString},
+		{Name: "secret", Type: field.TypeBytes},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// InvitesTable holds the schema information for the "invites" table.
+	InvitesTable = &schema.Table{
+		Name:       "invites",
+		Columns:    InvitesColumns,
+		PrimaryKey: []*schema.Column{InvitesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invites_organizations_invites",
+				Columns:    []*schema.Column{InvitesColumns[16]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "invite_recipient_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{InvitesColumns[10], InvitesColumns[16]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// OauthProvidersColumns holds the columns for the "oauth_providers" table.
+	OauthProvidersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "client_id", Type: field.TypeString},
+		{Name: "client_secret", Type: field.TypeString},
+		{Name: "redirect_url", Type: field.TypeString},
+		{Name: "scopes", Type: field.TypeString},
+		{Name: "auth_url", Type: field.TypeString},
+		{Name: "token_url", Type: field.TypeString},
+		{Name: "auth_style", Type: field.TypeUint8},
+		{Name: "info_url", Type: field.TypeString},
+		{Name: "organization_oauthprovider", Type: field.TypeString, Nullable: true},
+	}
+	// OauthProvidersTable holds the schema information for the "oauth_providers" table.
+	OauthProvidersTable = &schema.Table{
+		Name:       "oauth_providers",
+		Columns:    OauthProvidersColumns,
+		PrimaryKey: []*schema.Column{OauthProvidersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "oauth_providers_organizations_oauthprovider",
+				Columns:    []*schema.Column{OauthProvidersColumns[18]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// OauthProviderHistoryColumns holds the columns for the "oauth_provider_history" table.
+	OauthProviderHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "client_id", Type: field.TypeString},
+		{Name: "client_secret", Type: field.TypeString},
+		{Name: "redirect_url", Type: field.TypeString},
+		{Name: "scopes", Type: field.TypeString},
+		{Name: "auth_url", Type: field.TypeString},
+		{Name: "token_url", Type: field.TypeString},
+		{Name: "auth_style", Type: field.TypeUint8},
+		{Name: "info_url", Type: field.TypeString},
+	}
+	// OauthProviderHistoryTable holds the schema information for the "oauth_provider_history" table.
+	OauthProviderHistoryTable = &schema.Table{
+		Name:       "oauth_provider_history",
+		Columns:    OauthProviderHistoryColumns,
+		PrimaryKey: []*schema.Column{OauthProviderHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "oauthproviderhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{OauthProviderHistoryColumns[1]},
+			},
+		},
+	}
+	// OhAuthTooTokensColumns holds the columns for the "oh_auth_too_tokens" table.
+	OhAuthTooTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "client_id", Type: field.TypeString, Size: 2147483647},
+		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
+		{Name: "nonce", Type: field.TypeString, Size: 2147483647},
+		{Name: "claims_user_id", Type: field.TypeString, Size: 2147483647},
+		{Name: "claims_username", Type: field.TypeString, Size: 2147483647},
+		{Name: "claims_email", Type: field.TypeString, Size: 2147483647},
+		{Name: "claims_email_verified", Type: field.TypeBool},
+		{Name: "claims_groups", Type: field.TypeJSON, Nullable: true},
+		{Name: "claims_preferred_username", Type: field.TypeString, Size: 2147483647},
+		{Name: "connector_id", Type: field.TypeString, Size: 2147483647},
+		{Name: "connector_data", Type: field.TypeJSON, Nullable: true},
+		{Name: "last_used", Type: field.TypeTime},
+	}
+	// OhAuthTooTokensTable holds the schema information for the "oh_auth_too_tokens" table.
+	OhAuthTooTokensTable = &schema.Table{
+		Name:       "oh_auth_too_tokens",
+		Columns:    OhAuthTooTokensColumns,
+		PrimaryKey: []*schema.Column{OhAuthTooTokensColumns[0]},
+	}
+	// OrgMembershipsColumns holds the columns for the "org_memberships" table.
+	OrgMembershipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER", "OWNER"}, Default: "MEMBER"},
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// OrgMembershipsTable holds the schema information for the "org_memberships" table.
+	OrgMembershipsTable = &schema.Table{
+		Name:       "org_memberships",
+		Columns:    OrgMembershipsColumns,
+		PrimaryKey: []*schema.Column{OrgMembershipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "org_memberships_organizations_organization",
+				Columns:    []*schema.Column{OrgMembershipsColumns[9]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "org_memberships_users_user",
+				Columns:    []*schema.Column{OrgMembershipsColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orgmembership_user_id_organization_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrgMembershipsColumns[10], OrgMembershipsColumns[9]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// OrgMembershipHistoryColumns holds the columns for the "org_membership_history" table.
+	OrgMembershipHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER", "OWNER"}, Default: "MEMBER"},
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// OrgMembershipHistoryTable holds the schema information for the "org_membership_history" table.
+	OrgMembershipHistoryTable = &schema.Table{
+		Name:       "org_membership_history",
+		Columns:    OrgMembershipHistoryColumns,
+		PrimaryKey: []*schema.Column{OrgMembershipHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orgmembershiphistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{OrgMembershipHistoryColumns[1]},
+			},
+		},
+	}
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -647,8 +1018,8 @@ var (
 			},
 		},
 	}
-	// EntitlementsColumns holds the columns for the "entitlements" table.
-	EntitlementsColumns = []*schema.Column{
+	// OrganizationSettingsColumns holds the columns for the "organization_settings" table.
+	OrganizationSettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
@@ -658,30 +1029,31 @@ var (
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "tier", Type: field.TypeEnum, Enums: []string{"FREE", "PRO", "ENTERPRISE"}, Default: "FREE"},
-		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
-		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
-		{Name: "expires", Type: field.TypeBool, Default: false},
-		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
-		{Name: "cancelled", Type: field.TypeBool, Default: false},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "domains", Type: field.TypeJSON, Nullable: true},
+		{Name: "billing_contact", Type: field.TypeString, Nullable: true},
+		{Name: "billing_email", Type: field.TypeString, Nullable: true},
+		{Name: "billing_phone", Type: field.TypeString, Nullable: true},
+		{Name: "billing_address", Type: field.TypeString, Nullable: true},
+		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
+		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC"}, Default: "AMER"},
+		{Name: "organization_id", Type: field.TypeString, Unique: true, Nullable: true},
 	}
-	// EntitlementsTable holds the schema information for the "entitlements" table.
-	EntitlementsTable = &schema.Table{
-		Name:       "entitlements",
-		Columns:    EntitlementsColumns,
-		PrimaryKey: []*schema.Column{EntitlementsColumns[0]},
+	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
+	OrganizationSettingsTable = &schema.Table{
+		Name:       "organization_settings",
+		Columns:    OrganizationSettingsColumns,
+		PrimaryKey: []*schema.Column{OrganizationSettingsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "entitlements_organizations_entitlements",
-				Columns:    []*schema.Column{EntitlementsColumns[15]},
+				Symbol:     "organization_settings_organizations_setting",
+				Columns:    []*schema.Column{OrganizationSettingsColumns[16]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
 	}
-	// EntitlementHistoryColumns holds the columns for the "entitlement_history" table.
-	EntitlementHistoryColumns = []*schema.Column{
+	// OrganizationSettingHistoryColumns holds the columns for the "organization_setting_history" table.
+	OrganizationSettingHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
 		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
@@ -694,24 +1066,269 @@ var (
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-		{Name: "tier", Type: field.TypeEnum, Enums: []string{"FREE", "PRO", "ENTERPRISE"}, Default: "FREE"},
-		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
-		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
-		{Name: "expires", Type: field.TypeBool, Default: false},
-		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
-		{Name: "cancelled", Type: field.TypeBool, Default: false},
+		{Name: "domains", Type: field.TypeJSON, Nullable: true},
+		{Name: "billing_contact", Type: field.TypeString, Nullable: true},
+		{Name: "billing_email", Type: field.TypeString, Nullable: true},
+		{Name: "billing_phone", Type: field.TypeString, Nullable: true},
+		{Name: "billing_address", Type: field.TypeString, Nullable: true},
+		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
+		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC"}, Default: "AMER"},
+		{Name: "organization_id", Type: field.TypeString, Nullable: true},
 	}
-	// EntitlementHistoryTable holds the schema information for the "entitlement_history" table.
-	EntitlementHistoryTable = &schema.Table{
-		Name:       "entitlement_history",
-		Columns:    EntitlementHistoryColumns,
-		PrimaryKey: []*schema.Column{EntitlementHistoryColumns[0]},
+	// OrganizationSettingHistoryTable holds the schema information for the "organization_setting_history" table.
+	OrganizationSettingHistoryTable = &schema.Table{
+		Name:       "organization_setting_history",
+		Columns:    OrganizationSettingHistoryColumns,
+		PrimaryKey: []*schema.Column{OrganizationSettingHistoryColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "entitlementhistory_history_time",
+				Name:    "organizationsettinghistory_history_time",
 				Unique:  false,
-				Columns: []*schema.Column{EntitlementHistoryColumns[1]},
+				Columns: []*schema.Column{OrganizationSettingHistoryColumns[1]},
+			},
+		},
+	}
+	// PasswordResetTokensColumns holds the columns for the "password_reset_tokens" table.
+	PasswordResetTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "token", Type: field.TypeString, Unique: true},
+		{Name: "ttl", Type: field.TypeTime},
+		{Name: "email", Type: field.TypeString},
+		{Name: "secret", Type: field.TypeBytes},
+		{Name: "owner_id", Type: field.TypeString},
+	}
+	// PasswordResetTokensTable holds the schema information for the "password_reset_tokens" table.
+	PasswordResetTokensTable = &schema.Table{
+		Name:       "password_reset_tokens",
+		Columns:    PasswordResetTokensColumns,
+		PrimaryKey: []*schema.Column{PasswordResetTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "password_reset_tokens_users_password_reset_tokens",
+				Columns:    []*schema.Column{PasswordResetTokensColumns[12]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "passwordresettoken_token",
+				Unique:  true,
+				Columns: []*schema.Column{PasswordResetTokensColumns[8]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// PersonalAccessTokensColumns holds the columns for the "personal_access_tokens" table.
+	PersonalAccessTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "token", Type: field.TypeString, Unique: true},
+		{Name: "expires_at", Type: field.TypeTime},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
+		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString},
+	}
+	// PersonalAccessTokensTable holds the schema information for the "personal_access_tokens" table.
+	PersonalAccessTokensTable = &schema.Table{
+		Name:       "personal_access_tokens",
+		Columns:    PersonalAccessTokensColumns,
+		PrimaryKey: []*schema.Column{PersonalAccessTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "personal_access_tokens_users_personal_access_tokens",
+				Columns:    []*schema.Column{PersonalAccessTokensColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "personalaccesstoken_token",
+				Unique:  false,
+				Columns: []*schema.Column{PersonalAccessTokensColumns[10]},
+			},
+		},
+	}
+	// SubscribersColumns holds the columns for the "subscribers" table.
+	SubscribersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString},
+		{Name: "phone_number", Type: field.TypeString, Nullable: true},
+		{Name: "verified_email", Type: field.TypeBool, Default: false},
+		{Name: "verified_phone", Type: field.TypeBool, Default: false},
+		{Name: "active", Type: field.TypeBool, Default: false},
+		{Name: "token", Type: field.TypeString, Unique: true},
+		{Name: "ttl", Type: field.TypeTime},
+		{Name: "secret", Type: field.TypeBytes},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// SubscribersTable holds the schema information for the "subscribers" table.
+	SubscribersTable = &schema.Table{
+		Name:       "subscribers",
+		Columns:    SubscribersColumns,
+		PrimaryKey: []*schema.Column{SubscribersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "subscribers_organizations_subscribers",
+				Columns:    []*schema.Column{SubscribersColumns[17]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "subscriber_email_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{SubscribersColumns[9], SubscribersColumns[17]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// TfaSettingsColumns holds the columns for the "tfa_settings" table.
+	TfaSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
+		{Name: "verified", Type: field.TypeBool, Default: false},
+		{Name: "recovery_codes", Type: field.TypeJSON, Nullable: true},
+		{Name: "phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "totp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// TfaSettingsTable holds the schema information for the "tfa_settings" table.
+	TfaSettingsTable = &schema.Table{
+		Name:       "tfa_settings",
+		Columns:    TfaSettingsColumns,
+		PrimaryKey: []*schema.Column{TfaSettingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tfa_settings_users_tfa_settings",
+				Columns:    []*schema.Column{TfaSettingsColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "tfasetting_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{TfaSettingsColumns[15]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// TemplatesColumns holds the columns for the "templates" table.
+	TemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT"}, Default: "DOCUMENT"},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "jsonconfig", Type: field.TypeJSON},
+		{Name: "uischema", Type: field.TypeJSON, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// TemplatesTable holds the schema information for the "templates" table.
+	TemplatesTable = &schema.Table{
+		Name:       "templates",
+		Columns:    TemplatesColumns,
+		PrimaryKey: []*schema.Column{TemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "templates_organizations_templates",
+				Columns:    []*schema.Column{TemplatesColumns[14]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "template_name_owner_id_template_type",
+				Unique:  true,
+				Columns: []*schema.Column{TemplatesColumns[9], TemplatesColumns[14], TemplatesColumns[10]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// TemplateHistoryColumns holds the columns for the "template_history" table.
+	TemplateHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT"}, Default: "DOCUMENT"},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "jsonconfig", Type: field.TypeJSON},
+		{Name: "uischema", Type: field.TypeJSON, Nullable: true},
+	}
+	// TemplateHistoryTable holds the schema information for the "template_history" table.
+	TemplateHistoryTable = &schema.Table{
+		Name:       "template_history",
+		Columns:    TemplateHistoryColumns,
+		PrimaryKey: []*schema.Column{TemplateHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "templatehistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{TemplateHistoryColumns[1]},
 			},
 		},
 	}
@@ -800,528 +1417,6 @@ var (
 			},
 		},
 	}
-	// EventsColumns holds the columns for the "events" table.
-	EventsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "event_id", Type: field.TypeString, Nullable: true},
-		{Name: "correlation_id", Type: field.TypeString, Nullable: true},
-		{Name: "event_type", Type: field.TypeString},
-		{Name: "metadata", Type: field.TypeJSON, Nullable: true},
-	}
-	// EventsTable holds the schema information for the "events" table.
-	EventsTable = &schema.Table{
-		Name:       "events",
-		Columns:    EventsColumns,
-		PrimaryKey: []*schema.Column{EventsColumns[0]},
-	}
-	// EventHistoryColumns holds the columns for the "event_history" table.
-	EventHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "event_id", Type: field.TypeString, Nullable: true},
-		{Name: "correlation_id", Type: field.TypeString, Nullable: true},
-		{Name: "event_type", Type: field.TypeString},
-		{Name: "metadata", Type: field.TypeJSON, Nullable: true},
-	}
-	// EventHistoryTable holds the schema information for the "event_history" table.
-	EventHistoryTable = &schema.Table{
-		Name:       "event_history",
-		Columns:    EventHistoryColumns,
-		PrimaryKey: []*schema.Column{EventHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "eventhistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{EventHistoryColumns[1]},
-			},
-		},
-	}
-	// OauthProvidersColumns holds the columns for the "oauth_providers" table.
-	OauthProvidersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "client_id", Type: field.TypeString},
-		{Name: "client_secret", Type: field.TypeString},
-		{Name: "redirect_url", Type: field.TypeString},
-		{Name: "scopes", Type: field.TypeString},
-		{Name: "auth_url", Type: field.TypeString},
-		{Name: "token_url", Type: field.TypeString},
-		{Name: "auth_style", Type: field.TypeUint8},
-		{Name: "info_url", Type: field.TypeString},
-		{Name: "organization_oauthprovider", Type: field.TypeString, Nullable: true},
-	}
-	// OauthProvidersTable holds the schema information for the "oauth_providers" table.
-	OauthProvidersTable = &schema.Table{
-		Name:       "oauth_providers",
-		Columns:    OauthProvidersColumns,
-		PrimaryKey: []*schema.Column{OauthProvidersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "oauth_providers_organizations_oauthprovider",
-				Columns:    []*schema.Column{OauthProvidersColumns[18]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
-	// OauthProviderHistoryColumns holds the columns for the "oauth_provider_history" table.
-	OauthProviderHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "client_id", Type: field.TypeString},
-		{Name: "client_secret", Type: field.TypeString},
-		{Name: "redirect_url", Type: field.TypeString},
-		{Name: "scopes", Type: field.TypeString},
-		{Name: "auth_url", Type: field.TypeString},
-		{Name: "token_url", Type: field.TypeString},
-		{Name: "auth_style", Type: field.TypeUint8},
-		{Name: "info_url", Type: field.TypeString},
-	}
-	// OauthProviderHistoryTable holds the schema information for the "oauth_provider_history" table.
-	OauthProviderHistoryTable = &schema.Table{
-		Name:       "oauth_provider_history",
-		Columns:    OauthProviderHistoryColumns,
-		PrimaryKey: []*schema.Column{OauthProviderHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "oauthproviderhistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{OauthProviderHistoryColumns[1]},
-			},
-		},
-	}
-	// OrgMembershipsColumns holds the columns for the "org_memberships" table.
-	OrgMembershipsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER", "OWNER"}, Default: "MEMBER"},
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "user_id", Type: field.TypeString},
-	}
-	// OrgMembershipsTable holds the schema information for the "org_memberships" table.
-	OrgMembershipsTable = &schema.Table{
-		Name:       "org_memberships",
-		Columns:    OrgMembershipsColumns,
-		PrimaryKey: []*schema.Column{OrgMembershipsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "org_memberships_organizations_organization",
-				Columns:    []*schema.Column{OrgMembershipsColumns[9]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "org_memberships_users_user",
-				Columns:    []*schema.Column{OrgMembershipsColumns[10]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "orgmembership_user_id_organization_id",
-				Unique:  true,
-				Columns: []*schema.Column{OrgMembershipsColumns[10], OrgMembershipsColumns[9]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
-			},
-		},
-	}
-	// OrgMembershipHistoryColumns holds the columns for the "org_membership_history" table.
-	OrgMembershipHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER", "OWNER"}, Default: "MEMBER"},
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "user_id", Type: field.TypeString},
-	}
-	// OrgMembershipHistoryTable holds the schema information for the "org_membership_history" table.
-	OrgMembershipHistoryTable = &schema.Table{
-		Name:       "org_membership_history",
-		Columns:    OrgMembershipHistoryColumns,
-		PrimaryKey: []*schema.Column{OrgMembershipHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "orgmembershiphistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{OrgMembershipHistoryColumns[1]},
-			},
-		},
-	}
-	// HushesColumns holds the columns for the "hushes" table.
-	HushesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "kind", Type: field.TypeString, Nullable: true},
-		{Name: "secret_name", Type: field.TypeString, Nullable: true},
-		{Name: "secret_value", Type: field.TypeString, Nullable: true},
-	}
-	// HushesTable holds the schema information for the "hushes" table.
-	HushesTable = &schema.Table{
-		Name:       "hushes",
-		Columns:    HushesColumns,
-		PrimaryKey: []*schema.Column{HushesColumns[0]},
-	}
-	// HushHistoryColumns holds the columns for the "hush_history" table.
-	HushHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "kind", Type: field.TypeString, Nullable: true},
-		{Name: "secret_name", Type: field.TypeString, Nullable: true},
-		{Name: "secret_value", Type: field.TypeString, Nullable: true},
-	}
-	// HushHistoryTable holds the schema information for the "hush_history" table.
-	HushHistoryTable = &schema.Table{
-		Name:       "hush_history",
-		Columns:    HushHistoryColumns,
-		PrimaryKey: []*schema.Column{HushHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "hushhistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{HushHistoryColumns[1]},
-			},
-		},
-	}
-	// DocumentDataColumns holds the columns for the "document_data" table.
-	DocumentDataColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "data", Type: field.TypeJSON},
-		{Name: "template_id", Type: field.TypeString},
-	}
-	// DocumentDataTable holds the schema information for the "document_data" table.
-	DocumentDataTable = &schema.Table{
-		Name:       "document_data",
-		Columns:    DocumentDataColumns,
-		PrimaryKey: []*schema.Column{DocumentDataColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "document_data_templates_documents",
-				Columns:    []*schema.Column{DocumentDataColumns[10]},
-				RefColumns: []*schema.Column{TemplatesColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-	}
-	// DocumentDataHistoryColumns holds the columns for the "document_data_history" table.
-	DocumentDataHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "template_id", Type: field.TypeString},
-		{Name: "data", Type: field.TypeJSON},
-	}
-	// DocumentDataHistoryTable holds the schema information for the "document_data_history" table.
-	DocumentDataHistoryTable = &schema.Table{
-		Name:       "document_data_history",
-		Columns:    DocumentDataHistoryColumns,
-		PrimaryKey: []*schema.Column{DocumentDataHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "documentdatahistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{DocumentDataHistoryColumns[1]},
-			},
-		},
-	}
-	// IntegrationsColumns holds the columns for the "integrations" table.
-	IntegrationsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "kind", Type: field.TypeString, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-		{Name: "group_integrations", Type: field.TypeString, Nullable: true},
-	}
-	// IntegrationsTable holds the schema information for the "integrations" table.
-	IntegrationsTable = &schema.Table{
-		Name:       "integrations",
-		Columns:    IntegrationsColumns,
-		PrimaryKey: []*schema.Column{IntegrationsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "integrations_organizations_integrations",
-				Columns:    []*schema.Column{IntegrationsColumns[12]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "integrations_groups_integrations",
-				Columns:    []*schema.Column{IntegrationsColumns[13]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
-	// IntegrationHistoryColumns holds the columns for the "integration_history" table.
-	IntegrationHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "kind", Type: field.TypeString, Nullable: true},
-	}
-	// IntegrationHistoryTable holds the schema information for the "integration_history" table.
-	IntegrationHistoryTable = &schema.Table{
-		Name:       "integration_history",
-		Columns:    IntegrationHistoryColumns,
-		PrimaryKey: []*schema.Column{IntegrationHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "integrationhistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{IntegrationHistoryColumns[1]},
-			},
-		},
-	}
-	// GroupMembershipsColumns holds the columns for the "group_memberships" table.
-	GroupMembershipsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER"}, Default: "MEMBER"},
-		{Name: "group_id", Type: field.TypeString},
-		{Name: "user_id", Type: field.TypeString},
-	}
-	// GroupMembershipsTable holds the schema information for the "group_memberships" table.
-	GroupMembershipsTable = &schema.Table{
-		Name:       "group_memberships",
-		Columns:    GroupMembershipsColumns,
-		PrimaryKey: []*schema.Column{GroupMembershipsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "group_memberships_groups_group",
-				Columns:    []*schema.Column{GroupMembershipsColumns[9]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "group_memberships_users_user",
-				Columns:    []*schema.Column{GroupMembershipsColumns[10]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "groupmembership_user_id_group_id",
-				Unique:  true,
-				Columns: []*schema.Column{GroupMembershipsColumns[10], GroupMembershipsColumns[9]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
-			},
-		},
-	}
-	// GroupMembershipHistoryColumns holds the columns for the "group_membership_history" table.
-	GroupMembershipHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "USER"}, Default: "MEMBER"},
-		{Name: "group_id", Type: field.TypeString},
-		{Name: "user_id", Type: field.TypeString},
-	}
-	// GroupMembershipHistoryTable holds the schema information for the "group_membership_history" table.
-	GroupMembershipHistoryTable = &schema.Table{
-		Name:       "group_membership_history",
-		Columns:    GroupMembershipHistoryColumns,
-		PrimaryKey: []*schema.Column{GroupMembershipHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "groupmembershiphistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{GroupMembershipHistoryColumns[1]},
-			},
-		},
-	}
-	// OrganizationSettingsColumns holds the columns for the "organization_settings" table.
-	OrganizationSettingsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "domains", Type: field.TypeJSON, Nullable: true},
-		{Name: "billing_contact", Type: field.TypeString, Nullable: true},
-		{Name: "billing_email", Type: field.TypeString, Nullable: true},
-		{Name: "billing_phone", Type: field.TypeString, Nullable: true},
-		{Name: "billing_address", Type: field.TypeString, Nullable: true},
-		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
-		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC"}, Default: "AMER"},
-		{Name: "organization_id", Type: field.TypeString, Unique: true, Nullable: true},
-	}
-	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
-	OrganizationSettingsTable = &schema.Table{
-		Name:       "organization_settings",
-		Columns:    OrganizationSettingsColumns,
-		PrimaryKey: []*schema.Column{OrganizationSettingsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "organization_settings_organizations_setting",
-				Columns:    []*schema.Column{OrganizationSettingsColumns[16]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
-	// OrganizationSettingHistoryColumns holds the columns for the "organization_setting_history" table.
-	OrganizationSettingHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "domains", Type: field.TypeJSON, Nullable: true},
-		{Name: "billing_contact", Type: field.TypeString, Nullable: true},
-		{Name: "billing_email", Type: field.TypeString, Nullable: true},
-		{Name: "billing_phone", Type: field.TypeString, Nullable: true},
-		{Name: "billing_address", Type: field.TypeString, Nullable: true},
-		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
-		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC"}, Default: "AMER"},
-		{Name: "organization_id", Type: field.TypeString, Nullable: true},
-	}
-	// OrganizationSettingHistoryTable holds the schema information for the "organization_setting_history" table.
-	OrganizationSettingHistoryTable = &schema.Table{
-		Name:       "organization_setting_history",
-		Columns:    OrganizationSettingHistoryColumns,
-		PrimaryKey: []*schema.Column{OrganizationSettingHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "organizationsettinghistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{OrganizationSettingHistoryColumns[1]},
-			},
-		},
-	}
 	// UserSettingsColumns holds the columns for the "user_settings" table.
 	UserSettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -1401,191 +1496,90 @@ var (
 			},
 		},
 	}
-	// TemplatesColumns holds the columns for the "templates" table.
-	TemplatesColumns = []*schema.Column{
+	// WebauthnsColumns holds the columns for the "webauthns" table.
+	WebauthnsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "mapping_id", Type: field.TypeString, Unique: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT"}, Default: "DOCUMENT"},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "jsonconfig", Type: field.TypeJSON},
-		{Name: "uischema", Type: field.TypeJSON, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "credential_id", Type: field.TypeBytes, Unique: true, Nullable: true},
+		{Name: "public_key", Type: field.TypeBytes, Nullable: true},
+		{Name: "attestation_type", Type: field.TypeString, Nullable: true},
+		{Name: "aaguid", Type: field.TypeBytes, Unique: true},
+		{Name: "sign_count", Type: field.TypeInt32},
+		{Name: "transports", Type: field.TypeJSON},
+		{Name: "backup_eligible", Type: field.TypeBool, Default: false},
+		{Name: "backup_state", Type: field.TypeBool, Default: false},
+		{Name: "user_present", Type: field.TypeBool, Default: false},
+		{Name: "user_verified", Type: field.TypeBool, Default: false},
+		{Name: "owner_id", Type: field.TypeString},
 	}
-	// TemplatesTable holds the schema information for the "templates" table.
-	TemplatesTable = &schema.Table{
-		Name:       "templates",
-		Columns:    TemplatesColumns,
-		PrimaryKey: []*schema.Column{TemplatesColumns[0]},
+	// WebauthnsTable holds the schema information for the "webauthns" table.
+	WebauthnsTable = &schema.Table{
+		Name:       "webauthns",
+		Columns:    WebauthnsColumns,
+		PrimaryKey: []*schema.Column{WebauthnsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "templates_organizations_templates",
-				Columns:    []*schema.Column{TemplatesColumns[14]},
+				Symbol:     "webauthns_users_webauthn",
+				Columns:    []*schema.Column{WebauthnsColumns[17]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// WebhooksColumns holds the columns for the "webhooks" table.
+	WebhooksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "destination_url", Type: field.TypeString},
+		{Name: "enabled", Type: field.TypeBool, Default: true},
+		{Name: "callback", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "secret", Type: field.TypeBytes, Nullable: true},
+		{Name: "failures", Type: field.TypeInt, Nullable: true, Default: 0},
+		{Name: "last_error", Type: field.TypeString, Nullable: true},
+		{Name: "last_response", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// WebhooksTable holds the schema information for the "webhooks" table.
+	WebhooksTable = &schema.Table{
+		Name:       "webhooks",
+		Columns:    WebhooksColumns,
+		PrimaryKey: []*schema.Column{WebhooksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "webhooks_organizations_webhooks",
+				Columns:    []*schema.Column{WebhooksColumns[19]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "template_name_owner_id_template_type",
+				Name:    "webhook_name_owner_id",
 				Unique:  true,
-				Columns: []*schema.Column{TemplatesColumns[9], TemplatesColumns[14], TemplatesColumns[10]},
+				Columns: []*schema.Column{WebhooksColumns[9], WebhooksColumns[19]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
 			},
 		},
 	}
-	// TemplateHistoryColumns holds the columns for the "template_history" table.
-	TemplateHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT"}, Default: "DOCUMENT"},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "jsonconfig", Type: field.TypeJSON},
-		{Name: "uischema", Type: field.TypeJSON, Nullable: true},
-	}
-	// TemplateHistoryTable holds the schema information for the "template_history" table.
-	TemplateHistoryTable = &schema.Table{
-		Name:       "template_history",
-		Columns:    TemplateHistoryColumns,
-		PrimaryKey: []*schema.Column{TemplateHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "templatehistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{TemplateHistoryColumns[1]},
-			},
-		},
-	}
-	// GroupsColumns holds the columns for the "groups" table.
-	GroupsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
-		{Name: "logo_url", Type: field.TypeString, Nullable: true},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-	}
-	// GroupsTable holds the schema information for the "groups" table.
-	GroupsTable = &schema.Table{
-		Name:       "groups",
-		Columns:    GroupsColumns,
-		PrimaryKey: []*schema.Column{GroupsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "groups_organizations_groups",
-				Columns:    []*schema.Column{GroupsColumns[14]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "group_name_owner_id",
-				Unique:  true,
-				Columns: []*schema.Column{GroupsColumns[9], GroupsColumns[14]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
-			},
-		},
-	}
-	// GroupHistoryColumns holds the columns for the "group_history" table.
-	GroupHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
-		{Name: "logo_url", Type: field.TypeString, Nullable: true},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
-	}
-	// GroupHistoryTable holds the schema information for the "group_history" table.
-	GroupHistoryTable = &schema.Table{
-		Name:       "group_history",
-		Columns:    GroupHistoryColumns,
-		PrimaryKey: []*schema.Column{GroupHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "grouphistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{GroupHistoryColumns[1]},
-			},
-		},
-	}
-	// GroupSettingsColumns holds the columns for the "group_settings" table.
-	GroupSettingsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString, Unique: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
-		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "INVITE_OR_APPLICATION"},
-		{Name: "sync_to_slack", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "sync_to_github", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "group_id", Type: field.TypeString, Unique: true, Nullable: true},
-	}
-	// GroupSettingsTable holds the schema information for the "group_settings" table.
-	GroupSettingsTable = &schema.Table{
-		Name:       "group_settings",
-		Columns:    GroupSettingsColumns,
-		PrimaryKey: []*schema.Column{GroupSettingsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "group_settings_groups_setting",
-				Columns:    []*schema.Column{GroupSettingsColumns[13]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
-	// GroupSettingHistoryColumns holds the columns for the "group_setting_history" table.
-	GroupSettingHistoryColumns = []*schema.Column{
+	// WebhookHistoryColumns holds the columns for the "webhook_history" table.
+	WebhookHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
 		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
@@ -1598,297 +1592,28 @@ var (
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
-		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "INVITE_OR_APPLICATION"},
-		{Name: "sync_to_slack", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "sync_to_github", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "group_id", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "destination_url", Type: field.TypeString},
+		{Name: "enabled", Type: field.TypeBool, Default: true},
+		{Name: "callback", Type: field.TypeString, Nullable: true},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "secret", Type: field.TypeBytes, Nullable: true},
+		{Name: "failures", Type: field.TypeInt, Nullable: true, Default: 0},
+		{Name: "last_error", Type: field.TypeString, Nullable: true},
+		{Name: "last_response", Type: field.TypeString, Nullable: true},
 	}
-	// GroupSettingHistoryTable holds the schema information for the "group_setting_history" table.
-	GroupSettingHistoryTable = &schema.Table{
-		Name:       "group_setting_history",
-		Columns:    GroupSettingHistoryColumns,
-		PrimaryKey: []*schema.Column{GroupSettingHistoryColumns[0]},
+	// WebhookHistoryTable holds the schema information for the "webhook_history" table.
+	WebhookHistoryTable = &schema.Table{
+		Name:       "webhook_history",
+		Columns:    WebhookHistoryColumns,
+		PrimaryKey: []*schema.Column{WebhookHistoryColumns[0]},
 		Indexes: []*schema.Index{
 			{
-				Name:    "groupsettinghistory_history_time",
+				Name:    "webhookhistory_history_time",
 				Unique:  false,
-				Columns: []*schema.Column{GroupSettingHistoryColumns[1]},
-			},
-		},
-	}
-	// InviteEventsColumns holds the columns for the "invite_events" table.
-	InviteEventsColumns = []*schema.Column{
-		{Name: "invite_id", Type: field.TypeString},
-		{Name: "event_id", Type: field.TypeString},
-	}
-	// InviteEventsTable holds the schema information for the "invite_events" table.
-	InviteEventsTable = &schema.Table{
-		Name:       "invite_events",
-		Columns:    InviteEventsColumns,
-		PrimaryKey: []*schema.Column{InviteEventsColumns[0], InviteEventsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "invite_events_invite_id",
-				Columns:    []*schema.Column{InviteEventsColumns[0]},
-				RefColumns: []*schema.Column{InvitesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "invite_events_event_id",
-				Columns:    []*schema.Column{InviteEventsColumns[1]},
-				RefColumns: []*schema.Column{EventsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// OhAuthTooTokenEventsColumns holds the columns for the "oh_auth_too_token_events" table.
-	OhAuthTooTokenEventsColumns = []*schema.Column{
-		{Name: "oh_auth_too_token_id", Type: field.TypeString},
-		{Name: "event_id", Type: field.TypeString},
-	}
-	// OhAuthTooTokenEventsTable holds the schema information for the "oh_auth_too_token_events" table.
-	OhAuthTooTokenEventsTable = &schema.Table{
-		Name:       "oh_auth_too_token_events",
-		Columns:    OhAuthTooTokenEventsColumns,
-		PrimaryKey: []*schema.Column{OhAuthTooTokenEventsColumns[0], OhAuthTooTokenEventsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "oh_auth_too_token_events_oh_auth_too_token_id",
-				Columns:    []*schema.Column{OhAuthTooTokenEventsColumns[0]},
-				RefColumns: []*schema.Column{OhAuthTooTokensColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "oh_auth_too_token_events_event_id",
-				Columns:    []*schema.Column{OhAuthTooTokenEventsColumns[1]},
-				RefColumns: []*schema.Column{EventsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// PersonalAccessTokenEventsColumns holds the columns for the "personal_access_token_events" table.
-	PersonalAccessTokenEventsColumns = []*schema.Column{
-		{Name: "personal_access_token_id", Type: field.TypeString},
-		{Name: "event_id", Type: field.TypeString},
-	}
-	// PersonalAccessTokenEventsTable holds the schema information for the "personal_access_token_events" table.
-	PersonalAccessTokenEventsTable = &schema.Table{
-		Name:       "personal_access_token_events",
-		Columns:    PersonalAccessTokenEventsColumns,
-		PrimaryKey: []*schema.Column{PersonalAccessTokenEventsColumns[0], PersonalAccessTokenEventsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "personal_access_token_events_personal_access_token_id",
-				Columns:    []*schema.Column{PersonalAccessTokenEventsColumns[0]},
-				RefColumns: []*schema.Column{PersonalAccessTokensColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "personal_access_token_events_event_id",
-				Columns:    []*schema.Column{PersonalAccessTokenEventsColumns[1]},
-				RefColumns: []*schema.Column{EventsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// SubscriberEventsColumns holds the columns for the "subscriber_events" table.
-	SubscriberEventsColumns = []*schema.Column{
-		{Name: "subscriber_id", Type: field.TypeString},
-		{Name: "event_id", Type: field.TypeString},
-	}
-	// SubscriberEventsTable holds the schema information for the "subscriber_events" table.
-	SubscriberEventsTable = &schema.Table{
-		Name:       "subscriber_events",
-		Columns:    SubscriberEventsColumns,
-		PrimaryKey: []*schema.Column{SubscriberEventsColumns[0], SubscriberEventsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "subscriber_events_subscriber_id",
-				Columns:    []*schema.Column{SubscriberEventsColumns[0]},
-				RefColumns: []*schema.Column{SubscribersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "subscriber_events_event_id",
-				Columns:    []*schema.Column{SubscriberEventsColumns[1]},
-				RefColumns: []*schema.Column{EventsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// WebhookEventsColumns holds the columns for the "webhook_events" table.
-	WebhookEventsColumns = []*schema.Column{
-		{Name: "webhook_id", Type: field.TypeString},
-		{Name: "event_id", Type: field.TypeString},
-	}
-	// WebhookEventsTable holds the schema information for the "webhook_events" table.
-	WebhookEventsTable = &schema.Table{
-		Name:       "webhook_events",
-		Columns:    WebhookEventsColumns,
-		PrimaryKey: []*schema.Column{WebhookEventsColumns[0], WebhookEventsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "webhook_events_webhook_id",
-				Columns:    []*schema.Column{WebhookEventsColumns[0]},
-				RefColumns: []*schema.Column{WebhooksColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "webhook_events_event_id",
-				Columns:    []*schema.Column{WebhookEventsColumns[1]},
-				RefColumns: []*schema.Column{EventsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// FeatureEventsColumns holds the columns for the "feature_events" table.
-	FeatureEventsColumns = []*schema.Column{
-		{Name: "feature_id", Type: field.TypeString},
-		{Name: "event_id", Type: field.TypeString},
-	}
-	// FeatureEventsTable holds the schema information for the "feature_events" table.
-	FeatureEventsTable = &schema.Table{
-		Name:       "feature_events",
-		Columns:    FeatureEventsColumns,
-		PrimaryKey: []*schema.Column{FeatureEventsColumns[0], FeatureEventsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "feature_events_feature_id",
-				Columns:    []*schema.Column{FeatureEventsColumns[0]},
-				RefColumns: []*schema.Column{FeaturesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "feature_events_event_id",
-				Columns:    []*schema.Column{FeatureEventsColumns[1]},
-				RefColumns: []*schema.Column{EventsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// OrganizationPersonalAccessTokensColumns holds the columns for the "organization_personal_access_tokens" table.
-	OrganizationPersonalAccessTokensColumns = []*schema.Column{
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "personal_access_token_id", Type: field.TypeString},
-	}
-	// OrganizationPersonalAccessTokensTable holds the schema information for the "organization_personal_access_tokens" table.
-	OrganizationPersonalAccessTokensTable = &schema.Table{
-		Name:       "organization_personal_access_tokens",
-		Columns:    OrganizationPersonalAccessTokensColumns,
-		PrimaryKey: []*schema.Column{OrganizationPersonalAccessTokensColumns[0], OrganizationPersonalAccessTokensColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "organization_personal_access_tokens_organization_id",
-				Columns:    []*schema.Column{OrganizationPersonalAccessTokensColumns[0]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "organization_personal_access_tokens_personal_access_token_id",
-				Columns:    []*schema.Column{OrganizationPersonalAccessTokensColumns[1]},
-				RefColumns: []*schema.Column{PersonalAccessTokensColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// OrganizationEventsColumns holds the columns for the "organization_events" table.
-	OrganizationEventsColumns = []*schema.Column{
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "event_id", Type: field.TypeString},
-	}
-	// OrganizationEventsTable holds the schema information for the "organization_events" table.
-	OrganizationEventsTable = &schema.Table{
-		Name:       "organization_events",
-		Columns:    OrganizationEventsColumns,
-		PrimaryKey: []*schema.Column{OrganizationEventsColumns[0], OrganizationEventsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "organization_events_organization_id",
-				Columns:    []*schema.Column{OrganizationEventsColumns[0]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "organization_events_event_id",
-				Columns:    []*schema.Column{OrganizationEventsColumns[1]},
-				RefColumns: []*schema.Column{EventsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// OrganizationSecretsColumns holds the columns for the "organization_secrets" table.
-	OrganizationSecretsColumns = []*schema.Column{
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "hush_id", Type: field.TypeString},
-	}
-	// OrganizationSecretsTable holds the schema information for the "organization_secrets" table.
-	OrganizationSecretsTable = &schema.Table{
-		Name:       "organization_secrets",
-		Columns:    OrganizationSecretsColumns,
-		PrimaryKey: []*schema.Column{OrganizationSecretsColumns[0], OrganizationSecretsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "organization_secrets_organization_id",
-				Columns:    []*schema.Column{OrganizationSecretsColumns[0]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "organization_secrets_hush_id",
-				Columns:    []*schema.Column{OrganizationSecretsColumns[1]},
-				RefColumns: []*schema.Column{HushesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// OrganizationFeaturesColumns holds the columns for the "organization_features" table.
-	OrganizationFeaturesColumns = []*schema.Column{
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "feature_id", Type: field.TypeString},
-	}
-	// OrganizationFeaturesTable holds the schema information for the "organization_features" table.
-	OrganizationFeaturesTable = &schema.Table{
-		Name:       "organization_features",
-		Columns:    OrganizationFeaturesColumns,
-		PrimaryKey: []*schema.Column{OrganizationFeaturesColumns[0], OrganizationFeaturesColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "organization_features_organization_id",
-				Columns:    []*schema.Column{OrganizationFeaturesColumns[0]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "organization_features_feature_id",
-				Columns:    []*schema.Column{OrganizationFeaturesColumns[1]},
-				RefColumns: []*schema.Column{FeaturesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// OrganizationFilesColumns holds the columns for the "organization_files" table.
-	OrganizationFilesColumns = []*schema.Column{
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "file_id", Type: field.TypeString},
-	}
-	// OrganizationFilesTable holds the schema information for the "organization_files" table.
-	OrganizationFilesTable = &schema.Table{
-		Name:       "organization_files",
-		Columns:    OrganizationFilesColumns,
-		PrimaryKey: []*schema.Column{OrganizationFilesColumns[0], OrganizationFilesColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "organization_files_organization_id",
-				Columns:    []*schema.Column{OrganizationFilesColumns[0]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "organization_files_file_id",
-				Columns:    []*schema.Column{OrganizationFilesColumns[1]},
-				RefColumns: []*schema.Column{FilesColumns[0]},
-				OnDelete:   schema.Cascade,
+				Columns: []*schema.Column{WebhookHistoryColumns[1]},
 			},
 		},
 	}
@@ -1942,76 +1667,126 @@ var (
 			},
 		},
 	}
-	// UserEventsColumns holds the columns for the "user_events" table.
-	UserEventsColumns = []*schema.Column{
-		{Name: "user_id", Type: field.TypeString},
+	// FeatureEventsColumns holds the columns for the "feature_events" table.
+	FeatureEventsColumns = []*schema.Column{
+		{Name: "feature_id", Type: field.TypeString},
 		{Name: "event_id", Type: field.TypeString},
 	}
-	// UserEventsTable holds the schema information for the "user_events" table.
-	UserEventsTable = &schema.Table{
-		Name:       "user_events",
-		Columns:    UserEventsColumns,
-		PrimaryKey: []*schema.Column{UserEventsColumns[0], UserEventsColumns[1]},
+	// FeatureEventsTable holds the schema information for the "feature_events" table.
+	FeatureEventsTable = &schema.Table{
+		Name:       "feature_events",
+		Columns:    FeatureEventsColumns,
+		PrimaryKey: []*schema.Column{FeatureEventsColumns[0], FeatureEventsColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_events_user_id",
-				Columns:    []*schema.Column{UserEventsColumns[0]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
+				Symbol:     "feature_events_feature_id",
+				Columns:    []*schema.Column{FeatureEventsColumns[0]},
+				RefColumns: []*schema.Column{FeaturesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "user_events_event_id",
-				Columns:    []*schema.Column{UserEventsColumns[1]},
+				Symbol:     "feature_events_event_id",
+				Columns:    []*schema.Column{FeatureEventsColumns[1]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
 	}
-	// UserFeaturesColumns holds the columns for the "user_features" table.
-	UserFeaturesColumns = []*schema.Column{
-		{Name: "user_id", Type: field.TypeString},
+	// GroupFeaturesColumns holds the columns for the "group_features" table.
+	GroupFeaturesColumns = []*schema.Column{
+		{Name: "group_id", Type: field.TypeString},
 		{Name: "feature_id", Type: field.TypeString},
 	}
-	// UserFeaturesTable holds the schema information for the "user_features" table.
-	UserFeaturesTable = &schema.Table{
-		Name:       "user_features",
-		Columns:    UserFeaturesColumns,
-		PrimaryKey: []*schema.Column{UserFeaturesColumns[0], UserFeaturesColumns[1]},
+	// GroupFeaturesTable holds the schema information for the "group_features" table.
+	GroupFeaturesTable = &schema.Table{
+		Name:       "group_features",
+		Columns:    GroupFeaturesColumns,
+		PrimaryKey: []*schema.Column{GroupFeaturesColumns[0], GroupFeaturesColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_features_user_id",
-				Columns:    []*schema.Column{UserFeaturesColumns[0]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
+				Symbol:     "group_features_group_id",
+				Columns:    []*schema.Column{GroupFeaturesColumns[0]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "user_features_feature_id",
-				Columns:    []*schema.Column{UserFeaturesColumns[1]},
+				Symbol:     "group_features_feature_id",
+				Columns:    []*schema.Column{GroupFeaturesColumns[1]},
 				RefColumns: []*schema.Column{FeaturesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
 	}
-	// OrgMembershipEventsColumns holds the columns for the "org_membership_events" table.
-	OrgMembershipEventsColumns = []*schema.Column{
-		{Name: "org_membership_id", Type: field.TypeString},
+	// GroupEventsColumns holds the columns for the "group_events" table.
+	GroupEventsColumns = []*schema.Column{
+		{Name: "group_id", Type: field.TypeString},
 		{Name: "event_id", Type: field.TypeString},
 	}
-	// OrgMembershipEventsTable holds the schema information for the "org_membership_events" table.
-	OrgMembershipEventsTable = &schema.Table{
-		Name:       "org_membership_events",
-		Columns:    OrgMembershipEventsColumns,
-		PrimaryKey: []*schema.Column{OrgMembershipEventsColumns[0], OrgMembershipEventsColumns[1]},
+	// GroupEventsTable holds the schema information for the "group_events" table.
+	GroupEventsTable = &schema.Table{
+		Name:       "group_events",
+		Columns:    GroupEventsColumns,
+		PrimaryKey: []*schema.Column{GroupEventsColumns[0], GroupEventsColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "org_membership_events_org_membership_id",
-				Columns:    []*schema.Column{OrgMembershipEventsColumns[0]},
-				RefColumns: []*schema.Column{OrgMembershipsColumns[0]},
+				Symbol:     "group_events_group_id",
+				Columns:    []*schema.Column{GroupEventsColumns[0]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "org_membership_events_event_id",
-				Columns:    []*schema.Column{OrgMembershipEventsColumns[1]},
+				Symbol:     "group_events_event_id",
+				Columns:    []*schema.Column{GroupEventsColumns[1]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// GroupFilesColumns holds the columns for the "group_files" table.
+	GroupFilesColumns = []*schema.Column{
+		{Name: "group_id", Type: field.TypeString},
+		{Name: "file_id", Type: field.TypeString},
+	}
+	// GroupFilesTable holds the schema information for the "group_files" table.
+	GroupFilesTable = &schema.Table{
+		Name:       "group_files",
+		Columns:    GroupFilesColumns,
+		PrimaryKey: []*schema.Column{GroupFilesColumns[0], GroupFilesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "group_files_group_id",
+				Columns:    []*schema.Column{GroupFilesColumns[0]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "group_files_file_id",
+				Columns:    []*schema.Column{GroupFilesColumns[1]},
+				RefColumns: []*schema.Column{FilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// GroupMembershipEventsColumns holds the columns for the "group_membership_events" table.
+	GroupMembershipEventsColumns = []*schema.Column{
+		{Name: "group_membership_id", Type: field.TypeString},
+		{Name: "event_id", Type: field.TypeString},
+	}
+	// GroupMembershipEventsTable holds the schema information for the "group_membership_events" table.
+	GroupMembershipEventsTable = &schema.Table{
+		Name:       "group_membership_events",
+		Columns:    GroupMembershipEventsColumns,
+		PrimaryKey: []*schema.Column{GroupMembershipEventsColumns[0], GroupMembershipEventsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "group_membership_events_group_membership_id",
+				Columns:    []*schema.Column{GroupMembershipEventsColumns[0]},
+				RefColumns: []*schema.Column{GroupMembershipsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "group_membership_events_event_id",
+				Columns:    []*schema.Column{GroupMembershipEventsColumns[1]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -2142,102 +1917,327 @@ var (
 			},
 		},
 	}
-	// GroupMembershipEventsColumns holds the columns for the "group_membership_events" table.
-	GroupMembershipEventsColumns = []*schema.Column{
-		{Name: "group_membership_id", Type: field.TypeString},
+	// InviteEventsColumns holds the columns for the "invite_events" table.
+	InviteEventsColumns = []*schema.Column{
+		{Name: "invite_id", Type: field.TypeString},
 		{Name: "event_id", Type: field.TypeString},
 	}
-	// GroupMembershipEventsTable holds the schema information for the "group_membership_events" table.
-	GroupMembershipEventsTable = &schema.Table{
-		Name:       "group_membership_events",
-		Columns:    GroupMembershipEventsColumns,
-		PrimaryKey: []*schema.Column{GroupMembershipEventsColumns[0], GroupMembershipEventsColumns[1]},
+	// InviteEventsTable holds the schema information for the "invite_events" table.
+	InviteEventsTable = &schema.Table{
+		Name:       "invite_events",
+		Columns:    InviteEventsColumns,
+		PrimaryKey: []*schema.Column{InviteEventsColumns[0], InviteEventsColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "group_membership_events_group_membership_id",
-				Columns:    []*schema.Column{GroupMembershipEventsColumns[0]},
-				RefColumns: []*schema.Column{GroupMembershipsColumns[0]},
+				Symbol:     "invite_events_invite_id",
+				Columns:    []*schema.Column{InviteEventsColumns[0]},
+				RefColumns: []*schema.Column{InvitesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "group_membership_events_event_id",
-				Columns:    []*schema.Column{GroupMembershipEventsColumns[1]},
+				Symbol:     "invite_events_event_id",
+				Columns:    []*schema.Column{InviteEventsColumns[1]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
 	}
-	// GroupFeaturesColumns holds the columns for the "group_features" table.
-	GroupFeaturesColumns = []*schema.Column{
-		{Name: "group_id", Type: field.TypeString},
-		{Name: "feature_id", Type: field.TypeString},
+	// OhAuthTooTokenEventsColumns holds the columns for the "oh_auth_too_token_events" table.
+	OhAuthTooTokenEventsColumns = []*schema.Column{
+		{Name: "oh_auth_too_token_id", Type: field.TypeString},
+		{Name: "event_id", Type: field.TypeString},
 	}
-	// GroupFeaturesTable holds the schema information for the "group_features" table.
-	GroupFeaturesTable = &schema.Table{
-		Name:       "group_features",
-		Columns:    GroupFeaturesColumns,
-		PrimaryKey: []*schema.Column{GroupFeaturesColumns[0], GroupFeaturesColumns[1]},
+	// OhAuthTooTokenEventsTable holds the schema information for the "oh_auth_too_token_events" table.
+	OhAuthTooTokenEventsTable = &schema.Table{
+		Name:       "oh_auth_too_token_events",
+		Columns:    OhAuthTooTokenEventsColumns,
+		PrimaryKey: []*schema.Column{OhAuthTooTokenEventsColumns[0], OhAuthTooTokenEventsColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "group_features_group_id",
-				Columns:    []*schema.Column{GroupFeaturesColumns[0]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
+				Symbol:     "oh_auth_too_token_events_oh_auth_too_token_id",
+				Columns:    []*schema.Column{OhAuthTooTokenEventsColumns[0]},
+				RefColumns: []*schema.Column{OhAuthTooTokensColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "group_features_feature_id",
-				Columns:    []*schema.Column{GroupFeaturesColumns[1]},
+				Symbol:     "oh_auth_too_token_events_event_id",
+				Columns:    []*schema.Column{OhAuthTooTokenEventsColumns[1]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// OrgMembershipEventsColumns holds the columns for the "org_membership_events" table.
+	OrgMembershipEventsColumns = []*schema.Column{
+		{Name: "org_membership_id", Type: field.TypeString},
+		{Name: "event_id", Type: field.TypeString},
+	}
+	// OrgMembershipEventsTable holds the schema information for the "org_membership_events" table.
+	OrgMembershipEventsTable = &schema.Table{
+		Name:       "org_membership_events",
+		Columns:    OrgMembershipEventsColumns,
+		PrimaryKey: []*schema.Column{OrgMembershipEventsColumns[0], OrgMembershipEventsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "org_membership_events_org_membership_id",
+				Columns:    []*schema.Column{OrgMembershipEventsColumns[0]},
+				RefColumns: []*schema.Column{OrgMembershipsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "org_membership_events_event_id",
+				Columns:    []*schema.Column{OrgMembershipEventsColumns[1]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// OrganizationPersonalAccessTokensColumns holds the columns for the "organization_personal_access_tokens" table.
+	OrganizationPersonalAccessTokensColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "personal_access_token_id", Type: field.TypeString},
+	}
+	// OrganizationPersonalAccessTokensTable holds the schema information for the "organization_personal_access_tokens" table.
+	OrganizationPersonalAccessTokensTable = &schema.Table{
+		Name:       "organization_personal_access_tokens",
+		Columns:    OrganizationPersonalAccessTokensColumns,
+		PrimaryKey: []*schema.Column{OrganizationPersonalAccessTokensColumns[0], OrganizationPersonalAccessTokensColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_personal_access_tokens_organization_id",
+				Columns:    []*schema.Column{OrganizationPersonalAccessTokensColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_personal_access_tokens_personal_access_token_id",
+				Columns:    []*schema.Column{OrganizationPersonalAccessTokensColumns[1]},
+				RefColumns: []*schema.Column{PersonalAccessTokensColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// OrganizationEventsColumns holds the columns for the "organization_events" table.
+	OrganizationEventsColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "event_id", Type: field.TypeString},
+	}
+	// OrganizationEventsTable holds the schema information for the "organization_events" table.
+	OrganizationEventsTable = &schema.Table{
+		Name:       "organization_events",
+		Columns:    OrganizationEventsColumns,
+		PrimaryKey: []*schema.Column{OrganizationEventsColumns[0], OrganizationEventsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_events_organization_id",
+				Columns:    []*schema.Column{OrganizationEventsColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_events_event_id",
+				Columns:    []*schema.Column{OrganizationEventsColumns[1]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// OrganizationSecretsColumns holds the columns for the "organization_secrets" table.
+	OrganizationSecretsColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "hush_id", Type: field.TypeString},
+	}
+	// OrganizationSecretsTable holds the schema information for the "organization_secrets" table.
+	OrganizationSecretsTable = &schema.Table{
+		Name:       "organization_secrets",
+		Columns:    OrganizationSecretsColumns,
+		PrimaryKey: []*schema.Column{OrganizationSecretsColumns[0], OrganizationSecretsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_secrets_organization_id",
+				Columns:    []*schema.Column{OrganizationSecretsColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_secrets_hush_id",
+				Columns:    []*schema.Column{OrganizationSecretsColumns[1]},
+				RefColumns: []*schema.Column{HushesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// OrganizationFeaturesColumns holds the columns for the "organization_features" table.
+	OrganizationFeaturesColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "feature_id", Type: field.TypeString},
+	}
+	// OrganizationFeaturesTable holds the schema information for the "organization_features" table.
+	OrganizationFeaturesTable = &schema.Table{
+		Name:       "organization_features",
+		Columns:    OrganizationFeaturesColumns,
+		PrimaryKey: []*schema.Column{OrganizationFeaturesColumns[0], OrganizationFeaturesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_features_organization_id",
+				Columns:    []*schema.Column{OrganizationFeaturesColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_features_feature_id",
+				Columns:    []*schema.Column{OrganizationFeaturesColumns[1]},
 				RefColumns: []*schema.Column{FeaturesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
 	}
-	// GroupEventsColumns holds the columns for the "group_events" table.
-	GroupEventsColumns = []*schema.Column{
-		{Name: "group_id", Type: field.TypeString},
-		{Name: "event_id", Type: field.TypeString},
+	// OrganizationFilesColumns holds the columns for the "organization_files" table.
+	OrganizationFilesColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "file_id", Type: field.TypeString},
 	}
-	// GroupEventsTable holds the schema information for the "group_events" table.
-	GroupEventsTable = &schema.Table{
-		Name:       "group_events",
-		Columns:    GroupEventsColumns,
-		PrimaryKey: []*schema.Column{GroupEventsColumns[0], GroupEventsColumns[1]},
+	// OrganizationFilesTable holds the schema information for the "organization_files" table.
+	OrganizationFilesTable = &schema.Table{
+		Name:       "organization_files",
+		Columns:    OrganizationFilesColumns,
+		PrimaryKey: []*schema.Column{OrganizationFilesColumns[0], OrganizationFilesColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "group_events_group_id",
-				Columns:    []*schema.Column{GroupEventsColumns[0]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
+				Symbol:     "organization_files_organization_id",
+				Columns:    []*schema.Column{OrganizationFilesColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "group_events_event_id",
-				Columns:    []*schema.Column{GroupEventsColumns[1]},
+				Symbol:     "organization_files_file_id",
+				Columns:    []*schema.Column{OrganizationFilesColumns[1]},
+				RefColumns: []*schema.Column{FilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// PersonalAccessTokenEventsColumns holds the columns for the "personal_access_token_events" table.
+	PersonalAccessTokenEventsColumns = []*schema.Column{
+		{Name: "personal_access_token_id", Type: field.TypeString},
+		{Name: "event_id", Type: field.TypeString},
+	}
+	// PersonalAccessTokenEventsTable holds the schema information for the "personal_access_token_events" table.
+	PersonalAccessTokenEventsTable = &schema.Table{
+		Name:       "personal_access_token_events",
+		Columns:    PersonalAccessTokenEventsColumns,
+		PrimaryKey: []*schema.Column{PersonalAccessTokenEventsColumns[0], PersonalAccessTokenEventsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "personal_access_token_events_personal_access_token_id",
+				Columns:    []*schema.Column{PersonalAccessTokenEventsColumns[0]},
+				RefColumns: []*schema.Column{PersonalAccessTokensColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "personal_access_token_events_event_id",
+				Columns:    []*schema.Column{PersonalAccessTokenEventsColumns[1]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
 	}
-	// GroupFilesColumns holds the columns for the "group_files" table.
-	GroupFilesColumns = []*schema.Column{
-		{Name: "group_id", Type: field.TypeString},
-		{Name: "file_id", Type: field.TypeString},
+	// SubscriberEventsColumns holds the columns for the "subscriber_events" table.
+	SubscriberEventsColumns = []*schema.Column{
+		{Name: "subscriber_id", Type: field.TypeString},
+		{Name: "event_id", Type: field.TypeString},
 	}
-	// GroupFilesTable holds the schema information for the "group_files" table.
-	GroupFilesTable = &schema.Table{
-		Name:       "group_files",
-		Columns:    GroupFilesColumns,
-		PrimaryKey: []*schema.Column{GroupFilesColumns[0], GroupFilesColumns[1]},
+	// SubscriberEventsTable holds the schema information for the "subscriber_events" table.
+	SubscriberEventsTable = &schema.Table{
+		Name:       "subscriber_events",
+		Columns:    SubscriberEventsColumns,
+		PrimaryKey: []*schema.Column{SubscriberEventsColumns[0], SubscriberEventsColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "group_files_group_id",
-				Columns:    []*schema.Column{GroupFilesColumns[0]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
+				Symbol:     "subscriber_events_subscriber_id",
+				Columns:    []*schema.Column{SubscriberEventsColumns[0]},
+				RefColumns: []*schema.Column{SubscribersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "group_files_file_id",
-				Columns:    []*schema.Column{GroupFilesColumns[1]},
-				RefColumns: []*schema.Column{FilesColumns[0]},
+				Symbol:     "subscriber_events_event_id",
+				Columns:    []*schema.Column{SubscriberEventsColumns[1]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// UserEventsColumns holds the columns for the "user_events" table.
+	UserEventsColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "event_id", Type: field.TypeString},
+	}
+	// UserEventsTable holds the schema information for the "user_events" table.
+	UserEventsTable = &schema.Table{
+		Name:       "user_events",
+		Columns:    UserEventsColumns,
+		PrimaryKey: []*schema.Column{UserEventsColumns[0], UserEventsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_events_user_id",
+				Columns:    []*schema.Column{UserEventsColumns[0]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_events_event_id",
+				Columns:    []*schema.Column{UserEventsColumns[1]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// UserFeaturesColumns holds the columns for the "user_features" table.
+	UserFeaturesColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "feature_id", Type: field.TypeString},
+	}
+	// UserFeaturesTable holds the schema information for the "user_features" table.
+	UserFeaturesTable = &schema.Table{
+		Name:       "user_features",
+		Columns:    UserFeaturesColumns,
+		PrimaryKey: []*schema.Column{UserFeaturesColumns[0], UserFeaturesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_features_user_id",
+				Columns:    []*schema.Column{UserFeaturesColumns[0]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_features_feature_id",
+				Columns:    []*schema.Column{UserFeaturesColumns[1]},
+				RefColumns: []*schema.Column{FeaturesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// WebhookEventsColumns holds the columns for the "webhook_events" table.
+	WebhookEventsColumns = []*schema.Column{
+		{Name: "webhook_id", Type: field.TypeString},
+		{Name: "event_id", Type: field.TypeString},
+	}
+	// WebhookEventsTable holds the schema information for the "webhook_events" table.
+	WebhookEventsTable = &schema.Table{
+		Name:       "webhook_events",
+		Columns:    WebhookEventsColumns,
+		PrimaryKey: []*schema.Column{WebhookEventsColumns[0], WebhookEventsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "webhook_events_webhook_id",
+				Columns:    []*schema.Column{WebhookEventsColumns[0]},
+				RefColumns: []*schema.Column{WebhooksColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "webhook_events_event_id",
+				Columns:    []*schema.Column{WebhookEventsColumns[1]},
+				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -2245,90 +2245,91 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		APITokensTable,
+		DocumentDataTable,
+		DocumentDataHistoryTable,
 		EmailVerificationTokensTable,
-		InvitesTable,
-		OhAuthTooTokensTable,
-		PersonalAccessTokensTable,
-		PasswordResetTokensTable,
-		TfaSettingsTable,
-		SubscribersTable,
-		WebauthnsTable,
-		WebhooksTable,
-		WebhookHistoryTable,
+		EntitlementsTable,
+		EntitlementHistoryTable,
+		EventsTable,
+		EventHistoryTable,
 		FeaturesTable,
 		FeatureHistoryTable,
 		FilesTable,
 		FileHistoryTable,
-		OrganizationsTable,
-		OrganizationHistoryTable,
-		EntitlementsTable,
-		EntitlementHistoryTable,
-		UsersTable,
-		UserHistoryTable,
-		EventsTable,
-		EventHistoryTable,
-		OauthProvidersTable,
-		OauthProviderHistoryTable,
-		OrgMembershipsTable,
-		OrgMembershipHistoryTable,
-		HushesTable,
-		HushHistoryTable,
-		DocumentDataTable,
-		DocumentDataHistoryTable,
-		IntegrationsTable,
-		IntegrationHistoryTable,
-		GroupMembershipsTable,
-		GroupMembershipHistoryTable,
-		OrganizationSettingsTable,
-		OrganizationSettingHistoryTable,
-		UserSettingsTable,
-		UserSettingHistoryTable,
-		TemplatesTable,
-		TemplateHistoryTable,
 		GroupsTable,
 		GroupHistoryTable,
+		GroupMembershipsTable,
+		GroupMembershipHistoryTable,
 		GroupSettingsTable,
 		GroupSettingHistoryTable,
-		InviteEventsTable,
-		OhAuthTooTokenEventsTable,
-		PersonalAccessTokenEventsTable,
-		SubscriberEventsTable,
-		WebhookEventsTable,
-		FeatureEventsTable,
-		OrganizationPersonalAccessTokensTable,
-		OrganizationEventsTable,
-		OrganizationSecretsTable,
-		OrganizationFeaturesTable,
-		OrganizationFilesTable,
+		HushesTable,
+		HushHistoryTable,
+		IntegrationsTable,
+		IntegrationHistoryTable,
+		InvitesTable,
+		OauthProvidersTable,
+		OauthProviderHistoryTable,
+		OhAuthTooTokensTable,
+		OrgMembershipsTable,
+		OrgMembershipHistoryTable,
+		OrganizationsTable,
+		OrganizationHistoryTable,
+		OrganizationSettingsTable,
+		OrganizationSettingHistoryTable,
+		PasswordResetTokensTable,
+		PersonalAccessTokensTable,
+		SubscribersTable,
+		TfaSettingsTable,
+		TemplatesTable,
+		TemplateHistoryTable,
+		UsersTable,
+		UserHistoryTable,
+		UserSettingsTable,
+		UserSettingHistoryTable,
+		WebauthnsTable,
+		WebhooksTable,
+		WebhookHistoryTable,
 		EntitlementFeaturesTable,
 		EntitlementEventsTable,
-		UserEventsTable,
-		UserFeaturesTable,
-		OrgMembershipEventsTable,
+		FeatureEventsTable,
+		GroupFeaturesTable,
+		GroupEventsTable,
+		GroupFilesTable,
+		GroupMembershipEventsTable,
 		HushEventsTable,
 		IntegrationSecretsTable,
 		IntegrationOauth2tokensTable,
 		IntegrationEventsTable,
 		IntegrationWebhooksTable,
-		GroupMembershipEventsTable,
-		GroupFeaturesTable,
-		GroupEventsTable,
-		GroupFilesTable,
+		InviteEventsTable,
+		OhAuthTooTokenEventsTable,
+		OrgMembershipEventsTable,
+		OrganizationPersonalAccessTokensTable,
+		OrganizationEventsTable,
+		OrganizationSecretsTable,
+		OrganizationFeaturesTable,
+		OrganizationFilesTable,
+		PersonalAccessTokenEventsTable,
+		SubscriberEventsTable,
+		UserEventsTable,
+		UserFeaturesTable,
+		WebhookEventsTable,
 	}
 )
 
 func init() {
 	APITokensTable.ForeignKeys[0].RefTable = OrganizationsTable
+	DocumentDataTable.ForeignKeys[0].RefTable = TemplatesTable
+	DocumentDataHistoryTable.Annotation = &entsql.Annotation{
+		Table: "document_data_history",
+	}
 	EmailVerificationTokensTable.ForeignKeys[0].RefTable = UsersTable
-	InvitesTable.ForeignKeys[0].RefTable = OrganizationsTable
-	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
-	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
-	TfaSettingsTable.ForeignKeys[0].RefTable = UsersTable
-	SubscribersTable.ForeignKeys[0].RefTable = OrganizationsTable
-	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable
-	WebhooksTable.ForeignKeys[0].RefTable = OrganizationsTable
-	WebhookHistoryTable.Annotation = &entsql.Annotation{
-		Table: "webhook_history",
+	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	EntitlementHistoryTable.Annotation = &entsql.Annotation{
+		Table: "entitlement_history",
+	}
+	EventHistoryTable.Annotation = &entsql.Annotation{
+		Table: "event_history",
 	}
 	FeatureHistoryTable.Annotation = &entsql.Annotation{
 		Table: "feature_history",
@@ -2337,20 +2338,28 @@ func init() {
 	FileHistoryTable.Annotation = &entsql.Annotation{
 		Table: "file_history",
 	}
-	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
-	OrganizationHistoryTable.Annotation = &entsql.Annotation{
-		Table: "organization_history",
+	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	GroupHistoryTable.Annotation = &entsql.Annotation{
+		Table: "group_history",
 	}
-	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
-	EntitlementHistoryTable.Annotation = &entsql.Annotation{
-		Table: "entitlement_history",
+	GroupMembershipsTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupMembershipsTable.ForeignKeys[1].RefTable = UsersTable
+	GroupMembershipHistoryTable.Annotation = &entsql.Annotation{
+		Table: "group_membership_history",
 	}
-	UserHistoryTable.Annotation = &entsql.Annotation{
-		Table: "user_history",
+	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupSettingHistoryTable.Annotation = &entsql.Annotation{
+		Table: "group_setting_history",
 	}
-	EventHistoryTable.Annotation = &entsql.Annotation{
-		Table: "event_history",
+	HushHistoryTable.Annotation = &entsql.Annotation{
+		Table: "hush_history",
 	}
+	IntegrationsTable.ForeignKeys[0].RefTable = GroupsTable
+	IntegrationsTable.ForeignKeys[1].RefTable = OrganizationsTable
+	IntegrationHistoryTable.Annotation = &entsql.Annotation{
+		Table: "integration_history",
+	}
+	InvitesTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OauthProviderHistoryTable.Annotation = &entsql.Annotation{
 		Table: "oauth_provider_history",
@@ -2360,76 +2369,49 @@ func init() {
 	OrgMembershipHistoryTable.Annotation = &entsql.Annotation{
 		Table: "org_membership_history",
 	}
-	HushHistoryTable.Annotation = &entsql.Annotation{
-		Table: "hush_history",
-	}
-	DocumentDataTable.ForeignKeys[0].RefTable = TemplatesTable
-	DocumentDataHistoryTable.Annotation = &entsql.Annotation{
-		Table: "document_data_history",
-	}
-	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
-	IntegrationsTable.ForeignKeys[1].RefTable = GroupsTable
-	IntegrationHistoryTable.Annotation = &entsql.Annotation{
-		Table: "integration_history",
-	}
-	GroupMembershipsTable.ForeignKeys[0].RefTable = GroupsTable
-	GroupMembershipsTable.ForeignKeys[1].RefTable = UsersTable
-	GroupMembershipHistoryTable.Annotation = &entsql.Annotation{
-		Table: "group_membership_history",
+	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationHistoryTable.Annotation = &entsql.Annotation{
+		Table: "organization_history",
 	}
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationSettingHistoryTable.Annotation = &entsql.Annotation{
 		Table: "organization_setting_history",
+	}
+	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
+	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
+	SubscribersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	TfaSettingsTable.ForeignKeys[0].RefTable = UsersTable
+	TemplatesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	TemplateHistoryTable.Annotation = &entsql.Annotation{
+		Table: "template_history",
+	}
+	UserHistoryTable.Annotation = &entsql.Annotation{
+		Table: "user_history",
 	}
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	UserSettingHistoryTable.Annotation = &entsql.Annotation{
 		Table: "user_setting_history",
 	}
-	TemplatesTable.ForeignKeys[0].RefTable = OrganizationsTable
-	TemplateHistoryTable.Annotation = &entsql.Annotation{
-		Table: "template_history",
+	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable
+	WebhooksTable.ForeignKeys[0].RefTable = OrganizationsTable
+	WebhookHistoryTable.Annotation = &entsql.Annotation{
+		Table: "webhook_history",
 	}
-	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
-	GroupHistoryTable.Annotation = &entsql.Annotation{
-		Table: "group_history",
-	}
-	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
-	GroupSettingHistoryTable.Annotation = &entsql.Annotation{
-		Table: "group_setting_history",
-	}
-	InviteEventsTable.ForeignKeys[0].RefTable = InvitesTable
-	InviteEventsTable.ForeignKeys[1].RefTable = EventsTable
-	OhAuthTooTokenEventsTable.ForeignKeys[0].RefTable = OhAuthTooTokensTable
-	OhAuthTooTokenEventsTable.ForeignKeys[1].RefTable = EventsTable
-	PersonalAccessTokenEventsTable.ForeignKeys[0].RefTable = PersonalAccessTokensTable
-	PersonalAccessTokenEventsTable.ForeignKeys[1].RefTable = EventsTable
-	SubscriberEventsTable.ForeignKeys[0].RefTable = SubscribersTable
-	SubscriberEventsTable.ForeignKeys[1].RefTable = EventsTable
-	WebhookEventsTable.ForeignKeys[0].RefTable = WebhooksTable
-	WebhookEventsTable.ForeignKeys[1].RefTable = EventsTable
-	FeatureEventsTable.ForeignKeys[0].RefTable = FeaturesTable
-	FeatureEventsTable.ForeignKeys[1].RefTable = EventsTable
-	OrganizationPersonalAccessTokensTable.ForeignKeys[0].RefTable = OrganizationsTable
-	OrganizationPersonalAccessTokensTable.ForeignKeys[1].RefTable = PersonalAccessTokensTable
-	OrganizationEventsTable.ForeignKeys[0].RefTable = OrganizationsTable
-	OrganizationEventsTable.ForeignKeys[1].RefTable = EventsTable
-	OrganizationSecretsTable.ForeignKeys[0].RefTable = OrganizationsTable
-	OrganizationSecretsTable.ForeignKeys[1].RefTable = HushesTable
-	OrganizationFeaturesTable.ForeignKeys[0].RefTable = OrganizationsTable
-	OrganizationFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
-	OrganizationFilesTable.ForeignKeys[0].RefTable = OrganizationsTable
-	OrganizationFilesTable.ForeignKeys[1].RefTable = FilesTable
 	EntitlementFeaturesTable.ForeignKeys[0].RefTable = EntitlementsTable
 	EntitlementFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
 	EntitlementEventsTable.ForeignKeys[0].RefTable = EntitlementsTable
 	EntitlementEventsTable.ForeignKeys[1].RefTable = EventsTable
-	UserEventsTable.ForeignKeys[0].RefTable = UsersTable
-	UserEventsTable.ForeignKeys[1].RefTable = EventsTable
-	UserFeaturesTable.ForeignKeys[0].RefTable = UsersTable
-	UserFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
-	OrgMembershipEventsTable.ForeignKeys[0].RefTable = OrgMembershipsTable
-	OrgMembershipEventsTable.ForeignKeys[1].RefTable = EventsTable
+	FeatureEventsTable.ForeignKeys[0].RefTable = FeaturesTable
+	FeatureEventsTable.ForeignKeys[1].RefTable = EventsTable
+	GroupFeaturesTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
+	GroupEventsTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupEventsTable.ForeignKeys[1].RefTable = EventsTable
+	GroupFilesTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupFilesTable.ForeignKeys[1].RefTable = FilesTable
+	GroupMembershipEventsTable.ForeignKeys[0].RefTable = GroupMembershipsTable
+	GroupMembershipEventsTable.ForeignKeys[1].RefTable = EventsTable
 	HushEventsTable.ForeignKeys[0].RefTable = HushesTable
 	HushEventsTable.ForeignKeys[1].RefTable = EventsTable
 	IntegrationSecretsTable.ForeignKeys[0].RefTable = IntegrationsTable
@@ -2440,12 +2422,30 @@ func init() {
 	IntegrationEventsTable.ForeignKeys[1].RefTable = EventsTable
 	IntegrationWebhooksTable.ForeignKeys[0].RefTable = IntegrationsTable
 	IntegrationWebhooksTable.ForeignKeys[1].RefTable = WebhooksTable
-	GroupMembershipEventsTable.ForeignKeys[0].RefTable = GroupMembershipsTable
-	GroupMembershipEventsTable.ForeignKeys[1].RefTable = EventsTable
-	GroupFeaturesTable.ForeignKeys[0].RefTable = GroupsTable
-	GroupFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
-	GroupEventsTable.ForeignKeys[0].RefTable = GroupsTable
-	GroupEventsTable.ForeignKeys[1].RefTable = EventsTable
-	GroupFilesTable.ForeignKeys[0].RefTable = GroupsTable
-	GroupFilesTable.ForeignKeys[1].RefTable = FilesTable
+	InviteEventsTable.ForeignKeys[0].RefTable = InvitesTable
+	InviteEventsTable.ForeignKeys[1].RefTable = EventsTable
+	OhAuthTooTokenEventsTable.ForeignKeys[0].RefTable = OhAuthTooTokensTable
+	OhAuthTooTokenEventsTable.ForeignKeys[1].RefTable = EventsTable
+	OrgMembershipEventsTable.ForeignKeys[0].RefTable = OrgMembershipsTable
+	OrgMembershipEventsTable.ForeignKeys[1].RefTable = EventsTable
+	OrganizationPersonalAccessTokensTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationPersonalAccessTokensTable.ForeignKeys[1].RefTable = PersonalAccessTokensTable
+	OrganizationEventsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationEventsTable.ForeignKeys[1].RefTable = EventsTable
+	OrganizationSecretsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationSecretsTable.ForeignKeys[1].RefTable = HushesTable
+	OrganizationFeaturesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
+	OrganizationFilesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationFilesTable.ForeignKeys[1].RefTable = FilesTable
+	PersonalAccessTokenEventsTable.ForeignKeys[0].RefTable = PersonalAccessTokensTable
+	PersonalAccessTokenEventsTable.ForeignKeys[1].RefTable = EventsTable
+	SubscriberEventsTable.ForeignKeys[0].RefTable = SubscribersTable
+	SubscriberEventsTable.ForeignKeys[1].RefTable = EventsTable
+	UserEventsTable.ForeignKeys[0].RefTable = UsersTable
+	UserEventsTable.ForeignKeys[1].RefTable = EventsTable
+	UserFeaturesTable.ForeignKeys[0].RefTable = UsersTable
+	UserFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
+	WebhookEventsTable.ForeignKeys[0].RefTable = WebhooksTable
+	WebhookEventsTable.ForeignKeys[1].RefTable = EventsTable
 }

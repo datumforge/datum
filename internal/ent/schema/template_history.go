@@ -76,3 +76,4 @@ func (TemplateHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

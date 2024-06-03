@@ -76,3 +76,4 @@ func (EntitlementHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

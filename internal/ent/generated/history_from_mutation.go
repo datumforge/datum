@@ -30,7 +30,7 @@ func EntOpToHistoryOp(op ent.Op) enthistory.OpType {
 	}
 }
 
-func (m *WebhookMutation) CreateHistoryFromCreate(ctx context.Context) error {
+func (m *DocumentDataMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
 
 	id, ok := m.ID()
@@ -38,7 +38,203 @@ func (m *WebhookMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		return idNotFoundError
 	}
 
-	create := client.WebhookHistory.Create()
+	create := client.DocumentDataHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if templateID, exists := m.TemplateID(); exists {
+		create = create.SetTemplateID(templateID)
+	}
+
+	if data, exists := m.Data(); exists {
+		create = create.SetData(data)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *DocumentDataMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		documentdata, err := client.DocumentData.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.DocumentDataHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(documentdata.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(documentdata.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(documentdata.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(documentdata.UpdatedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(documentdata.MappingID)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(documentdata.Tags)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(documentdata.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(documentdata.DeletedBy)
+		}
+
+		if templateID, exists := m.TemplateID(); exists {
+			create = create.SetTemplateID(templateID)
+		} else {
+			create = create.SetTemplateID(documentdata.TemplateID)
+		}
+
+		if data, exists := m.Data(); exists {
+			create = create.SetData(data)
+		} else {
+			create = create.SetData(documentdata.Data)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DocumentDataMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		documentdata, err := client.DocumentData.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.DocumentDataHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(documentdata.CreatedAt).
+			SetUpdatedAt(documentdata.UpdatedAt).
+			SetCreatedBy(documentdata.CreatedBy).
+			SetUpdatedBy(documentdata.UpdatedBy).
+			SetMappingID(documentdata.MappingID).
+			SetTags(documentdata.Tags).
+			SetDeletedAt(documentdata.DeletedAt).
+			SetDeletedBy(documentdata.DeletedBy).
+			SetTemplateID(documentdata.TemplateID).
+			SetData(documentdata.Data).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.EntitlementHistory.Create()
 
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
@@ -81,44 +277,28 @@ func (m *WebhookMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetOwnerID(ownerID)
 	}
 
-	if name, exists := m.Name(); exists {
-		create = create.SetName(name)
+	if tier, exists := m.Tier(); exists {
+		create = create.SetTier(tier)
 	}
 
-	if description, exists := m.Description(); exists {
-		create = create.SetDescription(description)
+	if externalCustomerID, exists := m.ExternalCustomerID(); exists {
+		create = create.SetExternalCustomerID(externalCustomerID)
 	}
 
-	if destinationURL, exists := m.DestinationURL(); exists {
-		create = create.SetDestinationURL(destinationURL)
+	if externalSubscriptionID, exists := m.ExternalSubscriptionID(); exists {
+		create = create.SetExternalSubscriptionID(externalSubscriptionID)
 	}
 
-	if enabled, exists := m.Enabled(); exists {
-		create = create.SetEnabled(enabled)
-	}
-
-	if callback, exists := m.Callback(); exists {
-		create = create.SetCallback(callback)
+	if expires, exists := m.Expires(); exists {
+		create = create.SetExpires(expires)
 	}
 
 	if expiresAt, exists := m.ExpiresAt(); exists {
-		create = create.SetExpiresAt(expiresAt)
+		create = create.SetNillableExpiresAt(&expiresAt)
 	}
 
-	if secret, exists := m.Secret(); exists {
-		create = create.SetSecret(secret)
-	}
-
-	if failures, exists := m.Failures(); exists {
-		create = create.SetFailures(failures)
-	}
-
-	if lastError, exists := m.LastError(); exists {
-		create = create.SetLastError(lastError)
-	}
-
-	if lastResponse, exists := m.LastResponse(); exists {
-		create = create.SetLastResponse(lastResponse)
+	if cancelled, exists := m.Cancelled(); exists {
+		create = create.SetCancelled(cancelled)
 	}
 
 	_, err := create.Save(ctx)
@@ -126,7 +306,7 @@ func (m *WebhookMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	return err
 }
 
-func (m *WebhookMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	// check for soft delete operation and delete instead
 	if entx.CheckIsSoftDelete(ctx) {
 		return m.CreateHistoryFromDelete(ctx)
@@ -139,12 +319,12 @@ func (m *WebhookMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	}
 
 	for _, id := range ids {
-		webhook, err := client.Webhook.Get(ctx, id)
+		entitlement, err := client.Entitlement.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.WebhookHistory.Create()
+		create := client.EntitlementHistory.Create()
 
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -154,115 +334,91 @@ func (m *WebhookMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 		if createdAt, exists := m.CreatedAt(); exists {
 			create = create.SetCreatedAt(createdAt)
 		} else {
-			create = create.SetCreatedAt(webhook.CreatedAt)
+			create = create.SetCreatedAt(entitlement.CreatedAt)
 		}
 
 		if updatedAt, exists := m.UpdatedAt(); exists {
 			create = create.SetUpdatedAt(updatedAt)
 		} else {
-			create = create.SetUpdatedAt(webhook.UpdatedAt)
+			create = create.SetUpdatedAt(entitlement.UpdatedAt)
 		}
 
 		if createdBy, exists := m.CreatedBy(); exists {
 			create = create.SetCreatedBy(createdBy)
 		} else {
-			create = create.SetCreatedBy(webhook.CreatedBy)
+			create = create.SetCreatedBy(entitlement.CreatedBy)
 		}
 
 		if updatedBy, exists := m.UpdatedBy(); exists {
 			create = create.SetUpdatedBy(updatedBy)
 		} else {
-			create = create.SetUpdatedBy(webhook.UpdatedBy)
+			create = create.SetUpdatedBy(entitlement.UpdatedBy)
 		}
 
 		if mappingID, exists := m.MappingID(); exists {
 			create = create.SetMappingID(mappingID)
 		} else {
-			create = create.SetMappingID(webhook.MappingID)
+			create = create.SetMappingID(entitlement.MappingID)
 		}
 
 		if tags, exists := m.Tags(); exists {
 			create = create.SetTags(tags)
 		} else {
-			create = create.SetTags(webhook.Tags)
+			create = create.SetTags(entitlement.Tags)
 		}
 
 		if deletedAt, exists := m.DeletedAt(); exists {
 			create = create.SetDeletedAt(deletedAt)
 		} else {
-			create = create.SetDeletedAt(webhook.DeletedAt)
+			create = create.SetDeletedAt(entitlement.DeletedAt)
 		}
 
 		if deletedBy, exists := m.DeletedBy(); exists {
 			create = create.SetDeletedBy(deletedBy)
 		} else {
-			create = create.SetDeletedBy(webhook.DeletedBy)
+			create = create.SetDeletedBy(entitlement.DeletedBy)
 		}
 
 		if ownerID, exists := m.OwnerID(); exists {
 			create = create.SetOwnerID(ownerID)
 		} else {
-			create = create.SetOwnerID(webhook.OwnerID)
+			create = create.SetOwnerID(entitlement.OwnerID)
 		}
 
-		if name, exists := m.Name(); exists {
-			create = create.SetName(name)
+		if tier, exists := m.Tier(); exists {
+			create = create.SetTier(tier)
 		} else {
-			create = create.SetName(webhook.Name)
+			create = create.SetTier(entitlement.Tier)
 		}
 
-		if description, exists := m.Description(); exists {
-			create = create.SetDescription(description)
+		if externalCustomerID, exists := m.ExternalCustomerID(); exists {
+			create = create.SetExternalCustomerID(externalCustomerID)
 		} else {
-			create = create.SetDescription(webhook.Description)
+			create = create.SetExternalCustomerID(entitlement.ExternalCustomerID)
 		}
 
-		if destinationURL, exists := m.DestinationURL(); exists {
-			create = create.SetDestinationURL(destinationURL)
+		if externalSubscriptionID, exists := m.ExternalSubscriptionID(); exists {
+			create = create.SetExternalSubscriptionID(externalSubscriptionID)
 		} else {
-			create = create.SetDestinationURL(webhook.DestinationURL)
+			create = create.SetExternalSubscriptionID(entitlement.ExternalSubscriptionID)
 		}
 
-		if enabled, exists := m.Enabled(); exists {
-			create = create.SetEnabled(enabled)
+		if expires, exists := m.Expires(); exists {
+			create = create.SetExpires(expires)
 		} else {
-			create = create.SetEnabled(webhook.Enabled)
-		}
-
-		if callback, exists := m.Callback(); exists {
-			create = create.SetCallback(callback)
-		} else {
-			create = create.SetCallback(webhook.Callback)
+			create = create.SetExpires(entitlement.Expires)
 		}
 
 		if expiresAt, exists := m.ExpiresAt(); exists {
-			create = create.SetExpiresAt(expiresAt)
+			create = create.SetNillableExpiresAt(&expiresAt)
 		} else {
-			create = create.SetExpiresAt(webhook.ExpiresAt)
+			create = create.SetNillableExpiresAt(entitlement.ExpiresAt)
 		}
 
-		if secret, exists := m.Secret(); exists {
-			create = create.SetSecret(secret)
+		if cancelled, exists := m.Cancelled(); exists {
+			create = create.SetCancelled(cancelled)
 		} else {
-			create = create.SetSecret(webhook.Secret)
-		}
-
-		if failures, exists := m.Failures(); exists {
-			create = create.SetFailures(failures)
-		} else {
-			create = create.SetFailures(webhook.Failures)
-		}
-
-		if lastError, exists := m.LastError(); exists {
-			create = create.SetLastError(lastError)
-		} else {
-			create = create.SetLastError(webhook.LastError)
-		}
-
-		if lastResponse, exists := m.LastResponse(); exists {
-			create = create.SetLastResponse(lastResponse)
-		} else {
-			create = create.SetLastResponse(webhook.LastResponse)
+			create = create.SetCancelled(entitlement.Cancelled)
 		}
 
 		if _, err := create.Save(ctx); err != nil {
@@ -273,7 +429,7 @@ func (m *WebhookMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	return nil
 }
 
-func (m *WebhookMutation) CreateHistoryFromDelete(ctx context.Context) error {
+func (m *EntitlementMutation) CreateHistoryFromDelete(ctx context.Context) error {
 	// check for soft delete operation and skip so it happens on update
 	if entx.CheckIsSoftDelete(ctx) {
 		return nil
@@ -286,36 +442,228 @@ func (m *WebhookMutation) CreateHistoryFromDelete(ctx context.Context) error {
 	}
 
 	for _, id := range ids {
-		webhook, err := client.Webhook.Get(ctx, id)
+		entitlement, err := client.Entitlement.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.WebhookHistory.Create()
+		create := client.EntitlementHistory.Create()
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
 			SetRef(id).
-			SetCreatedAt(webhook.CreatedAt).
-			SetUpdatedAt(webhook.UpdatedAt).
-			SetCreatedBy(webhook.CreatedBy).
-			SetUpdatedBy(webhook.UpdatedBy).
-			SetMappingID(webhook.MappingID).
-			SetTags(webhook.Tags).
-			SetDeletedAt(webhook.DeletedAt).
-			SetDeletedBy(webhook.DeletedBy).
-			SetOwnerID(webhook.OwnerID).
-			SetName(webhook.Name).
-			SetDescription(webhook.Description).
-			SetDestinationURL(webhook.DestinationURL).
-			SetEnabled(webhook.Enabled).
-			SetCallback(webhook.Callback).
-			SetExpiresAt(webhook.ExpiresAt).
-			SetSecret(webhook.Secret).
-			SetFailures(webhook.Failures).
-			SetLastError(webhook.LastError).
-			SetLastResponse(webhook.LastResponse).
+			SetCreatedAt(entitlement.CreatedAt).
+			SetUpdatedAt(entitlement.UpdatedAt).
+			SetCreatedBy(entitlement.CreatedBy).
+			SetUpdatedBy(entitlement.UpdatedBy).
+			SetMappingID(entitlement.MappingID).
+			SetTags(entitlement.Tags).
+			SetDeletedAt(entitlement.DeletedAt).
+			SetDeletedBy(entitlement.DeletedBy).
+			SetOwnerID(entitlement.OwnerID).
+			SetTier(entitlement.Tier).
+			SetExternalCustomerID(entitlement.ExternalCustomerID).
+			SetExternalSubscriptionID(entitlement.ExternalSubscriptionID).
+			SetExpires(entitlement.Expires).
+			SetNillableExpiresAt(entitlement.ExpiresAt).
+			SetCancelled(entitlement.Cancelled).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EventMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.EventHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if eventID, exists := m.EventID(); exists {
+		create = create.SetEventID(eventID)
+	}
+
+	if correlationID, exists := m.CorrelationID(); exists {
+		create = create.SetCorrelationID(correlationID)
+	}
+
+	if eventType, exists := m.EventType(); exists {
+		create = create.SetEventType(eventType)
+	}
+
+	if metadata, exists := m.Metadata(); exists {
+		create = create.SetMetadata(metadata)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *EventMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		event, err := client.Event.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.EventHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(event.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(event.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(event.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(event.UpdatedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(event.MappingID)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(event.Tags)
+		}
+
+		if eventID, exists := m.EventID(); exists {
+			create = create.SetEventID(eventID)
+		} else {
+			create = create.SetEventID(event.EventID)
+		}
+
+		if correlationID, exists := m.CorrelationID(); exists {
+			create = create.SetCorrelationID(correlationID)
+		} else {
+			create = create.SetCorrelationID(event.CorrelationID)
+		}
+
+		if eventType, exists := m.EventType(); exists {
+			create = create.SetEventType(eventType)
+		} else {
+			create = create.SetEventType(event.EventType)
+		}
+
+		if metadata, exists := m.Metadata(); exists {
+			create = create.SetMetadata(metadata)
+		} else {
+			create = create.SetMetadata(event.Metadata)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EventMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		event, err := client.Event.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.EventHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(event.CreatedAt).
+			SetUpdatedAt(event.UpdatedAt).
+			SetCreatedBy(event.CreatedBy).
+			SetUpdatedBy(event.UpdatedBy).
+			SetMappingID(event.MappingID).
+			SetTags(event.Tags).
+			SetEventID(event.EventID).
+			SetCorrelationID(event.CorrelationID).
+			SetEventType(event.EventType).
+			SetMetadata(event.Metadata).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -794,7 +1142,7 @@ func (m *FileMutation) CreateHistoryFromDelete(ctx context.Context) error {
 	return nil
 }
 
-func (m *OrganizationMutation) CreateHistoryFromCreate(ctx context.Context) error {
+func (m *GroupMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
 
 	id, ok := m.ID()
@@ -802,7 +1150,443 @@ func (m *OrganizationMutation) CreateHistoryFromCreate(ctx context.Context) erro
 		return idNotFoundError
 	}
 
-	create := client.OrganizationHistory.Create()
+	create := client.GroupHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if gravatarLogoURL, exists := m.GravatarLogoURL(); exists {
+		create = create.SetGravatarLogoURL(gravatarLogoURL)
+	}
+
+	if logoURL, exists := m.LogoURL(); exists {
+		create = create.SetLogoURL(logoURL)
+	}
+
+	if displayName, exists := m.DisplayName(); exists {
+		create = create.SetDisplayName(displayName)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		group, err := client.Group.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.GroupHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(group.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(group.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(group.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(group.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(group.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(group.DeletedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(group.MappingID)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(group.Tags)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(group.OwnerID)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(group.Name)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(group.Description)
+		}
+
+		if gravatarLogoURL, exists := m.GravatarLogoURL(); exists {
+			create = create.SetGravatarLogoURL(gravatarLogoURL)
+		} else {
+			create = create.SetGravatarLogoURL(group.GravatarLogoURL)
+		}
+
+		if logoURL, exists := m.LogoURL(); exists {
+			create = create.SetLogoURL(logoURL)
+		} else {
+			create = create.SetLogoURL(group.LogoURL)
+		}
+
+		if displayName, exists := m.DisplayName(); exists {
+			create = create.SetDisplayName(displayName)
+		} else {
+			create = create.SetDisplayName(group.DisplayName)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		group, err := client.Group.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.GroupHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(group.CreatedAt).
+			SetUpdatedAt(group.UpdatedAt).
+			SetCreatedBy(group.CreatedBy).
+			SetUpdatedBy(group.UpdatedBy).
+			SetDeletedAt(group.DeletedAt).
+			SetDeletedBy(group.DeletedBy).
+			SetMappingID(group.MappingID).
+			SetTags(group.Tags).
+			SetOwnerID(group.OwnerID).
+			SetName(group.Name).
+			SetDescription(group.Description).
+			SetGravatarLogoURL(group.GravatarLogoURL).
+			SetLogoURL(group.LogoURL).
+			SetDisplayName(group.DisplayName).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupMembershipMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.GroupMembershipHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if role, exists := m.Role(); exists {
+		create = create.SetRole(role)
+	}
+
+	if groupID, exists := m.GroupID(); exists {
+		create = create.SetGroupID(groupID)
+	}
+
+	if userID, exists := m.UserID(); exists {
+		create = create.SetUserID(userID)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *GroupMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		groupmembership, err := client.GroupMembership.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.GroupMembershipHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(groupmembership.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(groupmembership.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(groupmembership.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(groupmembership.UpdatedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(groupmembership.MappingID)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(groupmembership.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(groupmembership.DeletedBy)
+		}
+
+		if role, exists := m.Role(); exists {
+			create = create.SetRole(role)
+		} else {
+			create = create.SetRole(groupmembership.Role)
+		}
+
+		if groupID, exists := m.GroupID(); exists {
+			create = create.SetGroupID(groupID)
+		} else {
+			create = create.SetGroupID(groupmembership.GroupID)
+		}
+
+		if userID, exists := m.UserID(); exists {
+			create = create.SetUserID(userID)
+		} else {
+			create = create.SetUserID(groupmembership.UserID)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupMembershipMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		groupmembership, err := client.GroupMembership.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.GroupMembershipHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(groupmembership.CreatedAt).
+			SetUpdatedAt(groupmembership.UpdatedAt).
+			SetCreatedBy(groupmembership.CreatedBy).
+			SetUpdatedBy(groupmembership.UpdatedBy).
+			SetMappingID(groupmembership.MappingID).
+			SetDeletedAt(groupmembership.DeletedAt).
+			SetDeletedBy(groupmembership.DeletedBy).
+			SetRole(groupmembership.Role).
+			SetGroupID(groupmembership.GroupID).
+			SetUserID(groupmembership.UserID).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupSettingMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.GroupSettingHistory.Create()
 
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
@@ -841,32 +1625,24 @@ func (m *OrganizationMutation) CreateHistoryFromCreate(ctx context.Context) erro
 		create = create.SetDeletedBy(deletedBy)
 	}
 
-	if name, exists := m.Name(); exists {
-		create = create.SetName(name)
+	if visibility, exists := m.Visibility(); exists {
+		create = create.SetVisibility(visibility)
 	}
 
-	if displayName, exists := m.DisplayName(); exists {
-		create = create.SetDisplayName(displayName)
+	if joinPolicy, exists := m.JoinPolicy(); exists {
+		create = create.SetJoinPolicy(joinPolicy)
 	}
 
-	if description, exists := m.Description(); exists {
-		create = create.SetDescription(description)
+	if syncToSlack, exists := m.SyncToSlack(); exists {
+		create = create.SetSyncToSlack(syncToSlack)
 	}
 
-	if parentOrganizationID, exists := m.ParentOrganizationID(); exists {
-		create = create.SetParentOrganizationID(parentOrganizationID)
+	if syncToGithub, exists := m.SyncToGithub(); exists {
+		create = create.SetSyncToGithub(syncToGithub)
 	}
 
-	if personalOrg, exists := m.PersonalOrg(); exists {
-		create = create.SetPersonalOrg(personalOrg)
-	}
-
-	if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
-		create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
-	}
-
-	if dedicatedDb, exists := m.DedicatedDb(); exists {
-		create = create.SetDedicatedDb(dedicatedDb)
+	if groupID, exists := m.GroupID(); exists {
+		create = create.SetGroupID(groupID)
 	}
 
 	_, err := create.Save(ctx)
@@ -874,7 +1650,7 @@ func (m *OrganizationMutation) CreateHistoryFromCreate(ctx context.Context) erro
 	return err
 }
 
-func (m *OrganizationMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+func (m *GroupSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	// check for soft delete operation and delete instead
 	if entx.CheckIsSoftDelete(ctx) {
 		return m.CreateHistoryFromDelete(ctx)
@@ -887,12 +1663,12 @@ func (m *OrganizationMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 	}
 
 	for _, id := range ids {
-		organization, err := client.Organization.Get(ctx, id)
+		groupsetting, err := client.GroupSetting.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.OrganizationHistory.Create()
+		create := client.GroupSettingHistory.Create()
 
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -902,91 +1678,79 @@ func (m *OrganizationMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 		if createdAt, exists := m.CreatedAt(); exists {
 			create = create.SetCreatedAt(createdAt)
 		} else {
-			create = create.SetCreatedAt(organization.CreatedAt)
+			create = create.SetCreatedAt(groupsetting.CreatedAt)
 		}
 
 		if updatedAt, exists := m.UpdatedAt(); exists {
 			create = create.SetUpdatedAt(updatedAt)
 		} else {
-			create = create.SetUpdatedAt(organization.UpdatedAt)
+			create = create.SetUpdatedAt(groupsetting.UpdatedAt)
 		}
 
 		if createdBy, exists := m.CreatedBy(); exists {
 			create = create.SetCreatedBy(createdBy)
 		} else {
-			create = create.SetCreatedBy(organization.CreatedBy)
+			create = create.SetCreatedBy(groupsetting.CreatedBy)
 		}
 
 		if updatedBy, exists := m.UpdatedBy(); exists {
 			create = create.SetUpdatedBy(updatedBy)
 		} else {
-			create = create.SetUpdatedBy(organization.UpdatedBy)
+			create = create.SetUpdatedBy(groupsetting.UpdatedBy)
 		}
 
 		if mappingID, exists := m.MappingID(); exists {
 			create = create.SetMappingID(mappingID)
 		} else {
-			create = create.SetMappingID(organization.MappingID)
+			create = create.SetMappingID(groupsetting.MappingID)
 		}
 
 		if tags, exists := m.Tags(); exists {
 			create = create.SetTags(tags)
 		} else {
-			create = create.SetTags(organization.Tags)
+			create = create.SetTags(groupsetting.Tags)
 		}
 
 		if deletedAt, exists := m.DeletedAt(); exists {
 			create = create.SetDeletedAt(deletedAt)
 		} else {
-			create = create.SetDeletedAt(organization.DeletedAt)
+			create = create.SetDeletedAt(groupsetting.DeletedAt)
 		}
 
 		if deletedBy, exists := m.DeletedBy(); exists {
 			create = create.SetDeletedBy(deletedBy)
 		} else {
-			create = create.SetDeletedBy(organization.DeletedBy)
+			create = create.SetDeletedBy(groupsetting.DeletedBy)
 		}
 
-		if name, exists := m.Name(); exists {
-			create = create.SetName(name)
+		if visibility, exists := m.Visibility(); exists {
+			create = create.SetVisibility(visibility)
 		} else {
-			create = create.SetName(organization.Name)
+			create = create.SetVisibility(groupsetting.Visibility)
 		}
 
-		if displayName, exists := m.DisplayName(); exists {
-			create = create.SetDisplayName(displayName)
+		if joinPolicy, exists := m.JoinPolicy(); exists {
+			create = create.SetJoinPolicy(joinPolicy)
 		} else {
-			create = create.SetDisplayName(organization.DisplayName)
+			create = create.SetJoinPolicy(groupsetting.JoinPolicy)
 		}
 
-		if description, exists := m.Description(); exists {
-			create = create.SetDescription(description)
+		if syncToSlack, exists := m.SyncToSlack(); exists {
+			create = create.SetSyncToSlack(syncToSlack)
 		} else {
-			create = create.SetDescription(organization.Description)
+			create = create.SetSyncToSlack(groupsetting.SyncToSlack)
 		}
 
-		if parentOrganizationID, exists := m.ParentOrganizationID(); exists {
-			create = create.SetParentOrganizationID(parentOrganizationID)
+		if syncToGithub, exists := m.SyncToGithub(); exists {
+			create = create.SetSyncToGithub(syncToGithub)
 		} else {
-			create = create.SetParentOrganizationID(organization.ParentOrganizationID)
+			create = create.SetSyncToGithub(groupsetting.SyncToGithub)
 		}
 
-		if personalOrg, exists := m.PersonalOrg(); exists {
-			create = create.SetPersonalOrg(personalOrg)
+		if groupID, exists := m.GroupID(); exists {
+			create = create.SetGroupID(groupID)
 		} else {
-			create = create.SetPersonalOrg(organization.PersonalOrg)
-		}
-
-		if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
-			create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
-		} else {
-			create = create.SetNillableAvatarRemoteURL(organization.AvatarRemoteURL)
-		}
-
-		if dedicatedDb, exists := m.DedicatedDb(); exists {
-			create = create.SetDedicatedDb(dedicatedDb)
-		} else {
-			create = create.SetDedicatedDb(organization.DedicatedDb)
+			create = create.SetGroupID(groupsetting.GroupID)
 		}
 
 		if _, err := create.Save(ctx); err != nil {
@@ -997,7 +1761,7 @@ func (m *OrganizationMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 	return nil
 }
 
-func (m *OrganizationMutation) CreateHistoryFromDelete(ctx context.Context) error {
+func (m *GroupSettingMutation) CreateHistoryFromDelete(ctx context.Context) error {
 	// check for soft delete operation and skip so it happens on update
 	if entx.CheckIsSoftDelete(ctx) {
 		return nil
@@ -1010,32 +1774,30 @@ func (m *OrganizationMutation) CreateHistoryFromDelete(ctx context.Context) erro
 	}
 
 	for _, id := range ids {
-		organization, err := client.Organization.Get(ctx, id)
+		groupsetting, err := client.GroupSetting.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.OrganizationHistory.Create()
+		create := client.GroupSettingHistory.Create()
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
 			SetRef(id).
-			SetCreatedAt(organization.CreatedAt).
-			SetUpdatedAt(organization.UpdatedAt).
-			SetCreatedBy(organization.CreatedBy).
-			SetUpdatedBy(organization.UpdatedBy).
-			SetMappingID(organization.MappingID).
-			SetTags(organization.Tags).
-			SetDeletedAt(organization.DeletedAt).
-			SetDeletedBy(organization.DeletedBy).
-			SetName(organization.Name).
-			SetDisplayName(organization.DisplayName).
-			SetDescription(organization.Description).
-			SetParentOrganizationID(organization.ParentOrganizationID).
-			SetPersonalOrg(organization.PersonalOrg).
-			SetNillableAvatarRemoteURL(organization.AvatarRemoteURL).
-			SetDedicatedDb(organization.DedicatedDb).
+			SetCreatedAt(groupsetting.CreatedAt).
+			SetUpdatedAt(groupsetting.UpdatedAt).
+			SetCreatedBy(groupsetting.CreatedBy).
+			SetUpdatedBy(groupsetting.UpdatedBy).
+			SetMappingID(groupsetting.MappingID).
+			SetTags(groupsetting.Tags).
+			SetDeletedAt(groupsetting.DeletedAt).
+			SetDeletedBy(groupsetting.DeletedBy).
+			SetVisibility(groupsetting.Visibility).
+			SetJoinPolicy(groupsetting.JoinPolicy).
+			SetSyncToSlack(groupsetting.SyncToSlack).
+			SetSyncToGithub(groupsetting.SyncToGithub).
+			SetGroupID(groupsetting.GroupID).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -1045,7 +1807,7 @@ func (m *OrganizationMutation) CreateHistoryFromDelete(ctx context.Context) erro
 	return nil
 }
 
-func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error {
+func (m *HushMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
 
 	id, ok := m.ID()
@@ -1053,7 +1815,225 @@ func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error
 		return idNotFoundError
 	}
 
-	create := client.EntitlementHistory.Create()
+	create := client.HushHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if kind, exists := m.Kind(); exists {
+		create = create.SetKind(kind)
+	}
+
+	if secretName, exists := m.SecretName(); exists {
+		create = create.SetSecretName(secretName)
+	}
+
+	if secretValue, exists := m.SecretValue(); exists {
+		create = create.SetSecretValue(secretValue)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *HushMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		hush, err := client.Hush.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.HushHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(hush.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(hush.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(hush.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(hush.UpdatedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(hush.MappingID)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(hush.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(hush.DeletedBy)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(hush.Name)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(hush.Description)
+		}
+
+		if kind, exists := m.Kind(); exists {
+			create = create.SetKind(kind)
+		} else {
+			create = create.SetKind(hush.Kind)
+		}
+
+		if secretName, exists := m.SecretName(); exists {
+			create = create.SetSecretName(secretName)
+		} else {
+			create = create.SetSecretName(hush.SecretName)
+		}
+
+		if secretValue, exists := m.SecretValue(); exists {
+			create = create.SetSecretValue(secretValue)
+		} else {
+			create = create.SetSecretValue(hush.SecretValue)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *HushMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		hush, err := client.Hush.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.HushHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(hush.CreatedAt).
+			SetUpdatedAt(hush.UpdatedAt).
+			SetCreatedBy(hush.CreatedBy).
+			SetUpdatedBy(hush.UpdatedBy).
+			SetMappingID(hush.MappingID).
+			SetDeletedAt(hush.DeletedAt).
+			SetDeletedBy(hush.DeletedBy).
+			SetName(hush.Name).
+			SetDescription(hush.Description).
+			SetKind(hush.Kind).
+			SetSecretName(hush.SecretName).
+			SetSecretValue(hush.SecretValue).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *IntegrationMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.IntegrationHistory.Create()
 
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
@@ -1096,28 +2076,16 @@ func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error
 		create = create.SetOwnerID(ownerID)
 	}
 
-	if tier, exists := m.Tier(); exists {
-		create = create.SetTier(tier)
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
 	}
 
-	if externalCustomerID, exists := m.ExternalCustomerID(); exists {
-		create = create.SetExternalCustomerID(externalCustomerID)
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
 	}
 
-	if externalSubscriptionID, exists := m.ExternalSubscriptionID(); exists {
-		create = create.SetExternalSubscriptionID(externalSubscriptionID)
-	}
-
-	if expires, exists := m.Expires(); exists {
-		create = create.SetExpires(expires)
-	}
-
-	if expiresAt, exists := m.ExpiresAt(); exists {
-		create = create.SetNillableExpiresAt(&expiresAt)
-	}
-
-	if cancelled, exists := m.Cancelled(); exists {
-		create = create.SetCancelled(cancelled)
+	if kind, exists := m.Kind(); exists {
+		create = create.SetKind(kind)
 	}
 
 	_, err := create.Save(ctx)
@@ -1125,7 +2093,7 @@ func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error
 	return err
 }
 
-func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	// check for soft delete operation and delete instead
 	if entx.CheckIsSoftDelete(ctx) {
 		return m.CreateHistoryFromDelete(ctx)
@@ -1138,12 +2106,12 @@ func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error
 	}
 
 	for _, id := range ids {
-		entitlement, err := client.Entitlement.Get(ctx, id)
+		integration, err := client.Integration.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.EntitlementHistory.Create()
+		create := client.IntegrationHistory.Create()
 
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -1153,91 +2121,73 @@ func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error
 		if createdAt, exists := m.CreatedAt(); exists {
 			create = create.SetCreatedAt(createdAt)
 		} else {
-			create = create.SetCreatedAt(entitlement.CreatedAt)
+			create = create.SetCreatedAt(integration.CreatedAt)
 		}
 
 		if updatedAt, exists := m.UpdatedAt(); exists {
 			create = create.SetUpdatedAt(updatedAt)
 		} else {
-			create = create.SetUpdatedAt(entitlement.UpdatedAt)
+			create = create.SetUpdatedAt(integration.UpdatedAt)
 		}
 
 		if createdBy, exists := m.CreatedBy(); exists {
 			create = create.SetCreatedBy(createdBy)
 		} else {
-			create = create.SetCreatedBy(entitlement.CreatedBy)
+			create = create.SetCreatedBy(integration.CreatedBy)
 		}
 
 		if updatedBy, exists := m.UpdatedBy(); exists {
 			create = create.SetUpdatedBy(updatedBy)
 		} else {
-			create = create.SetUpdatedBy(entitlement.UpdatedBy)
+			create = create.SetUpdatedBy(integration.UpdatedBy)
 		}
 
 		if mappingID, exists := m.MappingID(); exists {
 			create = create.SetMappingID(mappingID)
 		} else {
-			create = create.SetMappingID(entitlement.MappingID)
+			create = create.SetMappingID(integration.MappingID)
 		}
 
 		if tags, exists := m.Tags(); exists {
 			create = create.SetTags(tags)
 		} else {
-			create = create.SetTags(entitlement.Tags)
+			create = create.SetTags(integration.Tags)
 		}
 
 		if deletedAt, exists := m.DeletedAt(); exists {
 			create = create.SetDeletedAt(deletedAt)
 		} else {
-			create = create.SetDeletedAt(entitlement.DeletedAt)
+			create = create.SetDeletedAt(integration.DeletedAt)
 		}
 
 		if deletedBy, exists := m.DeletedBy(); exists {
 			create = create.SetDeletedBy(deletedBy)
 		} else {
-			create = create.SetDeletedBy(entitlement.DeletedBy)
+			create = create.SetDeletedBy(integration.DeletedBy)
 		}
 
 		if ownerID, exists := m.OwnerID(); exists {
 			create = create.SetOwnerID(ownerID)
 		} else {
-			create = create.SetOwnerID(entitlement.OwnerID)
+			create = create.SetOwnerID(integration.OwnerID)
 		}
 
-		if tier, exists := m.Tier(); exists {
-			create = create.SetTier(tier)
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
 		} else {
-			create = create.SetTier(entitlement.Tier)
+			create = create.SetName(integration.Name)
 		}
 
-		if externalCustomerID, exists := m.ExternalCustomerID(); exists {
-			create = create.SetExternalCustomerID(externalCustomerID)
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
 		} else {
-			create = create.SetExternalCustomerID(entitlement.ExternalCustomerID)
+			create = create.SetDescription(integration.Description)
 		}
 
-		if externalSubscriptionID, exists := m.ExternalSubscriptionID(); exists {
-			create = create.SetExternalSubscriptionID(externalSubscriptionID)
+		if kind, exists := m.Kind(); exists {
+			create = create.SetKind(kind)
 		} else {
-			create = create.SetExternalSubscriptionID(entitlement.ExternalSubscriptionID)
-		}
-
-		if expires, exists := m.Expires(); exists {
-			create = create.SetExpires(expires)
-		} else {
-			create = create.SetExpires(entitlement.Expires)
-		}
-
-		if expiresAt, exists := m.ExpiresAt(); exists {
-			create = create.SetNillableExpiresAt(&expiresAt)
-		} else {
-			create = create.SetNillableExpiresAt(entitlement.ExpiresAt)
-		}
-
-		if cancelled, exists := m.Cancelled(); exists {
-			create = create.SetCancelled(cancelled)
-		} else {
-			create = create.SetCancelled(entitlement.Cancelled)
+			create = create.SetKind(integration.Kind)
 		}
 
 		if _, err := create.Save(ctx); err != nil {
@@ -1248,7 +2198,7 @@ func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error
 	return nil
 }
 
-func (m *EntitlementMutation) CreateHistoryFromDelete(ctx context.Context) error {
+func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error {
 	// check for soft delete operation and skip so it happens on update
 	if entx.CheckIsSoftDelete(ctx) {
 		return nil
@@ -1261,534 +2211,29 @@ func (m *EntitlementMutation) CreateHistoryFromDelete(ctx context.Context) error
 	}
 
 	for _, id := range ids {
-		entitlement, err := client.Entitlement.Get(ctx, id)
+		integration, err := client.Integration.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.EntitlementHistory.Create()
+		create := client.IntegrationHistory.Create()
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
 			SetRef(id).
-			SetCreatedAt(entitlement.CreatedAt).
-			SetUpdatedAt(entitlement.UpdatedAt).
-			SetCreatedBy(entitlement.CreatedBy).
-			SetUpdatedBy(entitlement.UpdatedBy).
-			SetMappingID(entitlement.MappingID).
-			SetTags(entitlement.Tags).
-			SetDeletedAt(entitlement.DeletedAt).
-			SetDeletedBy(entitlement.DeletedBy).
-			SetOwnerID(entitlement.OwnerID).
-			SetTier(entitlement.Tier).
-			SetExternalCustomerID(entitlement.ExternalCustomerID).
-			SetExternalSubscriptionID(entitlement.ExternalSubscriptionID).
-			SetExpires(entitlement.Expires).
-			SetNillableExpiresAt(entitlement.ExpiresAt).
-			SetCancelled(entitlement.Cancelled).
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *UserMutation) CreateHistoryFromCreate(ctx context.Context) error {
-	client := m.Client()
-
-	id, ok := m.ID()
-	if !ok {
-		return idNotFoundError
-	}
-
-	create := client.UserHistory.Create()
-
-	create = create.
-		SetOperation(EntOpToHistoryOp(m.Op())).
-		SetHistoryTime(time.Now()).
-		SetRef(id)
-
-	if createdAt, exists := m.CreatedAt(); exists {
-		create = create.SetCreatedAt(createdAt)
-	}
-
-	if updatedAt, exists := m.UpdatedAt(); exists {
-		create = create.SetUpdatedAt(updatedAt)
-	}
-
-	if createdBy, exists := m.CreatedBy(); exists {
-		create = create.SetCreatedBy(createdBy)
-	}
-
-	if updatedBy, exists := m.UpdatedBy(); exists {
-		create = create.SetUpdatedBy(updatedBy)
-	}
-
-	if deletedAt, exists := m.DeletedAt(); exists {
-		create = create.SetDeletedAt(deletedAt)
-	}
-
-	if deletedBy, exists := m.DeletedBy(); exists {
-		create = create.SetDeletedBy(deletedBy)
-	}
-
-	if mappingID, exists := m.MappingID(); exists {
-		create = create.SetMappingID(mappingID)
-	}
-
-	if tags, exists := m.Tags(); exists {
-		create = create.SetTags(tags)
-	}
-
-	if email, exists := m.Email(); exists {
-		create = create.SetEmail(email)
-	}
-
-	if firstName, exists := m.FirstName(); exists {
-		create = create.SetFirstName(firstName)
-	}
-
-	if lastName, exists := m.LastName(); exists {
-		create = create.SetLastName(lastName)
-	}
-
-	if displayName, exists := m.DisplayName(); exists {
-		create = create.SetDisplayName(displayName)
-	}
-
-	if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
-		create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
-	}
-
-	if avatarLocalFile, exists := m.AvatarLocalFile(); exists {
-		create = create.SetNillableAvatarLocalFile(&avatarLocalFile)
-	}
-
-	if avatarUpdatedAt, exists := m.AvatarUpdatedAt(); exists {
-		create = create.SetNillableAvatarUpdatedAt(&avatarUpdatedAt)
-	}
-
-	if lastSeen, exists := m.LastSeen(); exists {
-		create = create.SetNillableLastSeen(&lastSeen)
-	}
-
-	if password, exists := m.Password(); exists {
-		create = create.SetNillablePassword(&password)
-	}
-
-	if sub, exists := m.Sub(); exists {
-		create = create.SetSub(sub)
-	}
-
-	if authProvider, exists := m.AuthProvider(); exists {
-		create = create.SetAuthProvider(authProvider)
-	}
-
-	if role, exists := m.Role(); exists {
-		create = create.SetRole(role)
-	}
-
-	_, err := create.Save(ctx)
-
-	return err
-}
-
-func (m *UserMutation) CreateHistoryFromUpdate(ctx context.Context) error {
-	// check for soft delete operation and delete instead
-	if entx.CheckIsSoftDelete(ctx) {
-		return m.CreateHistoryFromDelete(ctx)
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		user, err := client.User.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.UserHistory.Create()
-
-		create = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id)
-
-		if createdAt, exists := m.CreatedAt(); exists {
-			create = create.SetCreatedAt(createdAt)
-		} else {
-			create = create.SetCreatedAt(user.CreatedAt)
-		}
-
-		if updatedAt, exists := m.UpdatedAt(); exists {
-			create = create.SetUpdatedAt(updatedAt)
-		} else {
-			create = create.SetUpdatedAt(user.UpdatedAt)
-		}
-
-		if createdBy, exists := m.CreatedBy(); exists {
-			create = create.SetCreatedBy(createdBy)
-		} else {
-			create = create.SetCreatedBy(user.CreatedBy)
-		}
-
-		if updatedBy, exists := m.UpdatedBy(); exists {
-			create = create.SetUpdatedBy(updatedBy)
-		} else {
-			create = create.SetUpdatedBy(user.UpdatedBy)
-		}
-
-		if deletedAt, exists := m.DeletedAt(); exists {
-			create = create.SetDeletedAt(deletedAt)
-		} else {
-			create = create.SetDeletedAt(user.DeletedAt)
-		}
-
-		if deletedBy, exists := m.DeletedBy(); exists {
-			create = create.SetDeletedBy(deletedBy)
-		} else {
-			create = create.SetDeletedBy(user.DeletedBy)
-		}
-
-		if mappingID, exists := m.MappingID(); exists {
-			create = create.SetMappingID(mappingID)
-		} else {
-			create = create.SetMappingID(user.MappingID)
-		}
-
-		if tags, exists := m.Tags(); exists {
-			create = create.SetTags(tags)
-		} else {
-			create = create.SetTags(user.Tags)
-		}
-
-		if email, exists := m.Email(); exists {
-			create = create.SetEmail(email)
-		} else {
-			create = create.SetEmail(user.Email)
-		}
-
-		if firstName, exists := m.FirstName(); exists {
-			create = create.SetFirstName(firstName)
-		} else {
-			create = create.SetFirstName(user.FirstName)
-		}
-
-		if lastName, exists := m.LastName(); exists {
-			create = create.SetLastName(lastName)
-		} else {
-			create = create.SetLastName(user.LastName)
-		}
-
-		if displayName, exists := m.DisplayName(); exists {
-			create = create.SetDisplayName(displayName)
-		} else {
-			create = create.SetDisplayName(user.DisplayName)
-		}
-
-		if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
-			create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
-		} else {
-			create = create.SetNillableAvatarRemoteURL(user.AvatarRemoteURL)
-		}
-
-		if avatarLocalFile, exists := m.AvatarLocalFile(); exists {
-			create = create.SetNillableAvatarLocalFile(&avatarLocalFile)
-		} else {
-			create = create.SetNillableAvatarLocalFile(user.AvatarLocalFile)
-		}
-
-		if avatarUpdatedAt, exists := m.AvatarUpdatedAt(); exists {
-			create = create.SetNillableAvatarUpdatedAt(&avatarUpdatedAt)
-		} else {
-			create = create.SetNillableAvatarUpdatedAt(user.AvatarUpdatedAt)
-		}
-
-		if lastSeen, exists := m.LastSeen(); exists {
-			create = create.SetNillableLastSeen(&lastSeen)
-		} else {
-			create = create.SetNillableLastSeen(user.LastSeen)
-		}
-
-		if password, exists := m.Password(); exists {
-			create = create.SetNillablePassword(&password)
-		} else {
-			create = create.SetNillablePassword(user.Password)
-		}
-
-		if sub, exists := m.Sub(); exists {
-			create = create.SetSub(sub)
-		} else {
-			create = create.SetSub(user.Sub)
-		}
-
-		if authProvider, exists := m.AuthProvider(); exists {
-			create = create.SetAuthProvider(authProvider)
-		} else {
-			create = create.SetAuthProvider(user.AuthProvider)
-		}
-
-		if role, exists := m.Role(); exists {
-			create = create.SetRole(role)
-		} else {
-			create = create.SetRole(user.Role)
-		}
-
-		if _, err := create.Save(ctx); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *UserMutation) CreateHistoryFromDelete(ctx context.Context) error {
-	// check for soft delete operation and skip so it happens on update
-	if entx.CheckIsSoftDelete(ctx) {
-		return nil
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		user, err := client.User.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.UserHistory.Create()
-
-		_, err = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id).
-			SetCreatedAt(user.CreatedAt).
-			SetUpdatedAt(user.UpdatedAt).
-			SetCreatedBy(user.CreatedBy).
-			SetUpdatedBy(user.UpdatedBy).
-			SetDeletedAt(user.DeletedAt).
-			SetDeletedBy(user.DeletedBy).
-			SetMappingID(user.MappingID).
-			SetTags(user.Tags).
-			SetEmail(user.Email).
-			SetFirstName(user.FirstName).
-			SetLastName(user.LastName).
-			SetDisplayName(user.DisplayName).
-			SetNillableAvatarRemoteURL(user.AvatarRemoteURL).
-			SetNillableAvatarLocalFile(user.AvatarLocalFile).
-			SetNillableAvatarUpdatedAt(user.AvatarUpdatedAt).
-			SetNillableLastSeen(user.LastSeen).
-			SetNillablePassword(user.Password).
-			SetSub(user.Sub).
-			SetAuthProvider(user.AuthProvider).
-			SetRole(user.Role).
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *EventMutation) CreateHistoryFromCreate(ctx context.Context) error {
-	client := m.Client()
-
-	id, ok := m.ID()
-	if !ok {
-		return idNotFoundError
-	}
-
-	create := client.EventHistory.Create()
-
-	create = create.
-		SetOperation(EntOpToHistoryOp(m.Op())).
-		SetHistoryTime(time.Now()).
-		SetRef(id)
-
-	if createdAt, exists := m.CreatedAt(); exists {
-		create = create.SetCreatedAt(createdAt)
-	}
-
-	if updatedAt, exists := m.UpdatedAt(); exists {
-		create = create.SetUpdatedAt(updatedAt)
-	}
-
-	if createdBy, exists := m.CreatedBy(); exists {
-		create = create.SetCreatedBy(createdBy)
-	}
-
-	if updatedBy, exists := m.UpdatedBy(); exists {
-		create = create.SetUpdatedBy(updatedBy)
-	}
-
-	if mappingID, exists := m.MappingID(); exists {
-		create = create.SetMappingID(mappingID)
-	}
-
-	if tags, exists := m.Tags(); exists {
-		create = create.SetTags(tags)
-	}
-
-	if eventID, exists := m.EventID(); exists {
-		create = create.SetEventID(eventID)
-	}
-
-	if correlationID, exists := m.CorrelationID(); exists {
-		create = create.SetCorrelationID(correlationID)
-	}
-
-	if eventType, exists := m.EventType(); exists {
-		create = create.SetEventType(eventType)
-	}
-
-	if metadata, exists := m.Metadata(); exists {
-		create = create.SetMetadata(metadata)
-	}
-
-	_, err := create.Save(ctx)
-
-	return err
-}
-
-func (m *EventMutation) CreateHistoryFromUpdate(ctx context.Context) error {
-	// check for soft delete operation and delete instead
-	if entx.CheckIsSoftDelete(ctx) {
-		return m.CreateHistoryFromDelete(ctx)
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		event, err := client.Event.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.EventHistory.Create()
-
-		create = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id)
-
-		if createdAt, exists := m.CreatedAt(); exists {
-			create = create.SetCreatedAt(createdAt)
-		} else {
-			create = create.SetCreatedAt(event.CreatedAt)
-		}
-
-		if updatedAt, exists := m.UpdatedAt(); exists {
-			create = create.SetUpdatedAt(updatedAt)
-		} else {
-			create = create.SetUpdatedAt(event.UpdatedAt)
-		}
-
-		if createdBy, exists := m.CreatedBy(); exists {
-			create = create.SetCreatedBy(createdBy)
-		} else {
-			create = create.SetCreatedBy(event.CreatedBy)
-		}
-
-		if updatedBy, exists := m.UpdatedBy(); exists {
-			create = create.SetUpdatedBy(updatedBy)
-		} else {
-			create = create.SetUpdatedBy(event.UpdatedBy)
-		}
-
-		if mappingID, exists := m.MappingID(); exists {
-			create = create.SetMappingID(mappingID)
-		} else {
-			create = create.SetMappingID(event.MappingID)
-		}
-
-		if tags, exists := m.Tags(); exists {
-			create = create.SetTags(tags)
-		} else {
-			create = create.SetTags(event.Tags)
-		}
-
-		if eventID, exists := m.EventID(); exists {
-			create = create.SetEventID(eventID)
-		} else {
-			create = create.SetEventID(event.EventID)
-		}
-
-		if correlationID, exists := m.CorrelationID(); exists {
-			create = create.SetCorrelationID(correlationID)
-		} else {
-			create = create.SetCorrelationID(event.CorrelationID)
-		}
-
-		if eventType, exists := m.EventType(); exists {
-			create = create.SetEventType(eventType)
-		} else {
-			create = create.SetEventType(event.EventType)
-		}
-
-		if metadata, exists := m.Metadata(); exists {
-			create = create.SetMetadata(metadata)
-		} else {
-			create = create.SetMetadata(event.Metadata)
-		}
-
-		if _, err := create.Save(ctx); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *EventMutation) CreateHistoryFromDelete(ctx context.Context) error {
-	// check for soft delete operation and skip so it happens on update
-	if entx.CheckIsSoftDelete(ctx) {
-		return nil
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		event, err := client.Event.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.EventHistory.Create()
-
-		_, err = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id).
-			SetCreatedAt(event.CreatedAt).
-			SetUpdatedAt(event.UpdatedAt).
-			SetCreatedBy(event.CreatedBy).
-			SetUpdatedBy(event.UpdatedBy).
-			SetMappingID(event.MappingID).
-			SetTags(event.Tags).
-			SetEventID(event.EventID).
-			SetCorrelationID(event.CorrelationID).
-			SetEventType(event.EventType).
-			SetMetadata(event.Metadata).
+			SetCreatedAt(integration.CreatedAt).
+			SetUpdatedAt(integration.UpdatedAt).
+			SetCreatedBy(integration.CreatedBy).
+			SetUpdatedBy(integration.UpdatedBy).
+			SetMappingID(integration.MappingID).
+			SetTags(integration.Tags).
+			SetDeletedAt(integration.DeletedAt).
+			SetDeletedBy(integration.DeletedBy).
+			SetOwnerID(integration.OwnerID).
+			SetName(integration.Name).
+			SetDescription(integration.Description).
+			SetKind(integration.Kind).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -2267,7 +2712,7 @@ func (m *OrgMembershipMutation) CreateHistoryFromDelete(ctx context.Context) err
 	return nil
 }
 
-func (m *HushMutation) CreateHistoryFromCreate(ctx context.Context) error {
+func (m *OrganizationMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
 
 	id, ok := m.ID()
@@ -2275,225 +2720,7 @@ func (m *HushMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		return idNotFoundError
 	}
 
-	create := client.HushHistory.Create()
-
-	create = create.
-		SetOperation(EntOpToHistoryOp(m.Op())).
-		SetHistoryTime(time.Now()).
-		SetRef(id)
-
-	if createdAt, exists := m.CreatedAt(); exists {
-		create = create.SetCreatedAt(createdAt)
-	}
-
-	if updatedAt, exists := m.UpdatedAt(); exists {
-		create = create.SetUpdatedAt(updatedAt)
-	}
-
-	if createdBy, exists := m.CreatedBy(); exists {
-		create = create.SetCreatedBy(createdBy)
-	}
-
-	if updatedBy, exists := m.UpdatedBy(); exists {
-		create = create.SetUpdatedBy(updatedBy)
-	}
-
-	if mappingID, exists := m.MappingID(); exists {
-		create = create.SetMappingID(mappingID)
-	}
-
-	if deletedAt, exists := m.DeletedAt(); exists {
-		create = create.SetDeletedAt(deletedAt)
-	}
-
-	if deletedBy, exists := m.DeletedBy(); exists {
-		create = create.SetDeletedBy(deletedBy)
-	}
-
-	if name, exists := m.Name(); exists {
-		create = create.SetName(name)
-	}
-
-	if description, exists := m.Description(); exists {
-		create = create.SetDescription(description)
-	}
-
-	if kind, exists := m.Kind(); exists {
-		create = create.SetKind(kind)
-	}
-
-	if secretName, exists := m.SecretName(); exists {
-		create = create.SetSecretName(secretName)
-	}
-
-	if secretValue, exists := m.SecretValue(); exists {
-		create = create.SetSecretValue(secretValue)
-	}
-
-	_, err := create.Save(ctx)
-
-	return err
-}
-
-func (m *HushMutation) CreateHistoryFromUpdate(ctx context.Context) error {
-	// check for soft delete operation and delete instead
-	if entx.CheckIsSoftDelete(ctx) {
-		return m.CreateHistoryFromDelete(ctx)
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		hush, err := client.Hush.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.HushHistory.Create()
-
-		create = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id)
-
-		if createdAt, exists := m.CreatedAt(); exists {
-			create = create.SetCreatedAt(createdAt)
-		} else {
-			create = create.SetCreatedAt(hush.CreatedAt)
-		}
-
-		if updatedAt, exists := m.UpdatedAt(); exists {
-			create = create.SetUpdatedAt(updatedAt)
-		} else {
-			create = create.SetUpdatedAt(hush.UpdatedAt)
-		}
-
-		if createdBy, exists := m.CreatedBy(); exists {
-			create = create.SetCreatedBy(createdBy)
-		} else {
-			create = create.SetCreatedBy(hush.CreatedBy)
-		}
-
-		if updatedBy, exists := m.UpdatedBy(); exists {
-			create = create.SetUpdatedBy(updatedBy)
-		} else {
-			create = create.SetUpdatedBy(hush.UpdatedBy)
-		}
-
-		if mappingID, exists := m.MappingID(); exists {
-			create = create.SetMappingID(mappingID)
-		} else {
-			create = create.SetMappingID(hush.MappingID)
-		}
-
-		if deletedAt, exists := m.DeletedAt(); exists {
-			create = create.SetDeletedAt(deletedAt)
-		} else {
-			create = create.SetDeletedAt(hush.DeletedAt)
-		}
-
-		if deletedBy, exists := m.DeletedBy(); exists {
-			create = create.SetDeletedBy(deletedBy)
-		} else {
-			create = create.SetDeletedBy(hush.DeletedBy)
-		}
-
-		if name, exists := m.Name(); exists {
-			create = create.SetName(name)
-		} else {
-			create = create.SetName(hush.Name)
-		}
-
-		if description, exists := m.Description(); exists {
-			create = create.SetDescription(description)
-		} else {
-			create = create.SetDescription(hush.Description)
-		}
-
-		if kind, exists := m.Kind(); exists {
-			create = create.SetKind(kind)
-		} else {
-			create = create.SetKind(hush.Kind)
-		}
-
-		if secretName, exists := m.SecretName(); exists {
-			create = create.SetSecretName(secretName)
-		} else {
-			create = create.SetSecretName(hush.SecretName)
-		}
-
-		if secretValue, exists := m.SecretValue(); exists {
-			create = create.SetSecretValue(secretValue)
-		} else {
-			create = create.SetSecretValue(hush.SecretValue)
-		}
-
-		if _, err := create.Save(ctx); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *HushMutation) CreateHistoryFromDelete(ctx context.Context) error {
-	// check for soft delete operation and skip so it happens on update
-	if entx.CheckIsSoftDelete(ctx) {
-		return nil
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		hush, err := client.Hush.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.HushHistory.Create()
-
-		_, err = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id).
-			SetCreatedAt(hush.CreatedAt).
-			SetUpdatedAt(hush.UpdatedAt).
-			SetCreatedBy(hush.CreatedBy).
-			SetUpdatedBy(hush.UpdatedBy).
-			SetMappingID(hush.MappingID).
-			SetDeletedAt(hush.DeletedAt).
-			SetDeletedBy(hush.DeletedBy).
-			SetName(hush.Name).
-			SetDescription(hush.Description).
-			SetKind(hush.Kind).
-			SetSecretName(hush.SecretName).
-			SetSecretValue(hush.SecretValue).
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *DocumentDataMutation) CreateHistoryFromCreate(ctx context.Context) error {
-	client := m.Client()
-
-	id, ok := m.ID()
-	if !ok {
-		return idNotFoundError
-	}
-
-	create := client.DocumentDataHistory.Create()
+	create := client.OrganizationHistory.Create()
 
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
@@ -2532,216 +2759,32 @@ func (m *DocumentDataMutation) CreateHistoryFromCreate(ctx context.Context) erro
 		create = create.SetDeletedBy(deletedBy)
 	}
 
-	if templateID, exists := m.TemplateID(); exists {
-		create = create.SetTemplateID(templateID)
-	}
-
-	if data, exists := m.Data(); exists {
-		create = create.SetData(data)
-	}
-
-	_, err := create.Save(ctx)
-
-	return err
-}
-
-func (m *DocumentDataMutation) CreateHistoryFromUpdate(ctx context.Context) error {
-	// check for soft delete operation and delete instead
-	if entx.CheckIsSoftDelete(ctx) {
-		return m.CreateHistoryFromDelete(ctx)
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		documentdata, err := client.DocumentData.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.DocumentDataHistory.Create()
-
-		create = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id)
-
-		if createdAt, exists := m.CreatedAt(); exists {
-			create = create.SetCreatedAt(createdAt)
-		} else {
-			create = create.SetCreatedAt(documentdata.CreatedAt)
-		}
-
-		if updatedAt, exists := m.UpdatedAt(); exists {
-			create = create.SetUpdatedAt(updatedAt)
-		} else {
-			create = create.SetUpdatedAt(documentdata.UpdatedAt)
-		}
-
-		if createdBy, exists := m.CreatedBy(); exists {
-			create = create.SetCreatedBy(createdBy)
-		} else {
-			create = create.SetCreatedBy(documentdata.CreatedBy)
-		}
-
-		if updatedBy, exists := m.UpdatedBy(); exists {
-			create = create.SetUpdatedBy(updatedBy)
-		} else {
-			create = create.SetUpdatedBy(documentdata.UpdatedBy)
-		}
-
-		if mappingID, exists := m.MappingID(); exists {
-			create = create.SetMappingID(mappingID)
-		} else {
-			create = create.SetMappingID(documentdata.MappingID)
-		}
-
-		if tags, exists := m.Tags(); exists {
-			create = create.SetTags(tags)
-		} else {
-			create = create.SetTags(documentdata.Tags)
-		}
-
-		if deletedAt, exists := m.DeletedAt(); exists {
-			create = create.SetDeletedAt(deletedAt)
-		} else {
-			create = create.SetDeletedAt(documentdata.DeletedAt)
-		}
-
-		if deletedBy, exists := m.DeletedBy(); exists {
-			create = create.SetDeletedBy(deletedBy)
-		} else {
-			create = create.SetDeletedBy(documentdata.DeletedBy)
-		}
-
-		if templateID, exists := m.TemplateID(); exists {
-			create = create.SetTemplateID(templateID)
-		} else {
-			create = create.SetTemplateID(documentdata.TemplateID)
-		}
-
-		if data, exists := m.Data(); exists {
-			create = create.SetData(data)
-		} else {
-			create = create.SetData(documentdata.Data)
-		}
-
-		if _, err := create.Save(ctx); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *DocumentDataMutation) CreateHistoryFromDelete(ctx context.Context) error {
-	// check for soft delete operation and skip so it happens on update
-	if entx.CheckIsSoftDelete(ctx) {
-		return nil
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		documentdata, err := client.DocumentData.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.DocumentDataHistory.Create()
-
-		_, err = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id).
-			SetCreatedAt(documentdata.CreatedAt).
-			SetUpdatedAt(documentdata.UpdatedAt).
-			SetCreatedBy(documentdata.CreatedBy).
-			SetUpdatedBy(documentdata.UpdatedBy).
-			SetMappingID(documentdata.MappingID).
-			SetTags(documentdata.Tags).
-			SetDeletedAt(documentdata.DeletedAt).
-			SetDeletedBy(documentdata.DeletedBy).
-			SetTemplateID(documentdata.TemplateID).
-			SetData(documentdata.Data).
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *IntegrationMutation) CreateHistoryFromCreate(ctx context.Context) error {
-	client := m.Client()
-
-	id, ok := m.ID()
-	if !ok {
-		return idNotFoundError
-	}
-
-	create := client.IntegrationHistory.Create()
-
-	create = create.
-		SetOperation(EntOpToHistoryOp(m.Op())).
-		SetHistoryTime(time.Now()).
-		SetRef(id)
-
-	if createdAt, exists := m.CreatedAt(); exists {
-		create = create.SetCreatedAt(createdAt)
-	}
-
-	if updatedAt, exists := m.UpdatedAt(); exists {
-		create = create.SetUpdatedAt(updatedAt)
-	}
-
-	if createdBy, exists := m.CreatedBy(); exists {
-		create = create.SetCreatedBy(createdBy)
-	}
-
-	if updatedBy, exists := m.UpdatedBy(); exists {
-		create = create.SetUpdatedBy(updatedBy)
-	}
-
-	if mappingID, exists := m.MappingID(); exists {
-		create = create.SetMappingID(mappingID)
-	}
-
-	if tags, exists := m.Tags(); exists {
-		create = create.SetTags(tags)
-	}
-
-	if deletedAt, exists := m.DeletedAt(); exists {
-		create = create.SetDeletedAt(deletedAt)
-	}
-
-	if deletedBy, exists := m.DeletedBy(); exists {
-		create = create.SetDeletedBy(deletedBy)
-	}
-
-	if ownerID, exists := m.OwnerID(); exists {
-		create = create.SetOwnerID(ownerID)
-	}
-
 	if name, exists := m.Name(); exists {
 		create = create.SetName(name)
+	}
+
+	if displayName, exists := m.DisplayName(); exists {
+		create = create.SetDisplayName(displayName)
 	}
 
 	if description, exists := m.Description(); exists {
 		create = create.SetDescription(description)
 	}
 
-	if kind, exists := m.Kind(); exists {
-		create = create.SetKind(kind)
+	if parentOrganizationID, exists := m.ParentOrganizationID(); exists {
+		create = create.SetParentOrganizationID(parentOrganizationID)
+	}
+
+	if personalOrg, exists := m.PersonalOrg(); exists {
+		create = create.SetPersonalOrg(personalOrg)
+	}
+
+	if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
+		create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
+	}
+
+	if dedicatedDb, exists := m.DedicatedDb(); exists {
+		create = create.SetDedicatedDb(dedicatedDb)
 	}
 
 	_, err := create.Save(ctx)
@@ -2749,7 +2792,7 @@ func (m *IntegrationMutation) CreateHistoryFromCreate(ctx context.Context) error
 	return err
 }
 
-func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+func (m *OrganizationMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	// check for soft delete operation and delete instead
 	if entx.CheckIsSoftDelete(ctx) {
 		return m.CreateHistoryFromDelete(ctx)
@@ -2762,12 +2805,12 @@ func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error
 	}
 
 	for _, id := range ids {
-		integration, err := client.Integration.Get(ctx, id)
+		organization, err := client.Organization.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.IntegrationHistory.Create()
+		create := client.OrganizationHistory.Create()
 
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -2777,73 +2820,91 @@ func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error
 		if createdAt, exists := m.CreatedAt(); exists {
 			create = create.SetCreatedAt(createdAt)
 		} else {
-			create = create.SetCreatedAt(integration.CreatedAt)
+			create = create.SetCreatedAt(organization.CreatedAt)
 		}
 
 		if updatedAt, exists := m.UpdatedAt(); exists {
 			create = create.SetUpdatedAt(updatedAt)
 		} else {
-			create = create.SetUpdatedAt(integration.UpdatedAt)
+			create = create.SetUpdatedAt(organization.UpdatedAt)
 		}
 
 		if createdBy, exists := m.CreatedBy(); exists {
 			create = create.SetCreatedBy(createdBy)
 		} else {
-			create = create.SetCreatedBy(integration.CreatedBy)
+			create = create.SetCreatedBy(organization.CreatedBy)
 		}
 
 		if updatedBy, exists := m.UpdatedBy(); exists {
 			create = create.SetUpdatedBy(updatedBy)
 		} else {
-			create = create.SetUpdatedBy(integration.UpdatedBy)
+			create = create.SetUpdatedBy(organization.UpdatedBy)
 		}
 
 		if mappingID, exists := m.MappingID(); exists {
 			create = create.SetMappingID(mappingID)
 		} else {
-			create = create.SetMappingID(integration.MappingID)
+			create = create.SetMappingID(organization.MappingID)
 		}
 
 		if tags, exists := m.Tags(); exists {
 			create = create.SetTags(tags)
 		} else {
-			create = create.SetTags(integration.Tags)
+			create = create.SetTags(organization.Tags)
 		}
 
 		if deletedAt, exists := m.DeletedAt(); exists {
 			create = create.SetDeletedAt(deletedAt)
 		} else {
-			create = create.SetDeletedAt(integration.DeletedAt)
+			create = create.SetDeletedAt(organization.DeletedAt)
 		}
 
 		if deletedBy, exists := m.DeletedBy(); exists {
 			create = create.SetDeletedBy(deletedBy)
 		} else {
-			create = create.SetDeletedBy(integration.DeletedBy)
-		}
-
-		if ownerID, exists := m.OwnerID(); exists {
-			create = create.SetOwnerID(ownerID)
-		} else {
-			create = create.SetOwnerID(integration.OwnerID)
+			create = create.SetDeletedBy(organization.DeletedBy)
 		}
 
 		if name, exists := m.Name(); exists {
 			create = create.SetName(name)
 		} else {
-			create = create.SetName(integration.Name)
+			create = create.SetName(organization.Name)
+		}
+
+		if displayName, exists := m.DisplayName(); exists {
+			create = create.SetDisplayName(displayName)
+		} else {
+			create = create.SetDisplayName(organization.DisplayName)
 		}
 
 		if description, exists := m.Description(); exists {
 			create = create.SetDescription(description)
 		} else {
-			create = create.SetDescription(integration.Description)
+			create = create.SetDescription(organization.Description)
 		}
 
-		if kind, exists := m.Kind(); exists {
-			create = create.SetKind(kind)
+		if parentOrganizationID, exists := m.ParentOrganizationID(); exists {
+			create = create.SetParentOrganizationID(parentOrganizationID)
 		} else {
-			create = create.SetKind(integration.Kind)
+			create = create.SetParentOrganizationID(organization.ParentOrganizationID)
+		}
+
+		if personalOrg, exists := m.PersonalOrg(); exists {
+			create = create.SetPersonalOrg(personalOrg)
+		} else {
+			create = create.SetPersonalOrg(organization.PersonalOrg)
+		}
+
+		if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
+			create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
+		} else {
+			create = create.SetNillableAvatarRemoteURL(organization.AvatarRemoteURL)
+		}
+
+		if dedicatedDb, exists := m.DedicatedDb(); exists {
+			create = create.SetDedicatedDb(dedicatedDb)
+		} else {
+			create = create.SetDedicatedDb(organization.DedicatedDb)
 		}
 
 		if _, err := create.Save(ctx); err != nil {
@@ -2854,7 +2915,7 @@ func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error
 	return nil
 }
 
-func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error {
+func (m *OrganizationMutation) CreateHistoryFromDelete(ctx context.Context) error {
 	// check for soft delete operation and skip so it happens on update
 	if entx.CheckIsSoftDelete(ctx) {
 		return nil
@@ -2867,225 +2928,32 @@ func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error
 	}
 
 	for _, id := range ids {
-		integration, err := client.Integration.Get(ctx, id)
+		organization, err := client.Organization.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.IntegrationHistory.Create()
+		create := client.OrganizationHistory.Create()
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
 			SetRef(id).
-			SetCreatedAt(integration.CreatedAt).
-			SetUpdatedAt(integration.UpdatedAt).
-			SetCreatedBy(integration.CreatedBy).
-			SetUpdatedBy(integration.UpdatedBy).
-			SetMappingID(integration.MappingID).
-			SetTags(integration.Tags).
-			SetDeletedAt(integration.DeletedAt).
-			SetDeletedBy(integration.DeletedBy).
-			SetOwnerID(integration.OwnerID).
-			SetName(integration.Name).
-			SetDescription(integration.Description).
-			SetKind(integration.Kind).
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *GroupMembershipMutation) CreateHistoryFromCreate(ctx context.Context) error {
-	client := m.Client()
-
-	id, ok := m.ID()
-	if !ok {
-		return idNotFoundError
-	}
-
-	create := client.GroupMembershipHistory.Create()
-
-	create = create.
-		SetOperation(EntOpToHistoryOp(m.Op())).
-		SetHistoryTime(time.Now()).
-		SetRef(id)
-
-	if createdAt, exists := m.CreatedAt(); exists {
-		create = create.SetCreatedAt(createdAt)
-	}
-
-	if updatedAt, exists := m.UpdatedAt(); exists {
-		create = create.SetUpdatedAt(updatedAt)
-	}
-
-	if createdBy, exists := m.CreatedBy(); exists {
-		create = create.SetCreatedBy(createdBy)
-	}
-
-	if updatedBy, exists := m.UpdatedBy(); exists {
-		create = create.SetUpdatedBy(updatedBy)
-	}
-
-	if mappingID, exists := m.MappingID(); exists {
-		create = create.SetMappingID(mappingID)
-	}
-
-	if deletedAt, exists := m.DeletedAt(); exists {
-		create = create.SetDeletedAt(deletedAt)
-	}
-
-	if deletedBy, exists := m.DeletedBy(); exists {
-		create = create.SetDeletedBy(deletedBy)
-	}
-
-	if role, exists := m.Role(); exists {
-		create = create.SetRole(role)
-	}
-
-	if groupID, exists := m.GroupID(); exists {
-		create = create.SetGroupID(groupID)
-	}
-
-	if userID, exists := m.UserID(); exists {
-		create = create.SetUserID(userID)
-	}
-
-	_, err := create.Save(ctx)
-
-	return err
-}
-
-func (m *GroupMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) error {
-	// check for soft delete operation and delete instead
-	if entx.CheckIsSoftDelete(ctx) {
-		return m.CreateHistoryFromDelete(ctx)
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		groupmembership, err := client.GroupMembership.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.GroupMembershipHistory.Create()
-
-		create = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id)
-
-		if createdAt, exists := m.CreatedAt(); exists {
-			create = create.SetCreatedAt(createdAt)
-		} else {
-			create = create.SetCreatedAt(groupmembership.CreatedAt)
-		}
-
-		if updatedAt, exists := m.UpdatedAt(); exists {
-			create = create.SetUpdatedAt(updatedAt)
-		} else {
-			create = create.SetUpdatedAt(groupmembership.UpdatedAt)
-		}
-
-		if createdBy, exists := m.CreatedBy(); exists {
-			create = create.SetCreatedBy(createdBy)
-		} else {
-			create = create.SetCreatedBy(groupmembership.CreatedBy)
-		}
-
-		if updatedBy, exists := m.UpdatedBy(); exists {
-			create = create.SetUpdatedBy(updatedBy)
-		} else {
-			create = create.SetUpdatedBy(groupmembership.UpdatedBy)
-		}
-
-		if mappingID, exists := m.MappingID(); exists {
-			create = create.SetMappingID(mappingID)
-		} else {
-			create = create.SetMappingID(groupmembership.MappingID)
-		}
-
-		if deletedAt, exists := m.DeletedAt(); exists {
-			create = create.SetDeletedAt(deletedAt)
-		} else {
-			create = create.SetDeletedAt(groupmembership.DeletedAt)
-		}
-
-		if deletedBy, exists := m.DeletedBy(); exists {
-			create = create.SetDeletedBy(deletedBy)
-		} else {
-			create = create.SetDeletedBy(groupmembership.DeletedBy)
-		}
-
-		if role, exists := m.Role(); exists {
-			create = create.SetRole(role)
-		} else {
-			create = create.SetRole(groupmembership.Role)
-		}
-
-		if groupID, exists := m.GroupID(); exists {
-			create = create.SetGroupID(groupID)
-		} else {
-			create = create.SetGroupID(groupmembership.GroupID)
-		}
-
-		if userID, exists := m.UserID(); exists {
-			create = create.SetUserID(userID)
-		} else {
-			create = create.SetUserID(groupmembership.UserID)
-		}
-
-		if _, err := create.Save(ctx); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *GroupMembershipMutation) CreateHistoryFromDelete(ctx context.Context) error {
-	// check for soft delete operation and skip so it happens on update
-	if entx.CheckIsSoftDelete(ctx) {
-		return nil
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		groupmembership, err := client.GroupMembership.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.GroupMembershipHistory.Create()
-
-		_, err = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id).
-			SetCreatedAt(groupmembership.CreatedAt).
-			SetUpdatedAt(groupmembership.UpdatedAt).
-			SetCreatedBy(groupmembership.CreatedBy).
-			SetUpdatedBy(groupmembership.UpdatedBy).
-			SetMappingID(groupmembership.MappingID).
-			SetDeletedAt(groupmembership.DeletedAt).
-			SetDeletedBy(groupmembership.DeletedBy).
-			SetRole(groupmembership.Role).
-			SetGroupID(groupmembership.GroupID).
-			SetUserID(groupmembership.UserID).
+			SetCreatedAt(organization.CreatedAt).
+			SetUpdatedAt(organization.UpdatedAt).
+			SetCreatedBy(organization.CreatedBy).
+			SetUpdatedBy(organization.UpdatedBy).
+			SetMappingID(organization.MappingID).
+			SetTags(organization.Tags).
+			SetDeletedAt(organization.DeletedAt).
+			SetDeletedBy(organization.DeletedBy).
+			SetName(organization.Name).
+			SetDisplayName(organization.DisplayName).
+			SetDescription(organization.Description).
+			SetParentOrganizationID(organization.ParentOrganizationID).
+			SetPersonalOrg(organization.PersonalOrg).
+			SetNillableAvatarRemoteURL(organization.AvatarRemoteURL).
+			SetDedicatedDb(organization.DedicatedDb).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -3348,6 +3216,552 @@ func (m *OrganizationSettingMutation) CreateHistoryFromDelete(ctx context.Contex
 			SetTaxIdentifier(organizationsetting.TaxIdentifier).
 			SetGeoLocation(organizationsetting.GeoLocation).
 			SetOrganizationID(organizationsetting.OrganizationID).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.TemplateHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if templateType, exists := m.TemplateType(); exists {
+		create = create.SetTemplateType(templateType)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if jsonconfig, exists := m.Jsonconfig(); exists {
+		create = create.SetJsonconfig(jsonconfig)
+	}
+
+	if uischema, exists := m.Uischema(); exists {
+		create = create.SetUischema(uischema)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *TemplateMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		template, err := client.Template.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.TemplateHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(template.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(template.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(template.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(template.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(template.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(template.DeletedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(template.MappingID)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(template.Tags)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(template.OwnerID)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(template.Name)
+		}
+
+		if templateType, exists := m.TemplateType(); exists {
+			create = create.SetTemplateType(templateType)
+		} else {
+			create = create.SetTemplateType(template.TemplateType)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(template.Description)
+		}
+
+		if jsonconfig, exists := m.Jsonconfig(); exists {
+			create = create.SetJsonconfig(jsonconfig)
+		} else {
+			create = create.SetJsonconfig(template.Jsonconfig)
+		}
+
+		if uischema, exists := m.Uischema(); exists {
+			create = create.SetUischema(uischema)
+		} else {
+			create = create.SetUischema(template.Uischema)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		template, err := client.Template.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.TemplateHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(template.CreatedAt).
+			SetUpdatedAt(template.UpdatedAt).
+			SetCreatedBy(template.CreatedBy).
+			SetUpdatedBy(template.UpdatedBy).
+			SetDeletedAt(template.DeletedAt).
+			SetDeletedBy(template.DeletedBy).
+			SetMappingID(template.MappingID).
+			SetTags(template.Tags).
+			SetOwnerID(template.OwnerID).
+			SetName(template.Name).
+			SetTemplateType(template.TemplateType).
+			SetDescription(template.Description).
+			SetJsonconfig(template.Jsonconfig).
+			SetUischema(template.Uischema).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *UserMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.UserHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if email, exists := m.Email(); exists {
+		create = create.SetEmail(email)
+	}
+
+	if firstName, exists := m.FirstName(); exists {
+		create = create.SetFirstName(firstName)
+	}
+
+	if lastName, exists := m.LastName(); exists {
+		create = create.SetLastName(lastName)
+	}
+
+	if displayName, exists := m.DisplayName(); exists {
+		create = create.SetDisplayName(displayName)
+	}
+
+	if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
+		create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
+	}
+
+	if avatarLocalFile, exists := m.AvatarLocalFile(); exists {
+		create = create.SetNillableAvatarLocalFile(&avatarLocalFile)
+	}
+
+	if avatarUpdatedAt, exists := m.AvatarUpdatedAt(); exists {
+		create = create.SetNillableAvatarUpdatedAt(&avatarUpdatedAt)
+	}
+
+	if lastSeen, exists := m.LastSeen(); exists {
+		create = create.SetNillableLastSeen(&lastSeen)
+	}
+
+	if password, exists := m.Password(); exists {
+		create = create.SetNillablePassword(&password)
+	}
+
+	if sub, exists := m.Sub(); exists {
+		create = create.SetSub(sub)
+	}
+
+	if authProvider, exists := m.AuthProvider(); exists {
+		create = create.SetAuthProvider(authProvider)
+	}
+
+	if role, exists := m.Role(); exists {
+		create = create.SetRole(role)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *UserMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		user, err := client.User.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.UserHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(user.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(user.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(user.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(user.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(user.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(user.DeletedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(user.MappingID)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(user.Tags)
+		}
+
+		if email, exists := m.Email(); exists {
+			create = create.SetEmail(email)
+		} else {
+			create = create.SetEmail(user.Email)
+		}
+
+		if firstName, exists := m.FirstName(); exists {
+			create = create.SetFirstName(firstName)
+		} else {
+			create = create.SetFirstName(user.FirstName)
+		}
+
+		if lastName, exists := m.LastName(); exists {
+			create = create.SetLastName(lastName)
+		} else {
+			create = create.SetLastName(user.LastName)
+		}
+
+		if displayName, exists := m.DisplayName(); exists {
+			create = create.SetDisplayName(displayName)
+		} else {
+			create = create.SetDisplayName(user.DisplayName)
+		}
+
+		if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
+			create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
+		} else {
+			create = create.SetNillableAvatarRemoteURL(user.AvatarRemoteURL)
+		}
+
+		if avatarLocalFile, exists := m.AvatarLocalFile(); exists {
+			create = create.SetNillableAvatarLocalFile(&avatarLocalFile)
+		} else {
+			create = create.SetNillableAvatarLocalFile(user.AvatarLocalFile)
+		}
+
+		if avatarUpdatedAt, exists := m.AvatarUpdatedAt(); exists {
+			create = create.SetNillableAvatarUpdatedAt(&avatarUpdatedAt)
+		} else {
+			create = create.SetNillableAvatarUpdatedAt(user.AvatarUpdatedAt)
+		}
+
+		if lastSeen, exists := m.LastSeen(); exists {
+			create = create.SetNillableLastSeen(&lastSeen)
+		} else {
+			create = create.SetNillableLastSeen(user.LastSeen)
+		}
+
+		if password, exists := m.Password(); exists {
+			create = create.SetNillablePassword(&password)
+		} else {
+			create = create.SetNillablePassword(user.Password)
+		}
+
+		if sub, exists := m.Sub(); exists {
+			create = create.SetSub(sub)
+		} else {
+			create = create.SetSub(user.Sub)
+		}
+
+		if authProvider, exists := m.AuthProvider(); exists {
+			create = create.SetAuthProvider(authProvider)
+		} else {
+			create = create.SetAuthProvider(user.AuthProvider)
+		}
+
+		if role, exists := m.Role(); exists {
+			create = create.SetRole(role)
+		} else {
+			create = create.SetRole(user.Role)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *UserMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		user, err := client.User.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.UserHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(user.CreatedAt).
+			SetUpdatedAt(user.UpdatedAt).
+			SetCreatedBy(user.CreatedBy).
+			SetUpdatedBy(user.UpdatedBy).
+			SetDeletedAt(user.DeletedAt).
+			SetDeletedBy(user.DeletedBy).
+			SetMappingID(user.MappingID).
+			SetTags(user.Tags).
+			SetEmail(user.Email).
+			SetFirstName(user.FirstName).
+			SetLastName(user.LastName).
+			SetDisplayName(user.DisplayName).
+			SetNillableAvatarRemoteURL(user.AvatarRemoteURL).
+			SetNillableAvatarLocalFile(user.AvatarLocalFile).
+			SetNillableAvatarUpdatedAt(user.AvatarUpdatedAt).
+			SetNillableLastSeen(user.LastSeen).
+			SetNillablePassword(user.Password).
+			SetSub(user.Sub).
+			SetAuthProvider(user.AuthProvider).
+			SetRole(user.Role).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -3630,7 +4044,7 @@ func (m *UserSettingMutation) CreateHistoryFromDelete(ctx context.Context) error
 	return nil
 }
 
-func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
+func (m *WebhookMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
 
 	id, ok := m.ID()
@@ -3638,7 +4052,7 @@ func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		return idNotFoundError
 	}
 
-	create := client.TemplateHistory.Create()
+	create := client.WebhookHistory.Create()
 
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
@@ -3661,14 +4075,6 @@ func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetUpdatedBy(updatedBy)
 	}
 
-	if deletedAt, exists := m.DeletedAt(); exists {
-		create = create.SetDeletedAt(deletedAt)
-	}
-
-	if deletedBy, exists := m.DeletedBy(); exists {
-		create = create.SetDeletedBy(deletedBy)
-	}
-
 	if mappingID, exists := m.MappingID(); exists {
 		create = create.SetMappingID(mappingID)
 	}
@@ -3677,244 +4083,12 @@ func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetTags(tags)
 	}
 
-	if ownerID, exists := m.OwnerID(); exists {
-		create = create.SetOwnerID(ownerID)
-	}
-
-	if name, exists := m.Name(); exists {
-		create = create.SetName(name)
-	}
-
-	if templateType, exists := m.TemplateType(); exists {
-		create = create.SetTemplateType(templateType)
-	}
-
-	if description, exists := m.Description(); exists {
-		create = create.SetDescription(description)
-	}
-
-	if jsonconfig, exists := m.Jsonconfig(); exists {
-		create = create.SetJsonconfig(jsonconfig)
-	}
-
-	if uischema, exists := m.Uischema(); exists {
-		create = create.SetUischema(uischema)
-	}
-
-	_, err := create.Save(ctx)
-
-	return err
-}
-
-func (m *TemplateMutation) CreateHistoryFromUpdate(ctx context.Context) error {
-	// check for soft delete operation and delete instead
-	if entx.CheckIsSoftDelete(ctx) {
-		return m.CreateHistoryFromDelete(ctx)
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		template, err := client.Template.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.TemplateHistory.Create()
-
-		create = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id)
-
-		if createdAt, exists := m.CreatedAt(); exists {
-			create = create.SetCreatedAt(createdAt)
-		} else {
-			create = create.SetCreatedAt(template.CreatedAt)
-		}
-
-		if updatedAt, exists := m.UpdatedAt(); exists {
-			create = create.SetUpdatedAt(updatedAt)
-		} else {
-			create = create.SetUpdatedAt(template.UpdatedAt)
-		}
-
-		if createdBy, exists := m.CreatedBy(); exists {
-			create = create.SetCreatedBy(createdBy)
-		} else {
-			create = create.SetCreatedBy(template.CreatedBy)
-		}
-
-		if updatedBy, exists := m.UpdatedBy(); exists {
-			create = create.SetUpdatedBy(updatedBy)
-		} else {
-			create = create.SetUpdatedBy(template.UpdatedBy)
-		}
-
-		if deletedAt, exists := m.DeletedAt(); exists {
-			create = create.SetDeletedAt(deletedAt)
-		} else {
-			create = create.SetDeletedAt(template.DeletedAt)
-		}
-
-		if deletedBy, exists := m.DeletedBy(); exists {
-			create = create.SetDeletedBy(deletedBy)
-		} else {
-			create = create.SetDeletedBy(template.DeletedBy)
-		}
-
-		if mappingID, exists := m.MappingID(); exists {
-			create = create.SetMappingID(mappingID)
-		} else {
-			create = create.SetMappingID(template.MappingID)
-		}
-
-		if tags, exists := m.Tags(); exists {
-			create = create.SetTags(tags)
-		} else {
-			create = create.SetTags(template.Tags)
-		}
-
-		if ownerID, exists := m.OwnerID(); exists {
-			create = create.SetOwnerID(ownerID)
-		} else {
-			create = create.SetOwnerID(template.OwnerID)
-		}
-
-		if name, exists := m.Name(); exists {
-			create = create.SetName(name)
-		} else {
-			create = create.SetName(template.Name)
-		}
-
-		if templateType, exists := m.TemplateType(); exists {
-			create = create.SetTemplateType(templateType)
-		} else {
-			create = create.SetTemplateType(template.TemplateType)
-		}
-
-		if description, exists := m.Description(); exists {
-			create = create.SetDescription(description)
-		} else {
-			create = create.SetDescription(template.Description)
-		}
-
-		if jsonconfig, exists := m.Jsonconfig(); exists {
-			create = create.SetJsonconfig(jsonconfig)
-		} else {
-			create = create.SetJsonconfig(template.Jsonconfig)
-		}
-
-		if uischema, exists := m.Uischema(); exists {
-			create = create.SetUischema(uischema)
-		} else {
-			create = create.SetUischema(template.Uischema)
-		}
-
-		if _, err := create.Save(ctx); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *TemplateMutation) CreateHistoryFromDelete(ctx context.Context) error {
-	// check for soft delete operation and skip so it happens on update
-	if entx.CheckIsSoftDelete(ctx) {
-		return nil
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		template, err := client.Template.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.TemplateHistory.Create()
-
-		_, err = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id).
-			SetCreatedAt(template.CreatedAt).
-			SetUpdatedAt(template.UpdatedAt).
-			SetCreatedBy(template.CreatedBy).
-			SetUpdatedBy(template.UpdatedBy).
-			SetDeletedAt(template.DeletedAt).
-			SetDeletedBy(template.DeletedBy).
-			SetMappingID(template.MappingID).
-			SetTags(template.Tags).
-			SetOwnerID(template.OwnerID).
-			SetName(template.Name).
-			SetTemplateType(template.TemplateType).
-			SetDescription(template.Description).
-			SetJsonconfig(template.Jsonconfig).
-			SetUischema(template.Uischema).
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *GroupMutation) CreateHistoryFromCreate(ctx context.Context) error {
-	client := m.Client()
-
-	id, ok := m.ID()
-	if !ok {
-		return idNotFoundError
-	}
-
-	create := client.GroupHistory.Create()
-
-	create = create.
-		SetOperation(EntOpToHistoryOp(m.Op())).
-		SetHistoryTime(time.Now()).
-		SetRef(id)
-
-	if createdAt, exists := m.CreatedAt(); exists {
-		create = create.SetCreatedAt(createdAt)
-	}
-
-	if updatedAt, exists := m.UpdatedAt(); exists {
-		create = create.SetUpdatedAt(updatedAt)
-	}
-
-	if createdBy, exists := m.CreatedBy(); exists {
-		create = create.SetCreatedBy(createdBy)
-	}
-
-	if updatedBy, exists := m.UpdatedBy(); exists {
-		create = create.SetUpdatedBy(updatedBy)
-	}
-
 	if deletedAt, exists := m.DeletedAt(); exists {
 		create = create.SetDeletedAt(deletedAt)
 	}
 
 	if deletedBy, exists := m.DeletedBy(); exists {
 		create = create.SetDeletedBy(deletedBy)
-	}
-
-	if mappingID, exists := m.MappingID(); exists {
-		create = create.SetMappingID(mappingID)
-	}
-
-	if tags, exists := m.Tags(); exists {
-		create = create.SetTags(tags)
 	}
 
 	if ownerID, exists := m.OwnerID(); exists {
@@ -3929,16 +4103,36 @@ func (m *GroupMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetDescription(description)
 	}
 
-	if gravatarLogoURL, exists := m.GravatarLogoURL(); exists {
-		create = create.SetGravatarLogoURL(gravatarLogoURL)
+	if destinationURL, exists := m.DestinationURL(); exists {
+		create = create.SetDestinationURL(destinationURL)
 	}
 
-	if logoURL, exists := m.LogoURL(); exists {
-		create = create.SetLogoURL(logoURL)
+	if enabled, exists := m.Enabled(); exists {
+		create = create.SetEnabled(enabled)
 	}
 
-	if displayName, exists := m.DisplayName(); exists {
-		create = create.SetDisplayName(displayName)
+	if callback, exists := m.Callback(); exists {
+		create = create.SetCallback(callback)
+	}
+
+	if expiresAt, exists := m.ExpiresAt(); exists {
+		create = create.SetExpiresAt(expiresAt)
+	}
+
+	if secret, exists := m.Secret(); exists {
+		create = create.SetSecret(secret)
+	}
+
+	if failures, exists := m.Failures(); exists {
+		create = create.SetFailures(failures)
+	}
+
+	if lastError, exists := m.LastError(); exists {
+		create = create.SetLastError(lastError)
+	}
+
+	if lastResponse, exists := m.LastResponse(); exists {
+		create = create.SetLastResponse(lastResponse)
 	}
 
 	_, err := create.Save(ctx)
@@ -3946,7 +4140,7 @@ func (m *GroupMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	return err
 }
 
-func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+func (m *WebhookMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	// check for soft delete operation and delete instead
 	if entx.CheckIsSoftDelete(ctx) {
 		return m.CreateHistoryFromDelete(ctx)
@@ -3959,12 +4153,12 @@ func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	}
 
 	for _, id := range ids {
-		group, err := client.Group.Get(ctx, id)
+		webhook, err := client.Webhook.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.GroupHistory.Create()
+		create := client.WebhookHistory.Create()
 
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -3974,85 +4168,115 @@ func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 		if createdAt, exists := m.CreatedAt(); exists {
 			create = create.SetCreatedAt(createdAt)
 		} else {
-			create = create.SetCreatedAt(group.CreatedAt)
+			create = create.SetCreatedAt(webhook.CreatedAt)
 		}
 
 		if updatedAt, exists := m.UpdatedAt(); exists {
 			create = create.SetUpdatedAt(updatedAt)
 		} else {
-			create = create.SetUpdatedAt(group.UpdatedAt)
+			create = create.SetUpdatedAt(webhook.UpdatedAt)
 		}
 
 		if createdBy, exists := m.CreatedBy(); exists {
 			create = create.SetCreatedBy(createdBy)
 		} else {
-			create = create.SetCreatedBy(group.CreatedBy)
+			create = create.SetCreatedBy(webhook.CreatedBy)
 		}
 
 		if updatedBy, exists := m.UpdatedBy(); exists {
 			create = create.SetUpdatedBy(updatedBy)
 		} else {
-			create = create.SetUpdatedBy(group.UpdatedBy)
-		}
-
-		if deletedAt, exists := m.DeletedAt(); exists {
-			create = create.SetDeletedAt(deletedAt)
-		} else {
-			create = create.SetDeletedAt(group.DeletedAt)
-		}
-
-		if deletedBy, exists := m.DeletedBy(); exists {
-			create = create.SetDeletedBy(deletedBy)
-		} else {
-			create = create.SetDeletedBy(group.DeletedBy)
+			create = create.SetUpdatedBy(webhook.UpdatedBy)
 		}
 
 		if mappingID, exists := m.MappingID(); exists {
 			create = create.SetMappingID(mappingID)
 		} else {
-			create = create.SetMappingID(group.MappingID)
+			create = create.SetMappingID(webhook.MappingID)
 		}
 
 		if tags, exists := m.Tags(); exists {
 			create = create.SetTags(tags)
 		} else {
-			create = create.SetTags(group.Tags)
+			create = create.SetTags(webhook.Tags)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(webhook.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(webhook.DeletedBy)
 		}
 
 		if ownerID, exists := m.OwnerID(); exists {
 			create = create.SetOwnerID(ownerID)
 		} else {
-			create = create.SetOwnerID(group.OwnerID)
+			create = create.SetOwnerID(webhook.OwnerID)
 		}
 
 		if name, exists := m.Name(); exists {
 			create = create.SetName(name)
 		} else {
-			create = create.SetName(group.Name)
+			create = create.SetName(webhook.Name)
 		}
 
 		if description, exists := m.Description(); exists {
 			create = create.SetDescription(description)
 		} else {
-			create = create.SetDescription(group.Description)
+			create = create.SetDescription(webhook.Description)
 		}
 
-		if gravatarLogoURL, exists := m.GravatarLogoURL(); exists {
-			create = create.SetGravatarLogoURL(gravatarLogoURL)
+		if destinationURL, exists := m.DestinationURL(); exists {
+			create = create.SetDestinationURL(destinationURL)
 		} else {
-			create = create.SetGravatarLogoURL(group.GravatarLogoURL)
+			create = create.SetDestinationURL(webhook.DestinationURL)
 		}
 
-		if logoURL, exists := m.LogoURL(); exists {
-			create = create.SetLogoURL(logoURL)
+		if enabled, exists := m.Enabled(); exists {
+			create = create.SetEnabled(enabled)
 		} else {
-			create = create.SetLogoURL(group.LogoURL)
+			create = create.SetEnabled(webhook.Enabled)
 		}
 
-		if displayName, exists := m.DisplayName(); exists {
-			create = create.SetDisplayName(displayName)
+		if callback, exists := m.Callback(); exists {
+			create = create.SetCallback(callback)
 		} else {
-			create = create.SetDisplayName(group.DisplayName)
+			create = create.SetCallback(webhook.Callback)
+		}
+
+		if expiresAt, exists := m.ExpiresAt(); exists {
+			create = create.SetExpiresAt(expiresAt)
+		} else {
+			create = create.SetExpiresAt(webhook.ExpiresAt)
+		}
+
+		if secret, exists := m.Secret(); exists {
+			create = create.SetSecret(secret)
+		} else {
+			create = create.SetSecret(webhook.Secret)
+		}
+
+		if failures, exists := m.Failures(); exists {
+			create = create.SetFailures(failures)
+		} else {
+			create = create.SetFailures(webhook.Failures)
+		}
+
+		if lastError, exists := m.LastError(); exists {
+			create = create.SetLastError(lastError)
+		} else {
+			create = create.SetLastError(webhook.LastError)
+		}
+
+		if lastResponse, exists := m.LastResponse(); exists {
+			create = create.SetLastResponse(lastResponse)
+		} else {
+			create = create.SetLastResponse(webhook.LastResponse)
 		}
 
 		if _, err := create.Save(ctx); err != nil {
@@ -4063,7 +4287,7 @@ func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 	return nil
 }
 
-func (m *GroupMutation) CreateHistoryFromDelete(ctx context.Context) error {
+func (m *WebhookMutation) CreateHistoryFromDelete(ctx context.Context) error {
 	// check for soft delete operation and skip so it happens on update
 	if entx.CheckIsSoftDelete(ctx) {
 		return nil
@@ -4076,260 +4300,36 @@ func (m *GroupMutation) CreateHistoryFromDelete(ctx context.Context) error {
 	}
 
 	for _, id := range ids {
-		group, err := client.Group.Get(ctx, id)
+		webhook, err := client.Webhook.Get(ctx, id)
 		if err != nil {
 			return err
 		}
 
-		create := client.GroupHistory.Create()
+		create := client.WebhookHistory.Create()
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
 			SetRef(id).
-			SetCreatedAt(group.CreatedAt).
-			SetUpdatedAt(group.UpdatedAt).
-			SetCreatedBy(group.CreatedBy).
-			SetUpdatedBy(group.UpdatedBy).
-			SetDeletedAt(group.DeletedAt).
-			SetDeletedBy(group.DeletedBy).
-			SetMappingID(group.MappingID).
-			SetTags(group.Tags).
-			SetOwnerID(group.OwnerID).
-			SetName(group.Name).
-			SetDescription(group.Description).
-			SetGravatarLogoURL(group.GravatarLogoURL).
-			SetLogoURL(group.LogoURL).
-			SetDisplayName(group.DisplayName).
-			Save(ctx)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *GroupSettingMutation) CreateHistoryFromCreate(ctx context.Context) error {
-	client := m.Client()
-
-	id, ok := m.ID()
-	if !ok {
-		return idNotFoundError
-	}
-
-	create := client.GroupSettingHistory.Create()
-
-	create = create.
-		SetOperation(EntOpToHistoryOp(m.Op())).
-		SetHistoryTime(time.Now()).
-		SetRef(id)
-
-	if createdAt, exists := m.CreatedAt(); exists {
-		create = create.SetCreatedAt(createdAt)
-	}
-
-	if updatedAt, exists := m.UpdatedAt(); exists {
-		create = create.SetUpdatedAt(updatedAt)
-	}
-
-	if createdBy, exists := m.CreatedBy(); exists {
-		create = create.SetCreatedBy(createdBy)
-	}
-
-	if updatedBy, exists := m.UpdatedBy(); exists {
-		create = create.SetUpdatedBy(updatedBy)
-	}
-
-	if mappingID, exists := m.MappingID(); exists {
-		create = create.SetMappingID(mappingID)
-	}
-
-	if tags, exists := m.Tags(); exists {
-		create = create.SetTags(tags)
-	}
-
-	if deletedAt, exists := m.DeletedAt(); exists {
-		create = create.SetDeletedAt(deletedAt)
-	}
-
-	if deletedBy, exists := m.DeletedBy(); exists {
-		create = create.SetDeletedBy(deletedBy)
-	}
-
-	if visibility, exists := m.Visibility(); exists {
-		create = create.SetVisibility(visibility)
-	}
-
-	if joinPolicy, exists := m.JoinPolicy(); exists {
-		create = create.SetJoinPolicy(joinPolicy)
-	}
-
-	if syncToSlack, exists := m.SyncToSlack(); exists {
-		create = create.SetSyncToSlack(syncToSlack)
-	}
-
-	if syncToGithub, exists := m.SyncToGithub(); exists {
-		create = create.SetSyncToGithub(syncToGithub)
-	}
-
-	if groupID, exists := m.GroupID(); exists {
-		create = create.SetGroupID(groupID)
-	}
-
-	_, err := create.Save(ctx)
-
-	return err
-}
-
-func (m *GroupSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error {
-	// check for soft delete operation and delete instead
-	if entx.CheckIsSoftDelete(ctx) {
-		return m.CreateHistoryFromDelete(ctx)
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		groupsetting, err := client.GroupSetting.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.GroupSettingHistory.Create()
-
-		create = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id)
-
-		if createdAt, exists := m.CreatedAt(); exists {
-			create = create.SetCreatedAt(createdAt)
-		} else {
-			create = create.SetCreatedAt(groupsetting.CreatedAt)
-		}
-
-		if updatedAt, exists := m.UpdatedAt(); exists {
-			create = create.SetUpdatedAt(updatedAt)
-		} else {
-			create = create.SetUpdatedAt(groupsetting.UpdatedAt)
-		}
-
-		if createdBy, exists := m.CreatedBy(); exists {
-			create = create.SetCreatedBy(createdBy)
-		} else {
-			create = create.SetCreatedBy(groupsetting.CreatedBy)
-		}
-
-		if updatedBy, exists := m.UpdatedBy(); exists {
-			create = create.SetUpdatedBy(updatedBy)
-		} else {
-			create = create.SetUpdatedBy(groupsetting.UpdatedBy)
-		}
-
-		if mappingID, exists := m.MappingID(); exists {
-			create = create.SetMappingID(mappingID)
-		} else {
-			create = create.SetMappingID(groupsetting.MappingID)
-		}
-
-		if tags, exists := m.Tags(); exists {
-			create = create.SetTags(tags)
-		} else {
-			create = create.SetTags(groupsetting.Tags)
-		}
-
-		if deletedAt, exists := m.DeletedAt(); exists {
-			create = create.SetDeletedAt(deletedAt)
-		} else {
-			create = create.SetDeletedAt(groupsetting.DeletedAt)
-		}
-
-		if deletedBy, exists := m.DeletedBy(); exists {
-			create = create.SetDeletedBy(deletedBy)
-		} else {
-			create = create.SetDeletedBy(groupsetting.DeletedBy)
-		}
-
-		if visibility, exists := m.Visibility(); exists {
-			create = create.SetVisibility(visibility)
-		} else {
-			create = create.SetVisibility(groupsetting.Visibility)
-		}
-
-		if joinPolicy, exists := m.JoinPolicy(); exists {
-			create = create.SetJoinPolicy(joinPolicy)
-		} else {
-			create = create.SetJoinPolicy(groupsetting.JoinPolicy)
-		}
-
-		if syncToSlack, exists := m.SyncToSlack(); exists {
-			create = create.SetSyncToSlack(syncToSlack)
-		} else {
-			create = create.SetSyncToSlack(groupsetting.SyncToSlack)
-		}
-
-		if syncToGithub, exists := m.SyncToGithub(); exists {
-			create = create.SetSyncToGithub(syncToGithub)
-		} else {
-			create = create.SetSyncToGithub(groupsetting.SyncToGithub)
-		}
-
-		if groupID, exists := m.GroupID(); exists {
-			create = create.SetGroupID(groupID)
-		} else {
-			create = create.SetGroupID(groupsetting.GroupID)
-		}
-
-		if _, err := create.Save(ctx); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *GroupSettingMutation) CreateHistoryFromDelete(ctx context.Context) error {
-	// check for soft delete operation and skip so it happens on update
-	if entx.CheckIsSoftDelete(ctx) {
-		return nil
-	}
-	client := m.Client()
-
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return fmt.Errorf("getting ids: %w", err)
-	}
-
-	for _, id := range ids {
-		groupsetting, err := client.GroupSetting.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		create := client.GroupSettingHistory.Create()
-
-		_, err = create.
-			SetOperation(EntOpToHistoryOp(m.Op())).
-			SetHistoryTime(time.Now()).
-			SetRef(id).
-			SetCreatedAt(groupsetting.CreatedAt).
-			SetUpdatedAt(groupsetting.UpdatedAt).
-			SetCreatedBy(groupsetting.CreatedBy).
-			SetUpdatedBy(groupsetting.UpdatedBy).
-			SetMappingID(groupsetting.MappingID).
-			SetTags(groupsetting.Tags).
-			SetDeletedAt(groupsetting.DeletedAt).
-			SetDeletedBy(groupsetting.DeletedBy).
-			SetVisibility(groupsetting.Visibility).
-			SetJoinPolicy(groupsetting.JoinPolicy).
-			SetSyncToSlack(groupsetting.SyncToSlack).
-			SetSyncToGithub(groupsetting.SyncToGithub).
-			SetGroupID(groupsetting.GroupID).
+			SetCreatedAt(webhook.CreatedAt).
+			SetUpdatedAt(webhook.UpdatedAt).
+			SetCreatedBy(webhook.CreatedBy).
+			SetUpdatedBy(webhook.UpdatedBy).
+			SetMappingID(webhook.MappingID).
+			SetTags(webhook.Tags).
+			SetDeletedAt(webhook.DeletedAt).
+			SetDeletedBy(webhook.DeletedBy).
+			SetOwnerID(webhook.OwnerID).
+			SetName(webhook.Name).
+			SetDescription(webhook.Description).
+			SetDestinationURL(webhook.DestinationURL).
+			SetEnabled(webhook.Enabled).
+			SetCallback(webhook.Callback).
+			SetExpiresAt(webhook.ExpiresAt).
+			SetSecret(webhook.Secret).
+			SetFailures(webhook.Failures).
+			SetLastError(webhook.LastError).
+			SetLastResponse(webhook.LastResponse).
 			Save(ctx)
 		if err != nil {
 			return err

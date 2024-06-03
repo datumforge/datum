@@ -76,3 +76,4 @@ func (OrganizationHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

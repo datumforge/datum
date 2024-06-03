@@ -76,3 +76,4 @@ func (WebhookHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

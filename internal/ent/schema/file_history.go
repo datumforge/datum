@@ -71,3 +71,4 @@ func (FileHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

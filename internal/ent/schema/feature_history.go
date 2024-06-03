@@ -71,3 +71,4 @@ func (FeatureHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

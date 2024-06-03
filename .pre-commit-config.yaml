@@ -15,7 +15,11 @@ repos:
     rev: v1.20.7
     hooks:
       - id: typos
-  - repo: https://github.com/leehambley/pre-commit-graphql.git
-    rev: 97d85ddd4900ea403743d9d3ab6d8515ddbefd16
+  - repo: local
     hooks:
       - id: format-graphql
+        name: Format GraphQL
+        description: This hook formats GraphQL schemas
+        entry: npx format-graphql@1.4.0 --write=true
+        language: node
+        files: 'query/.*\.graphql$|schema/.*\.graphql$'

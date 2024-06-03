@@ -223,6 +223,21 @@ func (dd *DocumentDataQuery) collectField(ctx context.Context, oneNode bool, opC
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: dd.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+				return err
+			}
+			dd.withOwner = query
+			if _, ok := fieldSeen[documentdata.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldOwnerID)
+				fieldSeen[documentdata.FieldOwnerID] = struct{}{}
+			}
+
 		case "template":
 			var (
 				alias = field.Alias
@@ -271,6 +286,11 @@ func (dd *DocumentDataQuery) collectField(ctx context.Context, oneNode bool, opC
 			if _, ok := fieldSeen[documentdata.FieldDeletedBy]; !ok {
 				selectedFields = append(selectedFields, documentdata.FieldDeletedBy)
 				fieldSeen[documentdata.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[documentdata.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldOwnerID)
+				fieldSeen[documentdata.FieldOwnerID] = struct{}{}
 			}
 		case "templateID":
 			if _, ok := fieldSeen[documentdata.FieldTemplateID]; !ok {
@@ -393,6 +413,11 @@ func (ddh *DocumentDataHistoryQuery) collectField(ctx context.Context, oneNode b
 			if _, ok := fieldSeen[documentdatahistory.FieldDeletedBy]; !ok {
 				selectedFields = append(selectedFields, documentdatahistory.FieldDeletedBy)
 				fieldSeen[documentdatahistory.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[documentdatahistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldOwnerID)
+				fieldSeen[documentdatahistory.FieldOwnerID] = struct{}{}
 			}
 		case "templateID":
 			if _, ok := fieldSeen[documentdatahistory.FieldTemplateID]; !ok {
@@ -542,6 +567,11 @@ func (e *EntitlementQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				selectedFields = append(selectedFields, entitlement.FieldDeletedBy)
 				fieldSeen[entitlement.FieldDeletedBy] = struct{}{}
 			}
+		case "ownerID":
+			if _, ok := fieldSeen[entitlement.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldOwnerID)
+				fieldSeen[entitlement.FieldOwnerID] = struct{}{}
+			}
 		case "tier":
 			if _, ok := fieldSeen[entitlement.FieldTier]; !ok {
 				selectedFields = append(selectedFields, entitlement.FieldTier)
@@ -683,6 +713,11 @@ func (eh *EntitlementHistoryQuery) collectField(ctx context.Context, oneNode boo
 			if _, ok := fieldSeen[entitlementhistory.FieldDeletedBy]; !ok {
 				selectedFields = append(selectedFields, entitlementhistory.FieldDeletedBy)
 				fieldSeen[entitlementhistory.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[entitlementhistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldOwnerID)
+				fieldSeen[entitlementhistory.FieldOwnerID] = struct{}{}
 			}
 		case "tier":
 			if _, ok := fieldSeen[entitlementhistory.FieldTier]; !ok {
@@ -1956,6 +1991,11 @@ func (gr *GroupQuery) collectField(ctx context.Context, oneNode bool, opCtx *gra
 				selectedFields = append(selectedFields, group.FieldTags)
 				fieldSeen[group.FieldTags] = struct{}{}
 			}
+		case "ownerID":
+			if _, ok := fieldSeen[group.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, group.FieldOwnerID)
+				fieldSeen[group.FieldOwnerID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[group.FieldName]; !ok {
 				selectedFields = append(selectedFields, group.FieldName)
@@ -2114,6 +2154,11 @@ func (gh *GroupHistoryQuery) collectField(ctx context.Context, oneNode bool, opC
 			if _, ok := fieldSeen[grouphistory.FieldTags]; !ok {
 				selectedFields = append(selectedFields, grouphistory.FieldTags)
 				fieldSeen[grouphistory.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[grouphistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldOwnerID)
+				fieldSeen[grouphistory.FieldOwnerID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[grouphistory.FieldName]; !ok {
@@ -3618,6 +3663,10 @@ func (op *OauthProviderQuery) collectField(ctx context.Context, oneNode bool, op
 				return err
 			}
 			op.withOwner = query
+			if _, ok := fieldSeen[oauthprovider.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldOwnerID)
+				fieldSeen[oauthprovider.FieldOwnerID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[oauthprovider.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, oauthprovider.FieldCreatedAt)
@@ -3652,6 +3701,11 @@ func (op *OauthProviderQuery) collectField(ctx context.Context, oneNode bool, op
 			if _, ok := fieldSeen[oauthprovider.FieldDeletedBy]; !ok {
 				selectedFields = append(selectedFields, oauthprovider.FieldDeletedBy)
 				fieldSeen[oauthprovider.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[oauthprovider.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldOwnerID)
+				fieldSeen[oauthprovider.FieldOwnerID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[oauthprovider.FieldName]; !ok {
@@ -3809,6 +3863,11 @@ func (oph *OauthProviderHistoryQuery) collectField(ctx context.Context, oneNode 
 			if _, ok := fieldSeen[oauthproviderhistory.FieldDeletedBy]; !ok {
 				selectedFields = append(selectedFields, oauthproviderhistory.FieldDeletedBy)
 				fieldSeen[oauthproviderhistory.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldOwnerID)
+				fieldSeen[oauthproviderhistory.FieldOwnerID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[oauthproviderhistory.FieldName]; !ok {
@@ -4496,6 +4555,19 @@ func (o *OrganizationQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			o.withSetting = query
+
+		case "documentdata":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&DocumentDataClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, documentdataImplementors)...); err != nil {
+				return err
+			}
+			o.WithNamedDocumentdata(alias, func(wq *DocumentDataQuery) {
+				*wq = *query
+			})
 
 		case "entitlements":
 			var (
@@ -5800,6 +5872,11 @@ func (t *TemplateQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, template.FieldTags)
 				fieldSeen[template.FieldTags] = struct{}{}
 			}
+		case "ownerID":
+			if _, ok := fieldSeen[template.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, template.FieldOwnerID)
+				fieldSeen[template.FieldOwnerID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[template.FieldName]; !ok {
 				selectedFields = append(selectedFields, template.FieldName)
@@ -5958,6 +6035,11 @@ func (th *TemplateHistoryQuery) collectField(ctx context.Context, oneNode bool, 
 			if _, ok := fieldSeen[templatehistory.FieldTags]; !ok {
 				selectedFields = append(selectedFields, templatehistory.FieldTags)
 				fieldSeen[templatehistory.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[templatehistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldOwnerID)
+				fieldSeen[templatehistory.FieldOwnerID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[templatehistory.FieldName]; !ok {

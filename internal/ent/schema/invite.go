@@ -81,8 +81,7 @@ func (Invite) Mixin() []ent.Mixin {
 		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
-			Ref:        "invites",
-			AllowWhere: true,
+			Ref: "invites",
 		},
 	}
 }

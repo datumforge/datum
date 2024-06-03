@@ -130,6 +130,26 @@ func (ddhu *DocumentDataHistoryUpdate) ClearDeletedBy() *DocumentDataHistoryUpda
 	return ddhu
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (ddhu *DocumentDataHistoryUpdate) SetOwnerID(s string) *DocumentDataHistoryUpdate {
+	ddhu.mutation.SetOwnerID(s)
+	return ddhu
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ddhu *DocumentDataHistoryUpdate) SetNillableOwnerID(s *string) *DocumentDataHistoryUpdate {
+	if s != nil {
+		ddhu.SetOwnerID(*s)
+	}
+	return ddhu
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ddhu *DocumentDataHistoryUpdate) ClearOwnerID() *DocumentDataHistoryUpdate {
+	ddhu.mutation.ClearOwnerID()
+	return ddhu
+}
+
 // SetTemplateID sets the "template_id" field.
 func (ddhu *DocumentDataHistoryUpdate) SetTemplateID(s string) *DocumentDataHistoryUpdate {
 	ddhu.mutation.SetTemplateID(s)
@@ -234,6 +254,12 @@ func (ddhu *DocumentDataHistoryUpdate) sqlSave(ctx context.Context) (n int, err 
 	}
 	if ddhu.mutation.DeletedByCleared() {
 		_spec.ClearField(documentdatahistory.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := ddhu.mutation.OwnerID(); ok {
+		_spec.SetField(documentdatahistory.FieldOwnerID, field.TypeString, value)
+	}
+	if ddhu.mutation.OwnerIDCleared() {
+		_spec.ClearField(documentdatahistory.FieldOwnerID, field.TypeString)
 	}
 	if value, ok := ddhu.mutation.TemplateID(); ok {
 		_spec.SetField(documentdatahistory.FieldTemplateID, field.TypeString, value)
@@ -358,6 +384,26 @@ func (ddhuo *DocumentDataHistoryUpdateOne) SetNillableDeletedBy(s *string) *Docu
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (ddhuo *DocumentDataHistoryUpdateOne) ClearDeletedBy() *DocumentDataHistoryUpdateOne {
 	ddhuo.mutation.ClearDeletedBy()
+	return ddhuo
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (ddhuo *DocumentDataHistoryUpdateOne) SetOwnerID(s string) *DocumentDataHistoryUpdateOne {
+	ddhuo.mutation.SetOwnerID(s)
+	return ddhuo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ddhuo *DocumentDataHistoryUpdateOne) SetNillableOwnerID(s *string) *DocumentDataHistoryUpdateOne {
+	if s != nil {
+		ddhuo.SetOwnerID(*s)
+	}
+	return ddhuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ddhuo *DocumentDataHistoryUpdateOne) ClearOwnerID() *DocumentDataHistoryUpdateOne {
+	ddhuo.mutation.ClearOwnerID()
 	return ddhuo
 }
 
@@ -495,6 +541,12 @@ func (ddhuo *DocumentDataHistoryUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if ddhuo.mutation.DeletedByCleared() {
 		_spec.ClearField(documentdatahistory.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := ddhuo.mutation.OwnerID(); ok {
+		_spec.SetField(documentdatahistory.FieldOwnerID, field.TypeString, value)
+	}
+	if ddhuo.mutation.OwnerIDCleared() {
+		_spec.ClearField(documentdatahistory.FieldOwnerID, field.TypeString)
 	}
 	if value, ok := ddhuo.mutation.TemplateID(); ok {
 		_spec.SetField(documentdatahistory.FieldTemplateID, field.TypeString, value)

@@ -57,6 +57,8 @@ const (
 	EdgeIntegrations = "integrations"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
+	// EdgeDocumentdata holds the string denoting the documentdata edge name in mutations.
+	EdgeDocumentdata = "documentdata"
 	// EdgeEntitlements holds the string denoting the entitlements edge name in mutations.
 	EdgeEntitlements = "entitlements"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
@@ -121,6 +123,13 @@ const (
 	SettingInverseTable = "organization_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "organization_id"
+	// DocumentdataTable is the table that holds the documentdata relation/edge.
+	DocumentdataTable = "document_data"
+	// DocumentdataInverseTable is the table name for the DocumentData entity.
+	// It exists in this package in order to avoid circular dependency with the "documentdata" package.
+	DocumentdataInverseTable = "document_data"
+	// DocumentdataColumn is the table column denoting the documentdata relation/edge.
+	DocumentdataColumn = "owner_id"
 	// EntitlementsTable is the table that holds the entitlements relation/edge.
 	EntitlementsTable = "entitlements"
 	// EntitlementsInverseTable is the table name for the Entitlement entity.
@@ -146,7 +155,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "oauthprovider" package.
 	OauthproviderInverseTable = "oauth_providers"
 	// OauthproviderColumn is the table column denoting the oauthprovider relation/edge.
-	OauthproviderColumn = "organization_oauthprovider"
+	OauthproviderColumn = "owner_id"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
 	UsersTable = "org_memberships"
 	// UsersInverseTable is the table name for the User entity.
@@ -436,6 +445,20 @@ func BySettingField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByDocumentdataCount orders the results by documentdata count.
+func ByDocumentdataCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDocumentdataStep(), opts...)
+	}
+}
+
+// ByDocumentdata orders the results by documentdata terms.
+func ByDocumentdata(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDocumentdataStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByEntitlementsCount orders the results by entitlements count.
 func ByEntitlementsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -657,6 +680,13 @@ func newSettingStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SettingInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
+	)
+}
+func newDocumentdataStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DocumentdataInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DocumentdataTable, DocumentdataColumn),
 	)
 }
 func newEntitlementsStep() *sqlgraph.Step {

@@ -286,6 +286,7 @@ input CreateDocumentDataInput {
   the json data of the document
   """
   data: JSON!
+  ownerID: ID
   templateID: ID!
 }
 """
@@ -714,6 +715,7 @@ input CreateOrganizationInput {
   templateIDs: [ID!]
   integrationIDs: [ID!]
   settingID: ID
+  documentdatumIDs: [ID!]
   entitlementIDs: [ID!]
   personalAccessTokenIDs: [ID!]
   apiTokenIDs: [ID!]
@@ -1050,6 +1052,7 @@ type DocumentData implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  ownerID: ID
   """
   the template id of the document
   """
@@ -1058,6 +1061,7 @@ type DocumentData implements Node {
   the json data of the document
   """
   data: JSON!
+  owner: Organization
   template: Template!
 }
 """
@@ -1105,6 +1109,7 @@ type DocumentDataHistory implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  ownerID: String
   """
   the template id of the document
   """
@@ -1303,6 +1308,24 @@ input DocumentDataHistoryWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  owner_id field predicates
+  """
+  ownerID: String
+  ownerIDNEQ: String
+  ownerIDIn: [String!]
+  ownerIDNotIn: [String!]
+  ownerIDGT: String
+  ownerIDGTE: String
+  ownerIDLT: String
+  ownerIDLTE: String
+  ownerIDContains: String
+  ownerIDHasPrefix: String
+  ownerIDHasSuffix: String
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: String
+  ownerIDContainsFold: String
+  """
   template_id field predicates
   """
   templateID: String
@@ -1434,6 +1457,24 @@ input DocumentDataWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
+  """
   template_id field predicates
   """
   templateID: ID
@@ -1449,6 +1490,11 @@ input DocumentDataWhereInput {
   templateIDHasSuffix: ID
   templateIDEqualFold: ID
   templateIDContainsFold: ID
+  """
+  owner edge predicates
+  """
+  hasOwner: Boolean
+  hasOwnerWith: [OrganizationWhereInput!]
   """
   template edge predicates
   """
@@ -1467,6 +1513,7 @@ type Entitlement implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  ownerID: ID
   tier: EntitlementTier!
   """
   used to store references to external systems, e.g. Stripe
@@ -1537,6 +1584,7 @@ type EntitlementHistory implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  ownerID: String
   tier: EntitlementHistoryTier!
   """
   used to store references to external systems, e.g. Stripe
@@ -1756,6 +1804,24 @@ input EntitlementHistoryWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  owner_id field predicates
+  """
+  ownerID: String
+  ownerIDNEQ: String
+  ownerIDIn: [String!]
+  ownerIDNotIn: [String!]
+  ownerIDGT: String
+  ownerIDGTE: String
+  ownerIDLT: String
+  ownerIDLTE: String
+  ownerIDContains: String
+  ownerIDHasPrefix: String
+  ownerIDHasSuffix: String
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: String
+  ownerIDContainsFold: String
+  """
   tier field predicates
   """
   tier: EntitlementHistoryTier
@@ -1944,6 +2010,24 @@ input EntitlementWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
+  """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
   """
   tier field predicates
   """
@@ -3641,6 +3725,7 @@ type Group implements Node {
   tags associated with the object
   """
   tags: [String!]
+  ownerID: ID
   """
   the name of the group - must be unique within the organization
   """
@@ -3715,6 +3800,7 @@ type GroupHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  ownerID: String
   """
   the name of the group - must be unique within the organization
   """
@@ -3944,6 +4030,24 @@ input GroupHistoryWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
+  """
+  owner_id field predicates
+  """
+  ownerID: String
+  ownerIDNEQ: String
+  ownerIDIn: [String!]
+  ownerIDNotIn: [String!]
+  ownerIDGT: String
+  ownerIDGTE: String
+  ownerIDLT: String
+  ownerIDLTE: String
+  ownerIDContains: String
+  ownerIDHasPrefix: String
+  ownerIDHasSuffix: String
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: String
+  ownerIDContainsFold: String
   """
   name field predicates
   """
@@ -5070,6 +5174,24 @@ input GroupWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
+  """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
   """
   name field predicates
   """
@@ -6579,6 +6701,7 @@ type OauthProvider implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  ownerID: ID
   """
   the oauth provider's name
   """
@@ -6662,6 +6785,7 @@ type OauthProviderHistory implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  ownerID: String
   """
   the oauth provider's name
   """
@@ -6887,6 +7011,24 @@ input OauthProviderHistoryWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
+  """
+  owner_id field predicates
+  """
+  ownerID: String
+  ownerIDNEQ: String
+  ownerIDIn: [String!]
+  ownerIDNotIn: [String!]
+  ownerIDGT: String
+  ownerIDGTE: String
+  ownerIDLT: String
+  ownerIDLTE: String
+  ownerIDContains: String
+  ownerIDHasPrefix: String
+  ownerIDHasSuffix: String
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: String
+  ownerIDContainsFold: String
   """
   name field predicates
   """
@@ -7141,6 +7283,24 @@ input OauthProviderWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
+  """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
   """
   name field predicates
   """
@@ -8010,6 +8170,7 @@ type Organization implements Node {
   templates: [Template!]
   integrations: [Integration!]
   setting: OrganizationSetting
+  documentdata: [DocumentData!]
   entitlements: [Entitlement!]
   personalAccessTokens: [PersonalAccessToken!]
   apiTokens: [APIToken!]
@@ -9268,6 +9429,11 @@ input OrganizationWhereInput {
   """
   hasSetting: Boolean
   hasSettingWith: [OrganizationSettingWhereInput!]
+  """
+  documentdata edge predicates
+  """
+  hasDocumentdata: Boolean
+  hasDocumentdataWith: [DocumentDataWhereInput!]
   """
   entitlements edge predicates
   """
@@ -11252,6 +11418,7 @@ type Template implements Node {
   tags associated with the object
   """
   tags: [String!]
+  ownerID: ID
   """
   the name of the template
   """
@@ -11327,6 +11494,7 @@ type TemplateHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  ownerID: String
   """
   the name of the template
   """
@@ -11563,6 +11731,24 @@ input TemplateHistoryWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  owner_id field predicates
+  """
+  ownerID: String
+  ownerIDNEQ: String
+  ownerIDIn: [String!]
+  ownerIDNotIn: [String!]
+  ownerIDGT: String
+  ownerIDGTE: String
+  ownerIDLT: String
+  ownerIDLTE: String
+  ownerIDContains: String
+  ownerIDHasPrefix: String
+  ownerIDHasSuffix: String
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: String
+  ownerIDContainsFold: String
+  """
   name field predicates
   """
   name: String
@@ -11738,6 +11924,24 @@ input TemplateWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
+  """
   name field predicates
   """
   name: String
@@ -11848,6 +12052,8 @@ input UpdateDocumentDataInput {
   the json data of the document
   """
   data: JSON
+  ownerID: ID
+  clearOwner: Boolean
   templateID: ID
 }
 """
@@ -12387,6 +12593,9 @@ input UpdateOrganizationInput {
   clearIntegrations: Boolean
   settingID: ID
   clearSetting: Boolean
+  addDocumentdatumIDs: [ID!]
+  removeDocumentdatumIDs: [ID!]
+  clearDocumentdata: Boolean
   addEntitlementIDs: [ID!]
   removeEntitlementIDs: [ID!]
   clearEntitlements: Boolean

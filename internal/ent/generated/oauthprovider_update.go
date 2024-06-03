@@ -123,6 +123,26 @@ func (opu *OauthProviderUpdate) ClearDeletedBy() *OauthProviderUpdate {
 	return opu
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (opu *OauthProviderUpdate) SetOwnerID(s string) *OauthProviderUpdate {
+	opu.mutation.SetOwnerID(s)
+	return opu
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (opu *OauthProviderUpdate) SetNillableOwnerID(s *string) *OauthProviderUpdate {
+	if s != nil {
+		opu.SetOwnerID(*s)
+	}
+	return opu
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (opu *OauthProviderUpdate) ClearOwnerID() *OauthProviderUpdate {
+	opu.mutation.ClearOwnerID()
+	return opu
+}
+
 // SetName sets the "name" field.
 func (opu *OauthProviderUpdate) SetName(s string) *OauthProviderUpdate {
 	opu.mutation.SetName(s)
@@ -256,20 +276,6 @@ func (opu *OauthProviderUpdate) SetNillableInfoURL(s *string) *OauthProviderUpda
 	return opu
 }
 
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (opu *OauthProviderUpdate) SetOwnerID(id string) *OauthProviderUpdate {
-	opu.mutation.SetOwnerID(id)
-	return opu
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (opu *OauthProviderUpdate) SetNillableOwnerID(id *string) *OauthProviderUpdate {
-	if id != nil {
-		opu = opu.SetOwnerID(*id)
-	}
-	return opu
-}
-
 // SetOwner sets the "owner" edge to the Organization entity.
 func (opu *OauthProviderUpdate) SetOwner(o *Organization) *OauthProviderUpdate {
 	return opu.SetOwnerID(o.ID)
@@ -328,7 +334,20 @@ func (opu *OauthProviderUpdate) defaults() error {
 	return nil
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (opu *OauthProviderUpdate) check() error {
+	if v, ok := opu.mutation.OwnerID(); ok {
+		if err := oauthprovider.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "OauthProvider.owner_id": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (opu *OauthProviderUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := opu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(oauthprovider.Table, oauthprovider.Columns, sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString))
 	if ps := opu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -551,6 +570,26 @@ func (opuo *OauthProviderUpdateOne) ClearDeletedBy() *OauthProviderUpdateOne {
 	return opuo
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (opuo *OauthProviderUpdateOne) SetOwnerID(s string) *OauthProviderUpdateOne {
+	opuo.mutation.SetOwnerID(s)
+	return opuo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (opuo *OauthProviderUpdateOne) SetNillableOwnerID(s *string) *OauthProviderUpdateOne {
+	if s != nil {
+		opuo.SetOwnerID(*s)
+	}
+	return opuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (opuo *OauthProviderUpdateOne) ClearOwnerID() *OauthProviderUpdateOne {
+	opuo.mutation.ClearOwnerID()
+	return opuo
+}
+
 // SetName sets the "name" field.
 func (opuo *OauthProviderUpdateOne) SetName(s string) *OauthProviderUpdateOne {
 	opuo.mutation.SetName(s)
@@ -684,20 +723,6 @@ func (opuo *OauthProviderUpdateOne) SetNillableInfoURL(s *string) *OauthProvider
 	return opuo
 }
 
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (opuo *OauthProviderUpdateOne) SetOwnerID(id string) *OauthProviderUpdateOne {
-	opuo.mutation.SetOwnerID(id)
-	return opuo
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (opuo *OauthProviderUpdateOne) SetNillableOwnerID(id *string) *OauthProviderUpdateOne {
-	if id != nil {
-		opuo = opuo.SetOwnerID(*id)
-	}
-	return opuo
-}
-
 // SetOwner sets the "owner" edge to the Organization entity.
 func (opuo *OauthProviderUpdateOne) SetOwner(o *Organization) *OauthProviderUpdateOne {
 	return opuo.SetOwnerID(o.ID)
@@ -769,7 +794,20 @@ func (opuo *OauthProviderUpdateOne) defaults() error {
 	return nil
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (opuo *OauthProviderUpdateOne) check() error {
+	if v, ok := opuo.mutation.OwnerID(); ok {
+		if err := oauthprovider.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "OauthProvider.owner_id": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (opuo *OauthProviderUpdateOne) sqlSave(ctx context.Context) (_node *OauthProvider, err error) {
+	if err := opuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(oauthprovider.Table, oauthprovider.Columns, sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString))
 	id, ok := opuo.mutation.ID()
 	if !ok {

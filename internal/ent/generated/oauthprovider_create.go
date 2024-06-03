@@ -126,6 +126,20 @@ func (opc *OauthProviderCreate) SetNillableDeletedBy(s *string) *OauthProviderCr
 	return opc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (opc *OauthProviderCreate) SetOwnerID(s string) *OauthProviderCreate {
+	opc.mutation.SetOwnerID(s)
+	return opc
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (opc *OauthProviderCreate) SetNillableOwnerID(s *string) *OauthProviderCreate {
+	if s != nil {
+		opc.SetOwnerID(*s)
+	}
+	return opc
+}
+
 // SetName sets the "name" field.
 func (opc *OauthProviderCreate) SetName(s string) *OauthProviderCreate {
 	opc.mutation.SetName(s)
@@ -190,20 +204,6 @@ func (opc *OauthProviderCreate) SetID(s string) *OauthProviderCreate {
 func (opc *OauthProviderCreate) SetNillableID(s *string) *OauthProviderCreate {
 	if s != nil {
 		opc.SetID(*s)
-	}
-	return opc
-}
-
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (opc *OauthProviderCreate) SetOwnerID(id string) *OauthProviderCreate {
-	opc.mutation.SetOwnerID(id)
-	return opc
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (opc *OauthProviderCreate) SetNillableOwnerID(id *string) *OauthProviderCreate {
-	if id != nil {
-		opc = opc.SetOwnerID(*id)
 	}
 	return opc
 }
@@ -289,6 +289,11 @@ func (opc *OauthProviderCreate) defaults() error {
 func (opc *OauthProviderCreate) check() error {
 	if _, ok := opc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "OauthProvider.mapping_id"`)}
+	}
+	if v, ok := opc.mutation.OwnerID(); ok {
+		if err := oauthprovider.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "OauthProvider.owner_id": %w`, err)}
+		}
 	}
 	if _, ok := opc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "OauthProvider.name"`)}
@@ -436,7 +441,7 @@ func (opc *OauthProviderCreate) createSpec() (*OauthProvider, *sqlgraph.CreateSp
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.organization_oauthprovider = &nodes[0]
+		_node.OwnerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

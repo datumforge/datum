@@ -1,15 +1,19 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	emixin "github.com/datumforge/entx/mixin"
+	"github.com/datumforge/fgax/entfga"
 
 	"github.com/datumforge/datum/internal/ent/customtypes"
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -48,9 +52,7 @@ func (OauthProvider) Fields() []ent.Field {
 
 // Edges of the OauthProvider
 func (OauthProvider) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("owner", Organization.Type).Ref("oauthprovider").Unique(),
-	}
+	return []ent.Edge{}
 }
 
 // Annotations of the OauthProvider
@@ -59,6 +61,13 @@ func (OauthProvider) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			NillableIDField: true,
+			OrgOwnedField:   true,
+			IDField:         "OwnerID",
+		},
 	}
 }
 
@@ -69,5 +78,27 @@ func (OauthProvider) Mixin() []ent.Mixin {
 		emixin.IDMixin{},
 		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
+		OrgOwnerMixin{
+			Ref: "oauthprovider",
+		},
+	}
+}
+
+// Policy of the OauthProvider
+func (OauthProvider) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			privacy.OauthProviderMutationRuleFunc(func(ctx context.Context, m *generated.OauthProviderMutation) error {
+				return m.CheckAccessForEdit(ctx)
+			}),
+
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.OauthProviderQueryRuleFunc(func(ctx context.Context, q *generated.OauthProviderQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

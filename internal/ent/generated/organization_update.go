@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -297,6 +298,21 @@ func (ou *OrganizationUpdate) SetNillableSettingID(id *string) *OrganizationUpda
 // SetSetting sets the "setting" edge to the OrganizationSetting entity.
 func (ou *OrganizationUpdate) SetSetting(o *OrganizationSetting) *OrganizationUpdate {
 	return ou.SetSettingID(o.ID)
+}
+
+// AddDocumentdatumIDs adds the "documentdata" edge to the DocumentData entity by IDs.
+func (ou *OrganizationUpdate) AddDocumentdatumIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddDocumentdatumIDs(ids...)
+	return ou
+}
+
+// AddDocumentdata adds the "documentdata" edges to the DocumentData entity.
+func (ou *OrganizationUpdate) AddDocumentdata(d ...*DocumentData) *OrganizationUpdate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ou.AddDocumentdatumIDs(ids...)
 }
 
 // AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
@@ -587,6 +603,27 @@ func (ou *OrganizationUpdate) RemoveIntegrations(i ...*Integration) *Organizatio
 func (ou *OrganizationUpdate) ClearSetting() *OrganizationUpdate {
 	ou.mutation.ClearSetting()
 	return ou
+}
+
+// ClearDocumentdata clears all "documentdata" edges to the DocumentData entity.
+func (ou *OrganizationUpdate) ClearDocumentdata() *OrganizationUpdate {
+	ou.mutation.ClearDocumentdata()
+	return ou
+}
+
+// RemoveDocumentdatumIDs removes the "documentdata" edge to DocumentData entities by IDs.
+func (ou *OrganizationUpdate) RemoveDocumentdatumIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveDocumentdatumIDs(ids...)
+	return ou
+}
+
+// RemoveDocumentdata removes "documentdata" edges to DocumentData entities.
+func (ou *OrganizationUpdate) RemoveDocumentdata(d ...*DocumentData) *OrganizationUpdate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ou.RemoveDocumentdatumIDs(ids...)
 }
 
 // ClearEntitlements clears all "entitlements" edges to the Entitlement entity.
@@ -1219,6 +1256,54 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = ou.schemaConfig.OrganizationSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ou.mutation.DocumentdataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.DocumentdataTable,
+			Columns: []string{organization.DocumentdataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.DocumentData
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedDocumentdataIDs(); len(nodes) > 0 && !ou.mutation.DocumentdataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.DocumentdataTable,
+			Columns: []string{organization.DocumentdataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.DocumentData
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.DocumentdataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.DocumentdataTable,
+			Columns: []string{organization.DocumentdataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.DocumentData
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -2142,6 +2227,21 @@ func (ouo *OrganizationUpdateOne) SetSetting(o *OrganizationSetting) *Organizati
 	return ouo.SetSettingID(o.ID)
 }
 
+// AddDocumentdatumIDs adds the "documentdata" edge to the DocumentData entity by IDs.
+func (ouo *OrganizationUpdateOne) AddDocumentdatumIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddDocumentdatumIDs(ids...)
+	return ouo
+}
+
+// AddDocumentdata adds the "documentdata" edges to the DocumentData entity.
+func (ouo *OrganizationUpdateOne) AddDocumentdata(d ...*DocumentData) *OrganizationUpdateOne {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ouo.AddDocumentdatumIDs(ids...)
+}
+
 // AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
 func (ouo *OrganizationUpdateOne) AddEntitlementIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddEntitlementIDs(ids...)
@@ -2430,6 +2530,27 @@ func (ouo *OrganizationUpdateOne) RemoveIntegrations(i ...*Integration) *Organiz
 func (ouo *OrganizationUpdateOne) ClearSetting() *OrganizationUpdateOne {
 	ouo.mutation.ClearSetting()
 	return ouo
+}
+
+// ClearDocumentdata clears all "documentdata" edges to the DocumentData entity.
+func (ouo *OrganizationUpdateOne) ClearDocumentdata() *OrganizationUpdateOne {
+	ouo.mutation.ClearDocumentdata()
+	return ouo
+}
+
+// RemoveDocumentdatumIDs removes the "documentdata" edge to DocumentData entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveDocumentdatumIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveDocumentdatumIDs(ids...)
+	return ouo
+}
+
+// RemoveDocumentdata removes "documentdata" edges to DocumentData entities.
+func (ouo *OrganizationUpdateOne) RemoveDocumentdata(d ...*DocumentData) *OrganizationUpdateOne {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return ouo.RemoveDocumentdatumIDs(ids...)
 }
 
 // ClearEntitlements clears all "entitlements" edges to the Entitlement entity.
@@ -3092,6 +3213,54 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.OrganizationSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.DocumentdataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.DocumentdataTable,
+			Columns: []string{organization.DocumentdataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.DocumentData
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedDocumentdataIDs(); len(nodes) > 0 && !ouo.mutation.DocumentdataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.DocumentdataTable,
+			Columns: []string{organization.DocumentdataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.DocumentData
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.DocumentdataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.DocumentdataTable,
+			Columns: []string{organization.DocumentdataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.DocumentData
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

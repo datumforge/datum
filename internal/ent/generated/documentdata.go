@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 )
 
@@ -36,6 +37,8 @@ type DocumentData struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// the template id of the document
 	TemplateID string `json:"template_id,omitempty"`
 	// the json data of the document
@@ -48,13 +51,26 @@ type DocumentData struct {
 
 // DocumentDataEdges holds the relations/edges for other nodes in the graph.
 type DocumentDataEdges struct {
+	// Owner holds the value of the owner edge.
+	Owner *Organization `json:"owner,omitempty"`
 	// Template holds the value of the template edge.
 	Template *Template `json:"template,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
+}
+
+// OwnerOrErr returns the Owner value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e DocumentDataEdges) OwnerOrErr() (*Organization, error) {
+	if e.Owner != nil {
+		return e.Owner, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: organization.Label}
+	}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // TemplateOrErr returns the Template value or an error if the edge
@@ -62,7 +78,7 @@ type DocumentDataEdges struct {
 func (e DocumentDataEdges) TemplateOrErr() (*Template, error) {
 	if e.Template != nil {
 		return e.Template, nil
-	} else if e.loadedTypes[0] {
+	} else if e.loadedTypes[1] {
 		return nil, &NotFoundError{label: template.Label}
 	}
 	return nil, &NotLoadedError{edge: "template"}
@@ -75,7 +91,7 @@ func (*DocumentData) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case documentdata.FieldTags, documentdata.FieldData:
 			values[i] = new([]byte)
-		case documentdata.FieldID, documentdata.FieldCreatedBy, documentdata.FieldUpdatedBy, documentdata.FieldMappingID, documentdata.FieldDeletedBy, documentdata.FieldTemplateID:
+		case documentdata.FieldID, documentdata.FieldCreatedBy, documentdata.FieldUpdatedBy, documentdata.FieldMappingID, documentdata.FieldDeletedBy, documentdata.FieldOwnerID, documentdata.FieldTemplateID:
 			values[i] = new(sql.NullString)
 		case documentdata.FieldCreatedAt, documentdata.FieldUpdatedAt, documentdata.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -150,6 +166,12 @@ func (dd *DocumentData) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				dd.DeletedBy = value.String
 			}
+		case documentdata.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				dd.OwnerID = value.String
+			}
 		case documentdata.FieldTemplateID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field template_id", values[i])
@@ -175,6 +197,11 @@ func (dd *DocumentData) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (dd *DocumentData) Value(name string) (ent.Value, error) {
 	return dd.selectValues.Get(name)
+}
+
+// QueryOwner queries the "owner" edge of the DocumentData entity.
+func (dd *DocumentData) QueryOwner() *OrganizationQuery {
+	return NewDocumentDataClient(dd.config).QueryOwner(dd)
 }
 
 // QueryTemplate queries the "template" edge of the DocumentData entity.
@@ -228,6 +255,9 @@ func (dd *DocumentData) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(dd.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(dd.OwnerID)
 	builder.WriteString(", ")
 	builder.WriteString("template_id=")
 	builder.WriteString(dd.TemplateID)

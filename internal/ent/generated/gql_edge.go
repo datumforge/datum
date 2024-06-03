@@ -16,6 +16,14 @@ func (at *APIToken) Owner(ctx context.Context) (*Organization, error) {
 	return result, MaskNotFound(err)
 }
 
+func (dd *DocumentData) Owner(ctx context.Context) (*Organization, error) {
+	result, err := dd.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = dd.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (dd *DocumentData) Template(ctx context.Context) (*Template, error) {
 	result, err := dd.Edges.TemplateOrErr()
 	if IsNotLoaded(err) {
@@ -683,6 +691,18 @@ func (o *Organization) Setting(ctx context.Context) (*OrganizationSetting, error
 		result, err = o.QuerySetting().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (o *Organization) Documentdata(ctx context.Context) (result []*DocumentData, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedDocumentdata(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.DocumentdataOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryDocumentdata().All(ctx)
+	}
+	return result, err
 }
 
 func (o *Organization) Entitlements(ctx context.Context) (result []*Entitlement, err error) {

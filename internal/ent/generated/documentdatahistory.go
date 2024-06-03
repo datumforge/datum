@@ -42,6 +42,8 @@ type DocumentDataHistory struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// the template id of the document
 	TemplateID string `json:"template_id,omitempty"`
 	// the json data of the document
@@ -58,7 +60,7 @@ func (*DocumentDataHistory) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case documentdatahistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
-		case documentdatahistory.FieldID, documentdatahistory.FieldRef, documentdatahistory.FieldCreatedBy, documentdatahistory.FieldUpdatedBy, documentdatahistory.FieldMappingID, documentdatahistory.FieldDeletedBy, documentdatahistory.FieldTemplateID:
+		case documentdatahistory.FieldID, documentdatahistory.FieldRef, documentdatahistory.FieldCreatedBy, documentdatahistory.FieldUpdatedBy, documentdatahistory.FieldMappingID, documentdatahistory.FieldDeletedBy, documentdatahistory.FieldOwnerID, documentdatahistory.FieldTemplateID:
 			values[i] = new(sql.NullString)
 		case documentdatahistory.FieldHistoryTime, documentdatahistory.FieldCreatedAt, documentdatahistory.FieldUpdatedAt, documentdatahistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -151,6 +153,12 @@ func (ddh *DocumentDataHistory) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				ddh.DeletedBy = value.String
 			}
+		case documentdatahistory.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				ddh.OwnerID = value.String
+			}
 		case documentdatahistory.FieldTemplateID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field template_id", values[i])
@@ -233,6 +241,9 @@ func (ddh *DocumentDataHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(ddh.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(ddh.OwnerID)
 	builder.WriteString(", ")
 	builder.WriteString("template_id=")
 	builder.WriteString(ddh.TemplateID)

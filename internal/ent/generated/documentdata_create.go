@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 )
 
@@ -126,6 +127,20 @@ func (ddc *DocumentDataCreate) SetNillableDeletedBy(s *string) *DocumentDataCrea
 	return ddc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (ddc *DocumentDataCreate) SetOwnerID(s string) *DocumentDataCreate {
+	ddc.mutation.SetOwnerID(s)
+	return ddc
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ddc *DocumentDataCreate) SetNillableOwnerID(s *string) *DocumentDataCreate {
+	if s != nil {
+		ddc.SetOwnerID(*s)
+	}
+	return ddc
+}
+
 // SetTemplateID sets the "template_id" field.
 func (ddc *DocumentDataCreate) SetTemplateID(s string) *DocumentDataCreate {
 	ddc.mutation.SetTemplateID(s)
@@ -150,6 +165,11 @@ func (ddc *DocumentDataCreate) SetNillableID(s *string) *DocumentDataCreate {
 		ddc.SetID(*s)
 	}
 	return ddc
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (ddc *DocumentDataCreate) SetOwner(o *Organization) *DocumentDataCreate {
+	return ddc.SetOwnerID(o.ID)
 }
 
 // SetTemplate sets the "template" edge to the Template entity.
@@ -234,6 +254,11 @@ func (ddc *DocumentDataCreate) check() error {
 	if _, ok := ddc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "DocumentData.mapping_id"`)}
 	}
+	if v, ok := ddc.mutation.OwnerID(); ok {
+		if err := documentdata.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "DocumentData.owner_id": %w`, err)}
+		}
+	}
 	if _, ok := ddc.mutation.TemplateID(); !ok {
 		return &ValidationError{Name: "template_id", err: errors.New(`generated: missing required field "DocumentData.template_id"`)}
 	}
@@ -314,6 +339,24 @@ func (ddc *DocumentDataCreate) createSpec() (*DocumentData, *sqlgraph.CreateSpec
 	if value, ok := ddc.mutation.Data(); ok {
 		_spec.SetField(documentdata.FieldData, field.TypeJSON, value)
 		_node.Data = value
+	}
+	if nodes := ddc.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   documentdata.OwnerTable,
+			Columns: []string{documentdata.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ddc.schemaConfig.DocumentData
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := ddc.mutation.TemplateIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -106,6 +106,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			documentdata.FieldTags:       {Type: field.TypeJSON, Column: documentdata.FieldTags},
 			documentdata.FieldDeletedAt:  {Type: field.TypeTime, Column: documentdata.FieldDeletedAt},
 			documentdata.FieldDeletedBy:  {Type: field.TypeString, Column: documentdata.FieldDeletedBy},
+			documentdata.FieldOwnerID:    {Type: field.TypeString, Column: documentdata.FieldOwnerID},
 			documentdata.FieldTemplateID: {Type: field.TypeString, Column: documentdata.FieldTemplateID},
 			documentdata.FieldData:       {Type: field.TypeJSON, Column: documentdata.FieldData},
 		},
@@ -132,6 +133,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			documentdatahistory.FieldTags:        {Type: field.TypeJSON, Column: documentdatahistory.FieldTags},
 			documentdatahistory.FieldDeletedAt:   {Type: field.TypeTime, Column: documentdatahistory.FieldDeletedAt},
 			documentdatahistory.FieldDeletedBy:   {Type: field.TypeString, Column: documentdatahistory.FieldDeletedBy},
+			documentdatahistory.FieldOwnerID:     {Type: field.TypeString, Column: documentdatahistory.FieldOwnerID},
 			documentdatahistory.FieldTemplateID:  {Type: field.TypeString, Column: documentdatahistory.FieldTemplateID},
 			documentdatahistory.FieldData:        {Type: field.TypeJSON, Column: documentdatahistory.FieldData},
 		},
@@ -696,6 +698,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			oauthprovider.FieldTags:         {Type: field.TypeJSON, Column: oauthprovider.FieldTags},
 			oauthprovider.FieldDeletedAt:    {Type: field.TypeTime, Column: oauthprovider.FieldDeletedAt},
 			oauthprovider.FieldDeletedBy:    {Type: field.TypeString, Column: oauthprovider.FieldDeletedBy},
+			oauthprovider.FieldOwnerID:      {Type: field.TypeString, Column: oauthprovider.FieldOwnerID},
 			oauthprovider.FieldName:         {Type: field.TypeString, Column: oauthprovider.FieldName},
 			oauthprovider.FieldClientID:     {Type: field.TypeString, Column: oauthprovider.FieldClientID},
 			oauthprovider.FieldClientSecret: {Type: field.TypeString, Column: oauthprovider.FieldClientSecret},
@@ -729,6 +732,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			oauthproviderhistory.FieldTags:         {Type: field.TypeJSON, Column: oauthproviderhistory.FieldTags},
 			oauthproviderhistory.FieldDeletedAt:    {Type: field.TypeTime, Column: oauthproviderhistory.FieldDeletedAt},
 			oauthproviderhistory.FieldDeletedBy:    {Type: field.TypeString, Column: oauthproviderhistory.FieldDeletedBy},
+			oauthproviderhistory.FieldOwnerID:      {Type: field.TypeString, Column: oauthproviderhistory.FieldOwnerID},
 			oauthproviderhistory.FieldName:         {Type: field.TypeString, Column: oauthproviderhistory.FieldName},
 			oauthproviderhistory.FieldClientID:     {Type: field.TypeString, Column: oauthproviderhistory.FieldClientID},
 			oauthproviderhistory.FieldClientSecret: {Type: field.TypeString, Column: oauthproviderhistory.FieldClientSecret},
@@ -1343,6 +1347,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"APIToken",
+		"Organization",
+	)
+	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   documentdata.OwnerTable,
+			Columns: []string{documentdata.OwnerColumn},
+			Bidi:    false,
+		},
+		"DocumentData",
 		"Organization",
 	)
 	graph.MustAddE(
@@ -2078,6 +2094,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"OrganizationSetting",
 	)
 	graph.MustAddE(
+		"documentdata",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.DocumentdataTable,
+			Columns: []string{organization.DocumentdataColumn},
+			Bidi:    false,
+		},
+		"Organization",
+		"DocumentData",
+	)
+	graph.MustAddE(
 		"entitlements",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -2799,6 +2827,11 @@ func (f *DocumentDataFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(documentdata.FieldDeletedBy))
 }
 
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *DocumentDataFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(documentdata.FieldOwnerID))
+}
+
 // WhereTemplateID applies the entql string predicate on the template_id field.
 func (f *DocumentDataFilter) WhereTemplateID(p entql.StringP) {
 	f.Where(p.Field(documentdata.FieldTemplateID))
@@ -2807,6 +2840,20 @@ func (f *DocumentDataFilter) WhereTemplateID(p entql.StringP) {
 // WhereData applies the entql json.RawMessage predicate on the data field.
 func (f *DocumentDataFilter) WhereData(p entql.BytesP) {
 	f.Where(p.Field(documentdata.FieldData))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *DocumentDataFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *DocumentDataFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
 }
 
 // WhereHasTemplate applies a predicate to check if query has an edge template.
@@ -2916,6 +2963,11 @@ func (f *DocumentDataHistoryFilter) WhereDeletedAt(p entql.TimeP) {
 // WhereDeletedBy applies the entql string predicate on the deleted_by field.
 func (f *DocumentDataHistoryFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(documentdatahistory.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *DocumentDataHistoryFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(documentdatahistory.FieldOwnerID))
 }
 
 // WhereTemplateID applies the entql string predicate on the template_id field.
@@ -5885,6 +5937,11 @@ func (f *OauthProviderFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(oauthprovider.FieldDeletedBy))
 }
 
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *OauthProviderFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldOwnerID))
+}
+
 // WhereName applies the entql string predicate on the name field.
 func (f *OauthProviderFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(oauthprovider.FieldName))
@@ -6037,6 +6094,11 @@ func (f *OauthProviderHistoryFilter) WhereDeletedAt(p entql.TimeP) {
 // WhereDeletedBy applies the entql string predicate on the deleted_by field.
 func (f *OauthProviderHistoryFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(oauthproviderhistory.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *OauthProviderHistoryFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldOwnerID))
 }
 
 // WhereName applies the entql string predicate on the name field.
@@ -6652,6 +6714,20 @@ func (f *OrganizationFilter) WhereHasSetting() {
 // WhereHasSettingWith applies a predicate to check if query has an edge setting with a given conditions (other predicates).
 func (f *OrganizationFilter) WhereHasSettingWith(preds ...predicate.OrganizationSetting) {
 	f.Where(entql.HasEdgeWith("setting", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasDocumentdata applies a predicate to check if query has an edge documentdata.
+func (f *OrganizationFilter) WhereHasDocumentdata() {
+	f.Where(entql.HasEdge("documentdata"))
+}
+
+// WhereHasDocumentdataWith applies a predicate to check if query has an edge documentdata with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasDocumentdataWith(preds ...predicate.DocumentData) {
+	f.Where(entql.HasEdgeWith("documentdata", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/pkg/auth"
+	sliceutil "github.com/datumforge/datum/pkg/utils/slice"
 )
 
 // HookCreateAPIToken runs on api token mutations and sets expires and owner id
@@ -35,33 +36,18 @@ func HookCreateAPIToken() ent.Hook {
 			}
 
 			// create the relationship tuples in fga for the token
-			tuples := []fgax.TupleKey{}
-
-			// TODO (sfunk): this shouldn't be a static list
-			for _, scope := range token.Scopes {
-				var relation string
-
-				switch scope {
-				case "read":
-					relation = "can_view"
-				case "write":
-					relation = "can_edit"
-				case "delete":
-					relation = "can_delete"
-				}
-
-				apiKeyTuple, err := getTupleKey(token.ID, "service", orgID, "organization", relation)
-				if err != nil {
-					return nil, err
-				}
-
-				tuples = append(tuples, apiKeyTuple)
+			tuples, err := createScopeTuples(token.Scopes, orgID, token.ID)
+			if err != nil {
+				return retVal, err
 			}
 
-			if _, err := mutation.Authz.WriteTupleKeys(ctx, tuples, nil); err != nil {
-				mutation.Logger.Errorw("failed to create relationship tuple", "error", err)
+			// create the relationship tuples if we have any
+			if len(tuples) > 0 {
+				if _, err := mutation.Authz.WriteTupleKeys(ctx, tuples, nil); err != nil {
+					mutation.Logger.Errorw("failed to create relationship tuple", "error", err)
 
-				return nil, err
+					return nil, err
+				}
 			}
 
 			return retVal, err
@@ -86,7 +72,81 @@ func HookUpdateAPIToken() ent.Hook {
 
 			at.Token = redacted
 
+			// create the relationship tuples in fga for the token
+			newScopes, err := getNewScopes(ctx, mutation)
+			if err != nil {
+				return at, err
+			}
+
+			tuples, err := createScopeTuples(newScopes, at.OwnerID, at.ID)
+			if err != nil {
+				return retVal, err
+			}
+
+			// create the relationship tuples if we have any
+			if len(tuples) > 0 {
+				if _, err := mutation.Authz.WriteTupleKeys(ctx, tuples, nil); err != nil {
+					mutation.Logger.Errorw("failed to create relationship tuple", "error", err)
+
+					return nil, err
+				}
+			}
+
 			return at, nil
 		})
 	}, ent.OpUpdate|ent.OpUpdateOne)
+}
+
+// createScopeTuples creates the relationship tuples for the token
+func createScopeTuples(scopes []string, orgID, tokenID string) (tuples []fgax.TupleKey, err error) {
+	// create the relationship tuples in fga for the token
+	// TODO (sfunk): this shouldn't be a static list
+	for _, scope := range scopes {
+		var relation string
+
+		switch scope {
+		case "read":
+			relation = "can_view"
+		case "write":
+			relation = "can_edit"
+		case "delete":
+			relation = "can_delete"
+		}
+
+		var apiKeyTuple fgax.TupleKey
+
+		apiKeyTuple, err = getTupleKey(tokenID, "service", orgID, "organization", relation)
+		if err != nil {
+			return
+		}
+
+		tuples = append(tuples, apiKeyTuple)
+	}
+
+	return
+}
+
+// getNewScopes returns the new scopes that were added to the token during an update
+// NOTE: there is an AppendedScopes on the mutation, but this is not populated
+// so calculating the new scopes for now
+func getNewScopes(ctx context.Context, mutation *generated.APITokenMutation) ([]string, error) {
+	scopes, ok := mutation.Scopes()
+	if !ok {
+		return nil, nil
+	}
+
+	oldScopes, err := mutation.OldScopes(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var newScopes []string
+
+	for _, scope := range scopes {
+		if !sliceutil.Contains(oldScopes, scope) {
+			newScopes = append(newScopes, scope)
+		}
+	}
+
+	return newScopes, nil
 }

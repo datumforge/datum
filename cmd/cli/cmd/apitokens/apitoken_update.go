@@ -30,6 +30,9 @@ func init() {
 
 	apiTokenUpdateCmd.Flags().StringP("description", "d", "", "description of the api token")
 	datum.ViperBindFlag("apitoken.update.description", apiTokenUpdateCmd.Flags().Lookup("description"))
+
+	apiTokenUpdateCmd.Flags().StringSlice("scopes", []string{}, "scopes to add to the api token")
+	datum.ViperBindFlag("apitoken.update.scopes", apiTokenCreateCmd.Flags().Lookup("scopes"))
 }
 
 func updateAPIToken(ctx context.Context) error {
@@ -61,6 +64,11 @@ func updateAPIToken(ctx context.Context) error {
 	description := viper.GetString("apitoken.update.description")
 	if description != "" {
 		input.Description = &description
+	}
+
+	scopes := viper.GetStringSlice("apitoken.update.scopes")
+	if len(scopes) > 0 {
+		input.Scopes = scopes
 	}
 
 	o, err := cli.Client.UpdateAPIToken(ctx, pID, input, cli.Interceptor)

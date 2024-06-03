@@ -164,9 +164,9 @@ func (suite *GraphTestSuite) TestMutationCreateAPIToken() {
 
 			mock_fga.CheckAny(t, suite.client.fga, true)
 
-			if tc.errorMsg == "" {
-				// mock a call to check orgs
-				mock_fga.WriteAny(t, suite.client.fga)
+			if tc.errorMsg == "" && len(tc.input.Scopes) > 0 {
+				// mock a call write relationship tuples
+				mock_fga.WriteOnce(t, suite.client.fga)
 			}
 
 			resp, err := suite.client.datum.CreateAPIToken(reqCtx, tc.input)
@@ -259,6 +259,10 @@ func (suite *GraphTestSuite) TestMutationUpdateAPIToken() {
 
 			if tc.errorMsg == "" {
 				mock_fga.CheckAny(t, suite.client.fga, true)
+			}
+
+			if len(tc.input.Scopes) > 0 {
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			resp, err := suite.client.datum.UpdateAPIToken(reqCtx, tc.tokenID, tc.input)

@@ -8,48 +8,26 @@ import "context"
 // that can be passed at runtime.
 type SchemaConfig struct {
 	APIToken                         string // APIToken table.
-	DocumentData                     string // DocumentData table.
-	DocumentDataHistory              string // DocumentDataHistory table.
 	EmailVerificationToken           string // EmailVerificationToken table.
-	Entitlement                      string // Entitlement table.
-	EntitlementFeatures              string // Entitlement-features->Feature table.
-	EntitlementEvents                string // Entitlement-events->Event table.
-	EntitlementHistory               string // EntitlementHistory table.
-	Event                            string // Event table.
-	EventHistory                     string // EventHistory table.
+	Invite                           string // Invite table.
+	InviteEvents                     string // Invite-events->Event table.
+	OhAuthTooToken                   string // OhAuthTooToken table.
+	OhAuthTooTokenEvents             string // OhAuthTooToken-events->Event table.
+	PersonalAccessToken              string // PersonalAccessToken table.
+	PersonalAccessTokenEvents        string // PersonalAccessToken-events->Event table.
+	PasswordResetToken               string // PasswordResetToken table.
+	TFASetting                       string // TFASetting table.
+	Subscriber                       string // Subscriber table.
+	SubscriberEvents                 string // Subscriber-events->Event table.
+	Webauthn                         string // Webauthn table.
+	Webhook                          string // Webhook table.
+	WebhookEvents                    string // Webhook-events->Event table.
+	WebhookHistory                   string // WebhookHistory table.
 	Feature                          string // Feature table.
 	FeatureEvents                    string // Feature-events->Event table.
 	FeatureHistory                   string // FeatureHistory table.
 	File                             string // File table.
 	FileHistory                      string // FileHistory table.
-	Group                            string // Group table.
-	GroupFeatures                    string // Group-features->Feature table.
-	GroupEvents                      string // Group-events->Event table.
-	GroupFiles                       string // Group-files->File table.
-	GroupHistory                     string // GroupHistory table.
-	GroupMembership                  string // GroupMembership table.
-	GroupMembershipEvents            string // GroupMembership-events->Event table.
-	GroupMembershipHistory           string // GroupMembershipHistory table.
-	GroupSetting                     string // GroupSetting table.
-	GroupSettingHistory              string // GroupSettingHistory table.
-	Hush                             string // Hush table.
-	HushEvents                       string // Hush-events->Event table.
-	HushHistory                      string // HushHistory table.
-	Integration                      string // Integration table.
-	IntegrationSecrets               string // Integration-secrets->Hush table.
-	IntegrationOauth2tokens          string // Integration-oauth2tokens->OhAuthTooToken table.
-	IntegrationEvents                string // Integration-events->Event table.
-	IntegrationWebhooks              string // Integration-webhooks->Webhook table.
-	IntegrationHistory               string // IntegrationHistory table.
-	Invite                           string // Invite table.
-	InviteEvents                     string // Invite-events->Event table.
-	OauthProvider                    string // OauthProvider table.
-	OauthProviderHistory             string // OauthProviderHistory table.
-	OhAuthTooToken                   string // OhAuthTooToken table.
-	OhAuthTooTokenEvents             string // OhAuthTooToken-events->Event table.
-	OrgMembership                    string // OrgMembership table.
-	OrgMembershipEvents              string // OrgMembership-events->Event table.
-	OrgMembershipHistory             string // OrgMembershipHistory table.
 	Organization                     string // Organization table.
 	OrganizationPersonalAccessTokens string // Organization-personal_access_tokens->PersonalAccessToken table.
 	OrganizationEvents               string // Organization-events->Event table.
@@ -57,26 +35,48 @@ type SchemaConfig struct {
 	OrganizationFeatures             string // Organization-features->Feature table.
 	OrganizationFiles                string // Organization-files->File table.
 	OrganizationHistory              string // OrganizationHistory table.
-	OrganizationSetting              string // OrganizationSetting table.
-	OrganizationSettingHistory       string // OrganizationSettingHistory table.
-	PasswordResetToken               string // PasswordResetToken table.
-	PersonalAccessToken              string // PersonalAccessToken table.
-	PersonalAccessTokenEvents        string // PersonalAccessToken-events->Event table.
-	Subscriber                       string // Subscriber table.
-	SubscriberEvents                 string // Subscriber-events->Event table.
-	TFASetting                       string // TFASetting table.
-	Template                         string // Template table.
-	TemplateHistory                  string // TemplateHistory table.
+	Entitlement                      string // Entitlement table.
+	EntitlementFeatures              string // Entitlement-features->Feature table.
+	EntitlementEvents                string // Entitlement-events->Event table.
+	EntitlementHistory               string // EntitlementHistory table.
 	User                             string // User table.
 	UserEvents                       string // User-events->Event table.
 	UserFeatures                     string // User-features->Feature table.
 	UserHistory                      string // UserHistory table.
+	Event                            string // Event table.
+	EventHistory                     string // EventHistory table.
+	OauthProvider                    string // OauthProvider table.
+	OauthProviderHistory             string // OauthProviderHistory table.
+	OrgMembership                    string // OrgMembership table.
+	OrgMembershipEvents              string // OrgMembership-events->Event table.
+	OrgMembershipHistory             string // OrgMembershipHistory table.
+	Hush                             string // Hush table.
+	HushEvents                       string // Hush-events->Event table.
+	HushHistory                      string // HushHistory table.
+	DocumentData                     string // DocumentData table.
+	DocumentDataHistory              string // DocumentDataHistory table.
+	Integration                      string // Integration table.
+	IntegrationSecrets               string // Integration-secrets->Hush table.
+	IntegrationOauth2tokens          string // Integration-oauth2tokens->OhAuthTooToken table.
+	IntegrationEvents                string // Integration-events->Event table.
+	IntegrationWebhooks              string // Integration-webhooks->Webhook table.
+	IntegrationHistory               string // IntegrationHistory table.
+	GroupMembership                  string // GroupMembership table.
+	GroupMembershipEvents            string // GroupMembership-events->Event table.
+	GroupMembershipHistory           string // GroupMembershipHistory table.
+	OrganizationSetting              string // OrganizationSetting table.
+	OrganizationSettingHistory       string // OrganizationSettingHistory table.
 	UserSetting                      string // UserSetting table.
 	UserSettingHistory               string // UserSettingHistory table.
-	Webauthn                         string // Webauthn table.
-	Webhook                          string // Webhook table.
-	WebhookEvents                    string // Webhook-events->Event table.
-	WebhookHistory                   string // WebhookHistory table.
+	Template                         string // Template table.
+	TemplateHistory                  string // TemplateHistory table.
+	Group                            string // Group table.
+	GroupFeatures                    string // Group-features->Feature table.
+	GroupEvents                      string // Group-events->Event table.
+	GroupFiles                       string // Group-files->File table.
+	GroupHistory                     string // GroupHistory table.
+	GroupSetting                     string // GroupSetting table.
+	GroupSettingHistory              string // GroupSettingHistory table.
 }
 
 type schemaCtxKey struct{}

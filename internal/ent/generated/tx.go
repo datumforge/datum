@@ -14,20 +14,26 @@ type Tx struct {
 	config
 	// APIToken is the client for interacting with the APIToken builders.
 	APIToken *APITokenClient
-	// DocumentData is the client for interacting with the DocumentData builders.
-	DocumentData *DocumentDataClient
-	// DocumentDataHistory is the client for interacting with the DocumentDataHistory builders.
-	DocumentDataHistory *DocumentDataHistoryClient
 	// EmailVerificationToken is the client for interacting with the EmailVerificationToken builders.
 	EmailVerificationToken *EmailVerificationTokenClient
-	// Entitlement is the client for interacting with the Entitlement builders.
-	Entitlement *EntitlementClient
-	// EntitlementHistory is the client for interacting with the EntitlementHistory builders.
-	EntitlementHistory *EntitlementHistoryClient
-	// Event is the client for interacting with the Event builders.
-	Event *EventClient
-	// EventHistory is the client for interacting with the EventHistory builders.
-	EventHistory *EventHistoryClient
+	// Invite is the client for interacting with the Invite builders.
+	Invite *InviteClient
+	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
+	OhAuthTooToken *OhAuthTooTokenClient
+	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
+	PersonalAccessToken *PersonalAccessTokenClient
+	// PasswordResetToken is the client for interacting with the PasswordResetToken builders.
+	PasswordResetToken *PasswordResetTokenClient
+	// TFASetting is the client for interacting with the TFASetting builders.
+	TFASetting *TFASettingClient
+	// Subscriber is the client for interacting with the Subscriber builders.
+	Subscriber *SubscriberClient
+	// Webauthn is the client for interacting with the Webauthn builders.
+	Webauthn *WebauthnClient
+	// Webhook is the client for interacting with the Webhook builders.
+	Webhook *WebhookClient
+	// WebhookHistory is the client for interacting with the WebhookHistory builders.
+	WebhookHistory *WebhookHistoryClient
 	// Feature is the client for interacting with the Feature builders.
 	Feature *FeatureClient
 	// FeatureHistory is the client for interacting with the FeatureHistory builders.
@@ -36,72 +42,66 @@ type Tx struct {
 	File *FileClient
 	// FileHistory is the client for interacting with the FileHistory builders.
 	FileHistory *FileHistoryClient
-	// Group is the client for interacting with the Group builders.
-	Group *GroupClient
-	// GroupHistory is the client for interacting with the GroupHistory builders.
-	GroupHistory *GroupHistoryClient
-	// GroupMembership is the client for interacting with the GroupMembership builders.
-	GroupMembership *GroupMembershipClient
-	// GroupMembershipHistory is the client for interacting with the GroupMembershipHistory builders.
-	GroupMembershipHistory *GroupMembershipHistoryClient
-	// GroupSetting is the client for interacting with the GroupSetting builders.
-	GroupSetting *GroupSettingClient
-	// GroupSettingHistory is the client for interacting with the GroupSettingHistory builders.
-	GroupSettingHistory *GroupSettingHistoryClient
-	// Hush is the client for interacting with the Hush builders.
-	Hush *HushClient
-	// HushHistory is the client for interacting with the HushHistory builders.
-	HushHistory *HushHistoryClient
-	// Integration is the client for interacting with the Integration builders.
-	Integration *IntegrationClient
-	// IntegrationHistory is the client for interacting with the IntegrationHistory builders.
-	IntegrationHistory *IntegrationHistoryClient
-	// Invite is the client for interacting with the Invite builders.
-	Invite *InviteClient
-	// OauthProvider is the client for interacting with the OauthProvider builders.
-	OauthProvider *OauthProviderClient
-	// OauthProviderHistory is the client for interacting with the OauthProviderHistory builders.
-	OauthProviderHistory *OauthProviderHistoryClient
-	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
-	OhAuthTooToken *OhAuthTooTokenClient
-	// OrgMembership is the client for interacting with the OrgMembership builders.
-	OrgMembership *OrgMembershipClient
-	// OrgMembershipHistory is the client for interacting with the OrgMembershipHistory builders.
-	OrgMembershipHistory *OrgMembershipHistoryClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// OrganizationHistory is the client for interacting with the OrganizationHistory builders.
 	OrganizationHistory *OrganizationHistoryClient
-	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
-	OrganizationSetting *OrganizationSettingClient
-	// OrganizationSettingHistory is the client for interacting with the OrganizationSettingHistory builders.
-	OrganizationSettingHistory *OrganizationSettingHistoryClient
-	// PasswordResetToken is the client for interacting with the PasswordResetToken builders.
-	PasswordResetToken *PasswordResetTokenClient
-	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
-	PersonalAccessToken *PersonalAccessTokenClient
-	// Subscriber is the client for interacting with the Subscriber builders.
-	Subscriber *SubscriberClient
-	// TFASetting is the client for interacting with the TFASetting builders.
-	TFASetting *TFASettingClient
-	// Template is the client for interacting with the Template builders.
-	Template *TemplateClient
-	// TemplateHistory is the client for interacting with the TemplateHistory builders.
-	TemplateHistory *TemplateHistoryClient
+	// Entitlement is the client for interacting with the Entitlement builders.
+	Entitlement *EntitlementClient
+	// EntitlementHistory is the client for interacting with the EntitlementHistory builders.
+	EntitlementHistory *EntitlementHistoryClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserHistory is the client for interacting with the UserHistory builders.
 	UserHistory *UserHistoryClient
+	// Event is the client for interacting with the Event builders.
+	Event *EventClient
+	// EventHistory is the client for interacting with the EventHistory builders.
+	EventHistory *EventHistoryClient
+	// OauthProvider is the client for interacting with the OauthProvider builders.
+	OauthProvider *OauthProviderClient
+	// OauthProviderHistory is the client for interacting with the OauthProviderHistory builders.
+	OauthProviderHistory *OauthProviderHistoryClient
+	// OrgMembership is the client for interacting with the OrgMembership builders.
+	OrgMembership *OrgMembershipClient
+	// OrgMembershipHistory is the client for interacting with the OrgMembershipHistory builders.
+	OrgMembershipHistory *OrgMembershipHistoryClient
+	// Hush is the client for interacting with the Hush builders.
+	Hush *HushClient
+	// HushHistory is the client for interacting with the HushHistory builders.
+	HushHistory *HushHistoryClient
+	// DocumentData is the client for interacting with the DocumentData builders.
+	DocumentData *DocumentDataClient
+	// DocumentDataHistory is the client for interacting with the DocumentDataHistory builders.
+	DocumentDataHistory *DocumentDataHistoryClient
+	// Integration is the client for interacting with the Integration builders.
+	Integration *IntegrationClient
+	// IntegrationHistory is the client for interacting with the IntegrationHistory builders.
+	IntegrationHistory *IntegrationHistoryClient
+	// GroupMembership is the client for interacting with the GroupMembership builders.
+	GroupMembership *GroupMembershipClient
+	// GroupMembershipHistory is the client for interacting with the GroupMembershipHistory builders.
+	GroupMembershipHistory *GroupMembershipHistoryClient
+	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
+	OrganizationSetting *OrganizationSettingClient
+	// OrganizationSettingHistory is the client for interacting with the OrganizationSettingHistory builders.
+	OrganizationSettingHistory *OrganizationSettingHistoryClient
 	// UserSetting is the client for interacting with the UserSetting builders.
 	UserSetting *UserSettingClient
 	// UserSettingHistory is the client for interacting with the UserSettingHistory builders.
 	UserSettingHistory *UserSettingHistoryClient
-	// Webauthn is the client for interacting with the Webauthn builders.
-	Webauthn *WebauthnClient
-	// Webhook is the client for interacting with the Webhook builders.
-	Webhook *WebhookClient
-	// WebhookHistory is the client for interacting with the WebhookHistory builders.
-	WebhookHistory *WebhookHistoryClient
+	// Template is the client for interacting with the Template builders.
+	Template *TemplateClient
+	// TemplateHistory is the client for interacting with the TemplateHistory builders.
+	TemplateHistory *TemplateHistoryClient
+	// Group is the client for interacting with the Group builders.
+	Group *GroupClient
+	// GroupHistory is the client for interacting with the GroupHistory builders.
+	GroupHistory *GroupHistoryClient
+	// GroupSetting is the client for interacting with the GroupSetting builders.
+	GroupSetting *GroupSettingClient
+	// GroupSettingHistory is the client for interacting with the GroupSettingHistory builders.
+	GroupSettingHistory *GroupSettingHistoryClient
 
 	// lazily loaded.
 	client     *Client
@@ -234,50 +234,50 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.APIToken = NewAPITokenClient(tx.config)
-	tx.DocumentData = NewDocumentDataClient(tx.config)
-	tx.DocumentDataHistory = NewDocumentDataHistoryClient(tx.config)
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
-	tx.Entitlement = NewEntitlementClient(tx.config)
-	tx.EntitlementHistory = NewEntitlementHistoryClient(tx.config)
-	tx.Event = NewEventClient(tx.config)
-	tx.EventHistory = NewEventHistoryClient(tx.config)
+	tx.Invite = NewInviteClient(tx.config)
+	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
+	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
+	tx.PasswordResetToken = NewPasswordResetTokenClient(tx.config)
+	tx.TFASetting = NewTFASettingClient(tx.config)
+	tx.Subscriber = NewSubscriberClient(tx.config)
+	tx.Webauthn = NewWebauthnClient(tx.config)
+	tx.Webhook = NewWebhookClient(tx.config)
+	tx.WebhookHistory = NewWebhookHistoryClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)
 	tx.FeatureHistory = NewFeatureHistoryClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.FileHistory = NewFileHistoryClient(tx.config)
-	tx.Group = NewGroupClient(tx.config)
-	tx.GroupHistory = NewGroupHistoryClient(tx.config)
-	tx.GroupMembership = NewGroupMembershipClient(tx.config)
-	tx.GroupMembershipHistory = NewGroupMembershipHistoryClient(tx.config)
-	tx.GroupSetting = NewGroupSettingClient(tx.config)
-	tx.GroupSettingHistory = NewGroupSettingHistoryClient(tx.config)
-	tx.Hush = NewHushClient(tx.config)
-	tx.HushHistory = NewHushHistoryClient(tx.config)
-	tx.Integration = NewIntegrationClient(tx.config)
-	tx.IntegrationHistory = NewIntegrationHistoryClient(tx.config)
-	tx.Invite = NewInviteClient(tx.config)
-	tx.OauthProvider = NewOauthProviderClient(tx.config)
-	tx.OauthProviderHistory = NewOauthProviderHistoryClient(tx.config)
-	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
-	tx.OrgMembership = NewOrgMembershipClient(tx.config)
-	tx.OrgMembershipHistory = NewOrgMembershipHistoryClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
 	tx.OrganizationHistory = NewOrganizationHistoryClient(tx.config)
-	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
-	tx.OrganizationSettingHistory = NewOrganizationSettingHistoryClient(tx.config)
-	tx.PasswordResetToken = NewPasswordResetTokenClient(tx.config)
-	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
-	tx.Subscriber = NewSubscriberClient(tx.config)
-	tx.TFASetting = NewTFASettingClient(tx.config)
-	tx.Template = NewTemplateClient(tx.config)
-	tx.TemplateHistory = NewTemplateHistoryClient(tx.config)
+	tx.Entitlement = NewEntitlementClient(tx.config)
+	tx.EntitlementHistory = NewEntitlementHistoryClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserHistory = NewUserHistoryClient(tx.config)
+	tx.Event = NewEventClient(tx.config)
+	tx.EventHistory = NewEventHistoryClient(tx.config)
+	tx.OauthProvider = NewOauthProviderClient(tx.config)
+	tx.OauthProviderHistory = NewOauthProviderHistoryClient(tx.config)
+	tx.OrgMembership = NewOrgMembershipClient(tx.config)
+	tx.OrgMembershipHistory = NewOrgMembershipHistoryClient(tx.config)
+	tx.Hush = NewHushClient(tx.config)
+	tx.HushHistory = NewHushHistoryClient(tx.config)
+	tx.DocumentData = NewDocumentDataClient(tx.config)
+	tx.DocumentDataHistory = NewDocumentDataHistoryClient(tx.config)
+	tx.Integration = NewIntegrationClient(tx.config)
+	tx.IntegrationHistory = NewIntegrationHistoryClient(tx.config)
+	tx.GroupMembership = NewGroupMembershipClient(tx.config)
+	tx.GroupMembershipHistory = NewGroupMembershipHistoryClient(tx.config)
+	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
+	tx.OrganizationSettingHistory = NewOrganizationSettingHistoryClient(tx.config)
 	tx.UserSetting = NewUserSettingClient(tx.config)
 	tx.UserSettingHistory = NewUserSettingHistoryClient(tx.config)
-	tx.Webauthn = NewWebauthnClient(tx.config)
-	tx.Webhook = NewWebhookClient(tx.config)
-	tx.WebhookHistory = NewWebhookHistoryClient(tx.config)
+	tx.Template = NewTemplateClient(tx.config)
+	tx.TemplateHistory = NewTemplateHistoryClient(tx.config)
+	tx.Group = NewGroupClient(tx.config)
+	tx.GroupHistory = NewGroupHistoryClient(tx.config)
+	tx.GroupSetting = NewGroupSettingClient(tx.config)
+	tx.GroupSettingHistory = NewGroupSettingHistoryClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

@@ -149,8 +149,6 @@ github.com/datumforge/echox v0.1.1 h1:0R+XIF/eRoDFaXIc9SePdRvda/UPWhkn/RQUuwBCCF
 github.com/datumforge/echox v0.1.1/go.mod h1:hRNX2nV40eVFbV9GY/Gq4EaCjZypHScOzd2Ro3OYAiw=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PBRCAXbE29GW+HJXm8a99x0mGtSSE8iHM=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
-github.com/datumforge/enthistory v0.0.9 h1:jA1zvzoqTXfBtPhuWrZhqoeCUB6gGMpBXSA1MO8923U=
-github.com/datumforge/enthistory v0.0.9/go.mod h1:QVPj2xf/7bSWf8iXsyHKR5j8r+CKYGSbHYeS6lwg28U=
 github.com/datumforge/entx v0.2.1 h1:bdP6g+hS9KKvC4773Kk1yw4M0ctrJ3ifBw7Jx0Mroic=
 github.com/datumforge/entx v0.2.1/go.mod h1:ApJNGbAj3Wpa00UU2HGOWSjqqAUWnw2UtneD0pbu960=
 github.com/datumforge/fgax v0.2.1 h1:Vs/0gNn2MgwKfv1rPBuahODnBw0c2MQ2fgeKr+hT6/o=

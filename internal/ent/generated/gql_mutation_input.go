@@ -153,19 +153,24 @@ func (c *APITokenUpdateOne) SetInput(i UpdateAPITokenInput) *APITokenUpdateOne {
 	return c
 }
 
-// CreateDocumentDataInput represents a mutation input for creating documentdataslice.
-type CreateDocumentDataInput struct {
-	CreatedAt  *time.Time
-	UpdatedAt  *time.Time
-	CreatedBy  *string
-	UpdatedBy  *string
-	Tags       []string
-	Data       customtypes.JSONObject
-	TemplateID string
+// CreateInviteInput represents a mutation input for creating invites.
+type CreateInviteInput struct {
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Expires      time.Time
+	Recipient    string
+	Status       *enums.InviteStatus
+	Role         *enums.Role
+	SendAttempts *int
+	RequestorID  string
+	OwnerID      *string
+	EventIDs     []string
 }
 
-// Mutate applies the CreateDocumentDataInput on the DocumentDataMutation builder.
-func (i *CreateDocumentDataInput) Mutate(m *DocumentDataMutation) {
+// Mutate applies the CreateInviteInput on the InviteMutation builder.
+func (i *CreateInviteInput) Mutate(m *InviteMutation) {
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
@@ -178,177 +183,52 @@ func (i *CreateDocumentDataInput) Mutate(m *DocumentDataMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
+	m.SetExpires(i.Expires)
+	m.SetRecipient(i.Recipient)
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
 	}
-	if v := i.Data; v != nil {
-		m.SetData(v)
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
 	}
-	m.SetTemplateID(i.TemplateID)
-}
-
-// SetInput applies the change-set in the CreateDocumentDataInput on the DocumentDataCreate builder.
-func (c *DocumentDataCreate) SetInput(i CreateDocumentDataInput) *DocumentDataCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateDocumentDataInput represents a mutation input for updating documentdataslice.
-type UpdateDocumentDataInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	ClearTags      bool
-	Tags           []string
-	AppendTags     []string
-	Data           customtypes.JSONObject
-	TemplateID     *string
-}
-
-// Mutate applies the UpdateDocumentDataInput on the DocumentDataMutation builder.
-func (i *UpdateDocumentDataInput) Mutate(m *DocumentDataMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
+	if v := i.SendAttempts; v != nil {
+		m.SetSendAttempts(*v)
 	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Data; v != nil {
-		m.SetData(v)
-	}
-	if v := i.TemplateID; v != nil {
-		m.SetTemplateID(*v)
-	}
-}
-
-// SetInput applies the change-set in the UpdateDocumentDataInput on the DocumentDataUpdate builder.
-func (c *DocumentDataUpdate) SetInput(i UpdateDocumentDataInput) *DocumentDataUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateDocumentDataInput on the DocumentDataUpdateOne builder.
-func (c *DocumentDataUpdateOne) SetInput(i UpdateDocumentDataInput) *DocumentDataUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateEntitlementInput represents a mutation input for creating entitlements.
-type CreateEntitlementInput struct {
-	CreatedAt              *time.Time
-	UpdatedAt              *time.Time
-	CreatedBy              *string
-	UpdatedBy              *string
-	Tags                   []string
-	Tier                   *enums.Tier
-	ExternalCustomerID     *string
-	ExternalSubscriptionID *string
-	Expires                *bool
-	ExpiresAt              *time.Time
-	Cancelled              *bool
-	OwnerID                *string
-	FeatureIDs             []string
-	EventIDs               []string
-}
-
-// Mutate applies the CreateEntitlementInput on the EntitlementMutation builder.
-func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if v := i.Tier; v != nil {
-		m.SetTier(*v)
-	}
-	if v := i.ExternalCustomerID; v != nil {
-		m.SetExternalCustomerID(*v)
-	}
-	if v := i.ExternalSubscriptionID; v != nil {
-		m.SetExternalSubscriptionID(*v)
-	}
-	if v := i.Expires; v != nil {
-		m.SetExpires(*v)
-	}
-	if v := i.ExpiresAt; v != nil {
-		m.SetExpiresAt(*v)
-	}
-	if v := i.Cancelled; v != nil {
-		m.SetCancelled(*v)
-	}
+	m.SetRequestorID(i.RequestorID)
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
-	}
-	if v := i.FeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
 	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
 }
 
-// SetInput applies the change-set in the CreateEntitlementInput on the EntitlementCreate builder.
-func (c *EntitlementCreate) SetInput(i CreateEntitlementInput) *EntitlementCreate {
+// SetInput applies the change-set in the CreateInviteInput on the InviteCreate builder.
+func (c *InviteCreate) SetInput(i CreateInviteInput) *InviteCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateEntitlementInput represents a mutation input for updating entitlements.
-type UpdateEntitlementInput struct {
-	ClearUpdatedAt              bool
-	UpdatedAt                   *time.Time
-	ClearUpdatedBy              bool
-	UpdatedBy                   *string
-	ClearTags                   bool
-	Tags                        []string
-	AppendTags                  []string
-	Tier                        *enums.Tier
-	ClearExternalCustomerID     bool
-	ExternalCustomerID          *string
-	ClearExternalSubscriptionID bool
-	ExternalSubscriptionID      *string
-	Expires                     *bool
-	ClearExpiresAt              bool
-	ExpiresAt                   *time.Time
-	Cancelled                   *bool
-	ClearOwner                  bool
-	OwnerID                     *string
-	ClearFeatures               bool
-	AddFeatureIDs               []string
-	RemoveFeatureIDs            []string
-	ClearEvents                 bool
-	AddEventIDs                 []string
-	RemoveEventIDs              []string
+// UpdateInviteInput represents a mutation input for updating invites.
+type UpdateInviteInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Expires        *time.Time
+	Recipient      *string
+	Status         *enums.InviteStatus
+	Role           *enums.Role
+	SendAttempts   *int
+	ClearOwner     bool
+	OwnerID        *string
+	ClearEvents    bool
+	AddEventIDs    []string
+	RemoveEventIDs []string
 }
 
-// Mutate applies the UpdateEntitlementInput on the EntitlementMutation builder.
-func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
+// Mutate applies the UpdateInviteInput on the InviteMutation builder.
+func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
 	if i.ClearUpdatedAt {
 		m.ClearUpdatedAt()
 	}
@@ -361,56 +241,26 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Tier; v != nil {
-		m.SetTier(*v)
-	}
-	if i.ClearExternalCustomerID {
-		m.ClearExternalCustomerID()
-	}
-	if v := i.ExternalCustomerID; v != nil {
-		m.SetExternalCustomerID(*v)
-	}
-	if i.ClearExternalSubscriptionID {
-		m.ClearExternalSubscriptionID()
-	}
-	if v := i.ExternalSubscriptionID; v != nil {
-		m.SetExternalSubscriptionID(*v)
-	}
 	if v := i.Expires; v != nil {
 		m.SetExpires(*v)
 	}
-	if i.ClearExpiresAt {
-		m.ClearExpiresAt()
+	if v := i.Recipient; v != nil {
+		m.SetRecipient(*v)
 	}
-	if v := i.ExpiresAt; v != nil {
-		m.SetExpiresAt(*v)
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
 	}
-	if v := i.Cancelled; v != nil {
-		m.SetCancelled(*v)
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if v := i.SendAttempts; v != nil {
+		m.SetSendAttempts(*v)
 	}
 	if i.ClearOwner {
 		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
-	}
-	if i.ClearFeatures {
-		m.ClearFeatures()
-	}
-	if v := i.AddFeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
-	if v := i.RemoveFeatureIDs; len(v) > 0 {
-		m.RemoveFeatureIDs(v...)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()
@@ -423,45 +273,223 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	}
 }
 
-// SetInput applies the change-set in the UpdateEntitlementInput on the EntitlementUpdate builder.
-func (c *EntitlementUpdate) SetInput(i UpdateEntitlementInput) *EntitlementUpdate {
+// SetInput applies the change-set in the UpdateInviteInput on the InviteUpdate builder.
+func (c *InviteUpdate) SetInput(i UpdateInviteInput) *InviteUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateEntitlementInput on the EntitlementUpdateOne builder.
-func (c *EntitlementUpdateOne) SetInput(i UpdateEntitlementInput) *EntitlementUpdateOne {
+// SetInput applies the change-set in the UpdateInviteInput on the InviteUpdateOne builder.
+func (c *InviteUpdateOne) SetInput(i UpdateInviteInput) *InviteUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// CreateEventInput represents a mutation input for creating events.
-type CreateEventInput struct {
-	CreatedAt              *time.Time
-	UpdatedAt              *time.Time
-	CreatedBy              *string
-	UpdatedBy              *string
-	Tags                   []string
-	EventID                *string
-	CorrelationID          *string
-	EventType              string
-	Metadata               map[string]interface{}
-	UserIDs                []string
-	GroupIDs               []string
-	IntegrationIDs         []string
-	OrganizationIDs        []string
-	InviteIDs              []string
-	FeatureIDs             []string
-	PersonalAccessTokenIDs []string
-	Oauth2tokenIDs         []string
-	HushIDs                []string
-	EntitlementIDs         []string
-	WebhookIDs             []string
-	SubscriberIDs          []string
+// CreateOhAuthTooTokenInput represents a mutation input for creating ohauthtootokens.
+type CreateOhAuthTooTokenInput struct {
+	Tags                    []string
+	ClientID                string
+	Scopes                  []string
+	Nonce                   string
+	ClaimsUserID            string
+	ClaimsUsername          string
+	ClaimsEmail             string
+	ClaimsEmailVerified     bool
+	ClaimsGroups            []string
+	ClaimsPreferredUsername string
+	ConnectorID             string
+	ConnectorData           []string
+	LastUsed                *time.Time
+	IntegrationIDs          []string
+	EventIDs                []string
 }
 
-// Mutate applies the CreateEventInput on the EventMutation builder.
-func (i *CreateEventInput) Mutate(m *EventMutation) {
+// Mutate applies the CreateOhAuthTooTokenInput on the OhAuthTooTokenMutation builder.
+func (i *CreateOhAuthTooTokenInput) Mutate(m *OhAuthTooTokenMutation) {
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	m.SetClientID(i.ClientID)
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
+	}
+	m.SetNonce(i.Nonce)
+	m.SetClaimsUserID(i.ClaimsUserID)
+	m.SetClaimsUsername(i.ClaimsUsername)
+	m.SetClaimsEmail(i.ClaimsEmail)
+	m.SetClaimsEmailVerified(i.ClaimsEmailVerified)
+	if v := i.ClaimsGroups; v != nil {
+		m.SetClaimsGroups(v)
+	}
+	m.SetClaimsPreferredUsername(i.ClaimsPreferredUsername)
+	m.SetConnectorID(i.ConnectorID)
+	if v := i.ConnectorData; v != nil {
+		m.SetConnectorData(v)
+	}
+	if v := i.LastUsed; v != nil {
+		m.SetLastUsed(*v)
+	}
+	if v := i.IntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateOhAuthTooTokenInput on the OhAuthTooTokenCreate builder.
+func (c *OhAuthTooTokenCreate) SetInput(i CreateOhAuthTooTokenInput) *OhAuthTooTokenCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOhAuthTooTokenInput represents a mutation input for updating ohauthtootokens.
+type UpdateOhAuthTooTokenInput struct {
+	ClearTags               bool
+	Tags                    []string
+	AppendTags              []string
+	ClientID                *string
+	ClearScopes             bool
+	Scopes                  []string
+	AppendScopes            []string
+	Nonce                   *string
+	ClaimsUserID            *string
+	ClaimsUsername          *string
+	ClaimsEmail             *string
+	ClaimsEmailVerified     *bool
+	ClearClaimsGroups       bool
+	ClaimsGroups            []string
+	AppendClaimsGroups      []string
+	ClaimsPreferredUsername *string
+	ConnectorID             *string
+	ClearConnectorData      bool
+	ConnectorData           []string
+	AppendConnectorData     []string
+	LastUsed                *time.Time
+	ClearIntegration        bool
+	AddIntegrationIDs       []string
+	RemoveIntegrationIDs    []string
+	ClearEvents             bool
+	AddEventIDs             []string
+	RemoveEventIDs          []string
+}
+
+// Mutate applies the UpdateOhAuthTooTokenInput on the OhAuthTooTokenMutation builder.
+func (i *UpdateOhAuthTooTokenInput) Mutate(m *OhAuthTooTokenMutation) {
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.ClientID; v != nil {
+		m.SetClientID(*v)
+	}
+	if i.ClearScopes {
+		m.ClearScopes()
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
+	}
+	if i.AppendScopes != nil {
+		m.AppendScopes(i.Scopes)
+	}
+	if v := i.Nonce; v != nil {
+		m.SetNonce(*v)
+	}
+	if v := i.ClaimsUserID; v != nil {
+		m.SetClaimsUserID(*v)
+	}
+	if v := i.ClaimsUsername; v != nil {
+		m.SetClaimsUsername(*v)
+	}
+	if v := i.ClaimsEmail; v != nil {
+		m.SetClaimsEmail(*v)
+	}
+	if v := i.ClaimsEmailVerified; v != nil {
+		m.SetClaimsEmailVerified(*v)
+	}
+	if i.ClearClaimsGroups {
+		m.ClearClaimsGroups()
+	}
+	if v := i.ClaimsGroups; v != nil {
+		m.SetClaimsGroups(v)
+	}
+	if i.AppendClaimsGroups != nil {
+		m.AppendClaimsGroups(i.ClaimsGroups)
+	}
+	if v := i.ClaimsPreferredUsername; v != nil {
+		m.SetClaimsPreferredUsername(*v)
+	}
+	if v := i.ConnectorID; v != nil {
+		m.SetConnectorID(*v)
+	}
+	if i.ClearConnectorData {
+		m.ClearConnectorData()
+	}
+	if v := i.ConnectorData; v != nil {
+		m.SetConnectorData(v)
+	}
+	if i.AppendConnectorData != nil {
+		m.AppendConnectorData(i.ConnectorData)
+	}
+	if v := i.LastUsed; v != nil {
+		m.SetLastUsed(*v)
+	}
+	if i.ClearIntegration {
+		m.ClearIntegration()
+	}
+	if v := i.AddIntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.RemoveIntegrationIDs; len(v) > 0 {
+		m.RemoveIntegrationIDs(v...)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOhAuthTooTokenInput on the OhAuthTooTokenUpdate builder.
+func (c *OhAuthTooTokenUpdate) SetInput(i UpdateOhAuthTooTokenInput) *OhAuthTooTokenUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOhAuthTooTokenInput on the OhAuthTooTokenUpdateOne builder.
+func (c *OhAuthTooTokenUpdateOne) SetInput(i UpdateOhAuthTooTokenInput) *OhAuthTooTokenUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreatePersonalAccessTokenInput represents a mutation input for creating personalaccesstokens.
+type CreatePersonalAccessTokenInput struct {
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *string
+	UpdatedBy       *string
+	Tags            []string
+	Name            string
+	ExpiresAt       time.Time
+	Description     *string
+	Scopes          []string
+	LastUsedAt      *time.Time
+	OwnerID         string
+	OrganizationIDs []string
+	EventIDs        []string
+}
+
+// Mutate applies the CreatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
+func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
@@ -477,116 +505,59 @@ func (i *CreateEventInput) Mutate(m *EventMutation) {
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
-	if v := i.EventID; v != nil {
-		m.SetEventID(*v)
+	m.SetName(i.Name)
+	m.SetExpiresAt(i.ExpiresAt)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
 	}
-	if v := i.CorrelationID; v != nil {
-		m.SetCorrelationID(*v)
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
 	}
-	m.SetEventType(i.EventType)
-	if v := i.Metadata; v != nil {
-		m.SetMetadata(v)
+	if v := i.LastUsedAt; v != nil {
+		m.SetLastUsedAt(*v)
 	}
-	if v := i.UserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
-	}
-	if v := i.GroupIDs; len(v) > 0 {
-		m.AddGroupIDs(v...)
-	}
-	if v := i.IntegrationIDs; len(v) > 0 {
-		m.AddIntegrationIDs(v...)
-	}
+	m.SetOwnerID(i.OwnerID)
 	if v := i.OrganizationIDs; len(v) > 0 {
 		m.AddOrganizationIDs(v...)
 	}
-	if v := i.InviteIDs; len(v) > 0 {
-		m.AddInviteIDs(v...)
-	}
-	if v := i.FeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
-	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
-		m.AddPersonalAccessTokenIDs(v...)
-	}
-	if v := i.Oauth2tokenIDs; len(v) > 0 {
-		m.AddOauth2tokenIDs(v...)
-	}
-	if v := i.HushIDs; len(v) > 0 {
-		m.AddHushIDs(v...)
-	}
-	if v := i.EntitlementIDs; len(v) > 0 {
-		m.AddEntitlementIDs(v...)
-	}
-	if v := i.WebhookIDs; len(v) > 0 {
-		m.AddWebhookIDs(v...)
-	}
-	if v := i.SubscriberIDs; len(v) > 0 {
-		m.AddSubscriberIDs(v...)
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
 	}
 }
 
-// SetInput applies the change-set in the CreateEventInput on the EventCreate builder.
-func (c *EventCreate) SetInput(i CreateEventInput) *EventCreate {
+// SetInput applies the change-set in the CreatePersonalAccessTokenInput on the PersonalAccessTokenCreate builder.
+func (c *PersonalAccessTokenCreate) SetInput(i CreatePersonalAccessTokenInput) *PersonalAccessTokenCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateEventInput represents a mutation input for updating events.
-type UpdateEventInput struct {
-	ClearUpdatedAt               bool
-	UpdatedAt                    *time.Time
-	ClearUpdatedBy               bool
-	UpdatedBy                    *string
-	ClearTags                    bool
-	Tags                         []string
-	AppendTags                   []string
-	ClearEventID                 bool
-	EventID                      *string
-	ClearCorrelationID           bool
-	CorrelationID                *string
-	EventType                    *string
-	ClearMetadata                bool
-	Metadata                     map[string]interface{}
-	ClearUser                    bool
-	AddUserIDs                   []string
-	RemoveUserIDs                []string
-	ClearGroup                   bool
-	AddGroupIDs                  []string
-	RemoveGroupIDs               []string
-	ClearIntegration             bool
-	AddIntegrationIDs            []string
-	RemoveIntegrationIDs         []string
-	ClearOrganization            bool
-	AddOrganizationIDs           []string
-	RemoveOrganizationIDs        []string
-	ClearInvite                  bool
-	AddInviteIDs                 []string
-	RemoveInviteIDs              []string
-	ClearFeature                 bool
-	AddFeatureIDs                []string
-	RemoveFeatureIDs             []string
-	ClearPersonalAccessToken     bool
-	AddPersonalAccessTokenIDs    []string
-	RemovePersonalAccessTokenIDs []string
-	ClearOauth2token             bool
-	AddOauth2tokenIDs            []string
-	RemoveOauth2tokenIDs         []string
-	ClearHush                    bool
-	AddHushIDs                   []string
-	RemoveHushIDs                []string
-	ClearEntitlement             bool
-	AddEntitlementIDs            []string
-	RemoveEntitlementIDs         []string
-	ClearWebhook                 bool
-	AddWebhookIDs                []string
-	RemoveWebhookIDs             []string
-	ClearSubscriber              bool
-	AddSubscriberIDs             []string
-	RemoveSubscriberIDs          []string
+// UpdatePersonalAccessTokenInput represents a mutation input for updating personalaccesstokens.
+type UpdatePersonalAccessTokenInput struct {
+	ClearUpdatedAt        bool
+	UpdatedAt             *time.Time
+	ClearUpdatedBy        bool
+	UpdatedBy             *string
+	ClearTags             bool
+	Tags                  []string
+	AppendTags            []string
+	Name                  *string
+	ClearDescription      bool
+	Description           *string
+	ClearScopes           bool
+	Scopes                []string
+	AppendScopes          []string
+	ClearLastUsedAt       bool
+	LastUsedAt            *time.Time
+	ClearOrganizations    bool
+	AddOrganizationIDs    []string
+	RemoveOrganizationIDs []string
+	ClearEvents           bool
+	AddEventIDs           []string
+	RemoveEventIDs        []string
 }
 
-// Mutate applies the UpdateEventInput on the EventMutation builder.
-func (i *UpdateEventInput) Mutate(m *EventMutation) {
+// Mutate applies the UpdatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
+func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
 	if i.ClearUpdatedAt {
 		m.ClearUpdatedAt()
 	}
@@ -608,56 +579,32 @@ func (i *UpdateEventInput) Mutate(m *EventMutation) {
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
-	if i.ClearEventID {
-		m.ClearEventID()
+	if v := i.Name; v != nil {
+		m.SetName(*v)
 	}
-	if v := i.EventID; v != nil {
-		m.SetEventID(*v)
+	if i.ClearDescription {
+		m.ClearDescription()
 	}
-	if i.ClearCorrelationID {
-		m.ClearCorrelationID()
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
 	}
-	if v := i.CorrelationID; v != nil {
-		m.SetCorrelationID(*v)
+	if i.ClearScopes {
+		m.ClearScopes()
 	}
-	if v := i.EventType; v != nil {
-		m.SetEventType(*v)
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
 	}
-	if i.ClearMetadata {
-		m.ClearMetadata()
+	if i.AppendScopes != nil {
+		m.AppendScopes(i.Scopes)
 	}
-	if v := i.Metadata; v != nil {
-		m.SetMetadata(v)
+	if i.ClearLastUsedAt {
+		m.ClearLastUsedAt()
 	}
-	if i.ClearUser {
-		m.ClearUser()
+	if v := i.LastUsedAt; v != nil {
+		m.SetLastUsedAt(*v)
 	}
-	if v := i.AddUserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
-	}
-	if v := i.RemoveUserIDs; len(v) > 0 {
-		m.RemoveUserIDs(v...)
-	}
-	if i.ClearGroup {
-		m.ClearGroup()
-	}
-	if v := i.AddGroupIDs; len(v) > 0 {
-		m.AddGroupIDs(v...)
-	}
-	if v := i.RemoveGroupIDs; len(v) > 0 {
-		m.RemoveGroupIDs(v...)
-	}
-	if i.ClearIntegration {
-		m.ClearIntegration()
-	}
-	if v := i.AddIntegrationIDs; len(v) > 0 {
-		m.AddIntegrationIDs(v...)
-	}
-	if v := i.RemoveIntegrationIDs; len(v) > 0 {
-		m.RemoveIntegrationIDs(v...)
-	}
-	if i.ClearOrganization {
-		m.ClearOrganization()
+	if i.ClearOrganizations {
+		m.ClearOrganizations()
 	}
 	if v := i.AddOrganizationIDs; len(v) > 0 {
 		m.AddOrganizationIDs(v...)
@@ -665,88 +612,449 @@ func (i *UpdateEventInput) Mutate(m *EventMutation) {
 	if v := i.RemoveOrganizationIDs; len(v) > 0 {
 		m.RemoveOrganizationIDs(v...)
 	}
-	if i.ClearInvite {
-		m.ClearInvite()
+	if i.ClearEvents {
+		m.ClearEvents()
 	}
-	if v := i.AddInviteIDs; len(v) > 0 {
-		m.AddInviteIDs(v...)
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
 	}
-	if v := i.RemoveInviteIDs; len(v) > 0 {
-		m.RemoveInviteIDs(v...)
-	}
-	if i.ClearFeature {
-		m.ClearFeature()
-	}
-	if v := i.AddFeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
-	if v := i.RemoveFeatureIDs; len(v) > 0 {
-		m.RemoveFeatureIDs(v...)
-	}
-	if i.ClearPersonalAccessToken {
-		m.ClearPersonalAccessToken()
-	}
-	if v := i.AddPersonalAccessTokenIDs; len(v) > 0 {
-		m.AddPersonalAccessTokenIDs(v...)
-	}
-	if v := i.RemovePersonalAccessTokenIDs; len(v) > 0 {
-		m.RemovePersonalAccessTokenIDs(v...)
-	}
-	if i.ClearOauth2token {
-		m.ClearOauth2token()
-	}
-	if v := i.AddOauth2tokenIDs; len(v) > 0 {
-		m.AddOauth2tokenIDs(v...)
-	}
-	if v := i.RemoveOauth2tokenIDs; len(v) > 0 {
-		m.RemoveOauth2tokenIDs(v...)
-	}
-	if i.ClearHush {
-		m.ClearHush()
-	}
-	if v := i.AddHushIDs; len(v) > 0 {
-		m.AddHushIDs(v...)
-	}
-	if v := i.RemoveHushIDs; len(v) > 0 {
-		m.RemoveHushIDs(v...)
-	}
-	if i.ClearEntitlement {
-		m.ClearEntitlement()
-	}
-	if v := i.AddEntitlementIDs; len(v) > 0 {
-		m.AddEntitlementIDs(v...)
-	}
-	if v := i.RemoveEntitlementIDs; len(v) > 0 {
-		m.RemoveEntitlementIDs(v...)
-	}
-	if i.ClearWebhook {
-		m.ClearWebhook()
-	}
-	if v := i.AddWebhookIDs; len(v) > 0 {
-		m.AddWebhookIDs(v...)
-	}
-	if v := i.RemoveWebhookIDs; len(v) > 0 {
-		m.RemoveWebhookIDs(v...)
-	}
-	if i.ClearSubscriber {
-		m.ClearSubscriber()
-	}
-	if v := i.AddSubscriberIDs; len(v) > 0 {
-		m.AddSubscriberIDs(v...)
-	}
-	if v := i.RemoveSubscriberIDs; len(v) > 0 {
-		m.RemoveSubscriberIDs(v...)
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
 	}
 }
 
-// SetInput applies the change-set in the UpdateEventInput on the EventUpdate builder.
-func (c *EventUpdate) SetInput(i UpdateEventInput) *EventUpdate {
+// SetInput applies the change-set in the UpdatePersonalAccessTokenInput on the PersonalAccessTokenUpdate builder.
+func (c *PersonalAccessTokenUpdate) SetInput(i UpdatePersonalAccessTokenInput) *PersonalAccessTokenUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateEventInput on the EventUpdateOne builder.
-func (c *EventUpdateOne) SetInput(i UpdateEventInput) *EventUpdateOne {
+// SetInput applies the change-set in the UpdatePersonalAccessTokenInput on the PersonalAccessTokenUpdateOne builder.
+func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput) *PersonalAccessTokenUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateTFASettingInput represents a mutation input for creating tfasettings.
+type CreateTFASettingInput struct {
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	Tags        []string
+	TotpAllowed *bool
+	OwnerID     *string
+}
+
+// Mutate applies the CreateTFASettingInput on the TFASettingMutation builder.
+func (i *CreateTFASettingInput) Mutate(m *TFASettingMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if v := i.TotpAllowed; v != nil {
+		m.SetTotpAllowed(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateTFASettingInput on the TFASettingCreate builder.
+func (c *TFASettingCreate) SetInput(i CreateTFASettingInput) *TFASettingCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTFASettingInput represents a mutation input for updating tfasettings.
+type UpdateTFASettingInput struct {
+	ClearUpdatedAt   bool
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	ClearTags        bool
+	Tags             []string
+	AppendTags       []string
+	Verified         *bool
+	ClearTotpAllowed bool
+	TotpAllowed      *bool
+}
+
+// Mutate applies the UpdateTFASettingInput on the TFASettingMutation builder.
+func (i *UpdateTFASettingInput) Mutate(m *TFASettingMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Verified; v != nil {
+		m.SetVerified(*v)
+	}
+	if i.ClearTotpAllowed {
+		m.ClearTotpAllowed()
+	}
+	if v := i.TotpAllowed; v != nil {
+		m.SetTotpAllowed(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTFASettingInput on the TFASettingUpdate builder.
+func (c *TFASettingUpdate) SetInput(i UpdateTFASettingInput) *TFASettingUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTFASettingInput on the TFASettingUpdateOne builder.
+func (c *TFASettingUpdateOne) SetInput(i UpdateTFASettingInput) *TFASettingUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateSubscriberInput represents a mutation input for creating subscribers.
+type CreateSubscriberInput struct {
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	Tags        []string
+	Email       string
+	PhoneNumber *string
+	OwnerID     *string
+	EventIDs    []string
+}
+
+// Mutate applies the CreateSubscriberInput on the SubscriberMutation builder.
+func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	m.SetEmail(i.Email)
+	if v := i.PhoneNumber; v != nil {
+		m.SetPhoneNumber(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateSubscriberInput on the SubscriberCreate builder.
+func (c *SubscriberCreate) SetInput(i CreateSubscriberInput) *SubscriberCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateSubscriberInput represents a mutation input for updating subscribers.
+type UpdateSubscriberInput struct {
+	ClearUpdatedAt   bool
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	ClearTags        bool
+	Tags             []string
+	AppendTags       []string
+	Email            *string
+	ClearPhoneNumber bool
+	PhoneNumber      *string
+	ClearOwner       bool
+	OwnerID          *string
+	ClearEvents      bool
+	AddEventIDs      []string
+	RemoveEventIDs   []string
+}
+
+// Mutate applies the UpdateSubscriberInput on the SubscriberMutation builder.
+func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Email; v != nil {
+		m.SetEmail(*v)
+	}
+	if i.ClearPhoneNumber {
+		m.ClearPhoneNumber()
+	}
+	if v := i.PhoneNumber; v != nil {
+		m.SetPhoneNumber(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateSubscriberInput on the SubscriberUpdate builder.
+func (c *SubscriberUpdate) SetInput(i UpdateSubscriberInput) *SubscriberUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateSubscriberInput on the SubscriberUpdateOne builder.
+func (c *SubscriberUpdateOne) SetInput(i UpdateSubscriberInput) *SubscriberUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateWebhookInput represents a mutation input for creating webhooks.
+type CreateWebhookInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Tags           []string
+	Name           string
+	Description    *string
+	DestinationURL string
+	Enabled        *bool
+	Failures       *int
+	LastError      *string
+	LastResponse   *string
+	OwnerID        *string
+	EventIDs       []string
+	IntegrationIDs []string
+}
+
+// Mutate applies the CreateWebhookInput on the WebhookMutation builder.
+func (i *CreateWebhookInput) Mutate(m *WebhookMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	m.SetDestinationURL(i.DestinationURL)
+	if v := i.Enabled; v != nil {
+		m.SetEnabled(*v)
+	}
+	if v := i.Failures; v != nil {
+		m.SetFailures(*v)
+	}
+	if v := i.LastError; v != nil {
+		m.SetLastError(*v)
+	}
+	if v := i.LastResponse; v != nil {
+		m.SetLastResponse(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.IntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateWebhookInput on the WebhookCreate builder.
+func (c *WebhookCreate) SetInput(i CreateWebhookInput) *WebhookCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateWebhookInput represents a mutation input for updating webhooks.
+type UpdateWebhookInput struct {
+	ClearUpdatedAt       bool
+	UpdatedAt            *time.Time
+	ClearUpdatedBy       bool
+	UpdatedBy            *string
+	ClearTags            bool
+	Tags                 []string
+	AppendTags           []string
+	Name                 *string
+	ClearDescription     bool
+	Description          *string
+	DestinationURL       *string
+	Enabled              *bool
+	ClearFailures        bool
+	Failures             *int
+	ClearLastError       bool
+	LastError            *string
+	ClearLastResponse    bool
+	LastResponse         *string
+	ClearOwner           bool
+	OwnerID              *string
+	ClearEvents          bool
+	AddEventIDs          []string
+	RemoveEventIDs       []string
+	ClearIntegrations    bool
+	AddIntegrationIDs    []string
+	RemoveIntegrationIDs []string
+}
+
+// Mutate applies the UpdateWebhookInput on the WebhookMutation builder.
+func (i *UpdateWebhookInput) Mutate(m *WebhookMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.DestinationURL; v != nil {
+		m.SetDestinationURL(*v)
+	}
+	if v := i.Enabled; v != nil {
+		m.SetEnabled(*v)
+	}
+	if i.ClearFailures {
+		m.ClearFailures()
+	}
+	if v := i.Failures; v != nil {
+		m.SetFailures(*v)
+	}
+	if i.ClearLastError {
+		m.ClearLastError()
+	}
+	if v := i.LastError; v != nil {
+		m.SetLastError(*v)
+	}
+	if i.ClearLastResponse {
+		m.ClearLastResponse()
+	}
+	if v := i.LastResponse; v != nil {
+		m.SetLastResponse(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+	if i.ClearIntegrations {
+		m.ClearIntegrations()
+	}
+	if v := i.AddIntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.RemoveIntegrationIDs; len(v) > 0 {
+		m.RemoveIntegrationIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateWebhookInput on the WebhookUpdate builder.
+func (c *WebhookUpdate) SetInput(i UpdateWebhookInput) *WebhookUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateWebhookInput on the WebhookUpdateOne builder.
+func (c *WebhookUpdateOne) SetInput(i UpdateWebhookInput) *WebhookUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -1125,1364 +1433,6 @@ func (c *FileUpdate) SetInput(i UpdateFileInput) *FileUpdate {
 
 // SetInput applies the change-set in the UpdateFileInput on the FileUpdateOne builder.
 func (c *FileUpdateOne) SetInput(i UpdateFileInput) *FileUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateGroupInput represents a mutation input for creating groups.
-type CreateGroupInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
-	Tags            []string
-	Name            string
-	Description     *string
-	GravatarLogoURL *string
-	LogoURL         *string
-	DisplayName     *string
-	OwnerID         *string
-	SettingID       string
-	UserIDs         []string
-	FeatureIDs      []string
-	EventIDs        []string
-	IntegrationIDs  []string
-	FileIDs         []string
-}
-
-// Mutate applies the CreateGroupInput on the GroupMutation builder.
-func (i *CreateGroupInput) Mutate(m *GroupMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	m.SetName(i.Name)
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if v := i.GravatarLogoURL; v != nil {
-		m.SetGravatarLogoURL(*v)
-	}
-	if v := i.LogoURL; v != nil {
-		m.SetLogoURL(*v)
-	}
-	if v := i.DisplayName; v != nil {
-		m.SetDisplayName(*v)
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	m.SetSettingID(i.SettingID)
-	if v := i.UserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
-	}
-	if v := i.FeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
-	if v := i.EventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.IntegrationIDs; len(v) > 0 {
-		m.AddIntegrationIDs(v...)
-	}
-	if v := i.FileIDs; len(v) > 0 {
-		m.AddFileIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateGroupInput on the GroupCreate builder.
-func (c *GroupCreate) SetInput(i CreateGroupInput) *GroupCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateGroupInput represents a mutation input for updating groups.
-type UpdateGroupInput struct {
-	ClearUpdatedAt       bool
-	UpdatedAt            *time.Time
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
-	ClearTags            bool
-	Tags                 []string
-	AppendTags           []string
-	Name                 *string
-	ClearDescription     bool
-	Description          *string
-	ClearGravatarLogoURL bool
-	GravatarLogoURL      *string
-	ClearLogoURL         bool
-	LogoURL              *string
-	DisplayName          *string
-	ClearOwner           bool
-	OwnerID              *string
-	SettingID            *string
-	ClearUsers           bool
-	AddUserIDs           []string
-	RemoveUserIDs        []string
-	ClearFeatures        bool
-	AddFeatureIDs        []string
-	RemoveFeatureIDs     []string
-	ClearEvents          bool
-	AddEventIDs          []string
-	RemoveEventIDs       []string
-	ClearIntegrations    bool
-	AddIntegrationIDs    []string
-	RemoveIntegrationIDs []string
-	ClearFiles           bool
-	AddFileIDs           []string
-	RemoveFileIDs        []string
-}
-
-// Mutate applies the UpdateGroupInput on the GroupMutation builder.
-func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
-	if i.ClearDescription {
-		m.ClearDescription()
-	}
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if i.ClearGravatarLogoURL {
-		m.ClearGravatarLogoURL()
-	}
-	if v := i.GravatarLogoURL; v != nil {
-		m.SetGravatarLogoURL(*v)
-	}
-	if i.ClearLogoURL {
-		m.ClearLogoURL()
-	}
-	if v := i.LogoURL; v != nil {
-		m.SetLogoURL(*v)
-	}
-	if v := i.DisplayName; v != nil {
-		m.SetDisplayName(*v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if v := i.SettingID; v != nil {
-		m.SetSettingID(*v)
-	}
-	if i.ClearUsers {
-		m.ClearUsers()
-	}
-	if v := i.AddUserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
-	}
-	if v := i.RemoveUserIDs; len(v) > 0 {
-		m.RemoveUserIDs(v...)
-	}
-	if i.ClearFeatures {
-		m.ClearFeatures()
-	}
-	if v := i.AddFeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
-	if v := i.RemoveFeatureIDs; len(v) > 0 {
-		m.RemoveFeatureIDs(v...)
-	}
-	if i.ClearEvents {
-		m.ClearEvents()
-	}
-	if v := i.AddEventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.RemoveEventIDs; len(v) > 0 {
-		m.RemoveEventIDs(v...)
-	}
-	if i.ClearIntegrations {
-		m.ClearIntegrations()
-	}
-	if v := i.AddIntegrationIDs; len(v) > 0 {
-		m.AddIntegrationIDs(v...)
-	}
-	if v := i.RemoveIntegrationIDs; len(v) > 0 {
-		m.RemoveIntegrationIDs(v...)
-	}
-	if i.ClearFiles {
-		m.ClearFiles()
-	}
-	if v := i.AddFileIDs; len(v) > 0 {
-		m.AddFileIDs(v...)
-	}
-	if v := i.RemoveFileIDs; len(v) > 0 {
-		m.RemoveFileIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateGroupInput on the GroupUpdate builder.
-func (c *GroupUpdate) SetInput(i UpdateGroupInput) *GroupUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateGroupInput on the GroupUpdateOne builder.
-func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateGroupMembershipInput represents a mutation input for creating groupmemberships.
-type CreateGroupMembershipInput struct {
-	CreatedAt *time.Time
-	UpdatedAt *time.Time
-	CreatedBy *string
-	UpdatedBy *string
-	Role      *enums.Role
-	GroupID   string
-	UserID    string
-	EventIDs  []string
-}
-
-// Mutate applies the CreateGroupMembershipInput on the GroupMembershipMutation builder.
-func (i *CreateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Role; v != nil {
-		m.SetRole(*v)
-	}
-	m.SetGroupID(i.GroupID)
-	m.SetUserID(i.UserID)
-	if v := i.EventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateGroupMembershipInput on the GroupMembershipCreate builder.
-func (c *GroupMembershipCreate) SetInput(i CreateGroupMembershipInput) *GroupMembershipCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateGroupMembershipInput represents a mutation input for updating groupmemberships.
-type UpdateGroupMembershipInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	Role           *enums.Role
-	ClearEvents    bool
-	AddEventIDs    []string
-	RemoveEventIDs []string
-}
-
-// Mutate applies the UpdateGroupMembershipInput on the GroupMembershipMutation builder.
-func (i *UpdateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Role; v != nil {
-		m.SetRole(*v)
-	}
-	if i.ClearEvents {
-		m.ClearEvents()
-	}
-	if v := i.AddEventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.RemoveEventIDs; len(v) > 0 {
-		m.RemoveEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateGroupMembershipInput on the GroupMembershipUpdate builder.
-func (c *GroupMembershipUpdate) SetInput(i UpdateGroupMembershipInput) *GroupMembershipUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateGroupMembershipInput on the GroupMembershipUpdateOne builder.
-func (c *GroupMembershipUpdateOne) SetInput(i UpdateGroupMembershipInput) *GroupMembershipUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateGroupSettingInput represents a mutation input for creating groupsettings.
-type CreateGroupSettingInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
-	Tags         []string
-	Visibility   *enums.Visibility
-	JoinPolicy   *enums.JoinPolicy
-	SyncToSlack  *bool
-	SyncToGithub *bool
-	GroupID      *string
-}
-
-// Mutate applies the CreateGroupSettingInput on the GroupSettingMutation builder.
-func (i *CreateGroupSettingInput) Mutate(m *GroupSettingMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if v := i.Visibility; v != nil {
-		m.SetVisibility(*v)
-	}
-	if v := i.JoinPolicy; v != nil {
-		m.SetJoinPolicy(*v)
-	}
-	if v := i.SyncToSlack; v != nil {
-		m.SetSyncToSlack(*v)
-	}
-	if v := i.SyncToGithub; v != nil {
-		m.SetSyncToGithub(*v)
-	}
-	if v := i.GroupID; v != nil {
-		m.SetGroupID(*v)
-	}
-}
-
-// SetInput applies the change-set in the CreateGroupSettingInput on the GroupSettingCreate builder.
-func (c *GroupSettingCreate) SetInput(i CreateGroupSettingInput) *GroupSettingCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateGroupSettingInput represents a mutation input for updating groupsettings.
-type UpdateGroupSettingInput struct {
-	ClearUpdatedAt    bool
-	UpdatedAt         *time.Time
-	ClearUpdatedBy    bool
-	UpdatedBy         *string
-	ClearTags         bool
-	Tags              []string
-	AppendTags        []string
-	Visibility        *enums.Visibility
-	JoinPolicy        *enums.JoinPolicy
-	ClearSyncToSlack  bool
-	SyncToSlack       *bool
-	ClearSyncToGithub bool
-	SyncToGithub      *bool
-	ClearGroup        bool
-	GroupID           *string
-}
-
-// Mutate applies the UpdateGroupSettingInput on the GroupSettingMutation builder.
-func (i *UpdateGroupSettingInput) Mutate(m *GroupSettingMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Visibility; v != nil {
-		m.SetVisibility(*v)
-	}
-	if v := i.JoinPolicy; v != nil {
-		m.SetJoinPolicy(*v)
-	}
-	if i.ClearSyncToSlack {
-		m.ClearSyncToSlack()
-	}
-	if v := i.SyncToSlack; v != nil {
-		m.SetSyncToSlack(*v)
-	}
-	if i.ClearSyncToGithub {
-		m.ClearSyncToGithub()
-	}
-	if v := i.SyncToGithub; v != nil {
-		m.SetSyncToGithub(*v)
-	}
-	if i.ClearGroup {
-		m.ClearGroup()
-	}
-	if v := i.GroupID; v != nil {
-		m.SetGroupID(*v)
-	}
-}
-
-// SetInput applies the change-set in the UpdateGroupSettingInput on the GroupSettingUpdate builder.
-func (c *GroupSettingUpdate) SetInput(i UpdateGroupSettingInput) *GroupSettingUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateGroupSettingInput on the GroupSettingUpdateOne builder.
-func (c *GroupSettingUpdateOne) SetInput(i UpdateGroupSettingInput) *GroupSettingUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateHushInput represents a mutation input for creating hushes.
-type CreateHushInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
-	Name            string
-	Description     *string
-	Kind            *string
-	SecretName      *string
-	SecretValue     *string
-	IntegrationIDs  []string
-	OrganizationIDs []string
-	EventIDs        []string
-}
-
-// Mutate applies the CreateHushInput on the HushMutation builder.
-func (i *CreateHushInput) Mutate(m *HushMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	m.SetName(i.Name)
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if v := i.Kind; v != nil {
-		m.SetKind(*v)
-	}
-	if v := i.SecretName; v != nil {
-		m.SetSecretName(*v)
-	}
-	if v := i.SecretValue; v != nil {
-		m.SetSecretValue(*v)
-	}
-	if v := i.IntegrationIDs; len(v) > 0 {
-		m.AddIntegrationIDs(v...)
-	}
-	if v := i.OrganizationIDs; len(v) > 0 {
-		m.AddOrganizationIDs(v...)
-	}
-	if v := i.EventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateHushInput on the HushCreate builder.
-func (c *HushCreate) SetInput(i CreateHushInput) *HushCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateHushInput represents a mutation input for updating hushes.
-type UpdateHushInput struct {
-	ClearUpdatedAt        bool
-	UpdatedAt             *time.Time
-	ClearUpdatedBy        bool
-	UpdatedBy             *string
-	Name                  *string
-	ClearDescription      bool
-	Description           *string
-	ClearKind             bool
-	Kind                  *string
-	ClearIntegrations     bool
-	AddIntegrationIDs     []string
-	RemoveIntegrationIDs  []string
-	ClearOrganization     bool
-	AddOrganizationIDs    []string
-	RemoveOrganizationIDs []string
-	ClearEvents           bool
-	AddEventIDs           []string
-	RemoveEventIDs        []string
-}
-
-// Mutate applies the UpdateHushInput on the HushMutation builder.
-func (i *UpdateHushInput) Mutate(m *HushMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
-	if i.ClearDescription {
-		m.ClearDescription()
-	}
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if i.ClearKind {
-		m.ClearKind()
-	}
-	if v := i.Kind; v != nil {
-		m.SetKind(*v)
-	}
-	if i.ClearIntegrations {
-		m.ClearIntegrations()
-	}
-	if v := i.AddIntegrationIDs; len(v) > 0 {
-		m.AddIntegrationIDs(v...)
-	}
-	if v := i.RemoveIntegrationIDs; len(v) > 0 {
-		m.RemoveIntegrationIDs(v...)
-	}
-	if i.ClearOrganization {
-		m.ClearOrganization()
-	}
-	if v := i.AddOrganizationIDs; len(v) > 0 {
-		m.AddOrganizationIDs(v...)
-	}
-	if v := i.RemoveOrganizationIDs; len(v) > 0 {
-		m.RemoveOrganizationIDs(v...)
-	}
-	if i.ClearEvents {
-		m.ClearEvents()
-	}
-	if v := i.AddEventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.RemoveEventIDs; len(v) > 0 {
-		m.RemoveEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateHushInput on the HushUpdate builder.
-func (c *HushUpdate) SetInput(i UpdateHushInput) *HushUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateHushInput on the HushUpdateOne builder.
-func (c *HushUpdateOne) SetInput(i UpdateHushInput) *HushUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateIntegrationInput represents a mutation input for creating integrations.
-type CreateIntegrationInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Tags           []string
-	Name           string
-	Description    *string
-	Kind           *string
-	OwnerID        *string
-	SecretIDs      []string
-	Oauth2tokenIDs []string
-	EventIDs       []string
-	WebhookIDs     []string
-}
-
-// Mutate applies the CreateIntegrationInput on the IntegrationMutation builder.
-func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	m.SetName(i.Name)
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if v := i.Kind; v != nil {
-		m.SetKind(*v)
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if v := i.SecretIDs; len(v) > 0 {
-		m.AddSecretIDs(v...)
-	}
-	if v := i.Oauth2tokenIDs; len(v) > 0 {
-		m.AddOauth2tokenIDs(v...)
-	}
-	if v := i.EventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.WebhookIDs; len(v) > 0 {
-		m.AddWebhookIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateIntegrationInput on the IntegrationCreate builder.
-func (c *IntegrationCreate) SetInput(i CreateIntegrationInput) *IntegrationCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateIntegrationInput represents a mutation input for updating integrations.
-type UpdateIntegrationInput struct {
-	ClearUpdatedAt       bool
-	UpdatedAt            *time.Time
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
-	ClearTags            bool
-	Tags                 []string
-	AppendTags           []string
-	Name                 *string
-	ClearDescription     bool
-	Description          *string
-	ClearKind            bool
-	Kind                 *string
-	ClearOwner           bool
-	OwnerID              *string
-	ClearSecrets         bool
-	AddSecretIDs         []string
-	RemoveSecretIDs      []string
-	ClearOauth2tokens    bool
-	AddOauth2tokenIDs    []string
-	RemoveOauth2tokenIDs []string
-	ClearEvents          bool
-	AddEventIDs          []string
-	RemoveEventIDs       []string
-	ClearWebhooks        bool
-	AddWebhookIDs        []string
-	RemoveWebhookIDs     []string
-}
-
-// Mutate applies the UpdateIntegrationInput on the IntegrationMutation builder.
-func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
-	if i.ClearDescription {
-		m.ClearDescription()
-	}
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if i.ClearKind {
-		m.ClearKind()
-	}
-	if v := i.Kind; v != nil {
-		m.SetKind(*v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if i.ClearSecrets {
-		m.ClearSecrets()
-	}
-	if v := i.AddSecretIDs; len(v) > 0 {
-		m.AddSecretIDs(v...)
-	}
-	if v := i.RemoveSecretIDs; len(v) > 0 {
-		m.RemoveSecretIDs(v...)
-	}
-	if i.ClearOauth2tokens {
-		m.ClearOauth2tokens()
-	}
-	if v := i.AddOauth2tokenIDs; len(v) > 0 {
-		m.AddOauth2tokenIDs(v...)
-	}
-	if v := i.RemoveOauth2tokenIDs; len(v) > 0 {
-		m.RemoveOauth2tokenIDs(v...)
-	}
-	if i.ClearEvents {
-		m.ClearEvents()
-	}
-	if v := i.AddEventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.RemoveEventIDs; len(v) > 0 {
-		m.RemoveEventIDs(v...)
-	}
-	if i.ClearWebhooks {
-		m.ClearWebhooks()
-	}
-	if v := i.AddWebhookIDs; len(v) > 0 {
-		m.AddWebhookIDs(v...)
-	}
-	if v := i.RemoveWebhookIDs; len(v) > 0 {
-		m.RemoveWebhookIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateIntegrationInput on the IntegrationUpdate builder.
-func (c *IntegrationUpdate) SetInput(i UpdateIntegrationInput) *IntegrationUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateIntegrationInput on the IntegrationUpdateOne builder.
-func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateInviteInput represents a mutation input for creating invites.
-type CreateInviteInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
-	Expires      time.Time
-	Recipient    string
-	Status       *enums.InviteStatus
-	Role         *enums.Role
-	SendAttempts *int
-	RequestorID  string
-	OwnerID      *string
-	EventIDs     []string
-}
-
-// Mutate applies the CreateInviteInput on the InviteMutation builder.
-func (i *CreateInviteInput) Mutate(m *InviteMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	m.SetExpires(i.Expires)
-	m.SetRecipient(i.Recipient)
-	if v := i.Status; v != nil {
-		m.SetStatus(*v)
-	}
-	if v := i.Role; v != nil {
-		m.SetRole(*v)
-	}
-	if v := i.SendAttempts; v != nil {
-		m.SetSendAttempts(*v)
-	}
-	m.SetRequestorID(i.RequestorID)
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if v := i.EventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateInviteInput on the InviteCreate builder.
-func (c *InviteCreate) SetInput(i CreateInviteInput) *InviteCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateInviteInput represents a mutation input for updating invites.
-type UpdateInviteInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	Expires        *time.Time
-	Recipient      *string
-	Status         *enums.InviteStatus
-	Role           *enums.Role
-	SendAttempts   *int
-	ClearOwner     bool
-	OwnerID        *string
-	ClearEvents    bool
-	AddEventIDs    []string
-	RemoveEventIDs []string
-}
-
-// Mutate applies the UpdateInviteInput on the InviteMutation builder.
-func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Expires; v != nil {
-		m.SetExpires(*v)
-	}
-	if v := i.Recipient; v != nil {
-		m.SetRecipient(*v)
-	}
-	if v := i.Status; v != nil {
-		m.SetStatus(*v)
-	}
-	if v := i.Role; v != nil {
-		m.SetRole(*v)
-	}
-	if v := i.SendAttempts; v != nil {
-		m.SetSendAttempts(*v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if i.ClearEvents {
-		m.ClearEvents()
-	}
-	if v := i.AddEventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.RemoveEventIDs; len(v) > 0 {
-		m.RemoveEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateInviteInput on the InviteUpdate builder.
-func (c *InviteUpdate) SetInput(i UpdateInviteInput) *InviteUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateInviteInput on the InviteUpdateOne builder.
-func (c *InviteUpdateOne) SetInput(i UpdateInviteInput) *InviteUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateOauthProviderInput represents a mutation input for creating oauthproviders.
-type CreateOauthProviderInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
-	Tags         []string
-	Name         string
-	ClientID     string
-	ClientSecret string
-	RedirectURL  string
-	Scopes       string
-	AuthURL      string
-	TokenURL     string
-	AuthStyle    customtypes.Uint8
-	InfoURL      string
-	OwnerID      *string
-}
-
-// Mutate applies the CreateOauthProviderInput on the OauthProviderMutation builder.
-func (i *CreateOauthProviderInput) Mutate(m *OauthProviderMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	m.SetName(i.Name)
-	m.SetClientID(i.ClientID)
-	m.SetClientSecret(i.ClientSecret)
-	m.SetRedirectURL(i.RedirectURL)
-	m.SetScopes(i.Scopes)
-	m.SetAuthURL(i.AuthURL)
-	m.SetTokenURL(i.TokenURL)
-	m.SetAuthStyle(i.AuthStyle)
-	m.SetInfoURL(i.InfoURL)
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-}
-
-// SetInput applies the change-set in the CreateOauthProviderInput on the OauthProviderCreate builder.
-func (c *OauthProviderCreate) SetInput(i CreateOauthProviderInput) *OauthProviderCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateOauthProviderInput represents a mutation input for updating oauthproviders.
-type UpdateOauthProviderInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	ClearTags      bool
-	Tags           []string
-	AppendTags     []string
-	Name           *string
-	ClientID       *string
-	ClientSecret   *string
-	RedirectURL    *string
-	Scopes         *string
-	AuthURL        *string
-	TokenURL       *string
-	AuthStyle      *customtypes.Uint8
-	InfoURL        *string
-	ClearOwner     bool
-	OwnerID        *string
-}
-
-// Mutate applies the UpdateOauthProviderInput on the OauthProviderMutation builder.
-func (i *UpdateOauthProviderInput) Mutate(m *OauthProviderMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
-	if v := i.ClientID; v != nil {
-		m.SetClientID(*v)
-	}
-	if v := i.ClientSecret; v != nil {
-		m.SetClientSecret(*v)
-	}
-	if v := i.RedirectURL; v != nil {
-		m.SetRedirectURL(*v)
-	}
-	if v := i.Scopes; v != nil {
-		m.SetScopes(*v)
-	}
-	if v := i.AuthURL; v != nil {
-		m.SetAuthURL(*v)
-	}
-	if v := i.TokenURL; v != nil {
-		m.SetTokenURL(*v)
-	}
-	if v := i.AuthStyle; v != nil {
-		m.SetAuthStyle(*v)
-	}
-	if v := i.InfoURL; v != nil {
-		m.SetInfoURL(*v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-}
-
-// SetInput applies the change-set in the UpdateOauthProviderInput on the OauthProviderUpdate builder.
-func (c *OauthProviderUpdate) SetInput(i UpdateOauthProviderInput) *OauthProviderUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateOauthProviderInput on the OauthProviderUpdateOne builder.
-func (c *OauthProviderUpdateOne) SetInput(i UpdateOauthProviderInput) *OauthProviderUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateOhAuthTooTokenInput represents a mutation input for creating ohauthtootokens.
-type CreateOhAuthTooTokenInput struct {
-	Tags                    []string
-	ClientID                string
-	Scopes                  []string
-	Nonce                   string
-	ClaimsUserID            string
-	ClaimsUsername          string
-	ClaimsEmail             string
-	ClaimsEmailVerified     bool
-	ClaimsGroups            []string
-	ClaimsPreferredUsername string
-	ConnectorID             string
-	ConnectorData           []string
-	LastUsed                *time.Time
-	IntegrationIDs          []string
-	EventIDs                []string
-}
-
-// Mutate applies the CreateOhAuthTooTokenInput on the OhAuthTooTokenMutation builder.
-func (i *CreateOhAuthTooTokenInput) Mutate(m *OhAuthTooTokenMutation) {
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	m.SetClientID(i.ClientID)
-	if v := i.Scopes; v != nil {
-		m.SetScopes(v)
-	}
-	m.SetNonce(i.Nonce)
-	m.SetClaimsUserID(i.ClaimsUserID)
-	m.SetClaimsUsername(i.ClaimsUsername)
-	m.SetClaimsEmail(i.ClaimsEmail)
-	m.SetClaimsEmailVerified(i.ClaimsEmailVerified)
-	if v := i.ClaimsGroups; v != nil {
-		m.SetClaimsGroups(v)
-	}
-	m.SetClaimsPreferredUsername(i.ClaimsPreferredUsername)
-	m.SetConnectorID(i.ConnectorID)
-	if v := i.ConnectorData; v != nil {
-		m.SetConnectorData(v)
-	}
-	if v := i.LastUsed; v != nil {
-		m.SetLastUsed(*v)
-	}
-	if v := i.IntegrationIDs; len(v) > 0 {
-		m.AddIntegrationIDs(v...)
-	}
-	if v := i.EventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateOhAuthTooTokenInput on the OhAuthTooTokenCreate builder.
-func (c *OhAuthTooTokenCreate) SetInput(i CreateOhAuthTooTokenInput) *OhAuthTooTokenCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateOhAuthTooTokenInput represents a mutation input for updating ohauthtootokens.
-type UpdateOhAuthTooTokenInput struct {
-	ClearTags               bool
-	Tags                    []string
-	AppendTags              []string
-	ClientID                *string
-	ClearScopes             bool
-	Scopes                  []string
-	AppendScopes            []string
-	Nonce                   *string
-	ClaimsUserID            *string
-	ClaimsUsername          *string
-	ClaimsEmail             *string
-	ClaimsEmailVerified     *bool
-	ClearClaimsGroups       bool
-	ClaimsGroups            []string
-	AppendClaimsGroups      []string
-	ClaimsPreferredUsername *string
-	ConnectorID             *string
-	ClearConnectorData      bool
-	ConnectorData           []string
-	AppendConnectorData     []string
-	LastUsed                *time.Time
-	ClearIntegration        bool
-	AddIntegrationIDs       []string
-	RemoveIntegrationIDs    []string
-	ClearEvents             bool
-	AddEventIDs             []string
-	RemoveEventIDs          []string
-}
-
-// Mutate applies the UpdateOhAuthTooTokenInput on the OhAuthTooTokenMutation builder.
-func (i *UpdateOhAuthTooTokenInput) Mutate(m *OhAuthTooTokenMutation) {
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.ClientID; v != nil {
-		m.SetClientID(*v)
-	}
-	if i.ClearScopes {
-		m.ClearScopes()
-	}
-	if v := i.Scopes; v != nil {
-		m.SetScopes(v)
-	}
-	if i.AppendScopes != nil {
-		m.AppendScopes(i.Scopes)
-	}
-	if v := i.Nonce; v != nil {
-		m.SetNonce(*v)
-	}
-	if v := i.ClaimsUserID; v != nil {
-		m.SetClaimsUserID(*v)
-	}
-	if v := i.ClaimsUsername; v != nil {
-		m.SetClaimsUsername(*v)
-	}
-	if v := i.ClaimsEmail; v != nil {
-		m.SetClaimsEmail(*v)
-	}
-	if v := i.ClaimsEmailVerified; v != nil {
-		m.SetClaimsEmailVerified(*v)
-	}
-	if i.ClearClaimsGroups {
-		m.ClearClaimsGroups()
-	}
-	if v := i.ClaimsGroups; v != nil {
-		m.SetClaimsGroups(v)
-	}
-	if i.AppendClaimsGroups != nil {
-		m.AppendClaimsGroups(i.ClaimsGroups)
-	}
-	if v := i.ClaimsPreferredUsername; v != nil {
-		m.SetClaimsPreferredUsername(*v)
-	}
-	if v := i.ConnectorID; v != nil {
-		m.SetConnectorID(*v)
-	}
-	if i.ClearConnectorData {
-		m.ClearConnectorData()
-	}
-	if v := i.ConnectorData; v != nil {
-		m.SetConnectorData(v)
-	}
-	if i.AppendConnectorData != nil {
-		m.AppendConnectorData(i.ConnectorData)
-	}
-	if v := i.LastUsed; v != nil {
-		m.SetLastUsed(*v)
-	}
-	if i.ClearIntegration {
-		m.ClearIntegration()
-	}
-	if v := i.AddIntegrationIDs; len(v) > 0 {
-		m.AddIntegrationIDs(v...)
-	}
-	if v := i.RemoveIntegrationIDs; len(v) > 0 {
-		m.RemoveIntegrationIDs(v...)
-	}
-	if i.ClearEvents {
-		m.ClearEvents()
-	}
-	if v := i.AddEventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.RemoveEventIDs; len(v) > 0 {
-		m.RemoveEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateOhAuthTooTokenInput on the OhAuthTooTokenUpdate builder.
-func (c *OhAuthTooTokenUpdate) SetInput(i UpdateOhAuthTooTokenInput) *OhAuthTooTokenUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateOhAuthTooTokenInput on the OhAuthTooTokenUpdateOne builder.
-func (c *OhAuthTooTokenUpdateOne) SetInput(i UpdateOhAuthTooTokenInput) *OhAuthTooTokenUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateOrgMembershipInput represents a mutation input for creating orgmemberships.
-type CreateOrgMembershipInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Role           *enums.Role
-	OrganizationID string
-	UserID         string
-	EventIDs       []string
-}
-
-// Mutate applies the CreateOrgMembershipInput on the OrgMembershipMutation builder.
-func (i *CreateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Role; v != nil {
-		m.SetRole(*v)
-	}
-	m.SetOrganizationID(i.OrganizationID)
-	m.SetUserID(i.UserID)
-	if v := i.EventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateOrgMembershipInput on the OrgMembershipCreate builder.
-func (c *OrgMembershipCreate) SetInput(i CreateOrgMembershipInput) *OrgMembershipCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateOrgMembershipInput represents a mutation input for updating orgmemberships.
-type UpdateOrgMembershipInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	Role           *enums.Role
-	ClearEvents    bool
-	AddEventIDs    []string
-	RemoveEventIDs []string
-}
-
-// Mutate applies the UpdateOrgMembershipInput on the OrgMembershipMutation builder.
-func (i *UpdateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Role; v != nil {
-		m.SetRole(*v)
-	}
-	if i.ClearEvents {
-		m.ClearEvents()
-	}
-	if v := i.AddEventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.RemoveEventIDs; len(v) > 0 {
-		m.RemoveEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateOrgMembershipInput on the OrgMembershipUpdate builder.
-func (c *OrgMembershipUpdate) SetInput(i UpdateOrgMembershipInput) *OrgMembershipUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateOrgMembershipInput on the OrgMembershipUpdateOne builder.
-func (c *OrgMembershipUpdateOne) SetInput(i UpdateOrgMembershipInput) *OrgMembershipUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -2871,25 +1821,26 @@ func (c *OrganizationUpdateOne) SetInput(i UpdateOrganizationInput) *Organizatio
 	return c
 }
 
-// CreateOrganizationSettingInput represents a mutation input for creating organizationsettings.
-type CreateOrganizationSettingInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Tags           []string
-	Domains        []string
-	BillingContact *string
-	BillingEmail   *string
-	BillingPhone   *string
-	BillingAddress *string
-	TaxIdentifier  *string
-	GeoLocation    *enums.Region
-	OrganizationID *string
+// CreateEntitlementInput represents a mutation input for creating entitlements.
+type CreateEntitlementInput struct {
+	CreatedAt              *time.Time
+	UpdatedAt              *time.Time
+	CreatedBy              *string
+	UpdatedBy              *string
+	Tags                   []string
+	Tier                   *enums.Tier
+	ExternalCustomerID     *string
+	ExternalSubscriptionID *string
+	Expires                *bool
+	ExpiresAt              *time.Time
+	Cancelled              *bool
+	OwnerID                *string
+	FeatureIDs             []string
+	EventIDs               []string
 }
 
-// Mutate applies the CreateOrganizationSettingInput on the OrganizationSettingMutation builder.
-func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
+// Mutate applies the CreateEntitlementInput on the EntitlementMutation builder.
+func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
@@ -2905,241 +1856,71 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
-	if v := i.Domains; v != nil {
-		m.SetDomains(v)
+	if v := i.Tier; v != nil {
+		m.SetTier(*v)
 	}
-	if v := i.BillingContact; v != nil {
-		m.SetBillingContact(*v)
+	if v := i.ExternalCustomerID; v != nil {
+		m.SetExternalCustomerID(*v)
 	}
-	if v := i.BillingEmail; v != nil {
-		m.SetBillingEmail(*v)
+	if v := i.ExternalSubscriptionID; v != nil {
+		m.SetExternalSubscriptionID(*v)
 	}
-	if v := i.BillingPhone; v != nil {
-		m.SetBillingPhone(*v)
+	if v := i.Expires; v != nil {
+		m.SetExpires(*v)
 	}
-	if v := i.BillingAddress; v != nil {
-		m.SetBillingAddress(*v)
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
 	}
-	if v := i.TaxIdentifier; v != nil {
-		m.SetTaxIdentifier(*v)
+	if v := i.Cancelled; v != nil {
+		m.SetCancelled(*v)
 	}
-	if v := i.GeoLocation; v != nil {
-		m.SetGeoLocation(*v)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
-	if v := i.OrganizationID; v != nil {
-		m.SetOrganizationID(*v)
-	}
-}
-
-// SetInput applies the change-set in the CreateOrganizationSettingInput on the OrganizationSettingCreate builder.
-func (c *OrganizationSettingCreate) SetInput(i CreateOrganizationSettingInput) *OrganizationSettingCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateOrganizationSettingInput represents a mutation input for updating organizationsettings.
-type UpdateOrganizationSettingInput struct {
-	ClearUpdatedAt      bool
-	UpdatedAt           *time.Time
-	ClearUpdatedBy      bool
-	UpdatedBy           *string
-	ClearTags           bool
-	Tags                []string
-	AppendTags          []string
-	ClearDomains        bool
-	Domains             []string
-	AppendDomains       []string
-	ClearBillingContact bool
-	BillingContact      *string
-	ClearBillingEmail   bool
-	BillingEmail        *string
-	ClearBillingPhone   bool
-	BillingPhone        *string
-	ClearBillingAddress bool
-	BillingAddress      *string
-	ClearTaxIdentifier  bool
-	TaxIdentifier       *string
-	ClearGeoLocation    bool
-	GeoLocation         *enums.Region
-	ClearOrganization   bool
-	OrganizationID      *string
-}
-
-// Mutate applies the UpdateOrganizationSettingInput on the OrganizationSettingMutation builder.
-func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if i.ClearDomains {
-		m.ClearDomains()
-	}
-	if v := i.Domains; v != nil {
-		m.SetDomains(v)
-	}
-	if i.AppendDomains != nil {
-		m.AppendDomains(i.Domains)
-	}
-	if i.ClearBillingContact {
-		m.ClearBillingContact()
-	}
-	if v := i.BillingContact; v != nil {
-		m.SetBillingContact(*v)
-	}
-	if i.ClearBillingEmail {
-		m.ClearBillingEmail()
-	}
-	if v := i.BillingEmail; v != nil {
-		m.SetBillingEmail(*v)
-	}
-	if i.ClearBillingPhone {
-		m.ClearBillingPhone()
-	}
-	if v := i.BillingPhone; v != nil {
-		m.SetBillingPhone(*v)
-	}
-	if i.ClearBillingAddress {
-		m.ClearBillingAddress()
-	}
-	if v := i.BillingAddress; v != nil {
-		m.SetBillingAddress(*v)
-	}
-	if i.ClearTaxIdentifier {
-		m.ClearTaxIdentifier()
-	}
-	if v := i.TaxIdentifier; v != nil {
-		m.SetTaxIdentifier(*v)
-	}
-	if i.ClearGeoLocation {
-		m.ClearGeoLocation()
-	}
-	if v := i.GeoLocation; v != nil {
-		m.SetGeoLocation(*v)
-	}
-	if i.ClearOrganization {
-		m.ClearOrganization()
-	}
-	if v := i.OrganizationID; v != nil {
-		m.SetOrganizationID(*v)
-	}
-}
-
-// SetInput applies the change-set in the UpdateOrganizationSettingInput on the OrganizationSettingUpdate builder.
-func (c *OrganizationSettingUpdate) SetInput(i UpdateOrganizationSettingInput) *OrganizationSettingUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateOrganizationSettingInput on the OrganizationSettingUpdateOne builder.
-func (c *OrganizationSettingUpdateOne) SetInput(i UpdateOrganizationSettingInput) *OrganizationSettingUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreatePersonalAccessTokenInput represents a mutation input for creating personalaccesstokens.
-type CreatePersonalAccessTokenInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
-	Tags            []string
-	Name            string
-	ExpiresAt       time.Time
-	Description     *string
-	Scopes          []string
-	LastUsedAt      *time.Time
-	OwnerID         string
-	OrganizationIDs []string
-	EventIDs        []string
-}
-
-// Mutate applies the CreatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
-func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	m.SetName(i.Name)
-	m.SetExpiresAt(i.ExpiresAt)
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if v := i.Scopes; v != nil {
-		m.SetScopes(v)
-	}
-	if v := i.LastUsedAt; v != nil {
-		m.SetLastUsedAt(*v)
-	}
-	m.SetOwnerID(i.OwnerID)
-	if v := i.OrganizationIDs; len(v) > 0 {
-		m.AddOrganizationIDs(v...)
+	if v := i.FeatureIDs; len(v) > 0 {
+		m.AddFeatureIDs(v...)
 	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
 }
 
-// SetInput applies the change-set in the CreatePersonalAccessTokenInput on the PersonalAccessTokenCreate builder.
-func (c *PersonalAccessTokenCreate) SetInput(i CreatePersonalAccessTokenInput) *PersonalAccessTokenCreate {
+// SetInput applies the change-set in the CreateEntitlementInput on the EntitlementCreate builder.
+func (c *EntitlementCreate) SetInput(i CreateEntitlementInput) *EntitlementCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdatePersonalAccessTokenInput represents a mutation input for updating personalaccesstokens.
-type UpdatePersonalAccessTokenInput struct {
-	ClearUpdatedAt        bool
-	UpdatedAt             *time.Time
-	ClearUpdatedBy        bool
-	UpdatedBy             *string
-	ClearTags             bool
-	Tags                  []string
-	AppendTags            []string
-	Name                  *string
-	ClearDescription      bool
-	Description           *string
-	ClearScopes           bool
-	Scopes                []string
-	AppendScopes          []string
-	ClearLastUsedAt       bool
-	LastUsedAt            *time.Time
-	ClearOrganizations    bool
-	AddOrganizationIDs    []string
-	RemoveOrganizationIDs []string
-	ClearEvents           bool
-	AddEventIDs           []string
-	RemoveEventIDs        []string
+// UpdateEntitlementInput represents a mutation input for updating entitlements.
+type UpdateEntitlementInput struct {
+	ClearUpdatedAt              bool
+	UpdatedAt                   *time.Time
+	ClearUpdatedBy              bool
+	UpdatedBy                   *string
+	ClearTags                   bool
+	Tags                        []string
+	AppendTags                  []string
+	Tier                        *enums.Tier
+	ClearExternalCustomerID     bool
+	ExternalCustomerID          *string
+	ClearExternalSubscriptionID bool
+	ExternalSubscriptionID      *string
+	Expires                     *bool
+	ClearExpiresAt              bool
+	ExpiresAt                   *time.Time
+	Cancelled                   *bool
+	ClearOwner                  bool
+	OwnerID                     *string
+	ClearFeatures               bool
+	AddFeatureIDs               []string
+	RemoveFeatureIDs            []string
+	ClearEvents                 bool
+	AddEventIDs                 []string
+	RemoveEventIDs              []string
 }
 
-// Mutate applies the UpdatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
-func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
+// Mutate applies the UpdateEntitlementInput on the EntitlementMutation builder.
+func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if i.ClearUpdatedAt {
 		m.ClearUpdatedAt()
 	}
@@ -3161,38 +1942,47 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
-	if v := i.Name; v != nil {
-		m.SetName(*v)
+	if v := i.Tier; v != nil {
+		m.SetTier(*v)
 	}
-	if i.ClearDescription {
-		m.ClearDescription()
+	if i.ClearExternalCustomerID {
+		m.ClearExternalCustomerID()
 	}
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
+	if v := i.ExternalCustomerID; v != nil {
+		m.SetExternalCustomerID(*v)
 	}
-	if i.ClearScopes {
-		m.ClearScopes()
+	if i.ClearExternalSubscriptionID {
+		m.ClearExternalSubscriptionID()
 	}
-	if v := i.Scopes; v != nil {
-		m.SetScopes(v)
+	if v := i.ExternalSubscriptionID; v != nil {
+		m.SetExternalSubscriptionID(*v)
 	}
-	if i.AppendScopes != nil {
-		m.AppendScopes(i.Scopes)
+	if v := i.Expires; v != nil {
+		m.SetExpires(*v)
 	}
-	if i.ClearLastUsedAt {
-		m.ClearLastUsedAt()
+	if i.ClearExpiresAt {
+		m.ClearExpiresAt()
 	}
-	if v := i.LastUsedAt; v != nil {
-		m.SetLastUsedAt(*v)
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
 	}
-	if i.ClearOrganizations {
-		m.ClearOrganizations()
+	if v := i.Cancelled; v != nil {
+		m.SetCancelled(*v)
 	}
-	if v := i.AddOrganizationIDs; len(v) > 0 {
-		m.AddOrganizationIDs(v...)
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
-	if v := i.RemoveOrganizationIDs; len(v) > 0 {
-		m.RemoveOrganizationIDs(v...)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearFeatures {
+		m.ClearFeatures()
+	}
+	if v := i.AddFeatureIDs; len(v) > 0 {
+		m.AddFeatureIDs(v...)
+	}
+	if v := i.RemoveFeatureIDs; len(v) > 0 {
+		m.RemoveFeatureIDs(v...)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()
@@ -3205,400 +1995,14 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	}
 }
 
-// SetInput applies the change-set in the UpdatePersonalAccessTokenInput on the PersonalAccessTokenUpdate builder.
-func (c *PersonalAccessTokenUpdate) SetInput(i UpdatePersonalAccessTokenInput) *PersonalAccessTokenUpdate {
+// SetInput applies the change-set in the UpdateEntitlementInput on the EntitlementUpdate builder.
+func (c *EntitlementUpdate) SetInput(i UpdateEntitlementInput) *EntitlementUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdatePersonalAccessTokenInput on the PersonalAccessTokenUpdateOne builder.
-func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput) *PersonalAccessTokenUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateSubscriberInput represents a mutation input for creating subscribers.
-type CreateSubscriberInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
-	Tags        []string
-	Email       string
-	PhoneNumber *string
-	OwnerID     *string
-	EventIDs    []string
-}
-
-// Mutate applies the CreateSubscriberInput on the SubscriberMutation builder.
-func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	m.SetEmail(i.Email)
-	if v := i.PhoneNumber; v != nil {
-		m.SetPhoneNumber(*v)
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if v := i.EventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateSubscriberInput on the SubscriberCreate builder.
-func (c *SubscriberCreate) SetInput(i CreateSubscriberInput) *SubscriberCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateSubscriberInput represents a mutation input for updating subscribers.
-type UpdateSubscriberInput struct {
-	ClearUpdatedAt   bool
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
-	ClearTags        bool
-	Tags             []string
-	AppendTags       []string
-	Email            *string
-	ClearPhoneNumber bool
-	PhoneNumber      *string
-	ClearOwner       bool
-	OwnerID          *string
-	ClearEvents      bool
-	AddEventIDs      []string
-	RemoveEventIDs   []string
-}
-
-// Mutate applies the UpdateSubscriberInput on the SubscriberMutation builder.
-func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Email; v != nil {
-		m.SetEmail(*v)
-	}
-	if i.ClearPhoneNumber {
-		m.ClearPhoneNumber()
-	}
-	if v := i.PhoneNumber; v != nil {
-		m.SetPhoneNumber(*v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if i.ClearEvents {
-		m.ClearEvents()
-	}
-	if v := i.AddEventIDs; len(v) > 0 {
-		m.AddEventIDs(v...)
-	}
-	if v := i.RemoveEventIDs; len(v) > 0 {
-		m.RemoveEventIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateSubscriberInput on the SubscriberUpdate builder.
-func (c *SubscriberUpdate) SetInput(i UpdateSubscriberInput) *SubscriberUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateSubscriberInput on the SubscriberUpdateOne builder.
-func (c *SubscriberUpdateOne) SetInput(i UpdateSubscriberInput) *SubscriberUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateTFASettingInput represents a mutation input for creating tfasettings.
-type CreateTFASettingInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
-	Tags        []string
-	TotpAllowed *bool
-	OwnerID     *string
-}
-
-// Mutate applies the CreateTFASettingInput on the TFASettingMutation builder.
-func (i *CreateTFASettingInput) Mutate(m *TFASettingMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if v := i.TotpAllowed; v != nil {
-		m.SetTotpAllowed(*v)
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-}
-
-// SetInput applies the change-set in the CreateTFASettingInput on the TFASettingCreate builder.
-func (c *TFASettingCreate) SetInput(i CreateTFASettingInput) *TFASettingCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateTFASettingInput represents a mutation input for updating tfasettings.
-type UpdateTFASettingInput struct {
-	ClearUpdatedAt   bool
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
-	ClearTags        bool
-	Tags             []string
-	AppendTags       []string
-	Verified         *bool
-	ClearTotpAllowed bool
-	TotpAllowed      *bool
-}
-
-// Mutate applies the UpdateTFASettingInput on the TFASettingMutation builder.
-func (i *UpdateTFASettingInput) Mutate(m *TFASettingMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Verified; v != nil {
-		m.SetVerified(*v)
-	}
-	if i.ClearTotpAllowed {
-		m.ClearTotpAllowed()
-	}
-	if v := i.TotpAllowed; v != nil {
-		m.SetTotpAllowed(*v)
-	}
-}
-
-// SetInput applies the change-set in the UpdateTFASettingInput on the TFASettingUpdate builder.
-func (c *TFASettingUpdate) SetInput(i UpdateTFASettingInput) *TFASettingUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateTFASettingInput on the TFASettingUpdateOne builder.
-func (c *TFASettingUpdateOne) SetInput(i UpdateTFASettingInput) *TFASettingUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// CreateTemplateInput represents a mutation input for creating templates.
-type CreateTemplateInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
-	Tags         []string
-	Name         string
-	TemplateType *enums.DocumentType
-	Description  *string
-	Jsonconfig   customtypes.JSONObject
-	Uischema     customtypes.JSONObject
-	OwnerID      *string
-	DocumentIDs  []string
-}
-
-// Mutate applies the CreateTemplateInput on the TemplateMutation builder.
-func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	m.SetName(i.Name)
-	if v := i.TemplateType; v != nil {
-		m.SetTemplateType(*v)
-	}
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if v := i.Jsonconfig; v != nil {
-		m.SetJsonconfig(v)
-	}
-	if v := i.Uischema; v != nil {
-		m.SetUischema(v)
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if v := i.DocumentIDs; len(v) > 0 {
-		m.AddDocumentIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateTemplateInput on the TemplateCreate builder.
-func (c *TemplateCreate) SetInput(i CreateTemplateInput) *TemplateCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateTemplateInput represents a mutation input for updating templates.
-type UpdateTemplateInput struct {
-	ClearUpdatedAt    bool
-	UpdatedAt         *time.Time
-	ClearUpdatedBy    bool
-	UpdatedBy         *string
-	ClearTags         bool
-	Tags              []string
-	AppendTags        []string
-	Name              *string
-	TemplateType      *enums.DocumentType
-	ClearDescription  bool
-	Description       *string
-	Jsonconfig        customtypes.JSONObject
-	ClearUischema     bool
-	Uischema          customtypes.JSONObject
-	ClearOwner        bool
-	OwnerID           *string
-	ClearDocuments    bool
-	AddDocumentIDs    []string
-	RemoveDocumentIDs []string
-}
-
-// Mutate applies the UpdateTemplateInput on the TemplateMutation builder.
-func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if i.ClearTags {
-		m.ClearTags()
-	}
-	if v := i.Tags; v != nil {
-		m.SetTags(v)
-	}
-	if i.AppendTags != nil {
-		m.AppendTags(i.Tags)
-	}
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
-	if v := i.TemplateType; v != nil {
-		m.SetTemplateType(*v)
-	}
-	if i.ClearDescription {
-		m.ClearDescription()
-	}
-	if v := i.Description; v != nil {
-		m.SetDescription(*v)
-	}
-	if v := i.Jsonconfig; v != nil {
-		m.SetJsonconfig(v)
-	}
-	if i.ClearUischema {
-		m.ClearUischema()
-	}
-	if v := i.Uischema; v != nil {
-		m.SetUischema(v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-	if i.ClearDocuments {
-		m.ClearDocuments()
-	}
-	if v := i.AddDocumentIDs; len(v) > 0 {
-		m.AddDocumentIDs(v...)
-	}
-	if v := i.RemoveDocumentIDs; len(v) > 0 {
-		m.RemoveDocumentIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateTemplateInput on the TemplateUpdate builder.
-func (c *TemplateUpdate) SetInput(i UpdateTemplateInput) *TemplateUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateTemplateInput on the TemplateUpdateOne builder.
-func (c *TemplateUpdateOne) SetInput(i UpdateTemplateInput) *TemplateUpdateOne {
+// SetInput applies the change-set in the UpdateEntitlementInput on the EntitlementUpdateOne builder.
+func (c *EntitlementUpdateOne) SetInput(i UpdateEntitlementInput) *EntitlementUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -3979,6 +2383,1276 @@ func (c *UserUpdateOne) SetInput(i UpdateUserInput) *UserUpdateOne {
 	return c
 }
 
+// CreateEventInput represents a mutation input for creating events.
+type CreateEventInput struct {
+	CreatedAt              *time.Time
+	UpdatedAt              *time.Time
+	CreatedBy              *string
+	UpdatedBy              *string
+	Tags                   []string
+	EventID                *string
+	CorrelationID          *string
+	EventType              string
+	Metadata               map[string]interface{}
+	UserIDs                []string
+	GroupIDs               []string
+	IntegrationIDs         []string
+	OrganizationIDs        []string
+	InviteIDs              []string
+	FeatureIDs             []string
+	PersonalAccessTokenIDs []string
+	Oauth2tokenIDs         []string
+	HushIDs                []string
+	EntitlementIDs         []string
+	WebhookIDs             []string
+	SubscriberIDs          []string
+}
+
+// Mutate applies the CreateEventInput on the EventMutation builder.
+func (i *CreateEventInput) Mutate(m *EventMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if v := i.EventID; v != nil {
+		m.SetEventID(*v)
+	}
+	if v := i.CorrelationID; v != nil {
+		m.SetCorrelationID(*v)
+	}
+	m.SetEventType(i.EventType)
+	if v := i.Metadata; v != nil {
+		m.SetMetadata(v)
+	}
+	if v := i.UserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.GroupIDs; len(v) > 0 {
+		m.AddGroupIDs(v...)
+	}
+	if v := i.IntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.OrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
+	if v := i.InviteIDs; len(v) > 0 {
+		m.AddInviteIDs(v...)
+	}
+	if v := i.FeatureIDs; len(v) > 0 {
+		m.AddFeatureIDs(v...)
+	}
+	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
+		m.AddPersonalAccessTokenIDs(v...)
+	}
+	if v := i.Oauth2tokenIDs; len(v) > 0 {
+		m.AddOauth2tokenIDs(v...)
+	}
+	if v := i.HushIDs; len(v) > 0 {
+		m.AddHushIDs(v...)
+	}
+	if v := i.EntitlementIDs; len(v) > 0 {
+		m.AddEntitlementIDs(v...)
+	}
+	if v := i.WebhookIDs; len(v) > 0 {
+		m.AddWebhookIDs(v...)
+	}
+	if v := i.SubscriberIDs; len(v) > 0 {
+		m.AddSubscriberIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateEventInput on the EventCreate builder.
+func (c *EventCreate) SetInput(i CreateEventInput) *EventCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateEventInput represents a mutation input for updating events.
+type UpdateEventInput struct {
+	ClearUpdatedAt               bool
+	UpdatedAt                    *time.Time
+	ClearUpdatedBy               bool
+	UpdatedBy                    *string
+	ClearTags                    bool
+	Tags                         []string
+	AppendTags                   []string
+	ClearEventID                 bool
+	EventID                      *string
+	ClearCorrelationID           bool
+	CorrelationID                *string
+	EventType                    *string
+	ClearMetadata                bool
+	Metadata                     map[string]interface{}
+	ClearUser                    bool
+	AddUserIDs                   []string
+	RemoveUserIDs                []string
+	ClearGroup                   bool
+	AddGroupIDs                  []string
+	RemoveGroupIDs               []string
+	ClearIntegration             bool
+	AddIntegrationIDs            []string
+	RemoveIntegrationIDs         []string
+	ClearOrganization            bool
+	AddOrganizationIDs           []string
+	RemoveOrganizationIDs        []string
+	ClearInvite                  bool
+	AddInviteIDs                 []string
+	RemoveInviteIDs              []string
+	ClearFeature                 bool
+	AddFeatureIDs                []string
+	RemoveFeatureIDs             []string
+	ClearPersonalAccessToken     bool
+	AddPersonalAccessTokenIDs    []string
+	RemovePersonalAccessTokenIDs []string
+	ClearOauth2token             bool
+	AddOauth2tokenIDs            []string
+	RemoveOauth2tokenIDs         []string
+	ClearHush                    bool
+	AddHushIDs                   []string
+	RemoveHushIDs                []string
+	ClearEntitlement             bool
+	AddEntitlementIDs            []string
+	RemoveEntitlementIDs         []string
+	ClearWebhook                 bool
+	AddWebhookIDs                []string
+	RemoveWebhookIDs             []string
+	ClearSubscriber              bool
+	AddSubscriberIDs             []string
+	RemoveSubscriberIDs          []string
+}
+
+// Mutate applies the UpdateEventInput on the EventMutation builder.
+func (i *UpdateEventInput) Mutate(m *EventMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if i.ClearEventID {
+		m.ClearEventID()
+	}
+	if v := i.EventID; v != nil {
+		m.SetEventID(*v)
+	}
+	if i.ClearCorrelationID {
+		m.ClearCorrelationID()
+	}
+	if v := i.CorrelationID; v != nil {
+		m.SetCorrelationID(*v)
+	}
+	if v := i.EventType; v != nil {
+		m.SetEventType(*v)
+	}
+	if i.ClearMetadata {
+		m.ClearMetadata()
+	}
+	if v := i.Metadata; v != nil {
+		m.SetMetadata(v)
+	}
+	if i.ClearUser {
+		m.ClearUser()
+	}
+	if v := i.AddUserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.RemoveUserIDs; len(v) > 0 {
+		m.RemoveUserIDs(v...)
+	}
+	if i.ClearGroup {
+		m.ClearGroup()
+	}
+	if v := i.AddGroupIDs; len(v) > 0 {
+		m.AddGroupIDs(v...)
+	}
+	if v := i.RemoveGroupIDs; len(v) > 0 {
+		m.RemoveGroupIDs(v...)
+	}
+	if i.ClearIntegration {
+		m.ClearIntegration()
+	}
+	if v := i.AddIntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.RemoveIntegrationIDs; len(v) > 0 {
+		m.RemoveIntegrationIDs(v...)
+	}
+	if i.ClearOrganization {
+		m.ClearOrganization()
+	}
+	if v := i.AddOrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
+	if v := i.RemoveOrganizationIDs; len(v) > 0 {
+		m.RemoveOrganizationIDs(v...)
+	}
+	if i.ClearInvite {
+		m.ClearInvite()
+	}
+	if v := i.AddInviteIDs; len(v) > 0 {
+		m.AddInviteIDs(v...)
+	}
+	if v := i.RemoveInviteIDs; len(v) > 0 {
+		m.RemoveInviteIDs(v...)
+	}
+	if i.ClearFeature {
+		m.ClearFeature()
+	}
+	if v := i.AddFeatureIDs; len(v) > 0 {
+		m.AddFeatureIDs(v...)
+	}
+	if v := i.RemoveFeatureIDs; len(v) > 0 {
+		m.RemoveFeatureIDs(v...)
+	}
+	if i.ClearPersonalAccessToken {
+		m.ClearPersonalAccessToken()
+	}
+	if v := i.AddPersonalAccessTokenIDs; len(v) > 0 {
+		m.AddPersonalAccessTokenIDs(v...)
+	}
+	if v := i.RemovePersonalAccessTokenIDs; len(v) > 0 {
+		m.RemovePersonalAccessTokenIDs(v...)
+	}
+	if i.ClearOauth2token {
+		m.ClearOauth2token()
+	}
+	if v := i.AddOauth2tokenIDs; len(v) > 0 {
+		m.AddOauth2tokenIDs(v...)
+	}
+	if v := i.RemoveOauth2tokenIDs; len(v) > 0 {
+		m.RemoveOauth2tokenIDs(v...)
+	}
+	if i.ClearHush {
+		m.ClearHush()
+	}
+	if v := i.AddHushIDs; len(v) > 0 {
+		m.AddHushIDs(v...)
+	}
+	if v := i.RemoveHushIDs; len(v) > 0 {
+		m.RemoveHushIDs(v...)
+	}
+	if i.ClearEntitlement {
+		m.ClearEntitlement()
+	}
+	if v := i.AddEntitlementIDs; len(v) > 0 {
+		m.AddEntitlementIDs(v...)
+	}
+	if v := i.RemoveEntitlementIDs; len(v) > 0 {
+		m.RemoveEntitlementIDs(v...)
+	}
+	if i.ClearWebhook {
+		m.ClearWebhook()
+	}
+	if v := i.AddWebhookIDs; len(v) > 0 {
+		m.AddWebhookIDs(v...)
+	}
+	if v := i.RemoveWebhookIDs; len(v) > 0 {
+		m.RemoveWebhookIDs(v...)
+	}
+	if i.ClearSubscriber {
+		m.ClearSubscriber()
+	}
+	if v := i.AddSubscriberIDs; len(v) > 0 {
+		m.AddSubscriberIDs(v...)
+	}
+	if v := i.RemoveSubscriberIDs; len(v) > 0 {
+		m.RemoveSubscriberIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateEventInput on the EventUpdate builder.
+func (c *EventUpdate) SetInput(i UpdateEventInput) *EventUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateEventInput on the EventUpdateOne builder.
+func (c *EventUpdateOne) SetInput(i UpdateEventInput) *EventUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateOauthProviderInput represents a mutation input for creating oauthproviders.
+type CreateOauthProviderInput struct {
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Tags         []string
+	Name         string
+	ClientID     string
+	ClientSecret string
+	RedirectURL  string
+	Scopes       string
+	AuthURL      string
+	TokenURL     string
+	AuthStyle    customtypes.Uint8
+	InfoURL      string
+	OwnerID      *string
+}
+
+// Mutate applies the CreateOauthProviderInput on the OauthProviderMutation builder.
+func (i *CreateOauthProviderInput) Mutate(m *OauthProviderMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	m.SetName(i.Name)
+	m.SetClientID(i.ClientID)
+	m.SetClientSecret(i.ClientSecret)
+	m.SetRedirectURL(i.RedirectURL)
+	m.SetScopes(i.Scopes)
+	m.SetAuthURL(i.AuthURL)
+	m.SetTokenURL(i.TokenURL)
+	m.SetAuthStyle(i.AuthStyle)
+	m.SetInfoURL(i.InfoURL)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateOauthProviderInput on the OauthProviderCreate builder.
+func (c *OauthProviderCreate) SetInput(i CreateOauthProviderInput) *OauthProviderCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOauthProviderInput represents a mutation input for updating oauthproviders.
+type UpdateOauthProviderInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	ClearTags      bool
+	Tags           []string
+	AppendTags     []string
+	Name           *string
+	ClientID       *string
+	ClientSecret   *string
+	RedirectURL    *string
+	Scopes         *string
+	AuthURL        *string
+	TokenURL       *string
+	AuthStyle      *customtypes.Uint8
+	InfoURL        *string
+	ClearOwner     bool
+	OwnerID        *string
+}
+
+// Mutate applies the UpdateOauthProviderInput on the OauthProviderMutation builder.
+func (i *UpdateOauthProviderInput) Mutate(m *OauthProviderMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.ClientID; v != nil {
+		m.SetClientID(*v)
+	}
+	if v := i.ClientSecret; v != nil {
+		m.SetClientSecret(*v)
+	}
+	if v := i.RedirectURL; v != nil {
+		m.SetRedirectURL(*v)
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(*v)
+	}
+	if v := i.AuthURL; v != nil {
+		m.SetAuthURL(*v)
+	}
+	if v := i.TokenURL; v != nil {
+		m.SetTokenURL(*v)
+	}
+	if v := i.AuthStyle; v != nil {
+		m.SetAuthStyle(*v)
+	}
+	if v := i.InfoURL; v != nil {
+		m.SetInfoURL(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOauthProviderInput on the OauthProviderUpdate builder.
+func (c *OauthProviderUpdate) SetInput(i UpdateOauthProviderInput) *OauthProviderUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOauthProviderInput on the OauthProviderUpdateOne builder.
+func (c *OauthProviderUpdateOne) SetInput(i UpdateOauthProviderInput) *OauthProviderUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateOrgMembershipInput represents a mutation input for creating orgmemberships.
+type CreateOrgMembershipInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Role           *enums.Role
+	OrganizationID string
+	UserID         string
+	EventIDs       []string
+}
+
+// Mutate applies the CreateOrgMembershipInput on the OrgMembershipMutation builder.
+func (i *CreateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	m.SetOrganizationID(i.OrganizationID)
+	m.SetUserID(i.UserID)
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateOrgMembershipInput on the OrgMembershipCreate builder.
+func (c *OrgMembershipCreate) SetInput(i CreateOrgMembershipInput) *OrgMembershipCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOrgMembershipInput represents a mutation input for updating orgmemberships.
+type UpdateOrgMembershipInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Role           *enums.Role
+	ClearEvents    bool
+	AddEventIDs    []string
+	RemoveEventIDs []string
+}
+
+// Mutate applies the UpdateOrgMembershipInput on the OrgMembershipMutation builder.
+func (i *UpdateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOrgMembershipInput on the OrgMembershipUpdate builder.
+func (c *OrgMembershipUpdate) SetInput(i UpdateOrgMembershipInput) *OrgMembershipUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOrgMembershipInput on the OrgMembershipUpdateOne builder.
+func (c *OrgMembershipUpdateOne) SetInput(i UpdateOrgMembershipInput) *OrgMembershipUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateHushInput represents a mutation input for creating hushes.
+type CreateHushInput struct {
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *string
+	UpdatedBy       *string
+	Name            string
+	Description     *string
+	Kind            *string
+	SecretName      *string
+	SecretValue     *string
+	IntegrationIDs  []string
+	OrganizationIDs []string
+	EventIDs        []string
+}
+
+// Mutate applies the CreateHushInput on the HushMutation builder.
+func (i *CreateHushInput) Mutate(m *HushMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
+	}
+	if v := i.SecretName; v != nil {
+		m.SetSecretName(*v)
+	}
+	if v := i.SecretValue; v != nil {
+		m.SetSecretValue(*v)
+	}
+	if v := i.IntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.OrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateHushInput on the HushCreate builder.
+func (c *HushCreate) SetInput(i CreateHushInput) *HushCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateHushInput represents a mutation input for updating hushes.
+type UpdateHushInput struct {
+	ClearUpdatedAt        bool
+	UpdatedAt             *time.Time
+	ClearUpdatedBy        bool
+	UpdatedBy             *string
+	Name                  *string
+	ClearDescription      bool
+	Description           *string
+	ClearKind             bool
+	Kind                  *string
+	ClearIntegrations     bool
+	AddIntegrationIDs     []string
+	RemoveIntegrationIDs  []string
+	ClearOrganization     bool
+	AddOrganizationIDs    []string
+	RemoveOrganizationIDs []string
+	ClearEvents           bool
+	AddEventIDs           []string
+	RemoveEventIDs        []string
+}
+
+// Mutate applies the UpdateHushInput on the HushMutation builder.
+func (i *UpdateHushInput) Mutate(m *HushMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if i.ClearKind {
+		m.ClearKind()
+	}
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
+	}
+	if i.ClearIntegrations {
+		m.ClearIntegrations()
+	}
+	if v := i.AddIntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.RemoveIntegrationIDs; len(v) > 0 {
+		m.RemoveIntegrationIDs(v...)
+	}
+	if i.ClearOrganization {
+		m.ClearOrganization()
+	}
+	if v := i.AddOrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
+	if v := i.RemoveOrganizationIDs; len(v) > 0 {
+		m.RemoveOrganizationIDs(v...)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateHushInput on the HushUpdate builder.
+func (c *HushUpdate) SetInput(i UpdateHushInput) *HushUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateHushInput on the HushUpdateOne builder.
+func (c *HushUpdateOne) SetInput(i UpdateHushInput) *HushUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateDocumentDataInput represents a mutation input for creating documentdataslice.
+type CreateDocumentDataInput struct {
+	CreatedAt  *time.Time
+	UpdatedAt  *time.Time
+	CreatedBy  *string
+	UpdatedBy  *string
+	Tags       []string
+	Data       customtypes.JSONObject
+	TemplateID string
+}
+
+// Mutate applies the CreateDocumentDataInput on the DocumentDataMutation builder.
+func (i *CreateDocumentDataInput) Mutate(m *DocumentDataMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if v := i.Data; v != nil {
+		m.SetData(v)
+	}
+	m.SetTemplateID(i.TemplateID)
+}
+
+// SetInput applies the change-set in the CreateDocumentDataInput on the DocumentDataCreate builder.
+func (c *DocumentDataCreate) SetInput(i CreateDocumentDataInput) *DocumentDataCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateDocumentDataInput represents a mutation input for updating documentdataslice.
+type UpdateDocumentDataInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	ClearTags      bool
+	Tags           []string
+	AppendTags     []string
+	Data           customtypes.JSONObject
+	TemplateID     *string
+}
+
+// Mutate applies the UpdateDocumentDataInput on the DocumentDataMutation builder.
+func (i *UpdateDocumentDataInput) Mutate(m *DocumentDataMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Data; v != nil {
+		m.SetData(v)
+	}
+	if v := i.TemplateID; v != nil {
+		m.SetTemplateID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateDocumentDataInput on the DocumentDataUpdate builder.
+func (c *DocumentDataUpdate) SetInput(i UpdateDocumentDataInput) *DocumentDataUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateDocumentDataInput on the DocumentDataUpdateOne builder.
+func (c *DocumentDataUpdateOne) SetInput(i UpdateDocumentDataInput) *DocumentDataUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateIntegrationInput represents a mutation input for creating integrations.
+type CreateIntegrationInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Tags           []string
+	Name           string
+	Description    *string
+	Kind           *string
+	OwnerID        *string
+	SecretIDs      []string
+	Oauth2tokenIDs []string
+	EventIDs       []string
+	WebhookIDs     []string
+}
+
+// Mutate applies the CreateIntegrationInput on the IntegrationMutation builder.
+func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if v := i.SecretIDs; len(v) > 0 {
+		m.AddSecretIDs(v...)
+	}
+	if v := i.Oauth2tokenIDs; len(v) > 0 {
+		m.AddOauth2tokenIDs(v...)
+	}
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.WebhookIDs; len(v) > 0 {
+		m.AddWebhookIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateIntegrationInput on the IntegrationCreate builder.
+func (c *IntegrationCreate) SetInput(i CreateIntegrationInput) *IntegrationCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateIntegrationInput represents a mutation input for updating integrations.
+type UpdateIntegrationInput struct {
+	ClearUpdatedAt       bool
+	UpdatedAt            *time.Time
+	ClearUpdatedBy       bool
+	UpdatedBy            *string
+	ClearTags            bool
+	Tags                 []string
+	AppendTags           []string
+	Name                 *string
+	ClearDescription     bool
+	Description          *string
+	ClearKind            bool
+	Kind                 *string
+	ClearOwner           bool
+	OwnerID              *string
+	ClearSecrets         bool
+	AddSecretIDs         []string
+	RemoveSecretIDs      []string
+	ClearOauth2tokens    bool
+	AddOauth2tokenIDs    []string
+	RemoveOauth2tokenIDs []string
+	ClearEvents          bool
+	AddEventIDs          []string
+	RemoveEventIDs       []string
+	ClearWebhooks        bool
+	AddWebhookIDs        []string
+	RemoveWebhookIDs     []string
+}
+
+// Mutate applies the UpdateIntegrationInput on the IntegrationMutation builder.
+func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if i.ClearKind {
+		m.ClearKind()
+	}
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearSecrets {
+		m.ClearSecrets()
+	}
+	if v := i.AddSecretIDs; len(v) > 0 {
+		m.AddSecretIDs(v...)
+	}
+	if v := i.RemoveSecretIDs; len(v) > 0 {
+		m.RemoveSecretIDs(v...)
+	}
+	if i.ClearOauth2tokens {
+		m.ClearOauth2tokens()
+	}
+	if v := i.AddOauth2tokenIDs; len(v) > 0 {
+		m.AddOauth2tokenIDs(v...)
+	}
+	if v := i.RemoveOauth2tokenIDs; len(v) > 0 {
+		m.RemoveOauth2tokenIDs(v...)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+	if i.ClearWebhooks {
+		m.ClearWebhooks()
+	}
+	if v := i.AddWebhookIDs; len(v) > 0 {
+		m.AddWebhookIDs(v...)
+	}
+	if v := i.RemoveWebhookIDs; len(v) > 0 {
+		m.RemoveWebhookIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateIntegrationInput on the IntegrationUpdate builder.
+func (c *IntegrationUpdate) SetInput(i UpdateIntegrationInput) *IntegrationUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateIntegrationInput on the IntegrationUpdateOne builder.
+func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateGroupMembershipInput represents a mutation input for creating groupmemberships.
+type CreateGroupMembershipInput struct {
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	CreatedBy *string
+	UpdatedBy *string
+	Role      *enums.Role
+	GroupID   string
+	UserID    string
+	EventIDs  []string
+}
+
+// Mutate applies the CreateGroupMembershipInput on the GroupMembershipMutation builder.
+func (i *CreateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	m.SetGroupID(i.GroupID)
+	m.SetUserID(i.UserID)
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateGroupMembershipInput on the GroupMembershipCreate builder.
+func (c *GroupMembershipCreate) SetInput(i CreateGroupMembershipInput) *GroupMembershipCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateGroupMembershipInput represents a mutation input for updating groupmemberships.
+type UpdateGroupMembershipInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Role           *enums.Role
+	ClearEvents    bool
+	AddEventIDs    []string
+	RemoveEventIDs []string
+}
+
+// Mutate applies the UpdateGroupMembershipInput on the GroupMembershipMutation builder.
+func (i *UpdateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateGroupMembershipInput on the GroupMembershipUpdate builder.
+func (c *GroupMembershipUpdate) SetInput(i UpdateGroupMembershipInput) *GroupMembershipUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateGroupMembershipInput on the GroupMembershipUpdateOne builder.
+func (c *GroupMembershipUpdateOne) SetInput(i UpdateGroupMembershipInput) *GroupMembershipUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateOrganizationSettingInput represents a mutation input for creating organizationsettings.
+type CreateOrganizationSettingInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Tags           []string
+	Domains        []string
+	BillingContact *string
+	BillingEmail   *string
+	BillingPhone   *string
+	BillingAddress *string
+	TaxIdentifier  *string
+	GeoLocation    *enums.Region
+	OrganizationID *string
+}
+
+// Mutate applies the CreateOrganizationSettingInput on the OrganizationSettingMutation builder.
+func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if v := i.Domains; v != nil {
+		m.SetDomains(v)
+	}
+	if v := i.BillingContact; v != nil {
+		m.SetBillingContact(*v)
+	}
+	if v := i.BillingEmail; v != nil {
+		m.SetBillingEmail(*v)
+	}
+	if v := i.BillingPhone; v != nil {
+		m.SetBillingPhone(*v)
+	}
+	if v := i.BillingAddress; v != nil {
+		m.SetBillingAddress(*v)
+	}
+	if v := i.TaxIdentifier; v != nil {
+		m.SetTaxIdentifier(*v)
+	}
+	if v := i.GeoLocation; v != nil {
+		m.SetGeoLocation(*v)
+	}
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateOrganizationSettingInput on the OrganizationSettingCreate builder.
+func (c *OrganizationSettingCreate) SetInput(i CreateOrganizationSettingInput) *OrganizationSettingCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOrganizationSettingInput represents a mutation input for updating organizationsettings.
+type UpdateOrganizationSettingInput struct {
+	ClearUpdatedAt      bool
+	UpdatedAt           *time.Time
+	ClearUpdatedBy      bool
+	UpdatedBy           *string
+	ClearTags           bool
+	Tags                []string
+	AppendTags          []string
+	ClearDomains        bool
+	Domains             []string
+	AppendDomains       []string
+	ClearBillingContact bool
+	BillingContact      *string
+	ClearBillingEmail   bool
+	BillingEmail        *string
+	ClearBillingPhone   bool
+	BillingPhone        *string
+	ClearBillingAddress bool
+	BillingAddress      *string
+	ClearTaxIdentifier  bool
+	TaxIdentifier       *string
+	ClearGeoLocation    bool
+	GeoLocation         *enums.Region
+	ClearOrganization   bool
+	OrganizationID      *string
+}
+
+// Mutate applies the UpdateOrganizationSettingInput on the OrganizationSettingMutation builder.
+func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if i.ClearDomains {
+		m.ClearDomains()
+	}
+	if v := i.Domains; v != nil {
+		m.SetDomains(v)
+	}
+	if i.AppendDomains != nil {
+		m.AppendDomains(i.Domains)
+	}
+	if i.ClearBillingContact {
+		m.ClearBillingContact()
+	}
+	if v := i.BillingContact; v != nil {
+		m.SetBillingContact(*v)
+	}
+	if i.ClearBillingEmail {
+		m.ClearBillingEmail()
+	}
+	if v := i.BillingEmail; v != nil {
+		m.SetBillingEmail(*v)
+	}
+	if i.ClearBillingPhone {
+		m.ClearBillingPhone()
+	}
+	if v := i.BillingPhone; v != nil {
+		m.SetBillingPhone(*v)
+	}
+	if i.ClearBillingAddress {
+		m.ClearBillingAddress()
+	}
+	if v := i.BillingAddress; v != nil {
+		m.SetBillingAddress(*v)
+	}
+	if i.ClearTaxIdentifier {
+		m.ClearTaxIdentifier()
+	}
+	if v := i.TaxIdentifier; v != nil {
+		m.SetTaxIdentifier(*v)
+	}
+	if i.ClearGeoLocation {
+		m.ClearGeoLocation()
+	}
+	if v := i.GeoLocation; v != nil {
+		m.SetGeoLocation(*v)
+	}
+	if i.ClearOrganization {
+		m.ClearOrganization()
+	}
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOrganizationSettingInput on the OrganizationSettingUpdate builder.
+func (c *OrganizationSettingUpdate) SetInput(i UpdateOrganizationSettingInput) *OrganizationSettingUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOrganizationSettingInput on the OrganizationSettingUpdateOne builder.
+func (c *OrganizationSettingUpdateOne) SetInput(i UpdateOrganizationSettingInput) *OrganizationSettingUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateUserSettingInput represents a mutation input for creating usersettings.
 type CreateUserSettingInput struct {
 	CreatedAt         *time.Time
@@ -4157,27 +3831,185 @@ func (c *UserSettingUpdateOne) SetInput(i UpdateUserSettingInput) *UserSettingUp
 	return c
 }
 
-// CreateWebhookInput represents a mutation input for creating webhooks.
-type CreateWebhookInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Tags           []string
-	Name           string
-	Description    *string
-	DestinationURL string
-	Enabled        *bool
-	Failures       *int
-	LastError      *string
-	LastResponse   *string
-	OwnerID        *string
-	EventIDs       []string
-	IntegrationIDs []string
+// CreateTemplateInput represents a mutation input for creating templates.
+type CreateTemplateInput struct {
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Tags         []string
+	Name         string
+	TemplateType *enums.DocumentType
+	Description  *string
+	Jsonconfig   customtypes.JSONObject
+	Uischema     customtypes.JSONObject
+	OwnerID      *string
+	DocumentIDs  []string
 }
 
-// Mutate applies the CreateWebhookInput on the WebhookMutation builder.
-func (i *CreateWebhookInput) Mutate(m *WebhookMutation) {
+// Mutate applies the CreateTemplateInput on the TemplateMutation builder.
+func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	m.SetName(i.Name)
+	if v := i.TemplateType; v != nil {
+		m.SetTemplateType(*v)
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.Jsonconfig; v != nil {
+		m.SetJsonconfig(v)
+	}
+	if v := i.Uischema; v != nil {
+		m.SetUischema(v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if v := i.DocumentIDs; len(v) > 0 {
+		m.AddDocumentIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateTemplateInput on the TemplateCreate builder.
+func (c *TemplateCreate) SetInput(i CreateTemplateInput) *TemplateCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTemplateInput represents a mutation input for updating templates.
+type UpdateTemplateInput struct {
+	ClearUpdatedAt    bool
+	UpdatedAt         *time.Time
+	ClearUpdatedBy    bool
+	UpdatedBy         *string
+	ClearTags         bool
+	Tags              []string
+	AppendTags        []string
+	Name              *string
+	TemplateType      *enums.DocumentType
+	ClearDescription  bool
+	Description       *string
+	Jsonconfig        customtypes.JSONObject
+	ClearUischema     bool
+	Uischema          customtypes.JSONObject
+	ClearOwner        bool
+	OwnerID           *string
+	ClearDocuments    bool
+	AddDocumentIDs    []string
+	RemoveDocumentIDs []string
+}
+
+// Mutate applies the UpdateTemplateInput on the TemplateMutation builder.
+func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.TemplateType; v != nil {
+		m.SetTemplateType(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.Jsonconfig; v != nil {
+		m.SetJsonconfig(v)
+	}
+	if i.ClearUischema {
+		m.ClearUischema()
+	}
+	if v := i.Uischema; v != nil {
+		m.SetUischema(v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearDocuments {
+		m.ClearDocuments()
+	}
+	if v := i.AddDocumentIDs; len(v) > 0 {
+		m.AddDocumentIDs(v...)
+	}
+	if v := i.RemoveDocumentIDs; len(v) > 0 {
+		m.RemoveDocumentIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTemplateInput on the TemplateUpdate builder.
+func (c *TemplateUpdate) SetInput(i UpdateTemplateInput) *TemplateUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTemplateInput on the TemplateUpdateOne builder.
+func (c *TemplateUpdateOne) SetInput(i UpdateTemplateInput) *TemplateUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateGroupInput represents a mutation input for creating groups.
+type CreateGroupInput struct {
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *string
+	UpdatedBy       *string
+	Tags            []string
+	Name            string
+	Description     *string
+	GravatarLogoURL *string
+	LogoURL         *string
+	DisplayName     *string
+	OwnerID         *string
+	SettingID       string
+	UserIDs         []string
+	FeatureIDs      []string
+	EventIDs        []string
+	IntegrationIDs  []string
+	FileIDs         []string
+}
+
+// Mutate applies the CreateGroupInput on the GroupMutation builder.
+func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
@@ -4197,21 +4029,24 @@ func (i *CreateWebhookInput) Mutate(m *WebhookMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	m.SetDestinationURL(i.DestinationURL)
-	if v := i.Enabled; v != nil {
-		m.SetEnabled(*v)
+	if v := i.GravatarLogoURL; v != nil {
+		m.SetGravatarLogoURL(*v)
 	}
-	if v := i.Failures; v != nil {
-		m.SetFailures(*v)
+	if v := i.LogoURL; v != nil {
+		m.SetLogoURL(*v)
 	}
-	if v := i.LastError; v != nil {
-		m.SetLastError(*v)
-	}
-	if v := i.LastResponse; v != nil {
-		m.SetLastResponse(*v)
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
+	}
+	m.SetSettingID(i.SettingID)
+	if v := i.UserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.FeatureIDs; len(v) > 0 {
+		m.AddFeatureIDs(v...)
 	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
@@ -4219,16 +4054,19 @@ func (i *CreateWebhookInput) Mutate(m *WebhookMutation) {
 	if v := i.IntegrationIDs; len(v) > 0 {
 		m.AddIntegrationIDs(v...)
 	}
+	if v := i.FileIDs; len(v) > 0 {
+		m.AddFileIDs(v...)
+	}
 }
 
-// SetInput applies the change-set in the CreateWebhookInput on the WebhookCreate builder.
-func (c *WebhookCreate) SetInput(i CreateWebhookInput) *WebhookCreate {
+// SetInput applies the change-set in the CreateGroupInput on the GroupCreate builder.
+func (c *GroupCreate) SetInput(i CreateGroupInput) *GroupCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateWebhookInput represents a mutation input for updating webhooks.
-type UpdateWebhookInput struct {
+// UpdateGroupInput represents a mutation input for updating groups.
+type UpdateGroupInput struct {
 	ClearUpdatedAt       bool
 	UpdatedAt            *time.Time
 	ClearUpdatedBy       bool
@@ -4239,26 +4077,33 @@ type UpdateWebhookInput struct {
 	Name                 *string
 	ClearDescription     bool
 	Description          *string
-	DestinationURL       *string
-	Enabled              *bool
-	ClearFailures        bool
-	Failures             *int
-	ClearLastError       bool
-	LastError            *string
-	ClearLastResponse    bool
-	LastResponse         *string
+	ClearGravatarLogoURL bool
+	GravatarLogoURL      *string
+	ClearLogoURL         bool
+	LogoURL              *string
+	DisplayName          *string
 	ClearOwner           bool
 	OwnerID              *string
+	SettingID            *string
+	ClearUsers           bool
+	AddUserIDs           []string
+	RemoveUserIDs        []string
+	ClearFeatures        bool
+	AddFeatureIDs        []string
+	RemoveFeatureIDs     []string
 	ClearEvents          bool
 	AddEventIDs          []string
 	RemoveEventIDs       []string
 	ClearIntegrations    bool
 	AddIntegrationIDs    []string
 	RemoveIntegrationIDs []string
+	ClearFiles           bool
+	AddFileIDs           []string
+	RemoveFileIDs        []string
 }
 
-// Mutate applies the UpdateWebhookInput on the WebhookMutation builder.
-func (i *UpdateWebhookInput) Mutate(m *WebhookMutation) {
+// Mutate applies the UpdateGroupInput on the GroupMutation builder.
+func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	if i.ClearUpdatedAt {
 		m.ClearUpdatedAt()
 	}
@@ -4289,35 +4134,47 @@ func (i *UpdateWebhookInput) Mutate(m *WebhookMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	if v := i.DestinationURL; v != nil {
-		m.SetDestinationURL(*v)
+	if i.ClearGravatarLogoURL {
+		m.ClearGravatarLogoURL()
 	}
-	if v := i.Enabled; v != nil {
-		m.SetEnabled(*v)
+	if v := i.GravatarLogoURL; v != nil {
+		m.SetGravatarLogoURL(*v)
 	}
-	if i.ClearFailures {
-		m.ClearFailures()
+	if i.ClearLogoURL {
+		m.ClearLogoURL()
 	}
-	if v := i.Failures; v != nil {
-		m.SetFailures(*v)
+	if v := i.LogoURL; v != nil {
+		m.SetLogoURL(*v)
 	}
-	if i.ClearLastError {
-		m.ClearLastError()
-	}
-	if v := i.LastError; v != nil {
-		m.SetLastError(*v)
-	}
-	if i.ClearLastResponse {
-		m.ClearLastResponse()
-	}
-	if v := i.LastResponse; v != nil {
-		m.SetLastResponse(*v)
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
 	}
 	if i.ClearOwner {
 		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
+	}
+	if v := i.SettingID; v != nil {
+		m.SetSettingID(*v)
+	}
+	if i.ClearUsers {
+		m.ClearUsers()
+	}
+	if v := i.AddUserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.RemoveUserIDs; len(v) > 0 {
+		m.RemoveUserIDs(v...)
+	}
+	if i.ClearFeatures {
+		m.ClearFeatures()
+	}
+	if v := i.AddFeatureIDs; len(v) > 0 {
+		m.AddFeatureIDs(v...)
+	}
+	if v := i.RemoveFeatureIDs; len(v) > 0 {
+		m.RemoveFeatureIDs(v...)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()
@@ -4337,16 +4194,159 @@ func (i *UpdateWebhookInput) Mutate(m *WebhookMutation) {
 	if v := i.RemoveIntegrationIDs; len(v) > 0 {
 		m.RemoveIntegrationIDs(v...)
 	}
+	if i.ClearFiles {
+		m.ClearFiles()
+	}
+	if v := i.AddFileIDs; len(v) > 0 {
+		m.AddFileIDs(v...)
+	}
+	if v := i.RemoveFileIDs; len(v) > 0 {
+		m.RemoveFileIDs(v...)
+	}
 }
 
-// SetInput applies the change-set in the UpdateWebhookInput on the WebhookUpdate builder.
-func (c *WebhookUpdate) SetInput(i UpdateWebhookInput) *WebhookUpdate {
+// SetInput applies the change-set in the UpdateGroupInput on the GroupUpdate builder.
+func (c *GroupUpdate) SetInput(i UpdateGroupInput) *GroupUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateWebhookInput on the WebhookUpdateOne builder.
-func (c *WebhookUpdateOne) SetInput(i UpdateWebhookInput) *WebhookUpdateOne {
+// SetInput applies the change-set in the UpdateGroupInput on the GroupUpdateOne builder.
+func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateGroupSettingInput represents a mutation input for creating groupsettings.
+type CreateGroupSettingInput struct {
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Tags         []string
+	Visibility   *enums.Visibility
+	JoinPolicy   *enums.JoinPolicy
+	SyncToSlack  *bool
+	SyncToGithub *bool
+	GroupID      *string
+}
+
+// Mutate applies the CreateGroupSettingInput on the GroupSettingMutation builder.
+func (i *CreateGroupSettingInput) Mutate(m *GroupSettingMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if v := i.Visibility; v != nil {
+		m.SetVisibility(*v)
+	}
+	if v := i.JoinPolicy; v != nil {
+		m.SetJoinPolicy(*v)
+	}
+	if v := i.SyncToSlack; v != nil {
+		m.SetSyncToSlack(*v)
+	}
+	if v := i.SyncToGithub; v != nil {
+		m.SetSyncToGithub(*v)
+	}
+	if v := i.GroupID; v != nil {
+		m.SetGroupID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateGroupSettingInput on the GroupSettingCreate builder.
+func (c *GroupSettingCreate) SetInput(i CreateGroupSettingInput) *GroupSettingCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateGroupSettingInput represents a mutation input for updating groupsettings.
+type UpdateGroupSettingInput struct {
+	ClearUpdatedAt    bool
+	UpdatedAt         *time.Time
+	ClearUpdatedBy    bool
+	UpdatedBy         *string
+	ClearTags         bool
+	Tags              []string
+	AppendTags        []string
+	Visibility        *enums.Visibility
+	JoinPolicy        *enums.JoinPolicy
+	ClearSyncToSlack  bool
+	SyncToSlack       *bool
+	ClearSyncToGithub bool
+	SyncToGithub      *bool
+	ClearGroup        bool
+	GroupID           *string
+}
+
+// Mutate applies the UpdateGroupSettingInput on the GroupSettingMutation builder.
+func (i *UpdateGroupSettingInput) Mutate(m *GroupSettingMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Visibility; v != nil {
+		m.SetVisibility(*v)
+	}
+	if v := i.JoinPolicy; v != nil {
+		m.SetJoinPolicy(*v)
+	}
+	if i.ClearSyncToSlack {
+		m.ClearSyncToSlack()
+	}
+	if v := i.SyncToSlack; v != nil {
+		m.SetSyncToSlack(*v)
+	}
+	if i.ClearSyncToGithub {
+		m.ClearSyncToGithub()
+	}
+	if v := i.SyncToGithub; v != nil {
+		m.SetSyncToGithub(*v)
+	}
+	if i.ClearGroup {
+		m.ClearGroup()
+	}
+	if v := i.GroupID; v != nil {
+		m.SetGroupID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateGroupSettingInput on the GroupSettingUpdate builder.
+func (c *GroupSettingUpdate) SetInput(i UpdateGroupSettingInput) *GroupSettingUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateGroupSettingInput on the GroupSettingUpdateOne builder.
+func (c *GroupSettingUpdateOne) SetInput(i UpdateGroupSettingInput) *GroupSettingUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

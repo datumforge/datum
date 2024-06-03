@@ -2,6 +2,8 @@ module github.com/datumforge/datum
 
 go 1.22.2
 
+replace github.com/datumforge/enthistory => ../enthistory
+
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.5.0

@@ -27,178 +27,6 @@ func (m *APITokenMutation) CreateTuplesFromDelete(ctx context.Context) error {
 	return nil
 }
 
-func (m *GroupMutation) CreateTuplesFromCreate(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *GroupMutation) CreateTuplesFromUpdate(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *GroupMutation) CreateTuplesFromDelete(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *GroupMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
-
-	// Get fields for tuple creation
-	userID, _ := m.UserID()
-	objectID, _ := m.GroupID()
-	role, _ := m.Role()
-
-	// get tuple key
-	tuple := fgax.GetTupleKey(userID, "user", objectID, "group", role.String())
-
-	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
-		m.Logger.Errorw("failed to create relationship tuple", "error", err)
-
-		return err
-	}
-
-	m.Logger.Debugw("created relationship tuples", "relation", role, "object", tuple.Object)
-
-	return nil
-}
-
-func (m *GroupMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) error {
-
-	// check for soft delete operation and delete instead
-	if entx.CheckIsSoftDelete(ctx) {
-		return m.CreateTuplesFromDelete(ctx)
-	}
-
-	// get ids that will be updated
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return err
-	}
-
-	var (
-		writes  []fgax.TupleKey
-		deletes []fgax.TupleKey
-	)
-
-	oldRole, err := m.OldRole(ctx)
-	if err != nil {
-		return err
-	}
-
-	newRole, exists := m.Role()
-	if !exists {
-		return entfga.ErrMissingRole
-	}
-
-	if oldRole == newRole {
-		m.Logger.Debugw("nothing to update, roles are the same", "old_role", oldRole, "new_role", newRole)
-
-		return nil
-	}
-
-	// User the IDs of the memberships and delete all related tuples
-	for _, id := range ids {
-		member, err := m.Client().GroupMembership.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		d := fgax.GetTupleKey(member.UserID, "user", member.GroupID, "group", oldRole.String())
-
-		deletes = append(deletes, d)
-
-		w := fgax.GetTupleKey(member.UserID, "user", member.GroupID, "group", newRole.String())
-
-		writes = append(writes, w)
-
-		if len(writes) == 0 && len(deletes) == 0 {
-			m.Logger.Debugw("no relationships to create or delete")
-
-			return nil
-		}
-
-		if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
-			m.Logger.Errorw("failed to update relationship tuple", "error", err)
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) error {
-
-	// check for soft delete operation and skip so it happens on update
-	if entx.CheckIsSoftDelete(ctx) {
-		return nil
-	}
-
-	// get ids that will be deleted
-	ids, err := m.IDs(ctx)
-	if err != nil {
-		return err
-	}
-
-	tuples := []fgax.TupleKey{}
-
-	// User the IDs of the memberships and delete all related tuples
-	for _, id := range ids {
-		// this wont work with soft deletes
-		members, err := m.Client().GroupMembership.Get(ctx, id)
-		if err != nil {
-			return err
-		}
-
-		t := fgax.GetTupleKey(members.UserID, "user", members.GroupID, "group", members.Role.String())
-
-		tuples = append(tuples, t)
-	}
-
-	if len(tuples) > 0 {
-		if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
-			m.Logger.Errorw("failed to delete relationship tuple", "error", err)
-
-			return err
-		}
-
-		m.Logger.Debugw("deleted relationship tuples")
-	}
-
-	return nil
-}
-
-func (m *GroupSettingMutation) CreateTuplesFromCreate(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *GroupSettingMutation) CreateTuplesFromUpdate(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *GroupSettingMutation) CreateTuplesFromDelete(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *IntegrationMutation) CreateTuplesFromCreate(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *IntegrationMutation) CreateTuplesFromUpdate(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *IntegrationMutation) CreateTuplesFromDelete(ctx context.Context) error {
-
-	return nil
-}
-
 func (m *InviteMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	return nil
@@ -210,6 +38,51 @@ func (m *InviteMutation) CreateTuplesFromUpdate(ctx context.Context) error {
 }
 
 func (m *InviteMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *SubscriberMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *SubscriberMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *SubscriberMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *WebhookMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *WebhookMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *WebhookMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationMutation) CreateTuplesFromDelete(ctx context.Context) error {
 
 	return nil
 }
@@ -341,17 +214,144 @@ func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) erro
 	return nil
 }
 
-func (m *OrganizationMutation) CreateTuplesFromCreate(ctx context.Context) error {
+func (m *IntegrationMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	return nil
 }
 
-func (m *OrganizationMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+func (m *IntegrationMutation) CreateTuplesFromUpdate(ctx context.Context) error {
 
 	return nil
 }
 
-func (m *OrganizationMutation) CreateTuplesFromDelete(ctx context.Context) error {
+func (m *IntegrationMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *GroupMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	// Get fields for tuple creation
+	userID, _ := m.UserID()
+	objectID, _ := m.GroupID()
+	role, _ := m.Role()
+
+	// get tuple key
+	tuple := fgax.GetTupleKey(userID, "user", objectID, "group", role.String())
+
+	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
+		m.Logger.Errorw("failed to create relationship tuple", "error", err)
+
+		return err
+	}
+
+	m.Logger.Debugw("created relationship tuples", "relation", role, "object", tuple.Object)
+
+	return nil
+}
+
+func (m *GroupMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateTuplesFromDelete(ctx)
+	}
+
+	// get ids that will be updated
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return err
+	}
+
+	var (
+		writes  []fgax.TupleKey
+		deletes []fgax.TupleKey
+	)
+
+	oldRole, err := m.OldRole(ctx)
+	if err != nil {
+		return err
+	}
+
+	newRole, exists := m.Role()
+	if !exists {
+		return entfga.ErrMissingRole
+	}
+
+	if oldRole == newRole {
+		m.Logger.Debugw("nothing to update, roles are the same", "old_role", oldRole, "new_role", newRole)
+
+		return nil
+	}
+
+	// User the IDs of the memberships and delete all related tuples
+	for _, id := range ids {
+		member, err := m.Client().GroupMembership.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		d := fgax.GetTupleKey(member.UserID, "user", member.GroupID, "group", oldRole.String())
+
+		deletes = append(deletes, d)
+
+		w := fgax.GetTupleKey(member.UserID, "user", member.GroupID, "group", newRole.String())
+
+		writes = append(writes, w)
+
+		if len(writes) == 0 && len(deletes) == 0 {
+			m.Logger.Debugw("no relationships to create or delete")
+
+			return nil
+		}
+
+		if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
+			m.Logger.Errorw("failed to update relationship tuple", "error", err)
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+
+	// get ids that will be deleted
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return err
+	}
+
+	tuples := []fgax.TupleKey{}
+
+	// User the IDs of the memberships and delete all related tuples
+	for _, id := range ids {
+		// this wont work with soft deletes
+		members, err := m.Client().GroupMembership.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		t := fgax.GetTupleKey(members.UserID, "user", members.GroupID, "group", members.Role.String())
+
+		tuples = append(tuples, t)
+	}
+
+	if len(tuples) > 0 {
+		if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
+			m.Logger.Errorw("failed to delete relationship tuple", "error", err)
+
+			return err
+		}
+
+		m.Logger.Debugw("deleted relationship tuples")
+	}
 
 	return nil
 }
@@ -371,32 +371,32 @@ func (m *OrganizationSettingMutation) CreateTuplesFromDelete(ctx context.Context
 	return nil
 }
 
-func (m *SubscriberMutation) CreateTuplesFromCreate(ctx context.Context) error {
+func (m *GroupMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	return nil
 }
 
-func (m *SubscriberMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+func (m *GroupMutation) CreateTuplesFromUpdate(ctx context.Context) error {
 
 	return nil
 }
 
-func (m *SubscriberMutation) CreateTuplesFromDelete(ctx context.Context) error {
+func (m *GroupMutation) CreateTuplesFromDelete(ctx context.Context) error {
 
 	return nil
 }
 
-func (m *WebhookMutation) CreateTuplesFromCreate(ctx context.Context) error {
+func (m *GroupSettingMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	return nil
 }
 
-func (m *WebhookMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+func (m *GroupSettingMutation) CreateTuplesFromUpdate(ctx context.Context) error {
 
 	return nil
 }
 
-func (m *WebhookMutation) CreateTuplesFromDelete(ctx context.Context) error {
+func (m *GroupSettingMutation) CreateTuplesFromDelete(ctx context.Context) error {
 
 	return nil
 }

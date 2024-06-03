@@ -137,14 +137,12 @@ type DatumClient interface {
 	GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error)
 	GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error)
 	UpdateTFASetting(ctx context.Context, input UpdateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASetting, error)
+	CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error)
+	DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error)
+	GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error)
 	GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error)
 	GetUserByIDWithOrgs(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByIDWithOrgs, error)
-	GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error)
-	CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error)
-	CreateBulkUser(ctx context.Context, input []*CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkUser, error)
-	CreateBulkCSVUser(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVUser, error)
 	UpdateUser(ctx context.Context, updateUserID string, input UpdateUserInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUser, error)
-	DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error)
 	GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error)
 	GetUserSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetUserSettings, error)
 	GetUserSettingWhere(ctx context.Context, where UserSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingWhere, error)
@@ -14126,6 +14124,509 @@ func (t *UpdateTFASetting_UpdateTFASetting) GetTfaSetting() *UpdateTFASetting_Up
 	return &t.TfaSetting
 }
 
+type CreateUser_CreateUser_User_OrgMemberships struct {
+	ID             string "json:\"id\" graphql:\"id\""
+	OrganizationID string "json:\"organizationID\" graphql:\"organizationID\""
+}
+
+func (t *CreateUser_CreateUser_User_OrgMemberships) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_OrgMemberships{}
+	}
+	return t.ID
+}
+func (t *CreateUser_CreateUser_User_OrgMemberships) GetOrganizationID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_OrgMemberships{}
+	}
+	return t.OrganizationID
+}
+
+type CreateUser_CreateUser_User_GroupMemberships struct {
+	ID      string "json:\"id\" graphql:\"id\""
+	GroupID string "json:\"groupID\" graphql:\"groupID\""
+}
+
+func (t *CreateUser_CreateUser_User_GroupMemberships) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_GroupMemberships{}
+	}
+	return t.ID
+}
+func (t *CreateUser_CreateUser_User_GroupMemberships) GetGroupID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_GroupMemberships{}
+	}
+	return t.GroupID
+}
+
+type CreateUser_CreateUser_User_Setting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
+type CreateUser_CreateUser_User_Setting struct {
+	DefaultOrg     *CreateUser_CreateUser_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	CreatedAt      *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	EmailConfirmed bool                                           "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	Locked         bool                                           "json:\"locked\" graphql:\"locked\""
+	SilencedAt     *time.Time                                     "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         enums.UserStatus                               "json:\"status\" graphql:\"status\""
+	SuspendedAt    *time.Time                                     "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	Tags           []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt      *time.Time                                     "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateUser_CreateUser_User_Setting) GetDefaultOrg() *CreateUser_CreateUser_User_Setting_DefaultOrg {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.DefaultOrg
+}
+func (t *CreateUser_CreateUser_User_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateUser_CreateUser_User_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.EmailConfirmed
+}
+func (t *CreateUser_CreateUser_User_Setting) GetLocked() bool {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.Locked
+}
+func (t *CreateUser_CreateUser_User_Setting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.SilencedAt
+}
+func (t *CreateUser_CreateUser_User_Setting) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return &t.Status
+}
+func (t *CreateUser_CreateUser_User_Setting) GetSuspendedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.SuspendedAt
+}
+func (t *CreateUser_CreateUser_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.Tags
+}
+func (t *CreateUser_CreateUser_User_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateUser_CreateUser_User_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateUser_CreateUser_User struct {
+	AuthProvider     enums.AuthProvider                             "json:\"authProvider\" graphql:\"authProvider\""
+	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	AvatarRemoteURL  *string                                        "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	DisplayName      string                                         "json:\"displayName\" graphql:\"displayName\""
+	Email            string                                         "json:\"email\" graphql:\"email\""
+	FirstName        *string                                        "json:\"firstName,omitempty\" graphql:\"firstName\""
+	ID               string                                         "json:\"id\" graphql:\"id\""
+	LastName         *string                                        "json:\"lastName,omitempty\" graphql:\"lastName\""
+	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
+	Tags             []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
+	OrgMemberships   []*CreateUser_CreateUser_User_OrgMemberships   "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+	GroupMemberships []*CreateUser_CreateUser_User_GroupMemberships "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
+	Setting          CreateUser_CreateUser_User_Setting             "json:\"setting\" graphql:\"setting\""
+}
+
+func (t *CreateUser_CreateUser_User) GetAuthProvider() *enums.AuthProvider {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return &t.AuthProvider
+}
+func (t *CreateUser_CreateUser_User) GetAvatarLocalFile() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.AvatarLocalFile
+}
+func (t *CreateUser_CreateUser_User) GetAvatarRemoteURL() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.AvatarRemoteURL
+}
+func (t *CreateUser_CreateUser_User) GetDisplayName() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.DisplayName
+}
+func (t *CreateUser_CreateUser_User) GetEmail() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Email
+}
+func (t *CreateUser_CreateUser_User) GetFirstName() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.FirstName
+}
+func (t *CreateUser_CreateUser_User) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.ID
+}
+func (t *CreateUser_CreateUser_User) GetLastName() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.LastName
+}
+func (t *CreateUser_CreateUser_User) GetSub() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Sub
+}
+func (t *CreateUser_CreateUser_User) GetTags() []string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Tags
+}
+func (t *CreateUser_CreateUser_User) GetOrgMemberships() []*CreateUser_CreateUser_User_OrgMemberships {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.OrgMemberships
+}
+func (t *CreateUser_CreateUser_User) GetGroupMemberships() []*CreateUser_CreateUser_User_GroupMemberships {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.GroupMemberships
+}
+func (t *CreateUser_CreateUser_User) GetSetting() *CreateUser_CreateUser_User_Setting {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return &t.Setting
+}
+
+type CreateUser_CreateUser struct {
+	User CreateUser_CreateUser_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *CreateUser_CreateUser) GetUser() *CreateUser_CreateUser_User {
+	if t == nil {
+		t = &CreateUser_CreateUser{}
+	}
+	return &t.User
+}
+
+type DeleteUser_DeleteUser struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteUser_DeleteUser) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteUser_DeleteUser{}
+	}
+	return t.DeletedID
+}
+
+type GetAllUsers_Users_Edges_Node_Setting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
+type GetAllUsers_Users_Edges_Node_Setting struct {
+	DefaultOrg     *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	CreatedAt      *time.Time                                       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	EmailConfirmed bool                                             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	Locked         bool                                             "json:\"locked\" graphql:\"locked\""
+	SilencedAt     *time.Time                                       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         enums.UserStatus                                 "json:\"status\" graphql:\"status\""
+	SuspendedAt    *time.Time                                       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	Tags           []string                                         "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt      *time.Time                                       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetDefaultOrg() *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.DefaultOrg
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.EmailConfirmed
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetLocked() bool {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.Locked
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.SilencedAt
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return &t.Status
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetSuspendedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.SuspendedAt
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.Tags
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.UpdatedBy
+}
+
+type GetAllUsers_Users_Edges_Node struct {
+	AuthProvider    enums.AuthProvider                   "json:\"authProvider\" graphql:\"authProvider\""
+	AvatarLocalFile *string                              "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	AvatarRemoteURL *string                              "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	DisplayName     string                               "json:\"displayName\" graphql:\"displayName\""
+	Email           string                               "json:\"email\" graphql:\"email\""
+	FirstName       *string                              "json:\"firstName,omitempty\" graphql:\"firstName\""
+	ID              string                               "json:\"id\" graphql:\"id\""
+	LastName        *string                              "json:\"lastName,omitempty\" graphql:\"lastName\""
+	LastSeen        *time.Time                           "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
+	Sub             *string                              "json:\"sub,omitempty\" graphql:\"sub\""
+	Tags            []string                             "json:\"tags,omitempty\" graphql:\"tags\""
+	Setting         GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
+	CreatedAt       *time.Time                           "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy       *string                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt       *time.Time                           "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy       *string                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetAllUsers_Users_Edges_Node) GetAuthProvider() *enums.AuthProvider {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return &t.AuthProvider
+}
+func (t *GetAllUsers_Users_Edges_Node) GetAvatarLocalFile() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.AvatarLocalFile
+}
+func (t *GetAllUsers_Users_Edges_Node) GetAvatarRemoteURL() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.AvatarRemoteURL
+}
+func (t *GetAllUsers_Users_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GetAllUsers_Users_Edges_Node) GetEmail() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.Email
+}
+func (t *GetAllUsers_Users_Edges_Node) GetFirstName() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.FirstName
+}
+func (t *GetAllUsers_Users_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllUsers_Users_Edges_Node) GetLastName() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.LastName
+}
+func (t *GetAllUsers_Users_Edges_Node) GetLastSeen() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.LastSeen
+}
+func (t *GetAllUsers_Users_Edges_Node) GetSub() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.Sub
+}
+func (t *GetAllUsers_Users_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetAllUsers_Users_Edges_Node) GetSetting() *GetAllUsers_Users_Edges_Node_Setting {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return &t.Setting
+}
+func (t *GetAllUsers_Users_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllUsers_Users_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllUsers_Users_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllUsers_Users_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetAllUsers_Users_Edges struct {
+	Node *GetAllUsers_Users_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllUsers_Users_Edges) GetNode() *GetAllUsers_Users_Edges_Node {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllUsers_Users struct {
+	Edges []*GetAllUsers_Users_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllUsers_Users) GetEdges() []*GetAllUsers_Users_Edges {
+	if t == nil {
+		t = &GetAllUsers_Users{}
+	}
+	return t.Edges
+}
+
 type GetUserByID_User_Setting_DefaultOrg struct {
 	ID          string "json:\"id\" graphql:\"id\""
 	Name        string "json:\"name\" graphql:\"name\""
@@ -14677,668 +15178,6 @@ func (t *GetUserByIDWithOrgs_User) GetUpdatedBy() *string {
 	return t.UpdatedBy
 }
 
-type GetAllUsers_Users_Edges_Node_Setting_DefaultOrg struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	Name        string "json:\"name\" graphql:\"name\""
-	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
-}
-
-func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetID() string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
-	}
-	return t.ID
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetName() string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
-	}
-	return t.Name
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetPersonalOrg() *bool {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
-	}
-	return t.PersonalOrg
-}
-
-type GetAllUsers_Users_Edges_Node_Setting struct {
-	DefaultOrg     *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	CreatedAt      *time.Time                                       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string                                          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	EmailConfirmed bool                                             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	Locked         bool                                             "json:\"locked\" graphql:\"locked\""
-	SilencedAt     *time.Time                                       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
-	Status         enums.UserStatus                                 "json:\"status\" graphql:\"status\""
-	SuspendedAt    *time.Time                                       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	Tags           []string                                         "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt      *time.Time                                       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string                                          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-}
-
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetDefaultOrg() *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.DefaultOrg
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.CreatedAt
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetCreatedBy() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.CreatedBy
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.EmailConfirmed
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetLocked() bool {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.Locked
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetSilencedAt() *time.Time {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.SilencedAt
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *enums.UserStatus {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return &t.Status
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetSuspendedAt() *time.Time {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.SuspendedAt
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetTags() []string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.Tags
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.UpdatedAt
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetUpdatedBy() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.UpdatedBy
-}
-
-type GetAllUsers_Users_Edges_Node struct {
-	AuthProvider    enums.AuthProvider                   "json:\"authProvider\" graphql:\"authProvider\""
-	AvatarLocalFile *string                              "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	AvatarRemoteURL *string                              "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
-	DisplayName     string                               "json:\"displayName\" graphql:\"displayName\""
-	Email           string                               "json:\"email\" graphql:\"email\""
-	FirstName       *string                              "json:\"firstName,omitempty\" graphql:\"firstName\""
-	ID              string                               "json:\"id\" graphql:\"id\""
-	LastName        *string                              "json:\"lastName,omitempty\" graphql:\"lastName\""
-	LastSeen        *time.Time                           "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
-	Sub             *string                              "json:\"sub,omitempty\" graphql:\"sub\""
-	Tags            []string                             "json:\"tags,omitempty\" graphql:\"tags\""
-	Setting         GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
-	CreatedAt       *time.Time                           "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy       *string                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt       *time.Time                           "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy       *string                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-}
-
-func (t *GetAllUsers_Users_Edges_Node) GetAuthProvider() *enums.AuthProvider {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return &t.AuthProvider
-}
-func (t *GetAllUsers_Users_Edges_Node) GetAvatarLocalFile() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.AvatarLocalFile
-}
-func (t *GetAllUsers_Users_Edges_Node) GetAvatarRemoteURL() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.AvatarRemoteURL
-}
-func (t *GetAllUsers_Users_Edges_Node) GetDisplayName() string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.DisplayName
-}
-func (t *GetAllUsers_Users_Edges_Node) GetEmail() string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.Email
-}
-func (t *GetAllUsers_Users_Edges_Node) GetFirstName() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.FirstName
-}
-func (t *GetAllUsers_Users_Edges_Node) GetID() string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.ID
-}
-func (t *GetAllUsers_Users_Edges_Node) GetLastName() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.LastName
-}
-func (t *GetAllUsers_Users_Edges_Node) GetLastSeen() *time.Time {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.LastSeen
-}
-func (t *GetAllUsers_Users_Edges_Node) GetSub() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.Sub
-}
-func (t *GetAllUsers_Users_Edges_Node) GetTags() []string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.Tags
-}
-func (t *GetAllUsers_Users_Edges_Node) GetSetting() *GetAllUsers_Users_Edges_Node_Setting {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return &t.Setting
-}
-func (t *GetAllUsers_Users_Edges_Node) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.CreatedAt
-}
-func (t *GetAllUsers_Users_Edges_Node) GetCreatedBy() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.CreatedBy
-}
-func (t *GetAllUsers_Users_Edges_Node) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.UpdatedAt
-}
-func (t *GetAllUsers_Users_Edges_Node) GetUpdatedBy() *string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.UpdatedBy
-}
-
-type GetAllUsers_Users_Edges struct {
-	Node *GetAllUsers_Users_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
-}
-
-func (t *GetAllUsers_Users_Edges) GetNode() *GetAllUsers_Users_Edges_Node {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges{}
-	}
-	return t.Node
-}
-
-type GetAllUsers_Users struct {
-	Edges []*GetAllUsers_Users_Edges "json:\"edges,omitempty\" graphql:\"edges\""
-}
-
-func (t *GetAllUsers_Users) GetEdges() []*GetAllUsers_Users_Edges {
-	if t == nil {
-		t = &GetAllUsers_Users{}
-	}
-	return t.Edges
-}
-
-type CreateUser_CreateUser_User_OrgMemberships struct {
-	ID             string "json:\"id\" graphql:\"id\""
-	OrganizationID string "json:\"organizationID\" graphql:\"organizationID\""
-}
-
-func (t *CreateUser_CreateUser_User_OrgMemberships) GetID() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_OrgMemberships{}
-	}
-	return t.ID
-}
-func (t *CreateUser_CreateUser_User_OrgMemberships) GetOrganizationID() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_OrgMemberships{}
-	}
-	return t.OrganizationID
-}
-
-type CreateUser_CreateUser_User_GroupMemberships struct {
-	ID      string "json:\"id\" graphql:\"id\""
-	GroupID string "json:\"groupID\" graphql:\"groupID\""
-}
-
-func (t *CreateUser_CreateUser_User_GroupMemberships) GetID() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_GroupMemberships{}
-	}
-	return t.ID
-}
-func (t *CreateUser_CreateUser_User_GroupMemberships) GetGroupID() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_GroupMemberships{}
-	}
-	return t.GroupID
-}
-
-type CreateUser_CreateUser_User_Setting_DefaultOrg struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	Name        string "json:\"name\" graphql:\"name\""
-	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
-}
-
-func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetID() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
-	}
-	return t.ID
-}
-func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetName() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
-	}
-	return t.Name
-}
-func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
-	}
-	return t.PersonalOrg
-}
-
-type CreateUser_CreateUser_User_Setting struct {
-	DefaultOrg     *CreateUser_CreateUser_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	CreatedAt      *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string                                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	EmailConfirmed bool                                           "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	Locked         bool                                           "json:\"locked\" graphql:\"locked\""
-	SilencedAt     *time.Time                                     "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
-	Status         enums.UserStatus                               "json:\"status\" graphql:\"status\""
-	SuspendedAt    *time.Time                                     "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	Tags           []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt      *time.Time                                     "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string                                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-}
-
-func (t *CreateUser_CreateUser_User_Setting) GetDefaultOrg() *CreateUser_CreateUser_User_Setting_DefaultOrg {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.DefaultOrg
-}
-func (t *CreateUser_CreateUser_User_Setting) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.CreatedAt
-}
-func (t *CreateUser_CreateUser_User_Setting) GetCreatedBy() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.CreatedBy
-}
-func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.EmailConfirmed
-}
-func (t *CreateUser_CreateUser_User_Setting) GetLocked() bool {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.Locked
-}
-func (t *CreateUser_CreateUser_User_Setting) GetSilencedAt() *time.Time {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.SilencedAt
-}
-func (t *CreateUser_CreateUser_User_Setting) GetStatus() *enums.UserStatus {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return &t.Status
-}
-func (t *CreateUser_CreateUser_User_Setting) GetSuspendedAt() *time.Time {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.SuspendedAt
-}
-func (t *CreateUser_CreateUser_User_Setting) GetTags() []string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.Tags
-}
-func (t *CreateUser_CreateUser_User_Setting) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.UpdatedAt
-}
-func (t *CreateUser_CreateUser_User_Setting) GetUpdatedBy() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.UpdatedBy
-}
-
-type CreateUser_CreateUser_User struct {
-	AuthProvider     enums.AuthProvider                             "json:\"authProvider\" graphql:\"authProvider\""
-	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	AvatarRemoteURL  *string                                        "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
-	DisplayName      string                                         "json:\"displayName\" graphql:\"displayName\""
-	Email            string                                         "json:\"email\" graphql:\"email\""
-	FirstName        *string                                        "json:\"firstName,omitempty\" graphql:\"firstName\""
-	ID               string                                         "json:\"id\" graphql:\"id\""
-	LastName         *string                                        "json:\"lastName,omitempty\" graphql:\"lastName\""
-	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
-	Tags             []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
-	OrgMemberships   []*CreateUser_CreateUser_User_OrgMemberships   "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
-	GroupMemberships []*CreateUser_CreateUser_User_GroupMemberships "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
-	Setting          CreateUser_CreateUser_User_Setting             "json:\"setting\" graphql:\"setting\""
-}
-
-func (t *CreateUser_CreateUser_User) GetAuthProvider() *enums.AuthProvider {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return &t.AuthProvider
-}
-func (t *CreateUser_CreateUser_User) GetAvatarLocalFile() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.AvatarLocalFile
-}
-func (t *CreateUser_CreateUser_User) GetAvatarRemoteURL() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.AvatarRemoteURL
-}
-func (t *CreateUser_CreateUser_User) GetDisplayName() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.DisplayName
-}
-func (t *CreateUser_CreateUser_User) GetEmail() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.Email
-}
-func (t *CreateUser_CreateUser_User) GetFirstName() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.FirstName
-}
-func (t *CreateUser_CreateUser_User) GetID() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.ID
-}
-func (t *CreateUser_CreateUser_User) GetLastName() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.LastName
-}
-func (t *CreateUser_CreateUser_User) GetSub() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.Sub
-}
-func (t *CreateUser_CreateUser_User) GetTags() []string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.Tags
-}
-func (t *CreateUser_CreateUser_User) GetOrgMemberships() []*CreateUser_CreateUser_User_OrgMemberships {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.OrgMemberships
-}
-func (t *CreateUser_CreateUser_User) GetGroupMemberships() []*CreateUser_CreateUser_User_GroupMemberships {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.GroupMemberships
-}
-func (t *CreateUser_CreateUser_User) GetSetting() *CreateUser_CreateUser_User_Setting {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return &t.Setting
-}
-
-type CreateUser_CreateUser struct {
-	User CreateUser_CreateUser_User "json:\"user\" graphql:\"user\""
-}
-
-func (t *CreateUser_CreateUser) GetUser() *CreateUser_CreateUser_User {
-	if t == nil {
-		t = &CreateUser_CreateUser{}
-	}
-	return &t.User
-}
-
-type CreateBulkUser_CreateBulkUser_Users struct {
-	AuthProvider    enums.AuthProvider "json:\"authProvider\" graphql:\"authProvider\""
-	AvatarLocalFile *string            "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	AvatarRemoteURL *string            "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
-	DisplayName     string             "json:\"displayName\" graphql:\"displayName\""
-	Email           string             "json:\"email\" graphql:\"email\""
-	FirstName       *string            "json:\"firstName,omitempty\" graphql:\"firstName\""
-	ID              string             "json:\"id\" graphql:\"id\""
-	LastName        *string            "json:\"lastName,omitempty\" graphql:\"lastName\""
-	Sub             *string            "json:\"sub,omitempty\" graphql:\"sub\""
-	Tags            []string           "json:\"tags,omitempty\" graphql:\"tags\""
-}
-
-func (t *CreateBulkUser_CreateBulkUser_Users) GetAuthProvider() *enums.AuthProvider {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return &t.AuthProvider
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetAvatarLocalFile() *string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.AvatarLocalFile
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetAvatarRemoteURL() *string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.AvatarRemoteURL
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetDisplayName() string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.DisplayName
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetEmail() string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.Email
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetFirstName() *string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.FirstName
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetID() string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.ID
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetLastName() *string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.LastName
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetSub() *string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.Sub
-}
-func (t *CreateBulkUser_CreateBulkUser_Users) GetTags() []string {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser_Users{}
-	}
-	return t.Tags
-}
-
-type CreateBulkUser_CreateBulkUser struct {
-	Users []*CreateBulkUser_CreateBulkUser_Users "json:\"users,omitempty\" graphql:\"users\""
-}
-
-func (t *CreateBulkUser_CreateBulkUser) GetUsers() []*CreateBulkUser_CreateBulkUser_Users {
-	if t == nil {
-		t = &CreateBulkUser_CreateBulkUser{}
-	}
-	return t.Users
-}
-
-type CreateBulkCSVUser_CreateBulkCSVUser_Users struct {
-	AuthProvider    enums.AuthProvider "json:\"authProvider\" graphql:\"authProvider\""
-	AvatarLocalFile *string            "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	AvatarRemoteURL *string            "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
-	DisplayName     string             "json:\"displayName\" graphql:\"displayName\""
-	Email           string             "json:\"email\" graphql:\"email\""
-	FirstName       *string            "json:\"firstName,omitempty\" graphql:\"firstName\""
-	ID              string             "json:\"id\" graphql:\"id\""
-	LastName        *string            "json:\"lastName,omitempty\" graphql:\"lastName\""
-	Sub             *string            "json:\"sub,omitempty\" graphql:\"sub\""
-	Tags            []string           "json:\"tags,omitempty\" graphql:\"tags\""
-}
-
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetAuthProvider() *enums.AuthProvider {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return &t.AuthProvider
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetAvatarLocalFile() *string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.AvatarLocalFile
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetAvatarRemoteURL() *string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.AvatarRemoteURL
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetDisplayName() string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.DisplayName
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetEmail() string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.Email
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetFirstName() *string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.FirstName
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetID() string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.ID
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetLastName() *string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.LastName
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetSub() *string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.Sub
-}
-func (t *CreateBulkCSVUser_CreateBulkCSVUser_Users) GetTags() []string {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser_Users{}
-	}
-	return t.Tags
-}
-
-type CreateBulkCSVUser_CreateBulkCSVUser struct {
-	Users []*CreateBulkCSVUser_CreateBulkCSVUser_Users "json:\"users,omitempty\" graphql:\"users\""
-}
-
-func (t *CreateBulkCSVUser_CreateBulkCSVUser) GetUsers() []*CreateBulkCSVUser_CreateBulkCSVUser_Users {
-	if t == nil {
-		t = &CreateBulkCSVUser_CreateBulkCSVUser{}
-	}
-	return t.Users
-}
-
 type UpdateUser_UpdateUser_User_GroupMemberships struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
@@ -15571,17 +15410,6 @@ func (t *UpdateUser_UpdateUser) GetUser() *UpdateUser_UpdateUser_User {
 		t = &UpdateUser_UpdateUser{}
 	}
 	return &t.User
-}
-
-type DeleteUser_DeleteUser struct {
-	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
-}
-
-func (t *DeleteUser_DeleteUser) GetDeletedID() string {
-	if t == nil {
-		t = &DeleteUser_DeleteUser{}
-	}
-	return t.DeletedID
 }
 
 type GetUserSettingByID_UserSetting_DefaultOrg struct {
@@ -18135,6 +17963,39 @@ func (t *UpdateTFASetting) GetUpdateTFASetting() *UpdateTFASetting_UpdateTFASett
 	return &t.UpdateTFASetting
 }
 
+type CreateUser struct {
+	CreateUser CreateUser_CreateUser "json:\"createUser\" graphql:\"createUser\""
+}
+
+func (t *CreateUser) GetCreateUser() *CreateUser_CreateUser {
+	if t == nil {
+		t = &CreateUser{}
+	}
+	return &t.CreateUser
+}
+
+type DeleteUser struct {
+	DeleteUser DeleteUser_DeleteUser "json:\"deleteUser\" graphql:\"deleteUser\""
+}
+
+func (t *DeleteUser) GetDeleteUser() *DeleteUser_DeleteUser {
+	if t == nil {
+		t = &DeleteUser{}
+	}
+	return &t.DeleteUser
+}
+
+type GetAllUsers struct {
+	Users GetAllUsers_Users "json:\"users\" graphql:\"users\""
+}
+
+func (t *GetAllUsers) GetUsers() *GetAllUsers_Users {
+	if t == nil {
+		t = &GetAllUsers{}
+	}
+	return &t.Users
+}
+
 type GetUserByID struct {
 	User GetUserByID_User "json:\"user\" graphql:\"user\""
 }
@@ -18157,50 +18018,6 @@ func (t *GetUserByIDWithOrgs) GetUser() *GetUserByIDWithOrgs_User {
 	return &t.User
 }
 
-type GetAllUsers struct {
-	Users GetAllUsers_Users "json:\"users\" graphql:\"users\""
-}
-
-func (t *GetAllUsers) GetUsers() *GetAllUsers_Users {
-	if t == nil {
-		t = &GetAllUsers{}
-	}
-	return &t.Users
-}
-
-type CreateUser struct {
-	CreateUser CreateUser_CreateUser "json:\"createUser\" graphql:\"createUser\""
-}
-
-func (t *CreateUser) GetCreateUser() *CreateUser_CreateUser {
-	if t == nil {
-		t = &CreateUser{}
-	}
-	return &t.CreateUser
-}
-
-type CreateBulkUser struct {
-	CreateBulkUser CreateBulkUser_CreateBulkUser "json:\"createBulkUser\" graphql:\"createBulkUser\""
-}
-
-func (t *CreateBulkUser) GetCreateBulkUser() *CreateBulkUser_CreateBulkUser {
-	if t == nil {
-		t = &CreateBulkUser{}
-	}
-	return &t.CreateBulkUser
-}
-
-type CreateBulkCSVUser struct {
-	CreateBulkCSVUser CreateBulkCSVUser_CreateBulkCSVUser "json:\"createBulkCSVUser\" graphql:\"createBulkCSVUser\""
-}
-
-func (t *CreateBulkCSVUser) GetCreateBulkCSVUser() *CreateBulkCSVUser_CreateBulkCSVUser {
-	if t == nil {
-		t = &CreateBulkCSVUser{}
-	}
-	return &t.CreateBulkCSVUser
-}
-
 type UpdateUser struct {
 	UpdateUser UpdateUser_UpdateUser "json:\"updateUser\" graphql:\"updateUser\""
 }
@@ -18210,17 +18027,6 @@ func (t *UpdateUser) GetUpdateUser() *UpdateUser_UpdateUser {
 		t = &UpdateUser{}
 	}
 	return &t.UpdateUser
-}
-
-type DeleteUser struct {
-	DeleteUser DeleteUser_DeleteUser "json:\"deleteUser\" graphql:\"deleteUser\""
-}
-
-func (t *DeleteUser) GetDeleteUser() *DeleteUser_DeleteUser {
-	if t == nil {
-		t = &DeleteUser{}
-	}
-	return &t.DeleteUser
 }
 
 type GetUserSettingByID struct {
@@ -23262,6 +23068,147 @@ func (c *Client) UpdateTFASetting(ctx context.Context, input UpdateTFASettingInp
 	return &res, nil
 }
 
+const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
+	createUser(input: $input) {
+		user {
+			authProvider
+			avatarLocalFile
+			avatarRemoteURL
+			displayName
+			email
+			firstName
+			id
+			lastName
+			sub
+			tags
+			orgMemberships {
+				id
+				organizationID
+			}
+			groupMemberships {
+				id
+				groupID
+			}
+			setting {
+				defaultOrg {
+					id
+					name
+					personalOrg
+				}
+				createdAt
+				createdBy
+				emailConfirmed
+				locked
+				silencedAt
+				status
+				suspendedAt
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateUser
+	if err := c.Client.Post(ctx, "CreateUser", CreateUserDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteUserDocument = `mutation DeleteUser ($deleteUserId: ID!) {
+	deleteUser(id: $deleteUserId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error) {
+	vars := map[string]any{
+		"deleteUserId": deleteUserID,
+	}
+
+	var res DeleteUser
+	if err := c.Client.Post(ctx, "DeleteUser", DeleteUserDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllUsersDocument = `query GetAllUsers {
+	users {
+		edges {
+			node {
+				authProvider
+				avatarLocalFile
+				avatarRemoteURL
+				displayName
+				email
+				firstName
+				id
+				lastName
+				lastSeen
+				sub
+				tags
+				setting {
+					defaultOrg {
+						id
+						name
+						personalOrg
+					}
+					createdAt
+					createdBy
+					emailConfirmed
+					locked
+					silencedAt
+					status
+					suspendedAt
+					tags
+					updatedAt
+					updatedBy
+				}
+				createdAt
+				createdBy
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error) {
+	vars := map[string]any{}
+
+	var res GetAllUsers
+	if err := c.Client.Post(ctx, "GetAllUsers", GetAllUsersDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 	user(id: $userId) {
 		authProvider
@@ -23389,193 +23336,6 @@ func (c *Client) GetUserByIDWithOrgs(ctx context.Context, userID string, interce
 	return &res, nil
 }
 
-const GetAllUsersDocument = `query GetAllUsers {
-	users {
-		edges {
-			node {
-				authProvider
-				avatarLocalFile
-				avatarRemoteURL
-				displayName
-				email
-				firstName
-				id
-				lastName
-				lastSeen
-				sub
-				tags
-				setting {
-					defaultOrg {
-						id
-						name
-						personalOrg
-					}
-					createdAt
-					createdBy
-					emailConfirmed
-					locked
-					silencedAt
-					status
-					suspendedAt
-					tags
-					updatedAt
-					updatedBy
-				}
-				createdAt
-				createdBy
-				updatedAt
-				updatedBy
-			}
-		}
-	}
-}
-`
-
-func (c *Client) GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error) {
-	vars := map[string]any{}
-
-	var res GetAllUsers
-	if err := c.Client.Post(ctx, "GetAllUsers", GetAllUsersDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
-	createUser(input: $input) {
-		user {
-			authProvider
-			avatarLocalFile
-			avatarRemoteURL
-			displayName
-			email
-			firstName
-			id
-			lastName
-			sub
-			tags
-			orgMemberships {
-				id
-				organizationID
-			}
-			groupMemberships {
-				id
-				groupID
-			}
-			setting {
-				defaultOrg {
-					id
-					name
-					personalOrg
-				}
-				createdAt
-				createdBy
-				emailConfirmed
-				locked
-				silencedAt
-				status
-				suspendedAt
-				tags
-				updatedAt
-				updatedBy
-			}
-		}
-	}
-}
-`
-
-func (c *Client) CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error) {
-	vars := map[string]any{
-		"input": input,
-	}
-
-	var res CreateUser
-	if err := c.Client.Post(ctx, "CreateUser", CreateUserDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const CreateBulkUserDocument = `mutation CreateBulkUser ($input: [CreateUserInput!]) {
-	createBulkUser(input: $input) {
-		users {
-			authProvider
-			avatarLocalFile
-			avatarRemoteURL
-			displayName
-			email
-			firstName
-			id
-			lastName
-			sub
-			tags
-		}
-	}
-}
-`
-
-func (c *Client) CreateBulkUser(ctx context.Context, input []*CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkUser, error) {
-	vars := map[string]any{
-		"input": input,
-	}
-
-	var res CreateBulkUser
-	if err := c.Client.Post(ctx, "CreateBulkUser", CreateBulkUserDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const CreateBulkCSVUserDocument = `mutation CreateBulkCSVUser ($input: Upload!) {
-	createBulkCSVUser(input: $input) {
-		users {
-			authProvider
-			avatarLocalFile
-			avatarRemoteURL
-			displayName
-			email
-			firstName
-			id
-			lastName
-			sub
-			tags
-		}
-	}
-}
-`
-
-func (c *Client) CreateBulkCSVUser(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVUser, error) {
-	vars := map[string]any{
-		"input": input,
-	}
-
-	var res CreateBulkCSVUser
-	if err := c.Client.Post(ctx, "CreateBulkCSVUser", CreateBulkCSVUserDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
 const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: UpdateUserInput!) {
 	updateUser(id: $updateUserId, input: $input) {
 		user {
@@ -23625,30 +23385,6 @@ func (c *Client) UpdateUser(ctx context.Context, updateUserID string, input Upda
 
 	var res UpdateUser
 	if err := c.Client.Post(ctx, "UpdateUser", UpdateUserDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const DeleteUserDocument = `mutation DeleteUser ($deleteUserId: ID!) {
-	deleteUser(id: $deleteUserId) {
-		deletedID
-	}
-}
-`
-
-func (c *Client) DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error) {
-	vars := map[string]any{
-		"deleteUserId": deleteUserID,
-	}
-
-	var res DeleteUser
-	if err := c.Client.Post(ctx, "DeleteUser", DeleteUserDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -24207,14 +23943,12 @@ var DocumentOperationNames = map[string]string{
 	GetTFASettingDocument:                    "GetTFASetting",
 	GetTFASettingsDocument:                   "GetTFASettings",
 	UpdateTFASettingDocument:                 "UpdateTFASetting",
+	CreateUserDocument:                       "CreateUser",
+	DeleteUserDocument:                       "DeleteUser",
+	GetAllUsersDocument:                      "GetAllUsers",
 	GetUserByIDDocument:                      "GetUserByID",
 	GetUserByIDWithOrgsDocument:              "GetUserByIDWithOrgs",
-	GetAllUsersDocument:                      "GetAllUsers",
-	CreateUserDocument:                       "CreateUser",
-	CreateBulkUserDocument:                   "CreateBulkUser",
-	CreateBulkCSVUserDocument:                "CreateBulkCSVUser",
 	UpdateUserDocument:                       "UpdateUser",
-	DeleteUserDocument:                       "DeleteUser",
 	GetUserSettingByIDDocument:               "GetUserSettingByID",
 	GetUserSettingsDocument:                  "GetUserSettings",
 	GetUserSettingWhereDocument:              "GetUserSettingWhere",

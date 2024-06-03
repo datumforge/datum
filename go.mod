@@ -4,8 +4,6 @@ go 1.22.3
 
 replace github.com/datumforge/enthistory => ../enthistory
 
-replace github.com/datumforge/fgax => ../fgax
-
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.5.0
@@ -21,7 +19,7 @@ require (
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20240521143548-d561656e6328
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/datumforge/enthistory v0.0.9
-	github.com/datumforge/fgax v0.2.1
+	github.com/datumforge/fgax v0.2.2-0.20240603195006-276eb1524c7e
 	github.com/datumforge/geodetic v0.0.3
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 	github.com/gabriel-vasile/mimetype v1.4.4
@@ -182,7 +180,7 @@ require (
 	github.com/opencontainers/runc v1.1.12 // indirect
 	github.com/openfga/api/proto v0.0.0-20240529184453-5b0b4941f3e0 // indirect
 	github.com/openfga/go-sdk v0.4.0 // indirect
-	github.com/openfga/language/pkg/go v0.0.0-20240530090832-1ae482acc202 // indirect
+	github.com/openfga/language/pkg/go v0.0.0-20240603163217-f5fc1d6b5f85 // indirect
 	github.com/openfga/openfga v1.5.4 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect

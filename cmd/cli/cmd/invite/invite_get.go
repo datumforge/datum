@@ -9,6 +9,7 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
 var inviteGetCmd = &cobra.Command{
@@ -39,21 +40,52 @@ func invites(ctx context.Context) error {
 
 	// filter options
 	invID := viper.GetString("invite.get.id")
-	if invID == "" {
-		return datum.NewRequiredFieldMissingError("invite id")
+
+	if invID != "" {
+		invite, err := cli.Client.GetInvite(ctx, invID, cli.Interceptor)
+		if err != nil {
+			return err
+		}
+
+		return printInvite(invite)
 	}
 
-	var s []byte
-
-	invite, err := cli.Client.GetInvite(ctx, invID, cli.Interceptor)
+	invites, err := cli.Client.GetInvites(ctx, cli.Interceptor)
 	if err != nil {
 		return err
 	}
 
-	s, err = json.Marshal(invite)
-	if err != nil {
-		return err
+	return printInvite(invites)
+}
+
+// printInviteTable prints the invite table to the console
+func printInviteTable(i interface{}) {
+	writer := tables.NewTableWriter(inviteCmd.OutOrStdout(), "ID", "Recipient", "Role", "Status")
+
+	switch v := i.(type) {
+	case *datumclient.GetInvites:
+		for _, invite := range v.Invites.Edges {
+			writer.AddRow(invite.Node.ID, invite.Node.Recipient, invite.Node.Role, invite.Node.Status)
+		}
+	case *datumclient.GetInvite:
+		writer.AddRow(v.Invite.ID, v.Invite.Recipient, v.Invite.Role, v.Invite.Status)
 	}
 
-	return datum.JSONPrint(s)
+	writer.Render()
+}
+
+// printInvite prints the invite to the console either in table or json format
+func printInvite(i interface{}) error {
+	if datum.OutputFormat == datum.JSONOutput {
+		s, err := json.Marshal(i)
+		if err != nil {
+			return err
+		}
+
+		return datum.JSONPrint(s)
+	}
+
+	printInviteTable(i)
+
+	return nil
 }

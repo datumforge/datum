@@ -81,11 +81,12 @@ type DatumClient interface {
 	GetIntegrationByID(ctx context.Context, integrationID string, interceptors ...clientv2.RequestInterceptor) (*GetIntegrationByID, error)
 	GetIntegrations(ctx context.Context, where *IntegrationWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetIntegrations, error)
 	UpdateIntegration(ctx context.Context, updateIntegrationID string, input UpdateIntegrationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateIntegration, error)
-	CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error)
-	CreateBulkInvite(ctx context.Context, input []*CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkInvite, error)
 	CreateBulkCSVInvite(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVInvite, error)
+	CreateBulkInvite(ctx context.Context, input []*CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkInvite, error)
+	CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error)
 	DeleteInvite(ctx context.Context, deleteInviteID string, interceptors ...clientv2.RequestInterceptor) (*DeleteInvite, error)
 	GetInvite(ctx context.Context, inviteID string, interceptors ...clientv2.RequestInterceptor) (*GetInvite, error)
+	GetInvites(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetInvites, error)
 	InvitesByOrgID(ctx context.Context, where *InviteWhereInput, interceptors ...clientv2.RequestInterceptor) (*InvitesByOrgID, error)
 	CreateBulkCSVOhAuthTooToken(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVOhAuthTooToken, error)
 	CreateBulkOhAuthTooToken(ctx context.Context, input []*CreateOhAuthTooTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkOhAuthTooToken, error)
@@ -8715,6 +8716,134 @@ func (t *UpdateIntegration_UpdateIntegration) GetIntegration() *UpdateIntegratio
 	return &t.Integration
 }
 
+type CreateBulkCSVInvite_CreateBulkCSVInvite_Invites struct {
+	Expires      time.Time          "json:\"expires\" graphql:\"expires\""
+	ID           string             "json:\"id\" graphql:\"id\""
+	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
+	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
+	Role         enums.Role         "json:\"role\" graphql:\"role\""
+	SendAttempts int64              "json:\"sendAttempts\" graphql:\"sendAttempts\""
+	Status       enums.InviteStatus "json:\"status\" graphql:\"status\""
+}
+
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetExpires() *time.Time {
+	if t == nil {
+		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
+	}
+	return &t.Expires
+}
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetID() string {
+	if t == nil {
+		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
+	}
+	return t.ID
+}
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRecipient() string {
+	if t == nil {
+		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
+	}
+	return t.Recipient
+}
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRequestorID() string {
+	if t == nil {
+		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
+	}
+	return t.RequestorID
+}
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRole() *enums.Role {
+	if t == nil {
+		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
+	}
+	return &t.Role
+}
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetSendAttempts() int64 {
+	if t == nil {
+		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
+	}
+	return t.SendAttempts
+}
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetStatus() *enums.InviteStatus {
+	if t == nil {
+		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
+	}
+	return &t.Status
+}
+
+type CreateBulkCSVInvite_CreateBulkCSVInvite struct {
+	Invites []*CreateBulkCSVInvite_CreateBulkCSVInvite_Invites "json:\"invites,omitempty\" graphql:\"invites\""
+}
+
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite) GetInvites() []*CreateBulkCSVInvite_CreateBulkCSVInvite_Invites {
+	if t == nil {
+		t = &CreateBulkCSVInvite_CreateBulkCSVInvite{}
+	}
+	return t.Invites
+}
+
+type CreateBulkInvite_CreateBulkInvite_Invites struct {
+	Expires      time.Time          "json:\"expires\" graphql:\"expires\""
+	ID           string             "json:\"id\" graphql:\"id\""
+	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
+	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
+	Role         enums.Role         "json:\"role\" graphql:\"role\""
+	SendAttempts int64              "json:\"sendAttempts\" graphql:\"sendAttempts\""
+	Status       enums.InviteStatus "json:\"status\" graphql:\"status\""
+}
+
+func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetExpires() *time.Time {
+	if t == nil {
+		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
+	}
+	return &t.Expires
+}
+func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetID() string {
+	if t == nil {
+		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
+	}
+	return t.ID
+}
+func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRecipient() string {
+	if t == nil {
+		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
+	}
+	return t.Recipient
+}
+func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRequestorID() string {
+	if t == nil {
+		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
+	}
+	return t.RequestorID
+}
+func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRole() *enums.Role {
+	if t == nil {
+		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
+	}
+	return &t.Role
+}
+func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetSendAttempts() int64 {
+	if t == nil {
+		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
+	}
+	return t.SendAttempts
+}
+func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetStatus() *enums.InviteStatus {
+	if t == nil {
+		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
+	}
+	return &t.Status
+}
+
+type CreateBulkInvite_CreateBulkInvite struct {
+	Invites []*CreateBulkInvite_CreateBulkInvite_Invites "json:\"invites,omitempty\" graphql:\"invites\""
+}
+
+func (t *CreateBulkInvite_CreateBulkInvite) GetInvites() []*CreateBulkInvite_CreateBulkInvite_Invites {
+	if t == nil {
+		t = &CreateBulkInvite_CreateBulkInvite{}
+	}
+	return t.Invites
+}
+
 type CreateInvite_CreateInvite_Invite_Owner struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
@@ -8795,134 +8924,6 @@ func (t *CreateInvite_CreateInvite) GetInvite() *CreateInvite_CreateInvite_Invit
 		t = &CreateInvite_CreateInvite{}
 	}
 	return &t.Invite
-}
-
-type CreateBulkInvite_CreateBulkInvite_Invites struct {
-	Expires      time.Time          "json:\"expires\" graphql:\"expires\""
-	ID           string             "json:\"id\" graphql:\"id\""
-	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
-	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
-	Role         enums.Role         "json:\"role\" graphql:\"role\""
-	SendAttempts int64              "json:\"sendAttempts\" graphql:\"sendAttempts\""
-	Status       enums.InviteStatus "json:\"status\" graphql:\"status\""
-}
-
-func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetExpires() *time.Time {
-	if t == nil {
-		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
-	}
-	return &t.Expires
-}
-func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetID() string {
-	if t == nil {
-		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
-	}
-	return t.ID
-}
-func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRecipient() string {
-	if t == nil {
-		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
-	}
-	return t.Recipient
-}
-func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRequestorID() string {
-	if t == nil {
-		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
-	}
-	return t.RequestorID
-}
-func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRole() *enums.Role {
-	if t == nil {
-		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
-	}
-	return &t.Role
-}
-func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetSendAttempts() int64 {
-	if t == nil {
-		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
-	}
-	return t.SendAttempts
-}
-func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetStatus() *enums.InviteStatus {
-	if t == nil {
-		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
-	}
-	return &t.Status
-}
-
-type CreateBulkInvite_CreateBulkInvite struct {
-	Invites []*CreateBulkInvite_CreateBulkInvite_Invites "json:\"invites,omitempty\" graphql:\"invites\""
-}
-
-func (t *CreateBulkInvite_CreateBulkInvite) GetInvites() []*CreateBulkInvite_CreateBulkInvite_Invites {
-	if t == nil {
-		t = &CreateBulkInvite_CreateBulkInvite{}
-	}
-	return t.Invites
-}
-
-type CreateBulkCSVInvite_CreateBulkCSVInvite_Invites struct {
-	Expires      time.Time          "json:\"expires\" graphql:\"expires\""
-	ID           string             "json:\"id\" graphql:\"id\""
-	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
-	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
-	Role         enums.Role         "json:\"role\" graphql:\"role\""
-	SendAttempts int64              "json:\"sendAttempts\" graphql:\"sendAttempts\""
-	Status       enums.InviteStatus "json:\"status\" graphql:\"status\""
-}
-
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetExpires() *time.Time {
-	if t == nil {
-		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
-	}
-	return &t.Expires
-}
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetID() string {
-	if t == nil {
-		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
-	}
-	return t.ID
-}
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRecipient() string {
-	if t == nil {
-		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
-	}
-	return t.Recipient
-}
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRequestorID() string {
-	if t == nil {
-		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
-	}
-	return t.RequestorID
-}
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRole() *enums.Role {
-	if t == nil {
-		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
-	}
-	return &t.Role
-}
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetSendAttempts() int64 {
-	if t == nil {
-		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
-	}
-	return t.SendAttempts
-}
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetStatus() *enums.InviteStatus {
-	if t == nil {
-		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
-	}
-	return &t.Status
-}
-
-type CreateBulkCSVInvite_CreateBulkCSVInvite struct {
-	Invites []*CreateBulkCSVInvite_CreateBulkCSVInvite_Invites "json:\"invites,omitempty\" graphql:\"invites\""
-}
-
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite) GetInvites() []*CreateBulkCSVInvite_CreateBulkCSVInvite_Invites {
-	if t == nil {
-		t = &CreateBulkCSVInvite_CreateBulkCSVInvite{}
-	}
-	return t.Invites
 }
 
 type DeleteInvite_DeleteInvite struct {
@@ -9047,6 +9048,60 @@ func (t *GetInvite_Invite) GetUpdatedBy() *string {
 		t = &GetInvite_Invite{}
 	}
 	return t.UpdatedBy
+}
+
+type GetInvites_Invites_Edges_Node struct {
+	ID        string             "json:\"id\" graphql:\"id\""
+	Recipient string             "json:\"recipient\" graphql:\"recipient\""
+	Role      enums.Role         "json:\"role\" graphql:\"role\""
+	Status    enums.InviteStatus "json:\"status\" graphql:\"status\""
+}
+
+func (t *GetInvites_Invites_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetInvites_Invites_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetInvites_Invites_Edges_Node) GetRecipient() string {
+	if t == nil {
+		t = &GetInvites_Invites_Edges_Node{}
+	}
+	return t.Recipient
+}
+func (t *GetInvites_Invites_Edges_Node) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetInvites_Invites_Edges_Node{}
+	}
+	return &t.Role
+}
+func (t *GetInvites_Invites_Edges_Node) GetStatus() *enums.InviteStatus {
+	if t == nil {
+		t = &GetInvites_Invites_Edges_Node{}
+	}
+	return &t.Status
+}
+
+type GetInvites_Invites_Edges struct {
+	Node *GetInvites_Invites_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetInvites_Invites_Edges) GetNode() *GetInvites_Invites_Edges_Node {
+	if t == nil {
+		t = &GetInvites_Invites_Edges{}
+	}
+	return t.Node
+}
+
+type GetInvites_Invites struct {
+	Edges []*GetInvites_Invites_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetInvites_Invites) GetEdges() []*GetInvites_Invites_Edges {
+	if t == nil {
+		t = &GetInvites_Invites{}
+	}
+	return t.Edges
 }
 
 type InvitesByOrgID_Invites_Edges_Node_Owner_Invites struct {
@@ -17464,15 +17519,15 @@ func (t *UpdateIntegration) GetUpdateIntegration() *UpdateIntegration_UpdateInte
 	return &t.UpdateIntegration
 }
 
-type CreateInvite struct {
-	CreateInvite CreateInvite_CreateInvite "json:\"createInvite\" graphql:\"createInvite\""
+type CreateBulkCSVInvite struct {
+	CreateBulkCSVInvite CreateBulkCSVInvite_CreateBulkCSVInvite "json:\"createBulkCSVInvite\" graphql:\"createBulkCSVInvite\""
 }
 
-func (t *CreateInvite) GetCreateInvite() *CreateInvite_CreateInvite {
+func (t *CreateBulkCSVInvite) GetCreateBulkCSVInvite() *CreateBulkCSVInvite_CreateBulkCSVInvite {
 	if t == nil {
-		t = &CreateInvite{}
+		t = &CreateBulkCSVInvite{}
 	}
-	return &t.CreateInvite
+	return &t.CreateBulkCSVInvite
 }
 
 type CreateBulkInvite struct {
@@ -17486,15 +17541,15 @@ func (t *CreateBulkInvite) GetCreateBulkInvite() *CreateBulkInvite_CreateBulkInv
 	return &t.CreateBulkInvite
 }
 
-type CreateBulkCSVInvite struct {
-	CreateBulkCSVInvite CreateBulkCSVInvite_CreateBulkCSVInvite "json:\"createBulkCSVInvite\" graphql:\"createBulkCSVInvite\""
+type CreateInvite struct {
+	CreateInvite CreateInvite_CreateInvite "json:\"createInvite\" graphql:\"createInvite\""
 }
 
-func (t *CreateBulkCSVInvite) GetCreateBulkCSVInvite() *CreateBulkCSVInvite_CreateBulkCSVInvite {
+func (t *CreateInvite) GetCreateInvite() *CreateInvite_CreateInvite {
 	if t == nil {
-		t = &CreateBulkCSVInvite{}
+		t = &CreateInvite{}
 	}
-	return &t.CreateBulkCSVInvite
+	return &t.CreateInvite
 }
 
 type DeleteInvite struct {
@@ -17517,6 +17572,17 @@ func (t *GetInvite) GetInvite() *GetInvite_Invite {
 		t = &GetInvite{}
 	}
 	return &t.Invite
+}
+
+type GetInvites struct {
+	Invites GetInvites_Invites "json:\"invites\" graphql:\"invites\""
+}
+
+func (t *GetInvites) GetInvites() *GetInvites_Invites {
+	if t == nil {
+		t = &GetInvites{}
+	}
+	return &t.Invites
 }
 
 type InvitesByOrgID struct {
@@ -21121,9 +21187,9 @@ func (c *Client) UpdateIntegration(ctx context.Context, updateIntegrationID stri
 	return &res, nil
 }
 
-const CreateInviteDocument = `mutation CreateInvite ($input: CreateInviteInput!) {
-	createInvite(input: $input) {
-		invite {
+const CreateBulkCSVInviteDocument = `mutation CreateBulkCSVInvite ($input: Upload!) {
+	createBulkCSVInvite(input: $input) {
+		invites {
 			expires
 			id
 			recipient
@@ -21131,21 +21197,18 @@ const CreateInviteDocument = `mutation CreateInvite ($input: CreateInviteInput!)
 			role
 			sendAttempts
 			status
-			owner {
-				id
-			}
 		}
 	}
 }
 `
 
-func (c *Client) CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error) {
+func (c *Client) CreateBulkCSVInvite(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVInvite, error) {
 	vars := map[string]any{
 		"input": input,
 	}
 
-	var res CreateInvite
-	if err := c.Client.Post(ctx, "CreateInvite", CreateInviteDocument, &res, vars, interceptors...); err != nil {
+	var res CreateBulkCSVInvite
+	if err := c.Client.Post(ctx, "CreateBulkCSVInvite", CreateBulkCSVInviteDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -21188,9 +21251,9 @@ func (c *Client) CreateBulkInvite(ctx context.Context, input []*CreateInviteInpu
 	return &res, nil
 }
 
-const CreateBulkCSVInviteDocument = `mutation CreateBulkCSVInvite ($input: Upload!) {
-	createBulkCSVInvite(input: $input) {
-		invites {
+const CreateInviteDocument = `mutation CreateInvite ($input: CreateInviteInput!) {
+	createInvite(input: $input) {
+		invite {
 			expires
 			id
 			recipient
@@ -21198,18 +21261,21 @@ const CreateBulkCSVInviteDocument = `mutation CreateBulkCSVInvite ($input: Uploa
 			role
 			sendAttempts
 			status
+			owner {
+				id
+			}
 		}
 	}
 }
 `
 
-func (c *Client) CreateBulkCSVInvite(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVInvite, error) {
+func (c *Client) CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error) {
 	vars := map[string]any{
 		"input": input,
 	}
 
-	var res CreateBulkCSVInvite
-	if err := c.Client.Post(ctx, "CreateBulkCSVInvite", CreateBulkCSVInviteDocument, &res, vars, interceptors...); err != nil {
+	var res CreateInvite
+	if err := c.Client.Post(ctx, "CreateInvite", CreateInviteDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -21273,6 +21339,35 @@ func (c *Client) GetInvite(ctx context.Context, inviteID string, interceptors ..
 
 	var res GetInvite
 	if err := c.Client.Post(ctx, "GetInvite", GetInviteDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetInvitesDocument = `query GetInvites {
+	invites {
+		edges {
+			node {
+				id
+				recipient
+				role
+				status
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetInvites(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetInvites, error) {
+	vars := map[string]any{}
+
+	var res GetInvites
+	if err := c.Client.Post(ctx, "GetInvites", GetInvitesDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -24056,11 +24151,12 @@ var DocumentOperationNames = map[string]string{
 	GetIntegrationByIDDocument:               "GetIntegrationByID",
 	GetIntegrationsDocument:                  "GetIntegrations",
 	UpdateIntegrationDocument:                "UpdateIntegration",
-	CreateInviteDocument:                     "CreateInvite",
-	CreateBulkInviteDocument:                 "CreateBulkInvite",
 	CreateBulkCSVInviteDocument:              "CreateBulkCSVInvite",
+	CreateBulkInviteDocument:                 "CreateBulkInvite",
+	CreateInviteDocument:                     "CreateInvite",
 	DeleteInviteDocument:                     "DeleteInvite",
 	GetInviteDocument:                        "GetInvite",
+	GetInvitesDocument:                       "GetInvites",
 	InvitesByOrgIDDocument:                   "InvitesByOrgID",
 	CreateBulkCSVOhAuthTooTokenDocument:      "CreateBulkCSVOhAuthTooToken",
 	CreateBulkOhAuthTooTokenDocument:         "CreateBulkOhAuthTooToken",

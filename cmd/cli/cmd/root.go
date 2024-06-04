@@ -1,4 +1,4 @@
-// Package datum is our cobra/viper cli implementation
+// Package datum is our cobra cli implementation
 package datum
 
 import (

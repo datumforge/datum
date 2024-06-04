@@ -16,7 +16,7 @@ type LoggerConfig struct {
 	Pretty bool
 }
 
-// NewLogger creates a new zap logger with the appropriate configuration based on the viper settings for pretty and debug
+// NewLogger creates a new zap logger with the appropriate configuration based on the config settings for pretty and debug
 func (c *LoggerConfig) NewLogger() *zap.SugaredLogger {
 	cfg := zap.NewProductionConfig()
 	if c.Pretty {

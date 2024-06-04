@@ -1,2 +1,2 @@
-// Package cmd is our cobra/viper cli implementation
+// Package cmd is our cobra cli implementation
 package cmd

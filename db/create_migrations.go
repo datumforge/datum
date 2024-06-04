@@ -6,6 +6,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	// supported ent database drivers
 	_ "github.com/datumforge/entx"                       // overlay for sqlite
@@ -19,6 +20,7 @@ import (
 	atlas "ariga.io/atlas/sql/migrate"
 	"ariga.io/atlas/sql/sqltool"
 	"github.com/datumforge/datum/internal/ent/generated/migrate"
+	"github.com/datumforge/datum/pkg/testutils"
 )
 
 func main() {
@@ -64,6 +66,13 @@ func main() {
 		log.Fatalln("failed to load the ATLAS_POSTGRES_DB_URI env var")
 	}
 
+	tf, err := testutils.GetPostgresDockerTest(pgDBURI, 5*time.Minute)
+	if err != nil {
+		log.Fatalf("failed creating postgres test container: %v", err)
+	}
+
+	defer testutils.TeardownFixture(tf)
+
 	// Generate migrations using Atlas support for sqlite (note the Ent dialect option passed above).
 	atlasOpts := append(baseOpts,
 		schema.WithDialect(dialect.Postgres),
@@ -71,7 +80,7 @@ func main() {
 		schema.WithFormatter(atlas.DefaultFormatter),
 	)
 
-	if err := migrate.NamedDiff(ctx, pgDBURI, os.Args[1], atlasOpts...); err != nil {
+	if err := migrate.NamedDiff(ctx, tf.URI, os.Args[1], atlasOpts...); err != nil {
 		log.Fatalf("failed generating atlas migration file: %v", err)
 	}
 
@@ -85,7 +94,7 @@ func main() {
 	// Generate migrations using Goose support for postgres
 	gooseOptsPG := append(postgresOpts, schema.WithDir(gooseDirPG))
 
-	if err = migrate.NamedDiff(ctx, pgDBURI, os.Args[1], gooseOptsPG...); err != nil {
+	if err = migrate.NamedDiff(ctx, tf.URI, os.Args[1], gooseOptsPG...); err != nil {
 		log.Fatalf("failed generating goose migration file for postgres: %v", err)
 	}
 }

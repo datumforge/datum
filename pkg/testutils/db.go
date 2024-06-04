@@ -1,6 +1,7 @@
 package testutils
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -29,7 +30,7 @@ func TeardownFixture(tf *TestFixture) {
 		}
 	}
 }
-func getPGDockerTest(image string, expiry time.Duration) (*TestFixture, error) {
+func GetPostgresDockerTest(image string, expiry time.Duration) (*TestFixture, error) {
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		return nil, err
@@ -65,7 +66,7 @@ func getPGDockerTest(image string, expiry time.Duration) (*TestFixture, error) {
 			}
 		})
 	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
+		log.Fatalf("could not start resource: %s", err)
 	}
 
 	port := resource.GetPort("5432/tcp")
@@ -86,6 +87,17 @@ func getPGDockerTest(image string, expiry time.Duration) (*TestFixture, error) {
 		return nil, err
 	}
 
+	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
+	if err := pool.Retry(func() error {
+		db, err := sql.Open("postgres", databaseURL)
+		if err != nil {
+			return err
+		}
+		return db.Ping()
+	}); err != nil {
+		log.Fatalf("unable to connect to database: %s", err)
+	}
+
 	return &TestFixture{
 		Pool:     pool,
 		resource: resource,
@@ -97,7 +109,7 @@ func getPGDockerTest(image string, expiry time.Duration) (*TestFixture, error) {
 func getTestDB(u string, expiry time.Duration) (*TestFixture, error) {
 	switch {
 	case strings.HasPrefix(u, "postgres"):
-		return getPGDockerTest(u, expiry)
+		return GetPostgresDockerTest(u, expiry)
 	default:
 		return nil, newURIError(u)
 	}

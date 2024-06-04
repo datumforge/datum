@@ -40,7 +40,7 @@ func registerUserInfoHandler(router *Router) (err error) {
 		Name:        name,
 		Method:      method,
 		Path:        path,
-		Middlewares: router.Handler.AuthMiddleware,
+		Middlewares: authMW,
 		Handler: func(c echo.Context) error {
 			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 

@@ -16,7 +16,7 @@ func registerInviteHandler(router *Router) (err error) {
 		Name:        name,
 		Method:      method,
 		Path:        path,
-		Middlewares: router.Handler.AuthMiddleware,
+		Middlewares: authMW,
 		Handler: func(c echo.Context) error {
 			return router.Handler.OrganizationInviteAccept(c)
 		},

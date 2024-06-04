@@ -13,7 +13,8 @@ import (
 )
 
 var (
-	mw = []echo.MiddlewareFunc{middleware.Recover()}
+	mw     = []echo.MiddlewareFunc{middleware.Recover()}
+	authMW = []echo.MiddlewareFunc{}
 
 	restrictedRateLimit   = &ratelimit.Config{RateLimit: 10, BurstLimit: 10, ExpiresIn: 15 * time.Minute} //nolint:gomnd
 	restrictedEndpointsMW = []echo.MiddlewareFunc{}
@@ -106,6 +107,10 @@ func RegisterRoutes(router *Router) error {
 	// Middleware for restricted endpoints
 	restrictedEndpointsMW = append(restrictedEndpointsMW, mw...)
 	restrictedEndpointsMW = append(restrictedEndpointsMW, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
+
+	// Middleware for authenticated endpoints
+	authMW = append(authMW, mw...)
+	authMW = append(authMW, router.Handler.AuthMiddleware...)
 
 	// routeHandlers that take the router and handler as input
 	routeHandlers := []interface{}{

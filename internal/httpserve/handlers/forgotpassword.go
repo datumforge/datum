@@ -16,16 +16,8 @@ import (
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
-// ForgotPassword will send an forgot password email if the provided
-// email exists
+// ForgotPassword will send an forgot password email if the provided email exists
 func (h *Handler) ForgotPassword(ctx echo.Context) error {
-	out := &models.ForgotPasswordReply{
-		Reply: rout.Reply{
-			Success: true,
-		},
-		Message: "We've received your request to have the password associated with this email reset. Please check your email.",
-	}
-
 	var in models.ForgotPasswordRequest
 	if err := ctx.Bind(&in); err != nil {
 		return h.BadRequest(ctx, err)
@@ -33,6 +25,13 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 
 	if err := validateForgotPasswordRequest(&in); err != nil {
 		return h.BadRequest(ctx, err)
+	}
+
+	out := &models.ForgotPasswordReply{
+		Reply: rout.Reply{
+			Success: true,
+		},
+		Message: "We've received your request to have the password associated with this email reset. Please check your email.",
 	}
 
 	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email, enums.AuthProviderCredentials)

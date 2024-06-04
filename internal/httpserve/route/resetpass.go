@@ -10,19 +10,21 @@ import (
 func registerResetPasswordHandler(router *Router) (err error) {
 	path := "/password-reset"
 	method := http.MethodPost
+	name := "ResetPassword"
 
 	route := echo.Route{
-		Name:   "ResetPassword",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return router.Handler.ResetPassword(c)
 		},
-	}.ForGroup(V1Version, mw)
+	}
 
 	resetOperation := router.Handler.BindResetPasswordHandler()
 
-	if err := router.AddRoute(path, method, resetOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, resetOperation, route); err != nil {
 		return err
 	}
 

@@ -10,22 +10,21 @@ import (
 func registerInviteHandler(router *Router) (err error) {
 	path := "/invite"
 	method := http.MethodPost
-
-	authMW := mw
-	authMW = append(authMW, router.Handler.AuthMiddleware...)
+	name := "OrganizationInviteAccept"
 
 	route := echo.Route{
-		Name:   "OrganizationInviteAccept",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: router.Handler.AuthMiddleware,
 		Handler: func(c echo.Context) error {
 			return router.Handler.OrganizationInviteAccept(c)
 		},
-	}.ForGroup(V1Version, authMW)
+	}
 
 	inviteOperation := router.Handler.BindOrganizationInviteAccept()
 
-	if err := router.AddRoute(path, method, inviteOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, inviteOperation, route); err != nil {
 		return err
 	}
 

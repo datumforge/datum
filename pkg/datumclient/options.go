@@ -14,7 +14,7 @@ type ClientOption func(c *APIv1) error
 // WithClient sets the client for the APIv1 client
 func WithClient(client *httpsling.Client) ClientOption {
 	return func(c *APIv1) error {
-		c.client = client
+		c.Config.HTTPSlingClient = client
 		return nil
 	}
 }
@@ -22,7 +22,7 @@ func WithClient(client *httpsling.Client) ClientOption {
 // WithCredentials sets the credentials for the APIv1 client
 func WithCredentials(creds Credentials) ClientOption {
 	return func(c *APIv1) error {
-		c.creds = creds
+		c.Config.Credentials = creds
 		return nil
 	}
 }
@@ -30,7 +30,7 @@ func WithCredentials(creds Credentials) ClientOption {
 // WithHTTPSlingConfig sets the config for the APIv1 client
 func WithHTTPSlingConfig(config *httpsling.Config) ClientOption {
 	return func(c *APIv1) error {
-		c.config = config
+		c.Config.HTTPSling = config
 		return nil
 	}
 }
@@ -38,7 +38,7 @@ func WithHTTPSlingConfig(config *httpsling.Config) ClientOption {
 // WithInterceptors sets the interceptors for the APIv1 client
 func WithInterceptors(interceptors clientv2.RequestInterceptor) ClientOption {
 	return func(c *APIv1) error {
-		c.interceptors = []clientv2.RequestInterceptor{interceptors}
+		c.Config.Interceptors = []clientv2.RequestInterceptor{interceptors}
 		return nil
 	}
 }
@@ -46,7 +46,7 @@ func WithInterceptors(interceptors clientv2.RequestInterceptor) ClientOption {
 // WithClientv2Option sets the clientv2 options for the APIv1 client
 func WithClientv2Option(option clientv2.Options) ClientOption {
 	return func(c *APIv1) error {
-		c.clientv2Options = option
+		c.Config.Clientv2Options = option
 		return nil
 	}
 }
@@ -54,7 +54,7 @@ func WithClientv2Option(option clientv2.Options) ClientOption {
 // WithGraphQueryEndpoint sets the graph query endpoint for the APIv1 client
 func WithGraphQueryEndpoint(endpoint string) ClientOption {
 	return func(c *APIv1) error {
-		c.graphQueryEndpoint = endpoint
+		c.Config.GraphQLPath = endpoint
 		return nil
 	}
 }
@@ -62,7 +62,7 @@ func WithGraphQueryEndpoint(endpoint string) ClientOption {
 // WithBaseURL sets the base URL for the APIv1 client
 func WithBaseURL(baseURL *url.URL) ClientOption {
 	return func(c *APIv1) error {
-		c.baseurl = baseURL
+		c.Config.BaseURL = baseURL
 		return nil
 	}
 }
@@ -70,7 +70,7 @@ func WithBaseURL(baseURL *url.URL) ClientOption {
 // WithToken sets the token for the APIv1 client
 func WithToken(token string) ClientOption {
 	return func(c *APIv1) error {
-		c.token = token
+		c.Config.Token = token
 		return nil
 	}
 }
@@ -78,7 +78,7 @@ func WithToken(token string) ClientOption {
 // WithTokenRefresh sets the token refresh for the APIv1 client
 func WithTokenRefresh(tokenRefresh string) ClientOption {
 	return func(c *APIv1) error {
-		c.tokenRefresh = tokenRefresh
+		c.Config.TokenRefresh = tokenRefresh
 		return nil
 	}
 }

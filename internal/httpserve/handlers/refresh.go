@@ -88,8 +88,8 @@ func (h *Handler) BindRefreshHandler() *openapi3.Operation {
 		},
 	}
 
-	h.AddRequestBody("RefreshRequest", models.RefreshRequest{}, refresh)
-	h.AddResponse("RefreshReply", "success", models.RefreshReply{}, refresh, http.StatusOK)
+	h.AddRequestBody("RefreshRequest", models.ExampleRefreshRequest, refresh)
+	h.AddResponse("RefreshReply", "success", models.ExampleRefreshSuccessResponse, refresh, http.StatusOK)
 	refresh.AddResponse(http.StatusInternalServerError, internalServerError())
 	refresh.AddResponse(http.StatusBadRequest, badRequest())
 	refresh.AddResponse(http.StatusNotFound, notFound())

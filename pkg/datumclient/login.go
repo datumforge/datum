@@ -8,15 +8,12 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 
 	echo "github.com/datumforge/echox"
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/httpserve/route"
-	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/models"
-	"github.com/datumforge/datum/pkg/sessions"
 )
 
 // Login creates a login request to the Datum API
@@ -63,65 +60,4 @@ func Login(c *Client, ctx context.Context, login models.LoginRequest) (*oauth2.T
 	}
 
 	return getTokensFromCookiesFromResponse(resp), nil
-}
-
-// getTokensFromCookies returns the access and refresh tokens from the http cookies
-func getTokensFromCookies(cookies []*http.Cookie) (token *oauth2.Token) {
-	token = &oauth2.Token{}
-
-	for _, c := range cookies {
-		if c.Name == auth.AccessTokenCookie {
-			token.AccessToken = c.Value
-		}
-
-		if c.Name == auth.RefreshTokenCookie {
-			token.RefreshToken = c.Value
-		}
-	}
-
-	return token
-}
-
-// getTokensFromCookiesFromResponse parses the HTTP Response for cookies and returns the access and refresh tokens
-func getTokensFromCookiesFromResponse(resp *http.Response) (token *oauth2.Token) {
-	// parse cookies
-	cookies := resp.Cookies()
-
-	return getTokensFromCookies(cookies)
-}
-
-// getTokensFromCookieRequest parses the HTTP Request for cookies and returns the session and access and refresh tokens
-// this is used for the oauth login flow
-func getTokensFromCookieRequest(r *http.Request) (token *oauth2.Token, session string) {
-	// parse cookies
-	cookies := r.Cookies()
-
-	// get session from query string
-	session = r.URL.Query().Get("session")
-
-	return getTokensFromCookies(cookies), session
-}
-
-// GetSessionFromCookieJar parses the cookie jar for the session cookie
-func GetSessionFromCookieJar(c *Client) (sessionID string, err error) {
-	u, err := url.Parse(c.Client.BaseURL)
-	if err != nil {
-		return "", err
-	}
-
-	cookies := c.Client.Client.Jar.Cookies(u)
-	cookieName := sessions.DefaultCookieName
-
-	// Use the dev cookie when running on localhost
-	if strings.Contains(u.Host, "localhost") {
-		cookieName = sessions.DevCookieName
-	}
-
-	for _, c := range cookies {
-		if c.Name == cookieName {
-			return c.Value, nil
-		}
-	}
-
-	return "", nil
 }

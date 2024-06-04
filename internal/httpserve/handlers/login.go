@@ -81,7 +81,6 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		AccessToken:  access,
 		RefreshToken: refresh,
 		Session:      s,
-		TokenType:    "access_token",
 		ExpiresIn:    claims.ExpiresAt.Unix(),
 	}
 

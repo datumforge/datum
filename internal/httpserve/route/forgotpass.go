@@ -10,19 +10,21 @@ import (
 func registerForgotPasswordHandler(router *Router) (err error) {
 	path := "/forgot-password"
 	method := http.MethodPost
+	name := "ForgotPassword"
 
 	route := echo.Route{
-		Name:   "ForgotPassword",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: restrictedEndpointsMW,
 		Handler: func(c echo.Context) error {
 			return router.Handler.ForgotPassword(c)
 		},
-	}.ForGroup(V1Version, restrictedEndpointsMW)
+	}
 
 	forgotPasswordOperation := router.Handler.BindForgotPassword()
 
-	if err := router.AddRoute(path, method, forgotPasswordOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, forgotPasswordOperation, route); err != nil {
 		return err
 	}
 

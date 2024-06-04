@@ -16,10 +16,10 @@ func TestDefaultAuthOptions(t *testing.T) {
 	// Should be able to create a default auth options with no extra input.
 	conf := auth.NewAuthOptions()
 	require.NotZero(t, conf, "a zero valued configuration was returned")
-	require.Equal(t, auth.DefaultKeysURL, conf.KeysURL)
-	require.Equal(t, auth.DefaultAudience, conf.Audience)
-	require.Equal(t, auth.DefaultIssuer, conf.Issuer)
-	require.Equal(t, auth.DefaultMinRefreshInterval, conf.MinRefreshInterval)
+	require.Equal(t, auth.DefaultAuthOptions.KeysURL, conf.KeysURL)
+	require.Equal(t, auth.DefaultAuthOptions.Audience, conf.Audience)
+	require.Equal(t, auth.DefaultAuthOptions.Issuer, conf.Issuer)
+	require.Equal(t, auth.DefaultAuthOptions.MinRefreshInterval, conf.MinRefreshInterval)
 	require.NotNil(t, conf.Context, "no context was created")
 }
 

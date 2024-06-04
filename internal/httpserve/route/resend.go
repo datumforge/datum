@@ -10,19 +10,21 @@ import (
 func registerResendEmailHandler(router *Router) (err error) {
 	path := "/resend"
 	method := http.MethodPost
+	name := "ResendEmail"
 
 	route := echo.Route{
-		Name:   "ResendEmail",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return router.Handler.ResendEmail(c)
 		},
-	}.ForGroup(V1Version, mw)
+	}
 
 	resendOperation := router.Handler.BindResendEmailHandler()
 
-	if err := router.AddRoute(path, method, resendOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, resendOperation, route); err != nil {
 		return err
 	}
 

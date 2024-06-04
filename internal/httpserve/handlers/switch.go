@@ -127,14 +127,14 @@ func switchClaims(u *generated.User, targetOrgMappingID string) *tokens.Claims {
 	}
 }
 
-// BindResetPassword binds the reset password handler to the OpenAPI schema
+// BindSwitchHandler binds the reset password handler to the OpenAPI schema
 func (h *Handler) BindSwitchHandler() *openapi3.Operation {
 	switchHandler := openapi3.NewOperation()
 	switchHandler.Description = "Switch the user's organization context"
 	switchHandler.OperationID = "OrganizationSwitch"
 
-	h.AddRequestBody("SwitchOrganizationRequest", models.PublishRequest{}, switchHandler)
-	h.AddResponse("SwitchOrganizationReply", "success", models.PublishReply{}, switchHandler, http.StatusOK)
+	h.AddRequestBody("SwitchOrganizationRequest", models.ExampleSwitchSuccessRequest, switchHandler)
+	h.AddResponse("SwitchOrganizationReply", "success", models.ExampleSwitchSuccessReply, switchHandler, http.StatusOK)
 	switchHandler.AddResponse(http.StatusInternalServerError, internalServerError())
 	switchHandler.AddResponse(http.StatusBadRequest, badRequest())
 	switchHandler.AddResponse(http.StatusUnauthorized, unauthorized())

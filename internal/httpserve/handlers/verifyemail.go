@@ -135,7 +135,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,
-		TokenType:    "access_token",
 		ExpiresIn:    claims.ExpiresAt.Unix(),
 	}
 

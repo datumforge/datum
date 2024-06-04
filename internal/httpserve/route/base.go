@@ -21,9 +21,9 @@ func registerLivenessHandler(router *Router) (err error) {
 				"status": "UP",
 			})
 		},
-	}.ForGroup(unversioned, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.AddUnversionedRoute(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -42,9 +42,9 @@ func registerReadinessHandler(router *Router) (err error) {
 		Handler: func(c echo.Context) error {
 			return router.Handler.ReadyChecks.ReadyHandler(c)
 		},
-	}.ForGroup(unversioned, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.AddUnversionedRoute(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -61,9 +61,9 @@ func registerMetricsHandler(router *Router) (err error) {
 		Method:  method,
 		Path:    path,
 		Handler: echo.WrapHandler(promhttp.Handler()),
-	}.ForGroup(unversioned, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.AddUnversionedRoute(path, method, nil, route); err != nil {
 		return err
 	}
 

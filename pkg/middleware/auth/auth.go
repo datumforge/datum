@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/pkg/auth"
+	api "github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
 )
@@ -117,7 +118,7 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 		}
 
 		// Reauthenticate using the refresh token.
-		req := &RefreshRequest{RefreshToken: refreshToken}
+		req := &api.RefreshRequest{RefreshToken: refreshToken}
 
 		reply, err := conf.reauth.Refresh(c.Request().Context(), req)
 		if err != nil {

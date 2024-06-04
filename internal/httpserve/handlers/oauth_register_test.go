@@ -93,7 +93,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 				mock_fga.WriteOnce(t, suite.fga)
 			}
 
-			registerJSON := handlers.OauthTokenRequest{
+			registerJSON := models.OauthTokenRequest{
 				Name:             tt.args.name,
 				Email:            tt.args.email,
 				AuthProvider:     tt.args.provider.String(),

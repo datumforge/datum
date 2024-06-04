@@ -11,17 +11,19 @@ import (
 func registerOAuthRegisterHandler(router *Router) (err error) {
 	path := "/oauth/register"
 	method := http.MethodPost
+	name := "OAuthRegister"
 
 	route := echo.Route{
-		Name:   "OAuthRegister",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return router.Handler.OauthRegister(c)
 		},
-	}.ForGroup(unversioned, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.AddUnversionedRoute(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -30,24 +32,23 @@ func registerOAuthRegisterHandler(router *Router) (err error) {
 
 // registerUserInfoHandler registers the userinfo handler
 func registerUserInfoHandler(router *Router) (err error) {
-	authMW := mw
-	authMW = append(authMW, router.Handler.AuthMiddleware...)
-
 	path := "/oauth/userinfo"
 	method := http.MethodGet
+	name := "UserInfo"
 
 	route := echo.Route{
-		Name:   "UserInfo",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: router.Handler.AuthMiddleware,
 		Handler: func(c echo.Context) error {
 			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 
 			return router.Handler.UserInfo(c)
 		},
-	}.ForGroup(unversioned, authMW)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -58,15 +59,17 @@ func registerUserInfoHandler(router *Router) (err error) {
 func registerGithubLoginHandler(router *Router) (err error) {
 	path := "/github/login"
 	method := http.MethodGet
+	name := "GitHubLogin"
 
 	route := echo.Route{
-		Name:    "GitHubLogin",
-		Method:  method,
-		Path:    path,
-		Handler: githubLogin(router),
-	}.ForGroup(V1Version, mw)
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     githubLogin(router),
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -77,15 +80,17 @@ func registerGithubLoginHandler(router *Router) (err error) {
 func registerGithubCallbackHandler(router *Router) (err error) {
 	path := "/github/callback"
 	method := http.MethodGet
+	name := "GitHubCallback"
 
 	route := echo.Route{
-		Name:    "GitHubCallback",
-		Method:  method,
-		Path:    path,
-		Handler: githubCallback(router),
-	}.ForGroup(V1Version, mw)
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     githubCallback(router),
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -96,15 +101,17 @@ func registerGithubCallbackHandler(router *Router) (err error) {
 func registerGoogleLoginHandler(router *Router) (err error) {
 	path := "/google/login"
 	method := http.MethodGet
+	name := "GoogleLogin"
 
 	route := echo.Route{
-		Name:    "GoogleLogin",
-		Method:  method,
-		Path:    path,
-		Handler: googleLogin(router),
-	}.ForGroup(V1Version, mw)
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     googleLogin(router),
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -115,15 +122,17 @@ func registerGoogleLoginHandler(router *Router) (err error) {
 func registerGoogleCallbackHandler(router *Router) (err error) {
 	path := "/google/callback"
 	method := http.MethodGet
+	name := "GoogleCallback"
 
 	route := echo.Route{
-		Name:    "GoogleCallback",
-		Method:  method,
-		Path:    path,
-		Handler: googleCallback(router),
-	}.ForGroup(V1Version, mw)
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     googleCallback(router),
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 

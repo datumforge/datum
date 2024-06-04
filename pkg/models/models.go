@@ -28,6 +28,16 @@ type LoginReply struct {
 	Message      string `json:"message"`
 }
 
+// OauthTokenRequest to authenticate an oauth user with the Datum Server
+type OauthTokenRequest struct {
+	Name             string `json:"name"`
+	Email            string `json:"email"`
+	AuthProvider     string `json:"authProvider"`
+	ExternalUserID   string `json:"externalUserId"`
+	ExternalUserName string `json:"externalUserName"`
+	ClientToken      string `json:"clientToken"`
+}
+
 // RefreshRequest holds the fields that should be included on a request to the `/refresh` endpoint
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token"`
@@ -227,7 +237,7 @@ var ExampleLoginSuccessResponse = LoginReply{
 }
 
 var ExampleForgotPasswordSuccessRequest = ForgotPasswordRequest{
-	Email: "sfunky@datum.net",
+	Email: "mitb@datum.net",
 }
 
 var ExampleForgotPasswordSuccessResponse = ForgotPasswordReply{
@@ -259,8 +269,8 @@ var ExampleRefreshSuccessResponse = RefreshReply{
 }
 
 var ExampleRegisterSuccessRequest = RegisterRequest{
-	FirstName: "Matt",
-	LastName:  "Anderson",
+	FirstName: "Sarah",
+	LastName:  "Funk",
 	Email:     "sfunky@datum.net",
 	Password:  "mitb!",
 }
@@ -274,7 +284,7 @@ var ExampleRegisterSuccessResponse = RegisterReply{
 }
 
 var ExampleResendEmailSuccessRequest = ResendRequest{
-	Email: "sfunky@datum.net",
+	Email: "cercei.lannister@datum.net",
 }
 
 var ExampleResendEmailSuccessResponse = ResendReply{
@@ -293,7 +303,7 @@ var ExampleVerifySuccessResponse = VerifyReply{
 		Success: true,
 	},
 	ID:           ulids.New().String(),
-	Email:        "sfunky@datum.net",
+	Email:        "gregor.clegane@datum.net",
 	Token:        "token",
 	Message:      "Email has been verified",
 	AccessToken:  "token",

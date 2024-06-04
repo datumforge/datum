@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	provider "github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/sessions"
@@ -23,51 +24,9 @@ const (
 	webauthnLogin        = "WEBAUTHN_LOGIN"
 )
 
-// WebauthnRegistrationRequest is the request to begin a webauthn login
-type WebauthnRegistrationRequest struct {
-	Email string `json:"email"`
-	Name  string `json:"name"`
-}
-
-// WebauthnRegistrationResponse is the response to begin a webauthn login
-// this includes the credential creation options and the session token
-type WebauthnBeginRegistrationResponse struct {
-	Reply rout.Reply
-	*protocol.CredentialCreation
-	Session string `json:"session,omitempty"`
-}
-
-// WebauthnRegistrationResponse is the response after a successful webauthn registration
-type WebauthnRegistrationResponse struct {
-	rout.Reply
-	Message      string `json:"message,omitempty"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	Session      string `json:"session,omitempty"`
-	TokenType    string `json:"token_type"`
-}
-
-// WebauthnBeginLoginResponse is the response to begin a webauthn login
-// this includes the credential assertion options and the session token
-type WebauthnBeginLoginResponse struct {
-	Reply rout.Reply
-	*protocol.CredentialAssertion
-	Session string `json:"session,omitempty"`
-}
-
-// WebauthnRegistrationResponse is the response after a successful webauthn login
-type WebauthnLoginResponse struct {
-	rout.Reply
-	Message      string `json:"message,omitempty"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	Session      string `json:"session,omitempty"`
-	TokenType    string `json:"token_type"`
-}
-
 // BeginWebauthnRegistration is the request to begin a webauthn login
 func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
-	var r WebauthnRegistrationRequest
+	var r models.WebauthnRegistrationRequest
 	if err := ctx.Bind(&r); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
@@ -133,7 +92,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 		return h.InternalServerError(ctx, err)
 	}
 
-	out := &WebauthnBeginRegistrationResponse{
+	out := &models.WebauthnBeginRegistrationResponse{
 		Reply:              rout.Reply{Success: true},
 		CredentialCreation: options,
 		Session:            s,
@@ -240,12 +199,11 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 		return h.InternalServerError(ctx, err)
 	}
 
-	out := &WebauthnRegistrationResponse{
+	out := &models.WebauthnRegistrationResponse{
 		Reply:        rout.Reply{Success: true},
 		Message:      "passkey successfully created",
 		AccessToken:  access,
 		RefreshToken: refresh,
-		TokenType:    "access_token",
 		Session:      s,
 	}
 
@@ -276,7 +234,7 @@ func (h *Handler) BeginWebauthnLogin(ctx echo.Context) error {
 		return h.InternalServerError(ctx, err)
 	}
 
-	out := &WebauthnBeginLoginResponse{
+	out := &models.WebauthnBeginLoginResponse{
 		Reply:               rout.Reply{Success: true},
 		CredentialAssertion: credential,
 		Session:             s,
@@ -341,12 +299,11 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 		return h.InternalServerError(ctx, err)
 	}
 
-	out := &WebauthnLoginResponse{
+	out := &models.WebauthnLoginResponse{
 		Reply:        rout.Reply{Success: true},
 		Message:      "passkey successfully created",
 		AccessToken:  access,
 		RefreshToken: refresh,
-		TokenType:    "access_token",
 		Session:      s,
 	}
 

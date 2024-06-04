@@ -10,17 +10,19 @@ import (
 func registerWebauthnRegistrationHandler(router *Router) (err error) {
 	path := "/registration/options"
 	method := http.MethodPost
+	name := "WebauthnRegistration"
 
 	route := echo.Route{
-		Name:   "WebauthnRegistration",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return router.Handler.BeginWebauthnRegistration(c)
 		},
-	}.ForGroup(V1Version, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -31,17 +33,19 @@ func registerWebauthnRegistrationHandler(router *Router) (err error) {
 func registerWebauthnVerificationsHandler(router *Router) (err error) {
 	path := "/registration/verification"
 	method := http.MethodPost
+	name := "WebauthnRegistrationVerification"
 
 	route := echo.Route{
-		Name:   "WebauthnRegistrationVerification",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return router.Handler.FinishWebauthnRegistration(c)
 		},
-	}.ForGroup(V1Version, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -52,17 +56,19 @@ func registerWebauthnVerificationsHandler(router *Router) (err error) {
 func registerWebauthnAuthenticationHandler(router *Router) (err error) {
 	path := "/authentication/options"
 	method := http.MethodPost
+	name := "WebauthnAuthentication"
 
 	route := echo.Route{
-		Name:   "WebauthnAuthentication",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return router.Handler.BeginWebauthnLogin(c)
 		},
-	}.ForGroup(V1Version, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -73,17 +79,19 @@ func registerWebauthnAuthenticationHandler(router *Router) (err error) {
 func registerWebauthnAuthVerificationHandler(router *Router) (err error) {
 	path := "/authentication/verification"
 	method := http.MethodPost
+	name := "WebauthnAuthenticationVerification"
 
 	route := echo.Route{
-		Name:   "WebauthnAuthenticationVerification",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return router.Handler.FinishWebauthnLogin(c)
 		},
-	}.ForGroup(V1Version, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
 		return err
 	}
 

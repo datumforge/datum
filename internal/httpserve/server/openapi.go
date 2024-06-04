@@ -174,7 +174,7 @@ var openAPISchemas = map[string]any{
 	"ErrorResponse":              &rout.StatusError{},
 }
 
-// SecurityScheme is an interface that represents a security scheme
+// OAuth2 is a struct that represents an OAuth2 security scheme
 type OAuth2 struct {
 	AuthorizationURL string
 	TokenURL         string

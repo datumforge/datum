@@ -13,17 +13,18 @@ func registerEventPublisher(router *Router) (err error) {
 	name := "EventPublisher"
 
 	route := echo.Route{
-		Name:   name,
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: router.Handler.AuthMiddleware,
 		Handler: func(c echo.Context) error {
 			return router.Handler.EventPublisher(c)
 		},
-	}.ForGroup(V1Version, mw)
+	}
 
 	eventOperation := router.Handler.BindEventPublisher()
 
-	if err := router.AddRoute(path, method, eventOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, eventOperation, route); err != nil {
 		return err
 	}
 

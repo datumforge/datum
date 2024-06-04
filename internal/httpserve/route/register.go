@@ -10,19 +10,21 @@ import (
 func registerRegisterHandler(router *Router) (err error) {
 	path := "/register"
 	method := http.MethodPost
+	name := "Register"
 
 	route := echo.Route{
-		Name:   "Register",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: restrictedEndpointsMW,
 		Handler: func(c echo.Context) error {
 			return router.Handler.RegisterHandler(c)
 		},
-	}.ForGroup(V1Version, restrictedEndpointsMW)
+	}
 
 	registerOperation := router.Handler.BindRegisterHandler()
 
-	if err := router.AddRoute(path, method, registerOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, registerOperation, route); err != nil {
 		return err
 	}
 

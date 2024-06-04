@@ -10,19 +10,21 @@ import (
 func registerRefreshHandler(router *Router) (err error) {
 	path := "/refresh"
 	method := http.MethodPost
+	name := "Refresh"
 
 	route := echo.Route{
-		Name:   "Refresh",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return router.Handler.RefreshHandler(c)
 		},
-	}.ForGroup(V1Version, mw)
+	}
 
 	refreshOperation := router.Handler.BindRefreshHandler()
 
-	if err := router.AddRoute(path, method, refreshOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, refreshOperation, route); err != nil {
 		return err
 	}
 

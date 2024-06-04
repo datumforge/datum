@@ -11,17 +11,19 @@ import (
 func registerJwksWellKnownHandler(router *Router) (err error) {
 	path := "/.well-known/jwks.json"
 	method := http.MethodGet
+	name := "JWKS"
 
 	route := echo.Route{
-		Name:   "JWKS",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
 			return c.JSON(http.StatusOK, router.Handler.JWTKeys)
 		},
-	}.ForGroup(unversioned, mw)
+	}
 
-	if err := router.AddRoute(path, method, nil, route); err != nil {
+	if err := router.AddUnversionedRoute(path, method, nil, route); err != nil {
 		return err
 	}
 
@@ -32,14 +34,17 @@ func registerJwksWellKnownHandler(router *Router) (err error) {
 func registerOpenAPIHandler(router *Router) (err error) {
 	path := "/api-docs"
 	method := http.MethodGet
+	name := "APIDocs"
 
 	route := echo.Route{
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: echo.HandlerFunc(func(c echo.Context) error {
 			return c.JSON(http.StatusOK, router.OAS)
 		}),
-	}.ForGroup(V1Version, mw)
+	}
 
 	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
 		return err
@@ -55,13 +60,15 @@ var securityTxt embed.FS
 func registerSecurityTxtHandler(router *Router) (err error) {
 	path := "/.well-known/security.txt"
 	method := http.MethodGet
+	name := "SecurityTxt"
 
 	route := echo.Route{
-		Name:    "SecurityTxt",
-		Method:  method,
-		Path:    path,
-		Handler: echo.StaticFileHandler("security.txt", securityTxt),
-	}.ForGroup(unversioned, mw)
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     echo.StaticFileHandler("security.txt", securityTxt),
+	}
 
 	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
 		return err
@@ -77,13 +84,15 @@ var robotsTxt embed.FS
 func registerRobotsHandler(router *Router) (err error) {
 	path := "/robots.txt"
 	method := http.MethodGet
+	name := "Robots"
 
 	route := echo.Route{
-		Name:    "Robots",
-		Method:  method,
-		Path:    path,
-		Handler: echo.StaticFileHandler("robots.txt", robotsTxt),
-	}.ForGroup(unversioned, mw)
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     echo.StaticFileHandler("robots.txt", robotsTxt),
+	}
 
 	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
 		return err
@@ -99,13 +108,15 @@ var assets embed.FS
 func registerFaviconHandler(router *Router) (err error) {
 	path := "/favicon.ico"
 	method := http.MethodGet
+	name := "Favicon"
 
 	route := echo.Route{
-		Name:    "Favicon",
-		Method:  method,
-		Path:    path,
-		Handler: echo.StaticFileHandler("assets/favicon.ico", assets),
-	}.ForGroup(unversioned, mw)
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     echo.StaticFileHandler("assets/favicon.ico", assets),
+	}
 
 	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
 		return err

@@ -10,19 +10,21 @@ import (
 func registerVerifySubscribeHandler(router *Router) (err error) {
 	path := "/subscribe/verify"
 	method := http.MethodGet
+	name := "VerifySubscription"
 
 	route := echo.Route{
-		Name:   "VerifySubscription",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: restrictedEndpointsMW,
 		Handler: func(c echo.Context) error {
 			return router.Handler.VerifySubscriptionHandler(c)
 		},
-	}.ForGroup(V1Version, restrictedEndpointsMW)
+	}
 
 	subscribeOperation := router.Handler.BindVerifySubscriberHandler()
 
-	if err := router.AddRoute(path, method, subscribeOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, subscribeOperation, route); err != nil {
 		return err
 	}
 

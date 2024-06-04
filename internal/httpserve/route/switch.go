@@ -8,24 +8,23 @@ import (
 
 // registerSwitchRoute registers the switch route to switch the user's logged in organization context
 func registerSwitchRoute(router *Router) (err error) {
-	authMW := mw
-	authMW = append(authMW, router.Handler.AuthMiddleware...)
-
 	path := "/switch"
 	method := http.MethodPost
+	name := "Switch"
 
 	route := echo.Route{
-		Name:   "Switch",
-		Method: method,
-		Path:   path,
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: router.Handler.AuthMiddleware,
 		Handler: func(c echo.Context) error {
 			return router.Handler.SwitchHandler(c)
 		},
-	}.ForGroup(V1Version, authMW)
+	}
 
 	switchOperation := router.Handler.BindSwitchHandler()
 
-	if err := router.AddRoute(path, method, switchOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, switchOperation, route); err != nil {
 		return err
 	}
 

@@ -131,12 +131,13 @@ func main() {
 		log.Fatalf("creating entgql extension: %v", err)
 	}
 
-	historyExt := enthistory.NewHistoryExtension(
+	historyExt := enthistory.New(
 		enthistory.WithAuditing(),
 		enthistory.WithImmutableFields(),
 		enthistory.WithHistoryTimeIndex(),
 		enthistory.WithNillableFields(),
 		enthistory.WithGQLQuery(),
+		enthistory.WithAuthzPolicy(),
 		enthistory.WithSchemaPath("./internal/ent/schema"),
 	)
 	if err != nil {

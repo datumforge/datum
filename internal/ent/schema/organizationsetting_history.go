@@ -2,6 +2,7 @@
 package schema
 
 import (
+	"time"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -10,10 +11,8 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/enthistory"
-
 	"github.com/datumforge/entx"
-
-	"time"
+	"github.com/datumforge/fgax/entfga"
 )
 
 // OrganizationSettingHistory holds the schema definition for the OrganizationSettingHistory entity.
@@ -34,6 +33,11 @@ func (OrganizationSettingHistory) Annotations() []schema.Annotation {
 		},
 		entgql.QueryField(),
 		entgql.RelayConnection(),
+		entfga.Annotations{
+			ObjectType:   "Organization",
+			IDField:      "OrganizationID",
+			IncludeHooks: false,
+		},
 	}
 }
 
@@ -73,3 +77,4 @@ func (OrganizationSettingHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

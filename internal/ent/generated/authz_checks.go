@@ -316,6 +316,71 @@ func (m *DocumentDataMutation) CheckAccessForDelete(ctx context.Context) error {
 	return privacy.Deny
 }
 
+func (q *DocumentDataHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*DocumentDataHistoryWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
 func (q *EntitlementQuery) CheckAccess(ctx context.Context) error {
 	gCtx := graphql.GetFieldContext(ctx)
 
@@ -462,6 +527,266 @@ func (m *EntitlementMutation) CheckAccessForDelete(ctx context.Context) error {
 
 	// deny if it was a mutation is not allowed
 	return privacy.Deny
+}
+
+func (q *EntitlementHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*EntitlementHistoryWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
+func (q *EventHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*EventHistoryWhereInput)
+			if ok && where != nil && where.ID != nil {
+				ac.ObjectID = *where.ID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["id"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "id" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.ID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
+func (q *FeatureHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*FeatureHistoryWhereInput)
+			if ok && where != nil && where.ID != nil {
+				ac.ObjectID = *where.ID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["id"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "id" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.ID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
+func (q *FileHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*FileHistoryWhereInput)
+			if ok && where != nil && where.ID != nil {
+				ac.ObjectID = *where.ID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["id"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "id" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.ID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
 }
 
 func (q *GroupQuery) CheckAccess(ctx context.Context) error {
@@ -626,6 +951,71 @@ func (m *GroupMutation) CheckAccessForDelete(ctx context.Context) error {
 
 	// deny if it was a mutation is not allowed
 	return privacy.Deny
+}
+
+func (q *GroupHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*GroupHistoryWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
 }
 
 func (q *GroupMembershipQuery) CheckAccess(ctx context.Context) error {
@@ -802,6 +1192,71 @@ func (m *GroupMembershipMutation) CheckAccessForDelete(ctx context.Context) erro
 	return privacy.Deny
 }
 
+func (q *GroupMembershipHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*GroupMembershipHistoryWhereInput)
+			if ok && where != nil && where.ID != nil {
+				ac.ObjectID = *where.ID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["id"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "id" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.ID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
 func (q *GroupSettingQuery) CheckAccess(ctx context.Context) error {
 	gCtx := graphql.GetFieldContext(ctx)
 
@@ -976,6 +1431,136 @@ func (m *GroupSettingMutation) CheckAccessForDelete(ctx context.Context) error {
 	return privacy.Deny
 }
 
+func (q *GroupSettingHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "group",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*GroupSettingHistoryWhereInput)
+			if ok && where != nil && where.GroupID != nil {
+				ac.ObjectID = *where.GroupID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["groupid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "groupid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.GroupID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
+func (q *HushHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*HushHistoryWhereInput)
+			if ok && where != nil && where.ID != nil {
+				ac.ObjectID = *where.ID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["id"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "id" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.ID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
 func (q *IntegrationQuery) CheckAccess(ctx context.Context) error {
 	gCtx := graphql.GetFieldContext(ctx)
 
@@ -1122,6 +1707,71 @@ func (m *IntegrationMutation) CheckAccessForDelete(ctx context.Context) error {
 
 	// deny if it was a mutation is not allowed
 	return privacy.Deny
+}
+
+func (q *IntegrationHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*IntegrationHistoryWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
 }
 
 func (q *InviteQuery) CheckAccess(ctx context.Context) error {
@@ -1420,6 +2070,71 @@ func (m *OauthProviderMutation) CheckAccessForDelete(ctx context.Context) error 
 	return privacy.Deny
 }
 
+func (q *OauthProviderHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*OauthProviderHistoryWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
 func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 	gCtx := graphql.GetFieldContext(ctx)
 
@@ -1594,6 +2309,71 @@ func (m *OrgMembershipMutation) CheckAccessForDelete(ctx context.Context) error 
 	return privacy.Deny
 }
 
+func (q *OrgMembershipHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*OrgMembershipHistoryWhereInput)
+			if ok && where != nil && where.OrganizationID != nil {
+				ac.ObjectID = *where.OrganizationID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["organizationid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "organizationid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OrganizationID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
 func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 	gCtx := graphql.GetFieldContext(ctx)
 
@@ -1756,6 +2536,71 @@ func (m *OrganizationMutation) CheckAccessForDelete(ctx context.Context) error {
 
 	// deny if it was a mutation is not allowed
 	return privacy.Deny
+}
+
+func (q *OrganizationHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*OrganizationHistoryWhereInput)
+			if ok && where != nil && where.Ref != nil {
+				ac.ObjectID = *where.Ref
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ref"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ref" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.Ref
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
 }
 
 func (q *OrganizationSettingQuery) CheckAccess(ctx context.Context) error {
@@ -1930,6 +2775,71 @@ func (m *OrganizationSettingMutation) CheckAccessForDelete(ctx context.Context) 
 
 	// deny if it was a mutation is not allowed
 	return privacy.Deny
+}
+
+func (q *OrganizationSettingHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*OrganizationSettingHistoryWhereInput)
+			if ok && where != nil && where.OrganizationID != nil {
+				ac.ObjectID = *where.OrganizationID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["organizationid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "organizationid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OrganizationID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
 }
 
 func (q *SubscriberQuery) CheckAccess(ctx context.Context) error {
@@ -2228,6 +3138,201 @@ func (m *TemplateMutation) CheckAccessForDelete(ctx context.Context) error {
 	return privacy.Deny
 }
 
+func (q *TemplateHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*TemplateHistoryWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
+func (q *UserHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "user",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*UserHistoryWhereInput)
+			if ok && where != nil && where.Ref != nil {
+				ac.ObjectID = *where.Ref
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ref"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ref" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.Ref
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
+func (q *UserSettingHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "user",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*UserSettingHistoryWhereInput)
+			if ok && where != nil && where.UserID != nil {
+				ac.ObjectID = *where.UserID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["userid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "userid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.UserID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
 func (q *WebhookQuery) CheckAccess(ctx context.Context) error {
 	gCtx := graphql.GetFieldContext(ctx)
 
@@ -2400,4 +3505,69 @@ func (m *WebhookMutation) CheckAccessForDelete(ctx context.Context) error {
 
 	// deny if it was a mutation is not allowed
 	return privacy.Deny
+}
+
+func (q *WebhookHistoryQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*WebhookHistoryWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
 }

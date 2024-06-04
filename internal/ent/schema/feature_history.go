@@ -2,6 +2,7 @@
 package schema
 
 import (
+	"time"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -10,10 +11,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/enthistory"
-
 	"github.com/datumforge/entx"
-
-	"time"
 )
 
 // FeatureHistory holds the schema definition for the FeatureHistory entity.
@@ -73,3 +71,4 @@ func (FeatureHistory) Indexes() []ent.Index {
 		index.Fields("history_time"),
 	}
 }
+

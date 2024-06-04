@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
@@ -23,7 +22,6 @@ func init() {
 	webhookCmd.AddCommand(webhookGetCmd)
 
 	webhookGetCmd.Flags().StringP("id", "i", "", "get a specific webhook by ID")
-	datum.ViperBindFlag("webhook.get.id", webhookGetCmd.Flags().Lookup("id"))
 }
 
 func webhooks(ctx context.Context) error {
@@ -34,7 +32,7 @@ func webhooks(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	oID := viper.GetString("webhook.get.id")
+	oID := datum.Config.String("id")
 
 	var s []byte
 

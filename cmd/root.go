@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/knadh/koanf/providers/posflag"
+	"github.com/knadh/koanf/v2"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/pkg/utils/sentry"
@@ -13,12 +13,16 @@ const appName = "datum"
 
 var (
 	logger *zap.SugaredLogger
+	k      *koanf.Koanf
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   appName,
 	Short: "A datum repo for graph apis",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		return initCmdFlags(cmd)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -28,32 +32,29 @@ func Execute() {
 }
 
 func init() {
+	k = koanf.New(".") // Create a new koanf instance.
+
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
-	viperBindFlag("pretty", rootCmd.PersistentFlags().Lookup("pretty"))
-
 	rootCmd.PersistentFlags().Bool("debug", false, "debug logging output")
-	viperBindFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
 }
 
 // initConfig reads in flags set for server startup
 // all other configuration is done by the server with koanf
 // refer to the README.md for more information
 func initConfig() {
-	err := viper.ReadInConfig()
+	// Load config from flags, including defaults
+	initCmdFlags(rootCmd)
 
-	logger = sentry.NewLogger()
-
-	if err == nil {
-		logger.Infow("using config file", "file", viper.ConfigFileUsed())
+	c := sentry.LoggerConfig{
+		Debug:  k.Bool("debug"),
+		Pretty: k.Bool("pretty"),
 	}
+
+	logger = c.NewLogger()
 }
 
-// viperBindFlag provides a wrapper around the viper bindings that panics if an error occurs
-func viperBindFlag(name string, flag *pflag.Flag) {
-	err := viper.BindPFlag(name, flag)
-	if err != nil {
-		panic(err)
-	}
+func initCmdFlags(cmd *cobra.Command) error {
+	return k.Load(posflag.Provider(cmd.Flags(), k.Delim(), k), nil)
 }

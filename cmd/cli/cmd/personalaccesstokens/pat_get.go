@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	patCmd.AddCommand(patGetCmd)
 
 	patGetCmd.Flags().StringP("id", "i", "", "pat id to query")
-	datum.ViperBindFlag("pat.get.id", patGetCmd.Flags().Lookup("id"))
 }
 
 func pats(ctx context.Context) error {
@@ -34,7 +32,7 @@ func pats(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	pID := viper.GetString("pat.get.id")
+	pID := datum.Config.String("id")
 
 	var s []byte
 

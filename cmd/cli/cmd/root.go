@@ -7,13 +7,13 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/99designs/keyring"
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/TylerBrock/colorjson"
+	"github.com/Yamashou/gqlgenc/clientv2"
+	"github.com/knadh/koanf/providers/posflag"
+	"github.com/knadh/koanf/v2"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 
@@ -35,6 +35,7 @@ var (
 	OutputFormat string
 	InputFile    string
 	Logger       *zap.SugaredLogger
+	Config       *koanf.Koanf
 )
 
 var (
@@ -53,6 +54,9 @@ var (
 var RootCmd = &cobra.Command{
 	Use:   appName,
 	Short: "the datum cli",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		return initCmdFlags(cmd)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -62,65 +66,38 @@ func Execute() {
 }
 
 func init() {
+	Config = koanf.New(".") // Create a new koanf instance.
+
 	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/."+appName+".yaml)")
-	ViperBindFlag("config", RootCmd.PersistentFlags().Lookup("config"))
-
 	RootCmd.PersistentFlags().String("host", defaultRootHost, "api host url")
-	ViperBindFlag("datum.host", RootCmd.PersistentFlags().Lookup("host"))
 
 	// Logging flags
 	RootCmd.PersistentFlags().Bool("debug", false, "enable debug logging")
-	ViperBindFlag("logging.debug", RootCmd.PersistentFlags().Lookup("debug"))
-
 	RootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
-	ViperBindFlag("logging.pretty", RootCmd.PersistentFlags().Lookup("pretty"))
 
+	// Output flags
 	RootCmd.PersistentFlags().StringVarP(&OutputFormat, "format", "z", TableOutput, "output format (json, table)")
-	ViperBindFlag("output.format", RootCmd.PersistentFlags().Lookup("format"))
-
 	RootCmd.PersistentFlags().StringVar(&InputFile, "csv", "", "csv input file instead of stdin")
-	ViperBindFlag("input.csv", RootCmd.PersistentFlags().Lookup("csv"))
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		cobra.CheckErr(err)
+	initCmdFlags(RootCmd)
 
-		// Search config in home directory with name ".datum" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".datum")
-	}
-
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
-	viper.SetEnvPrefix("datum")
-	viper.AutomaticEnv() // read in environment variables that match
-
-	err := viper.ReadInConfig()
-
-	DatumHost = viper.GetString("datum.host")
+	DatumHost = Config.String("host")
 
 	setupLogging()
-
-	if err == nil {
-		Logger.Infow("using config file", "file", viper.ConfigFileUsed())
-	}
 }
 
 func setupLogging() {
 	cfg := zap.NewProductionConfig()
-	if viper.GetBool("logging.pretty") {
+	if Config.Bool("logging.pretty") {
 		cfg = zap.NewDevelopmentConfig()
 	}
 
-	if viper.GetBool("logging.debug") {
+	if Config.Bool("logging.debug") {
 		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	} else {
 		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
@@ -133,14 +110,6 @@ func setupLogging() {
 
 	Logger = l.Sugar().With("app", appName)
 	defer Logger.Sync() //nolint:errcheck
-}
-
-// ViperBindFlag provides a wrapper around the viper bindings that panics if an error occurs
-func ViperBindFlag(name string, flag *pflag.Flag) {
-	err := viper.BindPFlag(name, flag)
-	if err != nil {
-		panic(err)
-	}
 }
 
 // StoreSessionCookies gets the session cookie from the cookie jar
@@ -213,7 +182,7 @@ func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
 	config := datumclient.NewDefaultConfig()
 
 	// setup the logging interceptor
-	if viper.GetBool("logging.debug") {
+	if Config.Bool("debug") {
 		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
 	}
 
@@ -387,4 +356,8 @@ func GetInviteStatusEnum(status string) (enums.InviteStatus, error) {
 	}
 
 	return *r, nil
+}
+
+func initCmdFlags(cmd *cobra.Command) error {
+	return Config.Load(posflag.Provider(cmd.Flags(), Config.Delim(), Config), nil)
 }

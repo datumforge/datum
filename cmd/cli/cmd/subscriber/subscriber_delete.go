@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	subscribersCmd.AddCommand(subscribersDeleteCmd)
 
 	subscribersDeleteCmd.Flags().StringP("email", "e", "", "email address of the subscriber to delete")
-	datum.ViperBindFlag("subscribers.delete.email", subscribersDeleteCmd.Flags().Lookup("email"))
 }
 
 func subscriberDelete(ctx context.Context) error {
@@ -33,7 +31,7 @@ func subscriberDelete(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	email := viper.GetString("subscribers.delete.email")
+	email := datum.Config.String("email")
 	if email == "" {
 		return datum.NewRequiredFieldMissingError("email")
 	}

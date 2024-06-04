@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,16 +22,9 @@ func init() {
 	orgCmd.AddCommand(orgUpdateCmd)
 
 	orgUpdateCmd.Flags().StringP("id", "i", "", "org id to update")
-	datum.ViperBindFlag("org.update.id", orgUpdateCmd.Flags().Lookup("id"))
-
 	orgUpdateCmd.Flags().StringP("name", "n", "", "name of the organization")
-	datum.ViperBindFlag("org.update.name", orgUpdateCmd.Flags().Lookup("name"))
-
 	orgUpdateCmd.Flags().StringP("short-name", "s", "", "display name of the organization")
-	datum.ViperBindFlag("org.update.short-name", orgUpdateCmd.Flags().Lookup("short-name"))
-
 	orgUpdateCmd.Flags().StringP("description", "d", "", "description of the organization")
-	datum.ViperBindFlag("org.update.description", orgUpdateCmd.Flags().Lookup("description"))
 }
 
 func updateOrg(ctx context.Context) error {
@@ -45,14 +37,14 @@ func updateOrg(ctx context.Context) error {
 
 	var s []byte
 
-	oID := viper.GetString("org.update.id")
+	oID := datum.Config.String("id")
 	if oID == "" {
 		return datum.NewRequiredFieldMissingError("organization id")
 	}
 
-	name := viper.GetString("org.update.name")
-	displayName := viper.GetString("org.update.short-name")
-	description := viper.GetString("org.update.description")
+	name := datum.Config.String("name")
+	displayName := datum.Config.String("short-name")
+	description := datum.Config.String("description")
 
 	input := datumclient.UpdateOrganizationInput{}
 

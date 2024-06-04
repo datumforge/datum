@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/models"
@@ -23,16 +22,9 @@ func init() {
 	datum.RootCmd.AddCommand(registerCmd)
 
 	registerCmd.Flags().StringP("email", "e", "", "email of the user")
-	datum.ViperBindFlag("register.email", registerCmd.Flags().Lookup("email"))
-
 	registerCmd.Flags().StringP("password", "p", "", "password of the user")
-	datum.ViperBindFlag("register.password", registerCmd.Flags().Lookup("password"))
-
 	registerCmd.Flags().StringP("first-name", "f", "", "first name of the user")
-	datum.ViperBindFlag("register.first-name", registerCmd.Flags().Lookup("first-name"))
-
 	registerCmd.Flags().StringP("last-name", "l", "", "last name of the user")
-	datum.ViperBindFlag("register.last-name", registerCmd.Flags().Lookup("last-name"))
 }
 
 func registerUser(ctx context.Context) error {
@@ -44,22 +36,22 @@ func registerUser(ctx context.Context) error {
 
 	var s []byte
 
-	email := viper.GetString("register.email")
+	email := datum.Config.String("email")
 	if email == "" {
 		return datum.NewRequiredFieldMissingError("email")
 	}
 
-	firstName := viper.GetString("register.first-name")
+	firstName := datum.Config.String("first-name")
 	if firstName == "" {
 		return datum.NewRequiredFieldMissingError("first name")
 	}
 
-	lastName := viper.GetString("register.last-name")
+	lastName := datum.Config.String("last-name")
 	if lastName == "" {
 		return datum.NewRequiredFieldMissingError("last name")
 	}
 
-	password := viper.GetString("register.password")
+	password := datum.Config.String("password")
 	if password == "" {
 		return datum.NewRequiredFieldMissingError("password")
 	}

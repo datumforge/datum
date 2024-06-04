@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
@@ -23,7 +22,6 @@ func init() {
 	eventCmd.AddCommand(eventGetCmd)
 
 	eventGetCmd.Flags().StringP("id", "i", "", "get a specific event by ID")
-	datum.ViperBindFlag("event.get.id", eventGetCmd.Flags().Lookup("id"))
 }
 
 func events(ctx context.Context) error {
@@ -36,7 +34,7 @@ func events(ctx context.Context) error {
 
 	var s []byte
 
-	eventID := viper.GetString("event.get.id")
+	eventID := datum.Config.String("id")
 	if eventID != "" {
 		event, err := client.GetEventByID(ctx, eventID)
 		if err != nil {

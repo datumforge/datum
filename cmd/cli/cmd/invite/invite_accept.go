@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"golang.org/x/oauth2"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/models"
@@ -24,7 +22,6 @@ func init() {
 	inviteCmd.AddCommand(inviteAcceptCmd)
 
 	inviteAcceptCmd.Flags().StringP("token", "t", "", "invite token")
-	datum.ViperBindFlag("invite.accept.token", inviteAcceptCmd.Flags().Lookup("token"))
 }
 
 func inviteAccept(ctx context.Context) error {
@@ -36,7 +33,7 @@ func inviteAccept(ctx context.Context) error {
 
 	var s []byte
 
-	token := viper.GetString("invite.accept.token")
+	token := datum.Config.String("token")
 	if token == "" {
 		return datum.NewRequiredFieldMissingError("token")
 	}

@@ -6,7 +6,6 @@ import (
 	"errors"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -24,7 +23,6 @@ func init() {
 	orgMembersCmd.AddCommand(orgMembersDeleteCmd)
 
 	orgMembersDeleteCmd.Flags().StringP("user-id", "u", "", "user id")
-	datum.ViperBindFlag("orgmember.delete.userid", orgMembersDeleteCmd.Flags().Lookup("user-id"))
 }
 
 func deleteOrgMember(ctx context.Context) error {
@@ -35,9 +33,7 @@ func deleteOrgMember(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	oID := viper.GetString("orgmember.delete.orgid")
-
-	uID := viper.GetString("orgmember.delete.userid")
+	uID := datum.Config.String("user-id")
 	if uID == "" {
 		return datum.NewRequiredFieldMissingError("user id")
 	}
@@ -45,10 +41,6 @@ func deleteOrgMember(ctx context.Context) error {
 	// get the id of the org member
 	where := datumclient.OrgMembershipWhereInput{
 		UserID: &uID,
-	}
-
-	if oID != "" {
-		where.OrganizationID = &oID
 	}
 
 	orgMembers, err := client.GetOrgMembersByOrgID(ctx, &where)

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -24,10 +23,7 @@ func init() {
 	inviteCmd.AddCommand(inviteCreateCmd)
 
 	inviteCreateCmd.Flags().StringP("email", "e", "", "destination email for the invitation")
-	datum.ViperBindFlag("invite.create.email", inviteCreateCmd.Flags().Lookup("email"))
-
 	inviteCreateCmd.Flags().StringP("role", "r", "member", "role for the user in the organization (admin, member)")
-	datum.ViperBindFlag("invite.create.role", inviteCreateCmd.Flags().Lookup("role"))
 }
 
 func createInvite(ctx context.Context) error {
@@ -38,12 +34,12 @@ func createInvite(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	email := viper.GetString("invite.create.email")
+	email := datum.Config.String("email")
 	if email == "" {
 		return datum.NewRequiredFieldMissingError("email")
 	}
 
-	role := enums.ToRole(viper.GetString("invite.create.role"))
+	role := enums.ToRole(datum.Config.String("role"))
 
 	input := datumclient.CreateInviteInput{
 		Recipient: email,

@@ -5,8 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"golang.org/x/oauth2"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/models"
@@ -23,8 +21,7 @@ var loginCmd = &cobra.Command{
 func init() {
 	datum.RootCmd.AddCommand(loginCmd)
 
-	loginCmd.Flags().StringP("targetorg", "t", "", "target organization to switch to")
-	datum.ViperBindFlag("switch.targetorg", loginCmd.Flags().Lookup("targetorg"))
+	loginCmd.Flags().StringP("target-org", "t", "", "target organization to switch to")
 }
 
 func switchorg(ctx context.Context) error {
@@ -34,7 +31,7 @@ func switchorg(ctx context.Context) error {
 		return err
 	}
 
-	targetorg := viper.GetString("switch.targetorg")
+	targetorg := datum.Config.String("target-org")
 	if targetorg == "" {
 		return datum.NewRequiredFieldMissingError("target organization")
 	}

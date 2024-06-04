@@ -7,7 +7,6 @@ import (
 
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -25,16 +24,9 @@ func init() {
 	apiTokenCmd.AddCommand(apiTokenCreateCmd)
 
 	apiTokenCreateCmd.Flags().StringP("name", "n", "", "name of the api token token")
-	datum.ViperBindFlag("apitoken.create.name", apiTokenCreateCmd.Flags().Lookup("name"))
-
 	apiTokenCreateCmd.Flags().StringP("description", "d", "", "description of the api token")
-	datum.ViperBindFlag("apitoken.create.description", apiTokenCreateCmd.Flags().Lookup("description"))
-
 	apiTokenCreateCmd.Flags().DurationP("expiration", "e", 0, "duration of the api token to be valid, leave empty to never expire")
-	datum.ViperBindFlag("apitoken.create.expiration", apiTokenCreateCmd.Flags().Lookup("expiration"))
-
 	apiTokenCreateCmd.Flags().StringSlice("scopes", []string{"read", "write"}, "scopes to associate with the api token")
-	datum.ViperBindFlag("apitoken.create.scopes", apiTokenCreateCmd.Flags().Lookup("scopes"))
 }
 
 func createAPIToken(ctx context.Context) error {
@@ -47,22 +39,22 @@ func createAPIToken(ctx context.Context) error {
 
 	var s []byte
 
-	name := viper.GetString("apitoken.create.name")
+	name := datum.Config.String("name")
 	if name == "" {
 		return datum.NewRequiredFieldMissingError("token name")
 	}
 
 	input := datumclient.CreateAPITokenInput{
 		Name:   name,
-		Scopes: viper.GetStringSlice("apitoken.create.scopes"),
+		Scopes: datum.Config.Strings("scopes"),
 	}
 
-	description := viper.GetString("apitoken.create.description")
+	description := datum.Config.String("description")
 	if description != "" {
 		input.Description = &description
 	}
 
-	expiration := viper.GetDuration("apitoken.create.expiration")
+	expiration := datum.Config.Duration("expiration")
 	if expiration != 0 {
 		input.ExpiresAt = lo.ToPtr(time.Now().Add(expiration))
 	}

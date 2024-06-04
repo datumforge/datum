@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,16 +22,9 @@ func init() {
 	apiTokenCmd.AddCommand(apiTokenUpdateCmd)
 
 	apiTokenUpdateCmd.Flags().StringP("id", "i", "", "api token id to update")
-	datum.ViperBindFlag("apitoken.update.id", apiTokenUpdateCmd.Flags().Lookup("id"))
-
 	apiTokenUpdateCmd.Flags().StringP("name", "n", "", "name of the api token token")
-	datum.ViperBindFlag("apitoken.update.name", apiTokenUpdateCmd.Flags().Lookup("name"))
-
 	apiTokenUpdateCmd.Flags().StringP("description", "d", "", "description of the api token")
-	datum.ViperBindFlag("apitoken.update.description", apiTokenUpdateCmd.Flags().Lookup("description"))
-
 	apiTokenUpdateCmd.Flags().StringSlice("scopes", []string{}, "scopes to add to the api token")
-	datum.ViperBindFlag("apitoken.update.scopes", apiTokenCreateCmd.Flags().Lookup("scopes"))
 }
 
 func updateAPIToken(ctx context.Context) error {
@@ -45,7 +37,7 @@ func updateAPIToken(ctx context.Context) error {
 
 	var s []byte
 
-	pID := viper.GetString("apitoken.update.id")
+	pID := datum.Config.String("id")
 	if pID == "" {
 		return datum.NewRequiredFieldMissingError("token id")
 	}
@@ -53,17 +45,17 @@ func updateAPIToken(ctx context.Context) error {
 	// Craft update input
 	input := datumclient.UpdateAPITokenInput{}
 
-	name := viper.GetString("apitoken.update.name")
+	name := datum.Config.String("name")
 	if name != "" {
 		input.Name = &name
 	}
 
-	description := viper.GetString("apitoken.update.description")
+	description := datum.Config.String("description")
 	if description != "" {
 		input.Description = &description
 	}
 
-	scopes := viper.GetStringSlice("apitoken.update.scopes")
+	scopes := datum.Config.Strings("scopes")
 	if len(scopes) > 0 {
 		input.Scopes = scopes
 	}

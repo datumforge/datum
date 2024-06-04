@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
@@ -23,7 +22,6 @@ func init() {
 	orgCmd.AddCommand(orgGetCmd)
 
 	orgGetCmd.Flags().StringP("id", "i", "", "get a specific organization by ID")
-	datum.ViperBindFlag("org.get.id", orgGetCmd.Flags().Lookup("id"))
 }
 
 func orgs(ctx context.Context) error {
@@ -35,7 +33,7 @@ func orgs(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	oID := viper.GetString("org.get.id")
+	oID := datum.Config.String("id")
 
 	var s []byte
 

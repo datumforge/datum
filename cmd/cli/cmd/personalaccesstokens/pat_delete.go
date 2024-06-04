@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	patCmd.AddCommand(patDeleteCmd)
 
 	patDeleteCmd.Flags().StringP("id", "i", "", "pat id to delete")
-	datum.ViperBindFlag("pat.delete.id", patDeleteCmd.Flags().Lookup("id"))
 }
 
 func deletePat(ctx context.Context) error {
@@ -35,7 +33,7 @@ func deletePat(ctx context.Context) error {
 
 	var s []byte
 
-	oID := viper.GetString("pat.delete.id")
+	oID := datum.Config.String("id")
 	if oID == "" {
 		return datum.NewRequiredFieldMissingError("token id")
 	}

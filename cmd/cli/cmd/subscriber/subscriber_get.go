@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -24,10 +23,7 @@ func init() {
 	subscribersCmd.AddCommand(subscribersGetCmd)
 
 	subscribersGetCmd.Flags().BoolP("active", "a", true, "filter on active subscribers")
-	datum.ViperBindFlag("subscribers.get.active", subscribersGetCmd.Flags().Lookup("active"))
-
 	subscribersGetCmd.Flags().StringP("email", "e", "", "email address of the subscriber to get")
-	datum.ViperBindFlag("subscribers.get.email", subscribersGetCmd.Flags().Lookup("email"))
 }
 
 func subscribers(ctx context.Context) error {
@@ -41,12 +37,12 @@ func subscribers(ctx context.Context) error {
 	// filter options
 	where := datumclient.SubscriberWhereInput{}
 
-	active := viper.GetBool("subscribers.get.active")
+	active := datum.Config.Bool("active")
 	if active {
 		where.Active = &active
 	}
 
-	email := viper.GetString("subscribers.get.email")
+	email := datum.Config.String("email")
 
 	writer := tables.NewTableWriter(subscribersCmd.OutOrStdout(), "Email", "Verified", "Active")
 

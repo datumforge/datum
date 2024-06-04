@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -24,22 +23,11 @@ func init() {
 	groupSettingCmd.AddCommand(groupSettingUpdateCmd)
 
 	groupSettingUpdateCmd.Flags().StringP("id", "i", "", "group setting id to update")
-	datum.ViperBindFlag("groupsetting.update.id", groupSettingUpdateCmd.Flags().Lookup("id"))
-
 	groupSettingUpdateCmd.Flags().StringP("visibility", "v", "", "visibility of the group")
-	datum.ViperBindFlag("groupsetting.update.visibility", groupSettingUpdateCmd.Flags().Lookup("visibility"))
-
 	groupSettingUpdateCmd.Flags().StringP("join-policy", "j", "", "join policy of the group")
-	datum.ViperBindFlag("groupsetting.update.joinpolicy", groupSettingUpdateCmd.Flags().Lookup("join-policy"))
-
 	groupSettingUpdateCmd.Flags().BoolP("sync-to-slack", "s", false, "sync group members to slack")
-	datum.ViperBindFlag("groupsetting.update.synctoslack", groupSettingUpdateCmd.Flags().Lookup("sync-to-slack"))
-
 	groupSettingUpdateCmd.Flags().BoolP("sync-to-github", "g", false, "sync group members to github")
-	datum.ViperBindFlag("groupsetting.update.synctogithub", groupSettingUpdateCmd.Flags().Lookup("sync-to-github"))
-
 	groupSettingUpdateCmd.Flags().StringSliceP("tags", "t", []string{}, "tags associated with the group")
-	datum.ViperBindFlag("groupsetting.update.tags", groupSettingUpdateCmd.Flags().Lookup("tags"))
 }
 
 func updateGroupSetting(ctx context.Context) error {
@@ -52,34 +40,34 @@ func updateGroupSetting(ctx context.Context) error {
 
 	var s []byte
 
-	settingsID := viper.GetString("groupsetting.update.id")
+	settingsID := datum.Config.String("id")
 	if settingsID == "" {
 		return datum.NewRequiredFieldMissingError("setting id")
 	}
 
 	input := datumclient.UpdateGroupSettingInput{}
 
-	visibility := viper.GetString("groupsetting.update.visibility")
+	visibility := datum.Config.String("visibility")
 	if visibility != "" {
 		input.Visibility = enums.ToGroupVisibility(visibility)
 	}
 
-	joinPolicy := viper.GetString("groupsetting.update.joinpolicy")
+	joinPolicy := datum.Config.String("join-policy")
 	if joinPolicy != "" {
 		input.JoinPolicy = enums.ToGroupJoinPolicy(joinPolicy)
 	}
 
-	tags := viper.GetStringSlice("groupsetting.update.tags")
+	tags := datum.Config.Strings("tags")
 	if len(tags) > 0 {
 		input.Tags = tags
 	}
 
-	syncToSlack := viper.GetBool("groupsetting.update.synctoslack")
+	syncToSlack := datum.Config.Bool("sync-to-slack")
 	if syncToSlack {
 		input.SyncToSlack = &syncToSlack
 	}
 
-	syncToGithub := viper.GetBool("groupsetting.update.synctogithub")
+	syncToGithub := datum.Config.Bool("sync-to-github")
 	if syncToGithub {
 		input.SyncToGithub = &syncToGithub
 	}

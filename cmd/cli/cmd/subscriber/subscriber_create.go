@@ -7,7 +7,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -26,7 +25,6 @@ func init() {
 	subscribersCmd.AddCommand(subscribersCreateCmd)
 
 	subscribersCreateCmd.Flags().StringSliceP("emails", "e", []string{}, "email address of the subscriber()")
-	datum.ViperBindFlag("subscribers.create.emails", subscribersCreateCmd.Flags().Lookup("emails"))
 }
 
 func subscriberCreate(ctx context.Context) error {
@@ -71,7 +69,7 @@ func subscriberCreate(ctx context.Context) error {
 
 		writer.Render()
 	} else {
-		email := viper.GetStringSlice("subscribers.create.emails")
+		email := datum.Config.Strings("emails")
 		if len(email) == 0 {
 			return datum.NewRequiredFieldMissingError("emails")
 		}

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	apiTokenCmd.AddCommand(apiTokenGetCmd)
 
 	apiTokenGetCmd.Flags().StringP("id", "i", "", "api token id to query")
-	datum.ViperBindFlag("apitoken.get.id", apiTokenGetCmd.Flags().Lookup("id"))
 }
 
 func apiTokens(ctx context.Context) error {
@@ -34,7 +32,7 @@ func apiTokens(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	tokenID := viper.GetString("apitoken.get.id")
+	tokenID := datum.Config.String("id")
 
 	var s []byte
 

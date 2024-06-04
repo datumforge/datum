@@ -17,13 +17,10 @@ tasks:
   create:
     desc: creates an atlas migration if one is needed based on the ent schema definitions
     cmds:
-      - task: docker:postgres
-
       - |
         echo "If there is no schema to generate, this will not create a file (hint: name it your branch name if you're not sure) - enter the name of the migration:"
         read migration;
         go run create_migrations.go ${migration};
-      - task: docker:postgres:down
 
   lint:
     desc: lints the pushed migration files

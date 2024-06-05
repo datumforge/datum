@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"net/http"
 	"net/http/cookiejar"
-	"net/url"
 	"sync"
 	"time"
 )
@@ -368,16 +367,6 @@ func (c *Client) SetDefaultCookie(name, value string) {
 	}
 
 	c.Cookies = append(c.Cookies, &http.Cookie{Name: name, Value: value})
-}
-
-// GetCookiesFromCookieJar gets the cookies from the client's cookie jar
-func (c *Client) GetCookiesFromCookieJar() ([]*http.Cookie, error) {
-	u, err := url.Parse(c.BaseURL)
-	if err != nil {
-		return nil, err
-	}
-
-	return c.HTTPClient.Jar.Cookies(u), nil
 }
 
 // DelDefaultCookie removes a default cookie from the client

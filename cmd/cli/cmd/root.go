@@ -4,6 +4,7 @@ package datum
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"path"
 	"strings"
@@ -24,8 +25,7 @@ import (
 
 const (
 	appName         = "datum"
-	defaultRootHost = "http://localhost:17608/"
-	graphEndpoint   = "query"
+	defaultRootHost = "http://localhost:17608"
 	TableOutput     = "table"
 	JSONOutput      = "json"
 )
@@ -106,8 +106,6 @@ func initConfig() {
 	err := viper.ReadInConfig()
 
 	DatumHost = viper.GetString("datum.host")
-
-	GraphAPIHost = fmt.Sprintf("%s%s", DatumHost, graphEndpoint)
 
 	setupLogging()
 
@@ -196,12 +194,19 @@ func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) 
 		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
 	}
 
-	opts := datumclient.WithCredentials(datumclient.Authorization{
+	endpointOpt, err := configureClientEndpoints()
+	if err != nil {
+		return nil, err
+	}
+
+	opts := []datumclient.ClientOption{endpointOpt}
+
+	opts = append(opts, datumclient.WithCredentials(datumclient.Authorization{
 		BearerToken: token.AccessToken,
 		Session:     session,
-	})
+	}))
 
-	return datumclient.New(config, opts)
+	return datumclient.New(config, opts...)
 }
 
 func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
@@ -212,9 +217,21 @@ func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
 		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
 	}
 
-	opts := []datumclient.ClientOption{}
+	endpointOpt, err := configureClientEndpoints()
+	if err != nil {
+		return nil, err
+	}
 
-	return datumclient.New(config, opts...)
+	return datumclient.New(config, endpointOpt)
+}
+
+func configureClientEndpoints() (datumclient.ClientOption, error) {
+	baseURL, err := url.Parse(DatumHost)
+	if err != nil {
+		return nil, err
+	}
+
+	return datumclient.WithBaseURL(baseURL), nil
 }
 
 // GetTokenFromKeyring will return the oauth token from the keyring

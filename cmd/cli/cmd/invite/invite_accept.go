@@ -33,7 +33,6 @@ func inviteAccept(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	defer datum.StoreSessionCookies(client)
 
 	var s []byte
 
@@ -51,6 +50,11 @@ func inviteAccept(ctx context.Context) error {
 		return err
 	}
 
+	s, err = json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+
 	if err := datum.StoreToken(&oauth2.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
@@ -58,10 +62,7 @@ func inviteAccept(ctx context.Context) error {
 		return err
 	}
 
-	s, err = json.Marshal(resp)
-	if err != nil {
-		return err
-	}
+	datum.StoreSessionCookies(client)
 
 	return datum.JSONPrint(s)
 }

@@ -35,15 +35,17 @@ func NewRestClient(config Config, opts ...ClientOption) (_ DatumRestClient, err 
 		Config: config,
 	}
 
-	// create the HTTP sling client
-	c.HTTPSlingClient, err = newHTTPClient(c.Config)
-	if err != nil {
-		return nil, err
-	}
-
 	// Apply our options
 	for _, opt := range opts {
 		if err := opt(c); err != nil {
+			return nil, err
+		}
+	}
+
+	// create the HTTP sling client if it is not set
+	if c.HTTPSlingClient == nil {
+		c.HTTPSlingClient, err = newHTTPClient(c.Config)
+		if err != nil {
 			return nil, err
 		}
 	}

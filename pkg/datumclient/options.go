@@ -33,9 +33,7 @@ func WithCredentials(creds Credentials) ClientOption {
 		c.Config.Interceptors = append(c.Config.Interceptors, auth.WithAuthorization())
 
 		// Set the bearer token for the HTTPSling client, used for REST requests
-		c.HTTPSlingClient.SetAuth(httpsling.BearerAuth{
-			Token: auth.BearerToken,
-		})
+		c.Config.HTTPSling.Headers.Set(httpsling.HeaderAuthorization, "Bearer "+auth.BearerToken)
 
 		return nil
 	}

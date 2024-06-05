@@ -96,8 +96,8 @@ func (c *DatumClient) Config() Config {
 	return api.Config
 }
 
-// HTTPClient is the http client for the APIv1 client
-func (c *DatumClient) HTTPClient() *httpsling.Client {
+// HTTPSlingClient is the http client for the APIv1 client
+func (c *DatumClient) HTTPSlingClient() *httpsling.Client {
 	api := c.DatumRestClient.(*APIv1)
 
 	return api.HTTPSlingClient
@@ -144,7 +144,7 @@ func (c *DatumClient) RefreshToken() (_ string, err error) {
 // SetAuthTokens is a helper function to set the access and refresh tokens on the
 // client cookie jar.
 func (c *DatumClient) SetAuthTokens(access, refresh string) error {
-	if c.Config().HTTPSling.CookieJar == nil {
+	if c.HTTPSlingClient().HTTPClient.Jar == nil {
 		return ErrNoCookieJarSet
 	}
 
@@ -193,19 +193,19 @@ func (c *DatumClient) ClearAuthTokens() {
 }
 
 // Returns the cookies set from the previous request(s) on the client Jar.
-func (c *DatumClient) Cookies() (_ []*http.Cookie, err error) {
-	if c.Config().HTTPSling.CookieJar == nil {
-		return nil, err
+func (c *DatumClient) Cookies() ([]*http.Cookie, error) {
+	if c.HTTPSlingClient().HTTPClient.Jar == nil {
+		return nil, ErrNoCookieJarSet
 	}
 
-	cookies := c.Config().HTTPSling.CookieJar.Cookies(c.Config().BaseURL)
+	cookies := c.HTTPSlingClient().HTTPClient.Jar.Cookies(c.Config().BaseURL)
 
 	return cookies, nil
 }
 
 // GetSessionFromCookieJar parses the cookie jar for the session cookie
 func (c *DatumClient) GetSessionFromCookieJar() (sessionID string, err error) {
-	cookies, err := c.HTTPClient().GetCookiesFromCookieJar()
+	cookies, err := c.Cookies()
 	if err != nil {
 		return "", err
 	}

@@ -14,7 +14,6 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/datumforge/fgax"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"go.uber.org/zap"
@@ -26,6 +25,7 @@ import (
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/testutils"
 	"github.com/datumforge/datum/pkg/utils/emails"
@@ -178,23 +178,30 @@ func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumGraphClient {
 
 	graphapi.WithTransactions(srv, c)
 
-	g := &graphClient{
-		srvURL:     "query",
-		httpClient: &http.Client{Transport: localRoundTripper{handler: srv}},
-	}
-
-	// set options
-	opt := &clientv2.Options{
-		ParseDataAlongWithErrors: false,
+	httpClient := &httpsling.Client{
+		HTTPClient: &http.Client{Transport: localRoundTripper{handler: srv}},
 	}
 
 	// setup interceptors
-	auth := datumclient.Authorization{
-		BearerToken: rawToken,
-		Session:     session,
+	opts := []datumclient.ClientOption{
+		datumclient.WithCredentials(
+			datumclient.Authorization{
+				BearerToken: rawToken,
+				Session:     session,
+			}),
+		datumclient.WithClient(httpClient),
 	}
 
-	return datumclient.NewClient(g.httpClient, g.srvURL, opt, auth.WithAuthorization())
+	config := datumclient.NewDefaultConfig()
+
+	client, err := datumclient.New(config, opts...)
+	if err != nil {
+		t.Fatalf("failed to create client: %s", err)
+
+		return nil
+	}
+
+	return client
 }
 
 // localRoundTripper is an http.RoundTripper that executes HTTP transactions

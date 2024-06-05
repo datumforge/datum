@@ -37,12 +37,11 @@ func init() {
 }
 
 func createevent(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -89,7 +88,7 @@ func createevent(ctx context.Context) error {
 		input.UserIDs = userid
 	}
 
-	u, err := cli.Client.CreateEvent(ctx, input, cli.Interceptor)
+	u, err := client.CreateEvent(ctx, input, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

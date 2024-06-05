@@ -3,13 +3,10 @@ package datumlogin
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"net/http/cookiejar"
 	"os"
 	"strings"
 	"syscall"
 
-	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
@@ -17,7 +14,7 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/httpserve/route"
-	api "github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
@@ -44,24 +41,11 @@ func init() {
 }
 
 func login(ctx context.Context) (*oauth2.Token, error) {
-	// setup datum http client with cookie jar
-	jar, err := cookiejar.New(nil)
+	// setup datum http client
+	client, err := datum.SetupClient(ctx)
 	if err != nil {
 		return nil, err
 	}
-
-	h := &http.Client{
-		Jar: jar,
-	}
-
-	// set options
-	opt := &clientv2.Options{}
-
-	// new client with params
-	c := api.NewClient(h, datum.DatumHost, opt, nil)
-
-	// this allows the use of the graph client to be used for the REST endpoints
-	dc := c.(*api.Client)
 
 	// setup tokens
 	var tokens *oauth2.Token
@@ -71,20 +55,20 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 
 	if provider == "" {
 		// store session cookies on function exit
-		defer datum.StoreSessionCookies(dc)
+		defer datum.StoreSessionCookies(client)
 
 		username := viper.GetString("login.username")
 		if username == "" {
 			return nil, datum.NewRequiredFieldMissingError("username")
 		}
 
-		tokens, err = passwordAuth(ctx, dc, username)
+		tokens, err = passwordAuth(ctx, client, username)
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		var session string
-		tokens, session, err = providerAuth(ctx, dc, provider)
+		tokens, session, err = providerAuth(ctx, client, provider)
 
 		if err != nil {
 			return nil, err
@@ -114,7 +98,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 	return tokens, nil
 }
 
-func passwordAuth(ctx context.Context, client *api.Client, username string) (*oauth2.Token, error) {
+func passwordAuth(ctx context.Context, client *datumclient.DatumClient, username string) (*oauth2.Token, error) {
 	// read password from terminal if not set in environment variable
 	password := os.Getenv("DATUM_PASSWORD")
 
@@ -134,24 +118,33 @@ func passwordAuth(ctx context.Context, client *api.Client, username string) (*oa
 		Password: password,
 	}
 
-	return api.Login(client, ctx, login)
+	resp, err := client.Login(ctx, &login)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oauth2.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+		TokenType:    resp.TokenType,
+	}, nil
 }
 
 // validateProvider validate the provider specified is configured
-func providerAuth(ctx context.Context, client *api.Client, provider string) (*oauth2.Token, string, error) {
-	isDev := strings.Contains(client.Client.BaseURL, "localhost")
+func providerAuth(ctx context.Context, client *datumclient.DatumClient, provider string) (*oauth2.Token, string, error) {
+	isDev := strings.Contains(client.Config().BaseURL.String(), "localhost")
 
 	switch strings.ToUpper(provider) {
 	case google.ProviderName:
 		endpoint := "google/login"
-		u := fmt.Sprintf("%s%s/%s", client.Client.BaseURL, route.V1Version, endpoint)
+		u := fmt.Sprintf("%s%s/%s", client.Config().BaseURL.String(), route.V1Version, endpoint)
 
-		return api.OauthLogin(u, isDev)
+		return datumclient.OauthLogin(u, isDev)
 	case github.ProviderName:
 		endpoint := "github/login"
-		u := fmt.Sprintf("%s%s/%s", client.Client.BaseURL, route.V1Version, endpoint)
+		u := fmt.Sprintf("%s%s/%s", client.Config().BaseURL.String(), route.V1Version, endpoint)
 
-		return api.OauthLogin(u, isDev)
+		return datumclient.OauthLogin(u, isDev)
 	default:
 		return nil, "", datum.ErrUnsupportedProvider
 	}

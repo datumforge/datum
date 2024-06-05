@@ -43,12 +43,11 @@ func init() {
 }
 
 func updateGroupSetting(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -85,7 +84,7 @@ func updateGroupSetting(ctx context.Context) error {
 		input.SyncToGithub = &syncToGithub
 	}
 
-	o, err := cli.Client.UpdateGroupSetting(ctx, settingsID, input, cli.Interceptor)
+	o, err := client.UpdateGroupSetting(ctx, settingsID, input, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

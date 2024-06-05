@@ -49,13 +49,10 @@ func init() {
 
 func updateUserSetting(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -100,7 +97,7 @@ func updateUserSetting(ctx context.Context) error {
 
 	if settingsID == "" {
 		// get the user settings id
-		settings, err := cli.Client.GetUserSettings(ctx, cli.Interceptor)
+		settings, err := client.GetUserSettings(ctx, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}
@@ -114,7 +111,7 @@ func updateUserSetting(ctx context.Context) error {
 	}
 
 	// update the user settings
-	o, err := cli.Client.UpdateUserSetting(ctx, settingsID, input, cli.Interceptor)
+	o, err := client.UpdateUserSetting(ctx, settingsID, input, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/models"
 )
 
@@ -28,6 +27,13 @@ func init() {
 }
 
 func inviteAccept(ctx context.Context) error {
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
+	if err != nil {
+		return err
+	}
+	defer datum.StoreSessionCookies(client)
+
 	var s []byte
 
 	token := viper.GetString("invite.accept.token")
@@ -39,27 +45,18 @@ func inviteAccept(ctx context.Context) error {
 		Token: token,
 	}
 
-	// new client with params
-	cli, err := datum.GetRestClient(ctx)
+	resp, err := client.Invite(ctx, &invite)
 	if err != nil {
 		return err
 	}
 
-	// this allows the use of the graph client to be used for the REST endpoints
-	dc := cli.Client.(*datumclient.Client)
+	// TODO: Fix this!
 
-	defer datum.StoreSessionCookies(dc)
+	// if err := datum.StoreToken(resp.); err != nil {
+	// 	return err
+	// }
 
-	registration, tokens, err := datumclient.OrgInvite(dc, ctx, invite, cli.AccessToken)
-	if err != nil {
-		return err
-	}
-
-	if err := datum.StoreToken(tokens); err != nil {
-		return err
-	}
-
-	s, err = json.Marshal(registration)
+	s, err = json.Marshal(resp)
 	if err != nil {
 		return err
 	}

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/cookiejar"
 	"os"
 	"path"
 	"strings"
@@ -53,12 +52,6 @@ var (
 	userKeyring       keyring.Keyring
 	userKeyringLoaded = false
 )
-
-type CLI struct {
-	Client      datumclient.DatumGraphClient
-	Interceptor clientv2.RequestInterceptor
-	AccessToken string
-}
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -158,9 +151,9 @@ func ViperBindFlag(name string, flag *pflag.Flag) {
 
 // StoreSessionCookies gets the session cookie from the cookie jar
 // and stores it in the keychain for future requests
-func StoreSessionCookies(client *datumclient.Client) {
-	session, err := datumclient.GetSessionFromCookieJar(client)
-	if err != nil {
+func StoreSessionCookies(client *datumclient.DatumClient) {
+	session, err := client.GetSessionFromCookieJar()
+	if err != nil || session == "" {
 		fmt.Println("unable to get session from cookie jar")
 
 		return
@@ -216,24 +209,7 @@ func ParseBytes(v []byte) (map[string]interface{}, error) {
 	return m, nil
 }
 
-func createClient(ctx context.Context, baseURL string) (*CLI, error) {
-	cli := CLI{}
-
-	// setup datum http client with cookie jar
-	jar, err := cookiejar.New(nil)
-	if err != nil {
-		return nil, err
-	}
-
-	h := &http.Client{
-		Jar: jar,
-	}
-
-	// set options
-	opt := &clientv2.Options{
-		ParseDataAlongWithErrors: false,
-	}
-
+func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) {
 	// setup interceptors
 	token, session, err := GetTokenFromKeyring(ctx)
 	if err != nil {
@@ -260,33 +236,36 @@ func createClient(ctx context.Context, baseURL string) (*CLI, error) {
 		}
 	}
 
+	config := datumclient.DefaultClientConfig
+
+	// setup the authorization interceptor
 	auth := datumclient.Authorization{
 		BearerToken: token.AccessToken,
 		Session:     session,
 	}
+	config.Interceptors = append(config.Interceptors, auth.WithAuthorization())
 
-	i := auth.WithAuthorization()
-	interceptors := []clientv2.RequestInterceptor{i}
-
+	// setup the logging interceptor
 	if viper.GetBool("logging.debug") {
-		interceptors = append(interceptors, datumclient.WithLoggingInterceptor())
+		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
 	}
 
-	cli.Client = datumclient.NewClient(h, baseURL, opt, interceptors...)
+	opts := datumclient.WithCredentials(datumclient.Token(token.AccessToken))
 
-	cli.Interceptor = i
-	cli.AccessToken = auth.BearerToken
-
-	// new client with params
-	return &cli, nil
+	return datumclient.New(config, opts)
 }
 
-func GetGraphClient(ctx context.Context) (*CLI, error) {
-	return createClient(ctx, GraphAPIHost)
-}
+func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
+	config := datumclient.DefaultClientConfig
 
-func GetRestClient(ctx context.Context) (*CLI, error) {
-	return createClient(ctx, DatumHost)
+	// setup the logging interceptor
+	if viper.GetBool("logging.debug") {
+		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
+	}
+
+	opts := []datumclient.ClientOption{}
+
+	return datumclient.New(config, opts...)
 }
 
 // GetTokenFromKeyring will return the oauth token from the keyring

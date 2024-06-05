@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -28,12 +27,11 @@ func init() {
 }
 
 func webhooks(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	oID := viper.GetString("webhook.get.id")
@@ -43,7 +41,7 @@ func webhooks(ctx context.Context) error {
 	writer := tables.NewTableWriter(webhookCmd.OutOrStdout(), "ID", "Name", "Description", "Destination URL", "Enabled")
 
 	if oID != "" {
-		webhook, err := cli.Client.GetWebhookByID(ctx, oID, cli.Interceptor)
+		webhook, err := client.GetWebhookByID(ctx, oID, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}
@@ -63,7 +61,7 @@ func webhooks(ctx context.Context) error {
 		return nil
 	}
 
-	webhooks, err := cli.Client.GetAllWebhooks(ctx, cli.Interceptor)
+	webhooks, err := client.GetAllWebhooks(ctx, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

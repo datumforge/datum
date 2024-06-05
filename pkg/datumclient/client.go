@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"strings"
 	"time"
@@ -49,13 +50,16 @@ func New(config Config, opts ...ClientOption) (*DatumClient, error) {
 
 	api := c.(*APIv1)
 
-	token, err := api.Config.Credentials.AccessToken()
-	if err == nil {
-		auth := Authorization{
-			BearerToken: token,
-		}
+	// TODO: this can be better
+	if config.Token != "" {
+		token, err := config.Credentials.AccessToken()
+		if err == nil {
+			auth := Authorization{
+				BearerToken: token,
+			}
 
-		config.Interceptors = append(config.Interceptors, auth.WithAuthorization())
+			config.Interceptors = append(config.Interceptors, auth.WithAuthorization())
+		}
 	}
 
 	graphClient := NewClient(api.Config.HTTPSlingClient.HTTPClient, graphRequestPath(config), &config.Clientv2Options, config.Interceptors...)
@@ -68,9 +72,26 @@ func New(config Config, opts ...ClientOption) (*DatumClient, error) {
 
 // New creates a new API v1 client that implements the Datum Client interface
 func NewRestClient(config Config, opts ...ClientOption) (DatumRestClient, error) {
-	c := &APIv1{}
+	c := &APIv1{
+		Config: config,
+	}
 
 	c.Config.HTTPSlingClient = httpsling.Create(c.Config.HTTPSling)
+
+	// why do I have to do this again?
+	// because the base url is not yet in the httpsling config, only in the client config
+	// fix this up
+	c.Config.HTTPSlingClient.BaseURL = config.BaseURL.String()
+
+	// Set the default cookie jar
+	// TODO: write this in a better way in httpsling instead of doing it all here
+	var err error
+	c.Config.HTTPSling.CookieJar, err = cookiejar.New(nil)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Config.HTTPSlingClient.SetCookieJar(c.Config.HTTPSling.CookieJar)
 
 	// Apply our options
 	for _, opt := range opts {
@@ -88,10 +109,17 @@ type APIv1 struct {
 	Config Config
 }
 
+// Config is the configuration for the APIv1 client
+func (c *DatumClient) Config() Config {
+	api := c.DatumRestClient.(*APIv1)
+
+	return api.Config
+}
+
 // AccessToken returns the access token cached on the client or an error if it is not
 // available. This method is primarily used for testing but can be used to fetch the
 // access token for debugging or inspection if necessary.
-func (c *APIv1) AccessToken() (_ string, err error) {
+func (c *DatumClient) AccessToken() (_ string, err error) {
 	var cookies []*http.Cookie
 	if cookies, err = c.Cookies(); err != nil {
 		return "", err
@@ -109,7 +137,7 @@ func (c *APIv1) AccessToken() (_ string, err error) {
 // RefreshToken returns the refresh token cached on the client or an error if it is not
 // available. This method is primarily used for testing but can be used to fetch the
 // refresh token for debugging or inspection if necessary.
-func (c *APIv1) RefreshToken() (_ string, err error) {
+func (c *DatumClient) RefreshToken() (_ string, err error) {
 	var cookies []*http.Cookie
 	if cookies, err = c.Cookies(); err != nil {
 		return "", err
@@ -126,13 +154,13 @@ func (c *APIv1) RefreshToken() (_ string, err error) {
 
 // SetAuthTokens is a helper function to set the access and refresh tokens on the
 // client cookie jar.
-func (c *APIv1) SetAuthTokens(access, refresh string) error {
-	if c.Config.HTTPSling.CookieJar == nil {
+func (c *DatumClient) SetAuthTokens(access, refresh string) error {
+	if c.Config().HTTPSling.CookieJar == nil {
 		return errors.New("client does not have a cookie jar, cannot set cookies")
 	}
 
 	// The URL for the cookies
-	u := c.Config.BaseURL.ResolveReference(&url.URL{Path: "/"})
+	u := c.Config().BaseURL.ResolveReference(&url.URL{Path: "/"})
 
 	// Set the cookies on the client
 	cookies := make([]*http.Cookie, 0, 2)
@@ -154,12 +182,12 @@ func (c *APIv1) SetAuthTokens(access, refresh string) error {
 			Secure:  true,
 		})
 	}
-	c.Config.HTTPSling.CookieJar.SetCookies(u, cookies)
+	c.Config().HTTPSling.CookieJar.SetCookies(u, cookies)
 	return nil
 }
 
 // ClearAuthTokens clears the access and refresh tokens on the client Jar.
-func (c *APIv1) ClearAuthTokens() {
+func (c *DatumClient) ClearAuthTokens() {
 	if cookies, err := c.Cookies(); err == nil {
 		// Expire the access and refresh cookies.
 		for _, cookie := range cookies {
@@ -174,12 +202,12 @@ func (c *APIv1) ClearAuthTokens() {
 }
 
 // Returns the cookies set from the previous request(s) on the client Jar.
-func (c *APIv1) Cookies() (_ []*http.Cookie, err error) {
-	if c.Config.HTTPSling.CookieJar == nil {
+func (c *DatumClient) Cookies() (_ []*http.Cookie, err error) {
+	if c.Config().HTTPSling.CookieJar == nil {
 		return nil, err
 	}
 
-	cookies := c.Config.HTTPSling.CookieJar.Cookies(c.Config.BaseURL)
+	cookies := c.Config().HTTPSling.CookieJar.Cookies(c.Config().BaseURL)
 	return cookies, nil
 }
 
@@ -390,13 +418,13 @@ func getTokensFromCookieRequest(r *http.Request) (token *oauth2.Token, session s
 }
 
 // GetSessionFromCookieJar parses the cookie jar for the session cookie
-func (s *APIv1) GetSessionFromCookieJar() (sessionID string, err error) {
-	u, err := url.Parse(s.Config.BaseURL.String())
+func (c *DatumClient) GetSessionFromCookieJar() (sessionID string, err error) {
+	u, err := url.Parse(c.Config().BaseURL.String())
 	if err != nil {
 		return "", err
 	}
 
-	cookies := s.Config.HTTPSling.CookieJar.Cookies(u)
+	cookies := c.Config().HTTPSling.CookieJar.Cookies(u)
 	cookieName := sessions.DefaultCookieName
 
 	// Use the dev cookie when running on localhost

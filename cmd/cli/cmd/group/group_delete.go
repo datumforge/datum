@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var groupDeleteCmd = &cobra.Command{
@@ -28,13 +27,10 @@ func init() {
 
 func deleteGroup(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -44,7 +40,7 @@ func deleteGroup(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("group id")
 	}
 
-	o, err := cli.Client.DeleteGroup(ctx, gID, cli.Interceptor)
+	o, err := client.DeleteGroup(ctx, gID, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

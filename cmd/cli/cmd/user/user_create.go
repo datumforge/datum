@@ -40,13 +40,10 @@ func init() {
 
 func createUser(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -85,7 +82,7 @@ func createUser(ctx context.Context) error {
 		input.Password = &password
 	}
 
-	u, err := cli.Client.CreateUser(ctx, input, cli.Interceptor)
+	u, err := client.CreateUser(ctx, input, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

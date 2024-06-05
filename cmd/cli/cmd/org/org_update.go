@@ -37,13 +37,10 @@ func init() {
 
 func updateOrg(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -71,7 +68,7 @@ func updateOrg(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	o, err := cli.Client.UpdateOrganization(ctx, oID, input, cli.Interceptor)
+	o, err := client.UpdateOrganization(ctx, oID, input, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

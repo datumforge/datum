@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var subscribersDeleteCmd = &cobra.Command{
@@ -28,13 +27,10 @@ func init() {
 
 func subscriberDelete(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	email := viper.GetString("subscribers.delete.email")
@@ -44,7 +40,7 @@ func subscriberDelete(ctx context.Context) error {
 
 	var s []byte
 
-	sub, err := cli.Client.DeleteSubscriber(ctx, email, cli.Interceptor)
+	sub, err := client.DeleteSubscriber(ctx, email, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/models"
 )
 
@@ -28,13 +27,12 @@ func init() {
 }
 
 func switchorg(ctx context.Context) error {
-	cli, err := datum.GetRestClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	dc := cli.Client.(*datumclient.Client)
-	defer datum.StoreSessionCookies(dc)
+	defer datum.StoreSessionCookies(client)
 
 	targetorg := viper.GetString("switch.targetorg")
 	if targetorg == "" {
@@ -45,16 +43,17 @@ func switchorg(ctx context.Context) error {
 		TargetOrganizationID: targetorg,
 	}
 
-	switchOrganizationReply, err := datumclient.Switch(dc, ctx, input, cli.AccessToken)
+	_, err = client.Switch(ctx, &input)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("Successfully switched to organization: %s!\n", targetorg)
 
-	if err := datum.StoreToken(switchOrganizationReply); err != nil {
-		return err
-	}
+	// TODO FIX THIS!
+	// if err := datum.StoreToken(switchOrganizationReply); err != nil {
+	// 	return err
+	// }
 
 	fmt.Println("auth tokens successfully stored in keychain")
 

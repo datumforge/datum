@@ -32,13 +32,10 @@ func init() {
 
 func subscribers(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -54,7 +51,7 @@ func subscribers(ctx context.Context) error {
 	writer := tables.NewTableWriter(subscribersCmd.OutOrStdout(), "Email", "Verified", "Active")
 
 	if email != "" {
-		sub, err := cli.Client.GetSubscriber(ctx, email, cli.Interceptor)
+		sub, err := client.GetSubscriber(ctx, email, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}
@@ -72,7 +69,7 @@ func subscribers(ctx context.Context) error {
 			writer.Render()
 		}
 	} else {
-		subs, err := cli.Client.Subscribers(ctx, &where, cli.Interceptor)
+		subs, err := client.Subscribers(ctx, &where, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}

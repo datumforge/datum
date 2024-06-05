@@ -39,13 +39,10 @@ func init() {
 
 func createAPIToken(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -70,7 +67,7 @@ func createAPIToken(ctx context.Context) error {
 		input.ExpiresAt = lo.ToPtr(time.Now().Add(expiration))
 	}
 
-	o, err := cli.Client.CreateAPIToken(ctx, input, cli.Interceptor)
+	o, err := client.CreateAPIToken(ctx, input, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

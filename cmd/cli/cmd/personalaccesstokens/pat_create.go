@@ -38,13 +38,10 @@ func init() {
 
 func createPat(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -73,7 +70,7 @@ func createPat(ctx context.Context) error {
 		input.ExpiresAt = time.Now().Add(expiration)
 	}
 
-	o, err := cli.Client.CreatePersonalAccessToken(ctx, input, cli.Interceptor)
+	o, err := client.CreatePersonalAccessToken(ctx, input, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

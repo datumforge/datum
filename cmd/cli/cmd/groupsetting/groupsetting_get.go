@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var groupSettingGetCmd = &cobra.Command{
@@ -28,13 +27,10 @@ func init() {
 
 func groupSettings(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -44,7 +40,7 @@ func groupSettings(ctx context.Context) error {
 
 	// if setting ID is not provided, get settings which will automatically filter by group id
 	if settingsID == "" {
-		settings, err := cli.Client.GetGroupSettings(ctx, cli.Interceptor)
+		settings, err := client.GetGroupSettings(ctx, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}
@@ -54,7 +50,7 @@ func groupSettings(ctx context.Context) error {
 			return err
 		}
 	} else {
-		group, err := cli.Client.GetGroupSettingByID(ctx, settingsID, cli.Interceptor)
+		group, err := client.GetGroupSettingByID(ctx, settingsID, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}

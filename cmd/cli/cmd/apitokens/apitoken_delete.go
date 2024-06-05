@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var apiTokenDeleteCmd = &cobra.Command{
@@ -28,13 +27,10 @@ func init() {
 
 func deleteAPIToken(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -44,7 +40,7 @@ func deleteAPIToken(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("token id")
 	}
 
-	o, err := cli.Client.DeleteAPIToken(ctx, tokenID, cli.Interceptor)
+	o, err := client.DeleteAPIToken(ctx, tokenID, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -28,19 +27,18 @@ func init() {
 }
 
 func events(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
 
 	eventID := viper.GetString("event.get.id")
 	if eventID != "" {
-		event, err := cli.Client.GetEventByID(ctx, eventID, cli.Interceptor)
+		event, err := client.GetEventByID(ctx, eventID, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}
@@ -64,7 +62,7 @@ func events(ctx context.Context) error {
 
 	writer := tables.NewTableWriter(eventCmd.OutOrStdout(), "ID", "EventType", "EventMetadata", "CorrelationID")
 
-	events, err := cli.Client.GetAllEvents(ctx, cli.Interceptor)
+	events, err := client.GetAllEvents(ctx, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

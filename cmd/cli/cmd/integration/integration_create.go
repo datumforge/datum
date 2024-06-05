@@ -39,12 +39,11 @@ func init() {
 }
 
 func createIntegration(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -79,7 +78,7 @@ func createIntegration(ctx context.Context) error {
 		input.OwnerID = &ownerID
 	}
 
-	w, err := cli.Client.CreateIntegration(ctx, input, cli.Interceptor)
+	w, err := client.CreateIntegration(ctx, input, client.Config().Interceptors...)
 	if err != nil {
 		return err
 	}

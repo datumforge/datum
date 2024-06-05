@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var patGetCmd = &cobra.Command{
@@ -28,13 +27,10 @@ func init() {
 
 func pats(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -44,7 +40,7 @@ func pats(ctx context.Context) error {
 
 	// if an pat ID is provided, filter on that pat, otherwise get all
 	if pID == "" {
-		tokens, err := cli.Client.GetAllPersonalAccessTokens(ctx, cli.Interceptor)
+		tokens, err := client.GetAllPersonalAccessTokens(ctx, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}
@@ -54,7 +50,7 @@ func pats(ctx context.Context) error {
 			return err
 		}
 	} else {
-		token, err := cli.Client.GetPersonalAccessTokenByID(ctx, pID, cli.Interceptor)
+		token, err := client.GetPersonalAccessTokenByID(ctx, pID, client.Config().Interceptors...)
 		if err != nil {
 			return err
 		}

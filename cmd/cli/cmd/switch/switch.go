@@ -33,7 +33,6 @@ func switchorg(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	defer datum.StoreSessionCookies(client)
 
 	targetorg := viper.GetString("switch.targetorg")
 	if targetorg == "" {
@@ -51,12 +50,16 @@ func switchorg(ctx context.Context) error {
 
 	fmt.Printf("Successfully switched to organization: %s!\n", targetorg)
 
+	// store auth tokens
 	if err := datum.StoreToken(&oauth2.Token{
 		AccessToken:  resp.AccessToken,
 		RefreshToken: resp.RefreshToken,
 	}); err != nil {
 		return err
 	}
+
+	// store session cookies
+	datum.StoreSessionCookies(client)
 
 	fmt.Println("auth tokens successfully stored in keychain")
 

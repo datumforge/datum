@@ -56,7 +56,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// ensure user is already a member of the destination organization
-	if allow, err := h.DBClient.Authz.CheckOrgAccess(reqCtx, userID, auth.UserSubjectType, orgID, fgax.CanView); err != nil || !allow {
+	if allow, err := h.DBClient.Authz.CheckOrgAccess(reqCtx, userID, auth.UserSubjectType, in.TargetOrganizationID, fgax.CanView); err != nil || !allow {
 		h.Logger.Errorw("user not authorized to access organization", "error", err)
 
 		return ctx.JSON(http.StatusUnauthorized, rout.ErrorResponse("unauthorized"))
@@ -68,6 +68,8 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	org, err := h.getOrgByID(orgGetCtx, in.TargetOrganizationID)
 	if err != nil {
 		h.Logger.Errorw("unable to get target organization by id", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("unable to get target organization"))
 	}
 
 	// create new claims for the user

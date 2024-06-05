@@ -16,10 +16,10 @@ import (
 	"github.com/datumforge/datum/pkg/models"
 )
 
-// Login creates a login request to the Datum API
-func Login(c *Client, ctx context.Context, login models.LoginRequest) (*oauth2.Token, error) {
+// Refresh the access + refresh token pair to the Datum API
+func Refresh(c *Client, ctx context.Context, r models.RefreshRequest) (*oauth2.Token, error) {
 	method := http.MethodPost
-	endpoint := "login"
+	endpoint := "refresh"
 
 	u := fmt.Sprintf("%s%s/%s", c.Client.BaseURL, route.V1Version, endpoint)
 
@@ -36,7 +36,7 @@ func Login(c *Client, ctx context.Context, login models.LoginRequest) (*oauth2.T
 	// Set Headers
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
-	b, err := json.Marshal(login)
+	b, err := json.Marshal(r)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,8 @@ func Login(c *Client, ctx context.Context, login models.LoginRequest) (*oauth2.T
 
 	defer resp.Body.Close()
 
-	out := models.LoginReply{}
+	out := models.RefreshReply{}
+
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}

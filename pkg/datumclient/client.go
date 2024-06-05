@@ -3,7 +3,6 @@ package datumclient
 import (
 	"context"
 	"net/http"
-	"net/http/cookiejar"
 	"net/url"
 	"strings"
 	"time"
@@ -17,31 +16,26 @@ import (
 )
 
 const (
+	// cookieExpiryMinutes is the duration for which the cookies are valid
 	cookieExpiryMinutes = 10 * time.Minute
 )
 
-// DatumClient is the interface that wraps the Datum API client methods
+// DatumClient wraps the Datum API client methods to form a single client interface
 type DatumClient struct {
 	DatumRestClient
 	DatumGraphClient
 }
 
-// DatumRestClient is the interface that wraps the Datum API REST client methods
-type DatumRestClient interface {
-	Register(context.Context, *api.RegisterRequest) (*api.RegisterReply, error)
-	Login(context.Context, *api.LoginRequest) (*api.LoginReply, error)
-	Refresh(context.Context, *api.RefreshRequest) (*api.RefreshReply, error)
-	Switch(context.Context, *api.SwitchOrganizationRequest) (*api.SwitchOrganizationReply, error)
-	VerifyEmail(context.Context, *api.VerifyRequest) (*api.VerifyReply, error)
-	ResendEmail(context.Context, *api.ResendRequest) (*api.ResendReply, error)
-	ForgotPassword(context.Context, *api.ForgotPasswordRequest) (*api.ForgotPasswordReply, error)
-	ResetPassword(context.Context, *api.ResetPasswordRequest) (*api.ResetPasswordReply, error)
-	Invite(context.Context, *api.InviteRequest) (*api.InviteReply, error)
-}
-
 // A Reauthenticator generates new access and refresh pair given a valid refresh token
 type Reauthenticator interface {
 	Refresh(context.Context, *api.RefreshRequest) (*api.RefreshReply, error)
+}
+
+// NewWithDefaults creates a new API v1 client with default configuration
+func NewWithDefaults(opts ...ClientOption) (*DatumClient, error) {
+	config := NewDefaultConfig()
+
+	return New(config, opts...)
 }
 
 // New creates a new API v1 client that implements the Datum Client interface
@@ -54,19 +48,12 @@ func New(config Config, opts ...ClientOption) (*DatumClient, error) {
 
 	api := c.(*APIv1)
 
-	// TODO: this can be better
-	if config.Token != "" {
-		token, err := config.Credentials.AccessToken()
-		if err == nil {
-			auth := Authorization{
-				BearerToken: token,
-			}
-
-			config.Interceptors = append(config.Interceptors, auth.WithAuthorization())
-		}
-	}
-
-	graphClient := NewClient(api.Config.HTTPSlingClient.HTTPClient, graphRequestPath(config), &config.Clientv2Options, config.Interceptors...)
+	graphClient := NewClient(
+		api.HTTPSlingClient.HTTPClient,
+		graphRequestPath(config),
+		&config.Clientv2Options,
+		config.Interceptors...,
+	)
 
 	return &DatumClient{
 		c,
@@ -74,44 +61,33 @@ func New(config Config, opts ...ClientOption) (*DatumClient, error) {
 	}, nil
 }
 
-// New creates a new API v1 client that implements the Datum Client interface
-func NewRestClient(config Config, opts ...ClientOption) (DatumRestClient, error) {
-	c := &APIv1{
-		Config: config,
+// newHTTPClient creates a new HTTP sling client with the given configuration
+func newHTTPClient(config Config) (*httpsling.Client, error) {
+	// copy the values from the base config to the httpsling config
+	if config.HTTPSling == nil {
+		config.HTTPSling = &httpsling.Config{}
 	}
 
-	c.Config.HTTPSlingClient = httpsling.Create(c.Config.HTTPSling)
+	if config.HTTPSling.BaseURL == "" {
+		config.HTTPSling.BaseURL = config.BaseURL.String()
+	}
 
-	// why do I have to do this again?
-	// because the base url is not yet in the httpsling config, only in the client config
-	// fix this up
-	c.Config.HTTPSlingClient.BaseURL = config.BaseURL.String()
+	client := httpsling.Create(config.HTTPSling)
 
-	// Set the default cookie jar
-	// TODO: write this in a better way in httpsling instead of doing it all here
-	var err error
-
-	c.Config.HTTPSling.CookieJar, err = cookiejar.New(nil)
-	if err != nil {
+	// set the default cookie jar
+	if err := client.SetDefaultCookieJar(); err != nil {
 		return nil, err
 	}
 
-	c.Config.HTTPSlingClient.SetCookieJar(c.Config.HTTPSling.CookieJar)
-
-	// Apply our options
-	for _, opt := range opts {
-		if err := opt(c); err != nil {
-			return nil, err
-		}
-	}
-
-	return c, nil
+	return client, nil
 }
 
 // APIv1 implements the DatumClient interface and provides methods to interact with the Datum API
 type APIv1 struct {
 	// Config is the configuration for the APIv1 client
 	Config Config
+	// HTTPSlingClient is the HTTP client for the APIv1 client
+	HTTPSlingClient *httpsling.Client
 }
 
 // Config is the configuration for the APIv1 client
@@ -119,6 +95,13 @@ func (c *DatumClient) Config() Config {
 	api := c.DatumRestClient.(*APIv1)
 
 	return api.Config
+}
+
+// HTTPClient is the http client for the APIv1 client
+func (c *DatumClient) HTTPClient() *httpsling.Client {
+	api := c.DatumRestClient.(*APIv1)
+
+	return api.HTTPSlingClient
 }
 
 // AccessToken returns the access token cached on the client or an error if it is not
@@ -221,162 +204,6 @@ func (c *DatumClient) Cookies() (_ []*http.Cookie, err error) {
 	return cookies, nil
 }
 
-// Ensure the APIv1 implements the DatumClient interface
-var _ DatumRestClient = &APIv1{}
-
-// Register a new user with the Datum API
-func (s *APIv1) Register(ctx context.Context, in *api.RegisterRequest) (out *api.RegisterReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/register")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
-// Login to the Datum API
-func (s *APIv1) Login(ctx context.Context, in *api.LoginRequest) (out *api.LoginReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/login")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
-// Refresh a user's access token
-func (s *APIv1) Refresh(ctx context.Context, in *api.RefreshRequest) (out *api.RefreshReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/refresh")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
-// Switch the current organization context
-func (s *APIv1) Switch(ctx context.Context, in *api.SwitchOrganizationRequest) (out *api.SwitchOrganizationReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/switch")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
-// VerifyEmail verifies the email address of a user
-func (s *APIv1) VerifyEmail(ctx context.Context, in *api.VerifyRequest) (out *api.VerifyReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/verify")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
-// ResendEmail resends the verification email to the user
-func (s *APIv1) ResendEmail(ctx context.Context, in *api.ResendRequest) (out *api.ResendReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/resend")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
-// ForgotPassword sends a password reset email to the user
-func (s *APIv1) ForgotPassword(ctx context.Context, in *api.ForgotPasswordRequest) (out *api.ForgotPasswordReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/forgot-password")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
-// ResetPassword resets the user's password
-func (s *APIv1) ResetPassword(ctx context.Context, in *api.ResetPasswordRequest) (out *api.ResetPasswordReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/password-reset")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
-// Invite a user to an organization
-func (s *APIv1) Invite(ctx context.Context, in *api.InviteRequest) (out *api.InviteReply, err error) {
-	req := s.Config.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/invite")
-	req.Body(in)
-
-	resp, err := req.Send(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := resp.ScanJSON(&out); err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
-
 // getTokensFromCookies returns the access and refresh tokens from the http cookies
 func getTokensFromCookies(cookies []*http.Cookie) (token *oauth2.Token) {
 	token = &oauth2.Token{}
@@ -416,16 +243,15 @@ func getTokensFromCookieRequest(r *http.Request) (token *oauth2.Token, session s
 
 // GetSessionFromCookieJar parses the cookie jar for the session cookie
 func (c *DatumClient) GetSessionFromCookieJar() (sessionID string, err error) {
-	u, err := url.Parse(c.Config().BaseURL.String())
+	cookies, err := c.HTTPClient().GetCookiesFromCookieJar()
 	if err != nil {
 		return "", err
 	}
 
-	cookies := c.Config().HTTPSling.CookieJar.Cookies(u)
 	cookieName := sessions.DefaultCookieName
 
 	// Use the dev cookie when running on localhost
-	if strings.Contains(u.Host, "localhost") {
+	if strings.Contains(c.Config().BaseURL.Host, "localhost") {
 		cookieName = sessions.DevCookieName
 	}
 

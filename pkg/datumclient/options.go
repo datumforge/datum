@@ -14,7 +14,7 @@ type ClientOption func(c *APIv1) error
 // WithClient sets the client for the APIv1 client
 func WithClient(client *httpsling.Client) ClientOption {
 	return func(c *APIv1) error {
-		c.Config.HTTPSlingClient = client
+		c.HTTPSlingClient = client
 		return nil
 	}
 }
@@ -23,6 +23,20 @@ func WithClient(client *httpsling.Client) ClientOption {
 func WithCredentials(creds Credentials) ClientOption {
 	return func(c *APIv1) error {
 		c.Config.Credentials = creds
+
+		// If the credentials are set, we should also set the token for graph interceptor
+		auth, err := NewAuthorization(creds)
+		if err != nil {
+			return err
+		}
+
+		c.Config.Interceptors = append(c.Config.Interceptors, auth.WithAuthorization())
+
+		// Set the bearer token for the HTTPSling client, used for REST requests
+		c.HTTPSlingClient.SetAuth(httpsling.BearerAuth{
+			Token: auth.BearerToken,
+		})
+
 		return nil
 	}
 }
@@ -43,8 +57,8 @@ func WithInterceptors(interceptors clientv2.RequestInterceptor) ClientOption {
 	}
 }
 
-// WithClientv2Option sets the clientv2 options for the APIv1 client
-func WithClientv2Option(option clientv2.Options) ClientOption {
+// WithClientV2Option sets the clientv2 options for the APIv1 client
+func WithClientV2Option(option clientv2.Options) ClientOption {
 	return func(c *APIv1) error {
 		c.Config.Clientv2Options = option
 		return nil
@@ -62,23 +76,12 @@ func WithGraphQueryEndpoint(endpoint string) ClientOption {
 // WithBaseURL sets the base URL for the APIv1 client
 func WithBaseURL(baseURL *url.URL) ClientOption {
 	return func(c *APIv1) error {
+		// Set the base URL for the APIv1 client
 		c.Config.BaseURL = baseURL
-		return nil
-	}
-}
 
-// WithToken sets the token for the APIv1 client
-func WithToken(token string) ClientOption {
-	return func(c *APIv1) error {
-		c.Config.Token = token
-		return nil
-	}
-}
+		// Set the base URL for the HTTPSling client
+		c.Config.HTTPSling.BaseURL = baseURL.String()
 
-// WithTokenRefresh sets the token refresh for the APIv1 client
-func WithTokenRefresh(tokenRefresh string) ClientOption {
-	return func(c *APIv1) error {
-		c.Config.TokenRefresh = tokenRefresh
 		return nil
 	}
 }

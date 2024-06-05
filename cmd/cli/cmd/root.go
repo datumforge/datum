@@ -3,14 +3,12 @@ package datum
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path"
 	"strings"
 
 	"github.com/99designs/keyring"
-	"github.com/TylerBrock/colorjson"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -164,49 +162,6 @@ func StoreSessionCookies(client *datumclient.DatumClient) {
 	}
 }
 
-func JSONPrint(s []byte) error {
-	var obj map[string]interface{}
-
-	err := json.Unmarshal(s, &obj)
-	if err != nil {
-		return err
-	}
-
-	f := colorjson.NewFormatter()
-	f.Indent = 2
-
-	o, err := f.Marshal(obj)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(o))
-
-	return nil
-}
-
-// ParseJSON parses a JSON formatted string into a map
-func ParseJSON(v string) (map[string]interface{}, error) {
-	var m map[string]interface{}
-
-	if err := json.Unmarshal([]byte(v), &m); err != nil {
-		return nil, err
-	}
-
-	return m, nil
-}
-
-// ParseBytes parses buffered bytes into a map
-func ParseBytes(v []byte) (map[string]interface{}, error) {
-	var m map[string]interface{}
-
-	if err := json.Unmarshal(v, &m); err != nil {
-		return nil, err
-	}
-
-	return m, nil
-}
-
 func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) {
 	// setup interceptors
 	token, session, err := GetTokenFromKeyring(ctx)
@@ -234,27 +189,23 @@ func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) 
 		}
 	}
 
-	config := datumclient.DefaultClientConfig
-
-	// setup the authorization interceptor
-	auth := datumclient.Authorization{
-		BearerToken: token.AccessToken,
-		Session:     session,
-	}
-	config.Interceptors = append(config.Interceptors, auth.WithAuthorization())
+	config := datumclient.NewDefaultConfig()
 
 	// setup the logging interceptor
 	if viper.GetBool("logging.debug") {
 		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
 	}
 
-	opts := datumclient.WithCredentials(datumclient.Token(token.AccessToken))
+	opts := datumclient.WithCredentials(datumclient.Authorization{
+		BearerToken: token.AccessToken,
+		Session:     session,
+	})
 
 	return datumclient.New(config, opts)
 }
 
 func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
-	config := datumclient.DefaultClientConfig
+	config := datumclient.NewDefaultConfig()
 
 	// setup the logging interceptor
 	if viper.GetBool("logging.debug") {

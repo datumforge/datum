@@ -46,7 +46,7 @@ func inviteAccept(ctx context.Context) error {
 		Token: token,
 	}
 
-	resp, err := client.Invite(ctx, &invite)
+	resp, err := client.AcceptInvite(ctx, &invite)
 	if err != nil {
 		return err
 	}

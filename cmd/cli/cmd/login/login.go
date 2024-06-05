@@ -132,17 +132,18 @@ func passwordAuth(ctx context.Context, client *datumclient.DatumClient, username
 
 // validateProvider validate the provider specified is configured
 func providerAuth(ctx context.Context, client *datumclient.DatumClient, provider string) (*oauth2.Token, string, error) {
-	isDev := strings.Contains(client.Config().BaseURL.String(), "localhost")
+	baseURL := client.Config().BaseURL.String()
+	isDev := strings.Contains(baseURL, "localhost")
 
 	switch strings.ToUpper(provider) {
 	case google.ProviderName:
 		endpoint := "google/login"
-		u := fmt.Sprintf("%s%s/%s", client.Config().BaseURL.String(), route.V1Version, endpoint)
+		u := fmt.Sprintf("%s%s/%s", baseURL, route.V1Version, endpoint)
 
 		return datumclient.OauthLogin(u, isDev)
 	case github.ProviderName:
 		endpoint := "github/login"
-		u := fmt.Sprintf("%s%s/%s", client.Config().BaseURL.String(), route.V1Version, endpoint)
+		u := fmt.Sprintf("%s%s/%s", baseURL, route.V1Version, endpoint)
 
 		return datumclient.OauthLogin(u, isDev)
 	default:

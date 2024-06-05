@@ -62,7 +62,13 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 		SetAuthProvider(enums.AuthProviderGoogle).
 		SaveX(ctx)
 
-	userCtx, err := auth.NewTestContextWithOrgID(recipient.ID, org.ID)
+	userCtx, err := auth.NewTestContextWithOrgID(requestor.ID, org.ID)
+	require.NoError(t, err)
+
+	userSetting, err := recipient.Setting(ctx)
+	require.NoError(t, err)
+
+	recipientCtx, err := auth.NewTestContextWithOrgID(recipient.ID, userSetting.Edges.DefaultOrg.ID)
 	require.NoError(t, err)
 
 	testCases := []struct {
@@ -128,7 +134,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.e.ServeHTTP(recorder, req.WithContext(userCtx))
+			suite.e.ServeHTTP(recorder, req.WithContext(recipientCtx))
 
 			res := recorder.Result()
 			defer res.Body.Close()

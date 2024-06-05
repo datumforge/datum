@@ -156,7 +156,16 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		return h.BadRequest(ctx, err)
 	}
 
+	// add the newly authorized organization to the user
+	if err := auth.AddOrganizationIDToContext(ctxWithToken, oid.String()); err != nil {
+		h.Logger.Errorw("unable to add organization to context", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	}
+
 	if err := updateInviteStatusAccepted(ctxWithToken, invitedUser); err != nil {
+		h.Logger.Errorw("unable to update invite status", "error", err)
+
 		return h.BadRequest(ctx, err)
 	}
 
@@ -210,7 +219,7 @@ func (i *Invite) GetInviteExpires() (time.Time, error) {
 	return time.Time{}, nil
 }
 
-// setOrgInviteTokens ets the fields of the `Invite` struct to verify the email
+// setOrgInviteTokens sets the fields of the `Invite` struct to verify the email
 // invitation. It takes in an `Invite` object and an invitation token as parameters. If
 // the invitation token matches the token stored in the `Invite` object, it sets the
 // `Token`, `Secret`, and `Expires` fields of the `InviteToken` struct. This allows the

@@ -66,7 +66,7 @@ func addOrgMember(ctx context.Context) error {
 
 	var s []byte
 
-	orgMember, err := client.AddUserToOrgWithRole(ctx, input, client.Config().Interceptors...)
+	orgMember, err := client.AddUserToOrgWithRole(ctx, input)
 	if err != nil {
 		return err
 	}

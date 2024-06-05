@@ -89,7 +89,7 @@ func createTemplate(ctx context.Context) error {
 		input.TemplateType = enums.ToDocumentType(templateType)
 	}
 
-	o, err := client.CreateTemplate(ctx, input, client.Config().Interceptors...)
+	o, err := client.CreateTemplate(ctx, input)
 	if err != nil {
 		return err
 	}

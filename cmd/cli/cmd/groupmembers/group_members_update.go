@@ -67,7 +67,7 @@ func updateGroupMember(ctx context.Context) error {
 		UserID:  &uID,
 	}
 
-	groupMembers, err := client.GetGroupMembersByGroupID(ctx, &where, client.Config().Interceptors...)
+	groupMembers, err := client.GetGroupMembersByGroupID(ctx, &where)
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func updateGroupMember(ctx context.Context) error {
 
 	var s []byte
 
-	groupMember, err := client.UpdateUserRoleInGroup(ctx, id, input, client.Config().Interceptors...)
+	groupMember, err := client.UpdateUserRoleInGroup(ctx, id, input)
 	if err != nil {
 		return err
 	}

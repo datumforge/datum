@@ -78,7 +78,7 @@ func createIntegration(ctx context.Context) error {
 		input.OwnerID = &ownerID
 	}
 
-	w, err := client.CreateIntegration(ctx, input, client.Config().Interceptors...)
+	w, err := client.CreateIntegration(ctx, input)
 	if err != nil {
 		return err
 	}

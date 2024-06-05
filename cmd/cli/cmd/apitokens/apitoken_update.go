@@ -68,7 +68,7 @@ func updateAPIToken(ctx context.Context) error {
 		input.Scopes = scopes
 	}
 
-	o, err := client.UpdateAPIToken(ctx, pID, input, client.Config().Interceptors...)
+	o, err := client.UpdateAPIToken(ctx, pID, input)
 	if err != nil {
 		return err
 	}

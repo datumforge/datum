@@ -40,7 +40,7 @@ func pats(ctx context.Context) error {
 
 	// if an pat ID is provided, filter on that pat, otherwise get all
 	if pID == "" {
-		tokens, err := client.GetAllPersonalAccessTokens(ctx, client.Config().Interceptors...)
+		tokens, err := client.GetAllPersonalAccessTokens(ctx)
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func pats(ctx context.Context) error {
 			return err
 		}
 	} else {
-		token, err := client.GetPersonalAccessTokenByID(ctx, pID, client.Config().Interceptors...)
+		token, err := client.GetPersonalAccessTokenByID(ctx, pID)
 		if err != nil {
 			return err
 		}

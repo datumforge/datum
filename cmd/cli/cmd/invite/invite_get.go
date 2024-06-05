@@ -39,7 +39,7 @@ func invites(ctx context.Context) error {
 	invID := viper.GetString("invite.get.id")
 
 	if invID != "" {
-		invite, err := client.GetInvite(ctx, invID, client.Config().Interceptors...)
+		invite, err := client.GetInvite(ctx, invID)
 		if err != nil {
 			return err
 		}
@@ -47,7 +47,7 @@ func invites(ctx context.Context) error {
 		return printInvite(invite)
 	}
 
-	invites, err := client.GetInvites(ctx, client.Config().Interceptors...)
+	invites, err := client.GetInvites(ctx)
 	if err != nil {
 		return err
 	}

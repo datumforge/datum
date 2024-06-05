@@ -40,7 +40,7 @@ func deleteOrg(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("organization id")
 	}
 
-	o, err := client.DeleteOrganization(ctx, oID, client.Config().Interceptors...)
+	o, err := client.DeleteOrganization(ctx, oID)
 	if err != nil {
 		return err
 	}

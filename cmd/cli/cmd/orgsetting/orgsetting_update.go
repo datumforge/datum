@@ -99,7 +99,7 @@ func updateOrganizationSetting(ctx context.Context) error {
 		input.Domains = domains
 	}
 
-	o, err := client.UpdateOrganizationSetting(ctx, settingsID, input, client.Config().Interceptors...)
+	o, err := client.UpdateOrganizationSetting(ctx, settingsID, input)
 	if err != nil {
 		return err
 	}

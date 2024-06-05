@@ -40,7 +40,7 @@ func subscriberDelete(ctx context.Context) error {
 
 	var s []byte
 
-	sub, err := client.DeleteSubscriber(ctx, email, client.Config().Interceptors...)
+	sub, err := client.DeleteSubscriber(ctx, email)
 	if err != nil {
 		return err
 	}

@@ -43,7 +43,7 @@ func users(ctx context.Context) error {
 
 	// if a user ID is provided, filter on that user, otherwise get all
 	if userID != "" {
-		user, err := client.GetUserByID(ctx, userID, client.Config().Interceptors...)
+		user, err := client.GetUserByID(ctx, userID)
 		if err != nil {
 			return err
 		}
@@ -64,7 +64,7 @@ func users(ctx context.Context) error {
 		return nil
 	}
 
-	users, err := client.GetAllUsers(ctx, client.Config().Interceptors...)
+	users, err := client.GetAllUsers(ctx)
 	if err != nil {
 		return err
 	}

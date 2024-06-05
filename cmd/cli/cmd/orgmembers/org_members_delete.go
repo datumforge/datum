@@ -51,7 +51,7 @@ func deleteOrgMember(ctx context.Context) error {
 		where.OrganizationID = &oID
 	}
 
-	orgMembers, err := client.GetOrgMembersByOrgID(ctx, &where, client.Config().Interceptors...)
+	orgMembers, err := client.GetOrgMembersByOrgID(ctx, &where)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func deleteOrgMember(ctx context.Context) error {
 
 	var s []byte
 
-	orgMember, err := client.RemoveUserFromOrg(ctx, id, client.Config().Interceptors...)
+	orgMember, err := client.RemoveUserFromOrg(ctx, id)
 	if err != nil {
 		return err
 	}

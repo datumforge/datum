@@ -80,7 +80,7 @@ func createOrg(ctx context.Context) error {
 		input.DedicatedDb = &dedicatedDB
 	}
 
-	o, err := client.CreateOrganization(ctx, input, client.Config().Interceptors...)
+	o, err := client.CreateOrganization(ctx, input)
 	if err != nil {
 		return err
 	}

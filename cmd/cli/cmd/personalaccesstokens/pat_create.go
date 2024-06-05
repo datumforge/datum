@@ -70,7 +70,7 @@ func createPat(ctx context.Context) error {
 		input.ExpiresAt = time.Now().Add(expiration)
 	}
 
-	o, err := client.CreatePersonalAccessToken(ctx, input, client.Config().Interceptors...)
+	o, err := client.CreatePersonalAccessToken(ctx, input)
 	if err != nil {
 		return err
 	}

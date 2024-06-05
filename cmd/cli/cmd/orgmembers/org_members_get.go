@@ -46,7 +46,7 @@ func orgMembers(ctx context.Context) error {
 
 	var s []byte
 
-	org, err := client.GetOrgMembersByOrgID(ctx, &where, client.Config().Interceptors...)
+	org, err := client.GetOrgMembersByOrgID(ctx, &where)
 	if err != nil {
 		return err
 	}

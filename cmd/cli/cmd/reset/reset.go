@@ -11,7 +11,7 @@ import (
 	"github.com/datumforge/datum/pkg/models"
 )
 
-var registerCmd = &cobra.Command{
+var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "reset a datum user password",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -20,13 +20,13 @@ var registerCmd = &cobra.Command{
 }
 
 func init() {
-	datum.RootCmd.AddCommand(registerCmd)
+	datum.RootCmd.AddCommand(resetCmd)
 
-	registerCmd.Flags().StringP("token", "t", "", "reset token")
-	datum.ViperBindFlag("reset.token", registerCmd.Flags().Lookup("token"))
+	resetCmd.Flags().StringP("token", "t", "", "reset token")
+	datum.ViperBindFlag("reset.token", resetCmd.Flags().Lookup("token"))
 
-	registerCmd.Flags().StringP("password", "p", "", "new password of the user")
-	datum.ViperBindFlag("reset.password", registerCmd.Flags().Lookup("password"))
+	resetCmd.Flags().StringP("password", "p", "", "new password of the user")
+	datum.ViperBindFlag("reset.password", resetCmd.Flags().Lookup("password"))
 }
 
 func resetPassword(ctx context.Context) error {

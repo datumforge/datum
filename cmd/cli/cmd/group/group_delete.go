@@ -40,7 +40,7 @@ func deleteGroup(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("group id")
 	}
 
-	o, err := client.DeleteGroup(ctx, gID, client.Config().Interceptors...)
+	o, err := client.DeleteGroup(ctx, gID)
 	if err != nil {
 		return err
 	}

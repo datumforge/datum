@@ -67,7 +67,7 @@ func updateOrgMember(ctx context.Context) error {
 		where.OrganizationID = &oID
 	}
 
-	orgMembers, err := client.GetOrgMembersByOrgID(ctx, &where, client.Config().Interceptors...)
+	orgMembers, err := client.GetOrgMembersByOrgID(ctx, &where)
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func updateOrgMember(ctx context.Context) error {
 
 	var s []byte
 
-	orgMember, err := client.UpdateUserRoleInOrg(ctx, id, input, client.Config().Interceptors...)
+	orgMember, err := client.UpdateUserRoleInOrg(ctx, id, input)
 	if err != nil {
 		return err
 	}

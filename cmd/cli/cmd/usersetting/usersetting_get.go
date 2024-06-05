@@ -43,7 +43,7 @@ func userSettings(ctx context.Context) error {
 
 	// if setting ID is not provided, get settings which will automatically filter by user id
 	if settingsID != "" {
-		user, err := client.GetUserSettingByID(ctx, settingsID, client.Config().Interceptors...)
+		user, err := client.GetUserSettingByID(ctx, settingsID)
 		if err != nil {
 			return err
 		}
@@ -63,7 +63,7 @@ func userSettings(ctx context.Context) error {
 		return nil
 	}
 
-	settings, err := client.GetUserSettings(ctx, client.Config().Interceptors...)
+	settings, err := client.GetUserSettings(ctx)
 	if err != nil {
 		return err
 	}

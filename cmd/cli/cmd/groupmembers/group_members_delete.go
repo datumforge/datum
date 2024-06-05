@@ -54,7 +54,7 @@ func deleteGroupMember(ctx context.Context) error {
 		UserID:  &uID,
 	}
 
-	groupMembers, err := client.GetGroupMembersByGroupID(ctx, &where, client.Config().Interceptors...)
+	groupMembers, err := client.GetGroupMembersByGroupID(ctx, &where)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func deleteGroupMember(ctx context.Context) error {
 
 	var s []byte
 
-	groupMember, err := client.RemoveUserFromGroup(ctx, id, client.Config().Interceptors...)
+	groupMember, err := client.RemoveUserFromGroup(ctx, id)
 	if err != nil {
 		return err
 	}

@@ -40,7 +40,7 @@ func deletePat(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("token id")
 	}
 
-	o, err := client.DeletePersonalAccessToken(ctx, oID, client.Config().Interceptors...)
+	o, err := client.DeletePersonalAccessToken(ctx, oID)
 	if err != nil {
 		return err
 	}

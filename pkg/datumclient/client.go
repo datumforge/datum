@@ -7,9 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/oauth2"
-
-	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/httpsling"
 	api "github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/sessions"
@@ -48,11 +45,13 @@ func New(config Config, opts ...ClientOption) (*DatumClient, error) {
 
 	api := c.(*APIv1)
 
+	// create the graph client
+	// use api.Config instead of config because some fields are updated in NewRestClient
 	graphClient := NewClient(
 		api.HTTPSlingClient.HTTPClient,
-		graphRequestPath(config),
-		&config.Clientv2Options,
-		config.Interceptors...,
+		graphRequestPath(api.Config),
+		&api.Config.Clientv2Options,
+		api.Config.Interceptors...,
 	)
 
 	return &DatumClient{
@@ -202,43 +201,6 @@ func (c *DatumClient) Cookies() (_ []*http.Cookie, err error) {
 	cookies := c.Config().HTTPSling.CookieJar.Cookies(c.Config().BaseURL)
 
 	return cookies, nil
-}
-
-// getTokensFromCookies returns the access and refresh tokens from the http cookies
-func getTokensFromCookies(cookies []*http.Cookie) (token *oauth2.Token) {
-	token = &oauth2.Token{}
-
-	for _, c := range cookies {
-		if c.Name == auth.AccessTokenCookie {
-			token.AccessToken = c.Value
-		}
-
-		if c.Name == auth.RefreshTokenCookie {
-			token.RefreshToken = c.Value
-		}
-	}
-
-	return token
-}
-
-// getTokensFromCookiesFromResponse parses the HTTP Response for cookies and returns the access and refresh tokens
-func getTokensFromCookiesFromResponse(resp *http.Response) (token *oauth2.Token) {
-	// parse cookies
-	cookies := resp.Cookies()
-
-	return getTokensFromCookies(cookies)
-}
-
-// getTokensFromCookieRequest parses the HTTP Request for cookies and returns the session and access and refresh tokens
-// this is used for the oauth login flow
-func getTokensFromCookieRequest(r *http.Request) (token *oauth2.Token, session string) {
-	// parse cookies
-	cookies := r.Cookies()
-
-	// get session from query string
-	session = r.URL.Query().Get("session")
-
-	return getTokensFromCookies(cookies), session
 }
 
 // GetSessionFromCookieJar parses the cookie jar for the session cookie

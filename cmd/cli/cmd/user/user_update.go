@@ -78,7 +78,7 @@ func updateUser(ctx context.Context) error {
 
 	// TODO: allow updates to user settings
 
-	o, err := client.UpdateUser(ctx, userID, input, client.Config().Interceptors...)
+	o, err := client.UpdateUser(ctx, userID, input)
 	if err != nil {
 		return err
 	}

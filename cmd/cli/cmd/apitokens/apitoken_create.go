@@ -67,7 +67,7 @@ func createAPIToken(ctx context.Context) error {
 		input.ExpiresAt = lo.ToPtr(time.Now().Add(expiration))
 	}
 
-	o, err := client.CreateAPIToken(ctx, input, client.Config().Interceptors...)
+	o, err := client.CreateAPIToken(ctx, input)
 	if err != nil {
 		return err
 	}

@@ -51,7 +51,7 @@ func subscribers(ctx context.Context) error {
 	writer := tables.NewTableWriter(subscribersCmd.OutOrStdout(), "Email", "Verified", "Active")
 
 	if email != "" {
-		sub, err := client.GetSubscriber(ctx, email, client.Config().Interceptors...)
+		sub, err := client.GetSubscriber(ctx, email)
 		if err != nil {
 			return err
 		}
@@ -69,7 +69,7 @@ func subscribers(ctx context.Context) error {
 			writer.Render()
 		}
 	} else {
-		subs, err := client.Subscribers(ctx, &where, client.Config().Interceptors...)
+		subs, err := client.Subscribers(ctx, &where)
 		if err != nil {
 			return err
 		}

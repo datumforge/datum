@@ -40,7 +40,7 @@ func groupSettings(ctx context.Context) error {
 
 	// if setting ID is not provided, get settings which will automatically filter by group id
 	if settingsID == "" {
-		settings, err := client.GetGroupSettings(ctx, client.Config().Interceptors...)
+		settings, err := client.GetGroupSettings(ctx)
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func groupSettings(ctx context.Context) error {
 			return err
 		}
 	} else {
-		group, err := client.GetGroupSettingByID(ctx, settingsID, client.Config().Interceptors...)
+		group, err := client.GetGroupSettingByID(ctx, settingsID)
 		if err != nil {
 			return err
 		}

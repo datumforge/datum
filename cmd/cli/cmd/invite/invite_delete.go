@@ -40,7 +40,7 @@ func deleteInvite(ctx context.Context) error {
 
 	var s []byte
 
-	invite, err := client.DeleteInvite(ctx, invID, client.Config().Interceptors...)
+	invite, err := client.DeleteInvite(ctx, invID)
 	if err != nil {
 		return err
 	}

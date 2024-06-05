@@ -41,7 +41,7 @@ func getGroup(ctx context.Context) error {
 
 	// if an group ID is provided, filter on that group, otherwise get all
 	if gID != "" {
-		group, err := client.GetGroupByID(ctx, gID, client.Config().Interceptors...)
+		group, err := client.GetGroupByID(ctx, gID)
 		if err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ func getGroup(ctx context.Context) error {
 	}
 
 	// get all groups, will be filtered for the authorized organization(s)
-	groups, err := client.GetAllGroups(ctx, client.Config().Interceptors...)
+	groups, err := client.GetAllGroups(ctx)
 	if err != nil {
 		return err
 	}

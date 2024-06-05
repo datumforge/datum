@@ -40,7 +40,7 @@ func deleteAPIToken(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("token id")
 	}
 
-	o, err := client.DeleteAPIToken(ctx, tokenID, client.Config().Interceptors...)
+	o, err := client.DeleteAPIToken(ctx, tokenID)
 	if err != nil {
 		return err
 	}

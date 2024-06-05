@@ -62,7 +62,7 @@ func createGroup(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	o, err := client.CreateGroup(ctx, input, client.Config().Interceptors...)
+	o, err := client.CreateGroup(ctx, input)
 	if err != nil {
 		return err
 	}

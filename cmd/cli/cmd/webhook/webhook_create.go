@@ -79,7 +79,7 @@ func createwebhook(ctx context.Context) error {
 		input.OwnerID = &ownerID
 	}
 
-	w, err := client.CreateWebhook(ctx, input, client.Config().Interceptors...)
+	w, err := client.CreateWebhook(ctx, input)
 	if err != nil {
 		return err
 	}

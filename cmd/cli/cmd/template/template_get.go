@@ -41,7 +41,7 @@ func templates(ctx context.Context) error {
 	writer := tables.NewTableWriter(templateCmd.OutOrStdout(), "ID", "Name", "Description", "JSON")
 
 	if templateID != "" {
-		template, err := client.GetTemplate(ctx, templateID, client.Config().Interceptors...)
+		template, err := client.GetTemplate(ctx, templateID)
 		if err != nil {
 			return err
 		}
@@ -61,7 +61,7 @@ func templates(ctx context.Context) error {
 		return nil
 	}
 
-	templates, err := client.GetAllTemplates(ctx, client.Config().Interceptors...)
+	templates, err := client.GetAllTemplates(ctx)
 	if err != nil {
 		return err
 	}

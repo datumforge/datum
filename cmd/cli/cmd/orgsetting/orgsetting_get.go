@@ -40,7 +40,7 @@ func orgSettings(ctx context.Context) error {
 
 	// if setting ID is not provided, get settings which will automatically filter by org id
 	if settingsID == "" {
-		settings, err := client.GetOrganizationSettings(ctx, client.Config().Interceptors...)
+		settings, err := client.GetOrganizationSettings(ctx)
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func orgSettings(ctx context.Context) error {
 			return err
 		}
 	} else {
-		org, err := client.GetOrganizationSettingByID(ctx, settingsID, client.Config().Interceptors...)
+		org, err := client.GetOrganizationSettingByID(ctx, settingsID)
 		if err != nil {
 			return err
 		}

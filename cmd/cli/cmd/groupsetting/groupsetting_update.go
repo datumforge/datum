@@ -84,7 +84,7 @@ func updateGroupSetting(ctx context.Context) error {
 		input.SyncToGithub = &syncToGithub
 	}
 
-	o, err := client.UpdateGroupSetting(ctx, settingsID, input, client.Config().Interceptors...)
+	o, err := client.UpdateGroupSetting(ctx, settingsID, input)
 	if err != nil {
 		return err
 	}

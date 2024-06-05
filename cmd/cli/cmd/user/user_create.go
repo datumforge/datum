@@ -82,7 +82,7 @@ func createUser(ctx context.Context) error {
 		input.Password = &password
 	}
 
-	u, err := client.CreateUser(ctx, input, client.Config().Interceptors...)
+	u, err := client.CreateUser(ctx, input)
 	if err != nil {
 		return err
 	}

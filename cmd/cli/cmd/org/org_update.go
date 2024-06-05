@@ -68,7 +68,7 @@ func updateOrg(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	o, err := client.UpdateOrganization(ctx, oID, input, client.Config().Interceptors...)
+	o, err := client.UpdateOrganization(ctx, oID, input)
 	if err != nil {
 		return err
 	}

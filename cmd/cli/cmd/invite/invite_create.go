@@ -52,7 +52,7 @@ func createInvite(ctx context.Context) error {
 
 	var s []byte
 
-	invite, err := client.CreateInvite(ctx, input, client.Config().Interceptors...)
+	invite, err := client.CreateInvite(ctx, input)
 	if err != nil {
 		return err
 	}

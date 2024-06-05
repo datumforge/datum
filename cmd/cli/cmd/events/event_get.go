@@ -38,7 +38,7 @@ func events(ctx context.Context) error {
 
 	eventID := viper.GetString("event.get.id")
 	if eventID != "" {
-		event, err := client.GetEventByID(ctx, eventID, client.Config().Interceptors...)
+		event, err := client.GetEventByID(ctx, eventID)
 		if err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ func events(ctx context.Context) error {
 
 	writer := tables.NewTableWriter(eventCmd.OutOrStdout(), "ID", "EventType", "EventMetadata", "CorrelationID")
 
-	events, err := client.GetAllEvents(ctx, client.Config().Interceptors...)
+	events, err := client.GetAllEvents(ctx)
 	if err != nil {
 		return err
 	}

@@ -41,7 +41,7 @@ func integrations(ctx context.Context) error {
 	writer := tables.NewTableWriter(integrationCmd.OutOrStdout(), "OwnerID", "Name", "Description", "kind", "Webhook ID", "Webhook URL")
 
 	if oID != "" {
-		integration, err := client.GetIntegrationByID(ctx, oID, client.Config().Interceptors...)
+		integration, err := client.GetIntegrationByID(ctx, oID)
 		if err != nil {
 			return err
 		}
@@ -61,7 +61,7 @@ func integrations(ctx context.Context) error {
 		return nil
 	}
 
-	integrations, err := client.GetAllIntegrations(ctx, client.Config().Interceptors...)
+	integrations, err := client.GetAllIntegrations(ctx)
 	if err != nil {
 		return err
 	}

@@ -12,11 +12,6 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 )
 
-const (
-	V1Version = "v1"
-	V2Version = "v2"
-)
-
 var (
 	mw     = []echo.MiddlewareFunc{middleware.Recover()}
 	authMW = []echo.MiddlewareFunc{}
@@ -86,12 +81,12 @@ func (r *Router) AddEchoOnlyRoute(pattern, method string, route echo.Routable) e
 
 // VersionOne returns a new echo group for version 1 of the API
 func (r *Router) VersionOne() *echo.Group {
-	return r.Echo.Group(V1Version)
+	return r.Echo.Group("v1")
 }
 
 // VersionTwo returns a new echo group for version 2 of the API - lets anticipate the future
 func (r *Router) VersionTwo() *echo.Group {
-	return r.Echo.Group(V2Version)
+	return r.Echo.Group("v2")
 }
 
 // Base returns the base echo group - no "version" prefix for the router group

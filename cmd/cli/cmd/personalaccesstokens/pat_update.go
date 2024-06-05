@@ -76,7 +76,7 @@ func updatePat(ctx context.Context) error {
 		input.RemoveOrganizationIDs = removeOrgs
 	}
 
-	o, err := client.UpdatePersonalAccessToken(ctx, pID, input, client.Config().Interceptors...)
+	o, err := client.UpdatePersonalAccessToken(ctx, pID, input)
 	if err != nil {
 		return err
 	}

@@ -40,7 +40,7 @@ func deleteUser(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("user id")
 	}
 
-	o, err := client.DeleteUser(ctx, userID, client.Config().Interceptors...)
+	o, err := client.DeleteUser(ctx, userID)
 	if err != nil {
 		return err
 	}

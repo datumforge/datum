@@ -40,7 +40,7 @@ func apiTokens(ctx context.Context) error {
 
 	// if an api token ID is provided, filter on that api token, otherwise get all
 	if tokenID == "" {
-		tokens, err := client.GetAllAPITokens(ctx, client.Config().Interceptors...)
+		tokens, err := client.GetAllAPITokens(ctx)
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func apiTokens(ctx context.Context) error {
 			return err
 		}
 	} else {
-		token, err := client.GetAPITokenByID(ctx, tokenID, client.Config().Interceptors...)
+		token, err := client.GetAPITokenByID(ctx, tokenID)
 		if err != nil {
 			return err
 		}

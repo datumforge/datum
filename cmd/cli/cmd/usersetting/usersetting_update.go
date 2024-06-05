@@ -97,7 +97,7 @@ func updateUserSetting(ctx context.Context) error {
 
 	if settingsID == "" {
 		// get the user settings id
-		settings, err := client.GetUserSettings(ctx, client.Config().Interceptors...)
+		settings, err := client.GetUserSettings(ctx)
 		if err != nil {
 			return err
 		}
@@ -111,7 +111,7 @@ func updateUserSetting(ctx context.Context) error {
 	}
 
 	// update the user settings
-	o, err := client.UpdateUserSetting(ctx, settingsID, input, client.Config().Interceptors...)
+	o, err := client.UpdateUserSetting(ctx, settingsID, input)
 	if err != nil {
 		return err
 	}

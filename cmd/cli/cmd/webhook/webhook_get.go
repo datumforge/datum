@@ -41,7 +41,7 @@ func webhooks(ctx context.Context) error {
 	writer := tables.NewTableWriter(webhookCmd.OutOrStdout(), "ID", "Name", "Description", "Destination URL", "Enabled")
 
 	if oID != "" {
-		webhook, err := client.GetWebhookByID(ctx, oID, client.Config().Interceptors...)
+		webhook, err := client.GetWebhookByID(ctx, oID)
 		if err != nil {
 			return err
 		}
@@ -61,7 +61,7 @@ func webhooks(ctx context.Context) error {
 		return nil
 	}
 
-	webhooks, err := client.GetAllWebhooks(ctx, client.Config().Interceptors...)
+	webhooks, err := client.GetAllWebhooks(ctx)
 	if err != nil {
 		return err
 	}

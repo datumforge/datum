@@ -43,7 +43,7 @@ func orgs(ctx context.Context) error {
 
 	// if an org ID is provided, filter on that organization, otherwise get all
 	if oID != "" {
-		org, err := client.GetOrganizationByID(ctx, oID, client.Config().Interceptors...)
+		org, err := client.GetOrganizationByID(ctx, oID)
 		if err != nil {
 			return err
 		}
@@ -63,7 +63,7 @@ func orgs(ctx context.Context) error {
 		return nil
 	}
 
-	orgs, err := client.GetAllOrganizations(ctx, client.Config().Interceptors...)
+	orgs, err := client.GetAllOrganizations(ctx)
 	if err != nil {
 		return err
 	}

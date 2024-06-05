@@ -46,7 +46,7 @@ func groupMembers(ctx context.Context) error {
 
 	var s []byte
 
-	group, err := client.GetGroupMembersByGroupID(ctx, &where, client.Config().Interceptors...)
+	group, err := client.GetGroupMembersByGroupID(ctx, &where)
 	if err != nil {
 		return err
 	}

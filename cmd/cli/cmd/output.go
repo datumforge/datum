@@ -7,6 +7,7 @@ import (
 	"github.com/TylerBrock/colorjson"
 )
 
+// JSONPrint prints a JSON formatted string with color
 func JSONPrint(s []byte) error {
 	var obj map[string]interface{}
 

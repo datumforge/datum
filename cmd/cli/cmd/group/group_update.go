@@ -68,7 +68,7 @@ func updateGroup(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	o, err := client.UpdateGroup(ctx, gID, input, client.Config().Interceptors...)
+	o, err := client.UpdateGroup(ctx, gID, input)
 	if err != nil {
 		return err
 	}

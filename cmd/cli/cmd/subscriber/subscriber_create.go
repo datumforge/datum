@@ -50,7 +50,7 @@ func subscriberCreate(ctx context.Context) error {
 			File: input,
 		}
 
-		sub, err := client.CreateBulkCSVSubscriber(ctx, in, client.Config().Interceptors...)
+		sub, err := client.CreateBulkCSVSubscriber(ctx, in)
 		if err != nil {
 			return err
 		}
@@ -82,7 +82,7 @@ func subscriberCreate(ctx context.Context) error {
 			})
 		}
 
-		sub, err := client.CreateBulkSubscriber(ctx, subscriberInput, client.Config().Interceptors...)
+		sub, err := client.CreateBulkSubscriber(ctx, subscriberInput)
 		if err != nil {
 			return err
 		}

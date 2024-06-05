@@ -66,7 +66,7 @@ func addGroupMember(ctx context.Context) error {
 
 	var s []byte
 
-	groupMember, err := client.AddUserToGroupWithRole(ctx, input, client.Config().Interceptors...)
+	groupMember, err := client.AddUserToGroupWithRole(ctx, input)
 	if err != nil {
 		return err
 	}

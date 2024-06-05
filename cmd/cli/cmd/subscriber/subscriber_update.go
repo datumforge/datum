@@ -50,7 +50,7 @@ func subscriberUpdate(ctx context.Context) error {
 
 	var s []byte
 
-	sub, err := client.UpdateSubscriber(ctx, email, input, client.Config().Interceptors...)
+	sub, err := client.UpdateSubscriber(ctx, email, input)
 	if err != nil {
 		return err
 	}

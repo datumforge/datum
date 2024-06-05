@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/models"
@@ -50,11 +51,12 @@ func inviteAccept(ctx context.Context) error {
 		return err
 	}
 
-	// TODO: Fix this!
-
-	// if err := datum.StoreToken(resp.); err != nil {
-	// 	return err
-	// }
+	if err := datum.StoreToken(&oauth2.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+	}); err != nil {
+		return err
+	}
 
 	s, err = json.Marshal(resp)
 	if err != nil {

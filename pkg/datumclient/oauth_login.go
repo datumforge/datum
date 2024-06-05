@@ -81,7 +81,7 @@ func OauthLogin(u string, isDev bool) (*oauth2.Token, string, error) {
 	}
 
 	if result.err != nil {
-		return nil, "", errFailedToGetOauthToken
+		return nil, "", ErrFailedToGetOauthToken
 	}
 
 	return result.token, result.session, nil

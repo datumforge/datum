@@ -67,13 +67,19 @@ type RequestBuilder struct {
 
 // NewRequestBuilder creates a new RequestBuilder with default settings
 func (c *Client) NewRequestBuilder(method, path string) *RequestBuilder {
-	return &RequestBuilder{
+	rb := &RequestBuilder{
 		client:  c,
 		method:  method,
 		path:    path,
 		queries: url.Values{},
-		headers: c.Headers,
+		headers: &http.Header{},
 	}
+
+	if c.Headers != nil {
+		rb.headers = c.Headers
+	}
+
+	return rb
 }
 
 // AddMiddleware adds a middleware to the request

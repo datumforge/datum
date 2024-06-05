@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/models"
@@ -43,17 +44,19 @@ func switchorg(ctx context.Context) error {
 		TargetOrganizationID: targetorg,
 	}
 
-	_, err = client.Switch(ctx, &input)
+	resp, err := client.Switch(ctx, &input)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("Successfully switched to organization: %s!\n", targetorg)
 
-	// TODO FIX THIS!
-	// if err := datum.StoreToken(switchOrganizationReply); err != nil {
-	// 	return err
-	// }
+	if err := datum.StoreToken(&oauth2.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+	}); err != nil {
+		return err
+	}
 
 	fmt.Println("auth tokens successfully stored in keychain")
 

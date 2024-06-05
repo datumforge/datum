@@ -3,14 +3,11 @@ package reset
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 
-	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/models"
 )
 
@@ -18,7 +15,7 @@ var registerCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "reset a datum user password",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return registerUser(cmd.Context())
+		return resetPassword(cmd.Context())
 	},
 }
 
@@ -32,7 +29,13 @@ func init() {
 	datum.ViperBindFlag("reset.password", registerCmd.Flags().Lookup("password"))
 }
 
-func registerUser(ctx context.Context) error {
+func resetPassword(ctx context.Context) error {
+	// setup datum http client
+	client, err := datum.SetupClient(ctx)
+	if err != nil {
+		return err
+	}
+
 	var s []byte
 
 	password := viper.GetString("reset.password")
@@ -50,19 +53,7 @@ func registerUser(ctx context.Context) error {
 		Token:    token,
 	}
 
-	// setup datum http client
-	h := &http.Client{}
-
-	// set options
-	opt := &clientv2.Options{}
-
-	// new client with params
-	c := datumclient.NewClient(h, datum.DatumHost, opt, nil)
-
-	// this allows the use of the graph client to be used for the REST endpoints
-	dc := c.(*datumclient.Client)
-
-	reply, err := datumclient.Reset(dc, ctx, reset)
+	reply, err := client.ResetPassword(ctx, &reset)
 	if err != nil {
 		return err
 	}

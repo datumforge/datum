@@ -5,14 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"path"
 	"strings"
 
 	"github.com/99designs/keyring"
 	"github.com/TylerBrock/colorjson"
-	"github.com/Yamashou/gqlgenc/clientv2"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -300,22 +298,24 @@ func GetTokenFromKeyring(ctx context.Context) (*oauth2.Token, string, error) {
 
 func refreshToken(ctx context.Context, refresh string) (*oauth2.Token, error) {
 	// setup datum http client
-	h := &http.Client{}
-
-	// set options
-	opt := &clientv2.Options{}
-
-	// new client with params
-	c := datumclient.NewClient(h, DatumHost, opt, nil)
-
-	// this allows the use of the graph client to be used for the REST endpoints
-	dc := c.(*datumclient.Client)
+	client, err := SetupClient(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	req := models.RefreshRequest{
 		RefreshToken: refresh,
 	}
 
-	return datumclient.Refresh(dc, ctx, req)
+	resp, err := client.Refresh(ctx, &req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oauth2.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+	}, nil
 }
 
 // GetKeyring will return the already loaded keyring so that we don't prompt users for passwords multiple times

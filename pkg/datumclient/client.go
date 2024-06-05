@@ -2,18 +2,22 @@ package datumclient
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"strings"
 	"time"
 
+	"golang.org/x/oauth2"
+
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/httpsling"
 	api "github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/sessions"
-	"golang.org/x/oauth2"
+)
+
+const (
+	cookieExpiryMinutes = 10 * time.Minute
 )
 
 // DatumClient is the interface that wraps the Datum API client methods
@@ -86,6 +90,7 @@ func NewRestClient(config Config, opts ...ClientOption) (DatumRestClient, error)
 	// Set the default cookie jar
 	// TODO: write this in a better way in httpsling instead of doing it all here
 	var err error
+
 	c.Config.HTTPSling.CookieJar, err = cookiejar.New(nil)
 	if err != nil {
 		return nil, err
@@ -121,6 +126,7 @@ func (c *DatumClient) Config() Config {
 // access token for debugging or inspection if necessary.
 func (c *DatumClient) AccessToken() (_ string, err error) {
 	var cookies []*http.Cookie
+
 	if cookies, err = c.Cookies(); err != nil {
 		return "", err
 	}
@@ -139,6 +145,7 @@ func (c *DatumClient) AccessToken() (_ string, err error) {
 // refresh token for debugging or inspection if necessary.
 func (c *DatumClient) RefreshToken() (_ string, err error) {
 	var cookies []*http.Cookie
+
 	if cookies, err = c.Cookies(); err != nil {
 		return "", err
 	}
@@ -156,19 +163,19 @@ func (c *DatumClient) RefreshToken() (_ string, err error) {
 // client cookie jar.
 func (c *DatumClient) SetAuthTokens(access, refresh string) error {
 	if c.Config().HTTPSling.CookieJar == nil {
-		return errors.New("client does not have a cookie jar, cannot set cookies")
+		return ErrNoCookieJarSet
 	}
 
 	// The URL for the cookies
 	u := c.Config().BaseURL.ResolveReference(&url.URL{Path: "/"})
 
 	// Set the cookies on the client
-	cookies := make([]*http.Cookie, 0, 2)
+	cookies := make([]*http.Cookie, 0, 2) //nolint:gomnd
 	if access != "" {
 		cookies = append(cookies, &http.Cookie{
 			Name:     "access_token",
 			Value:    access,
-			Expires:  time.Now().Add(10 * time.Minute),
+			Expires:  time.Now().Add(cookieExpiryMinutes),
 			HttpOnly: true,
 			Secure:   true,
 		})
@@ -178,11 +185,13 @@ func (c *DatumClient) SetAuthTokens(access, refresh string) error {
 		cookies = append(cookies, &http.Cookie{
 			Name:    "refresh_token",
 			Value:   refresh,
-			Expires: time.Now().Add(10 * time.Minute),
+			Expires: time.Now().Add(cookieExpiryMinutes),
 			Secure:  true,
 		})
 	}
+
 	c.Config().HTTPSling.CookieJar.SetCookies(u, cookies)
+
 	return nil
 }
 
@@ -208,6 +217,7 @@ func (c *DatumClient) Cookies() (_ []*http.Cookie, err error) {
 	}
 
 	cookies := c.Config().HTTPSling.CookieJar.Cookies(c.Config().BaseURL)
+
 	return cookies, nil
 }
 
@@ -365,19 +375,6 @@ func (s *APIv1) Invite(ctx context.Context, in *api.InviteRequest) (out *api.Inv
 	}
 
 	return out, nil
-}
-
-func refreshToken(ctx context.Context, refresh string) (*api.RefreshReply, error) {
-	c, err := New(DefaultClientConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	req := api.RefreshRequest{
-		RefreshToken: refresh,
-	}
-
-	return c.Refresh(ctx, &req)
 }
 
 // getTokensFromCookies returns the access and refresh tokens from the http cookies

@@ -46,7 +46,9 @@ type RefreshRequest struct {
 // RefreshReply holds the fields that are sent on a response to the `/refresh` endpoint
 type RefreshReply struct {
 	rout.Reply
-	Message string `json:"message,omitempty"`
+	Message      string `json:"message,omitempty"`
+	AccessToken  string
+	RefreshToken string
 }
 
 // RegisterRequest holds the fields that should be included on a request to the `/register` endpoint
@@ -206,11 +208,13 @@ type InviteRequest struct {
 // InviteReply holds the fields that are sent on a response to an accepted invitation
 type InviteReply struct {
 	rout.Reply
-	ID          string `json:"user_id"`
-	Email       string `json:"email"`
-	Message     string `json:"message"`
-	JoinedOrgID string `json:"joined_org_id"`
-	Role        string `json:"role"`
+	ID           string `json:"user_id"`
+	Email        string `json:"email"`
+	Message      string `json:"message"`
+	JoinedOrgID  string `json:"joined_org_id"`
+	Role         string `json:"role"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 // Reply contains standard fields that are used for generic API responses and errors

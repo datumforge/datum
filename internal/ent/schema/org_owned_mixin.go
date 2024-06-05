@@ -134,16 +134,16 @@ func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
 				return nil
 			}
 
+			ctxQuery := ent.QueryFromContext(ctx)
+
+			// Skip the interceptor if the query is for a single entity
+			// and the BypassInterceptor flag is set for Only queries
+			if orgOwned.SkipInterceptor == interceptors.SkipOnlyQuery && ctxQuery.Op == "Only" {
+				return nil
+			}
+
 			orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
 			if err != nil {
-				ctxQuery := ent.QueryFromContext(ctx)
-
-				// Skip the interceptor if the query is for a single entity
-				// and the BypassInterceptor flag is set for Only queries
-				if orgOwned.SkipInterceptor == interceptors.SkipOnlyQuery && ctxQuery.Op == "Only" {
-					return nil
-				}
-
 				return err
 			}
 

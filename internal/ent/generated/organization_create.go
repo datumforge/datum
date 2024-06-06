@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -341,6 +342,21 @@ func (oc *OrganizationCreate) SetNillableSettingID(id *string) *OrganizationCrea
 // SetSetting sets the "setting" edge to the OrganizationSetting entity.
 func (oc *OrganizationCreate) SetSetting(o *OrganizationSetting) *OrganizationCreate {
 	return oc.SetSettingID(o.ID)
+}
+
+// AddDocumentdatumIDs adds the "documentdata" edge to the DocumentData entity by IDs.
+func (oc *OrganizationCreate) AddDocumentdatumIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddDocumentdatumIDs(ids...)
+	return oc
+}
+
+// AddDocumentdata adds the "documentdata" edges to the DocumentData entity.
+func (oc *OrganizationCreate) AddDocumentdata(d ...*DocumentData) *OrganizationCreate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return oc.AddDocumentdatumIDs(ids...)
 }
 
 // AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
@@ -841,6 +857,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.OrganizationSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.DocumentdataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.DocumentdataTable,
+			Columns: []string{organization.DocumentdataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.DocumentData
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

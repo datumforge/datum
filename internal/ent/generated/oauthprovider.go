@@ -36,6 +36,8 @@ type OauthProvider struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// the oauth provider's name
 	Name string `json:"name,omitempty"`
 	// the client id for the oauth provider
@@ -56,9 +58,8 @@ type OauthProvider struct {
 	InfoURL string `json:"info_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OauthProviderQuery when eager-loading is set.
-	Edges                      OauthProviderEdges `json:"edges"`
-	organization_oauthprovider *string
-	selectValues               sql.SelectValues
+	Edges        OauthProviderEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // OauthProviderEdges holds the relations/edges for other nodes in the graph.
@@ -92,12 +93,10 @@ func (*OauthProvider) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case oauthprovider.FieldAuthStyle:
 			values[i] = new(sql.NullInt64)
-		case oauthprovider.FieldID, oauthprovider.FieldCreatedBy, oauthprovider.FieldUpdatedBy, oauthprovider.FieldMappingID, oauthprovider.FieldDeletedBy, oauthprovider.FieldName, oauthprovider.FieldClientID, oauthprovider.FieldClientSecret, oauthprovider.FieldRedirectURL, oauthprovider.FieldScopes, oauthprovider.FieldAuthURL, oauthprovider.FieldTokenURL, oauthprovider.FieldInfoURL:
+		case oauthprovider.FieldID, oauthprovider.FieldCreatedBy, oauthprovider.FieldUpdatedBy, oauthprovider.FieldMappingID, oauthprovider.FieldDeletedBy, oauthprovider.FieldOwnerID, oauthprovider.FieldName, oauthprovider.FieldClientID, oauthprovider.FieldClientSecret, oauthprovider.FieldRedirectURL, oauthprovider.FieldScopes, oauthprovider.FieldAuthURL, oauthprovider.FieldTokenURL, oauthprovider.FieldInfoURL:
 			values[i] = new(sql.NullString)
 		case oauthprovider.FieldCreatedAt, oauthprovider.FieldUpdatedAt, oauthprovider.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case oauthprovider.ForeignKeys[0]: // organization_oauthprovider
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -169,6 +168,12 @@ func (op *OauthProvider) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				op.DeletedBy = value.String
 			}
+		case oauthprovider.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				op.OwnerID = value.String
+			}
 		case oauthprovider.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -222,13 +227,6 @@ func (op *OauthProvider) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field info_url", values[i])
 			} else if value.Valid {
 				op.InfoURL = value.String
-			}
-		case oauthprovider.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_oauthprovider", values[i])
-			} else if value.Valid {
-				op.organization_oauthprovider = new(string)
-				*op.organization_oauthprovider = value.String
 			}
 		default:
 			op.selectValues.Set(columns[i], values[i])
@@ -294,6 +292,9 @@ func (op *OauthProvider) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(op.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(op.OwnerID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(op.Name)

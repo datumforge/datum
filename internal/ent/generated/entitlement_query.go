@@ -5,6 +5,7 @@ package generated
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -449,6 +450,12 @@ func (eq *EntitlementQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		eq.sql = prev
+	}
+	if entitlement.Policy == nil {
+		return errors.New("generated: uninitialized entitlement.Policy (forgotten import generated/runtime?)")
+	}
+	if err := entitlement.Policy.EvalQuery(ctx, eq); err != nil {
+		return err
 	}
 	return nil
 }

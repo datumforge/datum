@@ -102,6 +102,11 @@ func DeletedBy(v string) predicate.DocumentData {
 	return predicate.DocumentData(sql.FieldEQ(FieldDeletedBy, v))
 }
 
+// OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
+func OwnerID(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldEQ(FieldOwnerID, v))
+}
+
 // TemplateID applies equality check predicate on the "template_id" field. It's identical to TemplateIDEQ.
 func TemplateID(v string) predicate.DocumentData {
 	return predicate.DocumentData(sql.FieldEQ(FieldTemplateID, v))
@@ -557,6 +562,81 @@ func DeletedByContainsFold(v string) predicate.DocumentData {
 	return predicate.DocumentData(sql.FieldContainsFold(FieldDeletedBy, v))
 }
 
+// OwnerIDEQ applies the EQ predicate on the "owner_id" field.
+func OwnerIDEQ(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldEQ(FieldOwnerID, v))
+}
+
+// OwnerIDNEQ applies the NEQ predicate on the "owner_id" field.
+func OwnerIDNEQ(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldNEQ(FieldOwnerID, v))
+}
+
+// OwnerIDIn applies the In predicate on the "owner_id" field.
+func OwnerIDIn(vs ...string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDNotIn applies the NotIn predicate on the "owner_id" field.
+func OwnerIDNotIn(vs ...string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldNotIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDGT applies the GT predicate on the "owner_id" field.
+func OwnerIDGT(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldGT(FieldOwnerID, v))
+}
+
+// OwnerIDGTE applies the GTE predicate on the "owner_id" field.
+func OwnerIDGTE(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldGTE(FieldOwnerID, v))
+}
+
+// OwnerIDLT applies the LT predicate on the "owner_id" field.
+func OwnerIDLT(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldLT(FieldOwnerID, v))
+}
+
+// OwnerIDLTE applies the LTE predicate on the "owner_id" field.
+func OwnerIDLTE(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldLTE(FieldOwnerID, v))
+}
+
+// OwnerIDContains applies the Contains predicate on the "owner_id" field.
+func OwnerIDContains(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldContains(FieldOwnerID, v))
+}
+
+// OwnerIDHasPrefix applies the HasPrefix predicate on the "owner_id" field.
+func OwnerIDHasPrefix(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldHasPrefix(FieldOwnerID, v))
+}
+
+// OwnerIDHasSuffix applies the HasSuffix predicate on the "owner_id" field.
+func OwnerIDHasSuffix(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldHasSuffix(FieldOwnerID, v))
+}
+
+// OwnerIDIsNil applies the IsNil predicate on the "owner_id" field.
+func OwnerIDIsNil() predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldIsNull(FieldOwnerID))
+}
+
+// OwnerIDNotNil applies the NotNil predicate on the "owner_id" field.
+func OwnerIDNotNil() predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldNotNull(FieldOwnerID))
+}
+
+// OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
+func OwnerIDEqualFold(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldEqualFold(FieldOwnerID, v))
+}
+
+// OwnerIDContainsFold applies the ContainsFold predicate on the "owner_id" field.
+func OwnerIDContainsFold(v string) predicate.DocumentData {
+	return predicate.DocumentData(sql.FieldContainsFold(FieldOwnerID, v))
+}
+
 // TemplateIDEQ applies the EQ predicate on the "template_id" field.
 func TemplateIDEQ(v string) predicate.DocumentData {
 	return predicate.DocumentData(sql.FieldEQ(FieldTemplateID, v))
@@ -620,6 +700,35 @@ func TemplateIDEqualFold(v string) predicate.DocumentData {
 // TemplateIDContainsFold applies the ContainsFold predicate on the "template_id" field.
 func TemplateIDContainsFold(v string) predicate.DocumentData {
 	return predicate.DocumentData(sql.FieldContainsFold(FieldTemplateID, v))
+}
+
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.DocumentData {
+	return predicate.DocumentData(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.DocumentData
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.Organization) predicate.DocumentData {
+	return predicate.DocumentData(func(s *sql.Selector) {
+		step := newOwnerStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.DocumentData
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // HasTemplate applies the HasEdge predicate on the "template" edge.

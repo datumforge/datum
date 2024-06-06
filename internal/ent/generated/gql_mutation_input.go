@@ -161,6 +161,7 @@ type CreateDocumentDataInput struct {
 	UpdatedBy  *string
 	Tags       []string
 	Data       customtypes.JSONObject
+	OwnerID    *string
 	TemplateID string
 }
 
@@ -184,6 +185,9 @@ func (i *CreateDocumentDataInput) Mutate(m *DocumentDataMutation) {
 	if v := i.Data; v != nil {
 		m.SetData(v)
 	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 	m.SetTemplateID(i.TemplateID)
 }
 
@@ -203,6 +207,8 @@ type UpdateDocumentDataInput struct {
 	Tags           []string
 	AppendTags     []string
 	Data           customtypes.JSONObject
+	ClearOwner     bool
+	OwnerID        *string
 	TemplateID     *string
 }
 
@@ -231,6 +237,12 @@ func (i *UpdateDocumentDataInput) Mutate(m *DocumentDataMutation) {
 	}
 	if v := i.Data; v != nil {
 		m.SetData(v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
 	if v := i.TemplateID; v != nil {
 		m.SetTemplateID(*v)
@@ -2505,6 +2517,7 @@ type CreateOrganizationInput struct {
 	TemplateIDs            []string
 	IntegrationIDs         []string
 	SettingID              *string
+	DocumentdatumIDs       []string
 	EntitlementIDs         []string
 	PersonalAccessTokenIDs []string
 	APITokenIDs            []string
@@ -2566,6 +2579,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
+	}
+	if v := i.DocumentdatumIDs; len(v) > 0 {
+		m.AddDocumentdatumIDs(v...)
 	}
 	if v := i.EntitlementIDs; len(v) > 0 {
 		m.AddEntitlementIDs(v...)
@@ -2637,6 +2653,9 @@ type UpdateOrganizationInput struct {
 	RemoveIntegrationIDs         []string
 	ClearSetting                 bool
 	SettingID                    *string
+	ClearDocumentdata            bool
+	AddDocumentdatumIDs          []string
+	RemoveDocumentdatumIDs       []string
 	ClearEntitlements            bool
 	AddEntitlementIDs            []string
 	RemoveEntitlementIDs         []string
@@ -2748,6 +2767,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
+	}
+	if i.ClearDocumentdata {
+		m.ClearDocumentdata()
+	}
+	if v := i.AddDocumentdatumIDs; len(v) > 0 {
+		m.AddDocumentdatumIDs(v...)
+	}
+	if v := i.RemoveDocumentdatumIDs; len(v) > 0 {
+		m.RemoveDocumentdatumIDs(v...)
 	}
 	if i.ClearEntitlements {
 		m.ClearEntitlements()

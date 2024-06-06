@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/edge"
@@ -32,8 +31,6 @@ type OrgOwnerMixin struct {
 	AllowEmpty bool
 	// SkipOASGeneration skips open api spec generation for the field
 	SkipOASGeneration bool
-	// AllowWhere includes the owner_id field in gql generated fields
-	AllowWhere bool
 	// SkipInterceptor skips the interceptor for that schema for all queries, or specific types,
 	// this is useful for tokens, etc
 	SkipInterceptor interceptors.SkipMode
@@ -42,10 +39,6 @@ type OrgOwnerMixin struct {
 // Fields of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Fields() []ent.Field {
 	ownerIDField := field.String(ownerFieldName)
-
-	if !orgOwned.AllowWhere {
-		ownerIDField.Annotations(entgql.Skip())
-	}
 
 	if !orgOwned.Required {
 		ownerIDField.Optional()

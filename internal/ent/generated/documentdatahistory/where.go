@@ -110,6 +110,11 @@ func DeletedBy(v string) predicate.DocumentDataHistory {
 	return predicate.DocumentDataHistory(sql.FieldEQ(FieldDeletedBy, v))
 }
 
+// OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
+func OwnerID(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldEQ(FieldOwnerID, v))
+}
+
 // TemplateID applies equality check predicate on the "template_id" field. It's identical to TemplateIDEQ.
 func TemplateID(v string) predicate.DocumentDataHistory {
 	return predicate.DocumentDataHistory(sql.FieldEQ(FieldTemplateID, v))
@@ -698,6 +703,81 @@ func DeletedByEqualFold(v string) predicate.DocumentDataHistory {
 // DeletedByContainsFold applies the ContainsFold predicate on the "deleted_by" field.
 func DeletedByContainsFold(v string) predicate.DocumentDataHistory {
 	return predicate.DocumentDataHistory(sql.FieldContainsFold(FieldDeletedBy, v))
+}
+
+// OwnerIDEQ applies the EQ predicate on the "owner_id" field.
+func OwnerIDEQ(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldEQ(FieldOwnerID, v))
+}
+
+// OwnerIDNEQ applies the NEQ predicate on the "owner_id" field.
+func OwnerIDNEQ(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldNEQ(FieldOwnerID, v))
+}
+
+// OwnerIDIn applies the In predicate on the "owner_id" field.
+func OwnerIDIn(vs ...string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDNotIn applies the NotIn predicate on the "owner_id" field.
+func OwnerIDNotIn(vs ...string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldNotIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDGT applies the GT predicate on the "owner_id" field.
+func OwnerIDGT(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldGT(FieldOwnerID, v))
+}
+
+// OwnerIDGTE applies the GTE predicate on the "owner_id" field.
+func OwnerIDGTE(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldGTE(FieldOwnerID, v))
+}
+
+// OwnerIDLT applies the LT predicate on the "owner_id" field.
+func OwnerIDLT(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldLT(FieldOwnerID, v))
+}
+
+// OwnerIDLTE applies the LTE predicate on the "owner_id" field.
+func OwnerIDLTE(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldLTE(FieldOwnerID, v))
+}
+
+// OwnerIDContains applies the Contains predicate on the "owner_id" field.
+func OwnerIDContains(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldContains(FieldOwnerID, v))
+}
+
+// OwnerIDHasPrefix applies the HasPrefix predicate on the "owner_id" field.
+func OwnerIDHasPrefix(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldHasPrefix(FieldOwnerID, v))
+}
+
+// OwnerIDHasSuffix applies the HasSuffix predicate on the "owner_id" field.
+func OwnerIDHasSuffix(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldHasSuffix(FieldOwnerID, v))
+}
+
+// OwnerIDIsNil applies the IsNil predicate on the "owner_id" field.
+func OwnerIDIsNil() predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldIsNull(FieldOwnerID))
+}
+
+// OwnerIDNotNil applies the NotNil predicate on the "owner_id" field.
+func OwnerIDNotNil() predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldNotNull(FieldOwnerID))
+}
+
+// OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
+func OwnerIDEqualFold(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldEqualFold(FieldOwnerID, v))
+}
+
+// OwnerIDContainsFold applies the ContainsFold predicate on the "owner_id" field.
+func OwnerIDContainsFold(v string) predicate.DocumentDataHistory {
+	return predicate.DocumentDataHistory(sql.FieldContainsFold(FieldOwnerID, v))
 }
 
 // TemplateIDEQ applies the EQ predicate on the "template_id" field.

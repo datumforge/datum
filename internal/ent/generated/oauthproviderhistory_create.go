@@ -160,6 +160,20 @@ func (ophc *OauthProviderHistoryCreate) SetNillableDeletedBy(s *string) *OauthPr
 	return ophc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (ophc *OauthProviderHistoryCreate) SetOwnerID(s string) *OauthProviderHistoryCreate {
+	ophc.mutation.SetOwnerID(s)
+	return ophc
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ophc *OauthProviderHistoryCreate) SetNillableOwnerID(s *string) *OauthProviderHistoryCreate {
+	if s != nil {
+		ophc.SetOwnerID(*s)
+	}
+	return ophc
+}
+
 // SetName sets the "name" field.
 func (ophc *OauthProviderHistoryCreate) SetName(s string) *OauthProviderHistoryCreate {
 	ophc.mutation.SetName(s)
@@ -411,6 +425,10 @@ func (ophc *OauthProviderHistoryCreate) createSpec() (*OauthProviderHistory, *sq
 	if value, ok := ophc.mutation.DeletedBy(); ok {
 		_spec.SetField(oauthproviderhistory.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := ophc.mutation.OwnerID(); ok {
+		_spec.SetField(oauthproviderhistory.FieldOwnerID, field.TypeString, value)
+		_node.OwnerID = value
 	}
 	if value, ok := ophc.mutation.Name(); ok {
 		_spec.SetField(oauthproviderhistory.FieldName, field.TypeString, value)

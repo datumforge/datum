@@ -124,7 +124,14 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(
 				entx.CascadeAnnotationField("Organization"),
 			),
-		edge.To("entitlements", Entitlement.Type),
+		edge.To("documentdata", DocumentData.Type).
+			Annotations(
+				entx.CascadeAnnotationField("Owner"),
+			),
+		edge.To("entitlements", Entitlement.Type).
+			Annotations(
+				entx.CascadeAnnotationField("Owner"),
+			),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type),
 		edge.To("api_tokens", APIToken.Type),
 		edge.To("oauthprovider", OauthProvider.Type),

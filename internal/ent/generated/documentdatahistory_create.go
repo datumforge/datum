@@ -160,6 +160,20 @@ func (ddhc *DocumentDataHistoryCreate) SetNillableDeletedBy(s *string) *Document
 	return ddhc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (ddhc *DocumentDataHistoryCreate) SetOwnerID(s string) *DocumentDataHistoryCreate {
+	ddhc.mutation.SetOwnerID(s)
+	return ddhc
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ddhc *DocumentDataHistoryCreate) SetNillableOwnerID(s *string) *DocumentDataHistoryCreate {
+	if s != nil {
+		ddhc.SetOwnerID(*s)
+	}
+	return ddhc
+}
+
 // SetTemplateID sets the "template_id" field.
 func (ddhc *DocumentDataHistoryCreate) SetTemplateID(s string) *DocumentDataHistoryCreate {
 	ddhc.mutation.SetTemplateID(s)
@@ -348,6 +362,10 @@ func (ddhc *DocumentDataHistoryCreate) createSpec() (*DocumentDataHistory, *sqlg
 	if value, ok := ddhc.mutation.DeletedBy(); ok {
 		_spec.SetField(documentdatahistory.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
+	}
+	if value, ok := ddhc.mutation.OwnerID(); ok {
+		_spec.SetField(documentdatahistory.FieldOwnerID, field.TypeString, value)
+		_node.OwnerID = value
 	}
 	if value, ok := ddhc.mutation.TemplateID(); ok {
 		_spec.SetField(documentdatahistory.FieldTemplateID, field.TypeString, value)

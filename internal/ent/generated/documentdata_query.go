@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 
@@ -24,6 +26,7 @@ type DocumentDataQuery struct {
 	order        []documentdata.OrderOption
 	inters       []Interceptor
 	predicates   []predicate.DocumentData
+	withOwner    *OrganizationQuery
 	withTemplate *TemplateQuery
 	modifiers    []func(*sql.Selector)
 	loadTotal    []func(context.Context, []*DocumentData) error
@@ -61,6 +64,31 @@ func (ddq *DocumentDataQuery) Unique(unique bool) *DocumentDataQuery {
 func (ddq *DocumentDataQuery) Order(o ...documentdata.OrderOption) *DocumentDataQuery {
 	ddq.order = append(ddq.order, o...)
 	return ddq
+}
+
+// QueryOwner chains the current query on the "owner" edge.
+func (ddq *DocumentDataQuery) QueryOwner() *OrganizationQuery {
+	query := (&OrganizationClient{config: ddq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ddq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ddq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(documentdata.Table, documentdata.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, documentdata.OwnerTable, documentdata.OwnerColumn),
+		)
+		schemaConfig := ddq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.DocumentData
+		fromU = sqlgraph.SetNeighbors(ddq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryTemplate chains the current query on the "template" edge.
@@ -280,11 +308,23 @@ func (ddq *DocumentDataQuery) Clone() *DocumentDataQuery {
 		order:        append([]documentdata.OrderOption{}, ddq.order...),
 		inters:       append([]Interceptor{}, ddq.inters...),
 		predicates:   append([]predicate.DocumentData{}, ddq.predicates...),
+		withOwner:    ddq.withOwner.Clone(),
 		withTemplate: ddq.withTemplate.Clone(),
 		// clone intermediate query.
 		sql:  ddq.sql.Clone(),
 		path: ddq.path,
 	}
+}
+
+// WithOwner tells the query-builder to eager-load the nodes that are connected to
+// the "owner" edge. The optional arguments are used to configure the query builder of the edge.
+func (ddq *DocumentDataQuery) WithOwner(opts ...func(*OrganizationQuery)) *DocumentDataQuery {
+	query := (&OrganizationClient{config: ddq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ddq.withOwner = query
+	return ddq
 }
 
 // WithTemplate tells the query-builder to eager-load the nodes that are connected to
@@ -369,6 +409,12 @@ func (ddq *DocumentDataQuery) prepareQuery(ctx context.Context) error {
 		}
 		ddq.sql = prev
 	}
+	if documentdata.Policy == nil {
+		return errors.New("generated: uninitialized documentdata.Policy (forgotten import generated/runtime?)")
+	}
+	if err := documentdata.Policy.EvalQuery(ctx, ddq); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -376,7 +422,8 @@ func (ddq *DocumentDataQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	var (
 		nodes       = []*DocumentData{}
 		_spec       = ddq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
+			ddq.withOwner != nil,
 			ddq.withTemplate != nil,
 		}
 	)
@@ -403,6 +450,12 @@ func (ddq *DocumentDataQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := ddq.withOwner; query != nil {
+		if err := ddq.loadOwner(ctx, query, nodes, nil,
+			func(n *DocumentData, e *Organization) { n.Edges.Owner = e }); err != nil {
+			return nil, err
+		}
+	}
 	if query := ddq.withTemplate; query != nil {
 		if err := ddq.loadTemplate(ctx, query, nodes, nil,
 			func(n *DocumentData, e *Template) { n.Edges.Template = e }); err != nil {
@@ -417,6 +470,35 @@ func (ddq *DocumentDataQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	return nodes, nil
 }
 
+func (ddq *DocumentDataQuery) loadOwner(ctx context.Context, query *OrganizationQuery, nodes []*DocumentData, init func(*DocumentData), assign func(*DocumentData, *Organization)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*DocumentData)
+	for i := range nodes {
+		fk := nodes[i].OwnerID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(organization.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (ddq *DocumentDataQuery) loadTemplate(ctx context.Context, query *TemplateQuery, nodes []*DocumentData, init func(*DocumentData), assign func(*DocumentData, *Template)) error {
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*DocumentData)
@@ -476,6 +558,9 @@ func (ddq *DocumentDataQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != documentdata.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if ddq.withOwner != nil {
+			_spec.Node.AddColumnOnce(documentdata.FieldOwnerID)
 		}
 		if ddq.withTemplate != nil {
 			_spec.Node.AddColumnOnce(documentdata.FieldTemplateID)

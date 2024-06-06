@@ -27,6 +27,36 @@ func (m *APITokenMutation) CreateTuplesFromDelete(ctx context.Context) error {
 	return nil
 }
 
+func (m *DocumentDataMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *DocumentDataMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *DocumentDataMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *EntitlementMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *EntitlementMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *EntitlementMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
 func (m *GroupMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	return nil
@@ -214,6 +244,21 @@ func (m *InviteMutation) CreateTuplesFromDelete(ctx context.Context) error {
 	return nil
 }
 
+func (m *OauthProviderMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OauthProviderMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OauthProviderMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
 func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	// Get fields for tuple creation
@@ -382,6 +427,21 @@ func (m *SubscriberMutation) CreateTuplesFromUpdate(ctx context.Context) error {
 }
 
 func (m *SubscriberMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *TemplateMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *TemplateMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *TemplateMutation) CreateTuplesFromDelete(ctx context.Context) error {
 
 	return nil
 }

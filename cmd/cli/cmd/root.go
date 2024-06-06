@@ -9,8 +9,6 @@ import (
 	"path"
 
 	"github.com/99designs/keyring"
-	"github.com/TylerBrock/colorjson"
-	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
 	"github.com/spf13/cobra"
@@ -159,7 +157,7 @@ func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) 
 	config := datumclient.NewDefaultConfig()
 
 	// setup the logging interceptor
-	if viper.GetBool("logging.debug") {
+	if Config.Bool("logging.debug") {
 		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
 	}
 

@@ -19,7 +19,7 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   appName,
-	Short: "A datum repo for graph apis",
+	Short: "A datum cli for interacting with the Datum Server",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		return initCmdFlags(cmd)
 	},

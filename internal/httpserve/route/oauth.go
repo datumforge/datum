@@ -48,7 +48,7 @@ func registerUserInfoHandler(router *Router) (err error) {
 		},
 	}
 
-	if err := router.Addv1Route(path, method, nil, route); err != nil {
+	if err := router.AddUnversionedRoute(path, method, nil, route); err != nil {
 		return err
 	}
 

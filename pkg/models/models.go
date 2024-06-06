@@ -10,14 +10,18 @@ import (
 	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
-// LoginRequest to authenticate with the Datum Sever
+// =========
+// LOGIN
+// =========
+
+// LoginRequest holds the login payload for the /login route
 type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	OTPCode  string `json:"otp_code,omitempty"`
 }
 
-// LoginReply holds response to successful authentication
+// LoginReply holds the response to LoginRequest
 type LoginReply struct {
 	rout.Reply
 	AccessToken  string `json:"access_token"`
@@ -28,15 +32,42 @@ type LoginReply struct {
 	Message      string `json:"message"`
 }
 
-// OauthTokenRequest to authenticate an oauth user with the Datum Server
-type OauthTokenRequest struct {
-	Name             string `json:"name"`
-	Email            string `json:"email"`
-	AuthProvider     string `json:"authProvider"`
-	ExternalUserID   string `json:"externalUserId"`
-	ExternalUserName string `json:"externalUserName"`
-	ClientToken      string `json:"clientToken"`
+// Validate ensures the required fields are set on the LoginRequest request
+func (r *LoginRequest) Validate() error {
+	r.Username = strings.TrimSpace(r.Username)
+	r.Password = strings.TrimSpace(r.Password)
+
+	switch {
+	case r.Username == "":
+		return rout.NewMissingRequiredFieldError("username")
+	case r.Password == "":
+		return rout.NewMissingRequiredFieldError("password")
+	}
+
+	return nil
 }
+
+// ExampleLoginSuccessRequest is an example of a successful login request for OpenAPI documentation
+var ExampleLoginSuccessRequest = LoginRequest{
+	Username: "sfunky@datum.net",
+	Password: "mitb!",
+	OTPCode:  "123456",
+}
+
+// ExampleLoginSuccessResponse is an example of a successful login response for OpenAPI documentation
+var ExampleLoginSuccessResponse = LoginReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	AccessToken:  "token",
+	RefreshToken: "token",
+	Session:      "session",
+	TokenType:    "access_token",
+}
+
+// =========
+// REFRESH
+// =========
 
 // RefreshRequest holds the fields that should be included on a request to the `/refresh` endpoint
 type RefreshRequest struct {
@@ -47,9 +78,33 @@ type RefreshRequest struct {
 type RefreshReply struct {
 	rout.Reply
 	Message      string `json:"message,omitempty"`
-	AccessToken  string
-	RefreshToken string
+	AccessToken  string `json:"access_token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
 }
+
+// Validate ensures the required fields are set on the RefreshRequest request
+func (r *RefreshRequest) Validate() error {
+	if r.RefreshToken == "" {
+		return rout.NewMissingRequiredFieldError("refresh_token")
+	}
+
+	return nil
+}
+
+// ExampleRefreshRequest is an example of a successful refresh request for OpenAPI documentation
+var ExampleRefreshRequest = RefreshRequest{
+	RefreshToken: "token",
+}
+
+// ExampleRefreshSuccessResponse is an example of a successful refresh response for OpenAPI documentation
+var ExampleRefreshSuccessResponse = RefreshReply{
+	Reply:   rout.Reply{Success: true},
+	Message: "success",
+}
+
+// =========
+// REGISTER
+// =========
 
 // RegisterRequest holds the fields that should be included on a request to the `/register` endpoint
 type RegisterRequest struct {
@@ -68,7 +123,48 @@ type RegisterReply struct {
 	Token   string `json:"token"`
 }
 
-// SwitchOrganizationRequest contains the target organization ID being switched to
+// Validate ensures the required fields are set on the RegisterRequest request
+func (r *RegisterRequest) Validate() error {
+	r.FirstName = strings.TrimSpace(r.FirstName)
+	r.LastName = strings.TrimSpace(r.LastName)
+	r.Email = strings.TrimSpace(r.Email)
+	r.Password = strings.TrimSpace(r.Password)
+
+	// Required for all requests
+	switch {
+	case r.Email == "":
+		return rout.MissingField("email")
+	case r.Password == "":
+		return rout.MissingField("password")
+	case passwd.Strength(r.Password) < passwd.Moderate:
+		return rout.ErrPasswordTooWeak
+	}
+
+	return nil
+}
+
+// ExampleRegisterSuccessRequest is an example of a successful register request for OpenAPI documentation
+var ExampleRegisterSuccessRequest = RegisterRequest{
+	FirstName: "Sarah",
+	LastName:  "Funk",
+	Email:     "sfunky@datum.net",
+	Password:  "mitb!",
+}
+
+// ExampleRegisterSuccessResponse is an example of a successful register response for OpenAPI documentation
+var ExampleRegisterSuccessResponse = RegisterReply{
+	Reply:   rout.Reply{Success: true},
+	ID:      "1234",
+	Email:   "",
+	Message: "Welcome to Datum!",
+	Token:   "",
+}
+
+// =========
+// SWITCH ORGANIZATION
+// =========
+
+// SwitchOrganizationRequest contains the target organization ID being switched to for the /switch endpoint
 type SwitchOrganizationRequest struct {
 	TargetOrganizationID string `json:"target_organization_id"`
 }
@@ -80,6 +176,34 @@ type SwitchOrganizationReply struct {
 	RefreshToken string `json:"refresh_token"`
 	Session      string `json:"session"`
 }
+
+// Validate ensures the required fields are set on the SwitchOrganizationRequest request
+func (r *SwitchOrganizationRequest) Validate() error {
+	if r.TargetOrganizationID == "" {
+		return rout.NewMissingRequiredFieldError("target_organization_id")
+	}
+
+	return nil
+}
+
+// ExampleSwitchSuccessRequest is an example of a successful switch organization request for OpenAPI documentation
+var ExampleSwitchSuccessRequest = SwitchOrganizationRequest{
+	TargetOrganizationID: ulids.New().String(),
+}
+
+// ExampleSwitchSuccessReply is an example of a successful switch organization response for OpenAPI documentation
+var ExampleSwitchSuccessReply = SwitchOrganizationReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	AccessToken:  "token",
+	RefreshToken: "token",
+	Session:      "session",
+}
+
+// =========
+// VERIFY EMAIL
+// =========
 
 // VerifyRequest holds the fields that should be included on a request to the `/verify` endpoint
 type VerifyRequest struct {
@@ -94,12 +218,42 @@ type VerifyReply struct {
 	Token        string `json:"token"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token,omitempty"`
-	TokenType    string `json:"token_type"`
 	ExpiresIn    int64  `json:"expires_in"`
 	Message      string `json:"message,omitempty"`
 }
 
-// ResendRequest contains fields for a resend email verification request
+// Validate ensures the required fields are set on the VerifyRequest request
+func (r *VerifyRequest) Validate() error {
+	if r.Token == "" {
+		return rout.NewMissingRequiredFieldError("token")
+	}
+
+	return nil
+}
+
+// ExampleVerifySuccessRequest is an example of a successful verify request for OpenAPI documentation
+var ExampleVerifySuccessRequest = VerifyRequest{
+	Token: "token",
+}
+
+// ExampleVerifySuccessResponse is an example of a successful verify response for OpenAPI documentation
+var ExampleVerifySuccessResponse = VerifyReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	ID:           ulids.New().String(),
+	Email:        "gregor.clegane@datum.net",
+	Token:        "token",
+	Message:      "Email has been verified",
+	AccessToken:  "token",
+	RefreshToken: "token",
+}
+
+// =========
+// RESEND EMAIL
+// =========
+
+// ResendRequest contains fields for a resend email verification request to the `/resend` endpoint
 type ResendRequest struct {
 	Email string `json:"email"`
 }
@@ -109,6 +263,32 @@ type ResendReply struct {
 	rout.Reply
 	Message string `json:"message"`
 }
+
+// Validate ensures the required fields are set on the ResendRequest request
+func (r *ResendRequest) Validate() error {
+	if r.Email == "" {
+		return rout.NewMissingRequiredFieldError("email")
+	}
+
+	return nil
+}
+
+// ExampleResendEmailSuccessRequest is an example of a successful resend email request for OpenAPI documentation
+var ExampleResendEmailSuccessRequest = ResendRequest{
+	Email: "cercei.lannister@datum.net",
+}
+
+// ExampleResendEmailSuccessResponse is an example of a successful resend email response for OpenAPI documentation
+var ExampleResendEmailSuccessResponse = ResendReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	Message: "Email has been resent",
+}
+
+// =========
+// FORGOT PASSWORD
+// =========
 
 // ForgotPasswordRequest contains fields for a forgot password request
 type ForgotPasswordRequest struct {
@@ -121,7 +301,33 @@ type ForgotPasswordReply struct {
 	Message string `json:"message,omitempty"`
 }
 
-// ResetPasswordRequest contains user input required to reset a user's password
+// Validate ensures the required fields are set on the ForgotPasswordRequest request
+func (r *ForgotPasswordRequest) Validate() error {
+	if r.Email == "" {
+		return rout.NewMissingRequiredFieldError("email")
+	}
+
+	return nil
+}
+
+// ExampleForgotPasswordSuccessRequest is an example of a successful forgot password request for OpenAPI documentation
+var ExampleForgotPasswordSuccessRequest = ForgotPasswordRequest{
+	Email: "example@datum.net",
+}
+
+// ExampleForgotPasswordSuccessResponse is an example of a successful forgot password response for OpenAPI documentation
+var ExampleForgotPasswordSuccessResponse = ForgotPasswordReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	Message: "We've received your request to have the password associated with this email reset. Please check your email.",
+}
+
+// =========
+// RESET PASSWORD
+// =========
+
+// ResetPasswordRequest contains user input required to reset a user's password using /password-reset endpoint
 type ResetPasswordRequest struct {
 	Password string `json:"password"`
 	Token    string `json:"token"`
@@ -133,6 +339,40 @@ type ResetPasswordReply struct {
 	rout.Reply
 	Message string `json:"message"`
 }
+
+// Validate ensures the required fields are set on the ResetPasswordRequest request
+func (r *ResetPasswordRequest) Validate() error {
+	r.Password = strings.TrimSpace(r.Password)
+
+	switch {
+	case r.Token == "":
+		return rout.NewMissingRequiredFieldError("token")
+	case r.Password == "":
+		return rout.NewMissingRequiredFieldError("password")
+	case passwd.Strength(r.Password) < passwd.Moderate:
+		return rout.ErrPasswordTooWeak
+	}
+
+	return nil
+}
+
+// ExampleResetPasswordSuccessRequest is an example of a successful reset password request for OpenAPI documentation
+var ExampleResetPasswordSuccessRequest = ResetPasswordRequest{
+	Password: "mitb!",
+	Token:    "token",
+}
+
+// ExampleResetPasswordSuccessResponse is an example of a successful reset password response for OpenAPI documentation
+var ExampleResetPasswordSuccessResponse = ResetPasswordReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	Message: "Password has been reset",
+}
+
+// =========
+// WEBAUTHN
+// =========
 
 // WebauthnRegistrationRequest is the request to begin a webauthn login
 type WebauthnRegistrationRequest struct {
@@ -176,6 +416,10 @@ type WebauthnLoginResponse struct {
 	TokenType    string `json:"token_type"`
 }
 
+// =========
+// SUBSCRIBER VERIFY
+// =========
+
 // VerifySubscribeRequest holds the fields that should be included on a request to the `/subscribe/verify` endpoint
 type VerifySubscribeRequest struct {
 	Token string `query:"token"`
@@ -186,6 +430,30 @@ type VerifySubscribeReply struct {
 	rout.Reply
 	Message string `json:"message,omitempty"`
 }
+
+// Validate ensures the required fields are set on the VerifySubscribeRequest request
+func (r *VerifySubscribeRequest) Validate() error {
+	if r.Token == "" {
+		return rout.NewMissingRequiredFieldError("token")
+	}
+
+	return nil
+}
+
+// ExampleVerifySubscriptionSuccessRequest is an example of a successful verify subscription request for OpenAPI documentation
+var ExampleVerifySubscriptionSuccessRequest = VerifySubscribeRequest{
+	Token: "token",
+}
+
+// ExampleVerifySubscriptionResponse is an example of a successful verify subscription response for OpenAPI documentation
+var ExampleVerifySubscriptionResponse = VerifySubscribeReply{
+	Reply:   rout.Reply{Success: true},
+	Message: "Subscription confirmed, looking forward to sending you updates!",
+}
+
+// =========
+// PUBLISH EVENT
+// =========
 
 // PublishRequest is the request payload for the event publisher
 type PublishRequest struct {
@@ -199,6 +467,41 @@ type PublishReply struct {
 	rout.Reply
 	Message string `json:"message"`
 }
+
+// Validate ensures the required fields are set on the PublishRequest request
+func (r *PublishRequest) Validate() error {
+	switch {
+	case r.Message == "":
+		return rout.NewMissingRequiredFieldError("message")
+	case r.Tags == nil:
+		return rout.NewMissingRequiredFieldError("tags")
+	case len(r.Tags) == 0:
+		return rout.NewMissingRequiredFieldError("tags")
+	case r.Topic == "":
+		return rout.NewMissingRequiredFieldError("topic")
+	}
+
+	return nil
+}
+
+// ExamplePublishSuccessRequest is an example of a successful publish request for OpenAPI documentation
+var ExamplePublishSuccessRequest = PublishRequest{
+	Tags:    map[string]string{"tag1": "meow", "tag2": "meowzer"},
+	Topic:   "meow",
+	Message: "hot diggity dog",
+}
+
+// ExamplePublishSuccessResponse is an example of a successful publish response for OpenAPI documentation
+var ExamplePublishSuccessResponse = PublishReply{
+	Reply: rout.Reply{
+		Success: true,
+	},
+	Message: "success!",
+}
+
+// =========
+// ORGANIZATION INVITE
+// =========
 
 // InviteRequest holds the fields that should be included on a request to the `/invite` endpoint
 type InviteRequest struct {
@@ -217,142 +520,21 @@ type InviteReply struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-// Reply contains standard fields that are used for generic API responses and errors
-type Reply struct {
-	Success    bool   `json:"success"`
-	Error      string `json:"error,omitempty"`
-	Unverified bool   `json:"unverified,omitempty"`
+// Validate ensures the required fields are set on the InviteRequest request
+func (r *InviteRequest) Validate() error {
+	if r.Token == "" {
+		return rout.NewMissingRequiredFieldError("token")
+	}
+
+	return nil
 }
 
-var ExampleLoginSuccessRequest = LoginRequest{
-	Username: "sfunky@datum.net",
-	Password: "mitb!",
-	OTPCode:  "123456",
-}
-
-var ExampleLoginSuccessResponse = LoginReply{
-	Reply: rout.Reply{
-		Success: true,
-	},
-	AccessToken:  "token",
-	RefreshToken: "token",
-	Session:      "session",
-	TokenType:    "access_token",
-}
-
-var ExampleForgotPasswordSuccessRequest = ForgotPasswordRequest{
-	Email: "mitb@datum.net",
-}
-
-var ExampleForgotPasswordSuccessResponse = ForgotPasswordReply{
-	Reply: rout.Reply{
-		Success: true,
-	},
-	Message: "We've received your request to have the password associated with this email reset. Please check your email.",
-}
-
-var ExampleResetPasswordSuccessRequest = ResetPasswordRequest{
-	Password: "mitb!",
-	Token:    "token",
-}
-
-var ExampleResetPasswordSuccessResponse = ResetPasswordReply{
-	Reply: rout.Reply{
-		Success: true,
-	},
-	Message: "Password has been reset",
-}
-
-var ExampleRefreshRequest = RefreshRequest{
-	RefreshToken: "token",
-}
-
-var ExampleRefreshSuccessResponse = RefreshReply{
-	Reply:   rout.Reply{Success: true},
-	Message: "success",
-}
-
-var ExampleRegisterSuccessRequest = RegisterRequest{
-	FirstName: "Sarah",
-	LastName:  "Funk",
-	Email:     "sfunky@datum.net",
-	Password:  "mitb!",
-}
-
-var ExampleRegisterSuccessResponse = RegisterReply{
-	Reply:   rout.Reply{Success: true},
-	ID:      "1234",
-	Email:   "",
-	Message: "Welcome to Datum!",
-	Token:   "",
-}
-
-var ExampleResendEmailSuccessRequest = ResendRequest{
-	Email: "cercei.lannister@datum.net",
-}
-
-var ExampleResendEmailSuccessResponse = ResendReply{
-	Reply: rout.Reply{
-		Success: true,
-	},
-	Message: "Email has been resent",
-}
-
-var ExampleVerifySuccessRequest = VerifyRequest{
-	Token: "token",
-}
-
-var ExampleVerifySuccessResponse = VerifyReply{
-	Reply: rout.Reply{
-		Success: true,
-	},
-	ID:           ulids.New().String(),
-	Email:        "gregor.clegane@datum.net",
-	Token:        "token",
-	Message:      "Email has been verified",
-	AccessToken:  "token",
-	RefreshToken: "token",
-}
-
-var ExamplePublishSuccessRequest = PublishRequest{
-	Tags:    map[string]string{"tag1": "meow", "tag2": "meowzer"},
-	Topic:   "meow",
-	Message: "hot diggity dog",
-}
-
-var ExamplePublishSuccessResponse = PublishReply{
-	Reply: rout.Reply{
-		Success: true,
-	},
-	Message: "success!",
-}
-
-var ExampleSwitchSuccessRequest = SwitchOrganizationRequest{
-	TargetOrganizationID: ulids.New().String(),
-}
-
-var ExampleSwitchSuccessReply = SwitchOrganizationReply{
-	Reply: rout.Reply{
-		Success: true,
-	},
-	AccessToken:  "token",
-	RefreshToken: "token",
-	Session:      "session",
-}
-
-var ExampleVerifySubscriptionSuccessRequest = VerifySubscribeRequest{
-	Token: "token",
-}
-
-var ExampleVerifySubscriptionResponse = VerifySubscribeReply{
-	Reply:   rout.Reply{Success: true},
-	Message: "Subscription confirmed, looking forward to sending you updates!",
-}
-
+// ExampleInviteRequest is an example of a successful invite request for OpenAPI documentation
 var ExampleInviteRequest = InviteRequest{
 	Token: "token",
 }
 
+// ExampleInviteResponse is an example of a successful invite response for OpenAPI documentation
 var ExampleInviteResponse = InviteReply{
 	Reply:       rout.Reply{Success: true},
 	ID:          "1234",
@@ -362,45 +544,16 @@ var ExampleInviteResponse = InviteReply{
 	Message:     "Welcome to your new organization!",
 }
 
-var ExampleErrorResponse = rout.StatusError{
-	StatusCode: 400, // nolint: gomnd
-	Reply:      rout.Reply{Success: false, Error: "error"},
-}
+// =========
+// OAUTH
+// =========
 
-// Validate the register request ensuring that the required fields are available and
-// that the password is valid - an error is returned if the request is not correct. This
-// method also performs some basic data cleanup, trimming whitespace
-func (r *RegisterRequest) Validate() error {
-	r.FirstName = strings.TrimSpace(r.FirstName)
-	r.LastName = strings.TrimSpace(r.LastName)
-	r.Email = strings.TrimSpace(r.Email)
-	r.Password = strings.TrimSpace(r.Password)
-
-	// Required for all requests
-	switch {
-	case r.Email == "":
-		return rout.MissingField("email")
-	case r.Password == "":
-		return rout.MissingField("password")
-	case passwd.Strength(r.Password) < passwd.Moderate:
-		return rout.ErrPasswordTooWeak
-	}
-
-	return nil
-}
-
-// validateVerifyRequest validates the required fields are set in the user request
-func (r *ResetPasswordRequest) ValidateResetRequest() error {
-	r.Password = strings.TrimSpace(r.Password)
-
-	switch {
-	case r.Token == "":
-		return rout.NewMissingRequiredFieldError("token")
-	case r.Password == "":
-		return rout.NewMissingRequiredFieldError("password")
-	case passwd.Strength(r.Password) < passwd.Moderate:
-		return rout.ErrPasswordTooWeak
-	}
-
-	return nil
+// OauthTokenRequest to authenticate an oauth user with the Datum Server
+type OauthTokenRequest struct {
+	Name             string `json:"name"`
+	Email            string `json:"email"`
+	AuthProvider     string `json:"authProvider"`
+	ExternalUserID   string `json:"externalUserId"`
+	ExternalUserName string `json:"externalUserName"`
+	ClientToken      string `json:"clientToken"`
 }

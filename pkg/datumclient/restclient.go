@@ -226,7 +226,7 @@ func (s *APIv1) ResetPassword(ctx context.Context, in *models.ResetPasswordReque
 
 // AcceptInvite accepts an invite to join an organization
 func (s *APIv1) AcceptInvite(ctx context.Context, in *models.InviteRequest) (out *models.InviteReply, err error) {
-	req := s.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/invite")
+	req := s.HTTPSlingClient.NewRequestBuilder(http.MethodGet, "/v1/invite")
 	req.Body(in)
 
 	resp, err := req.Send(ctx)

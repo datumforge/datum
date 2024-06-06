@@ -21,9 +21,12 @@ import (
 // SwitchHandler is responsible for handling requests to the `/switch` endpoint, and changing the user's logged in organization context
 func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	var in models.SwitchOrganizationRequest
-
 	if err := ctx.Bind(&in); err != nil {
-		return h.BadRequest(ctx, err)
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+	}
+
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	reqCtx := ctx.Request().Context()

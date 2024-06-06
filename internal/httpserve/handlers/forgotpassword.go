@@ -23,8 +23,8 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		return h.BadRequest(ctx, err)
 	}
 
-	if err := validateForgotPasswordRequest(&in); err != nil {
-		return h.BadRequest(ctx, err)
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	out := &models.ForgotPasswordReply{
@@ -66,15 +66,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	return h.Success(ctx, out)
 }
 
-// validateResendRequest validates the required fields are set in the user request
-func validateForgotPasswordRequest(req *models.ForgotPasswordRequest) error {
-	if req.Email == "" {
-		return rout.NewMissingRequiredFieldError("email")
-	}
-
-	return nil
-}
-
+// storeAndSendPasswordResetToken creates a password reset token for the user and sends an email with the token
 func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User) (*ent.PasswordResetToken, error) {
 	if err := h.expireAllResetTokensUserByEmail(ctx, user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)

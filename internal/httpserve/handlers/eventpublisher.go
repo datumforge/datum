@@ -17,6 +17,10 @@ func (h *Handler) EventPublisher(ctx echo.Context) error {
 		return h.BadRequest(ctx, err)
 	}
 
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+	}
+
 	if err := h.EventManager.Publish(in.Topic, []byte(in.Message)); err != nil {
 		return h.InternalServerError(ctx, err)
 	}

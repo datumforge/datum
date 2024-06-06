@@ -22,11 +22,11 @@ import (
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	var in models.VerifyRequest
 	if err := ctx.Bind(&in); err != nil {
-		return h.BadRequest(ctx, err)
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
-	if err := validateVerifyRequest(in.Token); err != nil {
-		return h.BadRequest(ctx, err)
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// setup viewer context
@@ -139,15 +139,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	}
 
 	return h.Success(ctx, out)
-}
-
-// validateVerifyRequest validates the required fields are set in the user request
-func validateVerifyRequest(token string) error {
-	if token == "" {
-		return rout.NewMissingRequiredFieldError("token")
-	}
-
-	return nil
 }
 
 // setUserTokens sets the fields to verify the email

@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"github.com/getkin/kin-openapi/openapi3"
+
+	"github.com/datumforge/datum/pkg/httpsling"
 )
 
 // badRequest is a wrapper for openaAPI bad request response
@@ -52,8 +54,8 @@ func (h *Handler) AddRequestBody(name string, body interface{}, op *openapi3.Ope
 		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/schemas/" + name}))
 	op.RequestBody = &openapi3.RequestBodyRef{Value: request}
 
-	request.Content.Get("application/json").Examples = make(map[string]*openapi3.ExampleRef)
-	request.Content.Get("application/json").Examples["success"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
+	request.Content.Get(httpsling.ContentTypeJSON).Examples = make(map[string]*openapi3.ExampleRef)
+	request.Content.Get(httpsling.ContentTypeJSON).Examples["success"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
 }
 
 // AddResponse is used to add a response definition to the OpenAPI schema
@@ -63,6 +65,6 @@ func (h *Handler) AddResponse(name string, description string, body interface{},
 		WithContent(openapi3.NewContentWithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/schemas/" + name}))
 	op.AddResponse(status, response)
 
-	response.Content.Get("application/json").Examples = make(map[string]*openapi3.ExampleRef)
-	response.Content.Get("application/json").Examples["success"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
+	response.Content.Get(httpsling.ContentTypeJSON).Examples = make(map[string]*openapi3.ExampleRef)
+	response.Content.Get(httpsling.ContentTypeJSON).Examples["success"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
 }

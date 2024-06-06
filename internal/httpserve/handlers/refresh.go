@@ -12,15 +12,16 @@ import (
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// RefreshHandler allows users to refresh their access token using their refresh token.
+// RefreshHandler allows users to refresh their access token using their refresh token
+
 func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	var in models.RefreshRequest
 	if err := ctx.Bind(&in); err != nil {
-		return h.BadRequest(ctx, err)
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
-	if in.RefreshToken == "" {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(rout.NewMissingRequiredFieldError("refresh_token")))
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// verify the refresh token

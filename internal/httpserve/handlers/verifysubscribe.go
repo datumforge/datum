@@ -28,8 +28,8 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 		return h.BadRequest(ctx, err)
 	}
 
-	if err := validateVerifySubscriptionRequest(in.Token); err != nil {
-		return h.BadRequest(ctx, err)
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// setup viewer context
@@ -92,15 +92,6 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 	}
 
 	return h.Success(ctx, out)
-}
-
-// validateVerifySubscriptionRequest validates the required fields are set in the user request
-func validateVerifySubscriptionRequest(token string) error {
-	if token == "" {
-		return rout.NewMissingRequiredFieldError("token")
-	}
-
-	return nil
 }
 
 // verifySubscriberToken checks the token provided by the user and verifies it against the database

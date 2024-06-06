@@ -32,8 +32,8 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		return h.BadRequest(ctx, err)
 	}
 
-	if err := in.ValidateResetRequest(); err != nil {
-		return h.BadRequest(ctx, err)
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// setup viewer context

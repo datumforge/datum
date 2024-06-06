@@ -9,7 +9,7 @@ import (
 // registerInviteHandler registers the invite handler
 func registerInviteHandler(router *Router) (err error) {
 	path := "/invite"
-	method := http.MethodPost
+	method := http.MethodGet
 	name := "OrganizationInviteAccept"
 
 	route := echo.Route{

@@ -21,8 +21,28 @@ import (
 // LoginHandler validates the user credentials and returns a valid cookie
 // this handler only supports username password login
 func (h *Handler) LoginHandler(ctx echo.Context) error {
-	user, err := h.verifyUserPassword(ctx)
+	var in models.LoginRequest
+	if err := ctx.Bind(&in); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+	}
+
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+	}
+
+	// check user in the database, username == email and ensure only one record is returned
+	user, err := h.getUserByEmail(ctx.Request().Context(), in.Username, enums.AuthProviderCredentials)
 	if err != nil {
+		return err
+	}
+
+	// verify the password is correct
+	valid, err := passwd.VerifyDerivedKey(*user.Password, in.Password)
+	if err != nil || !valid {
+		return ErrInvalidCredentials
+	}
+
+	if err := h.verifyUserStatus(user); err != nil {
 		return h.BadRequest(ctx, err)
 	}
 
@@ -103,45 +123,24 @@ func createClaims(u *generated.User) *tokens.Claims {
 	}
 }
 
-// verifyUserPassword verifies the username and password are valid
-func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) {
-	var l models.LoginRequest
-	if err := ctx.Bind(&l); err != nil {
-		return nil, ErrBadRequest
-	}
-
-	if l.Username == "" || l.Password == "" {
-		return nil, ErrMissingRequiredFields
-	}
-
-	// check user in the database, username == email and ensure only one record is returned
-	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username, enums.AuthProviderCredentials)
-	if err != nil {
-		return nil, ErrNoAuthUser
-	}
-
+// verifyUserStatus verifies the user is active and has a verified email
+func (h *Handler) verifyUserStatus(user *generated.User) error {
 	if user.Edges.Setting.Status != "ACTIVE" {
-		return nil, ErrNoAuthUser
-	}
-
-	// verify the password is correct
-	valid, err := passwd.VerifyDerivedKey(*user.Password, l.Password)
-	if err != nil || !valid {
-		return nil, ErrInvalidCredentials
+		return ErrNoAuthUser
 	}
 
 	// verify email is verified
 	if !user.Edges.Setting.EmailConfirmed {
-		return nil, ErrUnverifiedUser
+		return ErrUnverifiedUser
 	}
 
-	return user, nil
+	return nil
 }
 
 // BindLoginHandler binds the login request to the OpenAPI schema
 func (h *Handler) BindLoginHandler() *openapi3.Operation {
 	login := openapi3.NewOperation()
-	login.Description = "Login is oriented towards human users who use their email and password for authentication (whereas authenticate is used for machine access using API keys). Login verifies the password submitted for the user is correct by looking up the user by email and using the argon2 derived key verification process to confirm the password matches. Upon authentication an access token and a refresh token with the authorized claims of the user are returned. The user can use the access token to authenticate to Datum systems. The access token has an expiration and the refresh token can be used with the refresh endpoint to get a new access token without the user having to log in again. The refresh token overlaps with the access token to provide a seamless authentication experience and the user can refresh their access token so long as the refresh token is valid"
+	login.Description = "Login is oriented towards human users who use their email and password for authentication. Login verifies the password submitted for the user is correct by looking up the user by email and using the argon2 derived key verification process to confirm the password matches. Upon authentication an access token and a refresh token with the authorized claims of the user are returned. The user can use the access token to authenticate to Datum systems. The access token has an expiration and the refresh token can be used with the refresh endpoint to get a new access token without the user having to log in again. The refresh token overlaps with the access token to provide a seamless authentication experience and the user can refresh their access token so long as the refresh token is valid"
 	login.OperationID = "LoginHandler"
 
 	h.AddRequestBody("LoginRequest", models.ExampleLoginSuccessRequest, login)

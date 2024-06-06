@@ -15,19 +15,15 @@ import (
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// ResendEmail will resend an email verification email if the provided
-// email exists
+// ResendEmail will resend an email verification email if the provided email exists
 func (h *Handler) ResendEmail(ctx echo.Context) error {
 	var in models.ResendRequest
-
 	if err := ctx.Bind(&in); err != nil {
-		return h.BadRequest(ctx, err)
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
-	if err := validateResendRequest(in); err != nil {
-		h.Logger.Errorw("error validating request", "error", err)
-
-		return h.BadRequest(ctx, err)
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// set viewer context
@@ -83,15 +79,6 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	}
 
 	return h.Success(ctx, out)
-}
-
-// validateResendRequest validates the required fields are set in the user request
-func validateResendRequest(req models.ResendRequest) error {
-	if req.Email == "" {
-		return rout.NewMissingRequiredFieldError("email")
-	}
-
-	return nil
 }
 
 // BindResendEmailHandler binds the resend email verification endpoint to the OpenAPI schema

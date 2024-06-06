@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
 	"github.com/spf13/cobra"
@@ -45,7 +47,9 @@ func init() {
 // refer to the README.md for more information
 func initConfig() {
 	// Load config from flags, including defaults
-	initCmdFlags(rootCmd)
+	if err := initCmdFlags(rootCmd); err != nil {
+		log.Fatalf("error loading config: %v", err)
+	}
 
 	c := sentry.LoggerConfig{
 		Debug:  k.Bool("debug"),

@@ -2,23 +2,18 @@
 package datum
 
 import (
-	"context"
-	"fmt"
-	"net/url"
-	"os"
-	"path"
+	"path/filepath"
+	"strings"
 
 	"github.com/99designs/keyring"
+	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/env"
+	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
-	"golang.org/x/oauth2"
-
-	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/models"
-	"github.com/datumforge/datum/pkg/tokens"
 )
 
 const (
@@ -52,8 +47,8 @@ var (
 var RootCmd = &cobra.Command{
 	Use:   appName,
 	Short: "the datum cli",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		return initCmdFlags(cmd)
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		initConfiguration(cmd)
 	},
 }
 
@@ -82,280 +77,78 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	initCmdFlags(RootCmd)
+	// load the flags to ensure we know the correct config file path
+	initConfiguration(RootCmd)
 
+	// load the config file and env vars
+	loadConfigFile()
+
+	// reload because flags and env vars take precedence over file
+	initConfiguration(RootCmd)
+
+	// set the host url
 	DatumHost = Config.String("host")
 
+	// setup logging configuration
 	setupLogging()
 }
 
+// setupLogging configures the logger based on the command flags
 func setupLogging() {
 	cfg := zap.NewProductionConfig()
-	if Config.Bool("logging.pretty") {
+	if Config.Bool("pretty") {
 		cfg = zap.NewDevelopmentConfig()
 	}
 
-	if Config.Bool("logging.debug") {
+	if Config.Bool("debug") {
 		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	} else {
 		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
 	}
 
 	l, err := cfg.Build()
-	if err != nil {
-		panic(err)
-	}
+	cobra.CheckErr(err)
 
 	Logger = l.Sugar().With("app", appName)
 	defer Logger.Sync() //nolint:errcheck
 }
 
-// StoreSessionCookies gets the session cookie from the cookie jar
-// and stores it in the keychain for future requests
-func StoreSessionCookies(client *datumclient.DatumClient) {
-	session, err := client.GetSessionFromCookieJar()
-	if err != nil || session == "" {
-		fmt.Println("unable to get session from cookie jar")
+// initConfiguration loads the configuration from the command flags of the given cobra command
+func initConfiguration(cmd *cobra.Command) {
+	loadEnvVars()
 
-		return
-	}
-
-	if err := StoreSession(session); err != nil {
-		fmt.Println("unable to store session in keychain")
-
-		return
-	}
+	loadFlags(cmd)
 }
 
-func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) {
-	// setup interceptors
-	token, session, err := GetTokenFromKeyring(ctx)
-	if err != nil {
-		return nil, err
+func loadConfigFile() {
+	if cfgFile == "" {
+		// Find home directory.
+		home, err := homedir.Dir()
+		cobra.CheckErr(err)
+
+		cfgFile = filepath.Join(home, "."+appName+".yaml")
 	}
 
-	expired, err := tokens.IsExpired(token.AccessToken)
-	if err != nil {
-		return nil, err
-	}
+	err := Config.Load(file.Provider(cfgFile), yaml.Parser())
+	cobra.CheckErr(err)
+}
 
-	// refresh and store the new token pair if the existing access token
-	// is expired
-	if expired {
-		// refresh the token pair using the refresh token
-		token, err = refreshToken(ctx, token.RefreshToken)
-		if err != nil {
-			return nil, err
+func loadEnvVars() {
+	err := Config.Load(env.ProviderWithValue("DATUM_", ".", func(s string, v string) (string, interface{}) {
+		key := strings.ReplaceAll(strings.ToLower(strings.TrimPrefix(s, "DATUM_")), "_", ".")
+
+		if strings.Contains(v, ",") {
+			return key, strings.Split(v, ",")
 		}
 
-		// store the new token
-		if err := StoreToken(token); err != nil {
-			return nil, err
-		}
-	}
+		return key, v
+	}), nil)
 
-	config := datumclient.NewDefaultConfig()
-
-	// setup the logging interceptor
-	if Config.Bool("logging.debug") {
-		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
-	}
-
-	endpointOpt, err := configureClientEndpoints()
-	if err != nil {
-		return nil, err
-	}
-
-	opts := []datumclient.ClientOption{endpointOpt}
-
-	opts = append(opts, datumclient.WithCredentials(datumclient.Authorization{
-		BearerToken: token.AccessToken,
-		Session:     session,
-	}))
-
-	return datumclient.New(config, opts...)
+	cobra.CheckErr(err)
 }
 
-func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
-	config := datumclient.NewDefaultConfig()
+func loadFlags(cmd *cobra.Command) {
+	err := Config.Load(posflag.Provider(cmd.Flags(), Config.Delim(), Config), nil)
 
-	// setup the logging interceptor
-	if Config.Bool("debug") {
-		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
-	}
-
-	endpointOpt, err := configureClientEndpoints()
-	if err != nil {
-		return nil, err
-	}
-
-	return datumclient.New(config, endpointOpt)
-}
-
-func configureClientEndpoints() (datumclient.ClientOption, error) {
-	baseURL, err := url.Parse(DatumHost)
-	if err != nil {
-		return nil, err
-	}
-
-	return datumclient.WithBaseURL(baseURL), nil
-}
-
-// GetTokenFromKeyring will return the oauth token from the keyring
-// if the token is expired, but the refresh token is still valid, the
-// token will be refreshed
-func GetTokenFromKeyring(ctx context.Context) (*oauth2.Token, string, error) {
-	ring, err := GetKeyring()
-	if err != nil {
-		return nil, "", fmt.Errorf("error opening keyring: %w", err)
-	}
-
-	access, err := ring.Get("datum_token")
-	if err != nil {
-		return nil, "", fmt.Errorf("error fetching auth token: %w", err)
-	}
-
-	refresh, err := ring.Get("datum_refresh_token")
-	if err != nil {
-		return nil, "", fmt.Errorf("error fetching refresh token: %w", err)
-	}
-
-	session, err := ring.Get("datum_session")
-	if err != nil {
-		return nil, "", fmt.Errorf("error fetching refresh token: %w", err)
-	}
-
-	return &oauth2.Token{
-		AccessToken:  string(access.Data),
-		RefreshToken: string(refresh.Data),
-	}, string(session.Data), nil
-}
-
-func refreshToken(ctx context.Context, refresh string) (*oauth2.Token, error) {
-	// setup datum http client
-	client, err := SetupClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req := models.RefreshRequest{
-		RefreshToken: refresh,
-	}
-
-	resp, err := client.Refresh(ctx, &req)
-	if err != nil {
-		return nil, err
-	}
-
-	return &oauth2.Token{
-		AccessToken:  resp.AccessToken,
-		RefreshToken: resp.RefreshToken,
-	}, nil
-}
-
-// GetKeyring will return the already loaded keyring so that we don't prompt users for passwords multiple times
-func GetKeyring() (keyring.Keyring, error) {
-	var err error
-
-	if userKeyringLoaded {
-		return userKeyring, nil
-	}
-
-	cfgDir, err := os.UserConfigDir()
-	if err != nil {
-		return nil, err
-	}
-
-	userKeyring, err = keyring.Open(keyring.Config{
-		ServiceName: "datum",
-
-		// MacOS keychain
-		KeychainTrustApplication: true,
-
-		// KDE Wallet
-		KWalletAppID:  "datum",
-		KWalletFolder: "datum",
-
-		// Windows
-		WinCredPrefix: "datum",
-
-		// Fallback encrypted file
-		FileDir:          path.Join(cfgDir, "datum", "keyring"),
-		FilePasswordFunc: keyring.TerminalPrompt,
-	})
-	if err == nil {
-		userKeyringLoaded = true
-	}
-
-	return userKeyring, err
-}
-
-// StoreToken in local keyring
-func StoreToken(token *oauth2.Token) error {
-	ring, err := GetKeyring()
-	if err != nil {
-		return fmt.Errorf("error opening keyring: %w", err)
-	}
-
-	err = ring.Set(keyring.Item{
-		Key:  "datum_token",
-		Data: []byte(token.AccessToken),
-	})
-	if err != nil {
-		return fmt.Errorf("failed saving access token: %w", err)
-	}
-
-	err = ring.Set(keyring.Item{
-		Key:  "datum_refresh_token",
-		Data: []byte(token.RefreshToken),
-	})
-	if err != nil {
-		return fmt.Errorf("failed saving refresh token: %w", err)
-	}
-
-	return nil
-}
-
-// StoreSession in local keyring
-func StoreSession(session string) error {
-	ring, err := GetKeyring()
-	if err != nil {
-		return fmt.Errorf("error opening keyring: %w", err)
-	}
-
-	err = ring.Set(keyring.Item{
-		Key:  "datum_session",
-		Data: []byte(session),
-	})
-	if err != nil {
-		return fmt.Errorf("failed saving session: %w", err)
-	}
-
-	return nil
-}
-
-// GetRoleEnum returns the Role if valid, otherwise returns an error
-func GetRoleEnum(role string) (enums.Role, error) {
-	r := enums.ToRole(role)
-
-	if r.String() == enums.RoleInvalid.String() {
-		return *r, ErrInvalidRole
-	}
-
-	return *r, nil
-}
-
-// GetInviteStatusEnum returns the invitation status if valid, otherwise returns an error
-func GetInviteStatusEnum(status string) (enums.InviteStatus, error) {
-	r := enums.ToInviteStatus(status)
-
-	if r.String() == enums.InviteInvalid.String() {
-		return *r, ErrInvalidInviteStatus
-	}
-
-	return *r, nil
-}
-
-func initCmdFlags(cmd *cobra.Command) error {
-	return Config.Load(posflag.Provider(cmd.Flags(), Config.Delim(), Config), nil)
+	cobra.CheckErr(err)
 }

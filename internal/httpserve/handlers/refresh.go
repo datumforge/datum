@@ -4,40 +4,32 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// RefreshRequest holds the fields that should be included on a request to the `/refresh` endpoint
-type RefreshRequest struct {
-	RefreshToken string `json:"refresh_token"`
-}
+// RefreshHandler allows users to refresh their access token using their refresh token
 
-// RefreshReply holds the fields that are sent on a response to the `/refresh` endpoint
-type RefreshReply struct {
-	rout.Reply
-	Message string `json:"message,omitempty"`
-}
-
-// RefreshHandler allows users to refresh their access token using their refresh token.
 func (h *Handler) RefreshHandler(ctx echo.Context) error {
-	var r RefreshRequest
-	if err := ctx.Bind(&r); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	var in models.RefreshRequest
+	if err := ctx.Bind(&in); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
-	if r.RefreshToken == "" {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(rout.NewMissingRequiredFieldError("refresh_token")))
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// verify the refresh token
-	claims, err := h.TM.Verify(r.RefreshToken)
+	claims, err := h.TM.Verify(in.RefreshToken)
 	if err != nil {
 		h.Logger.Errorw("error verifying token", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// check user in the database, sub == claims subject and ensure only one record is returned
@@ -75,10 +67,35 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return err
 	}
 
-	out := &RefreshReply{
-		Reply:   rout.Reply{Success: true},
-		Message: "success",
+	out := &models.RefreshReply{
+		Reply:        rout.Reply{Success: true},
+		Message:      "success",
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
+}
+
+// BindRefreshHandler is used to bind the refresh endpoint to the OpenAPI schema
+func (h *Handler) BindRefreshHandler() *openapi3.Operation {
+	refresh := openapi3.NewOperation()
+	refresh.Description = "The Refresh endpoint re-authenticates users and API keys using a refresh token rather than requiring a username and password or API key credentials a second time and returns a new access and refresh token pair with the current credentials of the user. This endpoint is intended to facilitate long-running connections to datum systems that last longer than the duration of an access token; e.g. long sessions on the Datum UI or (especially) long running publishers and subscribers (machine users) that need to stay authenticated semi-permanently."
+	refresh.OperationID = "RefreshHandler"
+	refresh.Security = &openapi3.SecurityRequirements{
+		openapi3.SecurityRequirement{
+			"bearerAuth": []string{},
+		},
+		openapi3.SecurityRequirement{
+			"basicAuth": []string{},
+		},
+	}
+
+	h.AddRequestBody("RefreshRequest", models.ExampleRefreshRequest, refresh)
+	h.AddResponse("RefreshReply", "success", models.ExampleRefreshSuccessResponse, refresh, http.StatusOK)
+	refresh.AddResponse(http.StatusInternalServerError, internalServerError())
+	refresh.AddResponse(http.StatusBadRequest, badRequest())
+	refresh.AddResponse(http.StatusNotFound, notFound())
+
+	return refresh
 }

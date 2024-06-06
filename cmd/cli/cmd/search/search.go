@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -28,13 +27,11 @@ func init() {
 }
 
 func search(ctx context.Context) error { // setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -43,7 +40,7 @@ func search(ctx context.Context) error { // setup datum http client
 		return datum.NewRequiredFieldMissingError("query")
 	}
 
-	results, err := cli.Client.Search(ctx, query)
+	results, err := client.Search(ctx, query)
 	if err != nil {
 		return err
 	}

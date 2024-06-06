@@ -13,49 +13,40 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/sessions"
 )
 
-// OauthTokenRequest to authenticate an oauth user with the Datum Server
-type OauthTokenRequest struct {
-	Name             string `json:"name"`
-	Email            string `json:"email"`
-	AuthProvider     string `json:"authProvider"`
-	ExternalUserID   string `json:"externalUserId"`
-	ExternalUserName string `json:"externalUserName"`
-	ClientToken      string `json:"clientToken"`
-}
-
 // OauthRegister returns the TokenResponse for a verified authenticated external oauth user
 func (h *Handler) OauthRegister(ctx echo.Context) error {
-	var r OauthTokenRequest
-	if err := ctx.Bind(&r); err != nil {
+	var in models.OauthTokenRequest
+	if err := ctx.Bind(&in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
-	ctxWithToken := token.NewContextWithOauthTooToken(ctx.Request().Context(), r.Email)
+	ctxWithToken := token.NewContextWithOauthTooToken(ctx.Request().Context(), in.Email)
 
 	// create oauth2 token from request input
 	tok := &oauth2.Token{
-		AccessToken: r.ClientToken,
+		AccessToken: in.ClientToken,
 	}
 
 	// verify the token provided to ensure the user is valid
-	if err := h.verifyClientToken(ctxWithToken, r.AuthProvider, tok, r.Email); err != nil {
+	if err := h.verifyClientToken(ctxWithToken, in.AuthProvider, tok, in.Email); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// check if users exists and create if not, updates last seen of existing user
-	user, err := h.CheckAndCreateUser(ctxWithToken, r.Name, r.Email, enums.AuthProvider(strings.ToUpper(r.AuthProvider)))
+	user, err := h.CheckAndCreateUser(ctxWithToken, in.Name, in.Email, enums.AuthProvider(strings.ToUpper(in.AuthProvider)))
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	if err := h.addDefaultOrgToUserQuery(ctxWithToken, user); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// create claims for verified user
@@ -63,22 +54,22 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set cookies for the user
 	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
 	setSessionMap := map[string]any{}
-	setSessionMap[sessions.ExternalUserIDKey] = fmt.Sprintf("%v", r.ExternalUserID)
-	setSessionMap[sessions.UsernameKey] = r.ExternalUserName
-	setSessionMap[sessions.UserTypeKey] = r.AuthProvider
-	setSessionMap[sessions.EmailKey] = r.Email
+	setSessionMap[sessions.ExternalUserIDKey] = fmt.Sprintf("%v", in.ExternalUserID)
+	setSessionMap[sessions.UsernameKey] = in.ExternalUserName
+	setSessionMap[sessions.UserTypeKey] = in.AuthProvider
+	setSessionMap[sessions.EmailKey] = in.Email
 	setSessionMap[sessions.UserIDKey] = user.ID
 
 	c, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	ctx.SetRequest(ctx.Request().WithContext(c))
@@ -87,7 +78,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 		Set("user_id", user.ID).
 		Set("email", user.Email).
 		Set("organization_id", user.Edges.Setting.Edges.DefaultOrg.ID). // user is logged into their default org
-		Set("auth_provider", r.AuthProvider)
+		Set("auth_provider", in.AuthProvider)
 
 	h.AnalyticsClient.Event("user_authenticated", props)
 	h.AnalyticsClient.UserProperties(user.ID, props)
@@ -97,10 +88,10 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	// server side
 	s, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
-	out := LoginReply{
+	out := models.LoginReply{
 		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,
@@ -110,7 +101,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	}
 
 	// Return the access token
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // verifyClientToken verifies the provided access token from an external oauth2 provider is valid and matches the user's email

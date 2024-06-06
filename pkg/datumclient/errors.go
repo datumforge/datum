@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	errFailedToGetOauthToken = errors.New("failed to get oauth2 token")
+	ErrFailedToGetOauthToken = errors.New("failed to get oauth2 token")
+	ErrNoCookieJarSet        = errors.New("client does not have a cookie jar, cannot set cookies")
 )
 
 // AuthenticationError is returned when a user cannot be authenticated
@@ -21,6 +22,10 @@ type AuthenticationError struct {
 
 // Error returns the AuthenticationError in string format
 func (e *AuthenticationError) Error() string {
+	if e.Body == "" {
+		return fmt.Sprintf("unable to authenticate (status %d)", e.StatusCode)
+	}
+
 	return fmt.Sprintf("unable to authenticate (status %d): %s", e.StatusCode, strings.ToLower(e.Body))
 }
 

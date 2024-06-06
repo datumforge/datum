@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -48,15 +47,13 @@ func (UserSetting) Fields() []ent.Field {
 		field.Time("suspended_at").
 			Comment("The time the user was suspended").
 			Optional().
-			Nillable().
-			Annotations(entoas.Annotation{ReadOnly: true}),
+			Nillable(),
 		field.Enum("status").
 			Comment("status of the user account").
 			GoType(enums.UserStatus("")).
 			Default(string(enums.UserStatusActive)),
 		field.Bool("email_confirmed").Default(false).
-			Comment("whether the user has confirmed their email address").
-			Annotations(entoas.Annotation{ReadOnly: true}),
+			Comment("whether the user has confirmed their email address"),
 		field.Bool("is_webauthn_allowed").
 			Comment("specifies a user may complete authentication by verifying a WebAuthn capable device").
 			Optional().
@@ -70,7 +67,6 @@ func (UserSetting) Fields() []ent.Field {
 			Optional().
 			Annotations(
 				// skip until SMS 2fa feature is implemented
-				entoas.Skip(true),
 				entgql.Skip(entgql.SkipAll),
 			).
 			Nillable(),
@@ -80,14 +76,7 @@ func (UserSetting) Fields() []ent.Field {
 // Edges of the UserSetting
 func (UserSetting) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("setting").Unique().Field("user_id").Annotations(
-			entoas.Skip(true),
-			entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		),
+		edge.From("user", User.Type).Ref("setting").Unique().Field("user_id"),
 		edge.To("default_org", Organization.Type).
 			Unique().
 			Comment("organization to load on user login"),
@@ -100,12 +89,6 @@ func (UserSetting) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
-		entoas.Skip(true),
-		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 	}
 }
 

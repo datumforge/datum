@@ -67,13 +67,19 @@ type RequestBuilder struct {
 
 // NewRequestBuilder creates a new RequestBuilder with default settings
 func (c *Client) NewRequestBuilder(method, path string) *RequestBuilder {
-	return &RequestBuilder{
+	rb := &RequestBuilder{
 		client:  c,
 		method:  method,
 		path:    path,
 		queries: url.Values{},
 		headers: &http.Header{},
 	}
+
+	if c.Headers != nil {
+		rb.headers = c.Headers
+	}
+
+	return rb
 }
 
 // AddMiddleware adds a middleware to the request
@@ -809,7 +815,7 @@ func (b *RequestBuilder) prepareBodyBasedOnContentType() (io.Reader, string, err
 	var err error
 
 	switch contentType {
-	case ContentTypeJSON:
+	case ContentTypeJSON, ContentTypeJSONUTF8:
 		body, err = b.client.JSONEncoder.Encode(b.bodyData)
 	case ContentTypeXML:
 		body, err = b.client.XMLEncoder.Encode(b.bodyData)

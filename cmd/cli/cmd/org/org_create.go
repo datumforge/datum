@@ -42,13 +42,10 @@ func init() {
 
 func createOrg(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -83,7 +80,7 @@ func createOrg(ctx context.Context) error {
 		input.DedicatedDb = &dedicatedDB
 	}
 
-	o, err := cli.Client.CreateOrganization(ctx, input, cli.Interceptor)
+	o, err := client.CreateOrganization(ctx, input)
 	if err != nil {
 		return err
 	}

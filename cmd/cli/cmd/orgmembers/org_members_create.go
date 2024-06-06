@@ -34,13 +34,10 @@ func init() {
 
 func addOrgMember(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	oID := viper.GetString("orgmember.create.orgid")
@@ -69,7 +66,7 @@ func addOrgMember(ctx context.Context) error {
 
 	var s []byte
 
-	orgMember, err := cli.Client.AddUserToOrgWithRole(ctx, input, cli.Interceptor)
+	orgMember, err := client.AddUserToOrgWithRole(ctx, input)
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -28,12 +27,11 @@ func init() {
 }
 
 func templates(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	templateID := viper.GetString("template.get.id")
@@ -43,7 +41,7 @@ func templates(ctx context.Context) error {
 	writer := tables.NewTableWriter(templateCmd.OutOrStdout(), "ID", "Name", "Description", "JSON")
 
 	if templateID != "" {
-		template, err := cli.Client.GetTemplate(ctx, templateID, cli.Interceptor)
+		template, err := client.GetTemplate(ctx, templateID)
 		if err != nil {
 			return err
 		}
@@ -63,7 +61,7 @@ func templates(ctx context.Context) error {
 		return nil
 	}
 
-	templates, err := cli.Client.GetAllTemplates(ctx, cli.Interceptor)
+	templates, err := client.GetAllTemplates(ctx)
 	if err != nil {
 		return err
 	}

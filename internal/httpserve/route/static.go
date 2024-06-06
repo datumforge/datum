@@ -2,98 +2,125 @@ package route
 
 import (
 	"embed"
-	"io"
 	"net/http"
-	"text/template"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
-// registerJwksWellKnownHandler supplies the JWKS endpoint.
-// This endpoint will contain the JWK used to verify all Datum JWTs
-func registerJwksWellKnownHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/.well-known/jwks.json",
+// registerJwksWellKnownHandler supplies the JWKS endpoint
+func registerJwksWellKnownHandler(router *Router) (err error) {
+	path := "/.well-known/jwks.json"
+	method := http.MethodGet
+	name := "JWKS"
+
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
 		Handler: func(c echo.Context) error {
-			return c.JSON(http.StatusOK, h.JWTKeys)
+			return c.JSON(http.StatusOK, router.Handler.JWTKeys)
 		},
-	}.ForGroup(unversioned, mw))
+	}
 
-	return
+	if err := router.AddUnversionedRoute(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
-
-// registerOIDCHandler supplies the open-configuration endpoint
-func registerOIDCHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/.well-known/openid-configuration",
-		Handler: func(c echo.Context) error {
-			return h.OpenIDConfiguration(c)
-		},
-	}.ForGroup(unversioned, mw))
-
-	return
-}
-
-type Template struct {
-	templates *template.Template
-}
-
-func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
-}
-
-//go:embed openapi.json
-//go:embed robots.txt
-//go:embed security.txt
-var openapi embed.FS
 
 // registerOpenAPISpecHandler embeds our generated open api specs and serves it behind /api-docs
-func registerOpenAPISpecHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/api-docs",
-		Handler: echo.StaticFileHandler("joined.yaml", openapi),
-	}.ForGroup(V1Version, mw))
+func registerOpenAPIHandler(router *Router) (err error) {
+	path := "/api-docs"
+	method := http.MethodGet
+	name := "APIDocs"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler: echo.HandlerFunc(func(c echo.Context) error {
+			return c.JSON(http.StatusOK, router.OAS)
+		}),
+	}
+
+	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
+		return err
+	}
+
+	return nil
 }
+
+//go:embed security.txt
+var securityTxt embed.FS
 
 // registerSecurityTxtHandler serves up the text output of datum's security.txt
-func registerSecurityTxtHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/.well-known/security.txt",
-		Handler: echo.StaticFileHandler("security.txt", openapi),
-	}.ForGroup(unversioned, mw))
+func registerSecurityTxtHandler(router *Router) (err error) {
+	path := "/.well-known/security.txt"
+	method := http.MethodGet
+	name := "SecurityTxt"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     echo.StaticFileHandler("security.txt", securityTxt),
+	}
+
+	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// registerRobotsHandler serves up the robots.txt file via the RobotsHandler
-func registerRobotsHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/robots.txt",
-		Handler: echo.StaticFileHandler("robots.txt", openapi),
-	}.ForGroup(unversioned, mw))
+//go:embed robots.txt
+var robotsTxt embed.FS
 
-	return
+// registerRobotsHandler serves up the robots.txt file via the RobotsHandler
+func registerRobotsHandler(router *Router) (err error) {
+	path := "/robots.txt"
+	method := http.MethodGet
+	name := "Robots"
+
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     echo.StaticFileHandler("robots.txt", robotsTxt),
+	}
+
+	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 //go:embed assets/*
 var assets embed.FS
 
 // registerFaviconHandler serves up the favicon.ico
-func registerFaviconHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/favicon.ico",
-		Handler: echo.StaticFileHandler("assets/favicon.ico", assets),
-	}.ForGroup(unversioned, mw))
+func registerFaviconHandler(router *Router) (err error) {
+	path := "/favicon.ico"
+	method := http.MethodGet
+	name := "Favicon"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     echo.StaticFileHandler("assets/favicon.ico", assets),
+	}
+
+	if err := router.AddEchoOnlyRoute(path, method, route); err != nil {
+		return err
+	}
+
+	return nil
 }

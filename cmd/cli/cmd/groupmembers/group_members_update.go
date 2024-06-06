@@ -35,13 +35,10 @@ func init() {
 
 func updateGroupMember(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	gID := viper.GetString("groupmember.update.groupid")
@@ -70,7 +67,7 @@ func updateGroupMember(ctx context.Context) error {
 		UserID:  &uID,
 	}
 
-	groupMembers, err := cli.Client.GetGroupMembersByGroupID(ctx, &where, cli.Interceptor)
+	groupMembers, err := client.GetGroupMembersByGroupID(ctx, &where)
 	if err != nil {
 		return err
 	}
@@ -87,7 +84,7 @@ func updateGroupMember(ctx context.Context) error {
 
 	var s []byte
 
-	groupMember, err := cli.Client.UpdateUserRoleInGroup(ctx, id, input, cli.Interceptor)
+	groupMember, err := client.UpdateUserRoleInGroup(ctx, id, input)
 	if err != nil {
 		return err
 	}

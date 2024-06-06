@@ -4,22 +4,29 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // registerEventPublisher registers the event publisher endpoint
-func registerEventPublisher(router *echo.Echo, h *handlers.Handler) (err error) {
-	authMW := mw
-	authMW = append(authMW, h.AuthMiddleware...)
-	_, err = router.AddRoute(echo.Route{
-		Name:   "EventPublisher",
-		Method: http.MethodPost,
-		Path:   "/event/publish",
-		Handler: func(c echo.Context) error {
-			return h.EventPublisher(c)
-		},
-	}.ForGroup(V1Version, authMW))
+func registerEventPublisher(router *Router) (err error) {
+	path := "/event/publish"
+	method := http.MethodPost
+	name := "EventPublisher"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: authMW,
+		Handler: func(c echo.Context) error {
+			return router.Handler.EventPublisher(c)
+		},
+	}
+
+	eventOperation := router.Handler.BindEventPublisher()
+
+	if err := router.Addv1Route(path, method, eventOperation, route); err != nil {
+		return err
+	}
+
+	return nil
 }

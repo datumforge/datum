@@ -14,6 +14,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -92,7 +93,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 				mock_fga.WriteOnce(t, suite.fga)
 			}
 
-			registerJSON := handlers.OauthTokenRequest{
+			registerJSON := models.OauthTokenRequest{
 				Name:             tt.args.name,
 				Email:            tt.args.email,
 				AuthProvider:     tt.args.provider.String(),
@@ -118,7 +119,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.LoginReply
+			var out *models.LoginReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

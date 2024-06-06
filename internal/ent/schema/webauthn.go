@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
@@ -77,11 +76,6 @@ func (Webauthn) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
 		entx.SchemaGenSkip(true),
-		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		enthistory.Annotations{
 			Exclude: true,
 		},

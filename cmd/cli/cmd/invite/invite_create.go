@@ -31,13 +31,11 @@ func init() {
 }
 
 func createInvite(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	email := viper.GetString("invite.create.email")
@@ -54,7 +52,7 @@ func createInvite(ctx context.Context) error {
 
 	var s []byte
 
-	invite, err := cli.Client.CreateInvite(ctx, input, cli.Interceptor)
+	invite, err := client.CreateInvite(ctx, input)
 	if err != nil {
 		return err
 	}

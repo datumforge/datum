@@ -41,12 +41,11 @@ func init() {
 }
 
 func createTemplate(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -90,7 +89,7 @@ func createTemplate(ctx context.Context) error {
 		input.TemplateType = enums.ToDocumentType(templateType)
 	}
 
-	o, err := cli.Client.CreateTemplate(ctx, input, cli.Interceptor)
+	o, err := client.CreateTemplate(ctx, input)
 	if err != nil {
 		return err
 	}

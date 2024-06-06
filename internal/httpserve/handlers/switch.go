@@ -5,36 +5,28 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/fgax"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/golang-jwt/jwt/v5"
 	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
-// SwitchOrganizationRequest contains the target organization ID being switched to
-type SwitchOrganizationRequest struct {
-	TargetOrganizationID string `json:"target_organization_id"`
-}
-
-// SwitchOrganizationReply holds the new authentication and session information for the user for the new organization
-type SwitchOrganizationReply struct {
-	rout.Reply
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	Session      string `json:"session"`
-}
-
 // SwitchHandler is responsible for handling requests to the `/switch` endpoint, and changing the user's logged in organization context
 func (h *Handler) SwitchHandler(ctx echo.Context) error {
-	var req SwitchOrganizationRequest
+	var in models.SwitchOrganizationRequest
+	if err := ctx.Bind(&in); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+	}
 
-	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	reqCtx := ctx.Request().Context()
@@ -43,7 +35,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get user id from context", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// get user from database by subject
@@ -51,23 +43,23 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get user by subject", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	orgID, err := auth.GetOrganizationIDFromContext(reqCtx)
 	if err != nil {
 		h.Logger.Errorw("unable to get organization id from context", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// ensure the user is not already in the target organization
-	if orgID == req.TargetOrganizationID {
+	if orgID == in.TargetOrganizationID {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("already switched to organization"))
 	}
 
 	// ensure user is already a member of the destination organization
-	if allow, err := h.DBClient.Authz.CheckOrgAccess(reqCtx, userID, auth.UserSubjectType, orgID, fgax.CanView); err != nil || !allow {
+	if allow, err := h.DBClient.Authz.CheckOrgAccess(reqCtx, userID, auth.UserSubjectType, in.TargetOrganizationID, fgax.CanView); err != nil || !allow {
 		h.Logger.Errorw("user not authorized to access organization", "error", err)
 
 		return ctx.JSON(http.StatusUnauthorized, rout.ErrorResponse("unauthorized"))
@@ -76,9 +68,11 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	// get the target organization
 	orgGetCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
-	org, err := h.getOrgByID(orgGetCtx, req.TargetOrganizationID)
+	org, err := h.getOrgByID(orgGetCtx, in.TargetOrganizationID)
 	if err != nil {
 		h.Logger.Errorw("unable to get target organization by id", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("unable to get target organization"))
 	}
 
 	// create new claims for the user
@@ -87,7 +81,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	// create a new token pair for the user
 	access, refresh, err := h.TM.CreateTokenPair(newClaims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// set cookies on request with the access and refresh token
@@ -97,13 +91,13 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// return the session value for the UI to use
 	session, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// track the organization switch event
@@ -117,14 +111,14 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	h.AnalyticsClient.Event("organization_switched", props)
 
 	// set the out attributes we send back to the client only on success
-	out := &SwitchOrganizationReply{
+	out := &models.SwitchOrganizationReply{
 		Reply:        rout.Reply{Success: true},
 		AccessToken:  access,
 		RefreshToken: refresh,
 		Session:      session,
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
 // switchClaims creates a new set of claims for the user based on the target organization and returns them
@@ -136,4 +130,19 @@ func switchClaims(u *generated.User, targetOrgMappingID string) *tokens.Claims {
 		UserID: u.MappingID,
 		OrgID:  targetOrgMappingID,
 	}
+}
+
+// BindSwitchHandler binds the reset password handler to the OpenAPI schema
+func (h *Handler) BindSwitchHandler() *openapi3.Operation {
+	switchHandler := openapi3.NewOperation()
+	switchHandler.Description = "Switch the user's organization context"
+	switchHandler.OperationID = "OrganizationSwitch"
+
+	h.AddRequestBody("SwitchOrganizationRequest", models.ExampleSwitchSuccessRequest, switchHandler)
+	h.AddResponse("SwitchOrganizationReply", "success", models.ExampleSwitchSuccessReply, switchHandler, http.StatusOK)
+	switchHandler.AddResponse(http.StatusInternalServerError, internalServerError())
+	switchHandler.AddResponse(http.StatusBadRequest, badRequest())
+	switchHandler.AddResponse(http.StatusUnauthorized, unauthorized())
+
+	return switchHandler
 }

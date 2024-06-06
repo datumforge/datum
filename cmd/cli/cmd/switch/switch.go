@@ -6,10 +6,10 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 var loginCmd = &cobra.Command{
@@ -28,33 +28,38 @@ func init() {
 }
 
 func switchorg(ctx context.Context) error {
-	cli, err := datum.GetRestClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	dc := cli.Client.(*datumclient.Client)
-	defer datum.StoreSessionCookies(dc)
 
 	targetorg := viper.GetString("switch.targetorg")
 	if targetorg == "" {
 		return datum.NewRequiredFieldMissingError("target organization")
 	}
 
-	input := handlers.SwitchOrganizationRequest{
+	input := models.SwitchOrganizationRequest{
 		TargetOrganizationID: targetorg,
 	}
 
-	switchOrganizationReply, err := datumclient.Switch(dc, ctx, input, cli.AccessToken)
+	resp, err := client.Switch(ctx, &input)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("Successfully switched to organization: %s!\n", targetorg)
 
-	if err := datum.StoreToken(switchOrganizationReply); err != nil {
+	// store auth tokens
+	if err := datum.StoreToken(&oauth2.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+	}); err != nil {
 		return err
 	}
+
+	// store session cookies
+	datum.StoreSessionCookies(client)
 
 	fmt.Println("auth tokens successfully stored in keychain")
 

@@ -20,6 +20,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
@@ -124,7 +125,7 @@ func (suite *HandlerTestSuite) TestResetPassword() {
 			rt, _, err := suite.createUserWithResetToken(t, ec, tc.email, tc.ttl)
 			require.NoError(t, err)
 
-			pwResetJSON := handlers.ResetPasswordRequest{
+			pwResetJSON := models.ResetPasswordRequest{
 				Password: tc.newPassword,
 			}
 
@@ -156,7 +157,7 @@ func (suite *HandlerTestSuite) TestResetPassword() {
 			// check status
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			var out *handlers.ResetPasswordReply
+			var out *models.ResetPasswordReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

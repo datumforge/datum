@@ -5,54 +5,42 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/oklog/ulid/v2"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
-// ResetPasswordRequest contains user input required to reset a user's password
-type ResetPasswordRequest struct {
-	Password string `json:"password"`
-	Token    string `json:"token"`
-}
-
-// ResetPasswordReply is the response returned from a non-successful password reset request
-// on success, no content is returned (204)
-type ResetPasswordReply struct {
-	rout.Reply
-	Message string `json:"message"`
-}
-
 // ResetPassword allows the user (after requesting a password reset) to
 // set a new password - the password reset token needs to be set in the request
 // and not expired. If the request is successful, a confirmation of the reset is sent
 // to the user and a 204 no content is returned
 func (h *Handler) ResetPassword(ctx echo.Context) error {
-	var req ResetPasswordRequest
-	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	var in models.ResetPasswordRequest
+	if err := ctx.Bind(&in); err != nil {
+		return h.BadRequest(ctx, err)
 	}
 
-	if err := req.validateResetRequest(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithResetToken(ctx.Request().Context(), req.Token)
+	ctxWithToken := token.NewContextWithResetToken(ctx.Request().Context(), in.Token)
 
 	// lookup user from db based on provided token
-	entUser, err := h.getUserByResetToken(ctxWithToken, req.Token)
+	entUser, err := h.getUserByResetToken(ctxWithToken, in.Token)
 	if err != nil {
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
@@ -70,10 +58,10 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	}
 
 	// set tokens for request
-	if err := user.setResetTokens(entUser, req.Token); err != nil {
+	if err := user.setResetTokens(entUser, in.Token); err != nil {
 		h.Logger.Errorw("unable to set reset tokens for request", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// Construct the user token from the database fields
@@ -102,11 +90,11 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(errMsg))
 		}
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	// make sure its not the same password as current
-	valid, err := passwd.VerifyDerivedKey(*entUser.Password, req.Password)
+	valid, err := passwd.VerifyDerivedKey(*entUser.Password, in.Password)
 	if err != nil || valid {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrNonUniquePassword))
 	}
@@ -116,16 +104,16 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		SubjectID: entUser.ID,
 	})
 
-	if err := h.updateUserPassword(userCtx, entUser.ID, req.Password); err != nil {
+	if err := h.updateUserPassword(userCtx, entUser.ID, in.Password); err != nil {
 		h.Logger.Errorw("error updating user password", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := h.expireAllResetTokensUserByEmail(userCtx, user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.BadRequest(ctx, err)
 	}
 
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
@@ -139,28 +127,12 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
-	out := &ResetPasswordReply{
+	out := &models.ResetPasswordReply{
 		Reply:   rout.Reply{Success: true},
 		Message: "password has been re-set successfully",
 	}
 
-	return ctx.JSON(http.StatusOK, out)
-}
-
-// validateVerifyRequest validates the required fields are set in the user request
-func (r *ResetPasswordRequest) validateResetRequest() error {
-	r.Password = strings.TrimSpace(r.Password)
-
-	switch {
-	case r.Token == "":
-		return rout.NewMissingRequiredFieldError("token")
-	case r.Password == "":
-		return rout.NewMissingRequiredFieldError("password")
-	case passwd.Strength(r.Password) < passwd.Moderate:
-		return ErrPasswordTooWeak
-	}
-
-	return nil
+	return h.Success(ctx, out)
 }
 
 // setResetTokens sets the fields for the password reset
@@ -180,4 +152,19 @@ func (u *User) setResetTokens(user *generated.User, reqToken string) error {
 	// otherwise, since we get the user by the token, it should always
 	// be there
 	return ErrPassWordResetTokenInvalid
+}
+
+// BindResetPasswordHandler binds the reset password handler to the OpenAPI schema
+func (h *Handler) BindResetPasswordHandler() *openapi3.Operation {
+	resetPassword := openapi3.NewOperation()
+	resetPassword.Description = "ResetPassword allows the user (after requesting a password reset) to set a new password - the password reset token needs to be set in the request and not expired. If the request is successful, a confirmation of the reset is sent to the user and a 200 StatusOK is returned"
+	resetPassword.OperationID = "PasswordReset"
+	resetPassword.Security = &openapi3.SecurityRequirements{}
+
+	h.AddRequestBody("ResetPasswordRequest", models.ExampleResetPasswordSuccessRequest, resetPassword)
+	h.AddResponse("ResetPasswordReply", "success", models.ExampleResetPasswordSuccessResponse, resetPassword, http.StatusOK)
+	resetPassword.AddResponse(http.StatusInternalServerError, internalServerError())
+	resetPassword.AddResponse(http.StatusBadRequest, badRequest())
+
+	return resetPassword
 }

@@ -29,13 +29,10 @@ func init() {
 
 func groupMembers(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 	// filter options
 	gID := viper.GetString("groupmember.get.id")
@@ -49,7 +46,7 @@ func groupMembers(ctx context.Context) error {
 
 	var s []byte
 
-	group, err := cli.Client.GetGroupMembersByGroupID(ctx, &where, cli.Interceptor)
+	group, err := client.GetGroupMembersByGroupID(ctx, &where)
 	if err != nil {
 		return err
 	}

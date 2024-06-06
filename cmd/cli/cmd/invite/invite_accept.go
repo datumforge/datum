@@ -6,10 +6,10 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 var inviteAcceptCmd = &cobra.Command{
@@ -28,6 +28,12 @@ func init() {
 }
 
 func inviteAccept(ctx context.Context) error {
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
+	if err != nil {
+		return err
+	}
+
 	var s []byte
 
 	token := viper.GetString("invite.accept.token")
@@ -35,34 +41,28 @@ func inviteAccept(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("token")
 	}
 
-	invite := handlers.Invite{
+	invite := models.InviteRequest{
 		Token: token,
 	}
 
-	// new client with params
-	cli, err := datum.GetRestClient(ctx)
+	resp, err := client.AcceptInvite(ctx, &invite)
 	if err != nil {
 		return err
 	}
 
-	// this allows the use of the graph client to be used for the REST endpoints
-	dc := cli.Client.(*datumclient.Client)
-
-	defer datum.StoreSessionCookies(dc)
-
-	registration, tokens, err := datumclient.OrgInvite(dc, ctx, invite, cli.AccessToken)
+	s, err = json.Marshal(resp)
 	if err != nil {
 		return err
 	}
 
-	if err := datum.StoreToken(tokens); err != nil {
+	if err := datum.StoreToken(&oauth2.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+	}); err != nil {
 		return err
 	}
 
-	s, err = json.Marshal(registration)
-	if err != nil {
-		return err
-	}
+	datum.StoreSessionCookies(client)
 
 	return datum.JSONPrint(s)
 }

@@ -8,14 +8,8 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwk"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	api "github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/tokens"
-)
-
-const (
-	DefaultKeysURL            = "http://localhost:17608/.well-known/jwks.json"
-	DefaultAudience           = "http://localhost:17608"
-	DefaultIssuer             = "http://localhost:17608"
-	DefaultMinRefreshInterval = 5 * time.Minute
 )
 
 // AuthOption allows users to optionally supply configuration to the Authorization middleware.
@@ -24,13 +18,13 @@ type AuthOption func(opts *AuthOptions)
 // AuthOptions is constructed from variadic AuthOption arguments with reasonable defaults.
 type AuthOptions struct {
 	// KeysURL endpoint to the JWKS public keys on the datum server
-	KeysURL string
+	KeysURL string `default:"http://localhost:17608/.well-known/jwks.json"`
 	// Audience to verify on tokens
-	Audience string
+	Audience string `default:"http://localhost:17608"`
 	// Issuer to verify on tokens
-	Issuer string
+	Issuer string `default:"http://localhost:17608"`
 	// MinRefreshInterval to cache the JWKS public keys
-	MinRefreshInterval time.Duration
+	MinRefreshInterval time.Duration `default:"5m"`
 	// Context to control the lifecycle of the background fetch routine
 	Context context.Context
 
@@ -50,30 +44,21 @@ type AuthOptions struct {
 
 // Reauthenticator generates new access and refresh pair given a valid refresh token.
 type Reauthenticator interface {
-	Refresh(context.Context, *RefreshRequest) (*LoginReply, error)
+	Refresh(context.Context, *api.RefreshRequest) (*api.LoginReply, error)
 }
 
-type RefreshRequest struct {
-	RefreshToken string `json:"refresh_token"`
-	OrgID        string `json:"org_id,omitempty"`
-}
-
-type LoginReply struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	LastLogin    string `json:"last_login,omitempty"`
+var DefaultAuthOptions = AuthOptions{
+	KeysURL:            "http://localhost:17608/.well-known/jwks.json",
+	Audience:           "http://localhost:17608",
+	Issuer:             "http://localhost:17608",
+	MinRefreshInterval: 5 * time.Minute, //nolint:gomnd
+	Skipper:            middleware.DefaultSkipper,
 }
 
 // NewAuthOptions creates an AuthOptions object with reasonable defaults and any user
 // supplied input from the AuthOption variadic arguments.
 func NewAuthOptions(opts ...AuthOption) (conf AuthOptions) {
-	conf = AuthOptions{
-		KeysURL:            DefaultKeysURL,
-		Audience:           DefaultAudience,
-		Issuer:             DefaultIssuer,
-		MinRefreshInterval: DefaultMinRefreshInterval,
-		Skipper:            middleware.DefaultSkipper,
-	}
+	conf = DefaultAuthOptions
 
 	for _, opt := range opts {
 		opt(&conf)

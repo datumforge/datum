@@ -4,7 +4,6 @@ import (
 	"net/mail"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/entql"
@@ -36,15 +35,12 @@ func (PasswordResetToken) Fields() []ent.Field {
 		field.String("token").
 			Comment("the reset token sent to the user via email which should only be provided to the /forgot-password endpoint + handler").
 			Unique().
-			Annotations(entoas.Skip(true)).
 			NotEmpty(),
 		field.Time("ttl").
 			Comment("the ttl of the reset token which defaults to 15 minutes").
-			Annotations(entoas.Skip(true)).
 			Nillable(),
 		field.String("email").
 			Comment("the email used as input to generate the reset token; this is used to verify that the token when regenerated within the server matches the token emailed").
-			Annotations(entoas.Skip(true)).
 			Validate(func(email string) error {
 				_, err := mail.ParseAddress(email)
 				return err
@@ -53,7 +49,6 @@ func (PasswordResetToken) Fields() []ent.Field {
 		field.Bytes("secret").
 			Comment("the comparison secret to verify the token's signature").
 			NotEmpty().
-			Annotations(entoas.Skip(true)).
 			Nillable(),
 	}
 }
@@ -91,11 +86,6 @@ func (PasswordResetToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
 		entx.SchemaGenSkip(true),
-		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		enthistory.Annotations{
 			Exclude: true,
 		},

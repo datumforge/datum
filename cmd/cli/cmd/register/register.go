@@ -3,15 +3,12 @@ package register
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 
-	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/models"
 )
 
 var registerCmd = &cobra.Command{
@@ -39,6 +36,12 @@ func init() {
 }
 
 func registerUser(ctx context.Context) error {
+	// setup datum http client
+	client, err := datum.SetupClient(ctx)
+	if err != nil {
+		return err
+	}
+
 	var s []byte
 
 	email := viper.GetString("register.email")
@@ -61,26 +64,14 @@ func registerUser(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("password")
 	}
 
-	register := handlers.RegisterRequest{
+	register := models.RegisterRequest{
 		Email:     email,
 		FirstName: firstName,
 		LastName:  lastName,
 		Password:  password,
 	}
 
-	// setup datum http client
-	h := &http.Client{}
-
-	// set options
-	opt := &clientv2.Options{}
-
-	// new client with params
-	c := datumclient.NewClient(h, datum.DatumHost, opt, nil)
-
-	// this allows the use of the graph client to be used for the REST endpoints
-	dc := c.(*datumclient.Client)
-
-	registration, err := datumclient.Register(dc, ctx, register)
+	registration, err := client.Register(ctx, &register)
 	if err != nil {
 		return err
 	}

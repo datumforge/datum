@@ -33,13 +33,11 @@ func init() {
 }
 
 func createGroup(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -64,7 +62,7 @@ func createGroup(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	o, err := cli.Client.CreateGroup(ctx, input, cli.Interceptor)
+	o, err := client.CreateGroup(ctx, input)
 	if err != nil {
 		return err
 	}

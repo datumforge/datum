@@ -29,13 +29,10 @@ func init() {
 
 func orgMembers(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	where := datumclient.OrgMembershipWhereInput{}
@@ -49,7 +46,7 @@ func orgMembers(ctx context.Context) error {
 
 	var s []byte
 
-	org, err := cli.Client.GetOrgMembersByOrgID(ctx, &where, cli.Interceptor)
+	org, err := client.GetOrgMembersByOrgID(ctx, &where)
 	if err != nil {
 		return err
 	}

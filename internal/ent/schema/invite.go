@@ -5,7 +5,6 @@ import (
 	"net/mail"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -40,12 +39,10 @@ func (Invite) Fields() []ent.Field {
 			Sensitive().
 			Annotations(
 				entgql.Skip(),
-				entoas.Skip(true),
 			).
 			NotEmpty(),
 		field.Time("expires").
 			Comment("the expiration date of the invitation token which defaults to 14 days in the future from creation").
-			Annotations(entoas.Annotation{ReadOnly: true}).
 			Nillable(),
 		field.String("recipient").
 			Comment("the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization").
@@ -53,37 +50,26 @@ func (Invite) Fields() []ent.Field {
 				_, err := mail.ParseAddress(email)
 				return err
 			}).
-			Annotations(
-				entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			).
 			NotEmpty(),
 		field.Enum("status").
 			Comment("the status of the invitation").
-			Annotations(entoas.Annotation{ReadOnly: true}).
 			GoType(enums.InviteStatus("")).
 			Default(string(enums.InvitationSent)),
 		field.Enum("role").
 			GoType(enums.Role("")).
-			Default(string(enums.RoleMember)).
-			Annotations(
-				entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-				entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			),
+			Default(string(enums.RoleMember)),
 		field.Int("send_attempts").
 			Comment("the number of attempts made to perform email send of the invitation, maximum of 5").
-			Annotations(entoas.Annotation{ReadOnly: true}).
 			Default(0),
 		field.String("requestor_id").
 			Comment("the user who initiated the invitation").
-			Annotations(entoas.Annotation{ReadOnly: true}).
 			Immutable().
 			NotEmpty(),
 		field.Bytes("secret").
 			Comment("the comparison secret to verify the token's signature").
 			NotEmpty().
 			Nillable().
-			Annotations(entgql.Skip(), entoas.Skip(true)).
+			Annotations(entgql.Skip()).
 			Sensitive(),
 	}
 }

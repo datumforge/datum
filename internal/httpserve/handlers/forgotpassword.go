@@ -6,42 +6,32 @@ import (
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
-// ForgotPasswordRequest contains fields for a forgot password request
-type ForgotPasswordRequest struct {
-	Email string `json:"email"`
-}
-
-// ForgotPasswordReply contains fields for a forgot password response
-type ForgotPasswordReply struct {
-	rout.Reply
-	Message string `json:"message,omitempty"`
-}
-
-// ForgotPassword will send an forgot password email if the provided
-// email exists
+// ForgotPassword will send an forgot password email if the provided email exists
 func (h *Handler) ForgotPassword(ctx echo.Context) error {
-	out := &ForgotPasswordReply{
+	var in models.ForgotPasswordRequest
+	if err := ctx.Bind(&in); err != nil {
+		return h.BadRequest(ctx, err)
+	}
+
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+	}
+
+	out := &models.ForgotPasswordReply{
 		Reply: rout.Reply{
 			Success: true,
 		},
 		Message: "We've received your request to have the password associated with this email reset. Please check your email.",
-	}
-
-	var in ForgotPasswordRequest
-	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
-	}
-
-	if err := validateForgotPasswordRequest(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email, enums.AuthProviderCredentials)
@@ -49,12 +39,12 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		if ent.IsNotFound(err) {
 			// return a 200 response even if user is not found to avoid
 			// exposing confidential information
-			return ctx.JSON(http.StatusOK, out)
+			return h.Success(ctx, out)
 		}
 
 		h.Logger.Errorf("error retrieving user email", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, err)
 	}
 
 	// create password reset email token
@@ -70,21 +60,13 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	})
 
 	if _, err = h.storeAndSendPasswordResetToken(authCtx, user); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, err)
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
-// validateResendRequest validates the required fields are set in the user request
-func validateForgotPasswordRequest(req *ForgotPasswordRequest) error {
-	if req.Email == "" {
-		return rout.NewMissingRequiredFieldError("email")
-	}
-
-	return nil
-}
-
+// storeAndSendPasswordResetToken creates a password reset token for the user and sends an email with the token
 func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User) (*ent.PasswordResetToken, error) {
 	if err := h.expireAllResetTokensUserByEmail(ctx, user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
@@ -113,4 +95,19 @@ func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User
 	}
 
 	return meowtoken, nil
+}
+
+// BindForgotPassword is used to bind the forgot password endpoint to the OpenAPI schema
+func (h *Handler) BindForgotPassword() *openapi3.Operation {
+	forgotPassword := openapi3.NewOperation()
+	forgotPassword.Description = "ForgotPassword is a service for users to request a password reset email. The email address must be provided in the POST request and the user must exist in the database. This endpoint always returns 200 regardless of whether the user exists or not to avoid leaking information about users in the database"
+	forgotPassword.OperationID = "ForgotPassword"
+	forgotPassword.Security = &openapi3.SecurityRequirements{}
+
+	h.AddRequestBody("ForgotPasswordRequest", models.ExampleForgotPasswordSuccessRequest, forgotPassword)
+	h.AddResponse("ForgotPasswordReply", "success", models.ExampleForgotPasswordSuccessResponse, forgotPassword, http.StatusOK)
+	forgotPassword.AddResponse(http.StatusInternalServerError, internalServerError())
+	forgotPassword.AddResponse(http.StatusBadRequest, badRequest())
+
+	return forgotPassword
 }

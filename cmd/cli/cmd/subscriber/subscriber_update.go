@@ -31,13 +31,10 @@ func init() {
 
 func subscriberUpdate(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	email := viper.GetString("subscribers.update.email")
@@ -53,7 +50,7 @@ func subscriberUpdate(ctx context.Context) error {
 
 	var s []byte
 
-	sub, err := cli.Client.UpdateSubscriber(ctx, email, input, cli.Interceptor)
+	sub, err := client.UpdateSubscriber(ctx, email, input)
 	if err != nil {
 		return err
 	}

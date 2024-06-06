@@ -29,20 +29,17 @@ func init() {
 
 func invites(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
 	invID := viper.GetString("invite.get.id")
 
 	if invID != "" {
-		invite, err := cli.Client.GetInvite(ctx, invID, cli.Interceptor)
+		invite, err := client.GetInvite(ctx, invID)
 		if err != nil {
 			return err
 		}
@@ -50,7 +47,7 @@ func invites(ctx context.Context) error {
 		return printInvite(invite)
 	}
 
-	invites, err := cli.Client.GetInvites(ctx, cli.Interceptor)
+	invites, err := client.GetInvites(ctx)
 	if err != nil {
 		return err
 	}

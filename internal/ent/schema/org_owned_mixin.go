@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/edge"
@@ -42,10 +41,10 @@ type OrgOwnerMixin struct {
 
 // Fields of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Fields() []ent.Field {
-	ownerIDField := field.String(ownerFieldName).Annotations(entoas.Skip(true))
+	ownerIDField := field.String(ownerFieldName)
 
 	if !orgOwned.AllowWhere {
-		ownerIDField.Annotations(entgql.Skip(), entoas.Skip(true))
+		ownerIDField.Annotations(entgql.Skip())
 	}
 
 	if !orgOwned.Required {
@@ -72,22 +71,10 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 		From("owner", Organization.Type).
 		Field(ownerFieldName).
 		Ref(orgOwned.Ref).
-		Annotations(entoas.Skip(true)).
 		Unique()
 
 	if orgOwned.Required {
 		ownerEdge.Required()
-	}
-
-	if orgOwned.SkipOASGeneration {
-		ownerEdge.Annotations(
-			entoas.Skip(true),
-			entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		)
 	}
 
 	return []ent.Edge{

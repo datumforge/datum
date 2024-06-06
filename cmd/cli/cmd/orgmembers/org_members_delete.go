@@ -29,13 +29,10 @@ func init() {
 
 func deleteOrgMember(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	oID := viper.GetString("orgmember.delete.orgid")
@@ -54,7 +51,7 @@ func deleteOrgMember(ctx context.Context) error {
 		where.OrganizationID = &oID
 	}
 
-	orgMembers, err := cli.Client.GetOrgMembersByOrgID(ctx, &where, cli.Interceptor)
+	orgMembers, err := client.GetOrgMembersByOrgID(ctx, &where)
 	if err != nil {
 		return err
 	}
@@ -67,7 +64,7 @@ func deleteOrgMember(ctx context.Context) error {
 
 	var s []byte
 
-	orgMember, err := cli.Client.RemoveUserFromOrg(ctx, id, cli.Interceptor)
+	orgMember, err := client.RemoveUserFromOrg(ctx, id)
 	if err != nil {
 		return err
 	}

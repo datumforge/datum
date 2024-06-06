@@ -40,13 +40,10 @@ func init() {
 
 func updatePat(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -79,7 +76,7 @@ func updatePat(ctx context.Context) error {
 		input.RemoveOrganizationIDs = removeOrgs
 	}
 
-	o, err := cli.Client.UpdatePersonalAccessToken(ctx, pID, input, cli.Interceptor)
+	o, err := client.UpdatePersonalAccessToken(ctx, pID, input)
 	if err != nil {
 		return err
 	}

@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
@@ -25,7 +24,6 @@ func (TFASetting) Fields() []ent.Field {
 		field.String("tfa_secret").
 			Comment("TFA secret for the user").
 			Annotations(
-				entoas.Skip(true),
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
 			).
 			Optional().
@@ -39,7 +37,6 @@ func (TFASetting) Fields() []ent.Field {
 		field.Strings("recovery_codes").
 			Comment("recovery codes for 2fa").
 			Annotations(
-				entoas.Skip(true),
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
 			).
 			Optional(),
@@ -48,7 +45,6 @@ func (TFASetting) Fields() []ent.Field {
 			Optional().
 			Annotations(
 				// skip until feature is implemented
-				entoas.Skip(true),
 				entgql.Skip(entgql.SkipAll),
 			).
 			Default(false),
@@ -57,7 +53,6 @@ func (TFASetting) Fields() []ent.Field {
 			Optional().
 			Annotations(
 				// skip until feature is implemented
-				entoas.Skip(true),
 				entgql.Skip(entgql.SkipAll),
 			).
 			Default(false),
@@ -97,12 +92,6 @@ func (TFASetting) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
-		entoas.Skip(true),
-		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		enthistory.Annotations{
 			Exclude: true,
 		},

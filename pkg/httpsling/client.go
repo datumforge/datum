@@ -88,7 +88,6 @@ func Create(config *Config) *Client {
 	// Return a new Client instance
 	client := &Client{
 		BaseURL:     cfg.BaseURL,
-		Headers:     config.Headers,
 		HTTPClient:  httpClient,
 		JSONEncoder: DefaultJSONEncoder,
 		JSONDecoder: DefaultJSONDecoder,
@@ -97,6 +96,10 @@ func Create(config *Config) *Client {
 		YAMLEncoder: DefaultYAMLEncoder,
 		YAMLDecoder: DefaultYAMLDecoder,
 		TLSConfig:   cfg.TLSConfig,
+	}
+
+	if config != nil {
+		client.Headers = config.Headers
 	}
 
 	return finalizeClientChecks(client, cfg, httpClient)
@@ -324,11 +327,27 @@ func (c *Client) SetDefaultTransport(transport http.RoundTripper) {
 }
 
 // SetDefaultCookieJar sets the default cookie jar for the client
-func (c *Client) SetDefaultCookieJar(jar *cookiejar.Jar) {
+func (c *Client) SetCookieJar(jar *cookiejar.Jar) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	c.HTTPClient.Jar = jar
+}
+
+// SetDefaultCookieJar sets the creates a new cookie jar and sets it for the client
+func (c *Client) SetDefaultCookieJar() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	// Create a new cookie jar
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return err
+	}
+
+	c.HTTPClient.Jar = jar
+
+	return nil
 }
 
 // SetDefaultCookies sets the default cookies for the client

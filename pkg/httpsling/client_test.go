@@ -619,7 +619,7 @@ func TestSetDefaultCookieJar(t *testing.T) {
 
 	// Initialize the client and set the default cookie jar nom nom nom
 	client := Create(&Config{})
-	client.SetDefaultCookieJar(jar)
+	client.SetCookieJar(jar)
 
 	// Start a test HTTP server that sets a cookie
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

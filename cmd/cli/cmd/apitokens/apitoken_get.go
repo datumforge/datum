@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var apiTokenGetCmd = &cobra.Command{
@@ -28,13 +27,10 @@ func init() {
 
 func apiTokens(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -44,7 +40,7 @@ func apiTokens(ctx context.Context) error {
 
 	// if an api token ID is provided, filter on that api token, otherwise get all
 	if tokenID == "" {
-		tokens, err := cli.Client.GetAllAPITokens(ctx, cli.Interceptor)
+		tokens, err := client.GetAllAPITokens(ctx)
 		if err != nil {
 			return err
 		}
@@ -54,7 +50,7 @@ func apiTokens(ctx context.Context) error {
 			return err
 		}
 	} else {
-		token, err := cli.Client.GetAPITokenByID(ctx, tokenID, cli.Interceptor)
+		token, err := client.GetAPITokenByID(ctx, tokenID)
 		if err != nil {
 			return err
 		}

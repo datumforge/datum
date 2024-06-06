@@ -51,7 +51,6 @@ var (
 	AllResponses = map[string]struct{}{}
 
 	unsuccessful     = Reply{Success: false}
-	notFound         = Reply{Success: false, Error: "resource not found"}
 	notAllowed       = Reply{Success: false, Error: "method not allowed"}
 	unverified       = Reply{Success: false, Unverified: true, Error: ErrVerifyEmail}
 	httpunsuccessful = echo.HTTPError{}
@@ -90,6 +89,46 @@ type Reply struct {
 	Unverified bool      `json:"unverified,omitempty" yaml:"unverified,omitempty"`
 }
 
+type Response struct {
+	Success bool    `json:"success"`
+	Message string  `json:"message"`
+	Data    any     `json:"data,omitempty"`
+	Errors  []error `json:"errors,omitempty"`
+}
+
+func (res Response) MarshalJSON() ([]byte, error) {
+	var errors []string
+	for _, err := range res.Errors {
+		errors = append(errors, err.Error())
+	}
+
+	return json.Marshal(map[string]any{"data": res.Data, "errors": errors})
+}
+
+type GraphQLRequest struct {
+	Query string `json:"query"`
+}
+
+type GraphQLResponse struct {
+	Data   any     `json:"data"`
+	Errors []error `json:"errors,omitempty"`
+}
+
+// InvalidRequest returns a JSON 400 response for the API
+func InvalidRequest() StatusError {
+	return StatusError{
+		StatusCode: http.StatusBadRequest,
+		Reply:      Reply{Success: false, Error: "invalid request", Unverified: false},
+	}
+}
+
+func InternalError() StatusError {
+	return StatusError{
+		StatusCode: http.StatusInternalServerError,
+		Reply:      Reply{Success: false, Error: "internal server error", Unverified: false},
+	}
+}
+
 // BadRequest returns a JSON 400 response for the API
 func BadRequest() StatusError {
 	return StatusError{
@@ -119,6 +158,20 @@ func Unauthorized() StatusError {
 	return StatusError{
 		StatusCode: http.StatusUnauthorized,
 		Reply:      Reply{Success: false, Error: "unauthorized", Unverified: false},
+	}
+}
+
+func NotFound() StatusError {
+	return StatusError{
+		StatusCode: http.StatusNotFound,
+		Reply:      Reply{Success: false, Error: "not found", Unverified: false},
+	}
+}
+
+func Created() StatusError {
+	return StatusError{
+		StatusCode: http.StatusCreated,
+		Reply:      Reply{Success: true, Error: ""},
 	}
 }
 
@@ -204,10 +257,6 @@ func HTTPErrorResponse(err interface{}) *echo.HTTPError {
 	}
 
 	return &rep
-}
-
-func NotFound(c echo.Context) error {
-	return c.JSON(http.StatusNotFound, notFound) //nolint:errcheck
 }
 
 // NotAllowed returns a JSON 405 response for the API.

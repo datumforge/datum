@@ -4,24 +4,29 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
-// VerifyEmail verifies a user's email address by validating the token in the request.
-// This endpoint is intended to be called by frontend applications after the user has
-// followed the link in the verification email. If the user is not verified and the
-// token is valid then the user is logged in. If the user is already verified then a
-// 204 response is returned.
-func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Name:   "VerifyEmail",
-		Method: http.MethodGet,
-		Path:   "/verify",
-		Handler: func(c echo.Context) error {
-			return h.VerifyEmail(c)
-		},
-	}.ForGroup(V1Version, restrictedEndpointsMW))
+// registerVerifyHandler registers the verify handler and route which handles email verification
+func registerVerifyHandler(router *Router) (err error) {
+	path := "/verify"
+	method := http.MethodGet
+	name := "VerifyEmail"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: restrictedEndpointsMW,
+		Handler: func(c echo.Context) error {
+			return router.Handler.VerifyEmail(c)
+		},
+	}
+
+	verifyOperation := router.Handler.BindVerifyEmailHandler()
+
+	if err := router.Addv1Route(path, method, verifyOperation, route); err != nil {
+		return err
+	}
+
+	return nil
 }

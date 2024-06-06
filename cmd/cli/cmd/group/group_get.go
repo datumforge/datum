@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -29,13 +28,10 @@ func init() {
 
 func getGroup(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -45,7 +41,7 @@ func getGroup(ctx context.Context) error {
 
 	// if an group ID is provided, filter on that group, otherwise get all
 	if gID != "" {
-		group, err := cli.Client.GetGroupByID(ctx, gID, cli.Interceptor)
+		group, err := client.GetGroupByID(ctx, gID)
 		if err != nil {
 			return err
 		}
@@ -66,7 +62,7 @@ func getGroup(ctx context.Context) error {
 	}
 
 	// get all groups, will be filtered for the authorized organization(s)
-	groups, err := cli.Client.GetAllGroups(ctx, cli.Interceptor)
+	groups, err := client.GetAllGroups(ctx)
 	if err != nil {
 		return err
 	}

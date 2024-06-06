@@ -5,46 +5,34 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// ResendRequest contains fields for a resend email verification request
-type ResendRequest struct {
-	Email string `json:"email"`
-}
-
-// ResendReply holds the fields that are sent on a response to the `/resend` endpoint
-type ResendReply struct {
-	rout.Reply
-	Message string `json:"message"`
-}
-
-// ResendEmail will resend an email verification email if the provided
-// email exists
+// ResendEmail will resend an email verification email if the provided email exists
 func (h *Handler) ResendEmail(ctx echo.Context) error {
-	out := &ResendReply{
-		Reply:   rout.Reply{Success: true},
-		Message: "We've received your request to be resent an email to complete verification. Please check your email.",
-	}
-
-	var in ResendRequest
+	var in models.ResendRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
-	if err := validateResendRequest(in); err != nil {
-		h.Logger.Errorw("error validating request", "error", err)
-
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// set viewer context
 	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), in.Email)
+
+	out := &models.ResendReply{
+		Reply:   rout.Reply{Success: true},
+		Message: "We've received your request to be resent an email to complete verification. Please check your email.",
+	}
 
 	// email verifications only come to users that were created with username/password logins
 	entUser, err := h.getUserByEmail(ctxWithToken, in.Email, enums.AuthProviderCredentials)
@@ -52,7 +40,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		if ent.IsNotFound(err) {
 			// return a 200 response even if user is not found to avoid
 			// exposing confidential information
-			return ctx.JSON(http.StatusOK, out)
+			return h.Success(ctx, out)
 		}
 
 		h.Logger.Errorf("error retrieving user email", "error", err)
@@ -64,7 +52,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	if entUser.Edges.Setting.EmailConfirmed {
 		out.Message = "email is already confirmed"
 
-		return ctx.JSON(http.StatusOK, out)
+		return h.Success(ctx, out)
 	}
 
 	// setup user context
@@ -90,14 +78,20 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
-	return ctx.JSON(http.StatusOK, out)
+	return h.Success(ctx, out)
 }
 
-// validateResendRequest validates the required fields are set in the user request
-func validateResendRequest(req ResendRequest) error {
-	if req.Email == "" {
-		return rout.NewMissingRequiredFieldError("email")
-	}
+// BindResendEmailHandler binds the resend email verification endpoint to the OpenAPI schema
+func (h *Handler) BindResendEmailHandler() *openapi3.Operation {
+	resendEmail := openapi3.NewOperation()
+	resendEmail.Description = "ResendEmail accepts an email address via a POST request and always returns a 200 Status OK response, no matter the input or result of the processing. This is to ensure that no secure information is leaked from this unauthenticated endpoint. If the email address belongs to a user who has not been verified, another verification email is sent. If the post request contains an orgID and the user is invited to that organization but hasn't accepted the invite, then the invite is resent."
+	resendEmail.OperationID = "ResendEmail"
+	resendEmail.Security = &openapi3.SecurityRequirements{}
 
-	return nil
+	h.AddRequestBody("ResendEmail", models.ExampleResendEmailSuccessRequest, resendEmail)
+	h.AddResponse("ResendReply", "success", models.ExampleResendEmailSuccessResponse, resendEmail, http.StatusOK)
+	resendEmail.AddResponse(http.StatusInternalServerError, internalServerError())
+	resendEmail.AddResponse(http.StatusBadRequest, badRequest())
+
+	return resendEmail
 }

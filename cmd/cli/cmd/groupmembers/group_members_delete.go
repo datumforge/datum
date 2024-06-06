@@ -32,13 +32,10 @@ func init() {
 
 func deleteGroupMember(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	gID := viper.GetString("groupmember.delete.groupid")
@@ -57,7 +54,7 @@ func deleteGroupMember(ctx context.Context) error {
 		UserID:  &uID,
 	}
 
-	groupMembers, err := cli.Client.GetGroupMembersByGroupID(ctx, &where, cli.Interceptor)
+	groupMembers, err := client.GetGroupMembersByGroupID(ctx, &where)
 	if err != nil {
 		return err
 	}
@@ -70,7 +67,7 @@ func deleteGroupMember(ctx context.Context) error {
 
 	var s []byte
 
-	groupMember, err := cli.Client.RemoveUserFromGroup(ctx, id, cli.Interceptor)
+	groupMember, err := client.RemoveUserFromGroup(ctx, id)
 	if err != nil {
 		return err
 	}

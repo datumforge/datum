@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -29,13 +28,10 @@ func init() {
 
 func userSettings(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -47,7 +43,7 @@ func userSettings(ctx context.Context) error {
 
 	// if setting ID is not provided, get settings which will automatically filter by user id
 	if settingsID != "" {
-		user, err := cli.Client.GetUserSettingByID(ctx, settingsID, cli.Interceptor)
+		user, err := client.GetUserSettingByID(ctx, settingsID)
 		if err != nil {
 			return err
 		}
@@ -67,7 +63,7 @@ func userSettings(ctx context.Context) error {
 		return nil
 	}
 
-	settings, err := cli.Client.GetUserSettings(ctx, cli.Interceptor)
+	settings, err := client.GetUserSettings(ctx)
 	if err != nil {
 		return err
 	}

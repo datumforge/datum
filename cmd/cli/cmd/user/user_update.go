@@ -40,13 +40,10 @@ func init() {
 
 func updateUser(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -81,7 +78,7 @@ func updateUser(ctx context.Context) error {
 
 	// TODO: allow updates to user settings
 
-	o, err := cli.Client.UpdateUser(ctx, userID, input, cli.Interceptor)
+	o, err := client.UpdateUser(ctx, userID, input)
 	if err != nil {
 		return err
 	}

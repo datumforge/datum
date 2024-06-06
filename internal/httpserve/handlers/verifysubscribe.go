@@ -9,45 +9,36 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
-// VerifySubscribeRequest holds the fields that should be included on a request to the `/subscribe/verify` endpoint
-type VerifySubscribeRequest struct {
-	Token string `query:"token"`
-}
-
-// VerifySubscribeReply holds the fields that are sent on a response to the `/subscribe/verify` endpoint
-type VerifySubscribeReply struct {
-	rout.Reply
-	Message string `json:"message,omitempty"`
-}
-
 // VerifySubscriptionHandler is the handler for the subscription verification endpoint
 func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
-	var req VerifySubscribeRequest
-	if err := ctx.Bind(&req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	var in models.VerifySubscribeRequest
+	if err := ctx.Bind(&in); err != nil {
+		return h.BadRequest(ctx, err)
 	}
 
-	if err := validateVerifySubscriptionRequest(req.Token); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	if err := in.Validate(); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), req.Token)
+	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), in.Token)
 
-	entSubscriber, err := h.getSubscriberByToken(ctxWithToken, req.Token)
+	entSubscriber, err := h.getSubscriberByToken(ctxWithToken, in.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+			return h.BadRequest(ctx, err)
 		}
 
 		h.Logger.Errorf("error retrieving subscriber", "error", err)
@@ -61,12 +52,12 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 		OrganizationIDs: []string{entSubscriber.OwnerID},
 	})
 
-	ctxWithToken = token.NewContextWithVerifyToken(reqCtx, req.Token)
+	ctxWithToken = token.NewContextWithVerifyToken(reqCtx, in.Token)
 
 	if !entSubscriber.VerifiedEmail {
 		if err := h.verifySubscriberToken(ctxWithToken, entSubscriber); err != nil {
 			if errors.Is(err, ErrExpiredToken) {
-				out := &VerifySubscribeReply{
+				out := &models.VerifySubscribeReply{
 					Reply:   rout.Reply{Success: false},
 					Message: "The verification link has expired, a new one has been sent to your email.",
 				}
@@ -95,21 +86,12 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 
 	h.AnalyticsClient.Event("subscriber_verified", props)
 
-	out := &VerifySubscribeReply{
+	out := &models.VerifySubscribeReply{
 		Reply:   rout.Reply{Success: true},
 		Message: "Subscription confirmed, looking forward to sending you updates!",
 	}
 
-	return ctx.JSON(http.StatusOK, out)
-}
-
-// validateVerifySubscriptionRequest validates the required fields are set in the user request
-func validateVerifySubscriptionRequest(token string) error {
-	if token == "" {
-		return rout.NewMissingRequiredFieldError("token")
-	}
-
-	return nil
+	return h.Success(ctx, out)
 }
 
 // verifySubscriberToken checks the token provided by the user and verifies it against the database
@@ -204,4 +186,20 @@ func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID str
 	h.AnalyticsClient.Event("email_verification_sent", props)
 
 	return nil
+}
+
+// BindVerifySubscriberHandler creates the openapi operation for the subscription verification endpoint
+func (h *Handler) BindVerifySubscriberHandler() *openapi3.Operation {
+	verify := openapi3.NewOperation()
+	verify.Description = "Verify an email address for a subscription"
+	verify.OperationID = "VerifySubscriberEmail"
+	verify.Security = &openapi3.SecurityRequirements{}
+
+	h.AddRequestBody("VerifySubscriptionEmail", models.ExampleVerifySubscriptionSuccessRequest, verify)
+	h.AddResponse("VerifySubscriptionReply", "success", models.ExampleVerifySubscriptionResponse, verify, http.StatusOK)
+	verify.AddResponse(http.StatusInternalServerError, internalServerError())
+	verify.AddResponse(http.StatusBadRequest, badRequest())
+	verify.AddResponse(http.StatusCreated, created())
+
+	return verify
 }

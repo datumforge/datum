@@ -48,12 +48,11 @@ func init() {
 }
 
 func updateOrganizationSetting(ctx context.Context) error {
-	cli, err := datum.GetGraphClient(ctx)
+	// setup datum http client
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -100,7 +99,7 @@ func updateOrganizationSetting(ctx context.Context) error {
 		input.Domains = domains
 	}
 
-	o, err := cli.Client.UpdateOrganizationSetting(ctx, settingsID, input, cli.Interceptor)
+	o, err := client.UpdateOrganizationSetting(ctx, settingsID, input)
 	if err != nil {
 		return err
 	}

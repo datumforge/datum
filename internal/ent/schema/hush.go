@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -61,8 +60,7 @@ func (Hush) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("integrations", Integration.Type).
 			Comment("the integration associated with the secret").
-			Ref("secrets").
-			Annotations(entoas.Skip(true)),
+			Ref("secrets"),
 		edge.From("organization", Organization.Type).
 			Ref("secrets"),
 		edge.To("events", Event.Type),

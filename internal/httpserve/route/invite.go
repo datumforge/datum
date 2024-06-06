@@ -4,22 +4,29 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
-func registerInviteHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	// require authentication to accept an invitation
-	authMW := mw
-	authMW = append(authMW, h.AuthMiddleware...)
-	_, err = router.AddRoute(echo.Route{
-		Name:   "OrganizationInviteAccept",
-		Method: http.MethodGet,
-		Path:   "/invite",
-		Handler: func(c echo.Context) error {
-			return h.OrganizationInviteAccept(c)
-		},
-	}.ForGroup(V1Version, authMW))
+// registerInviteHandler registers the invite handler
+func registerInviteHandler(router *Router) (err error) {
+	path := "/invite"
+	method := http.MethodGet
+	name := "OrganizationInviteAccept"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: authMW,
+		Handler: func(c echo.Context) error {
+			return router.Handler.OrganizationInviteAccept(c)
+		},
+	}
+
+	inviteOperation := router.Handler.BindOrganizationInviteAccept()
+
+	if err := router.Addv1Route(path, method, inviteOperation, route); err != nil {
+		return err
+	}
+
+	return nil
 }

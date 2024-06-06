@@ -4,58 +4,96 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // registerWebauthnRegistrationHandler registers the webauthn registration handler
-func registerWebauthnRegistrationHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodPost,
-		Path:   "/registration/options",
-		Handler: func(c echo.Context) error {
-			return h.BeginWebauthnRegistration(c)
-		},
-	}.ForGroup(V1Version, mw))
+func registerWebauthnRegistrationHandler(router *Router) (err error) {
+	path := "/registration/options"
+	method := http.MethodPost
+	name := "WebauthnRegistration"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler: func(c echo.Context) error {
+			return router.Handler.BeginWebauthnRegistration(c)
+		},
+	}
+
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // registerWebauthnVerificationsHandler registers the webauthn registration verification handler
-func registerWebauthnVerificationsHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodPost,
-		Path:   "/registration/verification",
-		Handler: func(c echo.Context) error {
-			return h.FinishWebauthnRegistration(c)
-		},
-	}.ForGroup(V1Version, mw))
+func registerWebauthnVerificationsHandler(router *Router) (err error) {
+	path := "/registration/verification"
+	method := http.MethodPost
+	name := "WebauthnRegistrationVerification"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler: func(c echo.Context) error {
+			return router.Handler.FinishWebauthnRegistration(c)
+		},
+	}
+
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // registerWebauthnAuthenticationHandler registers the webauthn authentication handler
-func registerWebauthnAuthenticationHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodPost,
-		Path:   "/authentication/options",
-		Handler: func(c echo.Context) error {
-			return h.BeginWebauthnLogin(c)
-		},
-	}.ForGroup(V1Version, mw))
+func registerWebauthnAuthenticationHandler(router *Router) (err error) {
+	path := "/authentication/options"
+	method := http.MethodPost
+	name := "WebauthnAuthentication"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler: func(c echo.Context) error {
+			return router.Handler.BeginWebauthnLogin(c)
+		},
+	}
+
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // registerWebauthnAuthVerificationHandler registers the webauthn authentication verification handler
-func registerWebauthnAuthVerificationHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodPost,
-		Path:   "/authentication/verification",
-		Handler: func(c echo.Context) error {
-			return h.FinishWebauthnLogin(c)
-		},
-	}.ForGroup(V1Version, mw))
+func registerWebauthnAuthVerificationHandler(router *Router) (err error) {
+	path := "/authentication/verification"
+	method := http.MethodPost
+	name := "WebauthnAuthenticationVerification"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler: func(c echo.Context) error {
+			return router.Handler.FinishWebauthnLogin(c)
+		},
+	}
+
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }

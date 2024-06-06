@@ -31,13 +31,10 @@ func init() {
 
 func subscriberCreate(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	subscriberInput := []*datumclient.CreateSubscriberInput{}
@@ -53,7 +50,7 @@ func subscriberCreate(ctx context.Context) error {
 			File: input,
 		}
 
-		sub, err := cli.Client.CreateBulkCSVSubscriber(ctx, in, cli.Interceptor)
+		sub, err := client.CreateBulkCSVSubscriber(ctx, in)
 		if err != nil {
 			return err
 		}
@@ -85,7 +82,7 @@ func subscriberCreate(ctx context.Context) error {
 			})
 		}
 
-		sub, err := cli.Client.CreateBulkSubscriber(ctx, subscriberInput, cli.Interceptor)
+		sub, err := client.CreateBulkSubscriber(ctx, subscriberInput)
 		if err != nil {
 			return err
 		}

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
@@ -29,13 +28,10 @@ func init() {
 
 func orgs(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -47,7 +43,7 @@ func orgs(ctx context.Context) error {
 
 	// if an org ID is provided, filter on that organization, otherwise get all
 	if oID != "" {
-		org, err := cli.Client.GetOrganizationByID(ctx, oID, cli.Interceptor)
+		org, err := client.GetOrganizationByID(ctx, oID)
 		if err != nil {
 			return err
 		}
@@ -67,7 +63,7 @@ func orgs(ctx context.Context) error {
 		return nil
 	}
 
-	orgs, err := cli.Client.GetAllOrganizations(ctx, cli.Interceptor)
+	orgs, err := client.GetAllOrganizations(ctx)
 	if err != nil {
 		return err
 	}

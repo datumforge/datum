@@ -3,17 +3,13 @@ package datum
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/http/cookiejar"
+	"net/url"
 	"os"
 	"path"
 	"strings"
 
 	"github.com/99designs/keyring"
-	"github.com/TylerBrock/colorjson"
-	"github.com/Yamashou/gqlgenc/clientv2"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -22,15 +18,14 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
 const (
 	appName         = "datum"
-	defaultRootHost = "http://localhost:17608/"
-	graphEndpoint   = "query"
+	defaultRootHost = "http://localhost:17608"
 	TableOutput     = "table"
 	JSONOutput      = "json"
 )
@@ -53,12 +48,6 @@ var (
 	userKeyring       keyring.Keyring
 	userKeyringLoaded = false
 )
-
-type CLI struct {
-	Client      datumclient.DatumClient
-	Interceptor clientv2.RequestInterceptor
-	AccessToken string
-}
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -118,8 +107,6 @@ func initConfig() {
 
 	DatumHost = viper.GetString("datum.host")
 
-	GraphAPIHost = fmt.Sprintf("%s%s", DatumHost, graphEndpoint)
-
 	setupLogging()
 
 	if err == nil {
@@ -158,9 +145,9 @@ func ViperBindFlag(name string, flag *pflag.Flag) {
 
 // StoreSessionCookies gets the session cookie from the cookie jar
 // and stores it in the keychain for future requests
-func StoreSessionCookies(client *datumclient.Client) {
-	session, err := datumclient.GetSessionFromCookieJar(client)
-	if err != nil {
+func StoreSessionCookies(client *datumclient.DatumClient) {
+	session, err := client.GetSessionFromCookieJar()
+	if err != nil || session == "" {
 		fmt.Println("unable to get session from cookie jar")
 
 		return
@@ -173,67 +160,7 @@ func StoreSessionCookies(client *datumclient.Client) {
 	}
 }
 
-func JSONPrint(s []byte) error {
-	var obj map[string]interface{}
-
-	err := json.Unmarshal(s, &obj)
-	if err != nil {
-		return err
-	}
-
-	f := colorjson.NewFormatter()
-	f.Indent = 2
-
-	o, err := f.Marshal(obj)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(string(o))
-
-	return nil
-}
-
-// ParseJSON parses a JSON formatted string into a map
-func ParseJSON(v string) (map[string]interface{}, error) {
-	var m map[string]interface{}
-
-	if err := json.Unmarshal([]byte(v), &m); err != nil {
-		return nil, err
-	}
-
-	return m, nil
-}
-
-// ParseBytes parses buffered bytes into a map
-func ParseBytes(v []byte) (map[string]interface{}, error) {
-	var m map[string]interface{}
-
-	if err := json.Unmarshal(v, &m); err != nil {
-		return nil, err
-	}
-
-	return m, nil
-}
-
-func createClient(ctx context.Context, baseURL string) (*CLI, error) {
-	cli := CLI{}
-
-	// setup datum http client with cookie jar
-	jar, err := cookiejar.New(nil)
-	if err != nil {
-		return nil, err
-	}
-
-	h := &http.Client{
-		Jar: jar,
-	}
-
-	// set options
-	opt := &clientv2.Options{
-		ParseDataAlongWithErrors: false,
-	}
-
+func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) {
 	// setup interceptors
 	token, session, err := GetTokenFromKeyring(ctx)
 	if err != nil {
@@ -260,33 +187,51 @@ func createClient(ctx context.Context, baseURL string) (*CLI, error) {
 		}
 	}
 
-	auth := datumclient.Authorization{
+	config := datumclient.NewDefaultConfig()
+
+	// setup the logging interceptor
+	if viper.GetBool("logging.debug") {
+		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
+	}
+
+	endpointOpt, err := configureClientEndpoints()
+	if err != nil {
+		return nil, err
+	}
+
+	opts := []datumclient.ClientOption{endpointOpt}
+
+	opts = append(opts, datumclient.WithCredentials(datumclient.Authorization{
 		BearerToken: token.AccessToken,
 		Session:     session,
-	}
+	}))
 
-	i := auth.WithAuthorization()
-	interceptors := []clientv2.RequestInterceptor{i}
+	return datumclient.New(config, opts...)
+}
 
+func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
+	config := datumclient.NewDefaultConfig()
+
+	// setup the logging interceptor
 	if viper.GetBool("logging.debug") {
-		interceptors = append(interceptors, datumclient.WithLoggingInterceptor())
+		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
 	}
 
-	cli.Client = datumclient.NewClient(h, baseURL, opt, interceptors...)
+	endpointOpt, err := configureClientEndpoints()
+	if err != nil {
+		return nil, err
+	}
 
-	cli.Interceptor = i
-	cli.AccessToken = auth.BearerToken
-
-	// new client with params
-	return &cli, nil
+	return datumclient.New(config, endpointOpt)
 }
 
-func GetGraphClient(ctx context.Context) (*CLI, error) {
-	return createClient(ctx, GraphAPIHost)
-}
+func configureClientEndpoints() (datumclient.ClientOption, error) {
+	baseURL, err := url.Parse(DatumHost)
+	if err != nil {
+		return nil, err
+	}
 
-func GetRestClient(ctx context.Context) (*CLI, error) {
-	return createClient(ctx, DatumHost)
+	return datumclient.WithBaseURL(baseURL), nil
 }
 
 // GetTokenFromKeyring will return the oauth token from the keyring
@@ -321,22 +266,24 @@ func GetTokenFromKeyring(ctx context.Context) (*oauth2.Token, string, error) {
 
 func refreshToken(ctx context.Context, refresh string) (*oauth2.Token, error) {
 	// setup datum http client
-	h := &http.Client{}
+	client, err := SetupClient(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	// set options
-	opt := &clientv2.Options{}
-
-	// new client with params
-	c := datumclient.NewClient(h, DatumHost, opt, nil)
-
-	// this allows the use of the graph client to be used for the REST endpoints
-	dc := c.(*datumclient.Client)
-
-	req := handlers.RefreshRequest{
+	req := models.RefreshRequest{
 		RefreshToken: refresh,
 	}
 
-	return datumclient.Refresh(dc, ctx, req)
+	resp, err := client.Refresh(ctx, &req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oauth2.Token{
+		AccessToken:  resp.AccessToken,
+		RefreshToken: resp.RefreshToken,
+	}, nil
 }
 
 // GetKeyring will return the already loaded keyring so that we don't prompt users for passwords multiple times

@@ -4,109 +4,165 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // registerOAuthRegisterHandler registers the oauth register handler used by the UI to register
 // users logging in with an oauth provider
-func registerOAuthRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodPost,
-		Path:   "/oauth/register",
-		Handler: func(c echo.Context) error {
-			return h.OauthRegister(c)
-		},
-	}.ForGroup(unversioned, mw))
+func registerOAuthRegisterHandler(router *Router) (err error) {
+	path := "/oauth/register"
+	method := http.MethodPost
+	name := "OAuthRegister"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler: func(c echo.Context) error {
+			return router.Handler.OauthRegister(c)
+		},
+	}
+
+	if err := router.AddUnversionedRoute(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // registerUserInfoHandler registers the userinfo handler
-func registerUserInfoHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	authMW := mw
-	authMW = append(authMW, h.AuthMiddleware...)
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/oauth/userinfo",
+func registerUserInfoHandler(router *Router) (err error) {
+	path := "/oauth/userinfo"
+	method := http.MethodGet
+	name := "UserInfo"
+
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: authMW,
 		Handler: func(c echo.Context) error {
 			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 
-			return h.UserInfo(c)
+			return router.Handler.UserInfo(c)
 		},
-	}.ForGroup(unversioned, authMW))
+	}
 
-	return
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // registerGithubLoginHandler registers the github login handler
-func registerGithubLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/github/login",
-		Handler: githubLogin(h),
-	}.ForGroup(V1Version, mw))
+func registerGithubLoginHandler(router *Router) (err error) {
+	path := "/github/login"
+	method := http.MethodGet
+	name := "GitHubLogin"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     githubLogin(router),
+	}
+
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // registerGithubCallbackHandler registers the github callback handler
-func registerGithubCallbackHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/github/callback",
-		Handler: githubCallback(h),
-	}.ForGroup(V1Version, mw))
+func registerGithubCallbackHandler(router *Router) (err error) {
+	path := "/github/callback"
+	method := http.MethodGet
+	name := "GitHubCallback"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     githubCallback(router),
+	}
+
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // registerGoogleLoginHandler registers the google login handler
-func registerGoogleLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/google/login",
-		Handler: googleLogin(h),
-	}.ForGroup(V1Version, mw))
+func registerGoogleLoginHandler(router *Router) (err error) {
+	path := "/google/login"
+	method := http.MethodGet
+	name := "GoogleLogin"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     googleLogin(router),
+	}
+
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // registerGoogleCallbackHandler registers the google callback handler
-func registerGoogleCallbackHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/google/callback",
-		Handler: googleCallback(h),
-	}.ForGroup(V1Version, mw))
+func registerGoogleCallbackHandler(router *Router) (err error) {
+	path := "/google/callback"
+	method := http.MethodGet
+	name := "GoogleCallback"
 
-	return
+	route := echo.Route{
+		Name:        name,
+		Method:      method,
+		Path:        path,
+		Middlewares: mw,
+		Handler:     googleCallback(router),
+	}
+
+	if err := router.Addv1Route(path, method, nil, route); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // githubLogin wraps getloginhandlers
-func githubLogin(h *handlers.Handler) echo.HandlerFunc {
-	login, _ := h.GetGitHubLoginHandlers()
+func githubLogin(h *Router) echo.HandlerFunc {
+	login, _ := h.Handler.GetGitHubLoginHandlers()
 
 	return echo.WrapHandler(login)
 }
 
 // googleLogin wraps getloginhandlers
-func googleLogin(h *handlers.Handler) echo.HandlerFunc {
-	login, _ := h.GetGoogleLoginHandlers()
+func googleLogin(h *Router) echo.HandlerFunc {
+	login, _ := h.Handler.GetGoogleLoginHandlers()
 
 	return echo.WrapHandler(login)
 }
 
 // githubCallback wraps getloginhandlers
-func githubCallback(h *handlers.Handler) echo.HandlerFunc {
-	_, callback := h.GetGitHubLoginHandlers()
+func githubCallback(h *Router) echo.HandlerFunc {
+	_, callback := h.Handler.GetGitHubLoginHandlers()
 
 	return echo.WrapHandler(callback)
 }
 
 // googleCallback wraps getloginhandlers
-func googleCallback(h *handlers.Handler) echo.HandlerFunc {
-	_, callback := h.GetGoogleLoginHandlers()
+func googleCallback(h *Router) echo.HandlerFunc {
+	_, callback := h.Handler.GetGoogleLoginHandlers()
 
 	return echo.WrapHandler(callback)
 }

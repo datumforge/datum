@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var inviteDeleteCmd = &cobra.Command{
@@ -28,13 +27,10 @@ func init() {
 
 func deleteInvite(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetGraphClient(ctx)
+	client, err := datum.SetupClientWithAuth(ctx)
 	if err != nil {
 		return err
 	}
-
-	// save session cookies on function exit
-	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
 	invID := viper.GetString("invite.delete.inviteid")
@@ -44,7 +40,7 @@ func deleteInvite(ctx context.Context) error {
 
 	var s []byte
 
-	invite, err := cli.Client.DeleteInvite(ctx, invID, cli.Interceptor)
+	invite, err := client.DeleteInvite(ctx, invID)
 	if err != nil {
 		return err
 	}

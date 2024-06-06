@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
@@ -103,7 +104,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 				mock_fga.WriteAny(t, suite.fga)
 			}
 
-			registerJSON := handlers.RegisterRequest{
+			registerJSON := models.RegisterRequest{
 				FirstName: tc.firstName,
 				LastName:  tc.lastName,
 				Email:     tc.email,
@@ -127,7 +128,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.RegisterReply
+			var out *models.RegisterReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

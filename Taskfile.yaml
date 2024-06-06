@@ -15,10 +15,6 @@ includes:
     taskfile: ./db/Taskfile.yaml
     dir: ./db
     aliases: [atlas]
-  oas:
-    taskfile: ./pkg/utils/oas/Taskfile.yaml
-    dir: ./pkg/utils/oas
-    aliases: [oas]
   config:
     taskfile: ./jsonschema/Taskfile.yaml
 
@@ -52,13 +48,12 @@ tasks:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc.
     cmds:
       - go generate ./...
-      - cp ./internal/ent/generated/openapi.json ./pkg/utils/oas/specifications/openapi.json
 
   ## Go tasks
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
     cmds:
-      - golangci-lint run --config=.golangci.yaml --verbose --fast
+      - golangci-lint run --config=.golangci.yaml --verbose --fast --fix
 
   go:test:
     desc: runs and outputs results of created go tests

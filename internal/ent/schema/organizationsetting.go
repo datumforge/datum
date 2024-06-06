@@ -8,7 +8,6 @@ import (
 	"regexp"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -92,12 +91,6 @@ func (OrganizationSetting) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
-		entoas.Skip(true),
-		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entfga.Annotations{
 			ObjectType:      "organization",
 			IncludeHooks:    false,

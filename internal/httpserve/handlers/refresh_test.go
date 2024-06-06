@@ -17,8 +17,8 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/ulids"
 )
@@ -100,7 +100,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			refreshJSON := handlers.RefreshRequest{
+			refreshJSON := models.RefreshRequest{
 				RefreshToken: tc.refresh,
 			}
 
@@ -121,7 +121,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.RefreshReply
+			var out *models.RefreshReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

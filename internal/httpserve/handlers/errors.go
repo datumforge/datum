@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
 	"strings"
+
+	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/rout"
@@ -124,4 +127,28 @@ func IsForeignKeyConstraintError(err error) bool {
 	}
 
 	return false
+}
+
+func (h *Handler) InvalidRequest(ctx echo.Context, err error) error {
+	return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+}
+
+func (h *Handler) InternalServerError(ctx echo.Context, err error) error {
+	return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+}
+
+func (h *Handler) Unauthorized(ctx echo.Context, err error) error {
+	return ctx.JSON(http.StatusUnauthorized, rout.ErrorResponse(err))
+}
+
+func (h *Handler) NotFound(ctx echo.Context, err error) error {
+	return ctx.JSON(http.StatusNotFound, rout.ErrorResponse(err))
+}
+
+func (h *Handler) BadRequest(ctx echo.Context, err error) error {
+	return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+}
+
+func (h *Handler) Success(ctx echo.Context, rep interface{}) error {
+	return ctx.JSON(http.StatusOK, rep)
 }

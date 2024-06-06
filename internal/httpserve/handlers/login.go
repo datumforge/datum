@@ -23,27 +23,31 @@ import (
 func (h *Handler) LoginHandler(ctx echo.Context) error {
 	var in models.LoginRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// check user in the database, username == email and ensure only one record is returned
 	user, err := h.getUserByEmail(ctx.Request().Context(), in.Username, enums.AuthProviderCredentials)
 	if err != nil {
-		return err
+		return h.BadRequest(ctx, auth.ErrNoAuthUser)
+	}
+
+	if user.Edges.Setting.Status != "ACTIVE" {
+		return h.BadRequest(ctx, auth.ErrNoAuthUser)
 	}
 
 	// verify the password is correct
 	valid, err := passwd.VerifyDerivedKey(*user.Password, in.Password)
 	if err != nil || !valid {
-		return ErrInvalidCredentials
+		return h.BadRequest(ctx, rout.ErrInvalidCredentials)
 	}
 
-	if err := h.verifyUserStatus(user); err != nil {
-		return h.BadRequest(ctx, err)
+	if !user.Edges.Setting.EmailConfirmed {
+		return h.BadRequest(ctx, auth.ErrUnverifiedUser)
 	}
 
 	// set context for remaining request based on logged in user
@@ -121,20 +125,6 @@ func createClaims(u *generated.User) *tokens.Claims {
 		UserID: u.MappingID,
 		OrgID:  orgID,
 	}
-}
-
-// verifyUserStatus verifies the user is active and has a verified email
-func (h *Handler) verifyUserStatus(user *generated.User) error {
-	if user.Edges.Setting.Status != "ACTIVE" {
-		return ErrNoAuthUser
-	}
-
-	// verify email is verified
-	if !user.Edges.Setting.EmailConfirmed {
-		return ErrUnverifiedUser
-	}
-
-	return nil
 }
 
 // BindLoginHandler binds the login request to the OpenAPI schema

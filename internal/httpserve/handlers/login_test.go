@@ -15,7 +15,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/models"
@@ -107,14 +106,14 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 			username:       "",
 			password:       validPassword,
 			expectedStatus: http.StatusBadRequest,
-			expectedErr:    handlers.ErrMissingRequiredFields,
+			expectedErr:    rout.NewMissingRequiredFieldError("username"),
 		},
 		{
-			name:           "empty username",
+			name:           "empty password",
 			username:       validConfirmedUser,
 			password:       "",
 			expectedStatus: http.StatusBadRequest,
-			expectedErr:    handlers.ErrMissingRequiredFields,
+			expectedErr:    rout.NewMissingRequiredFieldError("password"),
 		},
 	}
 

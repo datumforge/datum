@@ -234,8 +234,8 @@ require (
 	github.com/alitto/pond v1.8.3
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.27.1
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.16.22
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.54.4
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.16.23
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.55.0
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect

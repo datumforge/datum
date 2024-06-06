@@ -21,8 +21,8 @@ var resetCmd = &cobra.Command{
 func init() {
 	datum.RootCmd.AddCommand(resetCmd)
 
-	registerCmd.Flags().StringP("token", "t", "", "reset token")
-	registerCmd.Flags().StringP("password", "p", "", "new password of the user")
+	resetCmd.Flags().StringP("token", "t", "", "reset token")
+	resetCmd.Flags().StringP("password", "p", "", "new password of the user")
 }
 
 func resetPassword(ctx context.Context) error {

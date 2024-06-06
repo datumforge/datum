@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/oauth2"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/models"

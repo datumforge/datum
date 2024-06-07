@@ -6,7 +6,7 @@ require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
-	github.com/99designs/gqlgen v0.17.47
+	github.com/99designs/gqlgen v0.17.48
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/Yamashou/gqlgenc v0.23.1
@@ -45,7 +45,7 @@ require (
 	github.com/pressly/goose/v3 v3.20.0
 	github.com/prometheus/client_golang v1.19.1
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e
-	github.com/redis/go-redis/v9 v9.5.2
+	github.com/redis/go-redis/v9 v9.5.3
 	github.com/samber/lo v1.39.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stoewer/go-strcase v1.3.0

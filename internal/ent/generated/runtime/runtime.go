@@ -136,18 +136,36 @@ func init() {
 	// apitoken.DefaultID holds the default value on creation for the id field.
 	apitoken.DefaultID = apitokenDescID.Default.(func() string)
 	documentdataMixin := schema.DocumentData{}.Mixin()
+	documentdata.Policy = privacy.NewPolicies(schema.DocumentData{})
+	documentdata.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := documentdata.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	documentdataMixinHooks0 := documentdataMixin[0].Hooks()
 	documentdataMixinHooks3 := documentdataMixin[3].Hooks()
-	documentdata.Hooks[0] = documentdataMixinHooks0[0]
-	documentdata.Hooks[1] = documentdataMixinHooks3[0]
+	documentdataMixinHooks4 := documentdataMixin[4].Hooks()
+
+	documentdata.Hooks[1] = documentdataMixinHooks0[0]
+
+	documentdata.Hooks[2] = documentdataMixinHooks3[0]
+
+	documentdata.Hooks[3] = documentdataMixinHooks4[0]
 	documentdataMixinInters3 := documentdataMixin[3].Interceptors()
+	documentdataMixinInters4 := documentdataMixin[4].Interceptors()
 	documentdata.Interceptors[0] = documentdataMixinInters3[0]
+	documentdata.Interceptors[1] = documentdataMixinInters4[0]
 	documentdataMixinFields0 := documentdataMixin[0].Fields()
 	_ = documentdataMixinFields0
 	documentdataMixinFields1 := documentdataMixin[1].Fields()
 	_ = documentdataMixinFields1
 	documentdataMixinFields2 := documentdataMixin[2].Fields()
 	_ = documentdataMixinFields2
+	documentdataMixinFields4 := documentdataMixin[4].Fields()
+	_ = documentdataMixinFields4
 	documentdataFields := schema.DocumentData{}.Fields()
 	_ = documentdataFields
 	// documentdataDescCreatedAt is the schema descriptor for created_at field.
@@ -168,6 +186,10 @@ func init() {
 	documentdataDescTags := documentdataMixinFields2[0].Descriptor()
 	// documentdata.DefaultTags holds the default value on creation for the tags field.
 	documentdata.DefaultTags = documentdataDescTags.Default.([]string)
+	// documentdataDescOwnerID is the schema descriptor for owner_id field.
+	documentdataDescOwnerID := documentdataMixinFields4[0].Descriptor()
+	// documentdata.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	documentdata.OwnerIDValidator = documentdataDescOwnerID.Validators[0].(func(string) error)
 	// documentdataDescID is the schema descriptor for id field.
 	documentdataDescID := documentdataMixinFields1[0].Descriptor()
 	// documentdata.DefaultID holds the default value on creation for the id field.
@@ -272,12 +294,24 @@ func init() {
 	// emailverificationtoken.DefaultID holds the default value on creation for the id field.
 	emailverificationtoken.DefaultID = emailverificationtokenDescID.Default.(func() string)
 	entitlementMixin := schema.Entitlement{}.Mixin()
+	entitlement.Policy = privacy.NewPolicies(schema.Entitlement{})
+	entitlement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := entitlement.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
 	entitlementMixinHooks3 := entitlementMixin[3].Hooks()
 	entitlementMixinHooks4 := entitlementMixin[4].Hooks()
-	entitlement.Hooks[0] = entitlementMixinHooks0[0]
-	entitlement.Hooks[1] = entitlementMixinHooks3[0]
-	entitlement.Hooks[2] = entitlementMixinHooks4[0]
+
+	entitlement.Hooks[1] = entitlementMixinHooks0[0]
+
+	entitlement.Hooks[2] = entitlementMixinHooks3[0]
+
+	entitlement.Hooks[3] = entitlementMixinHooks4[0]
 	entitlementMixinInters3 := entitlementMixin[3].Interceptors()
 	entitlementMixinInters4 := entitlementMixin[4].Interceptors()
 	entitlement.Interceptors[0] = entitlementMixinInters3[0]
@@ -1075,18 +1109,36 @@ func init() {
 	// invite.DefaultID holds the default value on creation for the id field.
 	invite.DefaultID = inviteDescID.Default.(func() string)
 	oauthproviderMixin := schema.OauthProvider{}.Mixin()
+	oauthprovider.Policy = privacy.NewPolicies(schema.OauthProvider{})
+	oauthprovider.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := oauthprovider.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	oauthproviderMixinHooks0 := oauthproviderMixin[0].Hooks()
 	oauthproviderMixinHooks3 := oauthproviderMixin[3].Hooks()
-	oauthprovider.Hooks[0] = oauthproviderMixinHooks0[0]
-	oauthprovider.Hooks[1] = oauthproviderMixinHooks3[0]
+	oauthproviderMixinHooks4 := oauthproviderMixin[4].Hooks()
+
+	oauthprovider.Hooks[1] = oauthproviderMixinHooks0[0]
+
+	oauthprovider.Hooks[2] = oauthproviderMixinHooks3[0]
+
+	oauthprovider.Hooks[3] = oauthproviderMixinHooks4[0]
 	oauthproviderMixinInters3 := oauthproviderMixin[3].Interceptors()
+	oauthproviderMixinInters4 := oauthproviderMixin[4].Interceptors()
 	oauthprovider.Interceptors[0] = oauthproviderMixinInters3[0]
+	oauthprovider.Interceptors[1] = oauthproviderMixinInters4[0]
 	oauthproviderMixinFields0 := oauthproviderMixin[0].Fields()
 	_ = oauthproviderMixinFields0
 	oauthproviderMixinFields1 := oauthproviderMixin[1].Fields()
 	_ = oauthproviderMixinFields1
 	oauthproviderMixinFields2 := oauthproviderMixin[2].Fields()
 	_ = oauthproviderMixinFields2
+	oauthproviderMixinFields4 := oauthproviderMixin[4].Fields()
+	_ = oauthproviderMixinFields4
 	oauthproviderFields := schema.OauthProvider{}.Fields()
 	_ = oauthproviderFields
 	// oauthproviderDescCreatedAt is the schema descriptor for created_at field.
@@ -1107,6 +1159,10 @@ func init() {
 	oauthproviderDescTags := oauthproviderMixinFields2[0].Descriptor()
 	// oauthprovider.DefaultTags holds the default value on creation for the tags field.
 	oauthprovider.DefaultTags = oauthproviderDescTags.Default.([]string)
+	// oauthproviderDescOwnerID is the schema descriptor for owner_id field.
+	oauthproviderDescOwnerID := oauthproviderMixinFields4[0].Descriptor()
+	// oauthprovider.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	oauthprovider.OwnerIDValidator = oauthproviderDescOwnerID.Validators[0].(func(string) error)
 	// oauthproviderDescID is the schema descriptor for id field.
 	oauthproviderDescID := oauthproviderMixinFields1[0].Descriptor()
 	// oauthprovider.DefaultID holds the default value on creation for the id field.
@@ -1766,12 +1822,24 @@ func init() {
 	// tfasetting.DefaultID holds the default value on creation for the id field.
 	tfasetting.DefaultID = tfasettingDescID.Default.(func() string)
 	templateMixin := schema.Template{}.Mixin()
+	template.Policy = privacy.NewPolicies(schema.Template{})
+	template.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := template.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	templateMixinHooks0 := templateMixin[0].Hooks()
 	templateMixinHooks1 := templateMixin[1].Hooks()
 	templateMixinHooks4 := templateMixin[4].Hooks()
-	template.Hooks[0] = templateMixinHooks0[0]
-	template.Hooks[1] = templateMixinHooks1[0]
-	template.Hooks[2] = templateMixinHooks4[0]
+
+	template.Hooks[1] = templateMixinHooks0[0]
+
+	template.Hooks[2] = templateMixinHooks1[0]
+
+	template.Hooks[3] = templateMixinHooks4[0]
 	templateMixinInters1 := templateMixin[1].Interceptors()
 	templateMixinInters4 := templateMixin[4].Interceptors()
 	template.Interceptors[0] = templateMixinInters1[0]

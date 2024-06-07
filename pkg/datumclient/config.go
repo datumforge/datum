@@ -47,7 +47,6 @@ var defaultClientConfig = Config{
 		Headers: &http.Header{
 			"Accept":          []string{httpsling.ContentTypeJSONUTF8},
 			"Accept-Language": []string{"en-US,en"},
-			"Accept-Encoding": []string{"gzip, deflate, br"},
 			"Content-Type":    []string{httpsling.ContentTypeJSONUTF8},
 		},
 	},

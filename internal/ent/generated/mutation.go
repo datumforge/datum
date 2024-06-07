@@ -1542,6 +1542,8 @@ type DocumentDataMutation struct {
 	deleted_by      *string
 	data            *customtypes.JSONObject
 	clearedFields   map[string]struct{}
+	owner           *string
+	clearedowner    bool
 	template        *string
 	clearedtemplate bool
 	done            bool
@@ -2048,6 +2050,55 @@ func (m *DocumentDataMutation) ResetDeletedBy() {
 	delete(m.clearedFields, documentdata.FieldDeletedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *DocumentDataMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *DocumentDataMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *DocumentDataMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[documentdata.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *DocumentDataMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[documentdata.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *DocumentDataMutation) ResetOwnerID() {
+	m.owner = nil
+	delete(m.clearedFields, documentdata.FieldOwnerID)
+}
+
 // SetTemplateID sets the "template_id" field.
 func (m *DocumentDataMutation) SetTemplateID(s string) {
 	m.template = &s
@@ -2120,6 +2171,33 @@ func (m *DocumentDataMutation) ResetData() {
 	m.data = nil
 }
 
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (m *DocumentDataMutation) ClearOwner() {
+	m.clearedowner = true
+	m.clearedFields[documentdata.FieldOwnerID] = struct{}{}
+}
+
+// OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
+func (m *DocumentDataMutation) OwnerCleared() bool {
+	return m.OwnerIDCleared() || m.clearedowner
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *DocumentDataMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *DocumentDataMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
 // ClearTemplate clears the "template" edge to the Template entity.
 func (m *DocumentDataMutation) ClearTemplate() {
 	m.clearedtemplate = true
@@ -2181,7 +2259,7 @@ func (m *DocumentDataMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DocumentDataMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, documentdata.FieldCreatedAt)
 	}
@@ -2205,6 +2283,9 @@ func (m *DocumentDataMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, documentdata.FieldDeletedBy)
+	}
+	if m.owner != nil {
+		fields = append(fields, documentdata.FieldOwnerID)
 	}
 	if m.template != nil {
 		fields = append(fields, documentdata.FieldTemplateID)
@@ -2236,6 +2317,8 @@ func (m *DocumentDataMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case documentdata.FieldDeletedBy:
 		return m.DeletedBy()
+	case documentdata.FieldOwnerID:
+		return m.OwnerID()
 	case documentdata.FieldTemplateID:
 		return m.TemplateID()
 	case documentdata.FieldData:
@@ -2265,6 +2348,8 @@ func (m *DocumentDataMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDeletedAt(ctx)
 	case documentdata.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case documentdata.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case documentdata.FieldTemplateID:
 		return m.OldTemplateID(ctx)
 	case documentdata.FieldData:
@@ -2334,6 +2419,13 @@ func (m *DocumentDataMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedBy(v)
 		return nil
+	case documentdata.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
 	case documentdata.FieldTemplateID:
 		v, ok := value.(string)
 		if !ok {
@@ -2399,6 +2491,9 @@ func (m *DocumentDataMutation) ClearedFields() []string {
 	if m.FieldCleared(documentdata.FieldDeletedBy) {
 		fields = append(fields, documentdata.FieldDeletedBy)
 	}
+	if m.FieldCleared(documentdata.FieldOwnerID) {
+		fields = append(fields, documentdata.FieldOwnerID)
+	}
 	return fields
 }
 
@@ -2434,6 +2529,9 @@ func (m *DocumentDataMutation) ClearField(name string) error {
 	case documentdata.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case documentdata.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
 	}
 	return fmt.Errorf("unknown DocumentData nullable field %s", name)
 }
@@ -2466,6 +2564,9 @@ func (m *DocumentDataMutation) ResetField(name string) error {
 	case documentdata.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case documentdata.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
 	case documentdata.FieldTemplateID:
 		m.ResetTemplateID()
 		return nil
@@ -2478,7 +2579,10 @@ func (m *DocumentDataMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DocumentDataMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.owner != nil {
+		edges = append(edges, documentdata.EdgeOwner)
+	}
 	if m.template != nil {
 		edges = append(edges, documentdata.EdgeTemplate)
 	}
@@ -2489,6 +2593,10 @@ func (m *DocumentDataMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *DocumentDataMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case documentdata.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
 	case documentdata.EdgeTemplate:
 		if id := m.template; id != nil {
 			return []ent.Value{*id}
@@ -2499,7 +2607,7 @@ func (m *DocumentDataMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DocumentDataMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -2511,7 +2619,10 @@ func (m *DocumentDataMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DocumentDataMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.clearedowner {
+		edges = append(edges, documentdata.EdgeOwner)
+	}
 	if m.clearedtemplate {
 		edges = append(edges, documentdata.EdgeTemplate)
 	}
@@ -2522,6 +2633,8 @@ func (m *DocumentDataMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *DocumentDataMutation) EdgeCleared(name string) bool {
 	switch name {
+	case documentdata.EdgeOwner:
+		return m.clearedowner
 	case documentdata.EdgeTemplate:
 		return m.clearedtemplate
 	}
@@ -2532,6 +2645,9 @@ func (m *DocumentDataMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *DocumentDataMutation) ClearEdge(name string) error {
 	switch name {
+	case documentdata.EdgeOwner:
+		m.ClearOwner()
+		return nil
 	case documentdata.EdgeTemplate:
 		m.ClearTemplate()
 		return nil
@@ -2543,6 +2659,9 @@ func (m *DocumentDataMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *DocumentDataMutation) ResetEdge(name string) error {
 	switch name {
+	case documentdata.EdgeOwner:
+		m.ResetOwner()
+		return nil
 	case documentdata.EdgeTemplate:
 		m.ResetTemplate()
 		return nil
@@ -2568,6 +2687,7 @@ type DocumentDataHistoryMutation struct {
 	appendtags    []string
 	deleted_at    *time.Time
 	deleted_by    *string
+	owner_id      *string
 	template_id   *string
 	data          *customtypes.JSONObject
 	clearedFields map[string]struct{}
@@ -3196,6 +3316,55 @@ func (m *DocumentDataHistoryMutation) ResetDeletedBy() {
 	delete(m.clearedFields, documentdatahistory.FieldDeletedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *DocumentDataHistoryMutation) SetOwnerID(s string) {
+	m.owner_id = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *DocumentDataHistoryMutation) OwnerID() (r string, exists bool) {
+	v := m.owner_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the DocumentDataHistory entity.
+// If the DocumentDataHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataHistoryMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *DocumentDataHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[documentdatahistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *DocumentDataHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[documentdatahistory.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *DocumentDataHistoryMutation) ResetOwnerID() {
+	m.owner_id = nil
+	delete(m.clearedFields, documentdatahistory.FieldOwnerID)
+}
+
 // SetTemplateID sets the "template_id" field.
 func (m *DocumentDataHistoryMutation) SetTemplateID(s string) {
 	m.template_id = &s
@@ -3302,7 +3471,7 @@ func (m *DocumentDataHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DocumentDataHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.history_time != nil {
 		fields = append(fields, documentdatahistory.FieldHistoryTime)
 	}
@@ -3335,6 +3504,9 @@ func (m *DocumentDataHistoryMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, documentdatahistory.FieldDeletedBy)
+	}
+	if m.owner_id != nil {
+		fields = append(fields, documentdatahistory.FieldOwnerID)
 	}
 	if m.template_id != nil {
 		fields = append(fields, documentdatahistory.FieldTemplateID)
@@ -3372,6 +3544,8 @@ func (m *DocumentDataHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case documentdatahistory.FieldDeletedBy:
 		return m.DeletedBy()
+	case documentdatahistory.FieldOwnerID:
+		return m.OwnerID()
 	case documentdatahistory.FieldTemplateID:
 		return m.TemplateID()
 	case documentdatahistory.FieldData:
@@ -3407,6 +3581,8 @@ func (m *DocumentDataHistoryMutation) OldField(ctx context.Context, name string)
 		return m.OldDeletedAt(ctx)
 	case documentdatahistory.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case documentdatahistory.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case documentdatahistory.FieldTemplateID:
 		return m.OldTemplateID(ctx)
 	case documentdatahistory.FieldData:
@@ -3497,6 +3673,13 @@ func (m *DocumentDataHistoryMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetDeletedBy(v)
 		return nil
+	case documentdatahistory.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
 	case documentdatahistory.FieldTemplateID:
 		v, ok := value.(string)
 		if !ok {
@@ -3565,6 +3748,9 @@ func (m *DocumentDataHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(documentdatahistory.FieldDeletedBy) {
 		fields = append(fields, documentdatahistory.FieldDeletedBy)
 	}
+	if m.FieldCleared(documentdatahistory.FieldOwnerID) {
+		fields = append(fields, documentdatahistory.FieldOwnerID)
+	}
 	return fields
 }
 
@@ -3602,6 +3788,9 @@ func (m *DocumentDataHistoryMutation) ClearField(name string) error {
 		return nil
 	case documentdatahistory.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case documentdatahistory.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	}
 	return fmt.Errorf("unknown DocumentDataHistory nullable field %s", name)
@@ -3643,6 +3832,9 @@ func (m *DocumentDataHistoryMutation) ResetField(name string) error {
 		return nil
 	case documentdatahistory.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case documentdatahistory.FieldOwnerID:
+		m.ResetOwnerID()
 		return nil
 	case documentdatahistory.FieldTemplateID:
 		m.ResetTemplateID()
@@ -32732,6 +32924,55 @@ func (m *OauthProviderMutation) ResetDeletedBy() {
 	delete(m.clearedFields, oauthprovider.FieldDeletedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *OauthProviderMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *OauthProviderMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the OauthProvider entity.
+// If the OauthProvider object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OauthProviderMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *OauthProviderMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[oauthprovider.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *OauthProviderMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[oauthprovider.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *OauthProviderMutation) ResetOwnerID() {
+	m.owner = nil
+	delete(m.clearedFields, oauthprovider.FieldOwnerID)
+}
+
 // SetName sets the "name" field.
 func (m *OauthProviderMutation) SetName(s string) {
 	m.name = &s
@@ -33076,27 +33317,15 @@ func (m *OauthProviderMutation) ResetInfoURL() {
 	m.info_url = nil
 }
 
-// SetOwnerID sets the "owner" edge to the Organization entity by id.
-func (m *OauthProviderMutation) SetOwnerID(id string) {
-	m.owner = &id
-}
-
 // ClearOwner clears the "owner" edge to the Organization entity.
 func (m *OauthProviderMutation) ClearOwner() {
 	m.clearedowner = true
+	m.clearedFields[oauthprovider.FieldOwnerID] = struct{}{}
 }
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *OauthProviderMutation) OwnerCleared() bool {
-	return m.clearedowner
-}
-
-// OwnerID returns the "owner" edge ID in the mutation.
-func (m *OauthProviderMutation) OwnerID() (id string, exists bool) {
-	if m.owner != nil {
-		return *m.owner, true
-	}
-	return
+	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -33149,7 +33378,7 @@ func (m *OauthProviderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OauthProviderMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, oauthprovider.FieldCreatedAt)
 	}
@@ -33173,6 +33402,9 @@ func (m *OauthProviderMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, oauthprovider.FieldDeletedBy)
+	}
+	if m.owner != nil {
+		fields = append(fields, oauthprovider.FieldOwnerID)
 	}
 	if m.name != nil {
 		fields = append(fields, oauthprovider.FieldName)
@@ -33225,6 +33457,8 @@ func (m *OauthProviderMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case oauthprovider.FieldDeletedBy:
 		return m.DeletedBy()
+	case oauthprovider.FieldOwnerID:
+		return m.OwnerID()
 	case oauthprovider.FieldName:
 		return m.Name()
 	case oauthprovider.FieldClientID:
@@ -33268,6 +33502,8 @@ func (m *OauthProviderMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldDeletedAt(ctx)
 	case oauthprovider.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case oauthprovider.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case oauthprovider.FieldName:
 		return m.OldName(ctx)
 	case oauthprovider.FieldClientID:
@@ -33350,6 +33586,13 @@ func (m *OauthProviderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case oauthprovider.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
 		return nil
 	case oauthprovider.FieldName:
 		v, ok := value.(string)
@@ -33480,6 +33723,9 @@ func (m *OauthProviderMutation) ClearedFields() []string {
 	if m.FieldCleared(oauthprovider.FieldDeletedBy) {
 		fields = append(fields, oauthprovider.FieldDeletedBy)
 	}
+	if m.FieldCleared(oauthprovider.FieldOwnerID) {
+		fields = append(fields, oauthprovider.FieldOwnerID)
+	}
 	return fields
 }
 
@@ -33515,6 +33761,9 @@ func (m *OauthProviderMutation) ClearField(name string) error {
 	case oauthprovider.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case oauthprovider.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
 	}
 	return fmt.Errorf("unknown OauthProvider nullable field %s", name)
 }
@@ -33546,6 +33795,9 @@ func (m *OauthProviderMutation) ResetField(name string) error {
 		return nil
 	case oauthprovider.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case oauthprovider.FieldOwnerID:
+		m.ResetOwnerID()
 		return nil
 	case oauthprovider.FieldName:
 		m.ResetName()
@@ -33670,6 +33922,7 @@ type OauthProviderHistoryMutation struct {
 	appendtags    []string
 	deleted_at    *time.Time
 	deleted_by    *string
+	owner_id      *string
 	name          *string
 	client_id     *string
 	client_secret *string
@@ -34306,6 +34559,55 @@ func (m *OauthProviderHistoryMutation) ResetDeletedBy() {
 	delete(m.clearedFields, oauthproviderhistory.FieldDeletedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *OauthProviderHistoryMutation) SetOwnerID(s string) {
+	m.owner_id = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *OauthProviderHistoryMutation) OwnerID() (r string, exists bool) {
+	v := m.owner_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the OauthProviderHistory entity.
+// If the OauthProviderHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OauthProviderHistoryMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *OauthProviderHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[oauthproviderhistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *OauthProviderHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[oauthproviderhistory.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *OauthProviderHistoryMutation) ResetOwnerID() {
+	m.owner_id = nil
+	delete(m.clearedFields, oauthproviderhistory.FieldOwnerID)
+}
+
 // SetName sets the "name" field.
 func (m *OauthProviderHistoryMutation) SetName(s string) {
 	m.name = &s
@@ -34684,7 +34986,7 @@ func (m *OauthProviderHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OauthProviderHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.history_time != nil {
 		fields = append(fields, oauthproviderhistory.FieldHistoryTime)
 	}
@@ -34717,6 +35019,9 @@ func (m *OauthProviderHistoryMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, oauthproviderhistory.FieldDeletedBy)
+	}
+	if m.owner_id != nil {
+		fields = append(fields, oauthproviderhistory.FieldOwnerID)
 	}
 	if m.name != nil {
 		fields = append(fields, oauthproviderhistory.FieldName)
@@ -34775,6 +35080,8 @@ func (m *OauthProviderHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case oauthproviderhistory.FieldDeletedBy:
 		return m.DeletedBy()
+	case oauthproviderhistory.FieldOwnerID:
+		return m.OwnerID()
 	case oauthproviderhistory.FieldName:
 		return m.Name()
 	case oauthproviderhistory.FieldClientID:
@@ -34824,6 +35131,8 @@ func (m *OauthProviderHistoryMutation) OldField(ctx context.Context, name string
 		return m.OldDeletedAt(ctx)
 	case oauthproviderhistory.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case oauthproviderhistory.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case oauthproviderhistory.FieldName:
 		return m.OldName(ctx)
 	case oauthproviderhistory.FieldClientID:
@@ -34927,6 +35236,13 @@ func (m *OauthProviderHistoryMutation) SetField(name string, value ent.Value) er
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case oauthproviderhistory.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
 		return nil
 	case oauthproviderhistory.FieldName:
 		v, ok := value.(string)
@@ -35060,6 +35376,9 @@ func (m *OauthProviderHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(oauthproviderhistory.FieldDeletedBy) {
 		fields = append(fields, oauthproviderhistory.FieldDeletedBy)
 	}
+	if m.FieldCleared(oauthproviderhistory.FieldOwnerID) {
+		fields = append(fields, oauthproviderhistory.FieldOwnerID)
+	}
 	return fields
 }
 
@@ -35097,6 +35416,9 @@ func (m *OauthProviderHistoryMutation) ClearField(name string) error {
 		return nil
 	case oauthproviderhistory.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case oauthproviderhistory.FieldOwnerID:
+		m.ClearOwnerID()
 		return nil
 	}
 	return fmt.Errorf("unknown OauthProviderHistory nullable field %s", name)
@@ -35138,6 +35460,9 @@ func (m *OauthProviderHistoryMutation) ResetField(name string) error {
 		return nil
 	case oauthproviderhistory.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case oauthproviderhistory.FieldOwnerID:
+		m.ResetOwnerID()
 		return nil
 	case oauthproviderhistory.FieldName:
 		m.ResetName()
@@ -38849,6 +39174,9 @@ type OrganizationMutation struct {
 	clearedintegrations           bool
 	setting                       *string
 	clearedsetting                bool
+	documentdata                  map[string]struct{}
+	removeddocumentdata           map[string]struct{}
+	cleareddocumentdata           bool
 	entitlements                  map[string]struct{}
 	removedentitlements           map[string]struct{}
 	clearedentitlements           bool
@@ -39989,6 +40317,60 @@ func (m *OrganizationMutation) SettingIDs() (ids []string) {
 func (m *OrganizationMutation) ResetSetting() {
 	m.setting = nil
 	m.clearedsetting = false
+}
+
+// AddDocumentdatumIDs adds the "documentdata" edge to the DocumentData entity by ids.
+func (m *OrganizationMutation) AddDocumentdatumIDs(ids ...string) {
+	if m.documentdata == nil {
+		m.documentdata = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.documentdata[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDocumentdata clears the "documentdata" edge to the DocumentData entity.
+func (m *OrganizationMutation) ClearDocumentdata() {
+	m.cleareddocumentdata = true
+}
+
+// DocumentdataCleared reports if the "documentdata" edge to the DocumentData entity was cleared.
+func (m *OrganizationMutation) DocumentdataCleared() bool {
+	return m.cleareddocumentdata
+}
+
+// RemoveDocumentdatumIDs removes the "documentdata" edge to the DocumentData entity by IDs.
+func (m *OrganizationMutation) RemoveDocumentdatumIDs(ids ...string) {
+	if m.removeddocumentdata == nil {
+		m.removeddocumentdata = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.documentdata, ids[i])
+		m.removeddocumentdata[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDocumentdata returns the removed IDs of the "documentdata" edge to the DocumentData entity.
+func (m *OrganizationMutation) RemovedDocumentdataIDs() (ids []string) {
+	for id := range m.removeddocumentdata {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DocumentdataIDs returns the "documentdata" edge IDs in the mutation.
+func (m *OrganizationMutation) DocumentdataIDs() (ids []string) {
+	for id := range m.documentdata {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDocumentdata resets all changes to the "documentdata" edge.
+func (m *OrganizationMutation) ResetDocumentdata() {
+	m.documentdata = nil
+	m.cleareddocumentdata = false
+	m.removeddocumentdata = nil
 }
 
 // AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by ids.
@@ -41133,7 +41515,7 @@ func (m *OrganizationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 19)
+	edges := make([]string, 0, 20)
 	if m.parent != nil {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -41151,6 +41533,9 @@ func (m *OrganizationMutation) AddedEdges() []string {
 	}
 	if m.setting != nil {
 		edges = append(edges, organization.EdgeSetting)
+	}
+	if m.documentdata != nil {
+		edges = append(edges, organization.EdgeDocumentdata)
 	}
 	if m.entitlements != nil {
 		edges = append(edges, organization.EdgeEntitlements)
@@ -41230,6 +41615,12 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 		if id := m.setting; id != nil {
 			return []ent.Value{*id}
 		}
+	case organization.EdgeDocumentdata:
+		ids := make([]ent.Value, 0, len(m.documentdata))
+		for id := range m.documentdata {
+			ids = append(ids, id)
+		}
+		return ids
 	case organization.EdgeEntitlements:
 		ids := make([]ent.Value, 0, len(m.entitlements))
 		for id := range m.entitlements {
@@ -41314,7 +41705,7 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 19)
+	edges := make([]string, 0, 20)
 	if m.removedchildren != nil {
 		edges = append(edges, organization.EdgeChildren)
 	}
@@ -41326,6 +41717,9 @@ func (m *OrganizationMutation) RemovedEdges() []string {
 	}
 	if m.removedintegrations != nil {
 		edges = append(edges, organization.EdgeIntegrations)
+	}
+	if m.removeddocumentdata != nil {
+		edges = append(edges, organization.EdgeDocumentdata)
 	}
 	if m.removedentitlements != nil {
 		edges = append(edges, organization.EdgeEntitlements)
@@ -41394,6 +41788,12 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 	case organization.EdgeIntegrations:
 		ids := make([]ent.Value, 0, len(m.removedintegrations))
 		for id := range m.removedintegrations {
+			ids = append(ids, id)
+		}
+		return ids
+	case organization.EdgeDocumentdata:
+		ids := make([]ent.Value, 0, len(m.removeddocumentdata))
+		for id := range m.removeddocumentdata {
 			ids = append(ids, id)
 		}
 		return ids
@@ -41481,7 +41881,7 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 19)
+	edges := make([]string, 0, 20)
 	if m.clearedparent {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -41499,6 +41899,9 @@ func (m *OrganizationMutation) ClearedEdges() []string {
 	}
 	if m.clearedsetting {
 		edges = append(edges, organization.EdgeSetting)
+	}
+	if m.cleareddocumentdata {
+		edges = append(edges, organization.EdgeDocumentdata)
 	}
 	if m.clearedentitlements {
 		edges = append(edges, organization.EdgeEntitlements)
@@ -41558,6 +41961,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.clearedintegrations
 	case organization.EdgeSetting:
 		return m.clearedsetting
+	case organization.EdgeDocumentdata:
+		return m.cleareddocumentdata
 	case organization.EdgeEntitlements:
 		return m.clearedentitlements
 	case organization.EdgePersonalAccessTokens:
@@ -41623,6 +42028,9 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 		return nil
 	case organization.EdgeSetting:
 		m.ResetSetting()
+		return nil
+	case organization.EdgeDocumentdata:
+		m.ResetDocumentdata()
 		return nil
 	case organization.EdgeEntitlements:
 		m.ResetEntitlements()

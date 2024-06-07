@@ -77,6 +77,10 @@ func (m *DocumentDataMutation) CreateHistoryFromCreate(ctx context.Context) erro
 		create = create.SetDeletedBy(deletedBy)
 	}
 
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
 	if templateID, exists := m.TemplateID(); exists {
 		create = create.SetTemplateID(templateID)
 	}
@@ -163,6 +167,12 @@ func (m *DocumentDataMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 			create = create.SetDeletedBy(documentdata.DeletedBy)
 		}
 
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(documentdata.OwnerID)
+		}
+
 		if templateID, exists := m.TemplateID(); exists {
 			create = create.SetTemplateID(templateID)
 		} else {
@@ -215,6 +225,7 @@ func (m *DocumentDataMutation) CreateHistoryFromDelete(ctx context.Context) erro
 			SetTags(documentdata.Tags).
 			SetDeletedAt(documentdata.DeletedAt).
 			SetDeletedBy(documentdata.DeletedBy).
+			SetOwnerID(documentdata.OwnerID).
 			SetTemplateID(documentdata.TemplateID).
 			SetData(documentdata.Data).
 			Save(ctx)
@@ -2290,6 +2301,10 @@ func (m *OauthProviderMutation) CreateHistoryFromCreate(ctx context.Context) err
 		create = create.SetDeletedBy(deletedBy)
 	}
 
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
 	if name, exists := m.Name(); exists {
 		create = create.SetName(name)
 	}
@@ -2404,6 +2419,12 @@ func (m *OauthProviderMutation) CreateHistoryFromUpdate(ctx context.Context) err
 			create = create.SetDeletedBy(oauthprovider.DeletedBy)
 		}
 
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(oauthprovider.OwnerID)
+		}
+
 		if name, exists := m.Name(); exists {
 			create = create.SetName(name)
 		} else {
@@ -2498,6 +2519,7 @@ func (m *OauthProviderMutation) CreateHistoryFromDelete(ctx context.Context) err
 			SetTags(oauthprovider.Tags).
 			SetDeletedAt(oauthprovider.DeletedAt).
 			SetDeletedBy(oauthprovider.DeletedBy).
+			SetOwnerID(oauthprovider.OwnerID).
 			SetName(oauthprovider.Name).
 			SetClientID(oauthprovider.ClientID).
 			SetClientSecret(oauthprovider.ClientSecret).

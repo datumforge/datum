@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -25,7 +26,6 @@ type OauthProviderQuery struct {
 	inters     []Interceptor
 	predicates []predicate.OauthProvider
 	withOwner  *OrganizationQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*OauthProvider) error
 	// intermediate query (i.e. traversal path).
@@ -370,24 +370,23 @@ func (opq *OauthProviderQuery) prepareQuery(ctx context.Context) error {
 		}
 		opq.sql = prev
 	}
+	if oauthprovider.Policy == nil {
+		return errors.New("generated: uninitialized oauthprovider.Policy (forgotten import generated/runtime?)")
+	}
+	if err := oauthprovider.Policy.EvalQuery(ctx, opq); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (opq *OauthProviderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*OauthProvider, error) {
 	var (
 		nodes       = []*OauthProvider{}
-		withFKs     = opq.withFKs
 		_spec       = opq.querySpec()
 		loadedTypes = [1]bool{
 			opq.withOwner != nil,
 		}
 	)
-	if opq.withOwner != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, oauthprovider.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*OauthProvider).scanValues(nil, columns)
 	}
@@ -429,10 +428,7 @@ func (opq *OauthProviderQuery) loadOwner(ctx context.Context, query *Organizatio
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*OauthProvider)
 	for i := range nodes {
-		if nodes[i].organization_oauthprovider == nil {
-			continue
-		}
-		fk := *nodes[i].organization_oauthprovider
+		fk := nodes[i].OwnerID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +445,7 @@ func (opq *OauthProviderQuery) loadOwner(ctx context.Context, query *Organizatio
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "organization_oauthprovider" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +483,9 @@ func (opq *OauthProviderQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != oauthprovider.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if opq.withOwner != nil {
+			_spec.Node.AddColumnOnce(oauthprovider.FieldOwnerID)
 		}
 	}
 	if ps := opq.predicates; len(ps) > 0 {

@@ -80,6 +80,9 @@ func (ddh *DocumentDataHistory) changes(new *DocumentDataHistory) []Change {
 	if !reflect.DeepEqual(ddh.DeletedBy, new.DeletedBy) {
 		changes = append(changes, NewChange(documentdatahistory.FieldDeletedBy, ddh.DeletedBy, new.DeletedBy))
 	}
+	if !reflect.DeepEqual(ddh.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(documentdatahistory.FieldOwnerID, ddh.OwnerID, new.OwnerID))
+	}
 	if !reflect.DeepEqual(ddh.TemplateID, new.TemplateID) {
 		changes = append(changes, NewChange(documentdatahistory.FieldTemplateID, ddh.TemplateID, new.TemplateID))
 	}
@@ -718,6 +721,9 @@ func (oph *OauthProviderHistory) changes(new *OauthProviderHistory) []Change {
 	}
 	if !reflect.DeepEqual(oph.DeletedBy, new.DeletedBy) {
 		changes = append(changes, NewChange(oauthproviderhistory.FieldDeletedBy, oph.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(oph.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(oauthproviderhistory.FieldOwnerID, oph.OwnerID, new.OwnerID))
 	}
 	if !reflect.DeepEqual(oph.Name, new.Name) {
 		changes = append(changes, NewChange(oauthproviderhistory.FieldName, oph.Name, new.Name))

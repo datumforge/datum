@@ -81,8 +81,7 @@ func (Integration) Mixin() []ent.Mixin {
 		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
-			Ref:        "integrations",
-			AllowWhere: true,
+			Ref: "integrations",
 		},
 	}
 }

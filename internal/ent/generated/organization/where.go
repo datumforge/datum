@@ -1146,6 +1146,35 @@ func HasSettingWith(preds ...predicate.OrganizationSetting) predicate.Organizati
 	})
 }
 
+// HasDocumentdata applies the HasEdge predicate on the "documentdata" edge.
+func HasDocumentdata() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DocumentdataTable, DocumentdataColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.DocumentData
+		step.Edge.Schema = schemaConfig.DocumentData
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDocumentdataWith applies the HasEdge predicate on the "documentdata" edge with a given conditions (other predicates).
+func HasDocumentdataWith(preds ...predicate.DocumentData) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newDocumentdataStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.DocumentData
+		step.Edge.Schema = schemaConfig.DocumentData
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasEntitlements applies the HasEdge predicate on the "entitlements" edge.
 func HasEntitlements() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

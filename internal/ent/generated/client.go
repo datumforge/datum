@@ -947,6 +947,25 @@ func (c *DocumentDataClient) GetX(ctx context.Context, id string) *DocumentData 
 	return obj
 }
 
+// QueryOwner queries the owner edge of a DocumentData.
+func (c *DocumentDataClient) QueryOwner(dd *DocumentData) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dd.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(documentdata.Table, documentdata.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, documentdata.OwnerTable, documentdata.OwnerColumn),
+		)
+		schemaConfig := dd.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.DocumentData
+		fromV = sqlgraph.Neighbors(dd.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryTemplate queries the template edge of a DocumentData.
 func (c *DocumentDataClient) QueryTemplate(dd *DocumentData) *TemplateQuery {
 	query := (&TemplateClient{config: c.config}).Query()
@@ -5718,6 +5737,25 @@ func (c *OrganizationClient) QuerySetting(o *Organization) *OrganizationSettingQ
 		schemaConfig := o.schemaConfig
 		step.To.Schema = schemaConfig.OrganizationSetting
 		step.Edge.Schema = schemaConfig.OrganizationSetting
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDocumentdata queries the documentdata edge of a Organization.
+func (c *OrganizationClient) QueryDocumentdata(o *Organization) *DocumentDataQuery {
+	query := (&DocumentDataClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(documentdata.Table, documentdata.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.DocumentdataTable, organization.DocumentdataColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.DocumentData
+		step.Edge.Schema = schemaConfig.DocumentData
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}

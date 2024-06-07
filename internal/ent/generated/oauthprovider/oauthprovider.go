@@ -31,6 +31,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
+	// FieldOwnerID holds the string denoting the owner_id field in the database.
+	FieldOwnerID = "owner_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldClientID holds the string denoting the client_id field in the database.
@@ -59,7 +61,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "organization" package.
 	OwnerInverseTable = "organizations"
 	// OwnerColumn is the table column denoting the owner relation/edge.
-	OwnerColumn = "organization_oauthprovider"
+	OwnerColumn = "owner_id"
 )
 
 // Columns holds all SQL columns for oauthprovider fields.
@@ -73,6 +75,7 @@ var Columns = []string{
 	FieldTags,
 	FieldDeletedAt,
 	FieldDeletedBy,
+	FieldOwnerID,
 	FieldName,
 	FieldClientID,
 	FieldClientSecret,
@@ -84,21 +87,10 @@ var Columns = []string{
 	FieldInfoURL,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "oauth_providers"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"organization_oauthprovider",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -111,8 +103,9 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [2]ent.Hook
-	Interceptors [1]ent.Interceptor
+	Hooks        [4]ent.Hook
+	Interceptors [2]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -123,6 +116,8 @@ var (
 	DefaultMappingID func() string
 	// DefaultTags holds the default value on creation for the "tags" field.
 	DefaultTags []string
+	// OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	OwnerIDValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -168,6 +163,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByDeletedBy orders the results by the deleted_by field.
 func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
+}
+
+// ByOwnerID orders the results by the owner_id field.
+func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOwnerID, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.

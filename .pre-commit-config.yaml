@@ -22,4 +22,4 @@ repos:
         description: This hook formats GraphQL schemas
         entry: npx format-graphql@1.4.0 --write=true
         language: node
-        files: 'query/.*\.graphql$|schema/.*\.graphql$'
+        files: 'query/.*\.graphql$'

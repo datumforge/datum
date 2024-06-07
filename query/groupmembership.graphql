@@ -1,3 +1,36 @@
+mutation AddUserToGroupWithRole($input: CreateGroupMembershipInput!) {
+  createGroupMembership(input: $input) {
+    groupMembership {
+      groupID
+      id
+      role
+      userID
+    }
+  }
+}
+
+mutation CreateBulkCSVGroupMembers($input: Upload!) {
+  createBulkCSVGroupMembership(input: $input) {
+    groupMemberships {
+      groupID
+      id
+      role
+      userID
+    }
+  }
+}
+
+mutation CreateBulkGroupMembers($input: [CreateGroupMembershipInput!]) {
+  createBulkGroupMembership(input: $input) {
+    groupMemberships {
+      groupID
+      id
+      role
+      userID
+    }
+  }
+}
+
 query GetGroupMembersByGroupID($where: GroupMembershipWhereInput) {
   groupMemberships(where: $where) {
     edges {
@@ -18,36 +51,9 @@ query GetGroupMembersByGroupID($where: GroupMembershipWhereInput) {
   }
 }
 
-mutation AddUserToGroupWithRole($input: CreateGroupMembershipInput!) {
-  createGroupMembership(input: $input) {
-    groupMembership {
-      groupID
-      id
-      role
-      userID
-    }
-  }
-}
-
-mutation CreateBulkGroupMembers($input: [CreateGroupMembershipInput!]) {
-  createBulkGroupMembership(input: $input) {
-    groupMemberships {
-      groupID
-      id
-      role
-      userID
-    }
-  }
-}
-
-mutation CreateBulkCSVGroupMembers($input: Upload!) {
-  createBulkCSVGroupMembership(input: $input) {
-   groupMemberships {
-      groupID
-      id
-      role
-      userID
-    }
+mutation RemoveUserFromGroup($deleteGroupMembershipId: ID!) {
+  deleteGroupMembership(id: $deleteGroupMembershipId) {
+    deletedID
   }
 }
 
@@ -59,11 +65,5 @@ mutation UpdateUserRoleInGroup($updateGroupMemberId: ID!, $input: UpdateGroupMem
       role
       userID
     }
-  }
-}
-
-mutation RemoveUserFromGroup($deleteGroupMembershipId: ID!) {
-  deleteGroupMembership(id: $deleteGroupMembershipId) {
-    deletedID
   }
 }

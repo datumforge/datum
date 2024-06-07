@@ -162,6 +162,14 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		return h.BadRequest(ctx, err)
 	}
 
+	// create new claims for the user
+	auth, err := h.generateUserAuthSession(ctx, user)
+	if err != nil {
+		h.Logger.Errorw("unable create new auth session", "error", err)
+
+		return h.InternalServerError(ctx, err)
+	}
+
 	// reply with the relevant details
 	out := &models.InviteReply{
 		Reply:       rout.Reply{Success: true},
@@ -170,6 +178,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		JoinedOrgID: invitedUser.OwnerID,
 		Role:        string(invitedUser.Role),
 		Message:     "Welcome to your new organization!",
+		AuthData:    *auth,
 	}
 
 	return ctx.JSON(http.StatusCreated, out)

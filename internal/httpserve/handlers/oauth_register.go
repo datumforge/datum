@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -12,12 +11,10 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
 	"github.com/datumforge/datum/pkg/rout"
-	"github.com/datumforge/datum/pkg/sessions"
 )
 
 // OauthRegister returns the TokenResponse for a verified authenticated external oauth user
@@ -50,29 +47,12 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	}
 
 	// create claims for verified user
-	claims := createClaims(user)
-
-	access, refresh, err := h.TM.CreateTokenPair(claims)
+	auth, err := h.generateOauthAuthSession(ctx.Request().Context(), ctx.Response().Writer, user, in)
 	if err != nil {
+		h.Logger.Errorw("unable create new auth session", "error", err)
+
 		return h.InternalServerError(ctx, err)
 	}
-
-	// set cookies for the user
-	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
-
-	setSessionMap := map[string]any{}
-	setSessionMap[sessions.ExternalUserIDKey] = fmt.Sprintf("%v", in.ExternalUserID)
-	setSessionMap[sessions.UsernameKey] = in.ExternalUserName
-	setSessionMap[sessions.UserTypeKey] = in.AuthProvider
-	setSessionMap[sessions.EmailKey] = in.Email
-	setSessionMap[sessions.UserIDKey] = user.ID
-
-	c, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID)
-	if err != nil {
-		return h.InternalServerError(ctx, err)
-	}
-
-	ctx.SetRequest(ctx.Request().WithContext(c))
 
 	props := ph.NewProperties().
 		Set("user_id", user.ID).
@@ -83,21 +63,9 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	h.AnalyticsClient.Event("user_authenticated", props)
 	h.AnalyticsClient.UserProperties(user.ID, props)
 
-	// return the session value for the UI to use
-	// the UI will need to set the cookie because authentication is handled
-	// server side
-	s, err := sessions.SessionToken(ctx.Request().Context())
-	if err != nil {
-		return h.InternalServerError(ctx, err)
-	}
-
 	out := models.LoginReply{
-		Message:      "success",
-		AccessToken:  access,
-		RefreshToken: refresh,
-		Session:      s,
-		TokenType:    "Bearer",
-		ExpiresIn:    claims.ExpiresAt.Unix(),
+		Message:  "success",
+		AuthData: *auth,
 	}
 
 	// Return the access token

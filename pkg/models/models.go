@@ -11,6 +11,17 @@ import (
 )
 
 // =========
+// Auth Data
+// =========
+
+type AuthData struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	Session      string `json:"session,omitempty"`
+	TokenType    string `json:"token_type,omitempty"`
+}
+
+// =========
 // LOGIN
 // =========
 
@@ -24,12 +35,8 @@ type LoginRequest struct {
 // LoginReply holds the response to LoginRequest
 type LoginReply struct {
 	rout.Reply
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	Session      string `json:"session,omitempty"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int64  `json:"expires_in"`
-	Message      string `json:"message"`
+	AuthData
+	Message string `json:"message"`
 }
 
 // Validate ensures the required fields are set on the LoginRequest request
@@ -59,10 +66,12 @@ var ExampleLoginSuccessResponse = LoginReply{
 	Reply: rout.Reply{
 		Success: true,
 	},
-	AccessToken:  "token",
-	RefreshToken: "token",
-	Session:      "session",
-	TokenType:    "access_token",
+	AuthData: AuthData{
+		AccessToken:  "access_token",
+		RefreshToken: "refresh_token",
+		Session:      "session",
+		TokenType:    "bearer",
+	},
 }
 
 // =========
@@ -77,9 +86,8 @@ type RefreshRequest struct {
 // RefreshReply holds the fields that are sent on a response to the `/refresh` endpoint
 type RefreshReply struct {
 	rout.Reply
-	Message      string `json:"message,omitempty"`
-	AccessToken  string `json:"access_token,omitempty"`
-	RefreshToken string `json:"refresh_token,omitempty"`
+	Message string `json:"message,omitempty"`
+	AuthData
 }
 
 // Validate ensures the required fields are set on the RefreshRequest request
@@ -100,6 +108,12 @@ var ExampleRefreshRequest = RefreshRequest{
 var ExampleRefreshSuccessResponse = RefreshReply{
 	Reply:   rout.Reply{Success: true},
 	Message: "success",
+	AuthData: AuthData{
+		AccessToken:  "access_token",
+		RefreshToken: "refresh_token",
+		Session:      "session",
+		TokenType:    "bearer",
+	},
 }
 
 // =========
@@ -172,9 +186,7 @@ type SwitchOrganizationRequest struct {
 // SwitchOrganizationReply holds the new authentication and session information for the user for the new organization
 type SwitchOrganizationReply struct {
 	rout.Reply
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	Session      string `json:"session"`
+	AuthData
 }
 
 // Validate ensures the required fields are set on the SwitchOrganizationRequest request
@@ -196,9 +208,12 @@ var ExampleSwitchSuccessReply = SwitchOrganizationReply{
 	Reply: rout.Reply{
 		Success: true,
 	},
-	AccessToken:  "token",
-	RefreshToken: "token",
-	Session:      "session",
+	AuthData: AuthData{
+		AccessToken:  "access_token",
+		RefreshToken: "refresh_token",
+		Session:      "session",
+		TokenType:    "bearer",
+	},
 }
 
 // =========
@@ -213,13 +228,11 @@ type VerifyRequest struct {
 // VerifyReply holds the fields that are sent on a response to the `/verify` endpoint
 type VerifyReply struct {
 	rout.Reply
-	ID           string `json:"user_id"`
-	Email        string `json:"email"`
-	Token        string `json:"token"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	ExpiresIn    int64  `json:"expires_in"`
-	Message      string `json:"message,omitempty"`
+	ID      string `json:"user_id"`
+	Email   string `json:"email"`
+	Token   string `json:"token"`
+	Message string `json:"message,omitempty"`
+	AuthData
 }
 
 // Validate ensures the required fields are set on the VerifyRequest request
@@ -241,12 +254,16 @@ var ExampleVerifySuccessResponse = VerifyReply{
 	Reply: rout.Reply{
 		Success: true,
 	},
-	ID:           ulids.New().String(),
-	Email:        "gregor.clegane@datum.net",
-	Token:        "token",
-	Message:      "Email has been verified",
-	AccessToken:  "token",
-	RefreshToken: "token",
+	ID:      ulids.New().String(),
+	Email:   "gregor.clegane@datum.net",
+	Token:   "token",
+	Message: "Email has been verified",
+	AuthData: AuthData{
+		AccessToken:  "access_token",
+		RefreshToken: "refresh_token",
+		Session:      "session",
+		TokenType:    "bearer",
+	},
 }
 
 // =========
@@ -391,11 +408,9 @@ type WebauthnBeginRegistrationResponse struct {
 // WebauthnRegistrationResponse is the response after a successful webauthn registration
 type WebauthnRegistrationResponse struct {
 	rout.Reply
-	Message      string `json:"message,omitempty"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	Session      string `json:"session,omitempty"`
-	TokenType    string `json:"token_type"`
+	Message   string `json:"message,omitempty"`
+	TokenType string `json:"token_type"`
+	AuthData
 }
 
 // WebauthnBeginLoginResponse is the response to begin a webauthn login
@@ -409,11 +424,8 @@ type WebauthnBeginLoginResponse struct {
 // WebauthnRegistrationResponse is the response after a successful webauthn login
 type WebauthnLoginResponse struct {
 	rout.Reply
-	Message      string `json:"message,omitempty"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token,omitempty"`
-	Session      string `json:"session,omitempty"`
-	TokenType    string `json:"token_type"`
+	Message string `json:"message,omitempty"`
+	AuthData
 }
 
 // =========
@@ -511,13 +523,12 @@ type InviteRequest struct {
 // InviteReply holds the fields that are sent on a response to an accepted invitation
 type InviteReply struct {
 	rout.Reply
-	ID           string `json:"user_id"`
-	Email        string `json:"email"`
-	Message      string `json:"message"`
-	JoinedOrgID  string `json:"joined_org_id"`
-	Role         string `json:"role"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	ID          string `json:"user_id"`
+	Email       string `json:"email"`
+	Message     string `json:"message"`
+	JoinedOrgID string `json:"joined_org_id"`
+	Role        string `json:"role"`
+	AuthData
 }
 
 // Validate ensures the required fields are set on the InviteRequest request
@@ -542,6 +553,12 @@ var ExampleInviteResponse = InviteReply{
 	JoinedOrgID: "1234",
 	Role:        "admin",
 	Message:     "Welcome to your new organization!",
+	AuthData: AuthData{
+		AccessToken:  "access_token",
+		RefreshToken: "refresh_token",
+		Session:      "session",
+		TokenType:    "bearer",
+	},
 }
 
 // =========

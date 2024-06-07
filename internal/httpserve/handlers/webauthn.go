@@ -174,37 +174,17 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	}
 
 	// create claims for verified user
-	claims := createClaims(entUser)
-
-	access, refresh, err := h.TM.CreateTokenPair(claims)
+	auth, err := h.generateUserAuthSession(ctx, entUser)
 	if err != nil {
-		return h.InternalServerError(ctx, err)
-	}
+		h.Logger.Errorw("unable create new auth session", "error", err)
 
-	// set cookies for the user
-	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
-
-	// set sessions in response
-	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
-		h.Logger.Errorw("unable to save session", "error", err)
-
-		return h.InternalServerError(ctx, err)
-	}
-
-	// return the session value for the UI to use
-	// the UI will need to set the cookie because authentication is handled
-	// server side
-	s, err := sessions.SessionToken(ctx.Request().Context())
-	if err != nil {
 		return h.InternalServerError(ctx, err)
 	}
 
 	out := &models.WebauthnRegistrationResponse{
-		Reply:        rout.Reply{Success: true},
-		Message:      "passkey successfully created",
-		AccessToken:  access,
-		RefreshToken: refresh,
-		Session:      s,
+		Reply:    rout.Reply{Success: true},
+		Message:  "passkey successfully created",
+		AuthData: *auth,
 	}
 
 	return h.Success(ctx, out)
@@ -274,37 +254,17 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 	}
 
 	// create claims for verified user
-	claims := createClaims(entUser)
-
-	access, refresh, err := h.TM.CreateTokenPair(claims)
+	auth, err := h.generateUserAuthSession(ctx, entUser)
 	if err != nil {
-		return h.InternalServerError(ctx, err)
-	}
+		h.Logger.Errorw("unable create new auth session", "error", err)
 
-	// set cookies for the user
-	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
-
-	// set sessions in response
-	if err := h.SessionConfig.CreateAndStoreSession(ctx, entUser.ID); err != nil {
-		h.Logger.Errorw("unable to save session", "error", err)
-
-		return h.InternalServerError(ctx, err)
-	}
-
-	// return the session value for the UI to use
-	// the UI will need to set the cookie because authentication is handled
-	// server side
-	s, err := sessions.SessionToken(ctx.Request().Context())
-	if err != nil {
 		return h.InternalServerError(ctx, err)
 	}
 
 	out := &models.WebauthnLoginResponse{
-		Reply:        rout.Reply{Success: true},
-		Message:      "passkey successfully created",
-		AccessToken:  access,
-		RefreshToken: refresh,
-		Session:      s,
+		Reply:    rout.Reply{Success: true},
+		Message:  "passkey successfully created",
+		AuthData: *auth,
 	}
 
 	return h.Success(ctx, out)

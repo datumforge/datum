@@ -5,17 +5,13 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/golang-jwt/jwt/v5"
 	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
-	"github.com/datumforge/datum/pkg/sessions"
-	"github.com/datumforge/datum/pkg/tokens"
 )
 
 // LoginHandler validates the user credentials and returns a valid cookie
@@ -59,19 +55,10 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return h.InternalServerError(ctx, err)
 	}
 
-	claims := createClaims(user)
-
-	access, refresh, err := h.TM.CreateTokenPair(claims)
+	// create new claims for the user
+	auth, err := h.generateUserAuthSession(ctx, user)
 	if err != nil {
-		return h.InternalServerError(ctx, err)
-	}
-
-	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
-
-	// set sessions in response
-	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
-		h.Logger.Errorw("unable to save session", "error", err)
+		h.Logger.Errorw("unable create new auth session", "error", err)
 
 		return h.InternalServerError(ctx, err)
 	}
@@ -91,40 +78,13 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	h.AnalyticsClient.Event("user_authenticated", props)
 	h.AnalyticsClient.UserProperties(user.ID, props)
 
-	// return the session value for the UI to use
-	// the UI will need to set the cookie because authentication is handled
-	// server side
-	s, err := sessions.SessionToken(ctx.Request().Context())
-	if err != nil {
-		return h.InternalServerError(ctx, err)
-	}
-
 	out := models.LoginReply{
-		Reply:        rout.Reply{Success: true},
-		Message:      "success",
-		AccessToken:  access,
-		RefreshToken: refresh,
-		Session:      s,
-		ExpiresIn:    claims.ExpiresAt.Unix(),
+		Reply:    rout.Reply{Success: true},
+		Message:  "success",
+		AuthData: *auth,
 	}
 
 	return h.Success(ctx, out)
-}
-
-// createClaims creates the claims for the JWT token using the mapping ids for the user and organization
-func createClaims(u *generated.User) *tokens.Claims {
-	orgID := ""
-	if u.Edges.Setting.Edges.DefaultOrg != nil {
-		orgID = u.Edges.Setting.Edges.DefaultOrg.MappingID
-	}
-
-	return &tokens.Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: u.MappingID,
-		},
-		UserID: u.MappingID,
-		OrgID:  orgID,
-	}
 }
 
 // BindLoginHandler binds the login request to the OpenAPI schema

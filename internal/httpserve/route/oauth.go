@@ -3,6 +3,7 @@ package route
 import (
 	"net/http"
 
+	"github.com/datumforge/datum/pkg/httpsling"
 	echo "github.com/datumforge/echox"
 )
 
@@ -42,7 +43,7 @@ func registerUserInfoHandler(router *Router) (err error) {
 		Path:        path,
 		Middlewares: authMW,
 		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+			c.Response().Header().Set(httpsling.HeaderContentType, httpsling.ContentTypeJSONUTF8)
 
 			return router.Handler.UserInfo(c)
 		},

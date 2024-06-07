@@ -3,7 +3,6 @@ package datumlogin
 import (
 	"context"
 	"fmt"
-	"os"
 	"syscall"
 
 	"github.com/spf13/cobra"
@@ -63,7 +62,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 
 func passwordAuth(ctx context.Context, client *datumclient.DatumClient, username string) (*oauth2.Token, error) {
 	// read password from terminal if not set in environment variable
-	password := os.Getenv("DATUM_PASSWORD")
+	password := datum.Config.String("password")
 
 	if password == "" {
 		fmt.Print("Password: ")

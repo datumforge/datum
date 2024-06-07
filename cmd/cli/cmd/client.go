@@ -8,10 +8,11 @@ import (
 	"path"
 
 	"github.com/99designs/keyring"
+	"golang.org/x/oauth2"
+
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/tokens"
-	"golang.org/x/oauth2"
 )
 
 const (

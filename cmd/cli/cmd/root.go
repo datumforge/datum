@@ -2,6 +2,8 @@
 package datum
 
 import (
+	"errors"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -129,7 +131,13 @@ func loadConfigFile() {
 		cfgFile = filepath.Join(home, "."+appName+".yaml")
 	}
 
+	// If the config file does not exist, do nothing
+	if _, err := os.Stat(cfgFile); errors.Is(err, os.ErrNotExist) {
+		return
+	}
+
 	err := Config.Load(file.Provider(cfgFile), yaml.Parser())
+
 	cobra.CheckErr(err)
 }
 

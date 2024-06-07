@@ -803,7 +803,7 @@ func (b *RequestBuilder) prepareBodyBasedOnContentType() (io.Reader, string, err
 		case url.Values, map[string][]string, map[string]string:
 			contentType = ContentTypeForm
 		case map[string]interface{}, []interface{}, struct{}:
-			contentType = ContentTypeJSON
+			contentType = ContentTypeJSONUTF8
 		case string, []byte:
 			contentType = ContentTypeText
 		}

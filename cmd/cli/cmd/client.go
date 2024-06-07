@@ -52,19 +52,10 @@ func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) 
 		}
 	}
 
-	config := datumclient.NewDefaultConfig()
-
-	// setup the logging interceptor
-	if Config.Bool("debug") {
-		config.Interceptors = append(config.Interceptors, datumclient.WithLoggingInterceptor())
-	}
-
-	endpointOpt, err := configureClientEndpoints()
+	config, opts, err := configureDefaultOpts()
 	if err != nil {
 		return nil, err
 	}
-
-	opts := []datumclient.ClientOption{endpointOpt}
 
 	opts = append(opts, datumclient.WithCredentials(datumclient.Authorization{
 		BearerToken: token.AccessToken,
@@ -77,6 +68,16 @@ func SetupClientWithAuth(ctx context.Context) (*datumclient.DatumClient, error) 
 // SetupClient will setup the datum client without the Authorization header
 // this is used for endpoints that do not require authentication, e.g. `v1/login`
 func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
+	config, opts, err := configureDefaultOpts()
+	if err != nil {
+		return nil, err
+	}
+
+	return datumclient.New(config, opts...)
+}
+
+// configureDefaultOpts will setup the default options for the datum client
+func configureDefaultOpts() (datumclient.Config, []datumclient.ClientOption, error) {
 	config := datumclient.NewDefaultConfig()
 
 	// setup the logging interceptor
@@ -86,10 +87,10 @@ func SetupClient(ctx context.Context) (*datumclient.DatumClient, error) {
 
 	endpointOpt, err := configureClientEndpoints()
 	if err != nil {
-		return nil, err
+		return config, nil, err
 	}
 
-	return datumclient.New(config, endpointOpt)
+	return config, []datumclient.ClientOption{endpointOpt}, nil
 }
 
 // configureClientEndpoints will setup the base URL for the datum client

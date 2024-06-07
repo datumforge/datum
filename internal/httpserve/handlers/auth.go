@@ -9,7 +9,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -120,7 +119,7 @@ func (h *Handler) generateOauthUserSession(ctx context.Context, w http.ResponseW
 	setSessionMap[sessions.UsernameKey] = oauthRequest.ExternalUserName
 	setSessionMap[sessions.UserTypeKey] = oauthRequest.AuthProvider
 	setSessionMap[sessions.EmailKey] = oauthRequest.Email
-	setSessionMap[sessions.UserIDKey] = user.ID
+	setSessionMap[sessions.UserIDKey] = userID
 
 	c, err := h.SessionConfig.SaveAndStoreSession(ctx, w, setSessionMap, userID)
 	if err != nil {

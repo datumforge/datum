@@ -101,7 +101,7 @@ tasks:
     cmds:
       - task: generate
       - task: config:generate
-      - task: atlas:all
+      - task: atlas:create
       - task: go
       - task: fga:test
 
@@ -202,7 +202,8 @@ tasks:
     desc: Downloads a Golang distribution
     silent: true
     vars:
-      GO_VERSION: 1.22.4
+      GO_VERSION:
+        sh: curl -sk "https://go.dev/VERSION?m=text" | head -n 1 |  sed 's/go//g'
       GO_URL: https://go.dev/dl/go{{.GO_VERSION}}.darwin-arm64.tar.gz
     cmds:
       - test -d /usr/local/go-{{.GO_VERSION}} || curl -L -o go{{.GO_VERSION}}.darwin-arm64.tar.gz {{.GO_URL}} && sudo tar -C /usr/local -xzf go{{.GO_VERSION}}.darwin-arm64.tar.gz

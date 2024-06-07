@@ -517,6 +517,7 @@ type InviteReply struct {
 	Role         string `json:"role"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+	Session      string `json:"session"`
 }
 
 // Validate ensures the required fields are set on the InviteRequest request

@@ -20,7 +20,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
-	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -82,8 +81,10 @@ func (Invite) Mixin() []ent.Mixin {
 		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
-			Ref:             "invites",
-			SkipInterceptor: interceptors.SkipOnlyQuery,
+			Ref: "invites",
+			SkipTokenType: []token.PrivacyToken{
+				&token.OrgInviteToken{},
+			},
 		},
 	}
 }

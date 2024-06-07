@@ -87,8 +87,10 @@ func (PersonalAccessToken) Mixin() []ent.Mixin {
 		emixin.IDMixin{},
 		emixin.TagMixin{},
 		UserOwnedMixin{
-			Ref:             "personal_access_tokens",
-			AllowUpdate:     false,
+			Ref:         "personal_access_tokens",
+			AllowUpdate: false,
+			// skip the interceptor for Only queries when the token is being checked
+			// and we do not yet know the organization
 			SkipInterceptor: interceptors.SkipOnlyQuery,
 		},
 	}

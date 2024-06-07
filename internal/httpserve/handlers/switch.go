@@ -6,16 +6,12 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/fgax"
 	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/golang-jwt/jwt/v5"
 	ph "github.com/posthog/posthog-go"
 
-	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
-	"github.com/datumforge/datum/pkg/sessions"
-	"github.com/datumforge/datum/pkg/tokens"
 )
 
 // SwitchHandler is responsible for handling requests to the `/switch` endpoint, and changing the user's logged in organization context
@@ -76,27 +72,10 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// create new claims for the user
-	newClaims := switchClaims(user, org.MappingID)
-
-	// create a new token pair for the user
-	access, refresh, err := h.TM.CreateTokenPair(newClaims)
+	auth, err := h.generateUserAuthSessionWithOrg(ctx, user, org.MappingID)
 	if err != nil {
-		return h.InternalServerError(ctx, err)
-	}
-
-	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
-
-	// set sessions in response
-	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
-		return h.InternalServerError(ctx, err)
-	}
-
-	// return the session value for the UI to use
-	session, err := sessions.SessionToken(ctx.Request().Context())
-	if err != nil {
 		return h.InternalServerError(ctx, err)
 	}
 
@@ -113,23 +92,12 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	// set the out attributes we send back to the client only on success
 	out := &models.SwitchOrganizationReply{
 		Reply:        rout.Reply{Success: true},
-		AccessToken:  access,
-		RefreshToken: refresh,
-		Session:      session,
+		AccessToken:  auth.accessToken,
+		RefreshToken: auth.refreshToken,
+		Session:      auth.session,
 	}
 
 	return h.Success(ctx, out)
-}
-
-// switchClaims creates a new set of claims for the user based on the target organization and returns them
-func switchClaims(u *generated.User, targetOrgMappingID string) *tokens.Claims {
-	return &tokens.Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: u.MappingID,
-		},
-		UserID: u.MappingID,
-		OrgID:  targetOrgMappingID,
-	}
 }
 
 // BindSwitchHandler binds the reset password handler to the OpenAPI schema

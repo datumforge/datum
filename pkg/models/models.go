@@ -28,7 +28,6 @@ type LoginReply struct {
 	RefreshToken string `json:"refresh_token,omitempty"`
 	Session      string `json:"session,omitempty"`
 	TokenType    string `json:"token_type"`
-	ExpiresIn    int64  `json:"expires_in"`
 	Message      string `json:"message"`
 }
 

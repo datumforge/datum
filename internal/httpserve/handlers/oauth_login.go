@@ -14,7 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
 	oauth "github.com/datumforge/datum/pkg/providers/oauth2"
@@ -120,16 +120,19 @@ func (h *Handler) issueGoogleSession() http.Handler {
 		}
 
 		// Create session with external data
-		setSessionMap := map[string]any{}
-		setSessionMap[sessions.ExternalUserIDKey] = googleUser.Id
-		setSessionMap[sessions.UsernameKey] = googleUser.Name
-		setSessionMap[sessions.EmailKey] = googleUser.Email
-		setSessionMap[sessions.UserTypeKey] = googleProvider
-		setSessionMap[sessions.UserIDKey] = user.ID
+		oauthReq := models.OauthTokenRequest{
+			Email:            googleUser.Email,
+			ExternalUserName: googleUser.Name,
+			ExternalUserID:   googleUser.Id,
+			AuthProvider:     googleProvider,
+		}
 
-		ctx, err = h.SessionConfig.SaveAndStoreSession(ctxWithToken, w, setSessionMap, user.ID)
+		auth, err := h.generateOauthAuthSession(ctxWithToken, w, user, oauthReq)
 		if err != nil {
+			h.Logger.Errorw("unable create new auth session", "error", err)
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
 			return
 		}
 
@@ -138,30 +141,10 @@ func (h *Handler) issueGoogleSession() http.Handler {
 			return
 		}
 
-		// this might get moved based on the UI auth flow
-		// but works here for the cli login
-		claims := createClaims(user)
-
-		access, refresh, err := h.TM.CreateTokenPair(claims)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// set cookies on request with the access and refresh token
-		auth.SetAuthCookies(w, access, refresh)
-
 		// remove cookie
 		sessions.RemoveCookie(w, "redirect_to", *h.SessionConfig.CookieConfig)
 
-		// return the session value in the query string
-		s, err := sessions.SessionToken(ctx)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, req, fmt.Sprintf("%s?session=%s", redirectURI, s), http.StatusFound)
+		http.Redirect(w, req, fmt.Sprintf("%s?session=%s", redirectURI, auth.session), http.StatusFound)
 	}
 
 	return http.HandlerFunc(fn)
@@ -214,43 +197,27 @@ func (h *Handler) issueGitHubSession() http.Handler {
 			return
 		}
 
-		// this might get moved based on the UI auth flow
-		// but works here for the cli login
-		claims := createClaims(user)
-
-		access, refresh, err := h.TM.CreateTokenPair(claims)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		oauthReq := models.OauthTokenRequest{
+			Email:            *githubUser.Email,
+			ExternalUserName: *githubUser.Login,
+			ExternalUserID:   fmt.Sprintf("%v", githubUser.ID),
+			AuthProvider:     githubProvider,
 		}
 
-		auth.SetAuthCookies(w, access, refresh)
-
-		setSessionMap := map[string]any{}
-		setSessionMap[sessions.ExternalUserIDKey] = fmt.Sprintf("%v", githubUser.ID)
-		setSessionMap[sessions.UsernameKey] = *githubUser.Login
-		setSessionMap[sessions.UserTypeKey] = githubProvider
-		setSessionMap[sessions.EmailKey] = *githubUser.Email
-		setSessionMap[sessions.UserIDKey] = user.ID
-
-		ctx, err = h.SessionConfig.SaveAndStoreSession(ctxWithToken, w, setSessionMap, user.ID)
+		auth, err := h.generateOauthAuthSession(ctxWithToken, w, user, oauthReq)
 		if err != nil {
+			h.Logger.Errorw("unable create new auth session", "error", err)
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
 			return
 		}
 
 		// remove cookie now that its in the context
 		sessions.RemoveCookie(w, "redirect_to", *h.SessionConfig.CookieConfig)
 
-		// return the session value in the query string
-		s, err := sessions.SessionToken(ctx)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		// redirect with context set
-		http.Redirect(w, req, fmt.Sprintf("%s?session=%s", redirectURI, s), http.StatusFound)
+		http.Redirect(w, req, fmt.Sprintf("%s?session=%s", redirectURI, auth.session), http.StatusFound)
 	}
 
 	return http.HandlerFunc(fn)

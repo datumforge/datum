@@ -156,13 +156,6 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		return h.BadRequest(ctx, err)
 	}
 
-	// add the newly authorized organization to the user
-	if err := auth.AddOrganizationIDToContext(ctxWithToken, oid.String()); err != nil {
-		h.Logger.Errorw("unable to add organization to context", "error", err)
-
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
-	}
-
 	if err := updateInviteStatusAccepted(ctxWithToken, invitedUser); err != nil {
 		h.Logger.Errorw("unable to update invite status", "error", err)
 

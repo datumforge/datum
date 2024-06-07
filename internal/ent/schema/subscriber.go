@@ -20,7 +20,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
-	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -85,8 +84,11 @@ func (Subscriber) Mixin() []ent.Mixin {
 		emixin.TagMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
-			Ref:             "subscribers",
-			SkipInterceptor: interceptors.SkipOnlyQuery,
+			Ref: "subscribers",
+			SkipTokenType: []token.PrivacyToken{
+				&token.VerifyToken{},
+				&token.SignUpToken{},
+			},
 		},
 	}
 }

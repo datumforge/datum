@@ -270,3 +270,34 @@ func GetAuthzSubjectType(ctx context.Context) string {
 
 	return subjectType
 }
+
+// AddOrganizationIDToContext appends an authorized organization ID to the context.
+// This generally should not be used, as the authorized organization should be
+// determined by the claims or the token. This is only used in cases where the
+// a user is newly authorized to an organization and the organization ID is not
+// in the token claims
+func AddOrganizationIDToContext(ctx context.Context, orgID string) error {
+	ec, err := echocontext.EchoContextFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	return addOrganizationIDsToEchoContext(ec, orgID)
+}
+
+// getOrganizationIDsFromEchoContext appends an authorized organization ID to the echo context
+func addOrganizationIDsToEchoContext(c echo.Context, orgID string) error {
+	if v := c.Get(ContextAuthenticatedUser.name); v != nil {
+		a, ok := v.(*AuthenticatedUser)
+		if !ok {
+			return ErrNoAuthUser
+		}
+
+		// append the organization ID to the list of organization IDs
+		a.OrganizationIDs = append(a.OrganizationIDs, orgID)
+
+		return nil
+	}
+
+	return ErrNoAuthUser
+}

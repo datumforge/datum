@@ -14,6 +14,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/ent/interceptors"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
@@ -21,6 +23,12 @@ const (
 	ownerFieldName = "owner_id"
 )
 
+// OrgOwnerMixin is a mixin for organization owned entities
+// that adds an owner field to the schema and automatically
+// sets the owner id on mutations and filters by owner on queries.
+// In some cases, the owner ID may not be wanted on a query or hook (e.g. before the user is authenticated)
+// In these cases, the SkipTokenType field can be used to skip the traverser or hook if the token type is found in the context
+// or the SkipInterceptor field can be used to skip the interceptor for that schema for all queries, or specific types
 type OrgOwnerMixin struct {
 	mixin.Schema
 	// Ref table for the id
@@ -34,6 +42,8 @@ type OrgOwnerMixin struct {
 	// SkipInterceptor skips the interceptor for that schema for all queries, or specific types,
 	// this is useful for tokens, etc
 	SkipInterceptor interceptors.SkipMode
+	// SkipTokenType skips the traverser or hook if the token type is found in the context
+	SkipTokenType []token.PrivacyToken
 }
 
 // Fields of the OrgOwnerMixin
@@ -85,6 +95,15 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 	return []ent.Hook{
 		func(next ent.Mutator) ent.Mutator {
 			return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+				// skip the hook if the context has the token type
+				// this is useful for tokens, where the user is not yet authenticated to
+				// a particular organization yet and auth policy allows this
+				for _, tokenType := range orgOwned.SkipTokenType {
+					if rule.ContextHasPrivacyTokenOfType(ctx, tokenType) {
+						return next.Mutate(ctx, m)
+					}
+				}
+
 				// set owner on create mutation
 				if m.Op() == ent.OpCreate {
 					orgID, err := auth.GetOrganizationIDFromContext(ctx)
@@ -130,20 +149,32 @@ func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
 
 	return []ent.Interceptor{
 		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
-			if orgOwned.SkipInterceptor == interceptors.SkipAll {
-				return nil
-			}
-
-			orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
-			if err != nil {
-				ctxQuery := ent.QueryFromContext(ctx)
-
-				// Skip the interceptor if the query is for a single entity
-				// and the BypassInterceptor flag is set for Only queries
-				if orgOwned.SkipInterceptor == interceptors.SkipOnlyQuery && ctxQuery.Op == "Only" {
+			// skip the interceptor if the context has the token type
+			// this is useful for tokens, where the user is not yet authenticated to
+			// a particular organization yet
+			for _, tokenType := range orgOwned.SkipTokenType {
+				if rule.ContextHasPrivacyTokenOfType(ctx, tokenType) {
 					return nil
 				}
+			}
 
+			// check query context skips
+			ctxQuery := ent.QueryFromContext(ctx)
+
+			switch orgOwned.SkipInterceptor {
+			case interceptors.SkipAll:
+				return nil
+			case interceptors.SkipOnlyQuery:
+				{
+					if ctxQuery.Op == "Only" {
+						return nil
+					}
+				}
+			}
+
+			// add owner id(s) to the query
+			orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
+			if err != nil {
 				return err
 			}
 

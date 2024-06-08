@@ -26,6 +26,10 @@ func AllowIfContextHasPrivacyTokenOfType(emptyToken token.PrivacyToken) privacy.
 
 // ContextHasPrivacyTokenOfType checks the context for the token type and returns true if they match
 func ContextHasPrivacyTokenOfType(ctx context.Context, emptyToken token.PrivacyToken) bool {
+	if emptyToken == nil {
+		return false
+	}
+
 	actualTokenType := reflect.TypeOf(ctx.Value(emptyToken.GetContextKey()))
 	expectedTokenType := reflect.TypeOf(emptyToken)
 

@@ -63,3 +63,4 @@ results.txt
 *.env
 *.env-dev
 *.config.yaml
+.task

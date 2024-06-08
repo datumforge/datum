@@ -29,7 +29,8 @@ archives:
 brews:
   - homepage: 'https://github.com/datumforge/datum'
     description: 'datum is the client CLI for interacting with Datum Server'
-    folder: Formula
+    directory: Formula
+    license: 'Apache-2.0'
     commit_author:
       name: bender-datum
       email: bender@datum.net

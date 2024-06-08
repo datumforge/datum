@@ -7,13 +7,6 @@ includes:
     aliases: [compose]
 
 tasks:
-  create-and-lint:
-    desc: runs the atlas create and lint commands
-    aliases: [all]
-    cmds:
-      - task: create
-      - task: lint
-
   create:
     desc: creates an atlas migration if one is needed based on the ent schema definitions
     cmds:
@@ -27,11 +20,6 @@ tasks:
     ignore_error: true
     cmds:
       - atlas migrate lint --dev-url "docker://postgres/16/dev?search_path=public" --dir "file://migrations" -w
-
-  migrate:
-    desc: pushes the generated migration files to atlas cloud
-    cmds:
-      - atlas migrate push datum --dev-url "docker://postgres/16/dev?search_path=public" --dir "file://migrations"
 
   resethash:
     desc: re-sets the checksum created by the atlas package so that a complete migration can be re-created if deleted

@@ -251,7 +251,7 @@ require (
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/flopp/go-findfont v0.1.0
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/getkin/kin-openapi v0.124.0
+	github.com/getkin/kin-openapi v0.125.0
 	github.com/getsentry/sentry-go v0.28.0
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/yaml v0.4.6 // indirect

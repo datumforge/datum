@@ -72,7 +72,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// create new claims for the user
-	auth, err := h.generateUserAuthSessionWithOrg(ctx, user, org.MappingID)
+	auth, err := h.generateUserAuthSessionWithOrg(ctx, user, org.ID)
 	if err != nil {
 		h.Logger.Errorw("unable create new auth session", "error", err)
 

@@ -15,20 +15,20 @@ import (
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
-// createClaims creates the claims for the JWT token using the mapping ids for the user and organization
-func createClaimsWithOrg(u *generated.User, targetOrgMappingID string) *tokens.Claims {
-	if targetOrgMappingID == "" {
+// createClaims creates the claims for the JWT token using the id for the user and organization
+func createClaimsWithOrg(u *generated.User, targetOrgID string) *tokens.Claims {
+	if targetOrgID == "" {
 		if u.Edges.Setting.Edges.DefaultOrg != nil {
-			targetOrgMappingID = u.Edges.Setting.Edges.DefaultOrg.MappingID
+			targetOrgID = u.Edges.Setting.Edges.DefaultOrg.ID
 		}
 	}
 
 	return &tokens.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: u.MappingID,
+			Subject: u.ID,
 		},
-		UserID: u.MappingID,
-		OrgID:  targetOrgMappingID,
+		UserID: u.ID,
+		OrgID:  targetOrgID,
 	}
 }
 
@@ -38,8 +38,8 @@ func (h *Handler) generateUserAuthSession(ctx echo.Context, user *generated.User
 }
 
 // generateUserAuthSessionWithOrg creates a new auth session for the user and the new target organization id
-func (h *Handler) generateUserAuthSessionWithOrg(ctx echo.Context, user *generated.User, targetOrgMappingID string) (*models.AuthData, error) {
-	auth, err := h.createTokenPair(user, targetOrgMappingID)
+func (h *Handler) generateUserAuthSessionWithOrg(ctx echo.Context, user *generated.User, targetOrgID string) (*models.AuthData, error) {
+	auth, err := h.createTokenPair(user, targetOrgID)
 	if err != nil {
 		return nil, err
 	}
@@ -72,9 +72,9 @@ func (h *Handler) generateOauthAuthSession(ctx context.Context, w http.ResponseW
 }
 
 // createTokenPair creates a new token pair for the user and the target organization id (or default org if none provided)
-func (h *Handler) createTokenPair(user *generated.User, targetOrgMappingID string) (*models.AuthData, error) {
+func (h *Handler) createTokenPair(user *generated.User, targetOrgID string) (*models.AuthData, error) {
 	// create new claims for the user
-	newClaims := createClaimsWithOrg(user, targetOrgMappingID)
+	newClaims := createClaimsWithOrg(user, targetOrgID)
 
 	// create a new token pair for the user
 	access, refresh, err := h.TM.CreateTokenPair(newClaims)

@@ -69,9 +69,9 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 
 	claims := &tokens.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: user.MappingID,
+			Subject: user.ID,
 		},
-		UserID: user.MappingID,
+		UserID: user.ID,
 	}
 
 	_, refresh, err := tm.CreateTokenPair(claims)

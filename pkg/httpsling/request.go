@@ -637,7 +637,7 @@ func (b *RequestBuilder) requestChecks(req *http.Request) *http.Request {
 		for key := range *b.client.Headers {
 			values := (*b.client.Headers)[key]
 			for _, value := range values {
-				req.Header.Add(key, value)
+				req.Header.Set(key, value)
 			}
 		}
 	}
@@ -646,7 +646,7 @@ func (b *RequestBuilder) requestChecks(req *http.Request) *http.Request {
 		for key := range *b.headers {
 			values := (*b.headers)[key]
 			for _, value := range values {
-				req.Header.Add(key, value)
+				req.Header.Set(key, value)
 			}
 		}
 	}

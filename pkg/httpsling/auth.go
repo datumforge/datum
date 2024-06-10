@@ -2,6 +2,16 @@ package httpsling
 
 import "net/http"
 
+// AuthType represents the type of authentication method
+type AuthType string
+
+var (
+	// BearerAuthType is the Bearer token authentication type using the Authorization header
+	BearerAuthType AuthType = "Bearer"
+	// BasicAuthType is the Basic authentication type using a username and password
+	BasicAuthType AuthType = "Basic"
+)
+
 // AuthMethod defines the interface for applying authentication strategies to httpsling
 type AuthMethod interface {
 	// Apply adds the authentication method to the request

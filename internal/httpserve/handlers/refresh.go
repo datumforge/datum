@@ -68,10 +68,12 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	out := &models.RefreshReply{
-		Reply:        rout.Reply{Success: true},
-		Message:      "success",
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		Reply:   rout.Reply{Success: true},
+		Message: "success",
+		AuthData: models.AuthData{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
 	}
 
 	return h.Success(ctx, out)

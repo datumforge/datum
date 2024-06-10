@@ -9,13 +9,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 )
-
-// bearerToken is the string used to identify the bearer token in the Authorization header
-const bearerToken = "Bearer"
 
 // createClaims creates the claims for the JWT token using the mapping ids for the user and organization
 func createClaimsWithOrg(u *generated.User, targetOrgMappingID string) *tokens.Claims {
@@ -51,7 +49,7 @@ func (h *Handler) generateUserAuthSessionWithOrg(ctx echo.Context, user *generat
 		return nil, err
 	}
 
-	auth.TokenType = bearerToken
+	auth.TokenType = string(httpsling.BearerAuthType)
 
 	return auth, nil
 }
@@ -68,7 +66,7 @@ func (h *Handler) generateOauthAuthSession(ctx context.Context, w http.ResponseW
 		return nil, err
 	}
 
-	auth.TokenType = bearerToken
+	auth.TokenType = string(httpsling.BearerAuthType)
 
 	return auth, nil
 }

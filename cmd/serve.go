@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/fgax"
@@ -21,7 +20,7 @@ import (
 
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Start the Datum Graph API",
+	Short: "Start the Datum API Server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return serve(cmd.Context())
 	},
@@ -31,7 +30,6 @@ func init() {
 	rootCmd.AddCommand(serveCmd)
 
 	serveCmd.PersistentFlags().String("config", "./config/.config.yaml", "config file location")
-	viperBindFlag("config", serveCmd.PersistentFlags().Lookup("config"))
 }
 
 func serve(ctx context.Context) error {
@@ -62,7 +60,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithEventPublisher(),
 	)
 
-	so := serveropts.NewServerOptions(serverOpts, viper.GetString("config"))
+	so := serveropts.NewServerOptions(serverOpts, k.String("config"))
 
 	err = otelx.NewTracer(so.Config.Settings.Tracer, appName, logger)
 	if err != nil {

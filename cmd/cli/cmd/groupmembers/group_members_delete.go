@@ -6,7 +6,6 @@ import (
 	"errors"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -24,10 +23,7 @@ func init() {
 	groupMembersCmd.AddCommand(groupMembersDeleteCmd)
 
 	groupMembersDeleteCmd.Flags().StringP("group-id", "g", "", "group id")
-	datum.ViperBindFlag("groupmember.delete.groupid", groupMembersDeleteCmd.Flags().Lookup("group-id"))
-
 	groupMembersDeleteCmd.Flags().StringP("user-id", "u", "", "user id")
-	datum.ViperBindFlag("groupmember.delete.userid", groupMembersDeleteCmd.Flags().Lookup("user-id"))
 }
 
 func deleteGroupMember(ctx context.Context) error {
@@ -38,12 +34,12 @@ func deleteGroupMember(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	gID := viper.GetString("groupmember.delete.groupid")
+	gID := datum.Config.String("group-id")
 	if gID == "" {
 		return datum.NewRequiredFieldMissingError("group id")
 	}
 
-	uID := viper.GetString("groupmember.delete.userid")
+	uID := datum.Config.String("user-id")
 	if uID == "" {
 		return datum.NewRequiredFieldMissingError("user id")
 	}

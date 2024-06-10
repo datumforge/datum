@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	groupSettingCmd.AddCommand(groupSettingGetCmd)
 
 	groupSettingGetCmd.Flags().StringP("id", "i", "", "group setting id to retrieve")
-	datum.ViperBindFlag("groupsetting.get.id", groupSettingGetCmd.Flags().Lookup("id"))
 }
 
 func groupSettings(ctx context.Context) error {
@@ -34,7 +32,7 @@ func groupSettings(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	settingsID := viper.GetString("groupsetting.get.id")
+	settingsID := datum.Config.String("id")
 
 	var s []byte
 

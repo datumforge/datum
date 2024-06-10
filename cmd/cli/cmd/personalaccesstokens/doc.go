@@ -1,2 +1,2 @@
-// Package datumtokens is our cobra/viper cli for token endpoints
+// Package datumtokens is our cobra cli for token endpoints
 package datumtokens

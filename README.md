@@ -58,8 +58,7 @@ Developing against this repo involves a few mandatory tools; please read up on t
 1. [gqlgenc](https://github.com/Yamashou/gqlgenc) - Client building utilities with GraphQL
 1. [openfga](https://openfga.dev/) - Flexible authorization/permission engine inspired by Google Zanzibar
 1. [echo](https://echo.labstack.com/) - High performance, extensible, minimalist Go web framework
-1. [koanf](https://github.com/knadh/koanf) - Configuration management library which parses Go structs + creates our main configuration files
-1. [viper](https://github.com/spf13/viper) - command line flags / management
+1. [koanf](https://github.com/knadh/koanf) - Configuration management library which parses command line arguments, Go structs + creates our main configuration files
 
 We also leverage many secondary technologies in use, including (but not limited to!):
 

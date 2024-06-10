@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,10 +22,7 @@ func init() {
 	subscribersCmd.AddCommand(subscribersUpdateCmd)
 
 	subscribersUpdateCmd.Flags().StringP("email", "e", "", "email address of the subscriber to update")
-	datum.ViperBindFlag("subscribers.update.email", subscribersUpdateCmd.Flags().Lookup("email"))
-
-	subscribersUpdateCmd.Flags().StringP("phonenumber", "p", "", "phone number to add or update on the subscriber")
-	datum.ViperBindFlag("subscribers.update.phone", subscribersUpdateCmd.Flags().Lookup("phonenumber"))
+	subscribersUpdateCmd.Flags().StringP("phone-number", "p", "", "phone number to add or update on the subscriber")
 }
 
 func subscriberUpdate(ctx context.Context) error {
@@ -37,12 +33,12 @@ func subscriberUpdate(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	email := viper.GetString("subscribers.update.email")
+	email := datum.Config.String("email")
 	if email == "" {
 		return datum.NewRequiredFieldMissingError("email")
 	}
 
-	phone := viper.GetString("subscribers.update.phone")
+	phone := datum.Config.String("phone-number")
 
 	input := datumclient.UpdateSubscriberInput{
 		PhoneNumber: &phone,

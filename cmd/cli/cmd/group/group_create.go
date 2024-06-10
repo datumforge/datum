@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,13 +22,8 @@ func init() {
 	groupCmd.AddCommand(groupCreateCmd)
 
 	groupCreateCmd.Flags().StringP("name", "n", "", "name of the group")
-	datum.ViperBindFlag("group.create.name", groupCreateCmd.Flags().Lookup("name"))
-
 	groupCreateCmd.Flags().StringP("short-name", "s", "", "display name of the group")
-	datum.ViperBindFlag("group.create.short-name", groupCreateCmd.Flags().Lookup("short-name"))
-
 	groupCreateCmd.Flags().StringP("description", "d", "", "description of the group")
-	datum.ViperBindFlag("group.create.description", groupCreateCmd.Flags().Lookup("description"))
 }
 
 func createGroup(ctx context.Context) error {
@@ -42,13 +36,13 @@ func createGroup(ctx context.Context) error {
 
 	var s []byte
 
-	name := viper.GetString("group.create.name")
+	name := datum.Config.String("name")
 	if name == "" {
 		return datum.NewRequiredFieldMissingError("group name")
 	}
 
-	displayName := viper.GetString("group.create.short-name")
-	description := viper.GetString("group.create.description")
+	displayName := datum.Config.String("short-name")
+	description := datum.Config.String("description")
 
 	input := datumclient.CreateGroupInput{
 		Name: name,

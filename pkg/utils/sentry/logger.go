@@ -4,19 +4,26 @@ import (
 	"time"
 
 	"github.com/getsentry/sentry-go"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-// NewLogger creates a new zap logger with the appropriate configuration based on the viper settings for pretty and debug
-func NewLogger() *zap.SugaredLogger {
+// LoggerConfig is the configuration for the logger used in the sentry package
+type LoggerConfig struct {
+	// Debug is a flag to enable debug logging
+	Debug bool
+	// Pretty is a flag to enable pretty logging
+	Pretty bool
+}
+
+// NewLogger creates a new zap logger with the appropriate configuration based on the config settings for pretty and debug
+func (c *LoggerConfig) NewLogger() *zap.SugaredLogger {
 	cfg := zap.NewProductionConfig()
-	if viper.GetBool("pretty") {
+	if c.Pretty {
 		cfg = zap.NewDevelopmentConfig()
 	}
 
-	if viper.GetBool("debug") {
+	if c.Debug {
 		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	} else {
 		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)

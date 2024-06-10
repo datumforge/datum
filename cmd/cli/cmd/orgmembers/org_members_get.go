@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -24,7 +23,6 @@ func init() {
 	orgMembersCmd.AddCommand(orgMembersGetCmd)
 
 	orgMembersGetCmd.Flags().StringP("org-id", "o", "", "org id to query")
-	datum.ViperBindFlag("orgmember.get.id", orgMembersGetCmd.Flags().Lookup("org-id"))
 }
 
 func orgMembers(ctx context.Context) error {
@@ -38,7 +36,7 @@ func orgMembers(ctx context.Context) error {
 	where := datumclient.OrgMembershipWhereInput{}
 
 	// filter options
-	oID := viper.GetString("orgmember.get.id")
+	oID := datum.Config.String("id")
 
 	if oID != "" {
 		where.OrganizationID = &oID

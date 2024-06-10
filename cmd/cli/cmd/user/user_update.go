@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,19 +22,10 @@ func init() {
 	userCmd.AddCommand(userUpdateCmd)
 
 	userUpdateCmd.Flags().StringP("id", "i", "", "user id to update")
-	datum.ViperBindFlag("user.update.id", userUpdateCmd.Flags().Lookup("id"))
-
 	userUpdateCmd.Flags().StringP("first-name", "f", "", "first name of the user")
-	datum.ViperBindFlag("user.update.first-name", userUpdateCmd.Flags().Lookup("first-name"))
-
 	userUpdateCmd.Flags().StringP("last-name", "l", "", "last name of the user")
-	datum.ViperBindFlag("user.update.last-name", userUpdateCmd.Flags().Lookup("last-name"))
-
 	userUpdateCmd.Flags().StringP("display-name", "d", "", "display name of the user")
-	datum.ViperBindFlag("user.update.display-name", userUpdateCmd.Flags().Lookup("display-name"))
-
 	userUpdateCmd.Flags().StringP("email", "e", "", "email of the user")
-	datum.ViperBindFlag("user.update.email", userUpdateCmd.Flags().Lookup("email"))
 }
 
 func updateUser(ctx context.Context) error {
@@ -48,15 +38,15 @@ func updateUser(ctx context.Context) error {
 
 	var s []byte
 
-	userID := viper.GetString("user.update.id")
+	userID := datum.Config.String("id")
 	if userID == "" {
 		return datum.NewRequiredFieldMissingError("user id")
 	}
 
-	firstName := viper.GetString("user.update.first-name")
-	lastName := viper.GetString("user.update.last-name")
-	displayName := viper.GetString("user.update.display-name")
-	email := viper.GetString("user.update.email")
+	firstName := datum.Config.String("first-name")
+	lastName := datum.Config.String("last-name")
+	displayName := datum.Config.String("display-name")
+	email := datum.Config.String("email")
 
 	input := datumclient.UpdateUserInput{}
 

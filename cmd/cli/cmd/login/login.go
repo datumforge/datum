@@ -3,11 +3,9 @@ package datumlogin
 import (
 	"context"
 	"fmt"
-	"os"
 	"syscall"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 	"golang.org/x/term"
 
@@ -30,7 +28,6 @@ func init() {
 	datum.RootCmd.AddCommand(loginCmd)
 
 	loginCmd.Flags().StringP("username", "u", "", "username (email) to authenticate with password auth")
-	datum.ViperBindFlag("login.username", loginCmd.Flags().Lookup("username"))
 }
 
 func login(ctx context.Context) (*oauth2.Token, error) {
@@ -40,7 +37,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	username := viper.GetString("login.username")
+	username := datum.Config.String("username")
 	if username == "" {
 		return nil, datum.NewRequiredFieldMissingError("username")
 	}
@@ -65,7 +62,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 
 func passwordAuth(ctx context.Context, client *datumclient.DatumClient, username string) (*oauth2.Token, error) {
 	// read password from terminal if not set in environment variable
-	password := os.Getenv("DATUM_PASSWORD")
+	password := datum.Config.String("password")
 
 	if password == "" {
 		fmt.Print("Password: ")

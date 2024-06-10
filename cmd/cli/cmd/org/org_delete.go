@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	orgCmd.AddCommand(orgDeleteCmd)
 
 	orgDeleteCmd.Flags().StringP("id", "i", "", "org id to delete")
-	datum.ViperBindFlag("org.delete.id", orgDeleteCmd.Flags().Lookup("id"))
 }
 
 func deleteOrg(ctx context.Context) error {
@@ -35,7 +33,7 @@ func deleteOrg(ctx context.Context) error {
 
 	var s []byte
 
-	oID := viper.GetString("org.delete.id")
+	oID := datum.Config.String("id")
 	if oID == "" {
 		return datum.NewRequiredFieldMissingError("organization id")
 	}

@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	echo "github.com/datumforge/echox"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
@@ -20,6 +19,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
@@ -117,7 +117,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(string(body)))
-			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			req.Header.Set(httpsling.HeaderContentType, httpsling.ContentTypeJSONUTF8)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

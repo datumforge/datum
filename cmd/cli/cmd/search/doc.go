@@ -1,2 +1,2 @@
-// Package datumsearch is our cobra/viper cli for search endpoint
+// Package datumsearch is our cobra cli for search endpoint
 package datumsearch

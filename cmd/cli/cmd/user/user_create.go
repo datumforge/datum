@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,19 +22,10 @@ func init() {
 	userCmd.AddCommand(userCreateCmd)
 
 	userCreateCmd.Flags().StringP("email", "e", "", "email of the user")
-	datum.ViperBindFlag("user.create.email", userCreateCmd.Flags().Lookup("email"))
-
 	userCreateCmd.Flags().StringP("password", "p", "", "password of the user")
-	datum.ViperBindFlag("user.create.password", userCreateCmd.Flags().Lookup("password"))
-
 	userCreateCmd.Flags().StringP("first-name", "f", "", "first name of the user")
-	datum.ViperBindFlag("user.create.first-name", userCreateCmd.Flags().Lookup("first-name"))
-
 	userCreateCmd.Flags().StringP("last-name", "l", "", "last name of the user")
-	datum.ViperBindFlag("user.create.last-name", userCreateCmd.Flags().Lookup("last-name"))
-
 	userCreateCmd.Flags().StringP("display-name", "d", "", "first name of the user")
-	datum.ViperBindFlag("user.create.display-name", userCreateCmd.Flags().Lookup("display-name"))
 }
 
 func createUser(ctx context.Context) error {
@@ -48,24 +38,24 @@ func createUser(ctx context.Context) error {
 
 	var s []byte
 
-	email := viper.GetString("user.create.email")
+	email := datum.Config.String("email")
 	if email == "" {
 		return datum.NewRequiredFieldMissingError("email")
 	}
 
-	firstName := viper.GetString("user.create.first-name")
+	firstName := datum.Config.String("first-name")
 	if firstName == "" {
 		return datum.NewRequiredFieldMissingError("first name")
 	}
 
-	lastName := viper.GetString("user.create.last-name")
+	lastName := datum.Config.String("last-name")
 	if lastName == "" {
 		return datum.NewRequiredFieldMissingError("last name")
 	}
 
-	displayName := viper.GetString("user.create.display-name")
+	displayName := datum.Config.String("display-name")
 
-	password := viper.GetString("user.create.password")
+	password := datum.Config.String("password")
 
 	input := datumclient.CreateUserInput{
 		Email:     email,

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,16 +22,9 @@ func init() {
 	groupCmd.AddCommand(groupUpdateCmd)
 
 	groupUpdateCmd.Flags().StringP("id", "i", "", "group id to update")
-	datum.ViperBindFlag("group.update.id", groupUpdateCmd.Flags().Lookup("id"))
-
 	groupUpdateCmd.Flags().StringP("name", "n", "", "name of the group")
-	datum.ViperBindFlag("group.update.name", groupUpdateCmd.Flags().Lookup("name"))
-
 	groupUpdateCmd.Flags().StringP("short-name", "s", "", "display name of the group")
-	datum.ViperBindFlag("group.update.short-name", groupUpdateCmd.Flags().Lookup("short-name"))
-
 	groupUpdateCmd.Flags().StringP("description", "d", "", "description of the group")
-	datum.ViperBindFlag("group.update.description", groupUpdateCmd.Flags().Lookup("description"))
 }
 
 func updateGroup(ctx context.Context) error {
@@ -45,14 +37,14 @@ func updateGroup(ctx context.Context) error {
 
 	var s []byte
 
-	gID := viper.GetString("group.update.id")
+	gID := datum.Config.String("id")
 	if gID == "" {
 		return datum.NewRequiredFieldMissingError("group id")
 	}
 
-	name := viper.GetString("group.update.name")
-	displayName := viper.GetString("group.update.short-name")
-	description := viper.GetString("group.update.description")
+	name := datum.Config.String("name")
+	displayName := datum.Config.String("short-name")
+	description := datum.Config.String("description")
 
 	input := datumclient.UpdateGroupInput{}
 

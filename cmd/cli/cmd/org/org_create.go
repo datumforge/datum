@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,21 +22,13 @@ func init() {
 	orgCmd.AddCommand(orgCreateCmd)
 
 	orgCreateCmd.Flags().StringP("name", "n", "", "name of the organization")
-	datum.ViperBindFlag("org.create.name", orgCreateCmd.Flags().Lookup("name"))
-
 	orgCreateCmd.Flags().StringP("short-name", "s", "", "display name of the organization")
-	datum.ViperBindFlag("org.create.short-name", orgCreateCmd.Flags().Lookup("short-name"))
-
 	orgCreateCmd.Flags().StringP("description", "d", "", "description of the organization")
-	datum.ViperBindFlag("org.create.description", orgCreateCmd.Flags().Lookup("description"))
-
 	orgCreateCmd.Flags().StringP("parent-org-id", "p", "", "parent organization id, leave empty to create a root org")
-	datum.ViperBindFlag("org.create.parent-org-id", orgCreateCmd.Flags().Lookup("parent-org-id"))
 
 	// TODO: https://github.com/datumforge/datum/issues/734
 	// remove flag once the feature is implemented
 	orgCreateCmd.Flags().BoolP("dedicated-db", "D", false, "create a dedicated database for the organization")
-	datum.ViperBindFlag("org.create.dedicated-db", orgCreateCmd.Flags().Lookup("dedicated-db"))
 }
 
 func createOrg(ctx context.Context) error {
@@ -50,15 +41,15 @@ func createOrg(ctx context.Context) error {
 
 	var s []byte
 
-	name := viper.GetString("org.create.name")
+	name := datum.Config.String("name")
 	if name == "" {
 		return datum.NewRequiredFieldMissingError("organization name")
 	}
 
-	displayName := viper.GetString("org.create.short-name")
-	description := viper.GetString("org.create.description")
-	parentOrgID := viper.GetString("org.create.parent-org-id")
-	dedicatedDB := viper.GetBool("org.create.dedicated-db")
+	displayName := datum.Config.String("short-name")
+	description := datum.Config.String("description")
+	parentOrgID := datum.Config.String("parent-org-id")
+	dedicatedDB := datum.Config.Bool("dedicated-db")
 
 	input := datumclient.CreateOrganizationInput{
 		Name: name,

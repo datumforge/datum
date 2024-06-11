@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,19 +22,10 @@ func init() {
 	webhookCmd.AddCommand(webhookCreateCmd)
 
 	webhookCreateCmd.Flags().StringP("name", "n", "", "name of the webhook")
-	datum.ViperBindFlag("webhook.create.name", webhookCreateCmd.Flags().Lookup("name"))
-
 	webhookCreateCmd.Flags().StringP("description", "d", "", "description of the webhook")
-	datum.ViperBindFlag("webhook.create.description", webhookCreateCmd.Flags().Lookup("description"))
-
 	webhookCreateCmd.Flags().StringP("url", "u", "", "the destination url the webhook is sent to")
-	datum.ViperBindFlag("webhook.create.url", webhookCreateCmd.Flags().Lookup("url"))
-
 	webhookCreateCmd.Flags().StringP("owner-id", "o", "", "owner of the webhook")
-	datum.ViperBindFlag("webhook.create.owner-id", webhookCreateCmd.Flags().Lookup("owner-id"))
-
 	webhookCreateCmd.Flags().BoolP("enabled", "e", true, "if the webhook is enabled")
-	datum.ViperBindFlag("webhook.create.enabled", webhookCreateCmd.Flags().Lookup("enabled"))
 }
 
 func createwebhook(ctx context.Context) error {
@@ -48,19 +38,19 @@ func createwebhook(ctx context.Context) error {
 
 	var s []byte
 
-	name := viper.GetString("webhook.create.name")
+	name := datum.Config.String("name")
 	if name == "" {
 		return datum.NewRequiredFieldMissingError("name")
 	}
 
-	url := viper.GetString("webhook.create.url")
+	url := datum.Config.String("url")
 	if url == "" {
 		return datum.NewRequiredFieldMissingError("url")
 	}
 
-	enabled := viper.GetBool("webhook.create.enabled")
-	ownerID := viper.GetString("webhook.create.owner-id")
-	description := viper.GetString("webhook.create.description")
+	enabled := datum.Config.Bool("enabled")
+	ownerID := datum.Config.String("owner-id")
+	description := datum.Config.String("description")
 
 	input := datumclient.CreateWebhookInput{
 		Name:           name,

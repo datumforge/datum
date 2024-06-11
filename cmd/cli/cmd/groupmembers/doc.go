@@ -1,2 +1,2 @@
-// Package datumgroupmembers is our cobra/viper cli for group member endpoints
+// Package datumgroupmembers is our cobra cli for group member endpoints
 package datumgroupmembers

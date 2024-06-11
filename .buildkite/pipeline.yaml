@@ -13,7 +13,7 @@ steps:
         cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
-              image: "ghcr.io/datumforge/base-ci-image:v1.1.4"
+              image: "ghcr.io/datumforge/base-ci-image:v1.1.6"
               command: ["task", "ci"]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -22,7 +22,7 @@ steps:
         cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
-              image: "ghcr.io/datumforge/base-ci-image:v1.1.4"
+              image: "ghcr.io/datumforge/base-ci-image:v1.1.6"
               command: ["task", "config:ci"]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -34,7 +34,7 @@ steps:
         key: "lint"
         plugins:
           - docker#v5.11.0:
-              image: "registry.hub.docker.com/golangci/golangci-lint:v1.57.1"
+              image: "registry.hub.docker.com/golangci/golangci-lint:v1.59.0"
               command: ["golangci-lint", "run", "-v", "--timeout", "10m", "--config", ".golangci.yaml", "--concurrency", "32"]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -45,7 +45,7 @@ steps:
           TEST_DB_URL: "libsql://file::memory:?cache=shared"
         plugins:
           - docker#v5.11.0:
-              image: golang:1.22.2
+              image: golang:1.22.4
               command: ["go", "test", "-coverprofile=coverage.out", "./..."]
               environment:
                 - "TEST_DB_URL"
@@ -64,7 +64,7 @@ steps:
           - "sqlite://file:ent?mode=memory&cache=shared"
         plugins:
           - docker#v5.11.0:
-              image: golang:1.22.2
+              image: golang:1.22.4
               command: ["go", "test", "-coverprofile=coverage.out", "./..."]
               environment:
                 - "TEST_DB_URL"
@@ -87,7 +87,7 @@ steps:
         key: "gosec"
         plugins:
           - docker#v5.11.0:
-              image: "registry.hub.docker.com/securego/gosec:2.18.2"
+              image: "registry.hub.docker.com/securego/gosec:2.20.0"
               command: ["-no-fail", "-exclude-generated", "-fmt sonarqube", "-out", "results.txt", "./..."]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -131,7 +131,7 @@ steps:
         artifact_paths: "bin/${APP_NAME}"
         plugins:
           - docker#v5.11.0:
-              image: "golang:1.22.2"
+              image: "golang:1.22.4"
               environment:
                 - CGO_ENABLED=0
                 - GOOS=linux
@@ -141,7 +141,7 @@ steps:
         artifact_paths: "bin/${APP_NAME}-cli"
         plugins:
           - docker#v5.11.0:
-              image: "golang:1.22.2"
+              image: "golang:1.22.4"
               environment:
                 - GOOS=darwin
                 - GOARCH=arm64

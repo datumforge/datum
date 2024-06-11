@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -24,7 +23,6 @@ func init() {
 	groupMembersCmd.AddCommand(groupMembersGetCmd)
 
 	groupMembersGetCmd.Flags().StringP("group-id", "g", "", "group id to query")
-	datum.ViperBindFlag("groupmember.get.id", groupMembersGetCmd.Flags().Lookup("group-id"))
 }
 
 func groupMembers(ctx context.Context) error {
@@ -35,7 +33,7 @@ func groupMembers(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 	// filter options
-	gID := viper.GetString("groupmember.get.id")
+	gID := datum.Config.String("id")
 	if gID == "" {
 		return datum.NewRequiredFieldMissingError("group id")
 	}

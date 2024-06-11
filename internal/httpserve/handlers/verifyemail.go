@@ -108,17 +108,13 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		return h.InternalServerError(ctx, err)
 	}
 
-	claims := createClaims(entUser)
-
-	access, refresh, err := h.TM.CreateTokenPair(claims)
+	// create new claims for the user
+	auth, err := h.generateUserAuthSession(ctx, entUser)
 	if err != nil {
-		h.Logger.Errorw("error creating token pair", "error", err)
+		h.Logger.Errorw("unable create new auth session", "error", err)
 
-		return h.BadRequest(ctx, err)
+		return h.InternalServerError(ctx, err)
 	}
-
-	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
 	props := ph.NewProperties().
 		Set("user_id", user.ID).
@@ -129,13 +125,11 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	h.AnalyticsClient.Event("email_verified", props)
 
 	out := &models.VerifyReply{
-		ID:           entUser.ID,
-		Email:        entUser.Email,
-		Reply:        rout.Reply{Success: true},
-		Message:      "success",
-		AccessToken:  access,
-		RefreshToken: refresh,
-		ExpiresIn:    claims.ExpiresAt.Unix(),
+		ID:       entUser.ID,
+		Email:    entUser.Email,
+		Reply:    rout.Reply{Success: true},
+		Message:  "success",
+		AuthData: *auth,
 	}
 
 	return h.Success(ctx, out)

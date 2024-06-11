@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
@@ -23,7 +22,6 @@ func init() {
 	templateCmd.AddCommand(templateGetCmd)
 
 	templateGetCmd.Flags().StringP("id", "i", "", "get a specific template by ID")
-	datum.ViperBindFlag("template.get.id", templateGetCmd.Flags().Lookup("id"))
 }
 
 func templates(ctx context.Context) error {
@@ -34,7 +32,7 @@ func templates(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	templateID := viper.GetString("template.get.id")
+	templateID := datum.Config.String("id")
 
 	var s []byte
 

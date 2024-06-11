@@ -13,6 +13,8 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/getsentry/sentry-go"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/datumforge/datum/pkg/httpsling"
 )
 
 type TransportMock struct {
@@ -74,14 +76,14 @@ func (s *MiddlewareTestSuite) TestMiddlewareWithConfig() {
 
 			s.NotEmpty(span.Tags["client_ip"])
 
-			s.Equal(echo.MIMEApplicationJSON, span.Tags["req.header.Content-Type"])
+			s.Equal(httpsling.ContentTypeJSONUTF8, span.Tags["req.header.Content-Type"])
 			s.Equal("test", span.Tags["req.header.Testheader"])
 
 			return c.String(http.StatusOK, "test")
 		})
 
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
-		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		req.Header.Set(echo.HeaderContentType, httpsling.ContentTypeJSONUTF8)
 		req.Header.Set("testHeader", "test")
 
 		rec := httptest.NewRecorder()

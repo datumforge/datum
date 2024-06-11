@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	userCmd.AddCommand(userDeleteCmd)
 
 	userDeleteCmd.Flags().StringP("id", "i", "", "user id to delete")
-	datum.ViperBindFlag("user.delete.id", userDeleteCmd.Flags().Lookup("id"))
 }
 
 func deleteUser(ctx context.Context) error {
@@ -35,7 +33,7 @@ func deleteUser(ctx context.Context) error {
 
 	var s []byte
 
-	userID := viper.GetString("user.delete.id")
+	userID := datum.Config.String(".id")
 	if userID == "" {
 		return datum.NewRequiredFieldMissingError("user id")
 	}

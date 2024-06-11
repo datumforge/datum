@@ -1,2 +1,2 @@
-// Package datumsubscribers is our cobra/viper cli for subscriber endpoints
+// Package datumsubscribers is our cobra cli for subscriber endpoints
 package datumsubscribers

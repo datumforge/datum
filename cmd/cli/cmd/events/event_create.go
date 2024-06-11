@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -24,16 +23,9 @@ func init() {
 	eventCmd.AddCommand(eventCreateCmd)
 
 	eventCreateCmd.Flags().StringP("type", "t", "", "type of the event")
-	datum.ViperBindFlag("event.create.type", eventCreateCmd.Flags().Lookup("type"))
-
 	eventCreateCmd.Flags().StringP("metadata", "m", "", "metadata for the event")
-	datum.ViperBindFlag("event.create.metadata", eventCreateCmd.Flags().Lookup("metadata"))
-
-	eventCreateCmd.Flags().StringP("userid", "u", "", "user id associated with the event")
-	datum.ViperBindFlag("event.create.userid", eventCreateCmd.Flags().Lookup("userid"))
-
-	eventCreateCmd.Flags().StringP("eventjson", "j", "", "json payload for the template")
-	datum.ViperBindFlag("event.create.metadata", eventCreateCmd.Flags().Lookup("eventjson"))
+	eventCreateCmd.Flags().StringSliceP("user-ids", "u", []string{}, "user id associated with the event")
+	eventCreateCmd.Flags().StringP("event-json", "j", "", "json payload for the template")
 }
 
 func createevent(ctx context.Context) error {
@@ -46,14 +38,14 @@ func createevent(ctx context.Context) error {
 
 	var s []byte
 
-	eventType := viper.GetString("event.create.type")
+	eventType := datum.Config.String("type")
 	if eventType == "" {
 		return datum.NewRequiredFieldMissingError("type")
 	}
 
-	userid := viper.GetStringSlice("event.create.userid")
-	eventjson := viper.GetString("event.create.eventjson")
-	metadata := viper.GetString("event.create.metadata")
+	userid := datum.Config.Strings("user-ids")
+	eventjson := datum.Config.String("event-json")
+	metadata := datum.Config.String("metadata")
 
 	input := datumclient.CreateEventInput{
 		EventType: eventType,

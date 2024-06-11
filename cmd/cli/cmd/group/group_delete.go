@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	groupCmd.AddCommand(groupDeleteCmd)
 
 	groupDeleteCmd.Flags().StringP("id", "i", "", "group id to delete")
-	datum.ViperBindFlag("group.delete.id", groupDeleteCmd.Flags().Lookup("id"))
 }
 
 func deleteGroup(ctx context.Context) error {
@@ -35,7 +33,7 @@ func deleteGroup(ctx context.Context) error {
 
 	var s []byte
 
-	gID := viper.GetString("group.delete.id")
+	gID := datum.Config.String("id")
 	if gID == "" {
 		return datum.NewRequiredFieldMissingError("group id")
 	}

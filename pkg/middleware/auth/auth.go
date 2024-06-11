@@ -10,10 +10,8 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
-	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/pkg/auth"
 	api "github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
@@ -135,7 +133,7 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 // createAuthenticatedUserFromClaims creates an authenticated user from the claims provided
 func createAuthenticatedUserFromClaims(ctx context.Context, dbClient *generated.Client, claims *tokens.Claims, authType auth.AuthenticationType) (*auth.AuthenticatedUser, error) {
 	// get the user ID from the claims
-	user, err := dbClient.User.Query().Where(user.MappingID(claims.UserID)).Only(ctx)
+	user, err := dbClient.User.Get(ctx, claims.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +141,7 @@ func createAuthenticatedUserFromClaims(ctx context.Context, dbClient *generated.
 	// all the query to get the organization, need to bypass the authz filter to get the org
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	org, err := dbClient.Organization.Query().Where(organization.MappingID(claims.OrgID)).Only(ctx)
+	org, err := dbClient.Organization.Get(ctx, claims.OrgID)
 	if err != nil {
 		return nil, err
 	}

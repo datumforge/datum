@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,13 +22,8 @@ func init() {
 	orgMembersCmd.AddCommand(orgMembersCreateCmd)
 
 	orgMembersCreateCmd.Flags().StringP("org-id", "o", "", "organization id")
-	datum.ViperBindFlag("orgmember.create.orgid", orgMembersCreateCmd.Flags().Lookup("org-id"))
-
 	orgMembersCreateCmd.Flags().StringP("user-id", "u", "", "user id")
-	datum.ViperBindFlag("orgmember.create.userid", orgMembersCreateCmd.Flags().Lookup("user-id"))
-
 	orgMembersCreateCmd.Flags().StringP("role", "r", "member", "role to assign the user (member, admin)")
-	datum.ViperBindFlag("orgmember.create.role", orgMembersCreateCmd.Flags().Lookup("role"))
 }
 
 func addOrgMember(ctx context.Context) error {
@@ -40,15 +34,15 @@ func addOrgMember(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	oID := viper.GetString("orgmember.create.orgid")
+	oID := datum.Config.String("org-id")
 
-	uID := viper.GetString("orgmember.create.userid")
+	uID := datum.Config.String("user-id")
 	if uID == "" {
 		return datum.NewRequiredFieldMissingError("user id")
 	}
 
 	// role defaults to `member` so it is not required
-	role := viper.GetString("orgmember.create.role")
+	role := datum.Config.String("role")
 
 	r, err := datum.GetRoleEnum(role)
 	if err != nil {

@@ -33,7 +33,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	// check user in the database, sub == claims subject and ensure only one record is returned
-	user, err := h.getUserByMappingID(ctx.Request().Context(), claims.Subject)
+	user, err := h.getUserDetailsByID(ctx.Request().Context(), claims.Subject)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)
@@ -48,7 +48,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	// UserID is not on the refresh token, so we need to set it now
-	claims.UserID = user.MappingID
+	claims.UserID = user.ID
 
 	accessToken, refreshToken, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
@@ -68,10 +68,12 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	out := &models.RefreshReply{
-		Reply:        rout.Reply{Success: true},
-		Message:      "success",
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		Reply:   rout.Reply{Success: true},
+		Message: "success",
+		AuthData: models.AuthData{
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		},
 	}
 
 	return h.Success(ctx, out)

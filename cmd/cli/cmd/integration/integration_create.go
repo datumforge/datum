@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -23,19 +22,10 @@ func init() {
 	integrationCmd.AddCommand(integrationCreateCmd)
 
 	integrationCreateCmd.Flags().StringP("name", "n", "", "name of the integration")
-	datum.ViperBindFlag("integration.create.name", integrationCreateCmd.Flags().Lookup("name"))
-
 	integrationCreateCmd.Flags().StringP("description", "d", "", "description of the integration")
-	datum.ViperBindFlag("integration.create.description", integrationCreateCmd.Flags().Lookup("description"))
-
 	integrationCreateCmd.Flags().StringP("kind", "k", "", "the kind of integration")
-	datum.ViperBindFlag("integration.create.kind", integrationCreateCmd.Flags().Lookup("kind"))
-
 	integrationCreateCmd.Flags().StringP("owner-id", "o", "", "owner of the integration")
-	datum.ViperBindFlag("integration.create.owner-id", integrationCreateCmd.Flags().Lookup("owner-id"))
-
 	integrationCreateCmd.Flags().StringP("webhook-id", "w", "", "the webhook id to associate with the integration")
-	datum.ViperBindFlag("integration.create.webhook-id", integrationCreateCmd.Flags().Lookup("webhook-id"))
 }
 
 func createIntegration(ctx context.Context) error {
@@ -48,25 +38,25 @@ func createIntegration(ctx context.Context) error {
 
 	var s []byte
 
-	name := viper.GetString("integration.create.name")
+	name := datum.Config.String("name")
 	if name == "" {
 		return datum.NewRequiredFieldMissingError("name")
 	}
 
-	kind := viper.GetString("integration.create.kind")
+	kind := datum.Config.String("kind")
 	if kind == "" {
 		return datum.NewRequiredFieldMissingError("kind")
 	}
 
-	ownerID := viper.GetString("integration.create.owner-id")
-	description := viper.GetString("integration.create.description")
+	ownerID := datum.Config.String("owner-id")
+	description := datum.Config.String("description")
 
 	input := datumclient.CreateIntegrationInput{
 		Name: name,
 		Kind: &kind,
 	}
 
-	if webhookID := viper.GetString("integration.create.webhook-id"); webhookID != "" {
+	if webhookID := datum.Config.String("webhook-id"); webhookID != "" {
 		input.WebhookIDs = append(input.WebhookIDs, webhookID)
 	}
 

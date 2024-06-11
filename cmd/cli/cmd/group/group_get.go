@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
@@ -23,7 +22,6 @@ func init() {
 	groupCmd.AddCommand(groupGetCmd)
 
 	groupGetCmd.Flags().StringP("id", "i", "", "group id to query")
-	datum.ViperBindFlag("group.get.id", groupGetCmd.Flags().Lookup("id"))
 }
 
 func getGroup(ctx context.Context) error {
@@ -35,7 +33,7 @@ func getGroup(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	gID := viper.GetString("group.get.id")
+	gID := datum.Config.String("id")
 
 	writer := tables.NewTableWriter(groupCmd.OutOrStdout(), "ID", "Name", "Description", "Visibility", "Organization", "Members")
 

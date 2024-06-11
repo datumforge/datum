@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -25,19 +24,10 @@ func init() {
 	templateCmd.AddCommand(templateCreateCmd)
 
 	templateCreateCmd.Flags().StringP("name", "n", "", "name of the template")
-	datum.ViperBindFlag("template.create.name", templateCreateCmd.Flags().Lookup("name"))
-
 	templateCreateCmd.Flags().StringP("description", "d", "", "description of the template")
-	datum.ViperBindFlag("template.create.description", templateCreateCmd.Flags().Lookup("description"))
-
-	templateCreateCmd.Flags().StringP("jsonconfig", "j", "", "json payload for the template")
-	datum.ViperBindFlag("template.create.jsonconfig", templateCreateCmd.Flags().Lookup("jsonconfig"))
-
-	templateCreateCmd.Flags().StringP("uischema", "u", "", "uischema for the template")
-	datum.ViperBindFlag("template.create.uischema", templateCreateCmd.Flags().Lookup("uischema"))
-
+	templateCreateCmd.Flags().StringP("json-config", "j", "", "json payload for the template")
+	templateCreateCmd.Flags().StringP("ui-schema", "u", "", "ui schema for the template")
 	templateCreateCmd.Flags().StringP("type", "t", "DOCUMENT", "type of the template")
-	datum.ViperBindFlag("template.create.type", templateCreateCmd.Flags().Lookup("type"))
 }
 
 func createTemplate(ctx context.Context) error {
@@ -50,15 +40,15 @@ func createTemplate(ctx context.Context) error {
 
 	var s []byte
 
-	name := viper.GetString("template.create.name")
+	name := datum.Config.String("name")
 	if name == "" {
 		return datum.NewRequiredFieldMissingError("template name")
 	}
 
-	description := viper.GetString("template.create.description")
-	jsonconfig := viper.GetString("template.create.jsonconfig")
-	templateType := viper.GetString("template.create.type")
-	uischema := viper.GetString("template.create.uischema")
+	description := datum.Config.String("description")
+	jsonconfig := datum.Config.String("json-config")
+	templateType := datum.Config.String("type")
+	uischema := datum.Config.String("ui-schema")
 
 	var data []byte
 

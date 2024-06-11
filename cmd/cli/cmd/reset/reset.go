@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/models"
@@ -23,10 +22,7 @@ func init() {
 	datum.RootCmd.AddCommand(resetCmd)
 
 	resetCmd.Flags().StringP("token", "t", "", "reset token")
-	datum.ViperBindFlag("reset.token", resetCmd.Flags().Lookup("token"))
-
 	resetCmd.Flags().StringP("password", "p", "", "new password of the user")
-	datum.ViperBindFlag("reset.password", resetCmd.Flags().Lookup("password"))
 }
 
 func resetPassword(ctx context.Context) error {
@@ -38,12 +34,12 @@ func resetPassword(ctx context.Context) error {
 
 	var s []byte
 
-	password := viper.GetString("reset.password")
+	password := datum.Config.String("password")
 	if password == "" {
 		return datum.NewRequiredFieldMissingError("password")
 	}
 
-	token := viper.GetString("reset.token")
+	token := datum.Config.String("token")
 	if token == "" {
 		return datum.NewRequiredFieldMissingError("token")
 	}

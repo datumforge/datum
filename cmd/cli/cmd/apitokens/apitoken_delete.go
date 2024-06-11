@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	apiTokenCmd.AddCommand(apiTokenDeleteCmd)
 
 	apiTokenDeleteCmd.Flags().StringP("id", "i", "", "api token id to delete")
-	datum.ViperBindFlag("apitoken.delete.id", apiTokenDeleteCmd.Flags().Lookup("id"))
 }
 
 func deleteAPIToken(ctx context.Context) error {
@@ -35,7 +33,7 @@ func deleteAPIToken(ctx context.Context) error {
 
 	var s []byte
 
-	tokenID := viper.GetString("apitoken.delete.id")
+	tokenID := datum.Config.String("id")
 	if tokenID == "" {
 		return datum.NewRequiredFieldMissingError("token id")
 	}

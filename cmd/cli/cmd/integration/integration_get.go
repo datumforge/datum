@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
@@ -23,7 +22,6 @@ func init() {
 	integrationCmd.AddCommand(integrationGetCmd)
 
 	integrationGetCmd.Flags().StringP("id", "i", "", "get a specific integration by ID")
-	datum.ViperBindFlag("integration.get.id", integrationGetCmd.Flags().Lookup("id"))
 }
 
 func integrations(ctx context.Context) error {
@@ -34,7 +32,7 @@ func integrations(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	oID := viper.GetString("integration.get.id")
+	oID := datum.Config.String("id")
 
 	var s []byte
 

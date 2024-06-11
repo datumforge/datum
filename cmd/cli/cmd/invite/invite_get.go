@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -24,7 +23,6 @@ func init() {
 	inviteCmd.AddCommand(inviteGetCmd)
 
 	inviteGetCmd.Flags().StringP("invite-id", "i", "", "invite id to query")
-	datum.ViperBindFlag("invite.get.id", inviteGetCmd.Flags().Lookup("invite-id"))
 }
 
 func invites(ctx context.Context) error {
@@ -36,7 +34,7 @@ func invites(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	invID := viper.GetString("invite.get.id")
+	invID := datum.Config.String("id")
 
 	if invID != "" {
 		invite, err := client.GetInvite(ctx, invID)

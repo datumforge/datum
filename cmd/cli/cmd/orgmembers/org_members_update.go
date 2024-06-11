@@ -6,7 +6,6 @@ import (
 	"errors"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -24,13 +23,8 @@ func init() {
 	orgMembersCmd.AddCommand(orgMembersUpdateCmd)
 
 	orgMembersUpdateCmd.Flags().StringP("org-id", "o", "", "organization id")
-	datum.ViperBindFlag("orgmember.update.orgid", orgMembersUpdateCmd.Flags().Lookup("org-id"))
-
 	orgMembersUpdateCmd.Flags().StringP("user-id", "u", "", "user id")
-	datum.ViperBindFlag("orgmember.update.userid", orgMembersUpdateCmd.Flags().Lookup("user-id"))
-
 	orgMembersUpdateCmd.Flags().StringP("role", "r", "member", "role to assign the user (member, admin)")
-	datum.ViperBindFlag("orgmember.update.role", orgMembersUpdateCmd.Flags().Lookup("role"))
 }
 
 func updateOrgMember(ctx context.Context) error {
@@ -41,14 +35,14 @@ func updateOrgMember(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	oID := viper.GetString("orgmember.update.orgid")
+	oID := datum.Config.String("org-id")
 
-	uID := viper.GetString("orgmember.update.userid")
+	uID := datum.Config.String("user-id")
 	if uID == "" {
 		return datum.NewRequiredFieldMissingError("user id")
 	}
 
-	role := viper.GetString("orgmember.update.role")
+	role := datum.Config.String("role")
 	if role == "" {
 		return datum.NewRequiredFieldMissingError("role")
 	}

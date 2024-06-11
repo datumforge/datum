@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
@@ -22,7 +21,6 @@ func init() {
 	inviteCmd.AddCommand(inviteDeleteCmd)
 
 	inviteDeleteCmd.Flags().StringP("invite-id", "i", "", "invite id")
-	datum.ViperBindFlag("invite.delete.inviteid", inviteDeleteCmd.Flags().Lookup("invite-id"))
 }
 
 func deleteInvite(ctx context.Context) error {
@@ -33,7 +31,7 @@ func deleteInvite(ctx context.Context) error {
 	}
 	defer datum.StoreSessionCookies(client)
 
-	invID := viper.GetString("invite.delete.inviteid")
+	invID := datum.Config.String("invite-id")
 	if invID == "" {
 		return datum.NewRequiredFieldMissingError("invite id")
 	}

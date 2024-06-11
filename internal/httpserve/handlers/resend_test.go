@@ -8,13 +8,13 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v7"
-	echo "github.com/datumforge/echox"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/models"
 )
@@ -131,7 +131,7 @@ func (suite *HandlerTestSuite) TestResendHandler() {
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/resend", strings.NewReader(string(body)))
-			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			req.Header.Set(httpsling.HeaderContentType, httpsling.ContentTypeJSONUTF8)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

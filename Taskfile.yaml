@@ -27,22 +27,10 @@ env:
   ENV: config
 
 tasks:
-  install:
-    desc: installs tools and packages needed to develop against the datum repo
+  default:
+    silent: true
     cmds:
-      - "brew install gomplate"
-      - "brew install daveshanley/vacuum/vacuum"
-      - "go install entgo.io/ent/cmd/ent@latest"
-      - "go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.57.1"
-      - "curl -sSf https://atlasgo.sh | sh"
-      - "curl -sSL https://rover.apollo.dev/nix/latest | sh"
-      - "go get -u github.com/openfga/go-sdk"
-      - "brew install openfga/tap/fga"
-      - go install github.com/vektra/mockery/v2@v2.40.1
-      - brew install pre-commit
-      - pre-commit install
-      - task: config:install
-      - defer: {task: "go:tidy"}
+      - task --list
 
   generate:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc.
@@ -113,7 +101,7 @@ tasks:
     cmds:
       - task: generate
       - task: config:generate
-      - task: atlas:all
+      - task: atlas:create
       - task: go
       - task: fga:test
 
@@ -136,14 +124,7 @@ tasks:
     cmds:
       - "rm -f datum.db"
       - "rm -f datum-cli"
-
-  email:
-    deps: [shell]
-    desc: a task to burn local db and bring stack back up and re-test
-    cmds:
       - task: buildcli
-      - sleep 5
-      - ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234!"
 
   shell:
     desc: open a new shell to launch server as a dep
@@ -154,3 +135,77 @@ tasks:
     vars:
       PWD:
         sh: pwd
+
+  install:all:
+    desc: installs all dependencies for the project
+    aliases: [install]
+    cmds:
+      - task: go:dist
+      - task: install:tools
+      - task: brew-install
+      - task: local-setup
+
+  install:tools:
+    desc: Installs tools from tools.go
+    run: once
+    cmds:
+      - echo Installing tools from tools.go
+      - cat tools.go | grep _ | awk -F'/' '{print $NF}' | awk -F'"' '{print "which "$1}' | sh $1 | xargs rm -f
+      - cat tools.go | grep _ | awk -F'"' '{print $2}' | xargs -tI % go install %
+    sources:
+      - tools.go
+      - go.mod
+
+  update-brew:
+    desc: Update Homebrew and upgrade all packages
+    cmds:
+      - brew update && brew upgrade && brew cleanup || true
+
+  local-setup:
+    desc: Setup the project dependencies
+    cmds:
+      - command -v gcloud &> /dev/null || curl https://sdk.cloud.google.com | bash
+      - npm install jsonschema2mk --global
+      - npm install format-graphql
+      - go mod download
+      - pre-commit install && pre-commit install-hooks
+      - pre-commit autoupdate
+      - go mod tidy && go get -u ./... &> /dev/null
+      - pre-commit run --show-diff-on-failure --color=always --all-files
+
+  precommit-full:
+    desc: Lint the project against all files
+    cmds:
+      - pre-commit run --show-diff-on-failure --color=always --all-files
+
+  brew-install:
+    desc: Install workstation dependencies with Brew
+    cmds:
+      - task: update-brew
+      - echo "Installing {{.DEPS}} via homebrew..."
+      - brew install {{.DEPS}} {{.CLI_ARGS}}
+      - echo "Installed {{.DEPS}} via homebrew!"
+    deps:
+      - task: brew-installed
+    status:
+      - '[ -f $(brew --prefix)/bin/{{.DEPS}} ]'
+    vars:
+      DEPS: >-
+        age helm kubernetes-cli yq jq gomplate golangci-lint openfga/tap/fga pre-commit ariga/tap/atlas rover #magic___^_^___line
+  brew-installed:
+    silent: true
+    desc: check if Homebrew is installed
+    cmds:
+      - '[ -x "$(command -v brew)" ] || (echo "Homebrew is not installed, please install it from https://brew.sh" && exit 1)'
+
+  go:dist:
+    desc: Downloads a Golang distribution
+    silent: true
+    vars:
+      GO_VERSION:
+        sh: curl -sk "https://go.dev/VERSION?m=text" | head -n 1 |  sed 's/go//g'
+      GO_URL: https://go.dev/dl/go{{.GO_VERSION}}.darwin-arm64.tar.gz
+    cmds:
+      - test -d /usr/local/go-{{.GO_VERSION}} || curl -L -o go{{.GO_VERSION}}.darwin-arm64.tar.gz {{.GO_URL}} && sudo tar -C /usr/local -xzf go{{.GO_VERSION}}.darwin-arm64.tar.gz
+    status:
+      - test -d /usr/local/go-{{.GO_VERSION}}

@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
-	echo "github.com/datumforge/echox"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
@@ -17,6 +16,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -69,9 +69,9 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 
 	claims := &tokens.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: user.MappingID,
+			Subject: user.ID,
 		},
-		UserID: user.MappingID,
+		UserID: user.ID,
 	}
 
 	_, refresh, err := tm.CreateTokenPair(claims)
@@ -110,7 +110,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/refresh", strings.NewReader(string(body)))
-			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			req.Header.Set(httpsling.HeaderContentType, httpsling.ContentTypeJSONUTF8)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

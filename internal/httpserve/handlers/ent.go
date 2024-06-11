@@ -243,21 +243,6 @@ func (h *Handler) addCredentialToUser(ctx context.Context, user *ent.User, crede
 	return nil
 }
 
-// getUserByMappingID returns the ent user with the user settings based on the mappingID in the claim
-func (h *Handler) getUserByMappingID(ctx context.Context, mappingID string) (*ent.User, error) {
-	// check user in the database, sub == claims subject and ensure only one record is returned
-	user, err := transaction.FromContext(ctx).User.Query().WithSetting().Where(
-		user.MappingID(mappingID),
-	).Only(ctx)
-	if err != nil {
-		h.Logger.Errorf("error retrieving user", "error", err)
-
-		return nil, err
-	}
-
-	return user, nil
-}
-
 // getUserDetailsByID returns the ent user with the user settings based on the user ID
 func (h *Handler) getUserDetailsByID(ctx context.Context, userID string) (*ent.User, error) {
 	user, err := transaction.FromContext(ctx).User.Query().WithSetting().Where(

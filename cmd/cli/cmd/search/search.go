@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
@@ -23,7 +22,6 @@ func init() {
 	datum.RootCmd.AddCommand(searchCmd)
 
 	searchCmd.Flags().StringP("query", "q", "", "query string to search for")
-	datum.ViperBindFlag("search.query", searchCmd.Flags().Lookup("query"))
 }
 
 func search(ctx context.Context) error { // setup datum http client
@@ -35,7 +33,7 @@ func search(ctx context.Context) error { // setup datum http client
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	query := viper.GetString("search.query")
+	query := datum.Config.String("query")
 	if query == "" {
 		return datum.NewRequiredFieldMissingError("query")
 	}

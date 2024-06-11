@@ -27,7 +27,7 @@ var generateCmd = &cobra.Command{
 	},
 }
 
-// init wraps the viper cmds - this probably won't stay as a CLI (maybe it will?) so keeping it basic with options for now
+// init wraps the cobra cmds - this probably won't stay as a CLI (maybe it will?) so keeping it basic with options for now
 func init() {
 	rootCmd.AddCommand(generateCmd)
 	rootCmd.PersistentFlags().String("yaml", "invoice.yaml", "Path to the YAML file with invoice parameters")

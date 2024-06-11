@@ -82,6 +82,9 @@ func (Invite) Mixin() []ent.Mixin {
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
 			Ref: "invites",
+			SkipTokenType: []token.PrivacyToken{
+				&token.OrgInviteToken{},
+			},
 		},
 	}
 }

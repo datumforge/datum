@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
@@ -23,7 +22,6 @@ func init() {
 	userCmd.AddCommand(userGetCmd)
 
 	userGetCmd.Flags().StringP("id", "i", "", "user id to query")
-	datum.ViperBindFlag("user.get.id", userGetCmd.Flags().Lookup("id"))
 }
 
 func users(ctx context.Context) error {
@@ -35,7 +33,7 @@ func users(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	userID := viper.GetString("user.get.id")
+	userID := datum.Config.String("id")
 
 	var s []byte
 

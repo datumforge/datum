@@ -1,2 +1,2 @@
-// Package datumlogin  is our cobra/viper cli for authentication endpoints
+// Package datumlogin is our cobra cli for authentication endpoints
 package datumlogin

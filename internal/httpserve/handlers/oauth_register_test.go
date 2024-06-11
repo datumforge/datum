@@ -7,13 +7,13 @@ import (
 	"strings"
 	"testing"
 
-	echo "github.com/datumforge/echox"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )
@@ -108,7 +108,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/oauth/register", strings.NewReader(string(body)))
-			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			req.Header.Set(httpsling.HeaderContentType, httpsling.ContentTypeJSONUTF8)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
@@ -132,7 +132,6 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			if tt.expectedStatus == http.StatusOK {
 				assert.NotNil(t, out.AccessToken)
 				assert.NotNil(t, out.RefreshToken)
-				assert.NotNil(t, out.ExpiresIn)
 				assert.Equal(t, "Bearer", out.TokenType)
 			}
 		})

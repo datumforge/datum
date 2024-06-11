@@ -233,7 +233,7 @@ require (
 
 require (
 	ariga.io/atlas v0.23.0 // indirect
-	cloud.google.com/go/storage v1.41.0
+	cloud.google.com/go/storage v1.42.0
 	github.com/IBM/sarama v1.43.2
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect

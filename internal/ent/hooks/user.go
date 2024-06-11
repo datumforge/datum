@@ -17,7 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/passwd"
-	"github.com/datumforge/datum/pkg/utils/gravatar"
+	// "github.com/datumforge/datum/pkg/utils/gravatar"
 )
 
 const (
@@ -43,9 +43,6 @@ func HookUser() ent.Hook {
 			}
 
 			if email, ok := mutation.Email(); ok {
-				url := gravatar.New(email, nil)
-				mutation.SetAvatarRemoteURL(url)
-
 				// use the email without the domain as the display name, if not provided on creation
 				if mutation.Op().Is(ent.OpCreate) {
 					displayName, _ := mutation.DisplayName()

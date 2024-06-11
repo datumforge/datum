@@ -22,11 +22,11 @@ import (
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	var in models.VerifyRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	// setup viewer context
@@ -40,7 +40,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
+		return h.InternalServerError(ctx, ErrUnableToVerifyEmail)
 	}
 
 	// create email verification
@@ -70,7 +70,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		if t.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
 			h.Logger.Errorw("unable to parse expiration", "error", err)
 
-			return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
+			return h.InternalServerError(ctx, ErrUnableToVerifyEmail)
 		}
 
 		// Verify the token with the stored secret
@@ -82,7 +82,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				if err != nil {
 					h.Logger.Errorw("unable to resend verification token", "error", err)
 
-					return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
+					return h.InternalServerError(ctx, ErrUnableToVerifyEmail)
 				}
 
 				out := &models.VerifyReply{
@@ -93,7 +93,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 					Token:   meowtoken.Token,
 				}
 
-				return ctx.JSON(http.StatusCreated, out)
+				return h.Created(ctx, out)
 			}
 
 			return h.BadRequest(ctx, err)

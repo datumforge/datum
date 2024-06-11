@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -20,6 +21,9 @@ var (
 
 	// ErrMissingRequiredFields is returned when the login request has an empty username or password
 	ErrMissingRequiredFields = errors.New("invalid request, missing username and/or password")
+
+	// ErrInvalidInput is returned when the input is invalid
+	ErrInvalidInput = errors.New("invalid input")
 
 	// ErrNotFound is returned when the requested object is not found
 	ErrNotFound = errors.New("object not found in the database")
@@ -71,6 +75,12 @@ var (
 
 	// ErrUnauthorized is returned when the user is not authorized to make the request
 	ErrUnauthorized = errors.New("not authorized")
+
+	// ErrConflict is returned when the request cannot be processed due to a conflict
+	ErrConflict = errors.New("conflict")
+
+	// ErrAlreadySwitchedIntoOrg is returned when a user attempts to switch into an org they are currently authenticated in
+	ErrAlreadySwitchedIntoOrg = errors.New("user already switched into organization")
 )
 
 var (
@@ -129,26 +139,90 @@ func IsForeignKeyConstraintError(err error) bool {
 	return false
 }
 
-func (h *Handler) InvalidRequest(ctx echo.Context, err error) error {
-	return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+func invalidInputError(err error) error {
+	field := err.(*generated.ValidationError).Name
+
+	return fmt.Errorf("%w: %s was invalid", ErrInvalidInput, field)
 }
 
+// InternalServerError returns a 500 Internal Server Error response with the error message.
 func (h *Handler) InternalServerError(ctx echo.Context, err error) error {
-	return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	if err := ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err)); err != nil {
+		return err
+	}
+
+	return err
 }
 
+// Unauthorized returns a 401 Unauthorized response with the error message.
 func (h *Handler) Unauthorized(ctx echo.Context, err error) error {
-	return ctx.JSON(http.StatusUnauthorized, rout.ErrorResponse(err))
+	if err := ctx.JSON(http.StatusUnauthorized, rout.ErrorResponse(err)); err != nil {
+		return err
+	}
+
+	return err
 }
 
+// NotFound returns a 404 Not Found response with the error message.
 func (h *Handler) NotFound(ctx echo.Context, err error) error {
-	return ctx.JSON(http.StatusNotFound, rout.ErrorResponse(err))
+	if err := ctx.JSON(http.StatusNotFound, rout.ErrorResponse(err)); err != nil {
+		return err
+	}
+
+	return err
 }
 
+// BadRequest returns a 400 Bad Request response with the error message.
 func (h *Handler) BadRequest(ctx echo.Context, err error) error {
-	return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	if err := ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err)); err != nil {
+		return err
+	}
+
+	return err
 }
 
+// BadRequest returns a 400 Bad Request response with the error message.
+func (h *Handler) BadRequestWithCode(ctx echo.Context, err error, code rout.ErrorCode) error {
+	if err := ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, code)); err != nil {
+		return err
+	}
+
+	return err
+}
+
+// InvalidInput returns a 400 Bad Request response with the error message.
+func (h *Handler) InvalidInput(ctx echo.Context, err error) error {
+	if err := ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode)); err != nil {
+		return err
+	}
+
+	return err
+}
+
+// Conflict returns a 409 Conflict response with the error message.
+func (h *Handler) Conflict(ctx echo.Context, err string, code rout.ErrorCode) error {
+	if err := ctx.JSON(http.StatusConflict, rout.ErrorResponseWithCode(err, code)); err != nil {
+		return err
+	}
+
+	return fmt.Errorf("%w: %v", ErrConflict, err)
+}
+
+// TooManyRequests returns a 429 Too Many Requests response with the error message.
+func (h *Handler) TooManyRequests(ctx echo.Context, err error) error {
+	if err := ctx.JSON(http.StatusTooManyRequests, rout.ErrorResponse(err)); err != nil {
+		return err
+	}
+
+	return err
+}
+
+// Success returns a 200 OK response with the response object.
 func (h *Handler) Success(ctx echo.Context, rep interface{}) error {
 	return ctx.JSON(http.StatusOK, rep)
+}
+
+// Created returns a 201 Created response with the response object.
+func (h *Handler) Created(ctx echo.Context, rep interface{}) error {
+	return ctx.JSON(http.StatusCreated, rep)
 }

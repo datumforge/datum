@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"net/http"
-
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/pkg/auth"
@@ -28,5 +26,5 @@ func (h *Handler) UserInfo(ctx echo.Context) error {
 		return h.BadRequest(ctx, err)
 	}
 
-	return ctx.JSON(http.StatusOK, user)
+	return h.Success(ctx, user)
 }

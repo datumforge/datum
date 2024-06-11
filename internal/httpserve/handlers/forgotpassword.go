@@ -24,7 +24,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	out := &models.ForgotPasswordReply{

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -29,11 +30,11 @@ import (
 func (h *Handler) ResetPassword(ctx echo.Context) error {
 	var in models.ResetPasswordRequest
 	if err := ctx.Bind(&in); err != nil {
-		return h.BadRequest(ctx, err)
+		return h.InvalidInput(ctx, err)
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	// setup viewer context
@@ -45,10 +46,10 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
 		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrPassWordResetTokenInvalid))
+			return h.BadRequest(ctx, ErrPassWordResetTokenInvalid)
 		}
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
+		return h.InternalServerError(ctx, ErrUnableToVerifyEmail)
 	}
 
 	// ent user to &User for funcs
@@ -79,7 +80,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	if token.ExpiresAt, err = user.GetPasswordResetExpires(); err != nil {
 		h.Logger.Errorw("unable to parse expiration", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
+		return h.InternalServerError(ctx, ErrUnableToVerifyEmail)
 	}
 
 	// Verify the token is valid with the stored secret
@@ -87,7 +88,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		if errors.Is(err, tokens.ErrTokenExpired) {
 			errMsg := "reset token is expired, please request a new token using forgot-password"
 
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(errMsg))
+			return h.BadRequest(ctx, fmt.Errorf("%w: %s", ErrPassWordResetTokenInvalid, errMsg))
 		}
 
 		return h.BadRequest(ctx, err)
@@ -96,7 +97,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	// make sure its not the same password as current
 	valid, err := passwd.VerifyDerivedKey(*entUser.Password, in.Password)
 	if err != nil || valid {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrNonUniquePassword))
+		return h.BadRequest(ctx, ErrNonUniquePassword)
 	}
 
 	// set context for remaining request based on logged in user
@@ -124,7 +125,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	); err != nil {
 		h.Logger.Errorw("error sending confirmation email", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, ErrProcessingRequest)
 	}
 
 	out := &models.ResetPasswordReply{

@@ -29,7 +29,7 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	// setup viewer context
@@ -43,7 +43,7 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 
 		h.Logger.Errorf("error retrieving subscriber", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
+		return h.InternalServerError(ctx, ErrUnableToVerifyEmail)
 	}
 
 	// add org to the authenticated context
@@ -62,12 +62,12 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 					Message: "The verification link has expired, a new one has been sent to your email.",
 				}
 
-				return ctx.JSON(http.StatusCreated, out)
+				return h.Created(ctx, out)
 			}
 
 			h.Logger.Errorf("error verifying subscriber token", "error", err)
 
-			return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
+			return h.InternalServerError(ctx, ErrUnableToVerifyEmail)
 		}
 
 		input := generated.UpdateSubscriberInput{
@@ -77,7 +77,7 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 		if err := h.updateSubscriberVerifiedEmail(ctxWithToken, entSubscriber.ID, input); err != nil {
 			h.Logger.Errorf("error updating subscriber", "error", err)
 
-			return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
+			return h.InternalServerError(ctx, ErrUnableToVerifyEmail)
 		}
 	}
 

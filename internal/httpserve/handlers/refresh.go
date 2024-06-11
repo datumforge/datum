@@ -17,11 +17,11 @@ import (
 func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	var in models.RefreshRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	// verify the refresh token
@@ -36,15 +36,15 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	user, err := h.getUserDetailsByID(ctx.Request().Context(), claims.Subject)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)
+			return h.NotFound(ctx, ErrNoAuthUser)
 		}
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, ErrProcessingRequest)
 	}
 
 	// ensure the user is still active
 	if user.Edges.Setting.Status != "ACTIVE" {
-		return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)
+		return h.NotFound(ctx, ErrNoAuthUser)
 	}
 
 	// UserID is not on the refresh token, so we need to set it now
@@ -54,7 +54,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("error creating token pair", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, ErrProcessingRequest)
 	}
 
 	// set cookies on request with the access and refresh token

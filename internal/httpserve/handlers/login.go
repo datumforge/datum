@@ -19,11 +19,11 @@ import (
 func (h *Handler) LoginHandler(ctx echo.Context) error {
 	var in models.LoginRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.InvalidInput(ctx, err)
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+		return h.InvalidInput(ctx, err)
 	}
 
 	// check user in the database, username == email and ensure only one record is returned

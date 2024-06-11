@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/cenkalti/backoff/v4"
@@ -29,11 +28,11 @@ const (
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	var in models.RegisterRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	// create user
@@ -52,15 +51,11 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		h.Logger.Errorw("error creating new user", "error", err)
 
 		if IsUniqueConstraintError(err) {
-			return ctx.JSON(http.StatusConflict, rout.ErrorResponseWithCode("user already exists", UserExistsErrCode))
+			return h.Conflict(ctx, "user already exists", UserExistsErrCode)
 		}
 
 		if generated.IsValidationError(err) {
-			field := err.(*generated.ValidationError).Name
-
-			return ctx.JSON(http.StatusBadRequest,
-				rout.ErrorResponseWithCode(fmt.Sprintf("%s was invalid", field), InvalidInputErrCode),
-			)
+			return h.InvalidInput(ctx, invalidInputError(err))
 		}
 
 		return err
@@ -94,7 +89,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		Token:   meowtoken.Token,
 	}
 
-	return ctx.JSON(http.StatusCreated, out)
+	return h.Created(ctx, out)
 }
 
 func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *User) (*generated.EmailVerificationToken, error) {

@@ -115,7 +115,7 @@ func (s *Scheduler) run() {
 		// allocated in each loop and old timers are not reused.
 		var timer *time.Timer
 		if len(s.tasks) == 0 || s.tasks[0].Time.IsZero() {
-			timer = time.NewTimer(24 * time.Hour) // nolint: gomnd
+			timer = time.NewTimer(24 * time.Hour) //nolint:mnd
 		} else {
 			timer = time.NewTimer(s.tasks[0].Time.Sub(now))
 		}

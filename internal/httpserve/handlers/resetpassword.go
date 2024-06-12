@@ -119,7 +119,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 		return h.SendPasswordResetSuccessEmail(user)
-	}), marionette.WithRetries(3), // nolint: gomnd
+	}), marionette.WithRetries(3), //nolint:mnd
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send password reset confirmation email to user %s", user.Email),
 	); err != nil {

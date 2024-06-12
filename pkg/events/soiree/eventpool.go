@@ -31,7 +31,7 @@ func NewEventPool(opts ...EventPoolOption) *EventPool {
 		errorHandler:      DefaultErrorHandler,
 		idGenerator:       DefaultIDGenerator,
 		panicHandler:      DefaultPanicHandler,
-		errChanBufferSize: 10, // nolint: gomnd
+		errChanBufferSize: 10, //nolint:mnd
 	}
 
 	m.closed.Store(false)

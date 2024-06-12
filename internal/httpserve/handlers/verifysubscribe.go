@@ -169,7 +169,7 @@ func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID str
 	// send emails via TaskMan as to not create blocking operations in the server
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 		return h.SendSubscriberEmail(user, orgName)
-	}), marionette.WithRetries(3), // nolint: gomnd
+	}), marionette.WithRetries(3), //nolint:mnd
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send subscriber verification email to user %s", user.Email),
 	); err != nil {

@@ -49,7 +49,7 @@ func (v *JWKSValidator) keyFunc(token *jwt.Token) (publicKey interface{}, err er
 
 	// Per JWT security notice: do not forget to validate alg is expected
 	if token.Method.Alg() != key.Algorithm().String() {
-		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"]) //nolint:goerr113
+		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"]) //nolint:err113
 	}
 
 	// Extract the raw public key from the key material and return it.

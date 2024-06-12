@@ -61,7 +61,7 @@ func (r JoinPolicy) MarshalGQL(w io.Writer) {
 func (r *JoinPolicy) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("wrong type for JoinPolicy, got: %T", v) //nolint:goerr113
+		return fmt.Errorf("wrong type for JoinPolicy, got: %T", v) //nolint:err113
 	}
 
 	*r = JoinPolicy(str)

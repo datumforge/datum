@@ -28,9 +28,7 @@ func init() {
 func subscriberUpdate(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	email := datum.Config.String("email")
@@ -47,14 +45,10 @@ func subscriberUpdate(ctx context.Context) error {
 	var s []byte
 
 	sub, err := client.UpdateSubscriber(ctx, email, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(sub)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

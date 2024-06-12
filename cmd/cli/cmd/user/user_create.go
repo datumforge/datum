@@ -31,9 +31,7 @@ func init() {
 func createUser(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -73,14 +71,10 @@ func createUser(ctx context.Context) error {
 	}
 
 	u, err := client.CreateUser(ctx, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(u)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

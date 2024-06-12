@@ -26,9 +26,7 @@ func init() {
 func pats(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -39,24 +37,16 @@ func pats(ctx context.Context) error {
 	// if an pat ID is provided, filter on that pat, otherwise get all
 	if pID == "" {
 		tokens, err := client.GetAllPersonalAccessTokens(ctx)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		s, err = json.Marshal(tokens)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 	} else {
 		token, err := client.GetPersonalAccessTokenByID(ctx, pID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		s, err = json.Marshal(token)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 	}
 
 	return datum.JSONPrint(s)

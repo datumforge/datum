@@ -26,9 +26,7 @@ func init() {
 func orgSettings(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -39,24 +37,16 @@ func orgSettings(ctx context.Context) error {
 	// if setting ID is not provided, get settings which will automatically filter by org id
 	if settingsID == "" {
 		settings, err := client.GetOrganizationSettings(ctx)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		s, err = json.Marshal(settings)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 	} else {
 		org, err := client.GetOrganizationSettingByID(ctx, settingsID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		s, err = json.Marshal(org)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 	}
 
 	return datum.JSONPrint(s)

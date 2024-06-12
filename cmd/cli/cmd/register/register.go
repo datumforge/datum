@@ -30,9 +30,7 @@ func init() {
 func registerUser(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClient(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	var s []byte
 
@@ -64,14 +62,10 @@ func registerUser(ctx context.Context) error {
 	}
 
 	registration, err := client.Register(ctx, &register)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(registration)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

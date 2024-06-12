@@ -29,9 +29,7 @@ func init() {
 func deleteGroupMember(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	gID := datum.Config.String("group-id")
@@ -51,9 +49,7 @@ func deleteGroupMember(ctx context.Context) error {
 	}
 
 	groupMembers, err := client.GetGroupMembersByGroupID(ctx, &where)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if len(groupMembers.GroupMemberships.Edges) != 1 {
 		return errors.New("error getting existing relation") //nolint:err113
@@ -64,14 +60,10 @@ func deleteGroupMember(ctx context.Context) error {
 	var s []byte
 
 	groupMember, err := client.RemoveUserFromGroup(ctx, id)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(groupMember)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

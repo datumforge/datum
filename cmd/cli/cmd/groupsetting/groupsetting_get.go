@@ -26,9 +26,7 @@ func init() {
 func groupSettings(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -39,24 +37,16 @@ func groupSettings(ctx context.Context) error {
 	// if setting ID is not provided, get settings which will automatically filter by group id
 	if settingsID == "" {
 		settings, err := client.GetGroupSettings(ctx)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		s, err = json.Marshal(settings)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 	} else {
 		group, err := client.GetGroupSettingByID(ctx, settingsID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		s, err = json.Marshal(group)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 	}
 
 	return datum.JSONPrint(s)

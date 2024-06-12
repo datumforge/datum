@@ -28,9 +28,7 @@ func init() {
 func invites(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -38,17 +36,13 @@ func invites(ctx context.Context) error {
 
 	if invID != "" {
 		invite, err := client.GetInvite(ctx, invID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		return printInvite(invite)
 	}
 
 	invites, err := client.GetInvites(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return printInvite(invites)
 }
@@ -73,9 +67,7 @@ func printInviteTable(i interface{}) {
 func printInvite(i interface{}) error {
 	if datum.OutputFormat == datum.JSONOutput {
 		s, err := json.Marshal(i)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		return datum.JSONPrint(s)
 	}

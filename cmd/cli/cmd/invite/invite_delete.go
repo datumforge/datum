@@ -26,9 +26,7 @@ func init() {
 func deleteInvite(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	invID := datum.Config.String("invite-id")
@@ -39,14 +37,10 @@ func deleteInvite(ctx context.Context) error {
 	var s []byte
 
 	invite, err := client.DeleteInvite(ctx, invID)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(invite)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

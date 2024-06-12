@@ -29,9 +29,7 @@ func init() {
 func createInvite(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	email := datum.Config.String("email")
@@ -49,14 +47,10 @@ func createInvite(ctx context.Context) error {
 	var s []byte
 
 	invite, err := client.CreateInvite(ctx, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(invite)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

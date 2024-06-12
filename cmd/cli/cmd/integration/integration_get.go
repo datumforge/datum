@@ -27,9 +27,7 @@ func init() {
 func integrations(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	oID := datum.Config.String("id")
@@ -40,9 +38,7 @@ func integrations(ctx context.Context) error {
 
 	if oID != "" {
 		integration, err := client.GetIntegrationByID(ctx, oID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(integration.Integration)
@@ -60,14 +56,10 @@ func integrations(ctx context.Context) error {
 	}
 
 	integrations, err := client.GetAllIntegrations(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(integrations.Integrations)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)

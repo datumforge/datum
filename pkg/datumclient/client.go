@@ -152,7 +152,7 @@ func (c *DatumClient) SetAuthTokens(access, refresh string) error {
 	u := c.Config().BaseURL.ResolveReference(&url.URL{Path: "/"})
 
 	// Set the cookies on the client
-	cookies := make([]*http.Cookie, 0, 2) //nolint:gomnd
+	cookies := make([]*http.Cookie, 0, 2) //nolint:mnd
 	if access != "" {
 		cookies = append(cookies, &http.Cookie{
 			Name:     "access_token",

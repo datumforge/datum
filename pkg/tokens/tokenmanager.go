@@ -317,7 +317,7 @@ func (tm *TokenManager) CurrentKey() ulid.ULID {
 func (tm *TokenManager) keyFunc(token *jwt.Token) (key interface{}, err error) {
 	// Per JWT security notice: do not forget to validate alg is expected, else haxorz!~
 	if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"]) //nolint:goerr113
+		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"]) //nolint:err113
 	}
 
 	// Fetch that kid

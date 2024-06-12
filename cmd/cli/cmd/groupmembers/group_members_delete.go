@@ -56,7 +56,7 @@ func deleteGroupMember(ctx context.Context) error {
 	}
 
 	if len(groupMembers.GroupMemberships.Edges) != 1 {
-		return errors.New("error getting existing relation") //nolint:goerr113
+		return errors.New("error getting existing relation") //nolint:err113
 	}
 
 	id := groupMembers.GroupMemberships.Edges[0].Node.ID

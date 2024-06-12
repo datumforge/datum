@@ -51,7 +51,7 @@ func init() {
 		}
 
 		// Each template will be accessible by its base name in the global map
-		patterns := make([]string, 0, 2) // nolint: gomnd
+		patterns := make([]string, 0, 2) //nolint:mnd
 		patterns = append(patterns, filepath.Join(templatesDir, file.Name()))
 
 		if filepath.Ext(file.Name()) == ".html" {

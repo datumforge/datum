@@ -16,7 +16,7 @@ func HookPasswordResetToken() ent.Hook {
 		return hook.PasswordResetTokenFunc(func(ctx context.Context, mutation *generated.PasswordResetTokenMutation) (generated.Value, error) {
 			expires, _ := mutation.TTL()
 			if expires.IsZero() {
-				mutation.SetTTL(time.Now().UTC().Add(time.Minute * 15).Truncate(time.Microsecond)) // nolint: gomnd
+				mutation.SetTTL(time.Now().UTC().Add(time.Minute * 15).Truncate(time.Microsecond)) //nolint:mnd
 			}
 
 			return next.Mutate(ctx, mutation)

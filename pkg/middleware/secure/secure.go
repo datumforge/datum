@@ -37,7 +37,7 @@ var DefaultConfig = Config{
 	ContentTypeNosniff:    "nosniff",
 	XFrameOptions:         "SAMEORIGIN",
 	HSTSPreloadEnabled:    false,
-	HSTSMaxAge:            31536000, //nolint: gomnd
+	HSTSMaxAge:            31536000, //nolint:mnd
 	ContentSecurityPolicy: "default-src 'self'",
 	ReferrerPolicy:        "same-origin",
 	CSPReportOnly:         false,

@@ -126,7 +126,7 @@ func (s *Storage) Save(ctx context.Context, content io.Reader, path, checksum, k
 	contenttype := mime.TypeByExtension(filepath.Ext(path)) // first, detect content type from extension
 	if contenttype == "" {
 		// second, detect content type from first 512 bytes of content
-		data := make([]byte, 512) // nolint:gomnd
+		data := make([]byte, 512) //nolint:mnd
 
 		n, err := content.Read(data)
 		if err != nil {
@@ -159,7 +159,7 @@ func (s *Storage) SaveQuick(ctx context.Context, content io.Reader, path string)
 	contenttype := mime.TypeByExtension(filepath.Ext(path)) // first, detect content type from extension
 	if contenttype == "" {
 		// second, detect content type from first 512 bytes of content
-		data := make([]byte, 512) // nolint:gomnd
+		data := make([]byte, 512) //nolint:mnd
 
 		n, err := content.Read(data)
 		if err != nil {
@@ -280,7 +280,7 @@ func (s *Storage) PresignedURL(key string, contentType string) (string, error) {
 			ResponseContentDisposition: StringPointer("attachment"),
 		},
 		func(opts *s3.PresignOptions) {
-			opts.Expires = 15 * time.Minute // nolint:gomnd
+			opts.Expires = 15 * time.Minute //nolint:mnd
 		},
 	)
 

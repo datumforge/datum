@@ -87,7 +87,7 @@ func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User
 	// send emails via TaskMan as to not create blocking operations in the server
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 		return h.SendPasswordResetRequestEmail(user)
-	}), marionette.WithRetries(3), //nolint: gomnd
+	}), marionette.WithRetries(3), //nolint:mnd
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send password reset email to user %s", user.ID),
 	); err != nil {

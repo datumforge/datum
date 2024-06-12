@@ -35,7 +35,7 @@ func GetAccessToken(c echo.Context) (string, error) {
 	// Attempt to get the access token from the header.
 	if h := c.Request().Header.Get(Authorization); h != "" {
 		match := bearer.FindStringSubmatch(h)
-		if len(match) == 2 { //nolint:gomnd
+		if len(match) == 2 { //nolint:mnd
 			return match[1], nil
 		}
 

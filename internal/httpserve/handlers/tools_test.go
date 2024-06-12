@@ -151,7 +151,7 @@ func setupEcho(entClient *ent.Client) *echo.Echo {
 
 // handlerSetup to be used for required references in the handler tests
 func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMan *marionette.TaskManager) *handlers.Handler {
-	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
+	tm, err := createTokenManager(15 * time.Minute) //nolint:mnd
 	if err != nil {
 		t.Fatal("error creating token manager")
 	}
@@ -200,8 +200,8 @@ func newRedisClient() *redis.Client {
 }
 
 func createSessionManager() sessions.Store[map[string]any] {
-	hashKey := randomString(32)  //nolint:gomnd
-	blockKey := randomString(32) //nolint:gomnd
+	hashKey := randomString(32)  //nolint:mnd
+	blockKey := randomString(32) //nolint:mnd
 
 	sm := sessions.NewCookieStore[map[string]any](sessions.DebugCookieConfig,
 		hashKey, blockKey,
@@ -224,12 +224,12 @@ func createTokenManager(refreshOverlap time.Duration) (*tokens.TokenManager, err
 	conf := tokens.Config{
 		Audience:        "http://localhost:17608",
 		Issuer:          "http://localhost:17608",
-		AccessDuration:  1 * time.Hour, // nolint: gomnd
-		RefreshDuration: 2 * time.Hour, // nolint: gomnd
+		AccessDuration:  1 * time.Hour, //nolint:mnd
+		RefreshDuration: 2 * time.Hour, //nolint:mnd
 		RefreshOverlap:  refreshOverlap,
 	}
 
-	key, err := rsa.GenerateKey(rand.Reader, 2048) // nolint: gomnd
+	key, err := rsa.GenerateKey(rand.Reader, 2048) //nolint:mnd
 	if err != nil {
 		return nil, err
 	}

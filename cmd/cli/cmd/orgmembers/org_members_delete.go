@@ -49,7 +49,7 @@ func deleteOrgMember(ctx context.Context) error {
 	}
 
 	if len(orgMembers.OrgMemberships.Edges) != 1 {
-		return errors.New("error getting existing relation") //nolint:goerr113
+		return errors.New("error getting existing relation") //nolint:err113
 	}
 
 	id := orgMembers.OrgMemberships.Edges[0].Node.ID

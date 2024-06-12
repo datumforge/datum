@@ -71,7 +71,7 @@ func (s *APIv1) Register(ctx context.Context, in *models.RegisterRequest) (out *
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newRequestError(resp.StatusCode(), out.Message)
+		return nil, newRequestError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil
@@ -92,7 +92,7 @@ func (s *APIv1) Login(ctx context.Context, in *models.LoginRequest) (out *models
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newAuthenticationError(resp.StatusCode(), out.Message)
+		return nil, newAuthenticationError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil
@@ -113,7 +113,7 @@ func (s *APIv1) Refresh(ctx context.Context, in *models.RefreshRequest) (out *mo
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newAuthenticationError(resp.StatusCode(), out.Message)
+		return nil, newAuthenticationError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil
@@ -134,7 +134,7 @@ func (s *APIv1) Switch(ctx context.Context, in *models.SwitchOrganizationRequest
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newAuthenticationError(resp.StatusCode(), out.Reply.Error)
+		return nil, newAuthenticationError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil
@@ -155,7 +155,7 @@ func (s *APIv1) VerifyEmail(ctx context.Context, in *models.VerifyRequest) (out 
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newRequestError(resp.StatusCode(), out.Message)
+		return nil, newRequestError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil
@@ -176,7 +176,7 @@ func (s *APIv1) ResendEmail(ctx context.Context, in *models.ResendRequest) (out 
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newRequestError(resp.StatusCode(), out.Message)
+		return nil, newRequestError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil
@@ -197,7 +197,7 @@ func (s *APIv1) ForgotPassword(ctx context.Context, in *models.ForgotPasswordReq
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newRequestError(resp.StatusCode(), out.Message)
+		return nil, newRequestError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil
@@ -218,7 +218,7 @@ func (s *APIv1) ResetPassword(ctx context.Context, in *models.ResetPasswordReque
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newRequestError(resp.StatusCode(), out.Message)
+		return nil, newRequestError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil
@@ -239,7 +239,7 @@ func (s *APIv1) AcceptInvite(ctx context.Context, in *models.InviteRequest) (out
 	}
 
 	if !resp.IsSuccess() {
-		return nil, newRequestError(resp.StatusCode(), out.Message)
+		return nil, newRequestError(resp.StatusCode(), out.Error)
 	}
 
 	return out, nil

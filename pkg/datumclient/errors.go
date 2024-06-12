@@ -47,6 +47,10 @@ type RequestError struct {
 
 // Error returns the RequestError in string format
 func (e *RequestError) Error() string {
+	if e.Body == "" {
+		return fmt.Sprintf("unable to process request (status %d)", e.StatusCode)
+	}
+
 	return fmt.Sprintf("unable to process request (status %d): %s", e.StatusCode, strings.ToLower(e.Body))
 }
 

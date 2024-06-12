@@ -32,7 +32,6 @@ func createevent(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
 	cobra.CheckErr(err)
-
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte

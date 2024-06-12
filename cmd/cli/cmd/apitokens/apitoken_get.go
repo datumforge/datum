@@ -26,9 +26,7 @@ func init() {
 func apiTokens(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -39,24 +37,16 @@ func apiTokens(ctx context.Context) error {
 	// if an api token ID is provided, filter on that api token, otherwise get all
 	if tokenID == "" {
 		tokens, err := client.GetAllAPITokens(ctx)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		s, err = json.Marshal(tokens)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 	} else {
 		token, err := client.GetAPITokenByID(ctx, tokenID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		s, err = json.Marshal(token)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 	}
 
 	return datum.JSONPrint(s)

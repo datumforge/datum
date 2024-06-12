@@ -28,9 +28,7 @@ func init() {
 func groupMembers(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 	// filter options
 	gID := datum.Config.String("id")
@@ -45,15 +43,11 @@ func groupMembers(ctx context.Context) error {
 	var s []byte
 
 	group, err := client.GetGroupMembersByGroupID(ctx, &where)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if datum.OutputFormat == datum.JSONOutput {
 		s, err = json.Marshal(group)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		return datum.JSONPrint(s)
 	}

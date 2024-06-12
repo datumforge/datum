@@ -29,9 +29,7 @@ func init() {
 func addGroupMember(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	gID := datum.Config.String("group-id")
@@ -48,9 +46,7 @@ func addGroupMember(ctx context.Context) error {
 	role := datum.Config.String("role")
 
 	r, err := datum.GetRoleEnum(role)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	input := datumclient.CreateGroupMembershipInput{
 		GroupID: gID,
@@ -61,14 +57,10 @@ func addGroupMember(ctx context.Context) error {
 	var s []byte
 
 	groupMember, err := client.AddUserToGroupWithRole(ctx, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(groupMember)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

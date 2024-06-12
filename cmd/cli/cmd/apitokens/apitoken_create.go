@@ -32,9 +32,7 @@ func init() {
 func createAPIToken(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -60,14 +58,10 @@ func createAPIToken(ctx context.Context) error {
 	}
 
 	o, err := client.CreateAPIToken(ctx, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(o)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

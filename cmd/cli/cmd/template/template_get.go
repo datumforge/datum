@@ -27,9 +27,7 @@ func init() {
 func templates(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	templateID := datum.Config.String("id")
@@ -40,9 +38,7 @@ func templates(ctx context.Context) error {
 
 	if templateID != "" {
 		template, err := client.GetTemplate(ctx, templateID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(template.Template)
@@ -60,14 +56,10 @@ func templates(ctx context.Context) error {
 	}
 
 	templates, err := client.GetAllTemplates(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(templates.Templates)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)

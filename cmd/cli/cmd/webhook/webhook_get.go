@@ -27,9 +27,7 @@ func init() {
 func webhooks(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	oID := datum.Config.String("id")
@@ -40,9 +38,7 @@ func webhooks(ctx context.Context) error {
 
 	if oID != "" {
 		webhook, err := client.GetWebhookByID(ctx, oID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(webhook.Webhook)
@@ -60,14 +56,10 @@ func webhooks(ctx context.Context) error {
 	}
 
 	webhooks, err := client.GetAllWebhooks(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(webhooks.Webhooks)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)

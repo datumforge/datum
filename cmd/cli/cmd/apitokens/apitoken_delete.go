@@ -26,9 +26,7 @@ func init() {
 func deleteAPIToken(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -39,14 +37,10 @@ func deleteAPIToken(ctx context.Context) error {
 	}
 
 	o, err := client.DeleteAPIToken(ctx, tokenID)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(o)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

@@ -30,9 +30,7 @@ func init() {
 func subscriberCreate(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	subscriberInput := []*datumclient.CreateSubscriberInput{}
@@ -49,9 +47,7 @@ func subscriberCreate(ctx context.Context) error {
 		}
 
 		sub, err := client.CreateBulkCSVSubscriber(ctx, in)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(sub.CreateBulkCSVSubscriber)
@@ -81,9 +77,7 @@ func subscriberCreate(ctx context.Context) error {
 		}
 
 		sub, err := client.CreateBulkSubscriber(ctx, subscriberInput)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(sub.CreateBulkSubscriber)

@@ -30,9 +30,7 @@ func init() {
 func updateOrgMember(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	oID := datum.Config.String("org-id")
@@ -48,9 +46,7 @@ func updateOrgMember(ctx context.Context) error {
 	}
 
 	r, err := datum.GetRoleEnum(role)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	// get the id of the org member
 	where := datumclient.OrgMembershipWhereInput{
@@ -62,9 +58,7 @@ func updateOrgMember(ctx context.Context) error {
 	}
 
 	orgMembers, err := client.GetOrgMembersByOrgID(ctx, &where)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if len(orgMembers.OrgMemberships.Edges) != 1 {
 		return errors.New("error getting existing relation") //nolint:goerr113
@@ -79,14 +73,10 @@ func updateOrgMember(ctx context.Context) error {
 	var s []byte
 
 	orgMember, err := client.UpdateUserRoleInOrg(ctx, id, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(orgMember)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

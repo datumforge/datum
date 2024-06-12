@@ -27,9 +27,7 @@ func init() {
 func events(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -37,9 +35,7 @@ func events(ctx context.Context) error {
 	eventID := datum.Config.String("id")
 	if eventID != "" {
 		event, err := client.GetEventByID(ctx, eventID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err = json.Marshal(event)
@@ -61,14 +57,10 @@ func events(ctx context.Context) error {
 	writer := tables.NewTableWriter(eventCmd.OutOrStdout(), "ID", "EventType", "EventMetadata", "CorrelationID")
 
 	events, err := client.GetAllEvents(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(events.Events)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)

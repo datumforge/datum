@@ -29,9 +29,7 @@ func init() {
 func subscribers(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -48,9 +46,7 @@ func subscribers(ctx context.Context) error {
 
 	if email != "" {
 		sub, err := client.GetSubscriber(ctx, email)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(sub)
@@ -66,9 +62,7 @@ func subscribers(ctx context.Context) error {
 		}
 	} else {
 		subs, err := client.Subscribers(ctx, &where)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(subs)

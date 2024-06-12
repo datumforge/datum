@@ -28,9 +28,7 @@ func init() {
 func resetPassword(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClient(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	var s []byte
 
@@ -50,14 +48,10 @@ func resetPassword(ctx context.Context) error {
 	}
 
 	reply, err := client.ResetPassword(ctx, &reset)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(reply)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

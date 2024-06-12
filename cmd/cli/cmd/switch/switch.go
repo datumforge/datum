@@ -28,9 +28,7 @@ func init() {
 func switchorg(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	targetorg := datum.Config.String("target-org")
 	if targetorg == "" {
@@ -42,9 +40,7 @@ func switchorg(ctx context.Context) error {
 	}
 
 	resp, err := client.Switch(ctx, &input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	fmt.Printf("Successfully switched to organization: %s!\n", targetorg)
 

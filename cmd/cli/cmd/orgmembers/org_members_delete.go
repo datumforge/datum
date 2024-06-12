@@ -28,9 +28,7 @@ func init() {
 func deleteOrgMember(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	uID := datum.Config.String("user-id")
@@ -44,9 +42,7 @@ func deleteOrgMember(ctx context.Context) error {
 	}
 
 	orgMembers, err := client.GetOrgMembersByOrgID(ctx, &where)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if len(orgMembers.OrgMemberships.Edges) != 1 {
 		return errors.New("error getting existing relation") //nolint:goerr113
@@ -57,14 +53,10 @@ func deleteOrgMember(ctx context.Context) error {
 	var s []byte
 
 	orgMember, err := client.RemoveUserFromOrg(ctx, id)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(orgMember)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

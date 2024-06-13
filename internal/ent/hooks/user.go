@@ -17,7 +17,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/passwd"
-	// "github.com/datumforge/datum/pkg/utils/gravatar"
 )
 
 const (

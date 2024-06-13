@@ -28,9 +28,7 @@ func init() {
 func inviteAccept(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	var s []byte
 
@@ -44,14 +42,10 @@ func inviteAccept(ctx context.Context) error {
 	}
 
 	resp, err := client.AcceptInvite(ctx, &invite)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(resp)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if err := datum.StoreToken(&oauth2.Token{
 		AccessToken:  resp.AccessToken,

@@ -56,7 +56,7 @@ func queueSubscriberEmail(ctx context.Context, m *generated.SubscriberMutation) 
 	// send emails via Marionette as to not create blocking operations in the server
 	if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 		return sendSubscriberEmail(m, org.Name, tok)
-	}), marionette.WithRetries(3), // nolint: gomnd
+	}), marionette.WithRetries(3), //nolint:mnd
 		marionette.WithErrorf("could not send subscriber verification email to user %s", email),
 	); err != nil {
 		return err

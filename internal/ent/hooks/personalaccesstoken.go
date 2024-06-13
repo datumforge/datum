@@ -22,7 +22,7 @@ func HookCreatePersonalAccessToken() ent.Hook {
 			// default the expiration to 7 days
 			expires, ok := mutation.ExpiresAt()
 			if !ok || expires.IsZero() {
-				mutation.SetExpiresAt(time.Now().Add(time.Hour * 24 * 7)) // nolint: gomnd
+				mutation.SetExpiresAt(time.Now().Add(time.Hour * 24 * 7)) //nolint:mnd
 			}
 
 			userID, err := auth.GetUserIDFromContext(ctx)

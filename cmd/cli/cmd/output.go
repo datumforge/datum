@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/TylerBrock/colorjson"
+	"github.com/spf13/cobra"
 )
 
 // JSONPrint prints a JSON formatted string with color
@@ -12,17 +13,13 @@ func JSONPrint(s []byte) error {
 	var obj map[string]interface{}
 
 	err := json.Unmarshal(s, &obj)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	f := colorjson.NewFormatter()
 	f.Indent = 2
 
 	o, err := f.Marshal(obj)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	fmt.Println(string(o))
 

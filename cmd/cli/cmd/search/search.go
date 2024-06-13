@@ -27,9 +27,7 @@ func init() {
 func search(ctx context.Context) error { // setup datum http client
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -39,9 +37,7 @@ func search(ctx context.Context) error { // setup datum http client
 	}
 
 	results, err := client.Search(ctx, query)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	// print results
 	for _, r := range results.Search.Nodes {

@@ -38,7 +38,7 @@ var DebugCookieConfig = &CookieConfig{
 var DebugOnlyCookieConfig = CookieConfig{
 	Name:     DevCookieName,
 	Path:     "/",
-	MaxAge:   600, // nolint: gomnd
+	MaxAge:   600, //nolint:mnd
 	HTTPOnly: true,
 	Secure:   false, // allow to work over http
 	SameSite: http.SameSiteLaxMode,

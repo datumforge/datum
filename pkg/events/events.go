@@ -24,7 +24,7 @@ type Properties map[string]interface{}
 
 // NewProperties creates a new Properties map
 func NewProperties() Properties {
-	return make(Properties, 10) // nolint: gomnd
+	return make(Properties, 10) //nolint:mnd
 }
 
 // Set sets a property on the Properties map

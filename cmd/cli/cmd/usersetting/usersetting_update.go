@@ -36,9 +36,7 @@ func init() {
 func updateUserSetting(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -84,9 +82,7 @@ func updateUserSetting(ctx context.Context) error {
 	if settingsID == "" {
 		// get the user settings id
 		settings, err := client.GetUserSettings(ctx)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		// this should never happen, but just in case
 		if len(settings.GetUserSettings().Edges) == 0 {
@@ -98,15 +94,11 @@ func updateUserSetting(ctx context.Context) error {
 
 	// update the user settings
 	o, err := client.UpdateUserSetting(ctx, settingsID, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	// parse the output
 	s, err = json.Marshal(o)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

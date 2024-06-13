@@ -29,9 +29,7 @@ func init() {
 func addOrgMember(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	oID := datum.Config.String("org-id")
@@ -45,9 +43,7 @@ func addOrgMember(ctx context.Context) error {
 	role := datum.Config.String("role")
 
 	r, err := datum.GetRoleEnum(role)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	input := datumclient.CreateOrgMembershipInput{
 		UserID: uID,
@@ -61,14 +57,10 @@ func addOrgMember(ctx context.Context) error {
 	var s []byte
 
 	orgMember, err := client.AddUserToOrgWithRole(ctx, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(orgMember)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

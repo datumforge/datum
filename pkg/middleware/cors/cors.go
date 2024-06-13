@@ -58,7 +58,7 @@ func NewWithConfig(config Config) (echo.MiddlewareFunc, error) {
 			AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 			ExposeHeaders:    []string{"Content-Length"},
 			AllowCredentials: true,
-			MaxAge:           int((24 * time.Hour).Seconds()), //nolint:gomnd
+			MaxAge:           int((24 * time.Hour).Seconds()), //nolint:mnd
 		}
 
 		prefixes[prefix] = middleware.CORSWithConfig(conf)

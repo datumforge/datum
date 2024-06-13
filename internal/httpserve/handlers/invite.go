@@ -80,7 +80,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 
 		h.Logger.Errorf("error retrieving invite token", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, nil)
+		return h.InternalServerError(ctx, nil)
 	}
 
 	// add email to the invite
@@ -91,7 +91,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get user for request", "error", err)
 
-		return ctx.JSON(http.StatusUnauthorized, rout.ErrorResponse(err))
+		return h.Unauthorized(ctx, err)
 	}
 
 	// ensure the user that is logged in, matches the invited user
@@ -136,7 +136,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	if t.ExpiresAt, err = invite.GetInviteExpires(); err != nil {
 		h.Logger.Errorw("unable to parse expiration", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, tokens.ErrTokenExpired)
+		return h.InternalServerError(ctx, err)
 	}
 
 	// Verify the token is valid with the stored secret
@@ -146,11 +146,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 				return err
 			}
 
-			out := &models.InviteReply{
-				Message: "invite token is expired, you will need to re-request an invite",
-			}
-
-			return ctx.JSON(http.StatusBadRequest, out)
+			return h.BadRequest(ctx, ErrExpiredToken)
 		}
 
 		return h.BadRequest(ctx, err)
@@ -181,7 +177,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		AuthData:    *auth,
 	}
 
-	return ctx.JSON(http.StatusCreated, out)
+	return h.Created(ctx, out)
 }
 
 // validateInviteRequest validates the required fields are set in the user request

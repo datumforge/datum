@@ -105,7 +105,7 @@ func WithGeneratedKeys() ServerOption {
 		// generate a new private key if one doesn't exist
 		if _, err := os.Stat(privFileName); err != nil {
 			// Generate a new RSA private key with 2048 bits
-			privateKey, err := rsa.GenerateKey(rand.Reader, 2048) //nolint:gomnd
+			privateKey, err := rsa.GenerateKey(rand.Reader, 2048) //nolint:mnd
 			if err != nil {
 				s.Config.Logger.Panicf("Error generating RSA private key:", err)
 			}

@@ -51,7 +51,7 @@ var DefaultAuthOptions = AuthOptions{
 	KeysURL:            "http://localhost:17608/.well-known/jwks.json",
 	Audience:           "http://localhost:17608",
 	Issuer:             "http://localhost:17608",
-	MinRefreshInterval: 5 * time.Minute, //nolint:gomnd
+	MinRefreshInterval: 5 * time.Minute, //nolint:mnd
 	Skipper:            middleware.DefaultSkipper,
 }
 

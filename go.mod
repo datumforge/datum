@@ -52,14 +52,14 @@ require (
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240416075003-747366ff79c4
-	github.com/vektah/gqlparser/v2 v2.5.12
-	github.com/wundergraph/graphql-go-tools v1.67.2
+	github.com/vektah/gqlparser/v2 v2.5.16
+	github.com/wundergraph/graphql-go-tools v1.67.3
 	go.opentelemetry.io/otel v1.27.0
 	go.opentelemetry.io/otel/sdk v1.27.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.21.0
 	golang.org/x/term v0.21.0
-	google.golang.org/api v0.183.0
+	google.golang.org/api v0.184.0
 	modernc.org/sqlite v1.30.1
 )
 
@@ -120,7 +120,7 @@ require (
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.14.1 // indirect
+	github.com/go-playground/validator/v10 v10.15.5 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-viper/mapstructure/v2 v2.0.0 // indirect
 	github.com/go-webauthn/x v0.1.10 // indirect
@@ -252,7 +252,7 @@ require (
 	github.com/flopp/go-findfont v0.1.0
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/getkin/kin-openapi v0.125.0
-	github.com/getsentry/sentry-go v0.28.0
+	github.com/getsentry/sentry-go v0.28.1
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/yaml v0.4.6 // indirect
 	github.com/go-openapi/inflect v0.21.0 // indirect

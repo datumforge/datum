@@ -57,7 +57,7 @@ func Strength(password string) PasswordStrength {
 	}
 
 	strength := Poor
-	if len(password) >= 12 { //nolint:gomnd
+	if len(password) >= 12 { //nolint:mnd
 		strength++
 	}
 

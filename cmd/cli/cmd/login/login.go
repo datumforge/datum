@@ -33,9 +33,7 @@ func init() {
 func login(ctx context.Context) (*oauth2.Token, error) {
 	// setup datum http client
 	client, err := datum.SetupClient(ctx)
-	if err != nil {
-		return nil, err
-	}
+	cobra.CheckErr(err)
 
 	username := datum.Config.String("username")
 	if username == "" {
@@ -43,15 +41,12 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 	}
 
 	tokens, err := passwordAuth(ctx, client, username)
-	if err != nil {
-		return nil, err
-	}
+	cobra.CheckErr(err)
 
 	fmt.Println("\nAuthentication Successful!")
 
-	if err := datum.StoreToken(tokens); err != nil {
-		return nil, err
-	}
+	err = datum.StoreToken(tokens)
+	cobra.CheckErr(err)
 
 	datum.StoreSessionCookies(client)
 

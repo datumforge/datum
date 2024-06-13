@@ -28,9 +28,7 @@ func init() {
 func orgMembers(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	where := datumclient.OrgMembershipWhereInput{}
@@ -45,15 +43,11 @@ func orgMembers(ctx context.Context) error {
 	var s []byte
 
 	org, err := client.GetOrgMembersByOrgID(ctx, &where)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if datum.OutputFormat == datum.JSONOutput {
 		s, err = json.Marshal(org)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		return datum.JSONPrint(s)
 	}

@@ -27,9 +27,7 @@ func init() {
 func getGroup(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -40,9 +38,7 @@ func getGroup(ctx context.Context) error {
 	// if an group ID is provided, filter on that group, otherwise get all
 	if gID != "" {
 		group, err := client.GetGroupByID(ctx, gID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(group)
@@ -61,15 +57,11 @@ func getGroup(ctx context.Context) error {
 
 	// get all groups, will be filtered for the authorized organization(s)
 	groups, err := client.GetAllGroups(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if datum.OutputFormat == datum.JSONOutput {
 		s, err := json.Marshal(groups)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		return datum.JSONPrint(s)
 	}

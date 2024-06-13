@@ -52,7 +52,7 @@ func NewServer() (s *Server, err error) {
 		Audience:        Audience,
 		Issuer:          Issuer,
 		AccessDuration:  1 * time.Hour,
-		RefreshDuration: 2 * time.Hour, // nolint: gomnd
+		RefreshDuration: 2 * time.Hour, //nolint:mnd
 		RefreshOverlap:  -15 * time.Minute,
 	}
 
@@ -60,7 +60,7 @@ func NewServer() (s *Server, err error) {
 	if _, err := os.Stat(privFileName); err != nil {
 		var key *rsa.PrivateKey
 
-		if key, err = rsa.GenerateKey(rand.Reader, 2048); err != nil { // nolint: gomnd
+		if key, err = rsa.GenerateKey(rand.Reader, 2048); err != nil { //nolint:mnd
 			return nil, err
 		}
 

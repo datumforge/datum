@@ -31,9 +31,7 @@ func init() {
 func createevent(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	var s []byte
@@ -63,9 +61,7 @@ func createevent(ctx context.Context) error {
 		}
 
 		parsedMessage, err := datum.ParseBytes(data)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		input.Metadata = parsedMessage
 	}
@@ -81,14 +77,10 @@ func createevent(ctx context.Context) error {
 	}
 
 	u, err := client.CreateEvent(ctx, input)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(u)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	return datum.JSONPrint(s)
 }

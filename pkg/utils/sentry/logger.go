@@ -144,6 +144,6 @@ func (s *SentryZapCore) Write(entry zapcore.Entry, fields []zapcore.Field) error
 
 // Sync flushes the sentry event
 func (s *SentryZapCore) Sync() error {
-	sentry.Flush(2 * time.Second) // nolint:gomnd
+	sentry.Flush(2 * time.Second) //nolint:mnd
 	return nil
 }

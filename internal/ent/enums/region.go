@@ -53,7 +53,7 @@ func (r Region) MarshalGQL(w io.Writer) {
 func (r *Region) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("wrong type for Region, got: %T", v) //nolint:goerr113
+		return fmt.Errorf("wrong type for Region, got: %T", v) //nolint:err113
 	}
 
 	*r = Region(str)

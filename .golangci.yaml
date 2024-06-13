@@ -16,10 +16,10 @@ linters:
     - errcheck
     - gocritic
     - gocyclo
-    - goerr113
+    - err113
     - gofmt
     - goimports
-    - gomnd
+    - mnd
     - gosimple
     - govet
     - gosec

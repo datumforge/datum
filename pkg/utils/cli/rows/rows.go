@@ -17,7 +17,7 @@ type Writer interface {
 // and returns a `Writer` interface.
 func NewTabRowWriter(w *tabwriter.Writer) Writer {
 	if w == nil {
-		w = tabwriter.NewWriter(os.Stdout, 1, 0, 4, ' ', 0) //nolint:gomnd
+		w = tabwriter.NewWriter(os.Stdout, 1, 0, 4, ' ', 0) //nolint:mnd
 	}
 
 	return &TabRowWriter{*w}

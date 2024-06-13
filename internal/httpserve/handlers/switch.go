@@ -18,11 +18,11 @@ import (
 func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	var in models.SwitchOrganizationRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	reqCtx := ctx.Request().Context()
@@ -51,14 +51,14 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 
 	// ensure the user is not already in the target organization
 	if orgID == in.TargetOrganizationID {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("already switched to organization"))
+		return h.BadRequest(ctx, ErrAlreadySwitchedIntoOrg)
 	}
 
 	// ensure user is already a member of the destination organization
 	if allow, err := h.DBClient.Authz.CheckOrgAccess(reqCtx, userID, auth.UserSubjectType, in.TargetOrganizationID, fgax.CanView); err != nil || !allow {
 		h.Logger.Errorw("user not authorized to access organization", "error", err)
 
-		return ctx.JSON(http.StatusUnauthorized, rout.ErrorResponse("unauthorized"))
+		return h.Unauthorized(ctx, err)
 	}
 
 	// get the target organization
@@ -68,7 +68,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get target organization by id", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("unable to get target organization"))
+		return h.BadRequest(ctx, err)
 	}
 
 	// create new claims for the user

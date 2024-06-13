@@ -37,7 +37,7 @@ func (fs *Storage) abs(path string) string {
 // Save saves content to the provided path
 func (fs *Storage) Save(ctx context.Context, content io.Reader, path string) error {
 	abs := fs.abs(path)
-	if err := os.MkdirAll(filepath.Dir(abs), 0755); err != nil { // nolint:gomnd
+	if err := os.MkdirAll(filepath.Dir(abs), 0755); err != nil { //nolint:mnd
 		return errors.WithStack(err)
 	}
 

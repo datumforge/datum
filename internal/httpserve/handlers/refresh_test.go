@@ -30,7 +30,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 	suite.e.POST("refresh", suite.h.RefreshHandler)
 
 	// Set full overlap of the refresh and access token so the refresh token is immediately valid
-	tm, err := createTokenManager(-60 * time.Minute) //nolint:gomnd
+	tm, err := createTokenManager(-60 * time.Minute) //nolint:mnd
 	if err != nil {
 		t.Error("error creating token manager")
 	}

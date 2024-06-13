@@ -27,9 +27,7 @@ func init() {
 func userSettings(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
@@ -42,9 +40,7 @@ func userSettings(ctx context.Context) error {
 	// if setting ID is not provided, get settings which will automatically filter by user id
 	if settingsID != "" {
 		user, err := client.GetUserSettingByID(ctx, settingsID)
-		if err != nil {
-			return err
-		}
+		cobra.CheckErr(err)
 
 		if datum.OutputFormat == datum.JSONOutput {
 			s, err := json.Marshal(user.UserSetting)
@@ -62,14 +58,10 @@ func userSettings(ctx context.Context) error {
 	}
 
 	settings, err := client.GetUserSettings(ctx)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	s, err = json.Marshal(settings.UserSettings)
-	if err != nil {
-		return err
-	}
+	cobra.CheckErr(err)
 
 	if datum.OutputFormat == datum.JSONOutput {
 		return datum.JSONPrint(s)

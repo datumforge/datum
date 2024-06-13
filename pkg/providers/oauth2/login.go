@@ -20,7 +20,7 @@ func StateHandler(config sessions.CookieConfig, success http.Handler) http.Handl
 		if queryParams.Get("state") != "" {
 			ctx = WithState(ctx, queryParams.Get("state"))
 		} else {
-			val := keygen.GenerateRandomString(32) // nolint: gomnd
+			val := keygen.GenerateRandomString(32) //nolint:mnd
 			http.SetCookie(w, sessions.NewCookie(config.Name, val, &config))
 			ctx = WithState(ctx, val)
 		}

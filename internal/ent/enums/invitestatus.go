@@ -56,7 +56,7 @@ func (r InviteStatus) MarshalGQL(w io.Writer) {
 func (r *InviteStatus) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("wrong type for InviteStatus, got: %T", v) //nolint:goerr113
+		return fmt.Errorf("wrong type for InviteStatus, got: %T", v) //nolint:err113
 	}
 
 	*r = InviteStatus(str)

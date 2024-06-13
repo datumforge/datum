@@ -176,7 +176,7 @@ func (c *SendGridClient) Send(msg *sgmail.SGMailV3) (rep *rest.Response, err err
 	if c.Storage != "" {
 		// Save the email to disk for manual inspection
 		dir := filepath.Join(c.Storage, toAddress)
-		if err = os.MkdirAll(dir, 0755); err != nil { // nolint: gomnd
+		if err = os.MkdirAll(dir, 0755); err != nil { //nolint:mnd
 			return &rest.Response{
 				StatusCode: http.StatusInternalServerError,
 				Body:       fmt.Sprintf("could not create archive directory at %s", dir),

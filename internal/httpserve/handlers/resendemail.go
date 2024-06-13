@@ -19,11 +19,11 @@ import (
 func (h *Handler) ResendEmail(ctx echo.Context) error {
 	var in models.ResendRequest
 	if err := ctx.Bind(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	// set viewer context
@@ -45,7 +45,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 
 		h.Logger.Errorf("error retrieving user email", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, ErrProcessingRequest)
 	}
 
 	// check to see if user is already confirmed
@@ -72,10 +72,10 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		h.Logger.Errorw("error storing token", "error", err)
 
 		if errors.Is(err, ErrMaxAttempts) {
-			return ctx.JSON(http.StatusTooManyRequests, rout.ErrorResponse(err))
+			return h.TooManyRequests(ctx, err)
 		}
 
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+		return h.InternalServerError(ctx, ErrProcessingRequest)
 	}
 
 	return h.Success(ctx, out)

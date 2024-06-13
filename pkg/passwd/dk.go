@@ -73,7 +73,7 @@ func ParseDerivedKey(encoded string) (dk, salt []byte, time, memory uint32, thre
 
 	parts := dkParse.FindStringSubmatch(encoded)
 
-	if len(parts) != 8 { //nolint:gomnd
+	if len(parts) != 8 { //nolint:mnd
 		return nil, nil, 0, 0, 0, ErrCannotParseEncodedEK
 	}
 

@@ -629,7 +629,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganizationTransaction() {
 			Name: gofakeit.Name(),
 		}
 
-		fgaErr := errors.New("unable to create relationship") //nolint:goerr113
+		fgaErr := errors.New("unable to create relationship") //nolint:err113
 		mock_fga.WriteError(t, suite.client.fga, fgaErr)
 
 		resp, err := suite.client.datum.CreateOrganization(reqCtx, input)

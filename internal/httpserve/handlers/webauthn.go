@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"net/http"
 
 	echo "github.com/datumforge/echox"
 
@@ -28,7 +27,7 @@ const (
 func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	var r models.WebauthnRegistrationRequest
 	if err := ctx.Bind(&r); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(err, InvalidInputErrCode))
+		return h.InvalidInput(ctx, err)
 	}
 
 	ctxWithToken := token.NewContextWithOauthTooToken(ctx.Request().Context(), r.Email)
@@ -149,7 +148,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 
 	wd, ok := webauthnData.(webauthn.SessionData)
 	if !ok {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrNoAuthUser))
+		return h.BadRequest(ctx, ErrNoAuthUser)
 	}
 
 	user := &provider.User{
@@ -167,7 +166,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	// save the credential to the database
 	if err := h.addCredentialToUser(userCtx, entUser, *credential); err != nil {
 		if IsConstraintError(err) {
-			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponseWithCode(ErrDeviceAlreadyRegistered, DeviceRegisteredErrCode))
+			return h.BadRequestWithCode(ctx, ErrDeviceAlreadyRegistered, DeviceRegisteredErrCode)
 		}
 
 		return h.InternalServerError(ctx, err)
@@ -235,7 +234,7 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 
 	wd, ok := webauthnData.(webauthn.SessionData)
 	if !ok {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrNoAuthUser))
+		return h.BadRequest(ctx, ErrNoAuthUser)
 	}
 
 	response, err := protocol.ParseCredentialRequestResponseBody(ctx.Request().Body)

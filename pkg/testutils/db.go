@@ -40,7 +40,7 @@ func GetPostgresDockerTest(image string, expiry time.Duration) (*TestFixture, er
 	imgTag := "alpine"
 
 	if strings.Contains(image, ":") {
-		p := strings.SplitN(image, ":", 2) //nolint:gomnd
+		p := strings.SplitN(image, ":", 2) //nolint:mnd
 		imgTag = p[1]
 	}
 

@@ -142,7 +142,7 @@ func (s *APIv1) Switch(ctx context.Context, in *models.SwitchOrganizationRequest
 
 // VerifyEmail verifies the email address of a user
 func (s *APIv1) VerifyEmail(ctx context.Context, in *models.VerifyRequest) (out *models.VerifyReply, err error) {
-	req := s.HTTPSlingClient.NewRequestBuilder(http.MethodPost, "/v1/verify")
+	req := s.HTTPSlingClient.NewRequestBuilder(http.MethodGet, "/v1/verify")
 	req.Body(in)
 
 	resp, err := req.Send(ctx)
@@ -227,6 +227,27 @@ func (s *APIv1) ResetPassword(ctx context.Context, in *models.ResetPasswordReque
 // AcceptInvite accepts an invite to join an organization
 func (s *APIv1) AcceptInvite(ctx context.Context, in *models.InviteRequest) (out *models.InviteReply, err error) {
 	req := s.HTTPSlingClient.NewRequestBuilder(http.MethodGet, "/v1/invite")
+	req.Body(in)
+
+	resp, err := req.Send(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := resp.ScanJSON(&out); err != nil {
+		return nil, err
+	}
+
+	if !resp.IsSuccess() {
+		return nil, newRequestError(resp.StatusCode(), out.Error)
+	}
+
+	return out, nil
+}
+
+// VerifySubscriberEmail verifies the email address of a subscriber
+func (s *APIv1) VerifySubscriberEmail(ctx context.Context, in *models.VerifySubscribeRequest) (out *models.VerifySubscribeReply, err error) {
+	req := s.HTTPSlingClient.NewRequestBuilder(http.MethodGet, "/v1/subscribe/verify")
 	req.Body(in)
 
 	resp, err := req.Send(ctx)

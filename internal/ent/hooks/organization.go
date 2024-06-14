@@ -66,7 +66,7 @@ func HookOrganization() ent.Hook {
 
 			if mutation.Op().Is(ent.OpCreate) {
 				// create the admin organization member if not using an API token (which is not associated with a user)
-				// otherwise add the API toke for admin access to the newly created organization
+				// otherwise add the API token for admin access to the newly created organization
 				if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
 					return v, err
 				}
@@ -152,11 +152,32 @@ func personalOrgNoChildren(ctx context.Context, mutation *generated.Organization
 	return nil
 }
 
+// createParentOrgTuple creates a parent org tuple if the newly created org has a parent
+func createParentOrgTuple(ctx context.Context, m *generated.OrganizationMutation, parentOrgID, childOrgID string) error {
+	tuple := fgax.GetTupleKey(parentOrgID, "organization", childOrgID, "organization", fgax.ParentRelation)
+
+	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{
+		tuple,
+	}, nil); err != nil {
+		m.Logger.Errorw("failed to create relationship tuple", "error", err)
+
+		return err
+	}
+
+	return nil
+}
+
 func createOrgMemberOwner(ctx context.Context, oID string, m *generated.OrganizationMutation) error {
 	// This is handled by the user create hook for personal orgs
 	personalOrg, _ := m.PersonalOrg()
 	if personalOrg {
 		return nil
+	}
+
+	// If this is a child org, create a parent org tuple instead of owner
+	parentOrgID, ok := m.ParentID()
+	if ok && parentOrgID != "" {
+		return createParentOrgTuple(ctx, m, parentOrgID, oID)
 	}
 
 	// if this was created with an API token, do not create an owner but add the service tuple to fga

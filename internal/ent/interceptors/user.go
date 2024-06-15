@@ -39,14 +39,23 @@ func InterceptorUser() ent.Interceptor {
 			orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
 			if err == nil {
 				// get child orgs in addition to the orgs the user is a direct member of
-				allOrgs, err := getAllRelatedOrgs(ctx, orgIDs)
+				childOrgs, err := getAllRelatedChildOrgs(ctx, orgIDs)
 				if err != nil {
 					return err
 				}
 
+				// get the parent orgs of the orgs the user is a member of to ensure all
+				// users in the org tree are returned
+				allOrgsIDs, err := getAllParentOrgIDs(ctx, orgIDs)
+				if err != nil {
+					return err
+				}
+
+				allOrgsIDs = append(allOrgsIDs, childOrgs...)
+
 				q.Where(user.HasOrgMembershipsWith(
 					orgmembership.HasOrganizationWith(
-						organization.IDIn(allOrgs...),
+						organization.IDIn(allOrgsIDs...),
 					),
 				))
 

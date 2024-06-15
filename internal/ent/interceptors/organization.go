@@ -71,15 +71,18 @@ func getAllActorOrgIDs(ctx context.Context) ([]string, error) {
 		return nil, err
 	}
 
-	return getAllRelatedOrgs(allowCtx, directOrgIDs)
+	return getAllRelatedChildOrgs(allowCtx, directOrgIDs)
 }
 
-// getAllRelatedOrgs returns all the combined directly related orgs in addition to any child organizations of the parent organizations
-func getAllRelatedOrgs(ctx context.Context, directOrgIDs []string) ([]string, error) {
+// getAllRelatedChildOrgs returns all the combined directly related orgs in addition to any child organizations of the parent organizations
+func getAllRelatedChildOrgs(ctx context.Context, directOrgIDs []string) ([]string, error) {
+	// allow the request, otherwise we would be in an infinite loop, as this function is called by the interceptor
+	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+
 	allOrgsIDs := directOrgIDs
 
 	for _, id := range directOrgIDs {
-		co, err := getChildOrgIDs(ctx, id)
+		co, err := getChildOrgIDs(allowCtx, id)
 		if err != nil {
 			return nil, err
 		}
@@ -92,6 +95,9 @@ func getAllRelatedOrgs(ctx context.Context, directOrgIDs []string) ([]string, er
 
 // getChildOrgIDs returns all the child organizations of the parent organization
 func getChildOrgIDs(ctx context.Context, parentOrgID string) ([]string, error) {
+	// allow the request, otherwise we would be in an infinite loop, as this function is called by the interceptor
+	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+
 	// given an organization id, get all the children of that organization
 	childOrgs, err := generated.FromContext(ctx).Organization.
 		Query().
@@ -99,7 +105,7 @@ func getChildOrgIDs(ctx context.Context, parentOrgID string) ([]string, error) {
 			organization.HasParentWith(organization.ID(parentOrgID)),
 		).
 		Select(organization.FieldID).
-		Strings(ctx)
+		Strings(allowCtx)
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +115,55 @@ func getChildOrgIDs(ctx context.Context, parentOrgID string) ([]string, error) {
 	for _, orgID := range childOrgs {
 		// recursively get all the children of the children
 		coIDs, err := getChildOrgIDs(ctx, orgID)
+		if err != nil {
+			return nil, err
+		}
+
+		allOrgsIDs = append(allOrgsIDs, coIDs...)
+	}
+
+	return allOrgsIDs, nil
+}
+
+// getAllParentOrgIDs returns all the parent organization IDs of the child organizations
+func getAllParentOrgIDs(ctx context.Context, childOrgIDs []string) ([]string, error) {
+	allOrgsIDs := childOrgIDs
+
+	for _, id := range childOrgIDs {
+		co, err := getParentOrgIDs(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+
+		allOrgsIDs = append(allOrgsIDs, co...)
+	}
+
+	return allOrgsIDs, nil
+}
+
+// getParentOrgIDs returns all the parent organizations of the child organization
+// this should only be used to get the org members for the current org
+// and does not imply the current user is a member or has access to the parent orgs
+func getParentOrgIDs(ctx context.Context, childOrgID string) ([]string, error) {
+	// allow the request, otherwise we would be in an infinite loop, as this function is called by the interceptor
+	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+
+	parentOrgs, err := generated.FromContext(ctx).Organization.
+		Query().
+		Where(
+			organization.HasChildrenWith(organization.ID(childOrgID)),
+		).
+		Select(organization.FieldID).
+		Strings(allowCtx)
+	if err != nil {
+		return nil, err
+	}
+
+	allOrgsIDs := parentOrgs
+
+	for _, orgID := range parentOrgs {
+		// recursively get all the children of the children
+		coIDs, err := getParentOrgIDs(ctx, orgID)
 		if err != nil {
 			return nil, err
 		}

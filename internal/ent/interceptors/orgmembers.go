@@ -30,8 +30,14 @@ func InterceptorOrgMembers() ent.Interceptor {
 			return err
 		}
 
+		// get all parent orgs to ensure we get all users in the org tree
+		allOrgsIDs, err := getAllParentOrgIDs(ctx, orgIDs)
+		if err != nil {
+			return err
+		}
+
 		// sets the organization id on the query for the current organization
-		q.WhereP(orgmembership.OrganizationIDIn(orgIDs...))
+		q.WhereP(orgmembership.OrganizationIDIn(allOrgsIDs...))
 
 		return nil
 	})

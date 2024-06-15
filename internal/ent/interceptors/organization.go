@@ -76,13 +76,10 @@ func getAllActorOrgIDs(ctx context.Context) ([]string, error) {
 
 // getAllRelatedChildOrgs returns all the combined directly related orgs in addition to any child organizations of the parent organizations
 func getAllRelatedChildOrgs(ctx context.Context, directOrgIDs []string) ([]string, error) {
-	// allow the request, otherwise we would be in an infinite loop, as this function is called by the interceptor
-	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
-
 	allOrgsIDs := directOrgIDs
 
 	for _, id := range directOrgIDs {
-		co, err := getChildOrgIDs(allowCtx, id)
+		co, err := getChildOrgIDs(ctx, id)
 		if err != nil {
 			return nil, err
 		}

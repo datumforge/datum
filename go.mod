@@ -48,7 +48,7 @@ require (
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e
 	github.com/redis/go-redis/v9 v9.5.3
 	github.com/samber/lo v1.39.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240416075003-747366ff79c4

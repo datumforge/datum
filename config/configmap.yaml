@@ -138,6 +138,7 @@ data:
   DATUM_EMAIL_MARKETINGURL_DEFAULTSUBSCRIPTIONORG: {{ .Values.datum.email.marketingUrl.defaultSubscriptionOrg | default "Datum" }}
   DATUM_SESSIONS_SIGNINGKEY: {{ .Values.datum.sessions.signingKey | default "my-signing-secret" }}
   DATUM_SESSIONS_ENCRYPTIONKEY: {{ .Values.datum.sessions.encryptionKey | default "encryptionsecret" }}
+  DATUM_SESSIONS_DOMAIN: {{ .Values.datum.sessions.domain }}
   DATUM_SENTRY_ENABLED: {{ .Values.datum.sentry.enabled | default false }}
   DATUM_SENTRY_DSN: {{ .Values.datum.sentry.dsn }}
   DATUM_SENTRY_ENVIRONMENT: {{ .Values.datum.sentry.environment | default "development" }}

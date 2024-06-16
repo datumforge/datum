@@ -525,6 +525,7 @@ Config contains the configuration for the session store
 |----|----|-----------|--------|
 |**signingKey**|`string`|SigningKey must be a 16, 32, or 64 character string used to encode the cookie<br/>||
 |**encryptionKey**|`string`|EncryptionKey must be a 16, 32, or 64 character string used to encode the cookie<br/>||
+|**domain**|`string`|Domain is the domain for the cookie, leave empty to use the default value of the server<br/>||
 
 **Additional Properties:** not allowed  
 <a name="sentry"></a>

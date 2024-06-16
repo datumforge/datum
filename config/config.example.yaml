@@ -181,6 +181,7 @@ server:
         enabled: false
     writeTimeout: 15000000000
 sessions:
+    domain: ""
     encryptionKey: encryptionsecret
     signingKey: my-signing-secret
 totp:

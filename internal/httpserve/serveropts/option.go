@@ -299,6 +299,10 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 			cc.Name = sessions.DefaultCookieName
 		}
 
+		if s.Config.Settings.Sessions.Domain != "" {
+			cc.Domain = s.Config.Settings.Sessions.Domain
+		}
+
 		sm := sessions.NewCookieStore[map[string]any](cc,
 			[]byte(s.Config.Settings.Sessions.SigningKey),
 			[]byte(s.Config.Settings.Sessions.EncryptionKey),

@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/test-go/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 // createTestServerForProxy creates a simple HTTP server for testing purposes

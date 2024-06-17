@@ -13,6 +13,8 @@ type Config struct {
 	SigningKey string `json:"signingKey" koanf:"signingKey" default:"my-signing-secret"`
 	// EncryptionKey must be a 16, 32, or 64 character string used to encode the cookie
 	EncryptionKey string `json:"encryptionKey" koanf:"encryptionKey" default:"encryptionsecret"`
+	// Domain is the domain for the cookie, leave empty to use the default value of the server
+	Domain string `json:"domain" koanf:"domain" default:""`
 }
 
 // Session represents state values maintained in a sessions Store

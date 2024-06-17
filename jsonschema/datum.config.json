@@ -903,6 +903,10 @@
         "encryptionKey": {
           "type": "string",
           "description": "EncryptionKey must be a 16, 32, or 64 character string used to encode the cookie"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain is the domain for the cookie, leave empty to use the default value of the server"
         }
       },
       "additionalProperties": false,

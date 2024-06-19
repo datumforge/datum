@@ -8,8 +8,8 @@ import (
 	ph "github.com/posthog/posthog-go"
 	"golang.org/x/oauth2"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"

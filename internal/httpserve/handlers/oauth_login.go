@@ -11,9 +11,9 @@ import (
 
 	"github.com/samber/lo"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"

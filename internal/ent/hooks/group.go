@@ -9,10 +9,10 @@ import (
 	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/utils/gravatar"
 )
 

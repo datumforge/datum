@@ -6,7 +6,6 @@ import (
 
 	gowebauthn "github.com/go-webauthn/webauthn/webauthn"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -16,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 )
 

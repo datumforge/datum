@@ -9,10 +9,10 @@ import (
 	geodeticenums "github.com/datumforge/geodetic/pkg/enums"
 	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/utils/gravatar"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )

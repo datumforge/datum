@@ -1,6 +1,6 @@
 package datum
 
-import "github.com/datumforge/datum/internal/ent/enums"
+import "github.com/datumforge/datum/pkg/enums"
 
 // GetRoleEnum returns the Role if valid, otherwise returns an error
 func GetRoleEnum(role string) (enums.Role, error) {

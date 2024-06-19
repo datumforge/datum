@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/datumforge/datum/internal/ent/customtypes"
-	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
 // CreateAPITokenInput represents a mutation input for creating apitokens.

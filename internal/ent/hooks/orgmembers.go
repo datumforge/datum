@@ -7,11 +7,11 @@ import (
 	"entgo.io/ent"
 	ph "github.com/posthog/posthog-go"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
 func HookOrgMembers() ent.Hook {

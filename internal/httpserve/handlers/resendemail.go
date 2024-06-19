@@ -7,10 +7,10 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/getkin/kin-openapi/openapi3"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 )

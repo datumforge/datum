@@ -10,7 +10,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/Yamashou/gqlgenc/clientv2"
-	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
 type DatumGraphClient interface {

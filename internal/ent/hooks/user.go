@@ -11,11 +11,11 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/passwd"
 )
 

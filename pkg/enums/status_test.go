@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
 func TestToUserStatus(t *testing.T) {

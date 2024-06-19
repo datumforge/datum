@@ -6,35 +6,31 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
-func TestToRegion(t *testing.T) {
+func TestToDocumentType(t *testing.T) {
 	testCases := []struct {
 		input    string
-		expected enums.Region
+		expected enums.DocumentType
 	}{
 		{
-			input:    "amer",
-			expected: enums.Amer,
+			input:    "roottemplate",
+			expected: enums.RootTemplate,
 		},
 		{
-			input:    "EMEA",
-			expected: enums.Emea,
-		},
-		{
-			input:    "Apac",
-			expected: enums.Apac,
+			input:    "document",
+			expected: enums.Document,
 		},
 		{
 			input:    "UNKNOWN",
-			expected: enums.InvalidRegion,
+			expected: enums.DocumentTypeInvalid,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Convert %s to Region", tc.input), func(t *testing.T) {
-			result := enums.ToRegion(tc.input)
+			result := enums.ToDocumentType(tc.input)
 			assert.Equal(t, tc.expected, *result)
 		})
 	}

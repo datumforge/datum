@@ -15,10 +15,10 @@ import (
 	"github.com/datumforge/fgax/entfga"
 
 	"github.com/datumforge/datum/internal/ent/customtypes"
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
 // Template holds the schema definition for the Template entity

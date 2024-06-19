@@ -7,8 +7,8 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	ph "github.com/posthog/posthog-go"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"

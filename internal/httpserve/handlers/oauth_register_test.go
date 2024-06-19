@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"

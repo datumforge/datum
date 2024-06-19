@@ -7,8 +7,8 @@ import (
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
 func TestCreateUserInput(t *testing.T) {

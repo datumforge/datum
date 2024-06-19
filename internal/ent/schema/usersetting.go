@@ -9,13 +9,13 @@ import (
 
 	emixin "github.com/datumforge/entx/mixin"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
 // UserSetting holds the schema definition for the User entity.

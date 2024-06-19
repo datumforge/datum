@@ -9,8 +9,8 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
+	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/enthistory"
 )
 

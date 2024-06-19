@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/cobra"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/enums"
 )
 
 var templateCreateCmd = &cobra.Command{

@@ -58,6 +58,7 @@ func (Invite) Fields() []ent.Field {
 				_, err := mail.ParseAddress(email)
 				return err
 			}).
+			Immutable().
 			NotEmpty(),
 		field.Enum("status").
 			Comment("the status of the invitation").

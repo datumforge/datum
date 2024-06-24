@@ -2007,7 +2007,6 @@ type UpdateInviteInput struct {
 	UpdatedBy      *string
 	ClearExpires   bool
 	Expires        *time.Time
-	Recipient      *string
 	Status         *enums.InviteStatus
 	Role           *enums.Role
 	SendAttempts   *int
@@ -2037,9 +2036,6 @@ func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
 	}
 	if v := i.Expires; v != nil {
 		m.SetExpires(*v)
-	}
-	if v := i.Recipient; v != nil {
-		m.SetRecipient(*v)
 	}
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)

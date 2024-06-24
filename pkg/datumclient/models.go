@@ -9311,8 +9311,6 @@ type UpdateInviteInput struct {
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
 	Expires      *time.Time `json:"expires,omitempty"`
 	ClearExpires *bool      `json:"clearExpires,omitempty"`
-	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
-	Recipient *string `json:"recipient,omitempty"`
 	// the status of the invitation
 	Status *enums.InviteStatus `json:"status,omitempty"`
 	Role   *enums.Role         `json:"role,omitempty"`

@@ -12432,10 +12432,6 @@ input UpdateInviteInput {
   expires: Time
   clearExpires: Boolean
   """
-  the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
-  """
-  recipient: String
-  """
   the status of the invitation
   """
   status: InviteInviteStatus

@@ -142,6 +142,11 @@ func serve(ctx context.Context) error {
 		serveropts.WithAuth(),
 	)
 
+	// add session manager
+	so.AddServerOptions(
+		serveropts.WithSessionMiddleware(),
+	)
+
 	srv := server.NewServer(so.Config, so.Config.Logger)
 
 	// Setup Graph API Handlers

@@ -346,9 +346,15 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 		// to graph and REST endpoints
 		s.Config.Handler.SessionConfig = &sessionConfig
 		s.Config.SessionConfig = &sessionConfig
+	})
+}
 
+// WithSessionMiddleware sets up the session middleware for the server
+func WithSessionMiddleware() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		// add session middleware, this has to be added after the authMiddleware
 		s.Config.GraphMiddleware = append(s.Config.GraphMiddleware,
-			sessions.LoadAndSaveWithConfig(sessionConfig),
+			sessions.LoadAndSaveWithConfig(*s.Config.SessionConfig),
 		)
 	})
 }

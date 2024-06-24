@@ -563,7 +563,7 @@ input CreateInviteInput {
   """
   the expiration date of the invitation token which defaults to 14 days in the future from creation
   """
-  expires: Time!
+  expires: Time
   """
   the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
   """
@@ -580,7 +580,7 @@ input CreateInviteInput {
   """
   the user who initiated the invitation
   """
-  requestorID: String!
+  requestorID: String
   ownerID: ID
   eventIDs: [ID!]
 }
@@ -6392,7 +6392,7 @@ type Invite implements Node {
   """
   the expiration date of the invitation token which defaults to 14 days in the future from creation
   """
-  expires: Time!
+  expires: Time
   """
   the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
   """
@@ -6409,7 +6409,7 @@ type Invite implements Node {
   """
   the user who initiated the invitation
   """
-  requestorID: String!
+  requestorID: String
   owner: Organization
   events: [Event!]
 }
@@ -6603,6 +6603,8 @@ input InviteWhereInput {
   expiresGTE: Time
   expiresLT: Time
   expiresLTE: Time
+  expiresIsNil: Boolean
+  expiresNotNil: Boolean
   """
   recipient field predicates
   """
@@ -6658,6 +6660,8 @@ input InviteWhereInput {
   requestorIDContains: String
   requestorIDHasPrefix: String
   requestorIDHasSuffix: String
+  requestorIDIsNil: Boolean
+  requestorIDNotNil: Boolean
   requestorIDEqualFold: String
   requestorIDContainsFold: String
   """
@@ -12426,10 +12430,7 @@ input UpdateInviteInput {
   the expiration date of the invitation token which defaults to 14 days in the future from creation
   """
   expires: Time
-  """
-  the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
-  """
-  recipient: String
+  clearExpires: Boolean
   """
   the status of the invitation
   """

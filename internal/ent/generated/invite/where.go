@@ -758,6 +758,16 @@ func ExpiresLTE(v time.Time) predicate.Invite {
 	return predicate.Invite(sql.FieldLTE(FieldExpires, v))
 }
 
+// ExpiresIsNil applies the IsNil predicate on the "expires" field.
+func ExpiresIsNil() predicate.Invite {
+	return predicate.Invite(sql.FieldIsNull(FieldExpires))
+}
+
+// ExpiresNotNil applies the NotNil predicate on the "expires" field.
+func ExpiresNotNil() predicate.Invite {
+	return predicate.Invite(sql.FieldNotNull(FieldExpires))
+}
+
 // RecipientEQ applies the EQ predicate on the "recipient" field.
 func RecipientEQ(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldRecipient, v))
@@ -976,6 +986,16 @@ func RequestorIDHasPrefix(v string) predicate.Invite {
 // RequestorIDHasSuffix applies the HasSuffix predicate on the "requestor_id" field.
 func RequestorIDHasSuffix(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldHasSuffix(FieldRequestorID, v))
+}
+
+// RequestorIDIsNil applies the IsNil predicate on the "requestor_id" field.
+func RequestorIDIsNil() predicate.Invite {
+	return predicate.Invite(sql.FieldIsNull(FieldRequestorID))
+}
+
+// RequestorIDNotNil applies the NotNil predicate on the "requestor_id" field.
+func RequestorIDNotNil() predicate.Invite {
+	return predicate.Invite(sql.FieldNotNull(FieldRequestorID))
 }
 
 // RequestorIDEqualFold applies the EqualFold predicate on the "requestor_id" field.

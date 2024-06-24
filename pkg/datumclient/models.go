@@ -480,7 +480,7 @@ type CreateInviteInput struct {
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
-	Expires time.Time `json:"expires"`
+	Expires *time.Time `json:"expires,omitempty"`
 	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
 	Recipient string `json:"recipient"`
 	// the status of the invitation
@@ -489,7 +489,7 @@ type CreateInviteInput struct {
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts *int64 `json:"sendAttempts,omitempty"`
 	// the user who initiated the invitation
-	RequestorID string   `json:"requestorID"`
+	RequestorID *string  `json:"requestorID,omitempty"`
 	OwnerID     *string  `json:"ownerID,omitempty"`
 	EventIDs    []string `json:"eventIDs,omitempty"`
 }
@@ -5287,7 +5287,7 @@ type Invite struct {
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	OwnerID   *string    `json:"ownerID,omitempty"`
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
-	Expires time.Time `json:"expires"`
+	Expires *time.Time `json:"expires,omitempty"`
 	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
 	Recipient string `json:"recipient"`
 	// the status of the invitation
@@ -5296,7 +5296,7 @@ type Invite struct {
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts int64 `json:"sendAttempts"`
 	// the user who initiated the invitation
-	RequestorID string        `json:"requestorID"`
+	RequestorID *string       `json:"requestorID,omitempty"`
 	Owner       *Organization `json:"owner,omitempty"`
 	Events      []*Event      `json:"events,omitempty"`
 }
@@ -5460,14 +5460,16 @@ type InviteWhereInput struct {
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// expires field predicates
-	Expires      *time.Time   `json:"expires,omitempty"`
-	ExpiresNeq   *time.Time   `json:"expiresNEQ,omitempty"`
-	ExpiresIn    []*time.Time `json:"expiresIn,omitempty"`
-	ExpiresNotIn []*time.Time `json:"expiresNotIn,omitempty"`
-	ExpiresGt    *time.Time   `json:"expiresGT,omitempty"`
-	ExpiresGte   *time.Time   `json:"expiresGTE,omitempty"`
-	ExpiresLt    *time.Time   `json:"expiresLT,omitempty"`
-	ExpiresLte   *time.Time   `json:"expiresLTE,omitempty"`
+	Expires       *time.Time   `json:"expires,omitempty"`
+	ExpiresNeq    *time.Time   `json:"expiresNEQ,omitempty"`
+	ExpiresIn     []*time.Time `json:"expiresIn,omitempty"`
+	ExpiresNotIn  []*time.Time `json:"expiresNotIn,omitempty"`
+	ExpiresGt     *time.Time   `json:"expiresGT,omitempty"`
+	ExpiresGte    *time.Time   `json:"expiresGTE,omitempty"`
+	ExpiresLt     *time.Time   `json:"expiresLT,omitempty"`
+	ExpiresLte    *time.Time   `json:"expiresLTE,omitempty"`
+	ExpiresIsNil  *bool        `json:"expiresIsNil,omitempty"`
+	ExpiresNotNil *bool        `json:"expiresNotNil,omitempty"`
 	// recipient field predicates
 	Recipient             *string  `json:"recipient,omitempty"`
 	RecipientNeq          *string  `json:"recipientNEQ,omitempty"`
@@ -5513,6 +5515,8 @@ type InviteWhereInput struct {
 	RequestorIDContains     *string  `json:"requestorIDContains,omitempty"`
 	RequestorIDHasPrefix    *string  `json:"requestorIDHasPrefix,omitempty"`
 	RequestorIDHasSuffix    *string  `json:"requestorIDHasSuffix,omitempty"`
+	RequestorIDIsNil        *bool    `json:"requestorIDIsNil,omitempty"`
+	RequestorIDNotNil       *bool    `json:"requestorIDNotNil,omitempty"`
 	RequestorIDEqualFold    *string  `json:"requestorIDEqualFold,omitempty"`
 	RequestorIDContainsFold *string  `json:"requestorIDContainsFold,omitempty"`
 	// owner edge predicates
@@ -9305,9 +9309,8 @@ type UpdateInviteInput struct {
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
-	Expires *time.Time `json:"expires,omitempty"`
-	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
-	Recipient *string `json:"recipient,omitempty"`
+	Expires      *time.Time `json:"expires,omitempty"`
+	ClearExpires *bool      `json:"clearExpires,omitempty"`
 	// the status of the invitation
 	Status *enums.InviteStatus `json:"status,omitempty"`
 	Role   *enums.Role         `json:"role,omitempty"`

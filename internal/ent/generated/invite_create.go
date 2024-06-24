@@ -147,6 +147,14 @@ func (ic *InviteCreate) SetExpires(t time.Time) *InviteCreate {
 	return ic
 }
 
+// SetNillableExpires sets the "expires" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableExpires(t *time.Time) *InviteCreate {
+	if t != nil {
+		ic.SetExpires(*t)
+	}
+	return ic
+}
+
 // SetRecipient sets the "recipient" field.
 func (ic *InviteCreate) SetRecipient(s string) *InviteCreate {
 	ic.mutation.SetRecipient(s)
@@ -198,6 +206,14 @@ func (ic *InviteCreate) SetNillableSendAttempts(i *int) *InviteCreate {
 // SetRequestorID sets the "requestor_id" field.
 func (ic *InviteCreate) SetRequestorID(s string) *InviteCreate {
 	ic.mutation.SetRequestorID(s)
+	return ic
+}
+
+// SetNillableRequestorID sets the "requestor_id" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableRequestorID(s *string) *InviteCreate {
+	if s != nil {
+		ic.SetRequestorID(*s)
+	}
 	return ic
 }
 
@@ -299,6 +315,13 @@ func (ic *InviteCreate) defaults() error {
 		v := invite.DefaultMappingID()
 		ic.mutation.SetMappingID(v)
 	}
+	if _, ok := ic.mutation.Expires(); !ok {
+		if invite.DefaultExpires == nil {
+			return fmt.Errorf("generated: uninitialized invite.DefaultExpires (forgotten import generated/runtime?)")
+		}
+		v := invite.DefaultExpires()
+		ic.mutation.SetExpires(v)
+	}
 	if _, ok := ic.mutation.Status(); !ok {
 		v := invite.DefaultStatus
 		ic.mutation.SetStatus(v)
@@ -339,9 +362,6 @@ func (ic *InviteCreate) check() error {
 			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Invite.token": %w`, err)}
 		}
 	}
-	if _, ok := ic.mutation.Expires(); !ok {
-		return &ValidationError{Name: "expires", err: errors.New(`generated: missing required field "Invite.expires"`)}
-	}
 	if _, ok := ic.mutation.Recipient(); !ok {
 		return &ValidationError{Name: "recipient", err: errors.New(`generated: missing required field "Invite.recipient"`)}
 	}
@@ -368,9 +388,6 @@ func (ic *InviteCreate) check() error {
 	}
 	if _, ok := ic.mutation.SendAttempts(); !ok {
 		return &ValidationError{Name: "send_attempts", err: errors.New(`generated: missing required field "Invite.send_attempts"`)}
-	}
-	if _, ok := ic.mutation.RequestorID(); !ok {
-		return &ValidationError{Name: "requestor_id", err: errors.New(`generated: missing required field "Invite.requestor_id"`)}
 	}
 	if v, ok := ic.mutation.RequestorID(); ok {
 		if err := invite.RequestorIDValidator(v); err != nil {
@@ -455,7 +472,7 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := ic.mutation.Expires(); ok {
 		_spec.SetField(invite.FieldExpires, field.TypeTime, value)
-		_node.Expires = &value
+		_node.Expires = value
 	}
 	if value, ok := ic.mutation.Recipient(); ok {
 		_spec.SetField(invite.FieldRecipient, field.TypeString, value)

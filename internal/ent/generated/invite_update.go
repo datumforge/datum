@@ -153,17 +153,9 @@ func (iu *InviteUpdate) SetNillableExpires(t *time.Time) *InviteUpdate {
 	return iu
 }
 
-// SetRecipient sets the "recipient" field.
-func (iu *InviteUpdate) SetRecipient(s string) *InviteUpdate {
-	iu.mutation.SetRecipient(s)
-	return iu
-}
-
-// SetNillableRecipient sets the "recipient" field if the given value is not nil.
-func (iu *InviteUpdate) SetNillableRecipient(s *string) *InviteUpdate {
-	if s != nil {
-		iu.SetRecipient(*s)
-	}
+// ClearExpires clears the value of the "expires" field.
+func (iu *InviteUpdate) ClearExpires() *InviteUpdate {
+	iu.mutation.ClearExpires()
 	return iu
 }
 
@@ -328,11 +320,6 @@ func (iu *InviteUpdate) check() error {
 			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Invite.token": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.Recipient(); ok {
-		if err := invite.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf(`generated: validator failed for field "Invite.recipient": %w`, err)}
-		}
-	}
 	if v, ok := iu.mutation.Status(); ok {
 		if err := invite.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "Invite.status": %w`, err)}
@@ -399,8 +386,8 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.Expires(); ok {
 		_spec.SetField(invite.FieldExpires, field.TypeTime, value)
 	}
-	if value, ok := iu.mutation.Recipient(); ok {
-		_spec.SetField(invite.FieldRecipient, field.TypeString, value)
+	if iu.mutation.ExpiresCleared() {
+		_spec.ClearField(invite.FieldExpires, field.TypeTime)
 	}
 	if value, ok := iu.mutation.Status(); ok {
 		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
@@ -413,6 +400,9 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.AddedSendAttempts(); ok {
 		_spec.AddField(invite.FieldSendAttempts, field.TypeInt, value)
+	}
+	if iu.mutation.RequestorIDCleared() {
+		_spec.ClearField(invite.FieldRequestorID, field.TypeString)
 	}
 	if value, ok := iu.mutation.Secret(); ok {
 		_spec.SetField(invite.FieldSecret, field.TypeBytes, value)
@@ -638,17 +628,9 @@ func (iuo *InviteUpdateOne) SetNillableExpires(t *time.Time) *InviteUpdateOne {
 	return iuo
 }
 
-// SetRecipient sets the "recipient" field.
-func (iuo *InviteUpdateOne) SetRecipient(s string) *InviteUpdateOne {
-	iuo.mutation.SetRecipient(s)
-	return iuo
-}
-
-// SetNillableRecipient sets the "recipient" field if the given value is not nil.
-func (iuo *InviteUpdateOne) SetNillableRecipient(s *string) *InviteUpdateOne {
-	if s != nil {
-		iuo.SetRecipient(*s)
-	}
+// ClearExpires clears the value of the "expires" field.
+func (iuo *InviteUpdateOne) ClearExpires() *InviteUpdateOne {
+	iuo.mutation.ClearExpires()
 	return iuo
 }
 
@@ -826,11 +808,6 @@ func (iuo *InviteUpdateOne) check() error {
 			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Invite.token": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.Recipient(); ok {
-		if err := invite.RecipientValidator(v); err != nil {
-			return &ValidationError{Name: "recipient", err: fmt.Errorf(`generated: validator failed for field "Invite.recipient": %w`, err)}
-		}
-	}
 	if v, ok := iuo.mutation.Status(); ok {
 		if err := invite.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "Invite.status": %w`, err)}
@@ -914,8 +891,8 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	if value, ok := iuo.mutation.Expires(); ok {
 		_spec.SetField(invite.FieldExpires, field.TypeTime, value)
 	}
-	if value, ok := iuo.mutation.Recipient(); ok {
-		_spec.SetField(invite.FieldRecipient, field.TypeString, value)
+	if iuo.mutation.ExpiresCleared() {
+		_spec.ClearField(invite.FieldExpires, field.TypeTime)
 	}
 	if value, ok := iuo.mutation.Status(); ok {
 		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
@@ -928,6 +905,9 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	}
 	if value, ok := iuo.mutation.AddedSendAttempts(); ok {
 		_spec.AddField(invite.FieldSendAttempts, field.TypeInt, value)
+	}
+	if iuo.mutation.RequestorIDCleared() {
+		_spec.ClearField(invite.FieldRequestorID, field.TypeString)
 	}
 	if value, ok := iuo.mutation.Secret(); ok {
 		_spec.SetField(invite.FieldSecret, field.TypeBytes, value)

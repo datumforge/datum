@@ -38,7 +38,7 @@ type Invite struct {
 	// the invitation token sent to the user via email which should only be provided to the /verify endpoint + handler
 	Token string `json:"-"`
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
-	Expires *time.Time `json:"expires,omitempty"`
+	Expires time.Time `json:"expires,omitempty"`
 	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
 	Recipient string `json:"recipient,omitempty"`
 	// the status of the invitation
@@ -184,8 +184,7 @@ func (i *Invite) assignValues(columns []string, values []any) error {
 			if value, ok := values[j].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expires", values[j])
 			} else if value.Valid {
-				i.Expires = new(time.Time)
-				*i.Expires = value.Time
+				i.Expires = value.Time
 			}
 		case invite.FieldRecipient:
 			if value, ok := values[j].(*sql.NullString); !ok {
@@ -295,10 +294,8 @@ func (i *Invite) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("token=<sensitive>")
 	builder.WriteString(", ")
-	if v := i.Expires; v != nil {
-		builder.WriteString("expires=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("expires=")
+	builder.WriteString(i.Expires.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("recipient=")
 	builder.WriteString(i.Recipient)

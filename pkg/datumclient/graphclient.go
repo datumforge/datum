@@ -8715,10 +8715,10 @@ func (t *UpdateIntegration_UpdateIntegration) GetIntegration() *UpdateIntegratio
 }
 
 type CreateBulkCSVInvite_CreateBulkCSVInvite_Invites struct {
-	Expires      time.Time          "json:\"expires\" graphql:\"expires\""
+	Expires      *time.Time         "json:\"expires,omitempty\" graphql:\"expires\""
 	ID           string             "json:\"id\" graphql:\"id\""
 	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
-	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
+	RequestorID  *string            "json:\"requestorID,omitempty\" graphql:\"requestorID\""
 	Role         enums.Role         "json:\"role\" graphql:\"role\""
 	SendAttempts int64              "json:\"sendAttempts\" graphql:\"sendAttempts\""
 	Status       enums.InviteStatus "json:\"status\" graphql:\"status\""
@@ -8728,7 +8728,7 @@ func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetExpires() *time.Tim
 	if t == nil {
 		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
 	}
-	return &t.Expires
+	return t.Expires
 }
 func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetID() string {
 	if t == nil {
@@ -8742,7 +8742,7 @@ func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRecipient() string 
 	}
 	return t.Recipient
 }
-func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRequestorID() string {
+func (t *CreateBulkCSVInvite_CreateBulkCSVInvite_Invites) GetRequestorID() *string {
 	if t == nil {
 		t = &CreateBulkCSVInvite_CreateBulkCSVInvite_Invites{}
 	}
@@ -8779,10 +8779,10 @@ func (t *CreateBulkCSVInvite_CreateBulkCSVInvite) GetInvites() []*CreateBulkCSVI
 }
 
 type CreateBulkInvite_CreateBulkInvite_Invites struct {
-	Expires      time.Time          "json:\"expires\" graphql:\"expires\""
+	Expires      *time.Time         "json:\"expires,omitempty\" graphql:\"expires\""
 	ID           string             "json:\"id\" graphql:\"id\""
 	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
-	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
+	RequestorID  *string            "json:\"requestorID,omitempty\" graphql:\"requestorID\""
 	Role         enums.Role         "json:\"role\" graphql:\"role\""
 	SendAttempts int64              "json:\"sendAttempts\" graphql:\"sendAttempts\""
 	Status       enums.InviteStatus "json:\"status\" graphql:\"status\""
@@ -8792,7 +8792,7 @@ func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetExpires() *time.Time {
 	if t == nil {
 		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
 	}
-	return &t.Expires
+	return t.Expires
 }
 func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetID() string {
 	if t == nil {
@@ -8806,7 +8806,7 @@ func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRecipient() string {
 	}
 	return t.Recipient
 }
-func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRequestorID() string {
+func (t *CreateBulkInvite_CreateBulkInvite_Invites) GetRequestorID() *string {
 	if t == nil {
 		t = &CreateBulkInvite_CreateBulkInvite_Invites{}
 	}
@@ -8854,10 +8854,10 @@ func (t *CreateInvite_CreateInvite_Invite_Owner) GetID() string {
 }
 
 type CreateInvite_CreateInvite_Invite struct {
-	Expires      time.Time                               "json:\"expires\" graphql:\"expires\""
+	Expires      *time.Time                              "json:\"expires,omitempty\" graphql:\"expires\""
 	ID           string                                  "json:\"id\" graphql:\"id\""
 	Recipient    string                                  "json:\"recipient\" graphql:\"recipient\""
-	RequestorID  string                                  "json:\"requestorID\" graphql:\"requestorID\""
+	RequestorID  *string                                 "json:\"requestorID,omitempty\" graphql:\"requestorID\""
 	Role         enums.Role                              "json:\"role\" graphql:\"role\""
 	SendAttempts int64                                   "json:\"sendAttempts\" graphql:\"sendAttempts\""
 	Status       enums.InviteStatus                      "json:\"status\" graphql:\"status\""
@@ -8868,7 +8868,7 @@ func (t *CreateInvite_CreateInvite_Invite) GetExpires() *time.Time {
 	if t == nil {
 		t = &CreateInvite_CreateInvite_Invite{}
 	}
-	return &t.Expires
+	return t.Expires
 }
 func (t *CreateInvite_CreateInvite_Invite) GetID() string {
 	if t == nil {
@@ -8882,7 +8882,7 @@ func (t *CreateInvite_CreateInvite_Invite) GetRecipient() string {
 	}
 	return t.Recipient
 }
-func (t *CreateInvite_CreateInvite_Invite) GetRequestorID() string {
+func (t *CreateInvite_CreateInvite_Invite) GetRequestorID() *string {
 	if t == nil {
 		t = &CreateInvite_CreateInvite_Invite{}
 	}
@@ -8961,10 +8961,10 @@ func (t *GetInvite_Invite_Owner) GetName() string {
 }
 
 type GetInvite_Invite struct {
-	Expires      time.Time               "json:\"expires\" graphql:\"expires\""
+	Expires      *time.Time              "json:\"expires,omitempty\" graphql:\"expires\""
 	ID           string                  "json:\"id\" graphql:\"id\""
 	Recipient    string                  "json:\"recipient\" graphql:\"recipient\""
-	RequestorID  string                  "json:\"requestorID\" graphql:\"requestorID\""
+	RequestorID  *string                 "json:\"requestorID,omitempty\" graphql:\"requestorID\""
 	Role         enums.Role              "json:\"role\" graphql:\"role\""
 	SendAttempts int64                   "json:\"sendAttempts\" graphql:\"sendAttempts\""
 	Status       enums.InviteStatus      "json:\"status\" graphql:\"status\""
@@ -8979,7 +8979,7 @@ func (t *GetInvite_Invite) GetExpires() *time.Time {
 	if t == nil {
 		t = &GetInvite_Invite{}
 	}
-	return &t.Expires
+	return t.Expires
 }
 func (t *GetInvite_Invite) GetID() string {
 	if t == nil {
@@ -8993,7 +8993,7 @@ func (t *GetInvite_Invite) GetRecipient() string {
 	}
 	return t.Recipient
 }
-func (t *GetInvite_Invite) GetRequestorID() string {
+func (t *GetInvite_Invite) GetRequestorID() *string {
 	if t == nil {
 		t = &GetInvite_Invite{}
 	}
@@ -9104,7 +9104,7 @@ func (t *GetInvites_Invites) GetEdges() []*GetInvites_Invites_Edges {
 
 type InvitesByOrgID_Invites_Edges_Node_Owner_Invites struct {
 	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
-	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
+	RequestorID  *string            "json:\"requestorID,omitempty\" graphql:\"requestorID\""
 	Role         enums.Role         "json:\"role\" graphql:\"role\""
 	SendAttempts int64              "json:\"sendAttempts\" graphql:\"sendAttempts\""
 	Status       enums.InviteStatus "json:\"status\" graphql:\"status\""
@@ -9116,7 +9116,7 @@ func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRecipient() string 
 	}
 	return t.Recipient
 }
-func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRequestorID() string {
+func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRequestorID() *string {
 	if t == nil {
 		t = &InvitesByOrgID_Invites_Edges_Node_Owner_Invites{}
 	}

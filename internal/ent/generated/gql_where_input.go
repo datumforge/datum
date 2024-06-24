@@ -15419,14 +15419,16 @@ type InviteWhereInput struct {
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 
 	// "expires" field predicates.
-	Expires      *time.Time  `json:"expires,omitempty"`
-	ExpiresNEQ   *time.Time  `json:"expiresNEQ,omitempty"`
-	ExpiresIn    []time.Time `json:"expiresIn,omitempty"`
-	ExpiresNotIn []time.Time `json:"expiresNotIn,omitempty"`
-	ExpiresGT    *time.Time  `json:"expiresGT,omitempty"`
-	ExpiresGTE   *time.Time  `json:"expiresGTE,omitempty"`
-	ExpiresLT    *time.Time  `json:"expiresLT,omitempty"`
-	ExpiresLTE   *time.Time  `json:"expiresLTE,omitempty"`
+	Expires       *time.Time  `json:"expires,omitempty"`
+	ExpiresNEQ    *time.Time  `json:"expiresNEQ,omitempty"`
+	ExpiresIn     []time.Time `json:"expiresIn,omitempty"`
+	ExpiresNotIn  []time.Time `json:"expiresNotIn,omitempty"`
+	ExpiresGT     *time.Time  `json:"expiresGT,omitempty"`
+	ExpiresGTE    *time.Time  `json:"expiresGTE,omitempty"`
+	ExpiresLT     *time.Time  `json:"expiresLT,omitempty"`
+	ExpiresLTE    *time.Time  `json:"expiresLTE,omitempty"`
+	ExpiresIsNil  bool        `json:"expiresIsNil,omitempty"`
+	ExpiresNotNil bool        `json:"expiresNotNil,omitempty"`
 
 	// "recipient" field predicates.
 	Recipient             *string  `json:"recipient,omitempty"`
@@ -15477,6 +15479,8 @@ type InviteWhereInput struct {
 	RequestorIDContains     *string  `json:"requestorIDContains,omitempty"`
 	RequestorIDHasPrefix    *string  `json:"requestorIDHasPrefix,omitempty"`
 	RequestorIDHasSuffix    *string  `json:"requestorIDHasSuffix,omitempty"`
+	RequestorIDIsNil        bool     `json:"requestorIDIsNil,omitempty"`
+	RequestorIDNotNil       bool     `json:"requestorIDNotNil,omitempty"`
 	RequestorIDEqualFold    *string  `json:"requestorIDEqualFold,omitempty"`
 	RequestorIDContainsFold *string  `json:"requestorIDContainsFold,omitempty"`
 
@@ -15884,6 +15888,12 @@ func (i *InviteWhereInput) P() (predicate.Invite, error) {
 	if i.ExpiresLTE != nil {
 		predicates = append(predicates, invite.ExpiresLTE(*i.ExpiresLTE))
 	}
+	if i.ExpiresIsNil {
+		predicates = append(predicates, invite.ExpiresIsNil())
+	}
+	if i.ExpiresNotNil {
+		predicates = append(predicates, invite.ExpiresNotNil())
+	}
 	if i.Recipient != nil {
 		predicates = append(predicates, invite.RecipientEQ(*i.Recipient))
 	}
@@ -16003,6 +16013,12 @@ func (i *InviteWhereInput) P() (predicate.Invite, error) {
 	}
 	if i.RequestorIDHasSuffix != nil {
 		predicates = append(predicates, invite.RequestorIDHasSuffix(*i.RequestorIDHasSuffix))
+	}
+	if i.RequestorIDIsNil {
+		predicates = append(predicates, invite.RequestorIDIsNil())
+	}
+	if i.RequestorIDNotNil {
+		predicates = append(predicates, invite.RequestorIDNotNil())
 	}
 	if i.RequestorIDEqualFold != nil {
 		predicates = append(predicates, invite.RequestorIDEqualFold(*i.RequestorIDEqualFold))

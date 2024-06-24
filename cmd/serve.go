@@ -62,6 +62,16 @@ func serve(ctx context.Context) error {
 
 	so := serveropts.NewServerOptions(serverOpts, k.String("config"))
 
+	// Create keys for development
+	if so.Config.Settings.Auth.Token.GenerateKeys {
+		so.AddServerOptions(serveropts.WithGeneratedKeys())
+	}
+
+	// setup token manager
+	so.AddServerOptions(
+		serveropts.WithTokenManager(),
+	)
+
 	err = otelx.NewTracer(so.Config.Settings.Tracer, appName, logger)
 	if err != nil {
 		logger.Fatalw("failed to initialize tracer", "error", err)
@@ -78,6 +88,11 @@ func serve(ctx context.Context) error {
 	// Setup Redis connection
 	redisClient := cache.New(so.Config.Settings.Redis)
 	defer redisClient.Close()
+
+	// add session manager
+	so.AddServerOptions(
+		serveropts.WithSessionManager(redisClient),
+	)
 
 	// Setup Geodetic client
 	if so.Config.Settings.Geodetic.Enabled {
@@ -99,6 +114,8 @@ func serve(ctx context.Context) error {
 		ent.Marionette(so.Config.Handler.TaskMan),
 		ent.Analytics(so.Config.Handler.AnalyticsClient),
 		ent.TOTP(so.Config.Handler.OTPManager),
+		ent.TokenManager(so.Config.Handler.TokenManager),
+		ent.SessionConfig(so.Config.Handler.SessionConfig),
 	)
 
 	// Setup DB connection
@@ -123,16 +140,6 @@ func serve(ctx context.Context) error {
 	// add auth options
 	so.AddServerOptions(
 		serveropts.WithAuth(),
-	)
-
-	// Create keys for development
-	if so.Config.Settings.Auth.Token.GenerateKeys {
-		so.AddServerOptions(serveropts.WithGeneratedKeys())
-	}
-
-	// add session manager
-	so.AddServerOptions(
-		serveropts.WithSessionManager(redisClient),
 	)
 
 	srv := server.NewServer(so.Config, so.Config.Logger)

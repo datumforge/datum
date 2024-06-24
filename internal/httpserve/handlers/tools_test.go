@@ -170,7 +170,7 @@ func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMa
 
 	h := &handlers.Handler{
 		IsTest:        true,
-		TM:            tm,
+		TokenManager:  tm,
 		DBClient:      ent,
 		RedisClient:   rc,
 		Logger:        logger,

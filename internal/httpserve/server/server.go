@@ -9,7 +9,6 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	echodebug "github.com/datumforge/datum/pkg/middleware/debug"
-	"github.com/datumforge/datum/pkg/tokens"
 )
 
 type Server struct {
@@ -77,21 +76,6 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	for _, m := range s.config.DefaultMiddleware {
 		srv.Echo.Use(m)
 	}
-
-	// Setup token manager
-	tm, err := tokens.New(s.config.Settings.Auth.Token)
-	if err != nil {
-		return err
-	}
-
-	keys, err := tm.Keys()
-	if err != nil {
-		return err
-	}
-
-	// pass to the REST handlers
-	s.config.Handler.JWTKeys = keys
-	s.config.Handler.TM = tm
 
 	srv.Handler = &s.config.Handler
 

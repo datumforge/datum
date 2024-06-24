@@ -22,6 +22,8 @@ import (
 	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
 	"github.com/datumforge/datum/pkg/analytics"
+	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
@@ -86,6 +88,14 @@ func main() {
 		entc.Dependency(
 			entc.DependencyName("Authz"),
 			entc.DependencyType(fgax.Client{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("TokenManager"),
+			entc.DependencyType(&tokens.TokenManager{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("SessionConfig"),
+			entc.DependencyType(&sessions.SessionConfig{}),
 		),
 		entc.Dependency(
 			entc.DependencyName("Logger"),

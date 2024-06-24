@@ -9,6 +9,9 @@ var (
 	// ErrInternalServerError is returned when an internal error occurs.
 	ErrInternalServerError = errors.New("internal server error")
 
+	// ErrInvalidInput is returned when the input is invalid.
+	ErrInvalidInput = errors.New("invalid input")
+
 	// ErrPersonalOrgsNoChildren is returned when personal org attempts to add a child org
 	ErrPersonalOrgsNoChildren = errors.New("personal organizations are not allowed to have child organizations")
 

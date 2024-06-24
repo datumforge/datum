@@ -37,6 +37,7 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/sentry"
 	"github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
@@ -142,6 +143,26 @@ func WithGeneratedKeys() ServerOption {
 
 		s.Config.Settings.Auth.Token.Keys = keys
 	})
+}
+
+func WithTokenManager() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		// Setup token manager
+		tm, err := tokens.New(s.Config.Settings.Auth.Token)
+		if err != nil {
+			panic(err)
+		}
+
+		keys, err := tm.Keys()
+		if err != nil {
+			panic(err)
+		}
+
+		// pass to the REST handlers
+		s.Config.Handler.JWTKeys = keys
+		s.Config.Handler.TokenManager = tm
+	})
+
 }
 
 // WithAuth supplies the authn and jwt config for the server

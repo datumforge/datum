@@ -553,13 +553,14 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	group1 := (&GroupBuilder{client: suite.client, Owner: org.ID}).MustNew(reqCtx, t)
 
 	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
+	// listOrgs := []string{fmt.Sprintf("organization:%s", org.ID), fmt.Sprintf("organization:%s", childOrg.ID)}
 
 	// mocks checks for all calls
 	mock_fga.CheckAny(t, suite.client.fga, true)
 
 	mock_fga.ListAny(t, suite.client.fga, listGroups)
 
-	// mock writes to delete member of org
+	// // mock writes to delete member of org
 	mock_fga.WriteAny(t, suite.client.fga)
 
 	// delete org

@@ -35,7 +35,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 		t.Error("error creating token manager")
 	}
 
-	suite.h.TM = tm
+	suite.h.TokenManager = tm
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 

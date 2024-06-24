@@ -25,7 +25,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	// verify the refresh token
-	claims, err := h.TM.Verify(in.RefreshToken)
+	claims, err := h.TokenManager.Verify(in.RefreshToken)
 	if err != nil {
 		h.Logger.Errorw("error verifying token", "error", err)
 
@@ -50,7 +50,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	// UserID is not on the refresh token, so we need to set it now
 	claims.UserID = user.ID
 
-	accessToken, refreshToken, err := h.TM.CreateTokenPair(claims)
+	accessToken, refreshToken, err := h.TokenManager.CreateTokenPair(claims)
 	if err != nil {
 		h.Logger.Errorw("error creating token pair", "error", err)
 

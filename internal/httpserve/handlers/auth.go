@@ -77,7 +77,7 @@ func (h *Handler) createTokenPair(user *generated.User, targetOrgID string) (*mo
 	newClaims := createClaimsWithOrg(user, targetOrgID)
 
 	// create a new token pair for the user
-	access, refresh, err := h.TM.CreateTokenPair(newClaims)
+	access, refresh, err := h.TokenManager.CreateTokenPair(newClaims)
 	if err != nil {
 		return nil, err
 	}

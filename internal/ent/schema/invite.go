@@ -26,6 +26,10 @@ import (
 	"github.com/datumforge/datum/pkg/enums"
 )
 
+const (
+	defaultInviteExpiresDays = 14
+)
+
 // Invite holds the schema definition for the Invite entity
 type Invite struct {
 	ent.Schema
@@ -45,7 +49,7 @@ func (Invite) Fields() []ent.Field {
 		field.Time("expires").
 			Comment("the expiration date of the invitation token which defaults to 14 days in the future from creation").
 			Default(func() time.Time {
-				return time.Now().AddDate(0, 0, 14)
+				return time.Now().AddDate(0, 0, defaultInviteExpiresDays)
 			}).
 			Optional(),
 		field.String("recipient").

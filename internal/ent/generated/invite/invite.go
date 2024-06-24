@@ -128,6 +128,8 @@ var (
 	OwnerIDValidator func(string) error
 	// TokenValidator is a validator for the "token" field. It is called by the builders before save.
 	TokenValidator func(string) error
+	// DefaultExpires holds the default value on creation for the "expires" field.
+	DefaultExpires func() time.Time
 	// RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
 	RecipientValidator func(string) error
 	// DefaultSendAttempts holds the default value on creation for the "send_attempts" field.

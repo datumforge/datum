@@ -31508,7 +31508,7 @@ func (m *InviteMutation) Expires() (r time.Time, exists bool) {
 // OldExpires returns the old "expires" field's value of the Invite entity.
 // If the Invite object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InviteMutation) OldExpires(ctx context.Context) (v *time.Time, err error) {
+func (m *InviteMutation) OldExpires(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldExpires is only allowed on UpdateOne operations")
 	}
@@ -31522,9 +31522,22 @@ func (m *InviteMutation) OldExpires(ctx context.Context) (v *time.Time, err erro
 	return oldValue.Expires, nil
 }
 
+// ClearExpires clears the value of the "expires" field.
+func (m *InviteMutation) ClearExpires() {
+	m.expires = nil
+	m.clearedFields[invite.FieldExpires] = struct{}{}
+}
+
+// ExpiresCleared returns if the "expires" field was cleared in this mutation.
+func (m *InviteMutation) ExpiresCleared() bool {
+	_, ok := m.clearedFields[invite.FieldExpires]
+	return ok
+}
+
 // ResetExpires resets all changes to the "expires" field.
 func (m *InviteMutation) ResetExpires() {
 	m.expires = nil
+	delete(m.clearedFields, invite.FieldExpires)
 }
 
 // SetRecipient sets the "recipient" field.
@@ -31722,9 +31735,22 @@ func (m *InviteMutation) OldRequestorID(ctx context.Context) (v string, err erro
 	return oldValue.RequestorID, nil
 }
 
+// ClearRequestorID clears the value of the "requestor_id" field.
+func (m *InviteMutation) ClearRequestorID() {
+	m.requestor_id = nil
+	m.clearedFields[invite.FieldRequestorID] = struct{}{}
+}
+
+// RequestorIDCleared returns if the "requestor_id" field was cleared in this mutation.
+func (m *InviteMutation) RequestorIDCleared() bool {
+	_, ok := m.clearedFields[invite.FieldRequestorID]
+	return ok
+}
+
 // ResetRequestorID resets all changes to the "requestor_id" field.
 func (m *InviteMutation) ResetRequestorID() {
 	m.requestor_id = nil
+	delete(m.clearedFields, invite.FieldRequestorID)
 }
 
 // SetSecret sets the "secret" field.
@@ -32195,6 +32221,12 @@ func (m *InviteMutation) ClearedFields() []string {
 	if m.FieldCleared(invite.FieldOwnerID) {
 		fields = append(fields, invite.FieldOwnerID)
 	}
+	if m.FieldCleared(invite.FieldExpires) {
+		fields = append(fields, invite.FieldExpires)
+	}
+	if m.FieldCleared(invite.FieldRequestorID) {
+		fields = append(fields, invite.FieldRequestorID)
+	}
 	return fields
 }
 
@@ -32229,6 +32261,12 @@ func (m *InviteMutation) ClearField(name string) error {
 		return nil
 	case invite.FieldOwnerID:
 		m.ClearOwnerID()
+		return nil
+	case invite.FieldExpires:
+		m.ClearExpires()
+		return nil
+	case invite.FieldRequestorID:
+		m.ClearRequestorID()
 		return nil
 	}
 	return fmt.Errorf("unknown Invite nullable field %s", name)

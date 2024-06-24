@@ -1945,12 +1945,12 @@ type CreateInviteInput struct {
 	UpdatedAt    *time.Time
 	CreatedBy    *string
 	UpdatedBy    *string
-	Expires      time.Time
+	Expires      *time.Time
 	Recipient    string
 	Status       *enums.InviteStatus
 	Role         *enums.Role
 	SendAttempts *int
-	RequestorID  string
+	RequestorID  *string
 	OwnerID      *string
 	EventIDs     []string
 }
@@ -1969,7 +1969,9 @@ func (i *CreateInviteInput) Mutate(m *InviteMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	m.SetExpires(i.Expires)
+	if v := i.Expires; v != nil {
+		m.SetExpires(*v)
+	}
 	m.SetRecipient(i.Recipient)
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
@@ -1980,7 +1982,9 @@ func (i *CreateInviteInput) Mutate(m *InviteMutation) {
 	if v := i.SendAttempts; v != nil {
 		m.SetSendAttempts(*v)
 	}
-	m.SetRequestorID(i.RequestorID)
+	if v := i.RequestorID; v != nil {
+		m.SetRequestorID(*v)
+	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
@@ -2001,6 +2005,7 @@ type UpdateInviteInput struct {
 	UpdatedAt      *time.Time
 	ClearUpdatedBy bool
 	UpdatedBy      *string
+	ClearExpires   bool
 	Expires        *time.Time
 	Recipient      *string
 	Status         *enums.InviteStatus
@@ -2026,6 +2031,9 @@ func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearExpires {
+		m.ClearExpires()
 	}
 	if v := i.Expires; v != nil {
 		m.SetExpires(*v)

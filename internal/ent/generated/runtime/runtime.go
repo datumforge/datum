@@ -1074,6 +1074,10 @@ func init() {
 	inviteDescToken := inviteFields[0].Descriptor()
 	// invite.TokenValidator is a validator for the "token" field. It is called by the builders before save.
 	invite.TokenValidator = inviteDescToken.Validators[0].(func(string) error)
+	// inviteDescExpires is the schema descriptor for expires field.
+	inviteDescExpires := inviteFields[1].Descriptor()
+	// invite.DefaultExpires holds the default value on creation for the expires field.
+	invite.DefaultExpires = inviteDescExpires.Default.(func() time.Time)
 	// inviteDescRecipient is the schema descriptor for recipient field.
 	inviteDescRecipient := inviteFields[2].Descriptor()
 	// invite.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.

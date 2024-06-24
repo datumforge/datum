@@ -153,6 +153,12 @@ func (iu *InviteUpdate) SetNillableExpires(t *time.Time) *InviteUpdate {
 	return iu
 }
 
+// ClearExpires clears the value of the "expires" field.
+func (iu *InviteUpdate) ClearExpires() *InviteUpdate {
+	iu.mutation.ClearExpires()
+	return iu
+}
+
 // SetRecipient sets the "recipient" field.
 func (iu *InviteUpdate) SetRecipient(s string) *InviteUpdate {
 	iu.mutation.SetRecipient(s)
@@ -399,6 +405,9 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.Expires(); ok {
 		_spec.SetField(invite.FieldExpires, field.TypeTime, value)
 	}
+	if iu.mutation.ExpiresCleared() {
+		_spec.ClearField(invite.FieldExpires, field.TypeTime)
+	}
 	if value, ok := iu.mutation.Recipient(); ok {
 		_spec.SetField(invite.FieldRecipient, field.TypeString, value)
 	}
@@ -413,6 +422,9 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.AddedSendAttempts(); ok {
 		_spec.AddField(invite.FieldSendAttempts, field.TypeInt, value)
+	}
+	if iu.mutation.RequestorIDCleared() {
+		_spec.ClearField(invite.FieldRequestorID, field.TypeString)
 	}
 	if value, ok := iu.mutation.Secret(); ok {
 		_spec.SetField(invite.FieldSecret, field.TypeBytes, value)
@@ -635,6 +647,12 @@ func (iuo *InviteUpdateOne) SetNillableExpires(t *time.Time) *InviteUpdateOne {
 	if t != nil {
 		iuo.SetExpires(*t)
 	}
+	return iuo
+}
+
+// ClearExpires clears the value of the "expires" field.
+func (iuo *InviteUpdateOne) ClearExpires() *InviteUpdateOne {
+	iuo.mutation.ClearExpires()
 	return iuo
 }
 
@@ -914,6 +932,9 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	if value, ok := iuo.mutation.Expires(); ok {
 		_spec.SetField(invite.FieldExpires, field.TypeTime, value)
 	}
+	if iuo.mutation.ExpiresCleared() {
+		_spec.ClearField(invite.FieldExpires, field.TypeTime)
+	}
 	if value, ok := iuo.mutation.Recipient(); ok {
 		_spec.SetField(invite.FieldRecipient, field.TypeString, value)
 	}
@@ -928,6 +949,9 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	}
 	if value, ok := iuo.mutation.AddedSendAttempts(); ok {
 		_spec.AddField(invite.FieldSendAttempts, field.TypeInt, value)
+	}
+	if iuo.mutation.RequestorIDCleared() {
+		_spec.ClearField(invite.FieldRequestorID, field.TypeString)
 	}
 	if value, ok := iuo.mutation.Secret(); ok {
 		_spec.SetField(invite.FieldSecret, field.TypeBytes, value)

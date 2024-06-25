@@ -460,6 +460,19 @@ func (suite *GraphTestSuite) TestMutationDeleteOrganization() {
 	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
 	require.NoError(t, err)
 
+	// update default org for user
+	// setup mocks for update user setting
+	mock_fga.CheckAny(t, suite.client.fga, true)
+	setting, err := suite.client.datum.UpdateUserSetting(reqCtx, testUser.Edges.Setting.ID,
+		datumclient.UpdateUserSettingInput{
+			DefaultOrgID: &org.ID,
+		},
+	)
+	require.NoError(t, err)
+	require.Equal(t, org.ID, setting.UpdateUserSetting.UserSetting.DefaultOrg.ID)
+	// clear mocks
+	mock_fga.ClearMocks(suite.client.fga)
+
 	testCases := []struct {
 		name          string
 		orgID         string
@@ -524,6 +537,12 @@ func (suite *GraphTestSuite) TestMutationDeleteOrganization() {
 
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.orgID, resp.DeleteOrganization.DeletedID)
+
+			// make sure the default org is reset
+			settingUpdated, err := suite.client.datum.GetUserSettingByID(reqCtx, testUser.Edges.Setting.ID)
+			require.NoError(t, err)
+			require.NotNil(t, settingUpdated.UserSetting.DefaultOrg)
+			assert.NotEqual(t, org.ID, settingUpdated.UserSetting.DefaultOrg.ID)
 
 			o, err := suite.client.datum.GetOrganizationByID(reqCtx, tc.orgID)
 

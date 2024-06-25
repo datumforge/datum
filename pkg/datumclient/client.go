@@ -229,7 +229,8 @@ func (c *DatumClient) GetSessionFromCookieJar() (sessionID string, err error) {
 	return "", nil
 }
 
-// ClearAuthTokens clears the access and refresh tokens on the client Jar.
+// GetAuthTokensFromCookieJar gets the access and refresh tokens from the cookie jar
+// and returns them as an oauth2.Token if they are set
 func (c *DatumClient) GetAuthTokensFromCookieJar() *oauth2.Token {
 	token := oauth2.Token{}
 

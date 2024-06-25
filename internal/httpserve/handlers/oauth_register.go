@@ -45,7 +45,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	}
 
 	// create claims for verified user
-	auth, err := h.generateOauthAuthSession(ctx.Request().Context(), ctx.Response().Writer, user, in)
+	auth, err := h.AuthSession.GenerateOauthAuthSession(ctx.Request().Context(), ctx.Response().Writer, user, in)
 	if err != nil {
 		h.Logger.Errorw("unable create new auth session", "error", err)
 

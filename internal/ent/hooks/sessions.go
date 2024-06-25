@@ -8,9 +8,22 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
-func updateUserSession(ctx context.Context, as authsessions.Auth, newOrgID string) error {
+// newAuthSession creates a new auth session struct
+func newAuthSession(sc *sessions.SessionConfig, tm *tokens.TokenManager) authsessions.Auth {
+	as := authsessions.Auth{}
+
+	as.SetSessionConfig(sc)
+	as.SetTokenManager(tm)
+
+	return as
+}
+
+// updateUserAuthSession updates the user session with the new org ID
+// and sets updated auth cookies
+func updateUserAuthSession(ctx context.Context, as authsessions.Auth, newOrgID string) error {
 	au, err := auth.GetAuthenticatedUserContext(ctx)
 	if err != nil {
 		return err
@@ -26,16 +39,15 @@ func updateUserSession(ctx context.Context, as authsessions.Auth, newOrgID strin
 		return err
 	}
 
-	as.Logger.Debugw("updating user session", "user_id", user.ID, "org_id", newOrgID)
-
+	// generate a new auth session with the new org ID
+	// this will also set the session cookie
 	out, err := as.GenerateUserAuthSessionWithOrg(ec, user, newOrgID)
 	if err != nil {
 		return err
 	}
 
 	// set the auth cookies
-	sessions.SetCookie(ec.Response().Writer, out.AccessToken, "access_token", *as.SessionConfig.CookieConfig)
-	sessions.SetCookie(ec.Response().Writer, out.RefreshToken, "refresh_token", *as.SessionConfig.CookieConfig)
+	auth.SetAuthCookies(ec.Response().Writer, out.AccessToken, out.RefreshToken, *as.GetSessionConfig().CookieConfig)
 
 	return err
 }

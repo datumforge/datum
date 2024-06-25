@@ -58,7 +58,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx.Response().Writer, accessToken, refreshToken)
+	auth.SetAuthCookies(ctx.Response().Writer, accessToken, refreshToken, *h.SessionConfig.CookieConfig)
 
 	// set sessions in response
 	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {

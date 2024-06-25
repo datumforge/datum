@@ -162,7 +162,6 @@ func WithTokenManager() ServerOption {
 		s.Config.Handler.JWTKeys = keys
 		s.Config.Handler.TokenManager = tm
 	})
-
 }
 
 // WithAuth supplies the authn and jwt config for the server
@@ -177,6 +176,7 @@ func WithAuth() ServerOption {
 			authmw.WithIssuer(s.Config.Settings.Auth.Token.Issuer),
 			authmw.WithJWKSEndpoint(s.Config.Settings.Auth.Token.JWKSEndpoint),
 			authmw.WithDBClient(s.Config.Handler.DBClient),
+			authmw.WithCookieConfig(s.Config.SessionConfig.CookieConfig),
 		)
 
 		s.Config.Handler.WebAuthn = webauthn.NewWithConfig(s.Config.Settings.Auth.Providers.Webauthn)

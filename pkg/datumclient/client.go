@@ -2,7 +2,6 @@ package datumclient
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -10,6 +9,7 @@ import (
 
 	"golang.org/x/oauth2"
 
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/httpsling"
 	api "github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/sessions"
@@ -117,7 +117,7 @@ func (c *DatumClient) AccessToken() (_ string, err error) {
 	}
 
 	for _, cookie := range cookies {
-		if cookie.Name == "access_token" {
+		if cookie.Name == auth.AccessTokenCookie {
 			return cookie.Value, nil
 		}
 	}
@@ -136,7 +136,7 @@ func (c *DatumClient) RefreshToken() (_ string, err error) {
 	}
 
 	for _, cookie := range cookies {
-		if cookie.Name == "refresh_token" {
+		if cookie.Name == auth.RefreshTokenCookie {
 			return cookie.Value, nil
 		}
 	}
@@ -158,7 +158,7 @@ func (c *DatumClient) SetAuthTokens(access, refresh string) error {
 	cookies := make([]*http.Cookie, 0, 2) //nolint:mnd
 	if access != "" {
 		cookies = append(cookies, &http.Cookie{
-			Name:     "access_token",
+			Name:     auth.AccessTokenCookie,
 			Value:    access,
 			Expires:  time.Now().Add(cookieExpiryMinutes),
 			HttpOnly: true,
@@ -168,7 +168,7 @@ func (c *DatumClient) SetAuthTokens(access, refresh string) error {
 
 	if refresh != "" {
 		cookies = append(cookies, &http.Cookie{
-			Name:    "refresh_token",
+			Name:    auth.RefreshTokenCookie,
 			Value:   refresh,
 			Expires: time.Now().Add(cookieExpiryMinutes),
 			Secure:  true,
@@ -186,9 +186,9 @@ func (c *DatumClient) ClearAuthTokens() {
 		// Expire the access and refresh cookies.
 		for _, cookie := range cookies {
 			switch cookie.Name {
-			case "access_token":
+			case auth.AccessTokenCookie:
 				cookie.MaxAge = -1
-			case "refresh_token":
+			case auth.RefreshTokenCookie:
 				cookie.MaxAge = -1
 			}
 		}
@@ -234,16 +234,19 @@ func (c *DatumClient) GetAuthTokensFromCookieJar() *oauth2.Token {
 	token := oauth2.Token{}
 
 	if cookies, err := c.Cookies(); err == nil {
-		fmt.Println("checking cookies")
 		for _, cookie := range cookies {
-			fmt.Println("cookie", cookie.Name, cookie.Value)
 			switch cookie.Name {
-			case "access_token":
+			case auth.AccessTokenCookie:
 				token.AccessToken = cookie.Value
-			case "refresh_token":
+			case auth.RefreshTokenCookie:
 				token.RefreshToken = cookie.Value
 			}
 		}
+	}
+
+	// return nil if the tokens are not set
+	if token.AccessToken == "" || token.RefreshToken == "" {
+		return nil
 	}
 
 	return &token

@@ -39,9 +39,6 @@ func deleteOrg(ctx context.Context) error {
 	o, err := client.DeleteOrganization(ctx, oID)
 	cobra.CheckErr(err)
 
-	// store the auth cookies
-	datum.StoreAuthCookies(client)
-
 	s, err = json.Marshal(o)
 	cobra.CheckErr(err)
 

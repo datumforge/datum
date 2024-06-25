@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/sessions"
 )
 
 var happy = "happy path"
@@ -236,7 +237,7 @@ func TestSetAuthCookies(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			auth.SetAuthCookies(tc.ctx.Response().Writer, tc.accessToken, tc.refreshToken)
+			auth.SetAuthCookies(tc.ctx.Response().Writer, tc.accessToken, tc.refreshToken, *sessions.DebugCookieConfig)
 		})
 	}
 }

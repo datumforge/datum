@@ -4,12 +4,18 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
 	"testing"
+	"time"
 
+	"github.com/alicebob/miniredis/v2"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
@@ -27,7 +33,9 @@ import (
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/testutils"
+	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
@@ -121,6 +129,22 @@ func (suite *GraphTestSuite) SetupTest() {
 		}),
 	}
 
+	tm, err := createTokenManager(15 * time.Minute) //nolint:mnd
+	if err != nil {
+		t.Fatal("error creating token manager")
+	}
+
+	sm := createSessionManager()
+	rc := newRedisClient()
+
+	sessionConfig := sessions.NewSessionConfig(
+		sm,
+		sessions.WithPersistence(rc),
+		sessions.WithLogger(logger),
+	)
+
+	sessionConfig.CookieConfig = &sessions.DebugOnlyCookieConfig
+
 	otpMan := totp.NewOTP(otpOpts...)
 
 	opts := []ent.Option{
@@ -132,6 +156,8 @@ func (suite *GraphTestSuite) SetupTest() {
 		ent.TOTP(&totp.Manager{
 			TOTPManager: otpMan,
 		}),
+		ent.TokenManager(tm),
+		ent.SessionConfig(&sessionConfig),
 	}
 
 	// create database connection
@@ -202,6 +228,58 @@ func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumGraphClient {
 	}
 
 	return client
+}
+
+func newRedisClient() *redis.Client {
+	mr, err := miniredis.Run()
+	if err != nil {
+		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	client := redis.NewClient(&redis.Options{
+		Addr:             mr.Addr(),
+		DisableIndentity: true, // # spellcheck:off
+	})
+
+	return client
+}
+
+func createSessionManager() sessions.Store[map[string]any] {
+	hashKey := randomString(32)  //nolint:mnd
+	blockKey := randomString(32) //nolint:mnd
+
+	sm := sessions.NewCookieStore[map[string]any](sessions.DebugCookieConfig,
+		hashKey, blockKey,
+	)
+
+	return sm
+}
+
+func randomString(n int) []byte {
+	id := make([]byte, n)
+
+	if _, err := io.ReadFull(rand.Reader, id); err != nil {
+		panic(err) // This shouldn't happen
+	}
+
+	return id
+}
+
+func createTokenManager(refreshOverlap time.Duration) (*tokens.TokenManager, error) {
+	conf := tokens.Config{
+		Audience:        "http://localhost:17608",
+		Issuer:          "http://localhost:17608",
+		AccessDuration:  1 * time.Hour, //nolint:mnd
+		RefreshDuration: 2 * time.Hour, //nolint:mnd
+		RefreshOverlap:  refreshOverlap,
+	}
+
+	key, err := rsa.GenerateKey(rand.Reader, 2048) //nolint:mnd
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens.NewWithKey(key, conf)
 }
 
 // localRoundTripper is an http.RoundTripper that executes HTTP transactions

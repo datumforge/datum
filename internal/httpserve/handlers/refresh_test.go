@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/models"
+	"github.com/datumforge/datum/pkg/testutils"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/ulids"
 )
@@ -30,7 +31,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 	suite.e.POST("refresh", suite.h.RefreshHandler)
 
 	// Set full overlap of the refresh and access token so the refresh token is immediately valid
-	tm, err := createTokenManager(-60 * time.Minute) //nolint:mnd
+	tm, err := testutils.CreateTokenManager(-60 * time.Minute) //nolint:mnd
 	if err != nil {
 		t.Error("error creating token manager")
 	}

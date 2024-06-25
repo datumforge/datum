@@ -120,6 +120,18 @@ func StoreSessionCookies(client *datumclient.DatumClient) {
 	}
 }
 
+// StoreAuthCookies gets the auth cookies from the cookie jar
+// and stores them in the keychain for future requests
+func StoreAuthCookies(client *datumclient.DatumClient) {
+	token := client.GetAuthTokensFromCookieJar()
+
+	if err := StoreToken(token); err != nil {
+		fmt.Println("unable to store auth tokens in keychain")
+
+		return
+	}
+}
+
 // GetTokenFromKeyring will return the oauth token from the keyring
 // if the token is expired, but the refresh token is still valid, the
 // token will be refreshed

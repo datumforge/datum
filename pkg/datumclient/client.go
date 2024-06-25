@@ -2,10 +2,13 @@ package datumclient
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/pkg/httpsling"
 	api "github.com/datumforge/datum/pkg/models"
@@ -224,4 +227,24 @@ func (c *DatumClient) GetSessionFromCookieJar() (sessionID string, err error) {
 	}
 
 	return "", nil
+}
+
+// ClearAuthTokens clears the access and refresh tokens on the client Jar.
+func (c *DatumClient) GetAuthTokensFromCookieJar() *oauth2.Token {
+	token := oauth2.Token{}
+
+	if cookies, err := c.Cookies(); err == nil {
+		fmt.Println("checking cookies")
+		for _, cookie := range cookies {
+			fmt.Println("cookie", cookie.Name, cookie.Value)
+			switch cookie.Name {
+			case "access_token":
+				token.AccessToken = cookie.Value
+			case "refresh_token":
+				token.RefreshToken = cookie.Value
+			}
+		}
+	}
+
+	return &token
 }

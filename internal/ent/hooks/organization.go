@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/httpserve/authsessions"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/utils/gravatar"
@@ -118,16 +119,16 @@ func HookOrganizationDelete() ent.Hook {
 					return v, nil
 				}
 
-				// // if the deleted org was the current org, update the session cookie
-				// as := authsessions.Auth{
-				// 	Logger:        &mutation.Logger,
-				// 	TokenManager:  mutation.TokenManager,
-				// 	SessionConfig: mutation.SessionConfig,
-				// }
+				// if the deleted org was the current org, update the session cookie
+				as := authsessions.Auth{
+					Logger:        &mutation.Logger,
+					TokenManager:  mutation.TokenManager,
+					SessionConfig: mutation.SessionConfig,
+				}
 
-				// if err := updateUserSession(ctx, as, newOrgID); err != nil {
-				// 	return v, err
-				// }
+				if err := updateUserSession(ctx, as, newOrgID); err != nil {
+					return v, err
+				}
 
 				return v, nil
 			}

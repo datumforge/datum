@@ -478,6 +478,12 @@ func (suite *GraphTestSuite) TestMutationDeleteOrganization() {
 			accessAllowed: true,
 		},
 		{
+			name:          "delete org, personal org not allowed",
+			orgID:         testPersonalOrgID,
+			accessAllowed: true,
+			errorMsg:      "cannot delete personal organizations",
+		},
+		{
 			name:          "delete org, not found",
 			orgID:         "tacos-tuesday",
 			accessAllowed: false,

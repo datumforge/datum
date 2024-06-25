@@ -37,6 +37,7 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/sentry"
 	"github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
@@ -144,6 +145,27 @@ func WithGeneratedKeys() ServerOption {
 	})
 }
 
+// WithTokenManager sets up the token manager for the server
+func WithTokenManager() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		// Setup token manager
+		tm, err := tokens.New(s.Config.Settings.Auth.Token)
+		if err != nil {
+			panic(err)
+		}
+
+		keys, err := tm.Keys()
+		if err != nil {
+			panic(err)
+		}
+
+		// pass to the REST handlers
+		s.Config.Handler.JWTKeys = keys
+		s.Config.Handler.TokenManager = tm
+		s.Config.Handler.AuthManager.SetTokenManager(tm)
+	})
+}
+
 // WithAuth supplies the authn and jwt config for the server
 func WithAuth() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
@@ -156,6 +178,7 @@ func WithAuth() ServerOption {
 			authmw.WithIssuer(s.Config.Settings.Auth.Token.Issuer),
 			authmw.WithJWKSEndpoint(s.Config.Settings.Auth.Token.JWKSEndpoint),
 			authmw.WithDBClient(s.Config.Handler.DBClient),
+			authmw.WithCookieConfig(s.Config.SessionConfig.CookieConfig),
 		)
 
 		s.Config.Handler.WebAuthn = webauthn.NewWithConfig(s.Config.Settings.Auth.Providers.Webauthn)
@@ -325,9 +348,16 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 		// to graph and REST endpoints
 		s.Config.Handler.SessionConfig = &sessionConfig
 		s.Config.SessionConfig = &sessionConfig
+		s.Config.Handler.AuthManager.SetSessionConfig(&sessionConfig)
+	})
+}
 
+// WithSessionMiddleware sets up the session middleware for the server
+func WithSessionMiddleware() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		// add session middleware, this has to be added after the authMiddleware
 		s.Config.GraphMiddleware = append(s.Config.GraphMiddleware,
-			sessions.LoadAndSaveWithConfig(sessionConfig),
+			sessions.LoadAndSaveWithConfig(*s.Config.SessionConfig),
 		)
 	})
 }

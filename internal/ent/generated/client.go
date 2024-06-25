@@ -64,6 +64,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/webhook"
 	"github.com/datumforge/datum/internal/ent/generated/webhookhistory"
 	"github.com/datumforge/datum/pkg/analytics"
+	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
@@ -261,16 +263,18 @@ type (
 		// hooks to execute on mutations.
 		hooks *hooks
 		// interceptors to execute on queries.
-		inters     *inters
-		Secrets    *secrets.Keeper
-		Authz      fgax.Client
-		Logger     zap.SugaredLogger
-		HTTPClient *http.Client
-		Emails     *emails.EmailManager
-		Marionette *marionette.TaskManager
-		Analytics  *analytics.EventManager
-		TOTP       *totp.Manager
-		Geodetic   *geodeticclient.Client
+		inters        *inters
+		Secrets       *secrets.Keeper
+		Authz         fgax.Client
+		TokenManager  *tokens.TokenManager
+		SessionConfig *sessions.SessionConfig
+		Logger        zap.SugaredLogger
+		HTTPClient    *http.Client
+		Emails        *emails.EmailManager
+		Marionette    *marionette.TaskManager
+		Analytics     *analytics.EventManager
+		TOTP          *totp.Manager
+		Geodetic      *geodeticclient.Client
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -327,6 +331,20 @@ func Secrets(v *secrets.Keeper) Option {
 func Authz(v fgax.Client) Option {
 	return func(c *config) {
 		c.Authz = v
+	}
+}
+
+// TokenManager configures the TokenManager.
+func TokenManager(v *tokens.TokenManager) Option {
+	return func(c *config) {
+		c.TokenManager = v
+	}
+}
+
+// SessionConfig configures the SessionConfig.
+func SessionConfig(v *sessions.SessionConfig) Option {
+	return func(c *config) {
+		c.SessionConfig = v
 	}
 }
 

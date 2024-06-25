@@ -127,7 +127,7 @@ func (h *Handler) issueGoogleSession() http.Handler {
 			AuthProvider:     googleProvider,
 		}
 
-		auth, err := h.generateOauthAuthSession(ctxWithToken, w, user, oauthReq)
+		auth, err := h.AuthManager.GenerateOauthAuthSession(ctxWithToken, w, user, oauthReq)
 		if err != nil {
 			h.Logger.Errorw("unable create new auth session", "error", err)
 
@@ -204,7 +204,7 @@ func (h *Handler) issueGitHubSession() http.Handler {
 			AuthProvider:     githubProvider,
 		}
 
-		auth, err := h.generateOauthAuthSession(ctxWithToken, w, user, oauthReq)
+		auth, err := h.AuthManager.GenerateOauthAuthSession(ctxWithToken, w, user, oauthReq)
 		if err != nil {
 			h.Logger.Errorw("unable create new auth session", "error", err)
 

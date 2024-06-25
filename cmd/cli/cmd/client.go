@@ -118,6 +118,25 @@ func StoreSessionCookies(client *datumclient.DatumClient) {
 
 		return
 	}
+
+	// store the auth cookies if they exist
+	StoreAuthCookies(client)
+}
+
+// StoreAuthCookies gets the auth cookies from the cookie jar if they exist
+// and stores them in the keychain for future requests
+func StoreAuthCookies(client *datumclient.DatumClient) {
+	token := client.GetAuthTokensFromCookieJar()
+
+	if token == nil {
+		return // no auth cookies found, nothing to store
+	}
+
+	if err := StoreToken(token); err != nil {
+		fmt.Println("unable to store auth tokens in keychain")
+
+		return
+	}
 }
 
 // GetTokenFromKeyring will return the oauth token from the keyring

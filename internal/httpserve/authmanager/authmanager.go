@@ -1,4 +1,4 @@
-package handlers
+package authmanager
 
 import (
 	"context"
@@ -14,6 +14,41 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 )
+
+type Config struct {
+	tokenManager  *tokens.TokenManager
+	sessionConfig *sessions.SessionConfig
+}
+
+func New() *Config {
+	return &Config{}
+}
+
+// SetSessionConfig sets the session config for the auth session
+func (a *Config) SetSessionConfig(sc *sessions.SessionConfig) {
+	if a == nil {
+		a = &Config{}
+	}
+
+	a.sessionConfig = sc
+}
+
+func (a *Config) GetSessionConfig() *sessions.SessionConfig {
+	return a.sessionConfig
+}
+
+// SetTokenManager sets the token manager for the auth session
+func (a *Config) SetTokenManager(tm *tokens.TokenManager) {
+	if a == nil {
+		a = &Config{}
+	}
+
+	a.tokenManager = tm
+}
+
+func (a *Config) GetTokenManager() *tokens.TokenManager {
+	return a.tokenManager
+}
 
 // createClaims creates the claims for the JWT token using the id for the user and organization
 func createClaimsWithOrg(u *generated.User, targetOrgID string) *tokens.Claims {
@@ -33,18 +68,18 @@ func createClaimsWithOrg(u *generated.User, targetOrgID string) *tokens.Claims {
 }
 
 // generateNewAuthSession creates a new auth session for the user and their default organization id
-func (h *Handler) generateUserAuthSession(ctx echo.Context, user *generated.User) (*models.AuthData, error) {
-	return h.generateUserAuthSessionWithOrg(ctx, user, "")
+func (a *Config) GenerateUserAuthSession(ctx echo.Context, user *generated.User) (*models.AuthData, error) {
+	return a.GenerateUserAuthSessionWithOrg(ctx, user, "")
 }
 
 // generateUserAuthSessionWithOrg creates a new auth session for the user and the new target organization id
-func (h *Handler) generateUserAuthSessionWithOrg(ctx echo.Context, user *generated.User, targetOrgID string) (*models.AuthData, error) {
-	auth, err := h.createTokenPair(user, targetOrgID)
+func (a *Config) GenerateUserAuthSessionWithOrg(ctx echo.Context, user *generated.User, targetOrgID string) (*models.AuthData, error) {
+	auth, err := a.createTokenPair(user, targetOrgID)
 	if err != nil {
 		return nil, err
 	}
 
-	auth.Session, err = h.generateUserSession(ctx, user.ID)
+	auth.Session, err = a.generateUserSession(ctx, user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -54,14 +89,14 @@ func (h *Handler) generateUserAuthSessionWithOrg(ctx echo.Context, user *generat
 	return auth, nil
 }
 
-// generateNewAuthSession creates a new auth session for the oauth user and their default organization id
-func (h *Handler) generateOauthAuthSession(ctx context.Context, w http.ResponseWriter, user *generated.User, oauthRequest models.OauthTokenRequest) (*models.AuthData, error) {
-	auth, err := h.createTokenPair(user, "")
+// GenerateOauthAuthSession creates a new auth session for the oauth user and their default organization id
+func (a *Config) GenerateOauthAuthSession(ctx context.Context, w http.ResponseWriter, user *generated.User, oauthRequest models.OauthTokenRequest) (*models.AuthData, error) {
+	auth, err := a.createTokenPair(user, "")
 	if err != nil {
 		return nil, err
 	}
 
-	auth.Session, err = h.generateOauthUserSession(ctx, w, user.ID, oauthRequest)
+	auth.Session, err = a.generateOauthUserSession(ctx, w, user.ID, oauthRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -72,12 +107,12 @@ func (h *Handler) generateOauthAuthSession(ctx context.Context, w http.ResponseW
 }
 
 // createTokenPair creates a new token pair for the user and the target organization id (or default org if none provided)
-func (h *Handler) createTokenPair(user *generated.User, targetOrgID string) (*models.AuthData, error) {
+func (a *Config) createTokenPair(user *generated.User, targetOrgID string) (*models.AuthData, error) {
 	// create new claims for the user
 	newClaims := createClaimsWithOrg(user, targetOrgID)
 
 	// create a new token pair for the user
-	access, refresh, err := h.TM.CreateTokenPair(newClaims)
+	access, refresh, err := a.tokenManager.CreateTokenPair(newClaims)
 	if err != nil {
 		return nil, err
 	}
@@ -88,26 +123,24 @@ func (h *Handler) createTokenPair(user *generated.User, targetOrgID string) (*mo
 	}, nil
 }
 
-// generateUserSession creates a new session for the user and stores it in the response
-func (h *Handler) generateUserSession(ctx echo.Context, userID string) (string, error) {
+// GenerateUserSession creates a new session for the user and stores it in the response
+func (a *Config) generateUserSession(ctx echo.Context, userID string) (string, error) {
 	// set sessions in response
-	if err := h.SessionConfig.CreateAndStoreSession(ctx, userID); err != nil {
-		h.Logger.Errorw("unable to save session", "error", err)
-
-		return "", h.InternalServerError(ctx, err)
+	if err := a.sessionConfig.CreateAndStoreSession(ctx, userID); err != nil {
+		return "", err
 	}
 
 	// return the session value for the UI to use
 	session, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
-		return "", h.InternalServerError(ctx, err)
+		return "", err
 	}
 
 	return session, nil
 }
 
 // generateOauthUserSession creates a new session for the oauth user and stores it in the response
-func (h *Handler) generateOauthUserSession(ctx context.Context, w http.ResponseWriter, userID string, oauthRequest models.OauthTokenRequest) (string, error) {
+func (a *Config) generateOauthUserSession(ctx context.Context, w http.ResponseWriter, userID string, oauthRequest models.OauthTokenRequest) (string, error) {
 	setSessionMap := map[string]any{}
 	setSessionMap[sessions.ExternalUserIDKey] = fmt.Sprintf("%v", oauthRequest.ExternalUserID)
 	setSessionMap[sessions.UsernameKey] = oauthRequest.ExternalUserName
@@ -115,7 +148,7 @@ func (h *Handler) generateOauthUserSession(ctx context.Context, w http.ResponseW
 	setSessionMap[sessions.EmailKey] = oauthRequest.Email
 	setSessionMap[sessions.UserIDKey] = userID
 
-	c, err := h.SessionConfig.SaveAndStoreSession(ctx, w, setSessionMap, userID)
+	c, err := a.sessionConfig.SaveAndStoreSession(ctx, w, setSessionMap, userID)
 	if err != nil {
 		return "", err
 	}

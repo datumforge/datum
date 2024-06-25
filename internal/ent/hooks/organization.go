@@ -2,15 +2,19 @@ package hooks
 
 import (
 	"context"
+	"fmt"
 
 	"entgo.io/ent"
 
+	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
 	geodeticenums "github.com/datumforge/geodetic/pkg/enums"
 	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/utils/gravatar"
@@ -21,20 +25,15 @@ import (
 func HookOrganization() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.OrganizationFunc(func(ctx context.Context, mutation *generated.OrganizationMutation) (generated.Value, error) {
+			// if this is a soft delete, skip this hook
+			if entx.CheckIsSoftDelete(ctx) {
+				return next.Mutate(ctx, mutation)
+			}
+
 			if mutation.Op().Is(ent.OpCreate) {
-				// if this is empty generate a default org setting schema
-				_, exists := mutation.SettingID()
-				if !exists {
-					// sets up default org settings using schema defaults
-					orgSettingID, err := defaultOrganizationSettings(ctx, mutation)
-					if err != nil {
-						mutation.Logger.Errorw("error creating default organization settings", "error", err)
-
-						return nil, err
-					}
-
-					// add the org setting ID to the input
-					mutation.SetSettingID(orgSettingID)
+				// generate a default org setting schema if not provided
+				if err := createOrgSettings(ctx, mutation); err != nil {
+					return nil, err
 				}
 
 				// check if this is a child org, error if parent org is a personal org
@@ -43,28 +42,20 @@ func HookOrganization() ent.Hook {
 				}
 			}
 
-			if name, ok := mutation.Name(); ok {
-				if displayName, ok := mutation.DisplayName(); ok {
-					if displayName == "" {
-						mutation.SetDisplayName(name)
-					}
-				}
-
-				url := gravatar.New(name, nil)
-				mutation.SetAvatarRemoteURL(url)
-			}
+			// set default display name and avatar if not provided
+			setDefaultsOnMutations(mutation)
 
 			v, err := next.Mutate(ctx, mutation)
 			if err != nil {
 				return v, err
 			}
 
-			orgCreated, ok := v.(*generated.Organization)
-			if !ok {
-				return nil, err
-			}
-
 			if mutation.Op().Is(ent.OpCreate) {
+				orgCreated, ok := v.(*generated.Organization)
+				if !ok {
+					return nil, err
+				}
+
 				// create the admin organization member if not using an API token (which is not associated with a user)
 				// otherwise add the API token for admin access to the newly created organization
 				if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
@@ -96,6 +87,158 @@ func HookOrganization() ent.Hook {
 	}, ent.OpCreate|ent.OpUpdateOne)
 }
 
+// HookOrganizationDelete runs on org delete mutations to ensure the org can be deleted
+func HookOrganizationDelete() ent.Hook {
+	return hook.On(func(next ent.Mutator) ent.Mutator {
+		return hook.OrganizationFunc(func(ctx context.Context, mutation *generated.OrganizationMutation) (generated.Value, error) {
+			// by pass checks on invite or pre-allowed request
+			// this includes things like the edge-cleanup on user deletion
+			if _, allow := privacy.DecisionFromContext(ctx); allow {
+				return next.Mutate(ctx, mutation)
+			}
+
+			// ensure it's a soft delete or a hard delete, otherwise skip this hook
+			if !isDeleteOp(ctx, mutation) {
+				return next.Mutate(ctx, mutation)
+			}
+
+			// validate the organization can be deleted
+			if err := validateDeletion(ctx, mutation); err != nil {
+				return nil, err
+			}
+
+			v, err := next.Mutate(ctx, mutation)
+			if err != nil {
+				return v, err
+			}
+
+			newOrgID, err := updateUserDefaultOrg(ctx, mutation)
+			// if we got an error, return it
+			// if we didn't get a new org id, keep going and don't
+			// update the session cookie
+			if err != nil || newOrgID == "" {
+				return v, err
+			}
+
+			// if the deleted org was the current org, update the session cookie
+			as := newAuthSession(mutation.SessionConfig, mutation.TokenManager)
+
+			if err := updateUserAuthSession(ctx, as, newOrgID); err != nil {
+				return v, err
+			}
+
+			return v, nil
+		})
+	}, ent.OpDeleteOne|ent.OpDelete|ent.OpUpdate|ent.OpUpdateOne)
+}
+
+// setDefaultsOnMutations sets default values on mutations that are not provided
+func setDefaultsOnMutations(mutation *generated.OrganizationMutation) {
+	if name, ok := mutation.Name(); ok {
+		if displayName, ok := mutation.DisplayName(); ok {
+			if displayName == "" {
+				mutation.SetDisplayName(name)
+			}
+		}
+
+		url := gravatar.New(name, nil)
+		mutation.SetAvatarRemoteURL(url)
+	}
+}
+
+// createOrgSettings creates the default organization settings for a new org
+func createOrgSettings(ctx context.Context, mutation *generated.OrganizationMutation) error {
+	// if this is empty generate a default org setting schema
+	if _, exists := mutation.SettingID(); !exists {
+		// sets up default org settings using schema defaults
+		orgSettingID, err := defaultOrganizationSettings(ctx, mutation)
+		if err != nil {
+			mutation.Logger.Errorw("error creating default organization settings", "error", err)
+
+			return err
+		}
+
+		// add the org setting ID to the input
+		mutation.SetSettingID(orgSettingID)
+	}
+
+	return nil
+}
+
+// validateDeletion ensures the organization can be deleted
+func validateDeletion(ctx context.Context, mutation *generated.OrganizationMutation) error {
+	deletedID, ok := mutation.ID()
+	if !ok {
+		return nil
+	}
+
+	// do not allow deletion of personal orgs, these are deleted when the user is deleted
+	deletedOrg, err := mutation.Client().Organization.Get(ctx, deletedID)
+	if err != nil {
+		return err
+	}
+
+	if deletedOrg.PersonalOrg {
+		mutation.Logger.Debugw("attempt to delete personal org detected")
+
+		return fmt.Errorf("%w: %s", ErrInvalidInput, "cannot delete personal organizations")
+	}
+
+	return nil
+}
+
+// updateUserDefaultOrg updates the user's default org if the org being deleted is the user's default org
+func updateUserDefaultOrg(ctx context.Context, mutation *generated.OrganizationMutation) (string, error) {
+	currentUserID, err := auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	// check if this organization is the user's default org
+	deletedOrgID, ok := mutation.ID()
+	if !ok {
+		return "", nil
+	}
+
+	// check if this is the user's default org
+	userSetting, err := mutation.Client().
+		UserSetting.
+		Query().
+		Where(
+			usersetting.UserIDEQ(currentUserID),
+		).
+		WithDefaultOrg().
+		Only(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	// if the user's default org was deleted this will now be nil
+	if userSetting.Edges.DefaultOrg == nil || userSetting.Edges.DefaultOrg.ID == deletedOrgID {
+		// set the user's default org another org
+		// get the first org that was not the org being deleted
+		newDefaultOrgID, err := mutation.Client().
+			Organization.
+			Query().
+			FirstID(ctx)
+		if err != nil {
+			return "", err
+		}
+
+		if _, err = mutation.Client().UserSetting.
+			UpdateOneID(userSetting.ID).
+			SetDefaultOrgID(newDefaultOrgID).
+			Save(ctx); err != nil {
+			return "", err
+		}
+
+		return newDefaultOrgID, nil
+	}
+
+	return userSetting.Edges.DefaultOrg.ID, nil
+}
+
+// createDatabase creates a new database for the organization
 func createDatabase(ctx context.Context, orgID, geo string, mutation *generated.OrganizationMutation) error {
 	// set default geo if not provided
 	if geo == "" {
@@ -167,6 +310,7 @@ func createParentOrgTuple(ctx context.Context, m *generated.OrganizationMutation
 	return nil
 }
 
+// createOrgMemberOwner creates the owner of the organization
 func createOrgMemberOwner(ctx context.Context, oID string, m *generated.OrganizationMutation) error {
 	// This is handled by the user create hook for personal orgs
 	personalOrg, _ := m.PersonalOrg()

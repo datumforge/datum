@@ -124,7 +124,7 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 		}
 
 		// Set the new access and refresh cookies
-		auth.SetAuthCookies(c.Response().Writer, reply.AccessToken, reply.RefreshToken)
+		auth.SetAuthCookies(c.Response().Writer, reply.AccessToken, reply.RefreshToken, *conf.CookieConfig)
 
 		return reply.AccessToken, nil
 	}

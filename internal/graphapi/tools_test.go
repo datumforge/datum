@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -27,6 +28,7 @@ import (
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/testutils"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
@@ -121,6 +123,22 @@ func (suite *GraphTestSuite) SetupTest() {
 		}),
 	}
 
+	tm, err := testutils.CreateTokenManager(15 * time.Minute) //nolint:mnd
+	if err != nil {
+		t.Fatal("error creating token manager")
+	}
+
+	sm := testutils.CreateSessionManager()
+	rc := testutils.NewRedisClient()
+
+	sessionConfig := sessions.NewSessionConfig(
+		sm,
+		sessions.WithPersistence(rc),
+		sessions.WithLogger(logger),
+	)
+
+	sessionConfig.CookieConfig = &sessions.DebugOnlyCookieConfig
+
 	otpMan := totp.NewOTP(otpOpts...)
 
 	opts := []ent.Option{
@@ -132,6 +150,8 @@ func (suite *GraphTestSuite) SetupTest() {
 		ent.TOTP(&totp.Manager{
 			TOTPManager: otpMan,
 		}),
+		ent.TokenManager(tm),
+		ent.SessionConfig(&sessionConfig),
 	}
 
 	// create database connection

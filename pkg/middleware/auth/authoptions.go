@@ -9,6 +9,7 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	api "github.com/datumforge/datum/pkg/models"
+	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
@@ -27,6 +28,9 @@ type AuthOptions struct {
 	MinRefreshInterval time.Duration `default:"5m"`
 	// Context to control the lifecycle of the background fetch routine
 	Context context.Context
+
+	// CookieConfig to set the cookie configuration for the auth middleware
+	CookieConfig *sessions.CookieConfig
 
 	//  validator constructed by the auth options (can be directly supplied by the user).
 	validator tokens.Validator
@@ -53,6 +57,7 @@ var DefaultAuthOptions = AuthOptions{
 	Issuer:             "http://localhost:17608",
 	MinRefreshInterval: 5 * time.Minute, //nolint:mnd
 	Skipper:            middleware.DefaultSkipper,
+	CookieConfig:       sessions.DefaultCookieConfig,
 }
 
 // NewAuthOptions creates an AuthOptions object with reasonable defaults and any user
@@ -193,5 +198,13 @@ func WithBeforeFunc(before middleware.BeforeFunc) AuthOption {
 func WithDBClient(client *ent.Client) AuthOption {
 	return func(opts *AuthOptions) {
 		opts.DBClient = client
+	}
+}
+
+// WithCookieConfig allows the user to specify a cookie configuration for the auth middleware
+// in order to override the default cookie configuration.
+func WithCookieConfig(cookieConfig *sessions.CookieConfig) AuthOption {
+	return func(opts *AuthOptions) {
+		opts.CookieConfig = cookieConfig
 	}
 }

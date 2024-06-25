@@ -13,6 +13,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/enums"
@@ -115,7 +116,7 @@ func HookDeleteUser() ent.Hook {
 					return nil, err
 				}
 
-				orgs, err := mutation.Client().User.QueryOrganizations(user).All(ctx)
+				personalOrgIDs, err := mutation.Client().User.QueryOrganizations(user).Where(organization.PersonalOrg(true)).IDs(ctx)
 				if err != nil {
 					return nil, err
 				}
@@ -126,13 +127,14 @@ func HookDeleteUser() ent.Hook {
 					return nil, err
 				}
 
-				// cleanup personal org
-				for _, o := range orgs {
-					if o.PersonalOrg {
-						if err := mutation.Client().Organization.DeleteOneID(o.ID).Exec(ctx); err != nil {
-							return nil, err
-						}
-					}
+				// cleanup personal org(s)
+				allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+				if _, err := mutation.Client().
+					Organization.
+					Delete().
+					Where(organization.IDIn(personalOrgIDs...)).
+					Exec(allowCtx); err != nil {
+					return nil, err
 				}
 
 				return v, err

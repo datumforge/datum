@@ -102,9 +102,9 @@ func AuthContextFromRequest(c echo.Context) (*context.Context, error) {
 // access token expires. The refresh token cookie is not an http only cookie (it can be
 // accessed by client-side scripts) and it expires when the refresh token expires. Both
 // cookies require https and will not be set (silently) over http connections.
-func SetAuthCookies(w http.ResponseWriter, accessToken, refreshToken string) {
-	sessions.SetCookie(w, accessToken, AccessTokenCookie, *sessions.DefaultCookieConfig)
-	sessions.SetCookie(w, refreshToken, RefreshTokenCookie, *sessions.DefaultCookieConfig)
+func SetAuthCookies(w http.ResponseWriter, accessToken, refreshToken string, c sessions.CookieConfig) {
+	sessions.SetCookie(w, accessToken, AccessTokenCookie, c)
+	sessions.SetCookie(w, refreshToken, RefreshTokenCookie, c)
 }
 
 // ClearAuthCookies is a helper function to clear authentication cookies on a echo

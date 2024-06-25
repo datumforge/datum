@@ -220,5 +220,6 @@ func (Organization) Interceptors() []ent.Interceptor {
 func (Organization) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookOrganization(),
+		hooks.HookOrganizationDelete(),
 	}
 }

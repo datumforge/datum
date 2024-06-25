@@ -173,7 +173,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	}
 
 	// create new claims for the user
-	auth, err := h.AuthSession.GenerateUserAuthSession(ctx, entUser)
+	auth, err := h.AuthManager.GenerateUserAuthSession(ctx, entUser)
 	if err != nil {
 		h.Logger.Errorw("unable create new auth session", "error", err)
 
@@ -253,7 +253,7 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 	}
 
 	// create claims for verified user
-	auth, err := h.AuthSession.GenerateUserAuthSession(ctx, entUser)
+	auth, err := h.AuthManager.GenerateUserAuthSession(ctx, entUser)
 	if err != nil {
 		h.Logger.Errorw("unable create new auth session", "error", err)
 

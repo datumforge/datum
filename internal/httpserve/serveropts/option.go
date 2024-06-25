@@ -145,6 +145,7 @@ func WithGeneratedKeys() ServerOption {
 	})
 }
 
+// WithTokenManager sets up the token manager for the server
 func WithTokenManager() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Setup token manager
@@ -161,7 +162,7 @@ func WithTokenManager() ServerOption {
 		// pass to the REST handlers
 		s.Config.Handler.JWTKeys = keys
 		s.Config.Handler.TokenManager = tm
-		s.Config.Handler.AuthSession.SetTokenManager(tm)
+		s.Config.Handler.AuthManager.SetTokenManager(tm)
 	})
 }
 
@@ -347,7 +348,7 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 		// to graph and REST endpoints
 		s.Config.Handler.SessionConfig = &sessionConfig
 		s.Config.SessionConfig = &sessionConfig
-		s.Config.Handler.AuthSession.SetSessionConfig(&sessionConfig)
+		s.Config.Handler.AuthManager.SetSessionConfig(&sessionConfig)
 	})
 }
 

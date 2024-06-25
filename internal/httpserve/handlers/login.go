@@ -56,7 +56,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	}
 
 	// create new claims for the user
-	auth, err := h.AuthSession.GenerateUserAuthSession(ctx, user)
+	auth, err := h.AuthManager.GenerateUserAuthSession(ctx, user)
 	if err != nil {
 		h.Logger.Errorw("unable create new auth session", "error", err)
 

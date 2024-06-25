@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/httpserve/authsessions"
+	"github.com/datumforge/datum/internal/httpserve/authmanager"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/sessions"
@@ -12,8 +12,8 @@ import (
 )
 
 // newAuthSession creates a new auth session struct
-func newAuthSession(sc *sessions.SessionConfig, tm *tokens.TokenManager) authsessions.Auth {
-	as := authsessions.Auth{}
+func newAuthSession(sc *sessions.SessionConfig, tm *tokens.TokenManager) authmanager.Config {
+	as := authmanager.Config{}
 
 	as.SetSessionConfig(sc)
 	as.SetTokenManager(tm)
@@ -23,7 +23,7 @@ func newAuthSession(sc *sessions.SessionConfig, tm *tokens.TokenManager) authses
 
 // updateUserAuthSession updates the user session with the new org ID
 // and sets updated auth cookies
-func updateUserAuthSession(ctx context.Context, as authsessions.Auth, newOrgID string) error {
+func updateUserAuthSession(ctx context.Context, as authmanager.Config, newOrgID string) error {
 	au, err := auth.GetAuthenticatedUserContext(ctx)
 	if err != nil {
 		return err

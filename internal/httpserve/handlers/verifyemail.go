@@ -109,7 +109,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	}
 
 	// create new claims for the user
-	auth, err := h.AuthSession.GenerateUserAuthSession(ctx, entUser)
+	auth, err := h.AuthManager.GenerateUserAuthSession(ctx, entUser)
 	if err != nil {
 		h.Logger.Errorw("unable create new auth session", "error", err)
 

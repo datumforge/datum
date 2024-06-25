@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/httpserve/authsessions"
+	"github.com/datumforge/datum/internal/httpserve/authmanager"
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/events/kafka/publisher"
 	"github.com/datumforge/datum/pkg/sessions"
@@ -26,8 +26,8 @@ type Handler struct {
 	DBClient *ent.Client
 	// RedisClient to interact with redis
 	RedisClient *redis.Client
-	// AuthSession contains the required configuration for the auth session creation
-	AuthSession *authsessions.Auth
+	// AuthManager contains the required configuration for the auth session creation
+	AuthManager *authmanager.Config
 	// TokenManager contains the token manager in order to validate auth requests
 	TokenManager *tokens.TokenManager
 	// Logger provides the zap logger to do logging things from the handlers

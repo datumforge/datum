@@ -18,7 +18,7 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/httpserve/authsessions"
+	"github.com/datumforge/datum/internal/httpserve/authmanager"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
@@ -163,7 +163,7 @@ func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMa
 
 	sessionConfig.CookieConfig = &sessions.DebugOnlyCookieConfig
 
-	as := authsessions.NewAuthManager()
+	as := authmanager.New()
 	as.SetTokenManager(tm)
 	as.SetSessionConfig(&sessionConfig)
 
@@ -174,7 +174,7 @@ func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMa
 		RedisClient:   rc,
 		Logger:        logger,
 		SessionConfig: &sessionConfig,
-		AuthSession:   as,
+		AuthManager:   as,
 		EmailManager:  em,
 		TaskMan:       taskMan,
 		AnalyticsClient: &analytics.EventManager{

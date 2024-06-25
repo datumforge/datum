@@ -11,7 +11,7 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/httpserve/authsessions"
+	"github.com/datumforge/datum/internal/httpserve/authmanager"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
@@ -69,7 +69,7 @@ func serve(ctx context.Context) error {
 	}
 
 	// add auth session manager
-	so.Config.Handler.AuthSession = authsessions.NewAuthManager()
+	so.Config.Handler.AuthManager = authmanager.New()
 
 	// setup token manager
 	so.AddServerOptions(

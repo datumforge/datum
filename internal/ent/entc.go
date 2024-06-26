@@ -74,7 +74,6 @@ func main() {
 		Features: []gen.Feature{
 			gen.FeatureVersionedMigration,
 			gen.FeaturePrivacy,
-			gen.FeatureSnapshot,
 			gen.FeatureEntQL,
 			gen.FeatureNamedEdges,
 			gen.FeatureSchemaConfig,

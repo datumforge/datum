@@ -61,6 +61,8 @@ const (
 	EdgeDocumentdata = "documentdata"
 	// EdgeEntitlements holds the string denoting the entitlements edge name in mutations.
 	EdgeEntitlements = "entitlements"
+	// EdgeOrganizationEntitlement holds the string denoting the organization_entitlement edge name in mutations.
+	EdgeOrganizationEntitlement = "organization_entitlement"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeAPITokens holds the string denoting the api_tokens edge name in mutations.
@@ -83,6 +85,10 @@ const (
 	EdgeFeatures = "features"
 	// EdgeFiles holds the string denoting the files edge name in mutations.
 	EdgeFiles = "files"
+	// EdgeEntitlementplans holds the string denoting the entitlementplans edge name in mutations.
+	EdgeEntitlementplans = "entitlementplans"
+	// EdgeEntitlementplanfeatures holds the string denoting the entitlementplanfeatures edge name in mutations.
+	EdgeEntitlementplanfeatures = "entitlementplanfeatures"
 	// EdgeMembers holds the string denoting the members edge name in mutations.
 	EdgeMembers = "members"
 	// Table holds the table name of the organization in the database.
@@ -137,6 +143,13 @@ const (
 	EntitlementsInverseTable = "entitlements"
 	// EntitlementsColumn is the table column denoting the entitlements relation/edge.
 	EntitlementsColumn = "owner_id"
+	// OrganizationEntitlementTable is the table that holds the organization_entitlement relation/edge.
+	OrganizationEntitlementTable = "entitlements"
+	// OrganizationEntitlementInverseTable is the table name for the Entitlement entity.
+	// It exists in this package in order to avoid circular dependency with the "entitlement" package.
+	OrganizationEntitlementInverseTable = "entitlements"
+	// OrganizationEntitlementColumn is the table column denoting the organization_entitlement relation/edge.
+	OrganizationEntitlementColumn = "organization_id"
 	// PersonalAccessTokensTable is the table that holds the personal_access_tokens relation/edge. The primary key declared below.
 	PersonalAccessTokensTable = "organization_personal_access_tokens"
 	// PersonalAccessTokensInverseTable is the table name for the PersonalAccessToken entity.
@@ -192,16 +205,32 @@ const (
 	// SecretsInverseTable is the table name for the Hush entity.
 	// It exists in this package in order to avoid circular dependency with the "hush" package.
 	SecretsInverseTable = "hushes"
-	// FeaturesTable is the table that holds the features relation/edge. The primary key declared below.
-	FeaturesTable = "organization_features"
+	// FeaturesTable is the table that holds the features relation/edge.
+	FeaturesTable = "features"
 	// FeaturesInverseTable is the table name for the Feature entity.
 	// It exists in this package in order to avoid circular dependency with the "feature" package.
 	FeaturesInverseTable = "features"
+	// FeaturesColumn is the table column denoting the features relation/edge.
+	FeaturesColumn = "owner_id"
 	// FilesTable is the table that holds the files relation/edge. The primary key declared below.
 	FilesTable = "organization_files"
 	// FilesInverseTable is the table name for the File entity.
 	// It exists in this package in order to avoid circular dependency with the "file" package.
 	FilesInverseTable = "files"
+	// EntitlementplansTable is the table that holds the entitlementplans relation/edge.
+	EntitlementplansTable = "entitlement_plans"
+	// EntitlementplansInverseTable is the table name for the EntitlementPlan entity.
+	// It exists in this package in order to avoid circular dependency with the "entitlementplan" package.
+	EntitlementplansInverseTable = "entitlement_plans"
+	// EntitlementplansColumn is the table column denoting the entitlementplans relation/edge.
+	EntitlementplansColumn = "owner_id"
+	// EntitlementplanfeaturesTable is the table that holds the entitlementplanfeatures relation/edge.
+	EntitlementplanfeaturesTable = "entitlement_plan_features"
+	// EntitlementplanfeaturesInverseTable is the table name for the EntitlementPlanFeature entity.
+	// It exists in this package in order to avoid circular dependency with the "entitlementplanfeature" package.
+	EntitlementplanfeaturesInverseTable = "entitlement_plan_features"
+	// EntitlementplanfeaturesColumn is the table column denoting the entitlementplanfeatures relation/edge.
+	EntitlementplanfeaturesColumn = "owner_id"
 	// MembersTable is the table that holds the members relation/edge.
 	MembersTable = "org_memberships"
 	// MembersInverseTable is the table name for the OrgMembership entity.
@@ -244,9 +273,6 @@ var (
 	// SecretsPrimaryKey and SecretsColumn2 are the table columns denoting the
 	// primary key for the secrets relation (M2M).
 	SecretsPrimaryKey = []string{"organization_id", "hush_id"}
-	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
-	// primary key for the features relation (M2M).
-	FeaturesPrimaryKey = []string{"organization_id", "feature_id"}
 	// FilesPrimaryKey and FilesColumn2 are the table columns denoting the
 	// primary key for the files relation (M2M).
 	FilesPrimaryKey = []string{"organization_id", "file_id"}
@@ -473,6 +499,20 @@ func ByEntitlements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByOrganizationEntitlementCount orders the results by organization_entitlement count.
+func ByOrganizationEntitlementCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOrganizationEntitlementStep(), opts...)
+	}
+}
+
+// ByOrganizationEntitlement orders the results by organization_entitlement terms.
+func ByOrganizationEntitlement(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOrganizationEntitlementStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
 func ByPersonalAccessTokensCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -627,6 +667,34 @@ func ByFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByEntitlementplansCount orders the results by entitlementplans count.
+func ByEntitlementplansCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEntitlementplansStep(), opts...)
+	}
+}
+
+// ByEntitlementplans orders the results by entitlementplans terms.
+func ByEntitlementplans(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntitlementplansStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEntitlementplanfeaturesCount orders the results by entitlementplanfeatures count.
+func ByEntitlementplanfeaturesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEntitlementplanfeaturesStep(), opts...)
+	}
+}
+
+// ByEntitlementplanfeatures orders the results by entitlementplanfeatures terms.
+func ByEntitlementplanfeatures(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntitlementplanfeaturesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByMembersCount orders the results by members count.
 func ByMembersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -696,6 +764,13 @@ func newEntitlementsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, EntitlementsTable, EntitlementsColumn),
 	)
 }
+func newOrganizationEntitlementStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OrganizationEntitlementInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OrganizationEntitlementTable, OrganizationEntitlementColumn),
+	)
+}
 func newPersonalAccessTokensStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -763,7 +838,7 @@ func newFeaturesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(FeaturesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, FeaturesTable, FeaturesColumn),
 	)
 }
 func newFilesStep() *sqlgraph.Step {
@@ -771,6 +846,20 @@ func newFilesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(FilesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, FilesTable, FilesPrimaryKey...),
+	)
+}
+func newEntitlementplansStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntitlementplansInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EntitlementplansTable, EntitlementplansColumn),
+	)
+}
+func newEntitlementplanfeaturesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntitlementplanfeaturesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EntitlementplanfeaturesTable, EntitlementplanfeaturesColumn),
 	)
 }
 func newMembersStep() *sqlgraph.Step {

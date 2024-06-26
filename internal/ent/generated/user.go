@@ -88,17 +88,15 @@ type UserEdges struct {
 	Files []*File `json:"files,omitempty"`
 	// Events holds the value of the events edge.
 	Events []*Event `json:"events,omitempty"`
-	// Features holds the value of the features edge.
-	Features []*Feature `json:"features,omitempty"`
 	// GroupMemberships holds the value of the group_memberships edge.
 	GroupMemberships []*GroupMembership `json:"group_memberships,omitempty"`
 	// OrgMemberships holds the value of the org_memberships edge.
 	OrgMemberships []*OrgMembership `json:"org_memberships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [13]bool
+	loadedTypes [12]bool
 	// totalCount holds the count of the edges above.
-	totalCount [10]map[string]int
+	totalCount [9]map[string]int
 
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
 	namedTfaSettings             map[string][]*TFASetting
@@ -109,7 +107,6 @@ type UserEdges struct {
 	namedWebauthn                map[string][]*Webauthn
 	namedFiles                   map[string][]*File
 	namedEvents                  map[string][]*Event
-	namedFeatures                map[string][]*Feature
 	namedGroupMemberships        map[string][]*GroupMembership
 	namedOrgMemberships          map[string][]*OrgMembership
 }
@@ -206,19 +203,10 @@ func (e UserEdges) EventsOrErr() ([]*Event, error) {
 	return nil, &NotLoadedError{edge: "events"}
 }
 
-// FeaturesOrErr returns the Features value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) FeaturesOrErr() ([]*Feature, error) {
-	if e.loadedTypes[10] {
-		return e.Features, nil
-	}
-	return nil, &NotLoadedError{edge: "features"}
-}
-
 // GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
-	if e.loadedTypes[11] {
+	if e.loadedTypes[10] {
 		return e.GroupMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "group_memberships"}
@@ -227,7 +215,7 @@ func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
 // OrgMembershipsOrErr returns the OrgMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OrgMembershipsOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[12] {
+	if e.loadedTypes[11] {
 		return e.OrgMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "org_memberships"}
@@ -453,11 +441,6 @@ func (u *User) QueryFiles() *FileQuery {
 // QueryEvents queries the "events" edge of the User entity.
 func (u *User) QueryEvents() *EventQuery {
 	return NewUserClient(u.config).QueryEvents(u)
-}
-
-// QueryFeatures queries the "features" edge of the User entity.
-func (u *User) QueryFeatures() *FeatureQuery {
-	return NewUserClient(u.config).QueryFeatures(u)
 }
 
 // QueryGroupMemberships queries the "group_memberships" edge of the User entity.
@@ -776,30 +759,6 @@ func (u *User) appendNamedEvents(name string, edges ...*Event) {
 		u.Edges.namedEvents[name] = []*Event{}
 	} else {
 		u.Edges.namedEvents[name] = append(u.Edges.namedEvents[name], edges...)
-	}
-}
-
-// NamedFeatures returns the Features named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (u *User) NamedFeatures(name string) ([]*Feature, error) {
-	if u.Edges.namedFeatures == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := u.Edges.namedFeatures[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (u *User) appendNamedFeatures(name string, edges ...*Feature) {
-	if u.Edges.namedFeatures == nil {
-		u.Edges.namedFeatures = make(map[string][]*Feature)
-	}
-	if len(edges) == 0 {
-		u.Edges.namedFeatures[name] = []*Feature{}
-	} else {
-		u.Edges.namedFeatures[name] = append(u.Edges.namedFeatures[name], edges...)
 	}
 }
 

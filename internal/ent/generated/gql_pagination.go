@@ -19,6 +19,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -1381,6 +1385,1002 @@ func (eh *EntitlementHistory) ToEdge(order *EntitlementHistoryOrder) *Entitlemen
 	return &EntitlementHistoryEdge{
 		Node:   eh,
 		Cursor: order.Field.toCursor(eh),
+	}
+}
+
+// EntitlementPlanEdge is the edge representation of EntitlementPlan.
+type EntitlementPlanEdge struct {
+	Node   *EntitlementPlan `json:"node"`
+	Cursor Cursor           `json:"cursor"`
+}
+
+// EntitlementPlanConnection is the connection containing edges to EntitlementPlan.
+type EntitlementPlanConnection struct {
+	Edges      []*EntitlementPlanEdge `json:"edges"`
+	PageInfo   PageInfo               `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
+func (c *EntitlementPlanConnection) build(nodes []*EntitlementPlan, pager *entitlementplanPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *EntitlementPlan
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *EntitlementPlan {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *EntitlementPlan {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*EntitlementPlanEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &EntitlementPlanEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// EntitlementPlanPaginateOption enables pagination customization.
+type EntitlementPlanPaginateOption func(*entitlementplanPager) error
+
+// WithEntitlementPlanOrder configures pagination ordering.
+func WithEntitlementPlanOrder(order *EntitlementPlanOrder) EntitlementPlanPaginateOption {
+	if order == nil {
+		order = DefaultEntitlementPlanOrder
+	}
+	o := *order
+	return func(pager *entitlementplanPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntitlementPlanOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntitlementPlanFilter configures pagination filter.
+func WithEntitlementPlanFilter(filter func(*EntitlementPlanQuery) (*EntitlementPlanQuery, error)) EntitlementPlanPaginateOption {
+	return func(pager *entitlementplanPager) error {
+		if filter == nil {
+			return errors.New("EntitlementPlanQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entitlementplanPager struct {
+	reverse bool
+	order   *EntitlementPlanOrder
+	filter  func(*EntitlementPlanQuery) (*EntitlementPlanQuery, error)
+}
+
+func newEntitlementPlanPager(opts []EntitlementPlanPaginateOption, reverse bool) (*entitlementplanPager, error) {
+	pager := &entitlementplanPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntitlementPlanOrder
+	}
+	return pager, nil
+}
+
+func (p *entitlementplanPager) applyFilter(query *EntitlementPlanQuery) (*EntitlementPlanQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entitlementplanPager) toCursor(ep *EntitlementPlan) Cursor {
+	return p.order.Field.toCursor(ep)
+}
+
+func (p *entitlementplanPager) applyCursors(query *EntitlementPlanQuery, after, before *Cursor) (*EntitlementPlanQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultEntitlementPlanOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *entitlementplanPager) applyOrder(query *EntitlementPlanQuery) *EntitlementPlanQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultEntitlementPlanOrder.Field {
+		query = query.Order(DefaultEntitlementPlanOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *entitlementplanPager) orderExpr(query *EntitlementPlanQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultEntitlementPlanOrder.Field {
+			b.Comma().Ident(DefaultEntitlementPlanOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to EntitlementPlan.
+func (ep *EntitlementPlanQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntitlementPlanPaginateOption,
+) (*EntitlementPlanConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntitlementPlanPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if ep, err = pager.applyFilter(ep); err != nil {
+		return nil, err
+	}
+	conn := &EntitlementPlanConnection{Edges: []*EntitlementPlanEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := ep.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if ep, err = pager.applyCursors(ep, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		ep.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := ep.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	ep = pager.applyOrder(ep)
+	nodes, err := ep.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// EntitlementPlanOrderField defines the ordering field of EntitlementPlan.
+type EntitlementPlanOrderField struct {
+	// Value extracts the ordering value from the given EntitlementPlan.
+	Value    func(*EntitlementPlan) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) entitlementplan.OrderOption
+	toCursor func(*EntitlementPlan) Cursor
+}
+
+// EntitlementPlanOrder defines the ordering of EntitlementPlan.
+type EntitlementPlanOrder struct {
+	Direction OrderDirection             `json:"direction"`
+	Field     *EntitlementPlanOrderField `json:"field"`
+}
+
+// DefaultEntitlementPlanOrder is the default ordering of EntitlementPlan.
+var DefaultEntitlementPlanOrder = &EntitlementPlanOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &EntitlementPlanOrderField{
+		Value: func(ep *EntitlementPlan) (ent.Value, error) {
+			return ep.ID, nil
+		},
+		column: entitlementplan.FieldID,
+		toTerm: entitlementplan.ByID,
+		toCursor: func(ep *EntitlementPlan) Cursor {
+			return Cursor{ID: ep.ID}
+		},
+	},
+}
+
+// ToEdge converts EntitlementPlan into EntitlementPlanEdge.
+func (ep *EntitlementPlan) ToEdge(order *EntitlementPlanOrder) *EntitlementPlanEdge {
+	if order == nil {
+		order = DefaultEntitlementPlanOrder
+	}
+	return &EntitlementPlanEdge{
+		Node:   ep,
+		Cursor: order.Field.toCursor(ep),
+	}
+}
+
+// EntitlementPlanHistoryEdge is the edge representation of EntitlementPlanHistory.
+type EntitlementPlanHistoryEdge struct {
+	Node   *EntitlementPlanHistory `json:"node"`
+	Cursor Cursor                  `json:"cursor"`
+}
+
+// EntitlementPlanHistoryConnection is the connection containing edges to EntitlementPlanHistory.
+type EntitlementPlanHistoryConnection struct {
+	Edges      []*EntitlementPlanHistoryEdge `json:"edges"`
+	PageInfo   PageInfo                      `json:"pageInfo"`
+	TotalCount int                           `json:"totalCount"`
+}
+
+func (c *EntitlementPlanHistoryConnection) build(nodes []*EntitlementPlanHistory, pager *entitlementplanhistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *EntitlementPlanHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *EntitlementPlanHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *EntitlementPlanHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*EntitlementPlanHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &EntitlementPlanHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// EntitlementPlanHistoryPaginateOption enables pagination customization.
+type EntitlementPlanHistoryPaginateOption func(*entitlementplanhistoryPager) error
+
+// WithEntitlementPlanHistoryOrder configures pagination ordering.
+func WithEntitlementPlanHistoryOrder(order *EntitlementPlanHistoryOrder) EntitlementPlanHistoryPaginateOption {
+	if order == nil {
+		order = DefaultEntitlementPlanHistoryOrder
+	}
+	o := *order
+	return func(pager *entitlementplanhistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntitlementPlanHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntitlementPlanHistoryFilter configures pagination filter.
+func WithEntitlementPlanHistoryFilter(filter func(*EntitlementPlanHistoryQuery) (*EntitlementPlanHistoryQuery, error)) EntitlementPlanHistoryPaginateOption {
+	return func(pager *entitlementplanhistoryPager) error {
+		if filter == nil {
+			return errors.New("EntitlementPlanHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entitlementplanhistoryPager struct {
+	reverse bool
+	order   *EntitlementPlanHistoryOrder
+	filter  func(*EntitlementPlanHistoryQuery) (*EntitlementPlanHistoryQuery, error)
+}
+
+func newEntitlementPlanHistoryPager(opts []EntitlementPlanHistoryPaginateOption, reverse bool) (*entitlementplanhistoryPager, error) {
+	pager := &entitlementplanhistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntitlementPlanHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *entitlementplanhistoryPager) applyFilter(query *EntitlementPlanHistoryQuery) (*EntitlementPlanHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entitlementplanhistoryPager) toCursor(eph *EntitlementPlanHistory) Cursor {
+	return p.order.Field.toCursor(eph)
+}
+
+func (p *entitlementplanhistoryPager) applyCursors(query *EntitlementPlanHistoryQuery, after, before *Cursor) (*EntitlementPlanHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultEntitlementPlanHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *entitlementplanhistoryPager) applyOrder(query *EntitlementPlanHistoryQuery) *EntitlementPlanHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultEntitlementPlanHistoryOrder.Field {
+		query = query.Order(DefaultEntitlementPlanHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *entitlementplanhistoryPager) orderExpr(query *EntitlementPlanHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultEntitlementPlanHistoryOrder.Field {
+			b.Comma().Ident(DefaultEntitlementPlanHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to EntitlementPlanHistory.
+func (eph *EntitlementPlanHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntitlementPlanHistoryPaginateOption,
+) (*EntitlementPlanHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntitlementPlanHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if eph, err = pager.applyFilter(eph); err != nil {
+		return nil, err
+	}
+	conn := &EntitlementPlanHistoryConnection{Edges: []*EntitlementPlanHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := eph.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if eph, err = pager.applyCursors(eph, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		eph.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := eph.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	eph = pager.applyOrder(eph)
+	nodes, err := eph.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// EntitlementPlanHistoryOrderField defines the ordering field of EntitlementPlanHistory.
+type EntitlementPlanHistoryOrderField struct {
+	// Value extracts the ordering value from the given EntitlementPlanHistory.
+	Value    func(*EntitlementPlanHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) entitlementplanhistory.OrderOption
+	toCursor func(*EntitlementPlanHistory) Cursor
+}
+
+// EntitlementPlanHistoryOrder defines the ordering of EntitlementPlanHistory.
+type EntitlementPlanHistoryOrder struct {
+	Direction OrderDirection                    `json:"direction"`
+	Field     *EntitlementPlanHistoryOrderField `json:"field"`
+}
+
+// DefaultEntitlementPlanHistoryOrder is the default ordering of EntitlementPlanHistory.
+var DefaultEntitlementPlanHistoryOrder = &EntitlementPlanHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &EntitlementPlanHistoryOrderField{
+		Value: func(eph *EntitlementPlanHistory) (ent.Value, error) {
+			return eph.ID, nil
+		},
+		column: entitlementplanhistory.FieldID,
+		toTerm: entitlementplanhistory.ByID,
+		toCursor: func(eph *EntitlementPlanHistory) Cursor {
+			return Cursor{ID: eph.ID}
+		},
+	},
+}
+
+// ToEdge converts EntitlementPlanHistory into EntitlementPlanHistoryEdge.
+func (eph *EntitlementPlanHistory) ToEdge(order *EntitlementPlanHistoryOrder) *EntitlementPlanHistoryEdge {
+	if order == nil {
+		order = DefaultEntitlementPlanHistoryOrder
+	}
+	return &EntitlementPlanHistoryEdge{
+		Node:   eph,
+		Cursor: order.Field.toCursor(eph),
+	}
+}
+
+// EntitlementPlanFeatureEdge is the edge representation of EntitlementPlanFeature.
+type EntitlementPlanFeatureEdge struct {
+	Node   *EntitlementPlanFeature `json:"node"`
+	Cursor Cursor                  `json:"cursor"`
+}
+
+// EntitlementPlanFeatureConnection is the connection containing edges to EntitlementPlanFeature.
+type EntitlementPlanFeatureConnection struct {
+	Edges      []*EntitlementPlanFeatureEdge `json:"edges"`
+	PageInfo   PageInfo                      `json:"pageInfo"`
+	TotalCount int                           `json:"totalCount"`
+}
+
+func (c *EntitlementPlanFeatureConnection) build(nodes []*EntitlementPlanFeature, pager *entitlementplanfeaturePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *EntitlementPlanFeature
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *EntitlementPlanFeature {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *EntitlementPlanFeature {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*EntitlementPlanFeatureEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &EntitlementPlanFeatureEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// EntitlementPlanFeaturePaginateOption enables pagination customization.
+type EntitlementPlanFeaturePaginateOption func(*entitlementplanfeaturePager) error
+
+// WithEntitlementPlanFeatureOrder configures pagination ordering.
+func WithEntitlementPlanFeatureOrder(order *EntitlementPlanFeatureOrder) EntitlementPlanFeaturePaginateOption {
+	if order == nil {
+		order = DefaultEntitlementPlanFeatureOrder
+	}
+	o := *order
+	return func(pager *entitlementplanfeaturePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntitlementPlanFeatureOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntitlementPlanFeatureFilter configures pagination filter.
+func WithEntitlementPlanFeatureFilter(filter func(*EntitlementPlanFeatureQuery) (*EntitlementPlanFeatureQuery, error)) EntitlementPlanFeaturePaginateOption {
+	return func(pager *entitlementplanfeaturePager) error {
+		if filter == nil {
+			return errors.New("EntitlementPlanFeatureQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entitlementplanfeaturePager struct {
+	reverse bool
+	order   *EntitlementPlanFeatureOrder
+	filter  func(*EntitlementPlanFeatureQuery) (*EntitlementPlanFeatureQuery, error)
+}
+
+func newEntitlementPlanFeaturePager(opts []EntitlementPlanFeaturePaginateOption, reverse bool) (*entitlementplanfeaturePager, error) {
+	pager := &entitlementplanfeaturePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntitlementPlanFeatureOrder
+	}
+	return pager, nil
+}
+
+func (p *entitlementplanfeaturePager) applyFilter(query *EntitlementPlanFeatureQuery) (*EntitlementPlanFeatureQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entitlementplanfeaturePager) toCursor(epf *EntitlementPlanFeature) Cursor {
+	return p.order.Field.toCursor(epf)
+}
+
+func (p *entitlementplanfeaturePager) applyCursors(query *EntitlementPlanFeatureQuery, after, before *Cursor) (*EntitlementPlanFeatureQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultEntitlementPlanFeatureOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *entitlementplanfeaturePager) applyOrder(query *EntitlementPlanFeatureQuery) *EntitlementPlanFeatureQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultEntitlementPlanFeatureOrder.Field {
+		query = query.Order(DefaultEntitlementPlanFeatureOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *entitlementplanfeaturePager) orderExpr(query *EntitlementPlanFeatureQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultEntitlementPlanFeatureOrder.Field {
+			b.Comma().Ident(DefaultEntitlementPlanFeatureOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to EntitlementPlanFeature.
+func (epf *EntitlementPlanFeatureQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntitlementPlanFeaturePaginateOption,
+) (*EntitlementPlanFeatureConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntitlementPlanFeaturePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if epf, err = pager.applyFilter(epf); err != nil {
+		return nil, err
+	}
+	conn := &EntitlementPlanFeatureConnection{Edges: []*EntitlementPlanFeatureEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := epf.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if epf, err = pager.applyCursors(epf, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		epf.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := epf.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	epf = pager.applyOrder(epf)
+	nodes, err := epf.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// EntitlementPlanFeatureOrderField defines the ordering field of EntitlementPlanFeature.
+type EntitlementPlanFeatureOrderField struct {
+	// Value extracts the ordering value from the given EntitlementPlanFeature.
+	Value    func(*EntitlementPlanFeature) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) entitlementplanfeature.OrderOption
+	toCursor func(*EntitlementPlanFeature) Cursor
+}
+
+// EntitlementPlanFeatureOrder defines the ordering of EntitlementPlanFeature.
+type EntitlementPlanFeatureOrder struct {
+	Direction OrderDirection                    `json:"direction"`
+	Field     *EntitlementPlanFeatureOrderField `json:"field"`
+}
+
+// DefaultEntitlementPlanFeatureOrder is the default ordering of EntitlementPlanFeature.
+var DefaultEntitlementPlanFeatureOrder = &EntitlementPlanFeatureOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &EntitlementPlanFeatureOrderField{
+		Value: func(epf *EntitlementPlanFeature) (ent.Value, error) {
+			return epf.ID, nil
+		},
+		column: entitlementplanfeature.FieldID,
+		toTerm: entitlementplanfeature.ByID,
+		toCursor: func(epf *EntitlementPlanFeature) Cursor {
+			return Cursor{ID: epf.ID}
+		},
+	},
+}
+
+// ToEdge converts EntitlementPlanFeature into EntitlementPlanFeatureEdge.
+func (epf *EntitlementPlanFeature) ToEdge(order *EntitlementPlanFeatureOrder) *EntitlementPlanFeatureEdge {
+	if order == nil {
+		order = DefaultEntitlementPlanFeatureOrder
+	}
+	return &EntitlementPlanFeatureEdge{
+		Node:   epf,
+		Cursor: order.Field.toCursor(epf),
+	}
+}
+
+// EntitlementPlanFeatureHistoryEdge is the edge representation of EntitlementPlanFeatureHistory.
+type EntitlementPlanFeatureHistoryEdge struct {
+	Node   *EntitlementPlanFeatureHistory `json:"node"`
+	Cursor Cursor                         `json:"cursor"`
+}
+
+// EntitlementPlanFeatureHistoryConnection is the connection containing edges to EntitlementPlanFeatureHistory.
+type EntitlementPlanFeatureHistoryConnection struct {
+	Edges      []*EntitlementPlanFeatureHistoryEdge `json:"edges"`
+	PageInfo   PageInfo                             `json:"pageInfo"`
+	TotalCount int                                  `json:"totalCount"`
+}
+
+func (c *EntitlementPlanFeatureHistoryConnection) build(nodes []*EntitlementPlanFeatureHistory, pager *entitlementplanfeaturehistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *EntitlementPlanFeatureHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *EntitlementPlanFeatureHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *EntitlementPlanFeatureHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*EntitlementPlanFeatureHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &EntitlementPlanFeatureHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// EntitlementPlanFeatureHistoryPaginateOption enables pagination customization.
+type EntitlementPlanFeatureHistoryPaginateOption func(*entitlementplanfeaturehistoryPager) error
+
+// WithEntitlementPlanFeatureHistoryOrder configures pagination ordering.
+func WithEntitlementPlanFeatureHistoryOrder(order *EntitlementPlanFeatureHistoryOrder) EntitlementPlanFeatureHistoryPaginateOption {
+	if order == nil {
+		order = DefaultEntitlementPlanFeatureHistoryOrder
+	}
+	o := *order
+	return func(pager *entitlementplanfeaturehistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntitlementPlanFeatureHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntitlementPlanFeatureHistoryFilter configures pagination filter.
+func WithEntitlementPlanFeatureHistoryFilter(filter func(*EntitlementPlanFeatureHistoryQuery) (*EntitlementPlanFeatureHistoryQuery, error)) EntitlementPlanFeatureHistoryPaginateOption {
+	return func(pager *entitlementplanfeaturehistoryPager) error {
+		if filter == nil {
+			return errors.New("EntitlementPlanFeatureHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entitlementplanfeaturehistoryPager struct {
+	reverse bool
+	order   *EntitlementPlanFeatureHistoryOrder
+	filter  func(*EntitlementPlanFeatureHistoryQuery) (*EntitlementPlanFeatureHistoryQuery, error)
+}
+
+func newEntitlementPlanFeatureHistoryPager(opts []EntitlementPlanFeatureHistoryPaginateOption, reverse bool) (*entitlementplanfeaturehistoryPager, error) {
+	pager := &entitlementplanfeaturehistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntitlementPlanFeatureHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *entitlementplanfeaturehistoryPager) applyFilter(query *EntitlementPlanFeatureHistoryQuery) (*EntitlementPlanFeatureHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entitlementplanfeaturehistoryPager) toCursor(epfh *EntitlementPlanFeatureHistory) Cursor {
+	return p.order.Field.toCursor(epfh)
+}
+
+func (p *entitlementplanfeaturehistoryPager) applyCursors(query *EntitlementPlanFeatureHistoryQuery, after, before *Cursor) (*EntitlementPlanFeatureHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultEntitlementPlanFeatureHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *entitlementplanfeaturehistoryPager) applyOrder(query *EntitlementPlanFeatureHistoryQuery) *EntitlementPlanFeatureHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultEntitlementPlanFeatureHistoryOrder.Field {
+		query = query.Order(DefaultEntitlementPlanFeatureHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *entitlementplanfeaturehistoryPager) orderExpr(query *EntitlementPlanFeatureHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultEntitlementPlanFeatureHistoryOrder.Field {
+			b.Comma().Ident(DefaultEntitlementPlanFeatureHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to EntitlementPlanFeatureHistory.
+func (epfh *EntitlementPlanFeatureHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntitlementPlanFeatureHistoryPaginateOption,
+) (*EntitlementPlanFeatureHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntitlementPlanFeatureHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if epfh, err = pager.applyFilter(epfh); err != nil {
+		return nil, err
+	}
+	conn := &EntitlementPlanFeatureHistoryConnection{Edges: []*EntitlementPlanFeatureHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := epfh.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if epfh, err = pager.applyCursors(epfh, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		epfh.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := epfh.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	epfh = pager.applyOrder(epfh)
+	nodes, err := epfh.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// EntitlementPlanFeatureHistoryOrderField defines the ordering field of EntitlementPlanFeatureHistory.
+type EntitlementPlanFeatureHistoryOrderField struct {
+	// Value extracts the ordering value from the given EntitlementPlanFeatureHistory.
+	Value    func(*EntitlementPlanFeatureHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) entitlementplanfeaturehistory.OrderOption
+	toCursor func(*EntitlementPlanFeatureHistory) Cursor
+}
+
+// EntitlementPlanFeatureHistoryOrder defines the ordering of EntitlementPlanFeatureHistory.
+type EntitlementPlanFeatureHistoryOrder struct {
+	Direction OrderDirection                           `json:"direction"`
+	Field     *EntitlementPlanFeatureHistoryOrderField `json:"field"`
+}
+
+// DefaultEntitlementPlanFeatureHistoryOrder is the default ordering of EntitlementPlanFeatureHistory.
+var DefaultEntitlementPlanFeatureHistoryOrder = &EntitlementPlanFeatureHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &EntitlementPlanFeatureHistoryOrderField{
+		Value: func(epfh *EntitlementPlanFeatureHistory) (ent.Value, error) {
+			return epfh.ID, nil
+		},
+		column: entitlementplanfeaturehistory.FieldID,
+		toTerm: entitlementplanfeaturehistory.ByID,
+		toCursor: func(epfh *EntitlementPlanFeatureHistory) Cursor {
+			return Cursor{ID: epfh.ID}
+		},
+	},
+}
+
+// ToEdge converts EntitlementPlanFeatureHistory into EntitlementPlanFeatureHistoryEdge.
+func (epfh *EntitlementPlanFeatureHistory) ToEdge(order *EntitlementPlanFeatureHistoryOrder) *EntitlementPlanFeatureHistoryEdge {
+	if order == nil {
+		order = DefaultEntitlementPlanFeatureHistoryOrder
+	}
+	return &EntitlementPlanFeatureHistoryEdge{
+		Node:   epfh,
+		Cursor: order.Field.toCursor(epfh),
 	}
 }
 

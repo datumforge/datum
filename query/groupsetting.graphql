@@ -1,22 +1,4 @@
-query GetGroupSettingByID($groupSettingId: ID!) {
-  groupSetting(id: $groupSettingId) {
-    id
-    joinPolicy
-    syncToGithub
-    syncToSlack
-    tags
-    visibility
-    group {
-      id
-    }
-    createdAt
-    createdBy
-    updatedAt
-    updatedBy
-  }
-}
-
-query GetGroupSettings {
+query GetAllGroupSettings {
   groupSettings {
     edges {
       node {
@@ -38,7 +20,25 @@ query GetGroupSettings {
   }
 }
 
-query GetGroupSettingWhere($where: GroupSettingWhereInput!) {
+query GetGroupSettingByID($groupSettingId: ID!) {
+  groupSetting(id: $groupSettingId) {
+    id
+    joinPolicy
+    syncToGithub
+    syncToSlack
+    tags
+    visibility
+    group {
+      id
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+
+query GetGroupSettings($where: GroupSettingWhereInput!) {
   groupSettings(where: $where) {
     edges {
       node {

@@ -61,7 +61,7 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.GetInvite(reqCtx, tc.queryID)
+			resp, err := suite.client.datum.GetInviteByID(reqCtx, tc.queryID)
 
 			if tc.wantErr {
 				require.Error(t, err)

@@ -19,7 +19,7 @@ query GetOrganizationSettingByID($organizationSettingId: ID!) {
   }
 }
 
-query GetOrganizationSettings {
+query GetAllOrganizationSettings {
   organizationSettings {
     edges {
       node {
@@ -44,7 +44,7 @@ query GetOrganizationSettings {
   }
 }
 
-query GetOrganizationSettingWhere($where: OrganizationSettingWhereInput!) {
+query GetOrganizationSettings($where: OrganizationSettingWhereInput!) {
   organizationSettings(where: $where) {
     edges {
       node {

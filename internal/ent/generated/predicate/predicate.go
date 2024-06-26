@@ -24,6 +24,18 @@ type Entitlement func(*sql.Selector)
 // EntitlementHistory is the predicate function for entitlementhistory builders.
 type EntitlementHistory func(*sql.Selector)
 
+// EntitlementPlan is the predicate function for entitlementplan builders.
+type EntitlementPlan func(*sql.Selector)
+
+// EntitlementPlanHistory is the predicate function for entitlementplanhistory builders.
+type EntitlementPlanHistory func(*sql.Selector)
+
+// EntitlementPlanFeature is the predicate function for entitlementplanfeature builders.
+type EntitlementPlanFeature func(*sql.Selector)
+
+// EntitlementPlanFeatureHistory is the predicate function for entitlementplanfeaturehistory builders.
+type EntitlementPlanFeatureHistory func(*sql.Selector)
+
 // Event is the predicate function for event builders.
 type Event func(*sql.Selector)
 

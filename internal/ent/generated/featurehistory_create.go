@@ -159,22 +159,36 @@ func (fhc *FeatureHistoryCreate) SetTags(s []string) *FeatureHistoryCreate {
 	return fhc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (fhc *FeatureHistoryCreate) SetOwnerID(s string) *FeatureHistoryCreate {
+	fhc.mutation.SetOwnerID(s)
+	return fhc
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (fhc *FeatureHistoryCreate) SetNillableOwnerID(s *string) *FeatureHistoryCreate {
+	if s != nil {
+		fhc.SetOwnerID(*s)
+	}
+	return fhc
+}
+
 // SetName sets the "name" field.
 func (fhc *FeatureHistoryCreate) SetName(s string) *FeatureHistoryCreate {
 	fhc.mutation.SetName(s)
 	return fhc
 }
 
-// SetGlobal sets the "global" field.
-func (fhc *FeatureHistoryCreate) SetGlobal(b bool) *FeatureHistoryCreate {
-	fhc.mutation.SetGlobal(b)
+// SetDisplayName sets the "display_name" field.
+func (fhc *FeatureHistoryCreate) SetDisplayName(s string) *FeatureHistoryCreate {
+	fhc.mutation.SetDisplayName(s)
 	return fhc
 }
 
-// SetNillableGlobal sets the "global" field if the given value is not nil.
-func (fhc *FeatureHistoryCreate) SetNillableGlobal(b *bool) *FeatureHistoryCreate {
-	if b != nil {
-		fhc.SetGlobal(*b)
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (fhc *FeatureHistoryCreate) SetNillableDisplayName(s *string) *FeatureHistoryCreate {
+	if s != nil {
+		fhc.SetDisplayName(*s)
 	}
 	return fhc
 }
@@ -204,6 +218,12 @@ func (fhc *FeatureHistoryCreate) SetNillableDescription(s *string) *FeatureHisto
 	if s != nil {
 		fhc.SetDescription(*s)
 	}
+	return fhc
+}
+
+// SetMetadata sets the "metadata" field.
+func (fhc *FeatureHistoryCreate) SetMetadata(m map[string]interface{}) *FeatureHistoryCreate {
+	fhc.mutation.SetMetadata(m)
 	return fhc
 }
 
@@ -276,10 +296,6 @@ func (fhc *FeatureHistoryCreate) defaults() {
 		v := featurehistory.DefaultTags
 		fhc.mutation.SetTags(v)
 	}
-	if _, ok := fhc.mutation.Global(); !ok {
-		v := featurehistory.DefaultGlobal
-		fhc.mutation.SetGlobal(v)
-	}
 	if _, ok := fhc.mutation.Enabled(); !ok {
 		v := featurehistory.DefaultEnabled
 		fhc.mutation.SetEnabled(v)
@@ -308,9 +324,6 @@ func (fhc *FeatureHistoryCreate) check() error {
 	}
 	if _, ok := fhc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "FeatureHistory.name"`)}
-	}
-	if _, ok := fhc.mutation.Global(); !ok {
-		return &ValidationError{Name: "global", err: errors.New(`generated: missing required field "FeatureHistory.global"`)}
 	}
 	if _, ok := fhc.mutation.Enabled(); !ok {
 		return &ValidationError{Name: "enabled", err: errors.New(`generated: missing required field "FeatureHistory.enabled"`)}
@@ -395,13 +408,17 @@ func (fhc *FeatureHistoryCreate) createSpec() (*FeatureHistory, *sqlgraph.Create
 		_spec.SetField(featurehistory.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
 	}
+	if value, ok := fhc.mutation.OwnerID(); ok {
+		_spec.SetField(featurehistory.FieldOwnerID, field.TypeString, value)
+		_node.OwnerID = value
+	}
 	if value, ok := fhc.mutation.Name(); ok {
 		_spec.SetField(featurehistory.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := fhc.mutation.Global(); ok {
-		_spec.SetField(featurehistory.FieldGlobal, field.TypeBool, value)
-		_node.Global = value
+	if value, ok := fhc.mutation.DisplayName(); ok {
+		_spec.SetField(featurehistory.FieldDisplayName, field.TypeString, value)
+		_node.DisplayName = value
 	}
 	if value, ok := fhc.mutation.Enabled(); ok {
 		_spec.SetField(featurehistory.FieldEnabled, field.TypeBool, value)
@@ -410,6 +427,10 @@ func (fhc *FeatureHistoryCreate) createSpec() (*FeatureHistory, *sqlgraph.Create
 	if value, ok := fhc.mutation.Description(); ok {
 		_spec.SetField(featurehistory.FieldDescription, field.TypeString, value)
 		_node.Description = &value
+	}
+	if value, ok := fhc.mutation.Metadata(); ok {
+		_spec.SetField(featurehistory.FieldMetadata, field.TypeJSON, value)
+		_node.Metadata = value
 	}
 	return _node, _spec
 }

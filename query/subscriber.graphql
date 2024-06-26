@@ -41,7 +41,21 @@ mutation DeleteSubscriber($deleteSubscriberEmail: String!) {
   }
 }
 
-query GetSubscriber($email: String!) {
+query GetAllSubscribers {
+  subscribers {
+    edges {
+      node {
+        active
+        email
+        id
+        ownerID
+        verifiedEmail
+      }
+    }
+  }
+}
+
+query GetSubscriberByEmail($email: String!) {
   subscriber(email: $email) {
     active
     email
@@ -51,7 +65,7 @@ query GetSubscriber($email: String!) {
   }
 }
 
-query Subscribers($where: SubscriberWhereInput) {
+query GetSubscribers($where: SubscriberWhereInput) {
   subscribers(where: $where) {
     edges {
       node {

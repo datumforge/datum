@@ -13,6 +13,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -249,6 +251,36 @@ func (eu *EventUpdate) AddFeature(f ...*Feature) *EventUpdate {
 		ids[i] = f[i].ID
 	}
 	return eu.AddFeatureIDs(ids...)
+}
+
+// AddEntitlementplanIDs adds the "entitlementplan" edge to the EntitlementPlan entity by IDs.
+func (eu *EventUpdate) AddEntitlementplanIDs(ids ...string) *EventUpdate {
+	eu.mutation.AddEntitlementplanIDs(ids...)
+	return eu
+}
+
+// AddEntitlementplan adds the "entitlementplan" edges to the EntitlementPlan entity.
+func (eu *EventUpdate) AddEntitlementplan(e ...*EntitlementPlan) *EventUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return eu.AddEntitlementplanIDs(ids...)
+}
+
+// AddEntitlementplanfeatureIDs adds the "entitlementplanfeature" edge to the EntitlementPlanFeature entity by IDs.
+func (eu *EventUpdate) AddEntitlementplanfeatureIDs(ids ...string) *EventUpdate {
+	eu.mutation.AddEntitlementplanfeatureIDs(ids...)
+	return eu
+}
+
+// AddEntitlementplanfeature adds the "entitlementplanfeature" edges to the EntitlementPlanFeature entity.
+func (eu *EventUpdate) AddEntitlementplanfeature(e ...*EntitlementPlanFeature) *EventUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return eu.AddEntitlementplanfeatureIDs(ids...)
 }
 
 // AddPersonalAccessTokenIDs adds the "personal_access_token" edge to the PersonalAccessToken entity by IDs.
@@ -500,6 +532,48 @@ func (eu *EventUpdate) RemoveFeature(f ...*Feature) *EventUpdate {
 		ids[i] = f[i].ID
 	}
 	return eu.RemoveFeatureIDs(ids...)
+}
+
+// ClearEntitlementplan clears all "entitlementplan" edges to the EntitlementPlan entity.
+func (eu *EventUpdate) ClearEntitlementplan() *EventUpdate {
+	eu.mutation.ClearEntitlementplan()
+	return eu
+}
+
+// RemoveEntitlementplanIDs removes the "entitlementplan" edge to EntitlementPlan entities by IDs.
+func (eu *EventUpdate) RemoveEntitlementplanIDs(ids ...string) *EventUpdate {
+	eu.mutation.RemoveEntitlementplanIDs(ids...)
+	return eu
+}
+
+// RemoveEntitlementplan removes "entitlementplan" edges to EntitlementPlan entities.
+func (eu *EventUpdate) RemoveEntitlementplan(e ...*EntitlementPlan) *EventUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return eu.RemoveEntitlementplanIDs(ids...)
+}
+
+// ClearEntitlementplanfeature clears all "entitlementplanfeature" edges to the EntitlementPlanFeature entity.
+func (eu *EventUpdate) ClearEntitlementplanfeature() *EventUpdate {
+	eu.mutation.ClearEntitlementplanfeature()
+	return eu
+}
+
+// RemoveEntitlementplanfeatureIDs removes the "entitlementplanfeature" edge to EntitlementPlanFeature entities by IDs.
+func (eu *EventUpdate) RemoveEntitlementplanfeatureIDs(ids ...string) *EventUpdate {
+	eu.mutation.RemoveEntitlementplanfeatureIDs(ids...)
+	return eu
+}
+
+// RemoveEntitlementplanfeature removes "entitlementplanfeature" edges to EntitlementPlanFeature entities.
+func (eu *EventUpdate) RemoveEntitlementplanfeature(e ...*EntitlementPlanFeature) *EventUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return eu.RemoveEntitlementplanfeatureIDs(ids...)
 }
 
 // ClearPersonalAccessToken clears all "personal_access_token" edges to the PersonalAccessToken entity.
@@ -1054,6 +1128,102 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = eu.schemaConfig.FeatureEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.EntitlementplanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanTable,
+			Columns: event.EntitlementplanPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntitlementPlanEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedEntitlementplanIDs(); len(nodes) > 0 && !eu.mutation.EntitlementplanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanTable,
+			Columns: event.EntitlementplanPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntitlementPlanEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.EntitlementplanIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanTable,
+			Columns: event.EntitlementplanPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntitlementPlanEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.EntitlementplanfeatureCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanfeatureTable,
+			Columns: event.EntitlementplanfeaturePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntitlementPlanFeatureEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedEntitlementplanfeatureIDs(); len(nodes) > 0 && !eu.mutation.EntitlementplanfeatureCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanfeatureTable,
+			Columns: event.EntitlementplanfeaturePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntitlementPlanFeatureEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.EntitlementplanfeatureIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanfeatureTable,
+			Columns: event.EntitlementplanfeaturePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntitlementPlanFeatureEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1671,6 +1841,36 @@ func (euo *EventUpdateOne) AddFeature(f ...*Feature) *EventUpdateOne {
 	return euo.AddFeatureIDs(ids...)
 }
 
+// AddEntitlementplanIDs adds the "entitlementplan" edge to the EntitlementPlan entity by IDs.
+func (euo *EventUpdateOne) AddEntitlementplanIDs(ids ...string) *EventUpdateOne {
+	euo.mutation.AddEntitlementplanIDs(ids...)
+	return euo
+}
+
+// AddEntitlementplan adds the "entitlementplan" edges to the EntitlementPlan entity.
+func (euo *EventUpdateOne) AddEntitlementplan(e ...*EntitlementPlan) *EventUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return euo.AddEntitlementplanIDs(ids...)
+}
+
+// AddEntitlementplanfeatureIDs adds the "entitlementplanfeature" edge to the EntitlementPlanFeature entity by IDs.
+func (euo *EventUpdateOne) AddEntitlementplanfeatureIDs(ids ...string) *EventUpdateOne {
+	euo.mutation.AddEntitlementplanfeatureIDs(ids...)
+	return euo
+}
+
+// AddEntitlementplanfeature adds the "entitlementplanfeature" edges to the EntitlementPlanFeature entity.
+func (euo *EventUpdateOne) AddEntitlementplanfeature(e ...*EntitlementPlanFeature) *EventUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return euo.AddEntitlementplanfeatureIDs(ids...)
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_token" edge to the PersonalAccessToken entity by IDs.
 func (euo *EventUpdateOne) AddPersonalAccessTokenIDs(ids ...string) *EventUpdateOne {
 	euo.mutation.AddPersonalAccessTokenIDs(ids...)
@@ -1920,6 +2120,48 @@ func (euo *EventUpdateOne) RemoveFeature(f ...*Feature) *EventUpdateOne {
 		ids[i] = f[i].ID
 	}
 	return euo.RemoveFeatureIDs(ids...)
+}
+
+// ClearEntitlementplan clears all "entitlementplan" edges to the EntitlementPlan entity.
+func (euo *EventUpdateOne) ClearEntitlementplan() *EventUpdateOne {
+	euo.mutation.ClearEntitlementplan()
+	return euo
+}
+
+// RemoveEntitlementplanIDs removes the "entitlementplan" edge to EntitlementPlan entities by IDs.
+func (euo *EventUpdateOne) RemoveEntitlementplanIDs(ids ...string) *EventUpdateOne {
+	euo.mutation.RemoveEntitlementplanIDs(ids...)
+	return euo
+}
+
+// RemoveEntitlementplan removes "entitlementplan" edges to EntitlementPlan entities.
+func (euo *EventUpdateOne) RemoveEntitlementplan(e ...*EntitlementPlan) *EventUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return euo.RemoveEntitlementplanIDs(ids...)
+}
+
+// ClearEntitlementplanfeature clears all "entitlementplanfeature" edges to the EntitlementPlanFeature entity.
+func (euo *EventUpdateOne) ClearEntitlementplanfeature() *EventUpdateOne {
+	euo.mutation.ClearEntitlementplanfeature()
+	return euo
+}
+
+// RemoveEntitlementplanfeatureIDs removes the "entitlementplanfeature" edge to EntitlementPlanFeature entities by IDs.
+func (euo *EventUpdateOne) RemoveEntitlementplanfeatureIDs(ids ...string) *EventUpdateOne {
+	euo.mutation.RemoveEntitlementplanfeatureIDs(ids...)
+	return euo
+}
+
+// RemoveEntitlementplanfeature removes "entitlementplanfeature" edges to EntitlementPlanFeature entities.
+func (euo *EventUpdateOne) RemoveEntitlementplanfeature(e ...*EntitlementPlanFeature) *EventUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return euo.RemoveEntitlementplanfeatureIDs(ids...)
 }
 
 // ClearPersonalAccessToken clears all "personal_access_token" edges to the PersonalAccessToken entity.
@@ -2504,6 +2746,102 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 			},
 		}
 		edge.Schema = euo.schemaConfig.FeatureEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.EntitlementplanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanTable,
+			Columns: event.EntitlementplanPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntitlementPlanEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedEntitlementplanIDs(); len(nodes) > 0 && !euo.mutation.EntitlementplanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanTable,
+			Columns: event.EntitlementplanPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntitlementPlanEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.EntitlementplanIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanTable,
+			Columns: event.EntitlementplanPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntitlementPlanEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.EntitlementplanfeatureCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanfeatureTable,
+			Columns: event.EntitlementplanfeaturePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntitlementPlanFeatureEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedEntitlementplanfeatureIDs(); len(nodes) > 0 && !euo.mutation.EntitlementplanfeatureCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanfeatureTable,
+			Columns: event.EntitlementplanfeaturePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntitlementPlanFeatureEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.EntitlementplanfeatureIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   event.EntitlementplanfeatureTable,
+			Columns: event.EntitlementplanfeaturePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntitlementPlanFeatureEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

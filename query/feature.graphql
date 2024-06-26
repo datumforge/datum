@@ -1,23 +1,12 @@
-mutation CreateFeature($input: CreateFeatureInput!) {
-  createFeature(input: $input) {
-    feature {
+mutation CreateBulkCSVFeature($input: Upload!) {
+  createBulkCSVFeature(input: $input) {
+    features {
       description
       enabled
-      global
       id
       name
-      users {
-        id
-      }
-      groups {
-        id
-      }
-      entitlements {
-        id
-      }
-      events {
-        id
-      }
+      displayName
+      tags
     }
   }
 }
@@ -27,44 +16,54 @@ mutation CreateBulkFeature($input: [CreateFeatureInput!]) {
     features {
       description
       enabled
-      global
       id
       name
-      users {
-        id
-      }
-      groups {
-        id
-      }
-      entitlements {
-        id
-      }
-      events {
-        id
-      }
+      displayName
+      tags
     }
   }
 }
 
-mutation CreateBulkCSVFeature($input: Upload!) {
-  createBulkCSVFeature(input: $input) {
-   features {
+mutation CreateFeature($input: CreateFeatureInput!) {
+  createFeature(input: $input) {
+    feature {
       description
       enabled
-      global
       id
       name
-      users {
+      displayName
+      tags
+    }
+  }
+}
+
+mutation DeleteFeature($deleteFeatureId: ID!) {
+  deleteFeature(id: $deleteFeatureId) {
+    deletedID
+  }
+}
+
+query GetFeatureByID($featureId: ID!) {
+  feature(id: $featureId) {
+    description
+    enabled
+    id
+    name
+    displayName
+    tags
+  }
+}
+
+query GetAllFeatures {
+  features {
+    edges {
+      node {
+        description
+        enabled
         id
-      }
-      groups {
-        id
-      }
-      entitlements {
-        id
-      }
-      events {
-        id
+        name
+        displayName
+        tags
       }
     }
   }
@@ -76,25 +75,10 @@ query GetFeatures($where: FeatureWhereInput) {
       node {
         description
         enabled
-        global
         id
         name
-        users {
-          id
-          email
-        }
-        groups {
-          id
-          name
-        }
-        entitlements {
-          id
-          tier
-        }
-        events {
-          id
-          eventType
-        }
+        displayName
+        tags
       }
     }
   }
@@ -105,27 +89,10 @@ mutation UpdateFeature($updateFeatureId: ID!, $input: UpdateFeatureInput!) {
     feature {
       description
       enabled
-      global
       id
       name
-      users {
-        id
-      }
-      groups {
-        id
-      }
-      entitlements {
-        id
-      }
-      events {
-        id
-      }
+      displayName
+      tags
     }
-  }
-}
-
-mutation DeleteFeature($deleteFeatureId: ID!) {
-  deleteFeature(id: $deleteFeatureId) {
-    deletedID
   }
 }

@@ -15,6 +15,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -507,18 +511,35 @@ func (e *EntitlementQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				fieldSeen[entitlement.FieldOwnerID] = struct{}{}
 			}
 
-		case "features":
+		case "plan":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&FeatureClient{config: e.config}).Query()
+				query = (&EntitlementPlanClient{config: e.config}).Query()
 			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, featureImplementors)...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, entitlementplanImplementors)...); err != nil {
 				return err
 			}
-			e.WithNamedFeatures(alias, func(wq *FeatureQuery) {
-				*wq = *query
-			})
+			e.withPlan = query
+			if _, ok := fieldSeen[entitlement.FieldPlanID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldPlanID)
+				fieldSeen[entitlement.FieldPlanID] = struct{}{}
+			}
+
+		case "organization":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: e.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+				return err
+			}
+			e.withOrganization = query
+			if _, ok := fieldSeen[entitlement.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldOrganizationID)
+				fieldSeen[entitlement.FieldOrganizationID] = struct{}{}
+			}
 
 		case "events":
 			var (
@@ -572,10 +593,15 @@ func (e *EntitlementQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				selectedFields = append(selectedFields, entitlement.FieldOwnerID)
 				fieldSeen[entitlement.FieldOwnerID] = struct{}{}
 			}
-		case "tier":
-			if _, ok := fieldSeen[entitlement.FieldTier]; !ok {
-				selectedFields = append(selectedFields, entitlement.FieldTier)
-				fieldSeen[entitlement.FieldTier] = struct{}{}
+		case "planID":
+			if _, ok := fieldSeen[entitlement.FieldPlanID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldPlanID)
+				fieldSeen[entitlement.FieldPlanID] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[entitlement.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldOrganizationID)
+				fieldSeen[entitlement.FieldOrganizationID] = struct{}{}
 			}
 		case "externalCustomerID":
 			if _, ok := fieldSeen[entitlement.FieldExternalCustomerID]; !ok {
@@ -719,10 +745,15 @@ func (eh *EntitlementHistoryQuery) collectField(ctx context.Context, oneNode boo
 				selectedFields = append(selectedFields, entitlementhistory.FieldOwnerID)
 				fieldSeen[entitlementhistory.FieldOwnerID] = struct{}{}
 			}
-		case "tier":
-			if _, ok := fieldSeen[entitlementhistory.FieldTier]; !ok {
-				selectedFields = append(selectedFields, entitlementhistory.FieldTier)
-				fieldSeen[entitlementhistory.FieldTier] = struct{}{}
+		case "planID":
+			if _, ok := fieldSeen[entitlementhistory.FieldPlanID]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldPlanID)
+				fieldSeen[entitlementhistory.FieldPlanID] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[entitlementhistory.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldOrganizationID)
+				fieldSeen[entitlementhistory.FieldOrganizationID] = struct{}{}
 			}
 		case "externalCustomerID":
 			if _, ok := fieldSeen[entitlementhistory.FieldExternalCustomerID]; !ok {
@@ -786,6 +817,649 @@ func newEntitlementHistoryPaginateArgs(rv map[string]any) *entitlementhistoryPag
 	}
 	if v, ok := rv[whereField].(*EntitlementHistoryWhereInput); ok {
 		args.opts = append(args.opts, WithEntitlementHistoryFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ep *EntitlementPlanQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntitlementPlanQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ep, nil
+	}
+	if err := ep.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ep, nil
+}
+
+func (ep *EntitlementPlanQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(entitlementplan.Columns))
+		selectedFields = []string{entitlementplan.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: ep.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+				return err
+			}
+			ep.withOwner = query
+			if _, ok := fieldSeen[entitlementplan.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldOwnerID)
+				fieldSeen[entitlementplan.FieldOwnerID] = struct{}{}
+			}
+
+		case "entitlements":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementClient{config: ep.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementImplementors)...); err != nil {
+				return err
+			}
+			ep.WithNamedEntitlements(alias, func(wq *EntitlementQuery) {
+				*wq = *query
+			})
+
+		case "baseFeatures":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&FeatureClient{config: ep.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, featureImplementors)...); err != nil {
+				return err
+			}
+			ep.WithNamedBaseFeatures(alias, func(wq *FeatureQuery) {
+				*wq = *query
+			})
+
+		case "events":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EventClient{config: ep.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, eventImplementors)...); err != nil {
+				return err
+			}
+			ep.WithNamedEvents(alias, func(wq *EventQuery) {
+				*wq = *query
+			})
+
+		case "features":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementPlanFeatureClient{config: ep.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementplanfeatureImplementors)...); err != nil {
+				return err
+			}
+			ep.WithNamedFeatures(alias, func(wq *EntitlementPlanFeatureQuery) {
+				*wq = *query
+			})
+		case "createdAt":
+			if _, ok := fieldSeen[entitlementplan.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldCreatedAt)
+				fieldSeen[entitlementplan.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[entitlementplan.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldUpdatedAt)
+				fieldSeen[entitlementplan.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[entitlementplan.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldCreatedBy)
+				fieldSeen[entitlementplan.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[entitlementplan.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldUpdatedBy)
+				fieldSeen[entitlementplan.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[entitlementplan.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldDeletedAt)
+				fieldSeen[entitlementplan.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[entitlementplan.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldDeletedBy)
+				fieldSeen[entitlementplan.FieldDeletedBy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[entitlementplan.FieldTags]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldTags)
+				fieldSeen[entitlementplan.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[entitlementplan.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldOwnerID)
+				fieldSeen[entitlementplan.FieldOwnerID] = struct{}{}
+			}
+		case "displayName":
+			if _, ok := fieldSeen[entitlementplan.FieldDisplayName]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldDisplayName)
+				fieldSeen[entitlementplan.FieldDisplayName] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[entitlementplan.FieldName]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldName)
+				fieldSeen[entitlementplan.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[entitlementplan.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldDescription)
+				fieldSeen[entitlementplan.FieldDescription] = struct{}{}
+			}
+		case "version":
+			if _, ok := fieldSeen[entitlementplan.FieldVersion]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldVersion)
+				fieldSeen[entitlementplan.FieldVersion] = struct{}{}
+			}
+		case "metadata":
+			if _, ok := fieldSeen[entitlementplan.FieldMetadata]; !ok {
+				selectedFields = append(selectedFields, entitlementplan.FieldMetadata)
+				fieldSeen[entitlementplan.FieldMetadata] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		ep.Select(selectedFields...)
+	}
+	return nil
+}
+
+type entitlementplanPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []EntitlementPlanPaginateOption
+}
+
+func newEntitlementPlanPaginateArgs(rv map[string]any) *entitlementplanPaginateArgs {
+	args := &entitlementplanPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*EntitlementPlanWhereInput); ok {
+		args.opts = append(args.opts, WithEntitlementPlanFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (eph *EntitlementPlanHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntitlementPlanHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return eph, nil
+	}
+	if err := eph.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return eph, nil
+}
+
+func (eph *EntitlementPlanHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(entitlementplanhistory.Columns))
+		selectedFields = []string{entitlementplanhistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldHistoryTime)
+				fieldSeen[entitlementplanhistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldOperation)
+				fieldSeen[entitlementplanhistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldRef)
+				fieldSeen[entitlementplanhistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldCreatedAt)
+				fieldSeen[entitlementplanhistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldUpdatedAt)
+				fieldSeen[entitlementplanhistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldCreatedBy)
+				fieldSeen[entitlementplanhistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldUpdatedBy)
+				fieldSeen[entitlementplanhistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldDeletedAt)
+				fieldSeen[entitlementplanhistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldDeletedBy)
+				fieldSeen[entitlementplanhistory.FieldDeletedBy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldTags]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldTags)
+				fieldSeen[entitlementplanhistory.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldOwnerID)
+				fieldSeen[entitlementplanhistory.FieldOwnerID] = struct{}{}
+			}
+		case "displayName":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldDisplayName]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldDisplayName)
+				fieldSeen[entitlementplanhistory.FieldDisplayName] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldName]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldName)
+				fieldSeen[entitlementplanhistory.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldDescription)
+				fieldSeen[entitlementplanhistory.FieldDescription] = struct{}{}
+			}
+		case "version":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldVersion]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldVersion)
+				fieldSeen[entitlementplanhistory.FieldVersion] = struct{}{}
+			}
+		case "metadata":
+			if _, ok := fieldSeen[entitlementplanhistory.FieldMetadata]; !ok {
+				selectedFields = append(selectedFields, entitlementplanhistory.FieldMetadata)
+				fieldSeen[entitlementplanhistory.FieldMetadata] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		eph.Select(selectedFields...)
+	}
+	return nil
+}
+
+type entitlementplanhistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []EntitlementPlanHistoryPaginateOption
+}
+
+func newEntitlementPlanHistoryPaginateArgs(rv map[string]any) *entitlementplanhistoryPaginateArgs {
+	args := &entitlementplanhistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*EntitlementPlanHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithEntitlementPlanHistoryFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (epf *EntitlementPlanFeatureQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntitlementPlanFeatureQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return epf, nil
+	}
+	if err := epf.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return epf, nil
+}
+
+func (epf *EntitlementPlanFeatureQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(entitlementplanfeature.Columns))
+		selectedFields = []string{entitlementplanfeature.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: epf.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+				return err
+			}
+			epf.withOwner = query
+			if _, ok := fieldSeen[entitlementplanfeature.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldOwnerID)
+				fieldSeen[entitlementplanfeature.FieldOwnerID] = struct{}{}
+			}
+
+		case "plan":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementPlanClient{config: epf.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, entitlementplanImplementors)...); err != nil {
+				return err
+			}
+			epf.withPlan = query
+			if _, ok := fieldSeen[entitlementplanfeature.FieldPlanID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldPlanID)
+				fieldSeen[entitlementplanfeature.FieldPlanID] = struct{}{}
+			}
+
+		case "feature":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&FeatureClient{config: epf.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, featureImplementors)...); err != nil {
+				return err
+			}
+			epf.withFeature = query
+			if _, ok := fieldSeen[entitlementplanfeature.FieldFeatureID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldFeatureID)
+				fieldSeen[entitlementplanfeature.FieldFeatureID] = struct{}{}
+			}
+
+		case "events":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EventClient{config: epf.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, eventImplementors)...); err != nil {
+				return err
+			}
+			epf.WithNamedEvents(alias, func(wq *EventQuery) {
+				*wq = *query
+			})
+		case "createdAt":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldCreatedAt)
+				fieldSeen[entitlementplanfeature.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldUpdatedAt)
+				fieldSeen[entitlementplanfeature.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldCreatedBy)
+				fieldSeen[entitlementplanfeature.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldUpdatedBy)
+				fieldSeen[entitlementplanfeature.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldDeletedAt)
+				fieldSeen[entitlementplanfeature.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldDeletedBy)
+				fieldSeen[entitlementplanfeature.FieldDeletedBy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldTags]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldTags)
+				fieldSeen[entitlementplanfeature.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldOwnerID)
+				fieldSeen[entitlementplanfeature.FieldOwnerID] = struct{}{}
+			}
+		case "metadata":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldMetadata]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldMetadata)
+				fieldSeen[entitlementplanfeature.FieldMetadata] = struct{}{}
+			}
+		case "planID":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldPlanID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldPlanID)
+				fieldSeen[entitlementplanfeature.FieldPlanID] = struct{}{}
+			}
+		case "featureID":
+			if _, ok := fieldSeen[entitlementplanfeature.FieldFeatureID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeature.FieldFeatureID)
+				fieldSeen[entitlementplanfeature.FieldFeatureID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		epf.Select(selectedFields...)
+	}
+	return nil
+}
+
+type entitlementplanfeaturePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []EntitlementPlanFeaturePaginateOption
+}
+
+func newEntitlementPlanFeaturePaginateArgs(rv map[string]any) *entitlementplanfeaturePaginateArgs {
+	args := &entitlementplanfeaturePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*EntitlementPlanFeatureWhereInput); ok {
+		args.opts = append(args.opts, WithEntitlementPlanFeatureFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (epfh *EntitlementPlanFeatureHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntitlementPlanFeatureHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return epfh, nil
+	}
+	if err := epfh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return epfh, nil
+}
+
+func (epfh *EntitlementPlanFeatureHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(entitlementplanfeaturehistory.Columns))
+		selectedFields = []string{entitlementplanfeaturehistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldHistoryTime)
+				fieldSeen[entitlementplanfeaturehistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldOperation)
+				fieldSeen[entitlementplanfeaturehistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldRef)
+				fieldSeen[entitlementplanfeaturehistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldCreatedAt)
+				fieldSeen[entitlementplanfeaturehistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldUpdatedAt)
+				fieldSeen[entitlementplanfeaturehistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldCreatedBy)
+				fieldSeen[entitlementplanfeaturehistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldUpdatedBy)
+				fieldSeen[entitlementplanfeaturehistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldDeletedAt)
+				fieldSeen[entitlementplanfeaturehistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldDeletedBy)
+				fieldSeen[entitlementplanfeaturehistory.FieldDeletedBy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldTags]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldTags)
+				fieldSeen[entitlementplanfeaturehistory.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldOwnerID)
+				fieldSeen[entitlementplanfeaturehistory.FieldOwnerID] = struct{}{}
+			}
+		case "metadata":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldMetadata]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldMetadata)
+				fieldSeen[entitlementplanfeaturehistory.FieldMetadata] = struct{}{}
+			}
+		case "planID":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldPlanID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldPlanID)
+				fieldSeen[entitlementplanfeaturehistory.FieldPlanID] = struct{}{}
+			}
+		case "featureID":
+			if _, ok := fieldSeen[entitlementplanfeaturehistory.FieldFeatureID]; !ok {
+				selectedFields = append(selectedFields, entitlementplanfeaturehistory.FieldFeatureID)
+				fieldSeen[entitlementplanfeaturehistory.FieldFeatureID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		epfh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type entitlementplanfeaturehistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []EntitlementPlanFeatureHistoryPaginateOption
+}
+
+func newEntitlementPlanFeatureHistoryPaginateArgs(rv map[string]any) *entitlementplanfeaturehistoryPaginateArgs {
+	args := &entitlementplanfeaturehistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*EntitlementPlanFeatureHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithEntitlementPlanFeatureHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -887,6 +1561,32 @@ func (e *EventQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 				return err
 			}
 			e.WithNamedFeature(alias, func(wq *FeatureQuery) {
+				*wq = *query
+			})
+
+		case "entitlementplan":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementPlanClient{config: e.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementplanImplementors)...); err != nil {
+				return err
+			}
+			e.WithNamedEntitlementplan(alias, func(wq *EntitlementPlanQuery) {
+				*wq = *query
+			})
+
+		case "entitlementplanfeature":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementPlanFeatureClient{config: e.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementplanfeatureImplementors)...); err != nil {
+				return err
+			}
+			e.WithNamedEntitlementplanfeature(alias, func(wq *EntitlementPlanFeatureQuery) {
 				*wq = *query
 			})
 
@@ -1223,55 +1923,31 @@ func (f *FeatureQuery) collectField(ctx context.Context, oneNode bool, opCtx *gr
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 
-		case "users":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&UserClient{config: f.config}).Query()
-			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
-				return err
-			}
-			f.WithNamedUsers(alias, func(wq *UserQuery) {
-				*wq = *query
-			})
-
-		case "groups":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&GroupClient{config: f.config}).Query()
-			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, groupImplementors)...); err != nil {
-				return err
-			}
-			f.WithNamedGroups(alias, func(wq *GroupQuery) {
-				*wq = *query
-			})
-
-		case "entitlements":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&EntitlementClient{config: f.config}).Query()
-			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementImplementors)...); err != nil {
-				return err
-			}
-			f.WithNamedEntitlements(alias, func(wq *EntitlementQuery) {
-				*wq = *query
-			})
-
-		case "organizations":
+		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: f.config}).Query()
 			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
-			f.WithNamedOrganizations(alias, func(wq *OrganizationQuery) {
+			f.withOwner = query
+			if _, ok := fieldSeen[feature.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, feature.FieldOwnerID)
+				fieldSeen[feature.FieldOwnerID] = struct{}{}
+			}
+
+		case "plans":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementPlanClient{config: f.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementplanImplementors)...); err != nil {
+				return err
+			}
+			f.WithNamedPlans(alias, func(wq *EntitlementPlanQuery) {
 				*wq = *query
 			})
 
@@ -1285,6 +1961,19 @@ func (f *FeatureQuery) collectField(ctx context.Context, oneNode bool, opCtx *gr
 				return err
 			}
 			f.WithNamedEvents(alias, func(wq *EventQuery) {
+				*wq = *query
+			})
+
+		case "features":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementPlanFeatureClient{config: f.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementplanfeatureImplementors)...); err != nil {
+				return err
+			}
+			f.WithNamedFeatures(alias, func(wq *EntitlementPlanFeatureQuery) {
 				*wq = *query
 			})
 		case "createdAt":
@@ -1322,15 +2011,20 @@ func (f *FeatureQuery) collectField(ctx context.Context, oneNode bool, opCtx *gr
 				selectedFields = append(selectedFields, feature.FieldTags)
 				fieldSeen[feature.FieldTags] = struct{}{}
 			}
+		case "ownerID":
+			if _, ok := fieldSeen[feature.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, feature.FieldOwnerID)
+				fieldSeen[feature.FieldOwnerID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[feature.FieldName]; !ok {
 				selectedFields = append(selectedFields, feature.FieldName)
 				fieldSeen[feature.FieldName] = struct{}{}
 			}
-		case "global":
-			if _, ok := fieldSeen[feature.FieldGlobal]; !ok {
-				selectedFields = append(selectedFields, feature.FieldGlobal)
-				fieldSeen[feature.FieldGlobal] = struct{}{}
+		case "displayName":
+			if _, ok := fieldSeen[feature.FieldDisplayName]; !ok {
+				selectedFields = append(selectedFields, feature.FieldDisplayName)
+				fieldSeen[feature.FieldDisplayName] = struct{}{}
 			}
 		case "enabled":
 			if _, ok := fieldSeen[feature.FieldEnabled]; !ok {
@@ -1341,6 +2035,11 @@ func (f *FeatureQuery) collectField(ctx context.Context, oneNode bool, opCtx *gr
 			if _, ok := fieldSeen[feature.FieldDescription]; !ok {
 				selectedFields = append(selectedFields, feature.FieldDescription)
 				fieldSeen[feature.FieldDescription] = struct{}{}
+			}
+		case "metadata":
+			if _, ok := fieldSeen[feature.FieldMetadata]; !ok {
+				selectedFields = append(selectedFields, feature.FieldMetadata)
+				fieldSeen[feature.FieldMetadata] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1454,15 +2153,20 @@ func (fh *FeatureHistoryQuery) collectField(ctx context.Context, oneNode bool, o
 				selectedFields = append(selectedFields, featurehistory.FieldTags)
 				fieldSeen[featurehistory.FieldTags] = struct{}{}
 			}
+		case "ownerID":
+			if _, ok := fieldSeen[featurehistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, featurehistory.FieldOwnerID)
+				fieldSeen[featurehistory.FieldOwnerID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[featurehistory.FieldName]; !ok {
 				selectedFields = append(selectedFields, featurehistory.FieldName)
 				fieldSeen[featurehistory.FieldName] = struct{}{}
 			}
-		case "global":
-			if _, ok := fieldSeen[featurehistory.FieldGlobal]; !ok {
-				selectedFields = append(selectedFields, featurehistory.FieldGlobal)
-				fieldSeen[featurehistory.FieldGlobal] = struct{}{}
+		case "displayName":
+			if _, ok := fieldSeen[featurehistory.FieldDisplayName]; !ok {
+				selectedFields = append(selectedFields, featurehistory.FieldDisplayName)
+				fieldSeen[featurehistory.FieldDisplayName] = struct{}{}
 			}
 		case "enabled":
 			if _, ok := fieldSeen[featurehistory.FieldEnabled]; !ok {
@@ -1473,6 +2177,11 @@ func (fh *FeatureHistoryQuery) collectField(ctx context.Context, oneNode bool, o
 			if _, ok := fieldSeen[featurehistory.FieldDescription]; !ok {
 				selectedFields = append(selectedFields, featurehistory.FieldDescription)
 				fieldSeen[featurehistory.FieldDescription] = struct{}{}
+			}
+		case "metadata":
+			if _, ok := fieldSeen[featurehistory.FieldMetadata]; !ok {
+				selectedFields = append(selectedFields, featurehistory.FieldMetadata)
+				fieldSeen[featurehistory.FieldMetadata] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1889,19 +2598,6 @@ func (gr *GroupQuery) collectField(ctx context.Context, oneNode bool, opCtx *gra
 				return err
 			}
 			gr.WithNamedUsers(alias, func(wq *UserQuery) {
-				*wq = *query
-			})
-
-		case "features":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&FeatureClient{config: gr.config}).Query()
-			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, featureImplementors)...); err != nil {
-				return err
-			}
-			gr.WithNamedFeatures(alias, func(wq *FeatureQuery) {
 				*wq = *query
 			})
 
@@ -4582,6 +5278,19 @@ func (o *OrganizationQuery) collectField(ctx context.Context, oneNode bool, opCt
 				*wq = *query
 			})
 
+		case "organizationEntitlement":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementImplementors)...); err != nil {
+				return err
+			}
+			o.WithNamedOrganizationEntitlement(alias, func(wq *EntitlementQuery) {
+				*wq = *query
+			})
+
 		case "personalAccessTokens":
 			var (
 				alias = field.Alias
@@ -4722,6 +5431,32 @@ func (o *OrganizationQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			o.WithNamedFiles(alias, func(wq *FileQuery) {
+				*wq = *query
+			})
+
+		case "entitlementplans":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementPlanClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementplanImplementors)...); err != nil {
+				return err
+			}
+			o.WithNamedEntitlementplans(alias, func(wq *EntitlementPlanQuery) {
+				*wq = *query
+			})
+
+		case "entitlementplanfeatures":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementPlanFeatureClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementplanfeatureImplementors)...); err != nil {
+				return err
+			}
+			o.WithNamedEntitlementplanfeatures(alias, func(wq *EntitlementPlanFeatureQuery) {
 				*wq = *query
 			})
 
@@ -6237,19 +6972,6 @@ func (u *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 				return err
 			}
 			u.WithNamedEvents(alias, func(wq *EventQuery) {
-				*wq = *query
-			})
-
-		case "features":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&FeatureClient{config: u.config}).Query()
-			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, featureImplementors)...); err != nil {
-				return err
-			}
-			u.WithNamedFeatures(alias, func(wq *FeatureQuery) {
 				*wq = *query
 			})
 

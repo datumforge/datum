@@ -78,8 +78,6 @@ const (
 	EdgeFiles = "files"
 	// EdgeEvents holds the string denoting the events edge name in mutations.
 	EdgeEvents = "events"
-	// EdgeFeatures holds the string denoting the features edge name in mutations.
-	EdgeFeatures = "features"
 	// EdgeGroupMemberships holds the string denoting the group_memberships edge name in mutations.
 	EdgeGroupMemberships = "group_memberships"
 	// EdgeOrgMemberships holds the string denoting the org_memberships edge name in mutations.
@@ -150,11 +148,6 @@ const (
 	// EventsInverseTable is the table name for the Event entity.
 	// It exists in this package in order to avoid circular dependency with the "event" package.
 	EventsInverseTable = "events"
-	// FeaturesTable is the table that holds the features relation/edge. The primary key declared below.
-	FeaturesTable = "user_features"
-	// FeaturesInverseTable is the table name for the Feature entity.
-	// It exists in this package in order to avoid circular dependency with the "feature" package.
-	FeaturesInverseTable = "features"
 	// GroupMembershipsTable is the table that holds the group_memberships relation/edge.
 	GroupMembershipsTable = "group_memberships"
 	// GroupMembershipsInverseTable is the table name for the GroupMembership entity.
@@ -206,9 +199,6 @@ var (
 	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
 	// primary key for the events relation (M2M).
 	EventsPrimaryKey = []string{"user_id", "event_id"}
-	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
-	// primary key for the features relation (M2M).
-	FeaturesPrimaryKey = []string{"user_id", "feature_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -520,20 +510,6 @@ func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByFeaturesCount orders the results by features count.
-func ByFeaturesCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newFeaturesStep(), opts...)
-	}
-}
-
-// ByFeatures orders the results by features terms.
-func ByFeatures(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newFeaturesStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByGroupMembershipsCount orders the results by group_memberships count.
 func ByGroupMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -629,13 +605,6 @@ func newEventsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EventsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
-	)
-}
-func newFeaturesStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(FeaturesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
 	)
 }
 func newGroupMembershipsStep() *sqlgraph.Step {

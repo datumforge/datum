@@ -7,7 +7,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/enthistory"
 )
 
@@ -114,6 +113,16 @@ func DeletedBy(v string) predicate.EntitlementHistory {
 // OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
 func OwnerID(v string) predicate.EntitlementHistory {
 	return predicate.EntitlementHistory(sql.FieldEQ(FieldOwnerID, v))
+}
+
+// PlanID applies equality check predicate on the "plan_id" field. It's identical to PlanIDEQ.
+func PlanID(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldEQ(FieldPlanID, v))
+}
+
+// OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
+func OrganizationID(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldEQ(FieldOrganizationID, v))
 }
 
 // ExternalCustomerID applies equality check predicate on the "external_customer_id" field. It's identical to ExternalCustomerIDEQ.
@@ -801,34 +810,134 @@ func OwnerIDContainsFold(v string) predicate.EntitlementHistory {
 	return predicate.EntitlementHistory(sql.FieldContainsFold(FieldOwnerID, v))
 }
 
-// TierEQ applies the EQ predicate on the "tier" field.
-func TierEQ(v enums.Tier) predicate.EntitlementHistory {
-	vc := v
-	return predicate.EntitlementHistory(sql.FieldEQ(FieldTier, vc))
+// PlanIDEQ applies the EQ predicate on the "plan_id" field.
+func PlanIDEQ(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldEQ(FieldPlanID, v))
 }
 
-// TierNEQ applies the NEQ predicate on the "tier" field.
-func TierNEQ(v enums.Tier) predicate.EntitlementHistory {
-	vc := v
-	return predicate.EntitlementHistory(sql.FieldNEQ(FieldTier, vc))
+// PlanIDNEQ applies the NEQ predicate on the "plan_id" field.
+func PlanIDNEQ(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldNEQ(FieldPlanID, v))
 }
 
-// TierIn applies the In predicate on the "tier" field.
-func TierIn(vs ...enums.Tier) predicate.EntitlementHistory {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.EntitlementHistory(sql.FieldIn(FieldTier, v...))
+// PlanIDIn applies the In predicate on the "plan_id" field.
+func PlanIDIn(vs ...string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldIn(FieldPlanID, vs...))
 }
 
-// TierNotIn applies the NotIn predicate on the "tier" field.
-func TierNotIn(vs ...enums.Tier) predicate.EntitlementHistory {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.EntitlementHistory(sql.FieldNotIn(FieldTier, v...))
+// PlanIDNotIn applies the NotIn predicate on the "plan_id" field.
+func PlanIDNotIn(vs ...string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldNotIn(FieldPlanID, vs...))
+}
+
+// PlanIDGT applies the GT predicate on the "plan_id" field.
+func PlanIDGT(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldGT(FieldPlanID, v))
+}
+
+// PlanIDGTE applies the GTE predicate on the "plan_id" field.
+func PlanIDGTE(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldGTE(FieldPlanID, v))
+}
+
+// PlanIDLT applies the LT predicate on the "plan_id" field.
+func PlanIDLT(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldLT(FieldPlanID, v))
+}
+
+// PlanIDLTE applies the LTE predicate on the "plan_id" field.
+func PlanIDLTE(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldLTE(FieldPlanID, v))
+}
+
+// PlanIDContains applies the Contains predicate on the "plan_id" field.
+func PlanIDContains(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldContains(FieldPlanID, v))
+}
+
+// PlanIDHasPrefix applies the HasPrefix predicate on the "plan_id" field.
+func PlanIDHasPrefix(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldHasPrefix(FieldPlanID, v))
+}
+
+// PlanIDHasSuffix applies the HasSuffix predicate on the "plan_id" field.
+func PlanIDHasSuffix(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldHasSuffix(FieldPlanID, v))
+}
+
+// PlanIDEqualFold applies the EqualFold predicate on the "plan_id" field.
+func PlanIDEqualFold(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldEqualFold(FieldPlanID, v))
+}
+
+// PlanIDContainsFold applies the ContainsFold predicate on the "plan_id" field.
+func PlanIDContainsFold(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldContainsFold(FieldPlanID, v))
+}
+
+// OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
+func OrganizationIDEQ(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDNEQ applies the NEQ predicate on the "organization_id" field.
+func OrganizationIDNEQ(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldNEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDIn applies the In predicate on the "organization_id" field.
+func OrganizationIDIn(vs ...string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDNotIn applies the NotIn predicate on the "organization_id" field.
+func OrganizationIDNotIn(vs ...string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldNotIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDGT applies the GT predicate on the "organization_id" field.
+func OrganizationIDGT(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldGT(FieldOrganizationID, v))
+}
+
+// OrganizationIDGTE applies the GTE predicate on the "organization_id" field.
+func OrganizationIDGTE(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldGTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDLT applies the LT predicate on the "organization_id" field.
+func OrganizationIDLT(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldLT(FieldOrganizationID, v))
+}
+
+// OrganizationIDLTE applies the LTE predicate on the "organization_id" field.
+func OrganizationIDLTE(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldLTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDContains applies the Contains predicate on the "organization_id" field.
+func OrganizationIDContains(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldContains(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasPrefix applies the HasPrefix predicate on the "organization_id" field.
+func OrganizationIDHasPrefix(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldHasPrefix(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasSuffix applies the HasSuffix predicate on the "organization_id" field.
+func OrganizationIDHasSuffix(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldHasSuffix(FieldOrganizationID, v))
+}
+
+// OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
+func OrganizationIDEqualFold(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldEqualFold(FieldOrganizationID, v))
+}
+
+// OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
+func OrganizationIDContainsFold(v string) predicate.EntitlementHistory {
+	return predicate.EntitlementHistory(sql.FieldContainsFold(FieldOrganizationID, v))
 }
 
 // ExternalCustomerIDEQ applies the EQ predicate on the "external_customer_id" field.

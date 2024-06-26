@@ -47,6 +47,10 @@ const (
 	EdgeInvite = "invite"
 	// EdgeFeature holds the string denoting the feature edge name in mutations.
 	EdgeFeature = "feature"
+	// EdgeEntitlementplan holds the string denoting the entitlementplan edge name in mutations.
+	EdgeEntitlementplan = "entitlementplan"
+	// EdgeEntitlementplanfeature holds the string denoting the entitlementplanfeature edge name in mutations.
+	EdgeEntitlementplanfeature = "entitlementplanfeature"
 	// EdgePersonalAccessToken holds the string denoting the personal_access_token edge name in mutations.
 	EdgePersonalAccessToken = "personal_access_token"
 	// EdgeOauth2token holds the string denoting the oauth2token edge name in mutations.
@@ -95,6 +99,16 @@ const (
 	// FeatureInverseTable is the table name for the Feature entity.
 	// It exists in this package in order to avoid circular dependency with the "feature" package.
 	FeatureInverseTable = "features"
+	// EntitlementplanTable is the table that holds the entitlementplan relation/edge. The primary key declared below.
+	EntitlementplanTable = "entitlement_plan_events"
+	// EntitlementplanInverseTable is the table name for the EntitlementPlan entity.
+	// It exists in this package in order to avoid circular dependency with the "entitlementplan" package.
+	EntitlementplanInverseTable = "entitlement_plans"
+	// EntitlementplanfeatureTable is the table that holds the entitlementplanfeature relation/edge. The primary key declared below.
+	EntitlementplanfeatureTable = "entitlement_plan_feature_events"
+	// EntitlementplanfeatureInverseTable is the table name for the EntitlementPlanFeature entity.
+	// It exists in this package in order to avoid circular dependency with the "entitlementplanfeature" package.
+	EntitlementplanfeatureInverseTable = "entitlement_plan_features"
 	// PersonalAccessTokenTable is the table that holds the personal_access_token relation/edge. The primary key declared below.
 	PersonalAccessTokenTable = "personal_access_token_events"
 	// PersonalAccessTokenInverseTable is the table name for the PersonalAccessToken entity.
@@ -171,6 +185,12 @@ var (
 	// FeaturePrimaryKey and FeatureColumn2 are the table columns denoting the
 	// primary key for the feature relation (M2M).
 	FeaturePrimaryKey = []string{"feature_id", "event_id"}
+	// EntitlementplanPrimaryKey and EntitlementplanColumn2 are the table columns denoting the
+	// primary key for the entitlementplan relation (M2M).
+	EntitlementplanPrimaryKey = []string{"entitlement_plan_id", "event_id"}
+	// EntitlementplanfeaturePrimaryKey and EntitlementplanfeatureColumn2 are the table columns denoting the
+	// primary key for the entitlementplanfeature relation (M2M).
+	EntitlementplanfeaturePrimaryKey = []string{"entitlement_plan_feature_id", "event_id"}
 	// PersonalAccessTokenPrimaryKey and PersonalAccessTokenColumn2 are the table columns denoting the
 	// primary key for the personal_access_token relation (M2M).
 	PersonalAccessTokenPrimaryKey = []string{"personal_access_token_id", "event_id"}
@@ -360,6 +380,34 @@ func ByFeature(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByEntitlementplanCount orders the results by entitlementplan count.
+func ByEntitlementplanCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEntitlementplanStep(), opts...)
+	}
+}
+
+// ByEntitlementplan orders the results by entitlementplan terms.
+func ByEntitlementplan(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntitlementplanStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEntitlementplanfeatureCount orders the results by entitlementplanfeature count.
+func ByEntitlementplanfeatureCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEntitlementplanfeatureStep(), opts...)
+	}
+}
+
+// ByEntitlementplanfeature orders the results by entitlementplanfeature terms.
+func ByEntitlementplanfeature(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntitlementplanfeatureStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByPersonalAccessTokenCount orders the results by personal_access_token count.
 func ByPersonalAccessTokenCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -511,6 +559,20 @@ func newFeatureStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(FeatureInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, FeatureTable, FeaturePrimaryKey...),
+	)
+}
+func newEntitlementplanStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntitlementplanInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, EntitlementplanTable, EntitlementplanPrimaryKey...),
+	)
+}
+func newEntitlementplanfeatureStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntitlementplanfeatureInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, EntitlementplanfeatureTable, EntitlementplanfeaturePrimaryKey...),
 	)
 }
 func newPersonalAccessTokenStep() *sqlgraph.Step {

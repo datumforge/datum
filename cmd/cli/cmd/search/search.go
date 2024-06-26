@@ -7,23 +7,36 @@ import (
 	"github.com/spf13/cobra"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
+	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
-var searchCmd = &cobra.Command{
+var cmd = &cobra.Command{
 	Use:   "search",
-	Short: "Search for organizations, groups, users, subscribers, etc in the datum system",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return search(cmd.Context())
+	Short: "search for organizations, groups, users, subscribers, etc in the datum system",
+	Run: func(cmd *cobra.Command, args []string) {
+		err := search(cmd.Context())
+		cobra.CheckErr(err)
 	},
 }
 
 func init() {
-	datum.RootCmd.AddCommand(searchCmd)
+	datum.RootCmd.AddCommand(cmd)
 
-	searchCmd.Flags().StringP("query", "q", "", "query string to search for")
+	cmd.Flags().StringP("query", "q", "", "query string to search for")
 }
 
+// validate validates the required fields for the command
+func validate() (string, error) {
+	query := datum.Config.String("query")
+	if query == "" {
+		return "", datum.NewRequiredFieldMissingError("query")
+	}
+
+	return query, nil
+}
+
+// search searches for organizations, groups, users, subscribers, etc in the datum system
 func search(ctx context.Context) error { // setup datum http client
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
@@ -31,14 +44,18 @@ func search(ctx context.Context) error { // setup datum http client
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	query := datum.Config.String("query")
-	if query == "" {
-		return datum.NewRequiredFieldMissingError("query")
-	}
+	query, err := validate()
+	cobra.CheckErr(err)
 
 	results, err := client.Search(ctx, query)
 	cobra.CheckErr(err)
 
+	consoleOutput(results)
+
+	return nil
+}
+
+func consoleOutput(results *datumclient.Search) {
 	// print results
 	for _, r := range results.Search.Nodes {
 		if len(r.OrganizationSearchResult.Organizations) > 0 {
@@ -89,6 +106,4 @@ func search(ctx context.Context) error { // setup datum http client
 			writer.Render()
 		}
 	}
-
-	return nil
 }

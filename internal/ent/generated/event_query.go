@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -34,40 +36,44 @@ import (
 // EventQuery is the builder for querying Event entities.
 type EventQuery struct {
 	config
-	ctx                          *QueryContext
-	order                        []event.OrderOption
-	inters                       []Interceptor
-	predicates                   []predicate.Event
-	withUser                     *UserQuery
-	withGroup                    *GroupQuery
-	withIntegration              *IntegrationQuery
-	withOrganization             *OrganizationQuery
-	withInvite                   *InviteQuery
-	withFeature                  *FeatureQuery
-	withPersonalAccessToken      *PersonalAccessTokenQuery
-	withOauth2token              *OhAuthTooTokenQuery
-	withHush                     *HushQuery
-	withOrgmembership            *OrgMembershipQuery
-	withGroupmembership          *GroupMembershipQuery
-	withEntitlement              *EntitlementQuery
-	withWebhook                  *WebhookQuery
-	withSubscriber               *SubscriberQuery
-	modifiers                    []func(*sql.Selector)
-	loadTotal                    []func(context.Context, []*Event) error
-	withNamedUser                map[string]*UserQuery
-	withNamedGroup               map[string]*GroupQuery
-	withNamedIntegration         map[string]*IntegrationQuery
-	withNamedOrganization        map[string]*OrganizationQuery
-	withNamedInvite              map[string]*InviteQuery
-	withNamedFeature             map[string]*FeatureQuery
-	withNamedPersonalAccessToken map[string]*PersonalAccessTokenQuery
-	withNamedOauth2token         map[string]*OhAuthTooTokenQuery
-	withNamedHush                map[string]*HushQuery
-	withNamedOrgmembership       map[string]*OrgMembershipQuery
-	withNamedGroupmembership     map[string]*GroupMembershipQuery
-	withNamedEntitlement         map[string]*EntitlementQuery
-	withNamedWebhook             map[string]*WebhookQuery
-	withNamedSubscriber          map[string]*SubscriberQuery
+	ctx                             *QueryContext
+	order                           []event.OrderOption
+	inters                          []Interceptor
+	predicates                      []predicate.Event
+	withUser                        *UserQuery
+	withGroup                       *GroupQuery
+	withIntegration                 *IntegrationQuery
+	withOrganization                *OrganizationQuery
+	withInvite                      *InviteQuery
+	withFeature                     *FeatureQuery
+	withEntitlementplan             *EntitlementPlanQuery
+	withEntitlementplanfeature      *EntitlementPlanFeatureQuery
+	withPersonalAccessToken         *PersonalAccessTokenQuery
+	withOauth2token                 *OhAuthTooTokenQuery
+	withHush                        *HushQuery
+	withOrgmembership               *OrgMembershipQuery
+	withGroupmembership             *GroupMembershipQuery
+	withEntitlement                 *EntitlementQuery
+	withWebhook                     *WebhookQuery
+	withSubscriber                  *SubscriberQuery
+	modifiers                       []func(*sql.Selector)
+	loadTotal                       []func(context.Context, []*Event) error
+	withNamedUser                   map[string]*UserQuery
+	withNamedGroup                  map[string]*GroupQuery
+	withNamedIntegration            map[string]*IntegrationQuery
+	withNamedOrganization           map[string]*OrganizationQuery
+	withNamedInvite                 map[string]*InviteQuery
+	withNamedFeature                map[string]*FeatureQuery
+	withNamedEntitlementplan        map[string]*EntitlementPlanQuery
+	withNamedEntitlementplanfeature map[string]*EntitlementPlanFeatureQuery
+	withNamedPersonalAccessToken    map[string]*PersonalAccessTokenQuery
+	withNamedOauth2token            map[string]*OhAuthTooTokenQuery
+	withNamedHush                   map[string]*HushQuery
+	withNamedOrgmembership          map[string]*OrgMembershipQuery
+	withNamedGroupmembership        map[string]*GroupMembershipQuery
+	withNamedEntitlement            map[string]*EntitlementQuery
+	withNamedWebhook                map[string]*WebhookQuery
+	withNamedSubscriber             map[string]*SubscriberQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -248,6 +254,56 @@ func (eq *EventQuery) QueryFeature() *FeatureQuery {
 		schemaConfig := eq.schemaConfig
 		step.To.Schema = schemaConfig.Feature
 		step.Edge.Schema = schemaConfig.FeatureEvents
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntitlementplan chains the current query on the "entitlementplan" edge.
+func (eq *EventQuery) QueryEntitlementplan() *EntitlementPlanQuery {
+	query := (&EntitlementPlanClient{config: eq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, selector),
+			sqlgraph.To(entitlementplan.Table, entitlementplan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, event.EntitlementplanTable, event.EntitlementplanPrimaryKey...),
+		)
+		schemaConfig := eq.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.EntitlementPlanEvents
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntitlementplanfeature chains the current query on the "entitlementplanfeature" edge.
+func (eq *EventQuery) QueryEntitlementplanfeature() *EntitlementPlanFeatureQuery {
+	query := (&EntitlementPlanFeatureClient{config: eq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, selector),
+			sqlgraph.To(entitlementplanfeature.Table, entitlementplanfeature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, event.EntitlementplanfeatureTable, event.EntitlementplanfeaturePrimaryKey...),
+		)
+		schemaConfig := eq.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlanFeature
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeatureEvents
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -641,25 +697,27 @@ func (eq *EventQuery) Clone() *EventQuery {
 		return nil
 	}
 	return &EventQuery{
-		config:                  eq.config,
-		ctx:                     eq.ctx.Clone(),
-		order:                   append([]event.OrderOption{}, eq.order...),
-		inters:                  append([]Interceptor{}, eq.inters...),
-		predicates:              append([]predicate.Event{}, eq.predicates...),
-		withUser:                eq.withUser.Clone(),
-		withGroup:               eq.withGroup.Clone(),
-		withIntegration:         eq.withIntegration.Clone(),
-		withOrganization:        eq.withOrganization.Clone(),
-		withInvite:              eq.withInvite.Clone(),
-		withFeature:             eq.withFeature.Clone(),
-		withPersonalAccessToken: eq.withPersonalAccessToken.Clone(),
-		withOauth2token:         eq.withOauth2token.Clone(),
-		withHush:                eq.withHush.Clone(),
-		withOrgmembership:       eq.withOrgmembership.Clone(),
-		withGroupmembership:     eq.withGroupmembership.Clone(),
-		withEntitlement:         eq.withEntitlement.Clone(),
-		withWebhook:             eq.withWebhook.Clone(),
-		withSubscriber:          eq.withSubscriber.Clone(),
+		config:                     eq.config,
+		ctx:                        eq.ctx.Clone(),
+		order:                      append([]event.OrderOption{}, eq.order...),
+		inters:                     append([]Interceptor{}, eq.inters...),
+		predicates:                 append([]predicate.Event{}, eq.predicates...),
+		withUser:                   eq.withUser.Clone(),
+		withGroup:                  eq.withGroup.Clone(),
+		withIntegration:            eq.withIntegration.Clone(),
+		withOrganization:           eq.withOrganization.Clone(),
+		withInvite:                 eq.withInvite.Clone(),
+		withFeature:                eq.withFeature.Clone(),
+		withEntitlementplan:        eq.withEntitlementplan.Clone(),
+		withEntitlementplanfeature: eq.withEntitlementplanfeature.Clone(),
+		withPersonalAccessToken:    eq.withPersonalAccessToken.Clone(),
+		withOauth2token:            eq.withOauth2token.Clone(),
+		withHush:                   eq.withHush.Clone(),
+		withOrgmembership:          eq.withOrgmembership.Clone(),
+		withGroupmembership:        eq.withGroupmembership.Clone(),
+		withEntitlement:            eq.withEntitlement.Clone(),
+		withWebhook:                eq.withWebhook.Clone(),
+		withSubscriber:             eq.withSubscriber.Clone(),
 		// clone intermediate query.
 		sql:  eq.sql.Clone(),
 		path: eq.path,
@@ -729,6 +787,28 @@ func (eq *EventQuery) WithFeature(opts ...func(*FeatureQuery)) *EventQuery {
 		opt(query)
 	}
 	eq.withFeature = query
+	return eq
+}
+
+// WithEntitlementplan tells the query-builder to eager-load the nodes that are connected to
+// the "entitlementplan" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithEntitlementplan(opts ...func(*EntitlementPlanQuery)) *EventQuery {
+	query := (&EntitlementPlanClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withEntitlementplan = query
+	return eq
+}
+
+// WithEntitlementplanfeature tells the query-builder to eager-load the nodes that are connected to
+// the "entitlementplanfeature" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithEntitlementplanfeature(opts ...func(*EntitlementPlanFeatureQuery)) *EventQuery {
+	query := (&EntitlementPlanFeatureClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withEntitlementplanfeature = query
 	return eq
 }
 
@@ -898,13 +978,15 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 	var (
 		nodes       = []*Event{}
 		_spec       = eq.querySpec()
-		loadedTypes = [14]bool{
+		loadedTypes = [16]bool{
 			eq.withUser != nil,
 			eq.withGroup != nil,
 			eq.withIntegration != nil,
 			eq.withOrganization != nil,
 			eq.withInvite != nil,
 			eq.withFeature != nil,
+			eq.withEntitlementplan != nil,
+			eq.withEntitlementplanfeature != nil,
 			eq.withPersonalAccessToken != nil,
 			eq.withOauth2token != nil,
 			eq.withHush != nil,
@@ -977,6 +1059,22 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 		if err := eq.loadFeature(ctx, query, nodes,
 			func(n *Event) { n.Edges.Feature = []*Feature{} },
 			func(n *Event, e *Feature) { n.Edges.Feature = append(n.Edges.Feature, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := eq.withEntitlementplan; query != nil {
+		if err := eq.loadEntitlementplan(ctx, query, nodes,
+			func(n *Event) { n.Edges.Entitlementplan = []*EntitlementPlan{} },
+			func(n *Event, e *EntitlementPlan) { n.Edges.Entitlementplan = append(n.Edges.Entitlementplan, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := eq.withEntitlementplanfeature; query != nil {
+		if err := eq.loadEntitlementplanfeature(ctx, query, nodes,
+			func(n *Event) { n.Edges.Entitlementplanfeature = []*EntitlementPlanFeature{} },
+			func(n *Event, e *EntitlementPlanFeature) {
+				n.Edges.Entitlementplanfeature = append(n.Edges.Entitlementplanfeature, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -1077,6 +1175,20 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 		if err := eq.loadFeature(ctx, query, nodes,
 			func(n *Event) { n.appendNamedFeature(name) },
 			func(n *Event, e *Feature) { n.appendNamedFeature(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range eq.withNamedEntitlementplan {
+		if err := eq.loadEntitlementplan(ctx, query, nodes,
+			func(n *Event) { n.appendNamedEntitlementplan(name) },
+			func(n *Event, e *EntitlementPlan) { n.appendNamedEntitlementplan(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range eq.withNamedEntitlementplanfeature {
+		if err := eq.loadEntitlementplanfeature(ctx, query, nodes,
+			func(n *Event) { n.appendNamedEntitlementplanfeature(name) },
+			func(n *Event, e *EntitlementPlanFeature) { n.appendNamedEntitlementplanfeature(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1509,6 +1621,130 @@ func (eq *EventQuery) loadFeature(ctx context.Context, query *FeatureQuery, node
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "feature" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (eq *EventQuery) loadEntitlementplan(ctx context.Context, query *EntitlementPlanQuery, nodes []*Event, init func(*Event), assign func(*Event, *EntitlementPlan)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Event)
+	nids := make(map[string]map[*Event]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(event.EntitlementplanTable)
+		joinT.Schema(eq.schemaConfig.EntitlementPlanEvents)
+		s.Join(joinT).On(s.C(entitlementplan.FieldID), joinT.C(event.EntitlementplanPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(event.EntitlementplanPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(event.EntitlementplanPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Event]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*EntitlementPlan](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "entitlementplan" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (eq *EventQuery) loadEntitlementplanfeature(ctx context.Context, query *EntitlementPlanFeatureQuery, nodes []*Event, init func(*Event), assign func(*Event, *EntitlementPlanFeature)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Event)
+	nids := make(map[string]map[*Event]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(event.EntitlementplanfeatureTable)
+		joinT.Schema(eq.schemaConfig.EntitlementPlanFeatureEvents)
+		s.Join(joinT).On(s.C(entitlementplanfeature.FieldID), joinT.C(event.EntitlementplanfeaturePrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(event.EntitlementplanfeaturePrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(event.EntitlementplanfeaturePrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Event]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*EntitlementPlanFeature](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "entitlementplanfeature" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
@@ -2183,6 +2419,34 @@ func (eq *EventQuery) WithNamedFeature(name string, opts ...func(*FeatureQuery))
 		eq.withNamedFeature = make(map[string]*FeatureQuery)
 	}
 	eq.withNamedFeature[name] = query
+	return eq
+}
+
+// WithNamedEntitlementplan tells the query-builder to eager-load the nodes that are connected to the "entitlementplan"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithNamedEntitlementplan(name string, opts ...func(*EntitlementPlanQuery)) *EventQuery {
+	query := (&EntitlementPlanClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if eq.withNamedEntitlementplan == nil {
+		eq.withNamedEntitlementplan = make(map[string]*EntitlementPlanQuery)
+	}
+	eq.withNamedEntitlementplan[name] = query
+	return eq
+}
+
+// WithNamedEntitlementplanfeature tells the query-builder to eager-load the nodes that are connected to the "entitlementplanfeature"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (eq *EventQuery) WithNamedEntitlementplanfeature(name string, opts ...func(*EntitlementPlanFeatureQuery)) *EventQuery {
+	query := (&EntitlementPlanFeatureClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if eq.withNamedEntitlementplanfeature == nil {
+		eq.withNamedEntitlementplanfeature = make(map[string]*EntitlementPlanFeatureQuery)
+	}
+	eq.withNamedEntitlementplanfeature[name] = query
 	return eq
 }
 

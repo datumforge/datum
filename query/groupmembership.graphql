@@ -1,12 +1,14 @@
 mutation AddUserToGroupWithRole($input: CreateGroupMembershipInput!) {
   createGroupMembership(input: $input) {
     groupMembership {
+      groupID
       group {
         id
         name
       }
       id
       role
+      userID
       user {
         displayName
         email
@@ -21,12 +23,14 @@ mutation AddUserToGroupWithRole($input: CreateGroupMembershipInput!) {
 mutation CreateBulkCSVGroupMembers($input: Upload!) {
   createBulkCSVGroupMembership(input: $input) {
     groupMemberships {
+      groupID
       group {
         id
         name
       }
       id
       role
+      userID
       user {
         displayName
         email
@@ -41,12 +45,14 @@ mutation CreateBulkCSVGroupMembers($input: Upload!) {
 mutation CreateBulkGroupMembers($input: [CreateGroupMembershipInput!]) {
   createBulkGroupMembership(input: $input) {
     groupMemberships {
+      groupID
       group {
         id
         name
       }
       id
       role
+      userID
       user {
         displayName
         email
@@ -62,12 +68,14 @@ query GetGroupMembersByGroupID($where: GroupMembershipWhereInput) {
   groupMemberships(where: $where) {
     edges {
       node {
+        groupID
         group {
           id
           name
         }
         id
         role
+        userID
         user {
           displayName
           email
@@ -90,9 +98,20 @@ mutation UpdateUserRoleInGroup($updateGroupMemberId: ID!, $input: UpdateGroupMem
   updateGroupMembership(id: $updateGroupMemberId, input: $input) {
     groupMembership {
       groupID
+      group {
+        id
+        name
+      }
       id
       role
       userID
+      user {
+        displayName
+        email
+        firstName
+        id
+        lastName
+      }
     }
   }
 }

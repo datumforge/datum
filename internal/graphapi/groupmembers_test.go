@@ -70,6 +70,11 @@ func (suite *GraphTestSuite) TestQueryGroupMembers() {
 
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
+			if tc.expected != nil {
+				// list groups in order to determine access to group level data
+				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("group:%s", group.ID)})
+			}
+
 			resp, err := suite.client.datum.GetGroupMembersByGroupID(reqCtx, &whereInput)
 
 			if tc.errExpected {
@@ -105,6 +110,11 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
+	require.NoError(t, err)
+
 	group1 := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	// allow access to group
@@ -114,11 +124,8 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 	require.NoError(t, err)
 	require.Len(t, groupMember, 1)
 
-	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-	testUser2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, group1.OwnerID)
-	require.NoError(t, err)
+	orgMember1 := (&OrgMemberBuilder{client: suite.client, OrgID: org.ID}).MustNew(reqCtx, t)
+	orgMember2 := (&OrgMemberBuilder{client: suite.client, OrgID: org.ID}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name    string
@@ -133,7 +140,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 		{
 			name:    "happy path, add admin",
 			groupID: group1.ID,
-			userID:  testUser1.ID,
+			userID:  orgMember1.UserID,
 			role:    enums.RoleAdmin,
 			allowed: true,
 			check:   true,
@@ -142,7 +149,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 		{
 			name:    "happy path, add member",
 			groupID: group1.ID,
-			userID:  testUser2.ID,
+			userID:  orgMember2.UserID,
 			role:    enums.RoleMember,
 			allowed: true,
 			check:   true,
@@ -151,7 +158,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 		{
 			name:    "add member, no access",
 			groupID: group1.ID,
-			userID:  testUser2.ID,
+			userID:  orgMember2.UserID,
 			role:    enums.RoleMember,
 			allowed: false,
 			check:   true,
@@ -161,7 +168,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 		{
 			name:    "owner relation not valid for groups",
 			groupID: group1.ID,
-			userID:  testUser2.ID,
+			userID:  orgMember2.UserID,
 			role:    enums.RoleOwner,
 			allowed: true,
 			check:   false,
@@ -171,7 +178,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 		{
 			name:    "duplicate user, different role",
 			groupID: group1.ID,
-			userID:  testUser1.ID,
+			userID:  orgMember1.UserID,
 			role:    enums.RoleMember,
 			allowed: true,
 			check:   true,
@@ -191,7 +198,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 		{
 			name:    "invalid group",
 			groupID: "not-a-valid-group-id",
-			userID:  testUser1.ID,
+			userID:  orgMember1.UserID,
 			role:    enums.RoleMember,
 			allowed: true,
 			check:   true,
@@ -201,7 +208,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 		{
 			name:    "invalid role",
 			groupID: group1.ID,
-			userID:  testUser1.ID,
+			userID:  orgMember1.UserID,
 			role:    enums.RoleInvalid,
 			allowed: true,
 			check:   false,
@@ -211,7 +218,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Create "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errMsg == "" {
@@ -223,7 +230,11 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 			}
 
 			if tc.list {
-				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", group1.OwnerID)})
+				mock_fga.ListOnce(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", group1.OwnerID)}, nil)
+			}
+
+			if tc.errMsg == "" {
+				mock_fga.ListOnce(t, suite.client.fga, []string{fmt.Sprintf("group:%s", group1.ID)}, nil)
 			}
 
 			role := tc.role
@@ -245,16 +256,16 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.CreateGroupMembership)
-			assert.Equal(t, tc.userID, resp.CreateGroupMembership.GroupMembership.GetUser().GetID())
-			assert.Equal(t, tc.groupID, resp.CreateGroupMembership.GroupMembership.GetGroup().GetID())
+			assert.Equal(t, tc.userID, resp.CreateGroupMembership.GroupMembership.UserID)
+			assert.Equal(t, tc.groupID, resp.CreateGroupMembership.GroupMembership.GroupID)
 			assert.Equal(t, tc.role, resp.CreateGroupMembership.GroupMembership.Role)
 		})
 	}
 
 	// delete created group and users
 	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: suite.client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: suite.client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
+	(&OrgMemberCleanup{client: suite.client, ID: orgMember1.ID}).MustDelete(reqCtx, t)
+	(&OrgMemberCleanup{client: suite.client, ID: orgMember2.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationUpdateGroupMembers() {
@@ -264,7 +275,14 @@ func (suite *GraphTestSuite) TestMutationUpdateGroupMembers() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	gm := (&GroupMemberBuilder{client: suite.client}).MustNew(reqCtx, t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
+	require.NoError(t, err)
+
+	orgMember := (&OrgMemberBuilder{client: suite.client, OrgID: org.ID}).MustNew(reqCtx, t)
+
+	gm := (&GroupMemberBuilder{client: suite.client, UserID: orgMember.UserID}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name    string
@@ -302,7 +320,7 @@ func (suite *GraphTestSuite) TestMutationUpdateGroupMembers() {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Update "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errMsg == "" {
@@ -311,6 +329,10 @@ func (suite *GraphTestSuite) TestMutationUpdateGroupMembers() {
 
 			if tc.check {
 				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
+			}
+
+			if tc.errMsg == "" {
+				mock_fga.ListOnce(t, suite.client.fga, []string{fmt.Sprintf("group:%s", gm.GroupID)}, nil)
 			}
 
 			role := tc.role
@@ -334,8 +356,11 @@ func (suite *GraphTestSuite) TestMutationUpdateGroupMembers() {
 		})
 	}
 
-	// delete created group
+	// delete created objects
 	(&GroupMemberCleanup{client: suite.client, ID: gm.ID}).MustDelete(reqCtx, t)
+	(&OrgMemberCleanup{client: suite.client, ID: orgMember.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: gm.GroupID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationDeleteGroupMembers() {

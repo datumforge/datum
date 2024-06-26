@@ -7956,12 +7956,20 @@ func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership_User) GetL
 }
 
 type AddUserToGroupWithRole_CreateGroupMembership_GroupMembership struct {
-	Group AddUserToGroupWithRole_CreateGroupMembership_GroupMembership_Group "json:\"group\" graphql:\"group\""
-	ID    string                                                             "json:\"id\" graphql:\"id\""
-	Role  enums.Role                                                         "json:\"role\" graphql:\"role\""
-	User  AddUserToGroupWithRole_CreateGroupMembership_GroupMembership_User  "json:\"user\" graphql:\"user\""
+	GroupID string                                                             "json:\"groupID\" graphql:\"groupID\""
+	Group   AddUserToGroupWithRole_CreateGroupMembership_GroupMembership_Group "json:\"group\" graphql:\"group\""
+	ID      string                                                             "json:\"id\" graphql:\"id\""
+	Role    enums.Role                                                         "json:\"role\" graphql:\"role\""
+	UserID  string                                                             "json:\"userID\" graphql:\"userID\""
+	User    AddUserToGroupWithRole_CreateGroupMembership_GroupMembership_User  "json:\"user\" graphql:\"user\""
 }
 
+func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetGroupID() string {
+	if t == nil {
+		t = &AddUserToGroupWithRole_CreateGroupMembership_GroupMembership{}
+	}
+	return t.GroupID
+}
 func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetGroup() *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership_Group {
 	if t == nil {
 		t = &AddUserToGroupWithRole_CreateGroupMembership_GroupMembership{}
@@ -7979,6 +7987,12 @@ func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetRole()
 		t = &AddUserToGroupWithRole_CreateGroupMembership_GroupMembership{}
 	}
 	return &t.Role
+}
+func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetUserID() string {
+	if t == nil {
+		t = &AddUserToGroupWithRole_CreateGroupMembership_GroupMembership{}
+	}
+	return t.UserID
 }
 func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetUser() *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership_User {
 	if t == nil {
@@ -8056,12 +8070,20 @@ func (t *CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships
 }
 
 type CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships struct {
-	Group CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships_Group "json:\"group\" graphql:\"group\""
-	ID    string                                                                        "json:\"id\" graphql:\"id\""
-	Role  enums.Role                                                                    "json:\"role\" graphql:\"role\""
-	User  CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships_User  "json:\"user\" graphql:\"user\""
+	GroupID string                                                                        "json:\"groupID\" graphql:\"groupID\""
+	Group   CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships_Group "json:\"group\" graphql:\"group\""
+	ID      string                                                                        "json:\"id\" graphql:\"id\""
+	Role    enums.Role                                                                    "json:\"role\" graphql:\"role\""
+	UserID  string                                                                        "json:\"userID\" graphql:\"userID\""
+	User    CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships_User  "json:\"user\" graphql:\"user\""
 }
 
+func (t *CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships) GetGroupID() string {
+	if t == nil {
+		t = &CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships{}
+	}
+	return t.GroupID
+}
 func (t *CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships) GetGroup() *CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships_Group {
 	if t == nil {
 		t = &CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships{}
@@ -8079,6 +8101,12 @@ func (t *CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships
 		t = &CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships{}
 	}
 	return &t.Role
+}
+func (t *CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships) GetUserID() string {
+	if t == nil {
+		t = &CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships{}
+	}
+	return t.UserID
 }
 func (t *CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships) GetUser() *CreateBulkCSVGroupMembers_CreateBulkCSVGroupMembership_GroupMemberships_User {
 	if t == nil {
@@ -8156,12 +8184,20 @@ func (t *CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships_User)
 }
 
 type CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships struct {
-	Group CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships_Group "json:\"group\" graphql:\"group\""
-	ID    string                                                                  "json:\"id\" graphql:\"id\""
-	Role  enums.Role                                                              "json:\"role\" graphql:\"role\""
-	User  CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships_User  "json:\"user\" graphql:\"user\""
+	GroupID string                                                                  "json:\"groupID\" graphql:\"groupID\""
+	Group   CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships_Group "json:\"group\" graphql:\"group\""
+	ID      string                                                                  "json:\"id\" graphql:\"id\""
+	Role    enums.Role                                                              "json:\"role\" graphql:\"role\""
+	UserID  string                                                                  "json:\"userID\" graphql:\"userID\""
+	User    CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships_User  "json:\"user\" graphql:\"user\""
 }
 
+func (t *CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships) GetGroupID() string {
+	if t == nil {
+		t = &CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships{}
+	}
+	return t.GroupID
+}
 func (t *CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships) GetGroup() *CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships_Group {
 	if t == nil {
 		t = &CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships{}
@@ -8179,6 +8215,12 @@ func (t *CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships) GetR
 		t = &CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships{}
 	}
 	return &t.Role
+}
+func (t *CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships) GetUserID() string {
+	if t == nil {
+		t = &CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships{}
+	}
+	return t.UserID
 }
 func (t *CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships) GetUser() *CreateBulkGroupMembers_CreateBulkGroupMembership_GroupMemberships_User {
 	if t == nil {
@@ -8256,12 +8298,20 @@ func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetLastName(
 }
 
 type GetGroupMembersByGroupID_GroupMemberships_Edges_Node struct {
-	Group GetGroupMembersByGroupID_GroupMemberships_Edges_Node_Group "json:\"group\" graphql:\"group\""
-	ID    string                                                     "json:\"id\" graphql:\"id\""
-	Role  enums.Role                                                 "json:\"role\" graphql:\"role\""
-	User  GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User  "json:\"user\" graphql:\"user\""
+	GroupID string                                                     "json:\"groupID\" graphql:\"groupID\""
+	Group   GetGroupMembersByGroupID_GroupMemberships_Edges_Node_Group "json:\"group\" graphql:\"group\""
+	ID      string                                                     "json:\"id\" graphql:\"id\""
+	Role    enums.Role                                                 "json:\"role\" graphql:\"role\""
+	UserID  string                                                     "json:\"userID\" graphql:\"userID\""
+	User    GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User  "json:\"user\" graphql:\"user\""
 }
 
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetGroupID() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
+	}
+	return t.GroupID
+}
 func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetGroup() *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_Group {
 	if t == nil {
 		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
@@ -8279,6 +8329,12 @@ func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetRole() *enums.
 		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
 	}
 	return &t.Role
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetUserID() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
+	}
+	return t.UserID
 }
 func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetUser() *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User {
 	if t == nil {
@@ -8320,11 +8376,70 @@ func (t *RemoveUserFromGroup_DeleteGroupMembership) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_Group struct {
+	ID   string "json:\"id\" graphql:\"id\""
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_Group) GetID() string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_Group{}
+	}
+	return t.ID
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_Group) GetName() string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_Group{}
+	}
+	return t.Name
+}
+
+type UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User struct {
+	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
+	Email       string  "json:\"email\" graphql:\"email\""
+	FirstName   *string "json:\"firstName,omitempty\" graphql:\"firstName\""
+	ID          string  "json:\"id\" graphql:\"id\""
+	LastName    *string "json:\"lastName,omitempty\" graphql:\"lastName\""
+}
+
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User) GetDisplayName() string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User{}
+	}
+	return t.DisplayName
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User) GetEmail() string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User{}
+	}
+	return t.Email
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User) GetFirstName() *string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User{}
+	}
+	return t.FirstName
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User) GetID() string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User{}
+	}
+	return t.ID
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User) GetLastName() *string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User{}
+	}
+	return t.LastName
+}
+
 type UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership struct {
-	GroupID string     "json:\"groupID\" graphql:\"groupID\""
-	ID      string     "json:\"id\" graphql:\"id\""
-	Role    enums.Role "json:\"role\" graphql:\"role\""
-	UserID  string     "json:\"userID\" graphql:\"userID\""
+	GroupID string                                                            "json:\"groupID\" graphql:\"groupID\""
+	Group   UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_Group "json:\"group\" graphql:\"group\""
+	ID      string                                                            "json:\"id\" graphql:\"id\""
+	Role    enums.Role                                                        "json:\"role\" graphql:\"role\""
+	UserID  string                                                            "json:\"userID\" graphql:\"userID\""
+	User    UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User  "json:\"user\" graphql:\"user\""
 }
 
 func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetGroupID() string {
@@ -8332,6 +8447,12 @@ func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetGroupID
 		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership{}
 	}
 	return t.GroupID
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetGroup() *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_Group {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership{}
+	}
+	return &t.Group
 }
 func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetID() string {
 	if t == nil {
@@ -8350,6 +8471,12 @@ func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetUserID(
 		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership{}
 	}
 	return t.UserID
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetUser() *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership_User {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership{}
+	}
+	return &t.User
 }
 
 type UpdateUserRoleInGroup_UpdateGroupMembership struct {
@@ -25657,12 +25784,14 @@ func (c *Client) UpdateGroup(ctx context.Context, updateGroupID string, input Up
 const AddUserToGroupWithRoleDocument = `mutation AddUserToGroupWithRole ($input: CreateGroupMembershipInput!) {
 	createGroupMembership(input: $input) {
 		groupMembership {
+			groupID
 			group {
 				id
 				name
 			}
 			id
 			role
+			userID
 			user {
 				displayName
 				email
@@ -25695,12 +25824,14 @@ func (c *Client) AddUserToGroupWithRole(ctx context.Context, input CreateGroupMe
 const CreateBulkCSVGroupMembersDocument = `mutation CreateBulkCSVGroupMembers ($input: Upload!) {
 	createBulkCSVGroupMembership(input: $input) {
 		groupMemberships {
+			groupID
 			group {
 				id
 				name
 			}
 			id
 			role
+			userID
 			user {
 				displayName
 				email
@@ -25733,12 +25864,14 @@ func (c *Client) CreateBulkCSVGroupMembers(ctx context.Context, input graphql.Up
 const CreateBulkGroupMembersDocument = `mutation CreateBulkGroupMembers ($input: [CreateGroupMembershipInput!]) {
 	createBulkGroupMembership(input: $input) {
 		groupMemberships {
+			groupID
 			group {
 				id
 				name
 			}
 			id
 			role
+			userID
 			user {
 				displayName
 				email
@@ -25772,12 +25905,14 @@ const GetGroupMembersByGroupIDDocument = `query GetGroupMembersByGroupID ($where
 	groupMemberships(where: $where) {
 		edges {
 			node {
+				groupID
 				group {
 					id
 					name
 				}
 				id
 				role
+				userID
 				user {
 					displayName
 					email
@@ -25836,9 +25971,20 @@ const UpdateUserRoleInGroupDocument = `mutation UpdateUserRoleInGroup ($updateGr
 	updateGroupMembership(id: $updateGroupMemberId, input: $input) {
 		groupMembership {
 			groupID
+			group {
+				id
+				name
+			}
 			id
 			role
 			userID
+			user {
+				displayName
+				email
+				firstName
+				id
+				lastName
+			}
 		}
 	}
 }

@@ -1,0 +1,11 @@
+#! /usr/bin/env bash
+
+#
+# Pre-commit hook to run `swagger validate`
+#
+
+set -eu -o pipefail
+
+for filename in "$@"; do
+  ./bin/swagger validate "${filename}"
+done

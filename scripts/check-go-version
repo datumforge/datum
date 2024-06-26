@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+set -eu -o pipefail
+
+VERSION_NUMBER="$(awk '/golang/ { print $2 }' .tool-versions)"
+
+VERSION="go${VERSION_NUMBER}"
+
+GOLANG_VERSION=$(go version)
+if [[ $GOLANG_VERSION = *$VERSION* ]]; then
+  echo "Golang $GOLANG_VERSION installed"
+else
+  echo "Golang ${VERSION} is required to run this project! Found ${GOLANG_VERSION}"
+  echo "Install go with 'asdf plugin add golang; asdf install'"
+  exit 1
+fi

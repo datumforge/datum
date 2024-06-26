@@ -99,6 +99,7 @@ tasks:
   pr:
     desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR
     cmds:
+      - task: pre-commit autoupdate
       - task: generate
       - task: config:generate
       - task: atlas:create
@@ -176,6 +177,8 @@ tasks:
   precommit-full:
     desc: Lint the project against all files
     cmds:
+      - pre-commit install && pre-commit install-hooks
+      - pre-commit autoupdate
       - pre-commit run --show-diff-on-failure --color=always --all-files
 
   brew-install:
@@ -191,7 +194,7 @@ tasks:
       - '[ -f $(brew --prefix)/bin/{{.DEPS}} ]'
     vars:
       DEPS: >-
-        age helm kubernetes-cli yq jq gomplate golangci-lint openfga/tap/fga pre-commit ariga/tap/atlas rover #magic___^_^___line
+        age helm kubernetes-cli yq jq gomplate golangci-lint openfga/tap/fga pre-commit ariga/tap/atlas rover clamav #magic___^_^___line
   brew-installed:
     silent: true
     desc: check if Homebrew is installed

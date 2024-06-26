@@ -1,0 +1,32 @@
+#! /usr/bin/env bash
+#
+#  go-find-pattern searches over all our go source code files for a regex pattern"
+#  For example: scripts/go-find-pattern '[.]Info[(]"[^"]+\s+"'
+#
+
+usage() {
+    echo "$0 <pattern>"
+    exit 1
+}
+[[ -z $1  ]] && usage
+
+pattern=$1
+
+# shellcheck disable=SC2207
+pkgs=($(go list -e -json github.com/datumforge/datum/... 2> /dev/null | jq -c '{import: .ImportPath, dir: .Dir, files: .GoFiles}'))
+
+results=()
+for pkg in "${pkgs[@]}"; do
+  import=$(echo "$pkg" | jq -r ".import")
+  parent=$(echo "$pkg" | jq -r ".dir")
+  files=($(echo "$pkg" | jq -r ".files[]"))
+  for file in "${files[@]}"; do
+    lines=$(cat "$parent/$file" | grep -inE "$pattern" | cut -d':' -f1 | tr '\n' ',')
+    if [[ "${lines// }" ]]; then
+      results="$results\n$import/$file | $lines"
+    fi
+    #exit 0
+  done
+done
+
+echo -e "package | lines\n$results" | column -t

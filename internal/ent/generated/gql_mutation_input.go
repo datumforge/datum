@@ -11,10 +11,6 @@ import (
 
 // CreateAPITokenInput represents a mutation input for creating apitokens.
 type CreateAPITokenInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
 	Tags        []string
 	Name        string
 	ExpiresAt   *time.Time
@@ -26,18 +22,6 @@ type CreateAPITokenInput struct {
 
 // Mutate applies the CreateAPITokenInput on the APITokenMutation builder.
 func (i *CreateAPITokenInput) Mutate(m *APITokenMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -67,10 +51,6 @@ func (c *APITokenCreate) SetInput(i CreateAPITokenInput) *APITokenCreate {
 
 // UpdateAPITokenInput represents a mutation input for updating apitokens.
 type UpdateAPITokenInput struct {
-	ClearUpdatedAt   bool
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
 	ClearTags        bool
 	Tags             []string
 	AppendTags       []string
@@ -88,18 +68,6 @@ type UpdateAPITokenInput struct {
 
 // Mutate applies the UpdateAPITokenInput on the APITokenMutation builder.
 func (i *UpdateAPITokenInput) Mutate(m *APITokenMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -155,10 +123,6 @@ func (c *APITokenUpdateOne) SetInput(i UpdateAPITokenInput) *APITokenUpdateOne {
 
 // CreateDocumentDataInput represents a mutation input for creating documentdataslice.
 type CreateDocumentDataInput struct {
-	CreatedAt  *time.Time
-	UpdatedAt  *time.Time
-	CreatedBy  *string
-	UpdatedBy  *string
 	Tags       []string
 	Data       customtypes.JSONObject
 	OwnerID    *string
@@ -167,18 +131,6 @@ type CreateDocumentDataInput struct {
 
 // Mutate applies the CreateDocumentDataInput on the DocumentDataMutation builder.
 func (i *CreateDocumentDataInput) Mutate(m *DocumentDataMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -199,33 +151,17 @@ func (c *DocumentDataCreate) SetInput(i CreateDocumentDataInput) *DocumentDataCr
 
 // UpdateDocumentDataInput represents a mutation input for updating documentdataslice.
 type UpdateDocumentDataInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	ClearTags      bool
-	Tags           []string
-	AppendTags     []string
-	Data           customtypes.JSONObject
-	ClearOwner     bool
-	OwnerID        *string
-	TemplateID     *string
+	ClearTags  bool
+	Tags       []string
+	AppendTags []string
+	Data       customtypes.JSONObject
+	ClearOwner bool
+	OwnerID    *string
+	TemplateID *string
 }
 
 // Mutate applies the UpdateDocumentDataInput on the DocumentDataMutation builder.
 func (i *UpdateDocumentDataInput) Mutate(m *DocumentDataMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -263,10 +199,6 @@ func (c *DocumentDataUpdateOne) SetInput(i UpdateDocumentDataInput) *DocumentDat
 
 // CreateEntitlementInput represents a mutation input for creating entitlements.
 type CreateEntitlementInput struct {
-	CreatedAt              *time.Time
-	UpdatedAt              *time.Time
-	CreatedBy              *string
-	UpdatedBy              *string
 	Tags                   []string
 	Tier                   *enums.Tier
 	ExternalCustomerID     *string
@@ -281,18 +213,6 @@ type CreateEntitlementInput struct {
 
 // Mutate applies the CreateEntitlementInput on the EntitlementMutation builder.
 func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -333,10 +253,6 @@ func (c *EntitlementCreate) SetInput(i CreateEntitlementInput) *EntitlementCreat
 
 // UpdateEntitlementInput represents a mutation input for updating entitlements.
 type UpdateEntitlementInput struct {
-	ClearUpdatedAt              bool
-	UpdatedAt                   *time.Time
-	ClearUpdatedBy              bool
-	UpdatedBy                   *string
 	ClearTags                   bool
 	Tags                        []string
 	AppendTags                  []string
@@ -361,18 +277,6 @@ type UpdateEntitlementInput struct {
 
 // Mutate applies the UpdateEntitlementInput on the EntitlementMutation builder.
 func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -449,10 +353,6 @@ func (c *EntitlementUpdateOne) SetInput(i UpdateEntitlementInput) *EntitlementUp
 
 // CreateEventInput represents a mutation input for creating events.
 type CreateEventInput struct {
-	CreatedAt              *time.Time
-	UpdatedAt              *time.Time
-	CreatedBy              *string
-	UpdatedBy              *string
 	Tags                   []string
 	EventID                *string
 	CorrelationID          *string
@@ -474,18 +374,6 @@ type CreateEventInput struct {
 
 // Mutate applies the CreateEventInput on the EventMutation builder.
 func (i *CreateEventInput) Mutate(m *EventMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -545,10 +433,6 @@ func (c *EventCreate) SetInput(i CreateEventInput) *EventCreate {
 
 // UpdateEventInput represents a mutation input for updating events.
 type UpdateEventInput struct {
-	ClearUpdatedAt               bool
-	UpdatedAt                    *time.Time
-	ClearUpdatedBy               bool
-	UpdatedBy                    *string
 	ClearTags                    bool
 	Tags                         []string
 	AppendTags                   []string
@@ -599,18 +483,6 @@ type UpdateEventInput struct {
 
 // Mutate applies the UpdateEventInput on the EventMutation builder.
 func (i *UpdateEventInput) Mutate(m *EventMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -765,10 +637,6 @@ func (c *EventUpdateOne) SetInput(i UpdateEventInput) *EventUpdateOne {
 
 // CreateFeatureInput represents a mutation input for creating features.
 type CreateFeatureInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
 	Tags            []string
 	Name            string
 	Global          *bool
@@ -783,18 +651,6 @@ type CreateFeatureInput struct {
 
 // Mutate applies the CreateFeatureInput on the FeatureMutation builder.
 func (i *CreateFeatureInput) Mutate(m *FeatureMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -833,10 +689,6 @@ func (c *FeatureCreate) SetInput(i CreateFeatureInput) *FeatureCreate {
 
 // UpdateFeatureInput represents a mutation input for updating features.
 type UpdateFeatureInput struct {
-	ClearUpdatedAt        bool
-	UpdatedAt             *time.Time
-	ClearUpdatedBy        bool
-	UpdatedBy             *string
 	ClearTags             bool
 	Tags                  []string
 	AppendTags            []string
@@ -863,18 +715,6 @@ type UpdateFeatureInput struct {
 
 // Mutate applies the UpdateFeatureInput on the FeatureMutation builder.
 func (i *UpdateFeatureInput) Mutate(m *FeatureMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -957,10 +797,6 @@ func (c *FeatureUpdateOne) SetInput(i UpdateFeatureInput) *FeatureUpdateOne {
 
 // CreateFileInput represents a mutation input for creating files.
 type CreateFileInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
 	Tags            []string
 	FileName        string
 	FileExtension   string
@@ -976,18 +812,6 @@ type CreateFileInput struct {
 
 // Mutate applies the CreateFileInput on the FileMutation builder.
 func (i *CreateFileInput) Mutate(m *FileMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -1023,10 +847,6 @@ func (c *FileCreate) SetInput(i CreateFileInput) *FileCreate {
 
 // UpdateFileInput represents a mutation input for updating files.
 type UpdateFileInput struct {
-	ClearUpdatedAt        bool
-	UpdatedAt             *time.Time
-	ClearUpdatedBy        bool
-	UpdatedBy             *string
 	ClearTags             bool
 	Tags                  []string
 	AppendTags            []string
@@ -1052,18 +872,6 @@ type UpdateFileInput struct {
 
 // Mutate applies the UpdateFileInput on the FileMutation builder.
 func (i *UpdateFileInput) Mutate(m *FileMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -1143,10 +951,6 @@ func (c *FileUpdateOne) SetInput(i UpdateFileInput) *FileUpdateOne {
 
 // CreateGroupInput represents a mutation input for creating groups.
 type CreateGroupInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
 	Tags            []string
 	Name            string
 	Description     *string
@@ -1164,18 +968,6 @@ type CreateGroupInput struct {
 
 // Mutate applies the CreateGroupInput on the GroupMutation builder.
 func (i *CreateGroupInput) Mutate(m *GroupMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -1221,10 +1013,6 @@ func (c *GroupCreate) SetInput(i CreateGroupInput) *GroupCreate {
 
 // UpdateGroupInput represents a mutation input for updating groups.
 type UpdateGroupInput struct {
-	ClearUpdatedAt       bool
-	UpdatedAt            *time.Time
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
 	ClearTags            bool
 	Tags                 []string
 	AppendTags           []string
@@ -1258,18 +1046,6 @@ type UpdateGroupInput struct {
 
 // Mutate applies the UpdateGroupInput on the GroupMutation builder.
 func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -1373,30 +1149,14 @@ func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
 
 // CreateGroupMembershipInput represents a mutation input for creating groupmemberships.
 type CreateGroupMembershipInput struct {
-	CreatedAt *time.Time
-	UpdatedAt *time.Time
-	CreatedBy *string
-	UpdatedBy *string
-	Role      *enums.Role
-	GroupID   string
-	UserID    string
-	EventIDs  []string
+	Role     *enums.Role
+	GroupID  string
+	UserID   string
+	EventIDs []string
 }
 
 // Mutate applies the CreateGroupMembershipInput on the GroupMembershipMutation builder.
 func (i *CreateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Role; v != nil {
 		m.SetRole(*v)
 	}
@@ -1415,10 +1175,6 @@ func (c *GroupMembershipCreate) SetInput(i CreateGroupMembershipInput) *GroupMem
 
 // UpdateGroupMembershipInput represents a mutation input for updating groupmemberships.
 type UpdateGroupMembershipInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
 	Role           *enums.Role
 	ClearEvents    bool
 	AddEventIDs    []string
@@ -1427,18 +1183,6 @@ type UpdateGroupMembershipInput struct {
 
 // Mutate applies the UpdateGroupMembershipInput on the GroupMembershipMutation builder.
 func (i *UpdateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Role; v != nil {
 		m.SetRole(*v)
 	}
@@ -1467,10 +1211,6 @@ func (c *GroupMembershipUpdateOne) SetInput(i UpdateGroupMembershipInput) *Group
 
 // CreateGroupSettingInput represents a mutation input for creating groupsettings.
 type CreateGroupSettingInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
 	Tags         []string
 	Visibility   *enums.Visibility
 	JoinPolicy   *enums.JoinPolicy
@@ -1481,18 +1221,6 @@ type CreateGroupSettingInput struct {
 
 // Mutate applies the CreateGroupSettingInput on the GroupSettingMutation builder.
 func (i *CreateGroupSettingInput) Mutate(m *GroupSettingMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -1521,10 +1249,6 @@ func (c *GroupSettingCreate) SetInput(i CreateGroupSettingInput) *GroupSettingCr
 
 // UpdateGroupSettingInput represents a mutation input for updating groupsettings.
 type UpdateGroupSettingInput struct {
-	ClearUpdatedAt    bool
-	UpdatedAt         *time.Time
-	ClearUpdatedBy    bool
-	UpdatedBy         *string
 	ClearTags         bool
 	Tags              []string
 	AppendTags        []string
@@ -1540,18 +1264,6 @@ type UpdateGroupSettingInput struct {
 
 // Mutate applies the UpdateGroupSettingInput on the GroupSettingMutation builder.
 func (i *UpdateGroupSettingInput) Mutate(m *GroupSettingMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -1601,10 +1313,6 @@ func (c *GroupSettingUpdateOne) SetInput(i UpdateGroupSettingInput) *GroupSettin
 
 // CreateHushInput represents a mutation input for creating hushes.
 type CreateHushInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
 	Name            string
 	Description     *string
 	Kind            *string
@@ -1617,18 +1325,6 @@ type CreateHushInput struct {
 
 // Mutate applies the CreateHushInput on the HushMutation builder.
 func (i *CreateHushInput) Mutate(m *HushMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	m.SetName(i.Name)
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
@@ -1661,10 +1357,6 @@ func (c *HushCreate) SetInput(i CreateHushInput) *HushCreate {
 
 // UpdateHushInput represents a mutation input for updating hushes.
 type UpdateHushInput struct {
-	ClearUpdatedAt        bool
-	UpdatedAt             *time.Time
-	ClearUpdatedBy        bool
-	UpdatedBy             *string
 	Name                  *string
 	ClearDescription      bool
 	Description           *string
@@ -1683,18 +1375,6 @@ type UpdateHushInput struct {
 
 // Mutate applies the UpdateHushInput on the HushMutation builder.
 func (i *UpdateHushInput) Mutate(m *HushMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
@@ -1753,10 +1433,6 @@ func (c *HushUpdateOne) SetInput(i UpdateHushInput) *HushUpdateOne {
 
 // CreateIntegrationInput represents a mutation input for creating integrations.
 type CreateIntegrationInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
 	Tags           []string
 	Name           string
 	Description    *string
@@ -1770,18 +1446,6 @@ type CreateIntegrationInput struct {
 
 // Mutate applies the CreateIntegrationInput on the IntegrationMutation builder.
 func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -1817,10 +1481,6 @@ func (c *IntegrationCreate) SetInput(i CreateIntegrationInput) *IntegrationCreat
 
 // UpdateIntegrationInput represents a mutation input for updating integrations.
 type UpdateIntegrationInput struct {
-	ClearUpdatedAt       bool
-	UpdatedAt            *time.Time
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
 	ClearTags            bool
 	Tags                 []string
 	AppendTags           []string
@@ -1847,18 +1507,6 @@ type UpdateIntegrationInput struct {
 
 // Mutate applies the UpdateIntegrationInput on the IntegrationMutation builder.
 func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -1941,10 +1589,6 @@ func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUp
 
 // CreateInviteInput represents a mutation input for creating invites.
 type CreateInviteInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
 	Expires      *time.Time
 	Recipient    string
 	Status       *enums.InviteStatus
@@ -1957,18 +1601,6 @@ type CreateInviteInput struct {
 
 // Mutate applies the CreateInviteInput on the InviteMutation builder.
 func (i *CreateInviteInput) Mutate(m *InviteMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Expires; v != nil {
 		m.SetExpires(*v)
 	}
@@ -2001,10 +1633,6 @@ func (c *InviteCreate) SetInput(i CreateInviteInput) *InviteCreate {
 
 // UpdateInviteInput represents a mutation input for updating invites.
 type UpdateInviteInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
 	ClearExpires   bool
 	Expires        *time.Time
 	Status         *enums.InviteStatus
@@ -2019,18 +1647,6 @@ type UpdateInviteInput struct {
 
 // Mutate applies the UpdateInviteInput on the InviteMutation builder.
 func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearExpires {
 		m.ClearExpires()
 	}
@@ -2077,10 +1693,6 @@ func (c *InviteUpdateOne) SetInput(i UpdateInviteInput) *InviteUpdateOne {
 
 // CreateOauthProviderInput represents a mutation input for creating oauthproviders.
 type CreateOauthProviderInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
 	Tags         []string
 	Name         string
 	ClientID     string
@@ -2096,18 +1708,6 @@ type CreateOauthProviderInput struct {
 
 // Mutate applies the CreateOauthProviderInput on the OauthProviderMutation builder.
 func (i *CreateOauthProviderInput) Mutate(m *OauthProviderMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -2133,40 +1733,24 @@ func (c *OauthProviderCreate) SetInput(i CreateOauthProviderInput) *OauthProvide
 
 // UpdateOauthProviderInput represents a mutation input for updating oauthproviders.
 type UpdateOauthProviderInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	ClearTags      bool
-	Tags           []string
-	AppendTags     []string
-	Name           *string
-	ClientID       *string
-	ClientSecret   *string
-	RedirectURL    *string
-	Scopes         *string
-	AuthURL        *string
-	TokenURL       *string
-	AuthStyle      *customtypes.Uint8
-	InfoURL        *string
-	ClearOwner     bool
-	OwnerID        *string
+	ClearTags    bool
+	Tags         []string
+	AppendTags   []string
+	Name         *string
+	ClientID     *string
+	ClientSecret *string
+	RedirectURL  *string
+	Scopes       *string
+	AuthURL      *string
+	TokenURL     *string
+	AuthStyle    *customtypes.Uint8
+	InfoURL      *string
+	ClearOwner   bool
+	OwnerID      *string
 }
 
 // Mutate applies the UpdateOauthProviderInput on the OauthProviderMutation builder.
 func (i *UpdateOauthProviderInput) Mutate(m *OauthProviderMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -2411,10 +1995,6 @@ func (c *OhAuthTooTokenUpdateOne) SetInput(i UpdateOhAuthTooTokenInput) *OhAuthT
 
 // CreateOrgMembershipInput represents a mutation input for creating orgmemberships.
 type CreateOrgMembershipInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
 	Role           *enums.Role
 	OrganizationID string
 	UserID         string
@@ -2423,18 +2003,6 @@ type CreateOrgMembershipInput struct {
 
 // Mutate applies the CreateOrgMembershipInput on the OrgMembershipMutation builder.
 func (i *CreateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Role; v != nil {
 		m.SetRole(*v)
 	}
@@ -2453,10 +2021,6 @@ func (c *OrgMembershipCreate) SetInput(i CreateOrgMembershipInput) *OrgMembershi
 
 // UpdateOrgMembershipInput represents a mutation input for updating orgmemberships.
 type UpdateOrgMembershipInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
 	Role           *enums.Role
 	ClearEvents    bool
 	AddEventIDs    []string
@@ -2465,18 +2029,6 @@ type UpdateOrgMembershipInput struct {
 
 // Mutate applies the UpdateOrgMembershipInput on the OrgMembershipMutation builder.
 func (i *UpdateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Role; v != nil {
 		m.SetRole(*v)
 	}
@@ -2505,10 +2057,6 @@ func (c *OrgMembershipUpdateOne) SetInput(i UpdateOrgMembershipInput) *OrgMember
 
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
-	CreatedAt              *time.Time
-	UpdatedAt              *time.Time
-	CreatedBy              *string
-	UpdatedBy              *string
 	Tags                   []string
 	Name                   string
 	DisplayName            *string
@@ -2538,18 +2086,6 @@ type CreateOrganizationInput struct {
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
 func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -2633,10 +2169,6 @@ func (c *OrganizationCreate) SetInput(i CreateOrganizationInput) *OrganizationCr
 
 // UpdateOrganizationInput represents a mutation input for updating organizations.
 type UpdateOrganizationInput struct {
-	ClearUpdatedAt               bool
-	UpdatedAt                    *time.Time
-	ClearUpdatedBy               bool
-	UpdatedBy                    *string
 	ClearTags                    bool
 	Tags                         []string
 	AppendTags                   []string
@@ -2700,18 +2232,6 @@ type UpdateOrganizationInput struct {
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
 func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -2905,10 +2425,6 @@ func (c *OrganizationUpdateOne) SetInput(i UpdateOrganizationInput) *Organizatio
 
 // CreateOrganizationSettingInput represents a mutation input for creating organizationsettings.
 type CreateOrganizationSettingInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
 	Tags           []string
 	Domains        []string
 	BillingContact *string
@@ -2922,18 +2438,6 @@ type CreateOrganizationSettingInput struct {
 
 // Mutate applies the CreateOrganizationSettingInput on the OrganizationSettingMutation builder.
 func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -2971,10 +2475,6 @@ func (c *OrganizationSettingCreate) SetInput(i CreateOrganizationSettingInput) *
 
 // UpdateOrganizationSettingInput represents a mutation input for updating organizationsettings.
 type UpdateOrganizationSettingInput struct {
-	ClearUpdatedAt      bool
-	UpdatedAt           *time.Time
-	ClearUpdatedBy      bool
-	UpdatedBy           *string
 	ClearTags           bool
 	Tags                []string
 	AppendTags          []string
@@ -2999,18 +2499,6 @@ type UpdateOrganizationSettingInput struct {
 
 // Mutate applies the UpdateOrganizationSettingInput on the OrganizationSettingMutation builder.
 func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -3087,10 +2575,6 @@ func (c *OrganizationSettingUpdateOne) SetInput(i UpdateOrganizationSettingInput
 
 // CreatePersonalAccessTokenInput represents a mutation input for creating personalaccesstokens.
 type CreatePersonalAccessTokenInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
 	Tags            []string
 	Name            string
 	ExpiresAt       time.Time
@@ -3104,18 +2588,6 @@ type CreatePersonalAccessTokenInput struct {
 
 // Mutate applies the CreatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
 func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -3147,10 +2619,6 @@ func (c *PersonalAccessTokenCreate) SetInput(i CreatePersonalAccessTokenInput) *
 
 // UpdatePersonalAccessTokenInput represents a mutation input for updating personalaccesstokens.
 type UpdatePersonalAccessTokenInput struct {
-	ClearUpdatedAt        bool
-	UpdatedAt             *time.Time
-	ClearUpdatedBy        bool
-	UpdatedBy             *string
 	ClearTags             bool
 	Tags                  []string
 	AppendTags            []string
@@ -3172,18 +2640,6 @@ type UpdatePersonalAccessTokenInput struct {
 
 // Mutate applies the UpdatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
 func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -3251,10 +2707,6 @@ func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput
 
 // CreateSubscriberInput represents a mutation input for creating subscribers.
 type CreateSubscriberInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
 	Tags        []string
 	Email       string
 	PhoneNumber *string
@@ -3264,18 +2716,6 @@ type CreateSubscriberInput struct {
 
 // Mutate applies the CreateSubscriberInput on the SubscriberMutation builder.
 func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -3299,10 +2739,6 @@ func (c *SubscriberCreate) SetInput(i CreateSubscriberInput) *SubscriberCreate {
 
 // UpdateSubscriberInput represents a mutation input for updating subscribers.
 type UpdateSubscriberInput struct {
-	ClearUpdatedAt   bool
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
 	ClearTags        bool
 	Tags             []string
 	AppendTags       []string
@@ -3318,18 +2754,6 @@ type UpdateSubscriberInput struct {
 
 // Mutate applies the UpdateSubscriberInput on the SubscriberMutation builder.
 func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -3379,10 +2803,6 @@ func (c *SubscriberUpdateOne) SetInput(i UpdateSubscriberInput) *SubscriberUpdat
 
 // CreateTFASettingInput represents a mutation input for creating tfasettings.
 type CreateTFASettingInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
 	Tags        []string
 	TotpAllowed *bool
 	OwnerID     *string
@@ -3390,18 +2810,6 @@ type CreateTFASettingInput struct {
 
 // Mutate applies the CreateTFASettingInput on the TFASettingMutation builder.
 func (i *CreateTFASettingInput) Mutate(m *TFASettingMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -3421,10 +2829,6 @@ func (c *TFASettingCreate) SetInput(i CreateTFASettingInput) *TFASettingCreate {
 
 // UpdateTFASettingInput represents a mutation input for updating tfasettings.
 type UpdateTFASettingInput struct {
-	ClearUpdatedAt   bool
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
 	ClearTags        bool
 	Tags             []string
 	AppendTags       []string
@@ -3435,18 +2839,6 @@ type UpdateTFASettingInput struct {
 
 // Mutate applies the UpdateTFASettingInput on the TFASettingMutation builder.
 func (i *UpdateTFASettingInput) Mutate(m *TFASettingMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -3481,10 +2873,6 @@ func (c *TFASettingUpdateOne) SetInput(i UpdateTFASettingInput) *TFASettingUpdat
 
 // CreateTemplateInput represents a mutation input for creating templates.
 type CreateTemplateInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
 	Tags         []string
 	Name         string
 	TemplateType *enums.DocumentType
@@ -3497,18 +2885,6 @@ type CreateTemplateInput struct {
 
 // Mutate applies the CreateTemplateInput on the TemplateMutation builder.
 func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -3541,10 +2917,6 @@ func (c *TemplateCreate) SetInput(i CreateTemplateInput) *TemplateCreate {
 
 // UpdateTemplateInput represents a mutation input for updating templates.
 type UpdateTemplateInput struct {
-	ClearUpdatedAt    bool
-	UpdatedAt         *time.Time
-	ClearUpdatedBy    bool
-	UpdatedBy         *string
 	ClearTags         bool
 	Tags              []string
 	AppendTags        []string
@@ -3564,18 +2936,6 @@ type UpdateTemplateInput struct {
 
 // Mutate applies the UpdateTemplateInput on the TemplateMutation builder.
 func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -3637,10 +2997,6 @@ func (c *TemplateUpdateOne) SetInput(i UpdateTemplateInput) *TemplateUpdateOne {
 
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
-	CreatedAt                 *time.Time
-	UpdatedAt                 *time.Time
-	CreatedBy                 *string
-	UpdatedBy                 *string
 	Tags                      []string
 	Email                     string
 	FirstName                 *string
@@ -3669,18 +3025,6 @@ type CreateUserInput struct {
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
 func (i *CreateUserInput) Mutate(m *UserMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -3757,10 +3101,6 @@ func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
 
 // UpdateUserInput represents a mutation input for updating users.
 type UpdateUserInput struct {
-	ClearUpdatedAt                  bool
-	UpdatedAt                       *time.Time
-	ClearUpdatedBy                  bool
-	UpdatedBy                       *string
 	ClearTags                       bool
 	Tags                            []string
 	AppendTags                      []string
@@ -3820,18 +3160,6 @@ type UpdateUserInput struct {
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
 func (i *UpdateUserInput) Mutate(m *UserMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -4013,10 +3341,6 @@ func (c *UserUpdateOne) SetInput(i UpdateUserInput) *UserUpdateOne {
 
 // CreateUserSettingInput represents a mutation input for creating usersettings.
 type CreateUserSettingInput struct {
-	CreatedAt         *time.Time
-	UpdatedAt         *time.Time
-	CreatedBy         *string
-	UpdatedBy         *string
 	Tags              []string
 	Locked            *bool
 	SilencedAt        *time.Time
@@ -4031,18 +3355,6 @@ type CreateUserSettingInput struct {
 
 // Mutate applies the CreateUserSettingInput on the UserSettingMutation builder.
 func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -4083,10 +3395,6 @@ func (c *UserSettingCreate) SetInput(i CreateUserSettingInput) *UserSettingCreat
 
 // UpdateUserSettingInput represents a mutation input for updating usersettings.
 type UpdateUserSettingInput struct {
-	ClearUpdatedAt         bool
-	UpdatedAt              *time.Time
-	ClearUpdatedBy         bool
-	UpdatedBy              *string
 	ClearTags              bool
 	Tags                   []string
 	AppendTags             []string
@@ -4109,18 +3417,6 @@ type UpdateUserSettingInput struct {
 
 // Mutate applies the UpdateUserSettingInput on the UserSettingMutation builder.
 func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}
@@ -4191,10 +3487,6 @@ func (c *UserSettingUpdateOne) SetInput(i UpdateUserSettingInput) *UserSettingUp
 
 // CreateWebhookInput represents a mutation input for creating webhooks.
 type CreateWebhookInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
 	Tags           []string
 	Name           string
 	Description    *string
@@ -4210,18 +3502,6 @@ type CreateWebhookInput struct {
 
 // Mutate applies the CreateWebhookInput on the WebhookMutation builder.
 func (i *CreateWebhookInput) Mutate(m *WebhookMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -4261,10 +3541,6 @@ func (c *WebhookCreate) SetInput(i CreateWebhookInput) *WebhookCreate {
 
 // UpdateWebhookInput represents a mutation input for updating webhooks.
 type UpdateWebhookInput struct {
-	ClearUpdatedAt       bool
-	UpdatedAt            *time.Time
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
 	ClearTags            bool
 	Tags                 []string
 	AppendTags           []string
@@ -4291,18 +3567,6 @@ type UpdateWebhookInput struct {
 
 // Mutate applies the UpdateWebhookInput on the WebhookMutation builder.
 func (i *UpdateWebhookInput) Mutate(m *WebhookMutation) {
-	if i.ClearUpdatedAt {
-		m.ClearUpdatedAt()
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
 	if i.ClearTags {
 		m.ClearTags()
 	}

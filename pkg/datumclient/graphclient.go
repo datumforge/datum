@@ -20,10 +20,10 @@ type DatumGraphClient interface {
 	GetAllAPITokens(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllAPITokens, error)
 	GetAPITokenByID(ctx context.Context, apiTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetAPITokenByID, error)
 	DeleteAPIToken(ctx context.Context, deleteAPITokenID string, interceptors ...clientv2.RequestInterceptor) (*DeleteAPIToken, error)
-	GetDocumentDataByID(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentDataByID, error)
 	CreateDocumentData(ctx context.Context, input CreateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*CreateDocumentData, error)
-	UpdateDocumentData(ctx context.Context, updateDocumentDataID string, input UpdateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*UpdateDocumentData, error)
 	DeleteDocumentData(ctx context.Context, deleteDocumentDataID string, interceptors ...clientv2.RequestInterceptor) (*DeleteDocumentData, error)
+	GetDocumentDataByID(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentDataByID, error)
+	UpdateDocumentData(ctx context.Context, updateDocumentDataID string, input UpdateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*UpdateDocumentData, error)
 	CreateBulkCSVEntitlement(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVEntitlement, error)
 	CreateBulkEntitlement(ctx context.Context, input []*CreateEntitlementInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkEntitlement, error)
 	CreateEntitlement(ctx context.Context, input CreateEntitlementInput, interceptors ...clientv2.RequestInterceptor) (*CreateEntitlement, error)
@@ -68,8 +68,8 @@ type DatumGraphClient interface {
 	CreateBulkFile(ctx context.Context, input []*CreateFileInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkFile, error)
 	CreateFile(ctx context.Context, input CreateFileInput, interceptors ...clientv2.RequestInterceptor) (*CreateFile, error)
 	DeleteFile(ctx context.Context, deleteFileID string, interceptors ...clientv2.RequestInterceptor) (*DeleteFile, error)
-	GetFiles(ctx context.Context, where *FileWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetFiles, error)
 	GetAllFiles(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllFiles, error)
+	GetFiles(ctx context.Context, where *FileWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetFiles, error)
 	UpdateFile(ctx context.Context, updateFileID string, input UpdateFileInput, interceptors ...clientv2.RequestInterceptor) (*UpdateFile, error)
 	GetAllFileHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllFileHistories, error)
 	GetFileHistories(ctx context.Context, where *FileHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetFileHistories, error)
@@ -165,15 +165,15 @@ type DatumGraphClient interface {
 	GetSubscriberByEmail(ctx context.Context, email string, interceptors ...clientv2.RequestInterceptor) (*GetSubscriberByEmail, error)
 	GetSubscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetSubscribers, error)
 	UpdateSubscriber(ctx context.Context, email string, input UpdateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*UpdateSubscriber, error)
-	CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error)
-	CreateBulkTemplate(ctx context.Context, input []*CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkTemplate, error)
 	CreateBulkCSVTemplate(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVTemplate, error)
-	UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error)
+	CreateBulkTemplate(ctx context.Context, input []*CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkTemplate, error)
+	CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error)
 	GetAllTemplates(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTemplates, error)
 	GetTemplateByID(ctx context.Context, getTemplateID string, interceptors ...clientv2.RequestInterceptor) (*GetTemplateByID, error)
+	UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error)
 	CreateTFASetting(ctx context.Context, input CreateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASetting, error)
-	GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error)
 	GetAllTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTFASettings, error)
+	GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error)
 	UpdateTFASetting(ctx context.Context, input UpdateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASetting, error)
 	CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error)
 	DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error)
@@ -659,59 +659,6 @@ func (t *DeleteAPIToken_DeleteAPIToken) GetDeletedID() string {
 	return t.DeletedID
 }
 
-type GetDocumentDataByID_DocumentData struct {
-	ID         string          "json:\"id\" graphql:\"id\""
-	TemplateID string          "json:\"templateID\" graphql:\"templateID\""
-	Data       json.RawMessage "json:\"data\" graphql:\"data\""
-	CreatedAt  *time.Time      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy  *string         "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt  *time.Time      "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy  *string         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-}
-
-func (t *GetDocumentDataByID_DocumentData) GetID() string {
-	if t == nil {
-		t = &GetDocumentDataByID_DocumentData{}
-	}
-	return t.ID
-}
-func (t *GetDocumentDataByID_DocumentData) GetTemplateID() string {
-	if t == nil {
-		t = &GetDocumentDataByID_DocumentData{}
-	}
-	return t.TemplateID
-}
-func (t *GetDocumentDataByID_DocumentData) GetData() *json.RawMessage {
-	if t == nil {
-		t = &GetDocumentDataByID_DocumentData{}
-	}
-	return &t.Data
-}
-func (t *GetDocumentDataByID_DocumentData) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &GetDocumentDataByID_DocumentData{}
-	}
-	return t.CreatedAt
-}
-func (t *GetDocumentDataByID_DocumentData) GetCreatedBy() *string {
-	if t == nil {
-		t = &GetDocumentDataByID_DocumentData{}
-	}
-	return t.CreatedBy
-}
-func (t *GetDocumentDataByID_DocumentData) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &GetDocumentDataByID_DocumentData{}
-	}
-	return t.UpdatedAt
-}
-func (t *GetDocumentDataByID_DocumentData) GetUpdatedBy() *string {
-	if t == nil {
-		t = &GetDocumentDataByID_DocumentData{}
-	}
-	return t.UpdatedBy
-}
-
 type CreateDocumentData_CreateDocumentData_DocumentData struct {
 	ID         string          "json:\"id\" graphql:\"id\""
 	TemplateID string          "json:\"templateID\" graphql:\"templateID\""
@@ -776,6 +723,70 @@ func (t *CreateDocumentData_CreateDocumentData) GetDocumentData() *CreateDocumen
 	return &t.DocumentData
 }
 
+type DeleteDocumentData_DeleteDocumentData struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteDocumentData_DeleteDocumentData) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteDocumentData_DeleteDocumentData{}
+	}
+	return t.DeletedID
+}
+
+type GetDocumentDataByID_DocumentData struct {
+	ID         string          "json:\"id\" graphql:\"id\""
+	TemplateID string          "json:\"templateID\" graphql:\"templateID\""
+	Data       json.RawMessage "json:\"data\" graphql:\"data\""
+	CreatedAt  *time.Time      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy  *string         "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt  *time.Time      "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy  *string         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetDocumentDataByID_DocumentData) GetID() string {
+	if t == nil {
+		t = &GetDocumentDataByID_DocumentData{}
+	}
+	return t.ID
+}
+func (t *GetDocumentDataByID_DocumentData) GetTemplateID() string {
+	if t == nil {
+		t = &GetDocumentDataByID_DocumentData{}
+	}
+	return t.TemplateID
+}
+func (t *GetDocumentDataByID_DocumentData) GetData() *json.RawMessage {
+	if t == nil {
+		t = &GetDocumentDataByID_DocumentData{}
+	}
+	return &t.Data
+}
+func (t *GetDocumentDataByID_DocumentData) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetDocumentDataByID_DocumentData{}
+	}
+	return t.CreatedAt
+}
+func (t *GetDocumentDataByID_DocumentData) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetDocumentDataByID_DocumentData{}
+	}
+	return t.CreatedBy
+}
+func (t *GetDocumentDataByID_DocumentData) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetDocumentDataByID_DocumentData{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetDocumentDataByID_DocumentData) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetDocumentDataByID_DocumentData{}
+	}
+	return t.UpdatedBy
+}
+
 type UpdateDocumentData_UpdateDocumentData_DocumentData struct {
 	ID         string          "json:\"id\" graphql:\"id\""
 	TemplateID string          "json:\"templateID\" graphql:\"templateID\""
@@ -838,17 +849,6 @@ func (t *UpdateDocumentData_UpdateDocumentData) GetDocumentData() *UpdateDocumen
 		t = &UpdateDocumentData_UpdateDocumentData{}
 	}
 	return &t.DocumentData
-}
-
-type DeleteDocumentData_DeleteDocumentData struct {
-	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
-}
-
-func (t *DeleteDocumentData_DeleteDocumentData) GetDeletedID() string {
-	if t == nil {
-		t = &DeleteDocumentData_DeleteDocumentData{}
-	}
-	return t.DeletedID
 }
 
 type CreateBulkCSVEntitlement_CreateBulkCSVEntitlement_Entitlements_Plan struct {
@@ -5609,170 +5609,6 @@ func (t *DeleteFile_DeleteFile) GetDeletedID() string {
 	return t.DeletedID
 }
 
-type GetFiles_Files_Edges_Node_User struct {
-	ID string "json:\"id\" graphql:\"id\""
-}
-
-func (t *GetFiles_Files_Edges_Node_User) GetID() string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node_User{}
-	}
-	return t.ID
-}
-
-type GetFiles_Files_Edges_Node_Organization struct {
-	ID string "json:\"id\" graphql:\"id\""
-}
-
-func (t *GetFiles_Files_Edges_Node_Organization) GetID() string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node_Organization{}
-	}
-	return t.ID
-}
-
-type GetFiles_Files_Edges_Node_Group struct {
-	ID string "json:\"id\" graphql:\"id\""
-}
-
-func (t *GetFiles_Files_Edges_Node_Group) GetID() string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node_Group{}
-	}
-	return t.ID
-}
-
-type GetFiles_Files_Edges_Node struct {
-	Annotation    *string                                   "json:\"annotation,omitempty\" graphql:\"annotation\""
-	Category      *string                                   "json:\"category,omitempty\" graphql:\"category\""
-	ContentType   string                                    "json:\"contentType\" graphql:\"contentType\""
-	CreatedAt     *time.Time                                "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy     *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	FileExtension string                                    "json:\"fileExtension\" graphql:\"fileExtension\""
-	FileName      string                                    "json:\"fileName\" graphql:\"fileName\""
-	FileSize      *int64                                    "json:\"fileSize,omitempty\" graphql:\"fileSize\""
-	ID            string                                    "json:\"id\" graphql:\"id\""
-	StoreKey      string                                    "json:\"storeKey\" graphql:\"storeKey\""
-	UpdatedAt     *time.Time                                "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy     *string                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	User          *GetFiles_Files_Edges_Node_User           "json:\"user,omitempty\" graphql:\"user\""
-	Organization  []*GetFiles_Files_Edges_Node_Organization "json:\"organization,omitempty\" graphql:\"organization\""
-	Group         []*GetFiles_Files_Edges_Node_Group        "json:\"group,omitempty\" graphql:\"group\""
-}
-
-func (t *GetFiles_Files_Edges_Node) GetAnnotation() *string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.Annotation
-}
-func (t *GetFiles_Files_Edges_Node) GetCategory() *string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.Category
-}
-func (t *GetFiles_Files_Edges_Node) GetContentType() string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.ContentType
-}
-func (t *GetFiles_Files_Edges_Node) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.CreatedAt
-}
-func (t *GetFiles_Files_Edges_Node) GetCreatedBy() *string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.CreatedBy
-}
-func (t *GetFiles_Files_Edges_Node) GetFileExtension() string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.FileExtension
-}
-func (t *GetFiles_Files_Edges_Node) GetFileName() string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.FileName
-}
-func (t *GetFiles_Files_Edges_Node) GetFileSize() *int64 {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.FileSize
-}
-func (t *GetFiles_Files_Edges_Node) GetID() string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.ID
-}
-func (t *GetFiles_Files_Edges_Node) GetStoreKey() string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.StoreKey
-}
-func (t *GetFiles_Files_Edges_Node) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.UpdatedAt
-}
-func (t *GetFiles_Files_Edges_Node) GetUpdatedBy() *string {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.UpdatedBy
-}
-func (t *GetFiles_Files_Edges_Node) GetUser() *GetFiles_Files_Edges_Node_User {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.User
-}
-func (t *GetFiles_Files_Edges_Node) GetOrganization() []*GetFiles_Files_Edges_Node_Organization {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.Organization
-}
-func (t *GetFiles_Files_Edges_Node) GetGroup() []*GetFiles_Files_Edges_Node_Group {
-	if t == nil {
-		t = &GetFiles_Files_Edges_Node{}
-	}
-	return t.Group
-}
-
-type GetFiles_Files_Edges struct {
-	Node *GetFiles_Files_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
-}
-
-func (t *GetFiles_Files_Edges) GetNode() *GetFiles_Files_Edges_Node {
-	if t == nil {
-		t = &GetFiles_Files_Edges{}
-	}
-	return t.Node
-}
-
-type GetFiles_Files struct {
-	Edges []*GetFiles_Files_Edges "json:\"edges,omitempty\" graphql:\"edges\""
-}
-
-func (t *GetFiles_Files) GetEdges() []*GetFiles_Files_Edges {
-	if t == nil {
-		t = &GetFiles_Files{}
-	}
-	return t.Edges
-}
-
 type GetAllFiles_Files_Edges_Node_User struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
@@ -5933,6 +5769,170 @@ type GetAllFiles_Files struct {
 func (t *GetAllFiles_Files) GetEdges() []*GetAllFiles_Files_Edges {
 	if t == nil {
 		t = &GetAllFiles_Files{}
+	}
+	return t.Edges
+}
+
+type GetFiles_Files_Edges_Node_User struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetFiles_Files_Edges_Node_User) GetID() string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node_User{}
+	}
+	return t.ID
+}
+
+type GetFiles_Files_Edges_Node_Organization struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetFiles_Files_Edges_Node_Organization) GetID() string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node_Organization{}
+	}
+	return t.ID
+}
+
+type GetFiles_Files_Edges_Node_Group struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetFiles_Files_Edges_Node_Group) GetID() string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node_Group{}
+	}
+	return t.ID
+}
+
+type GetFiles_Files_Edges_Node struct {
+	Annotation    *string                                   "json:\"annotation,omitempty\" graphql:\"annotation\""
+	Category      *string                                   "json:\"category,omitempty\" graphql:\"category\""
+	ContentType   string                                    "json:\"contentType\" graphql:\"contentType\""
+	CreatedAt     *time.Time                                "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy     *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	FileExtension string                                    "json:\"fileExtension\" graphql:\"fileExtension\""
+	FileName      string                                    "json:\"fileName\" graphql:\"fileName\""
+	FileSize      *int64                                    "json:\"fileSize,omitempty\" graphql:\"fileSize\""
+	ID            string                                    "json:\"id\" graphql:\"id\""
+	StoreKey      string                                    "json:\"storeKey\" graphql:\"storeKey\""
+	UpdatedAt     *time.Time                                "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy     *string                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	User          *GetFiles_Files_Edges_Node_User           "json:\"user,omitempty\" graphql:\"user\""
+	Organization  []*GetFiles_Files_Edges_Node_Organization "json:\"organization,omitempty\" graphql:\"organization\""
+	Group         []*GetFiles_Files_Edges_Node_Group        "json:\"group,omitempty\" graphql:\"group\""
+}
+
+func (t *GetFiles_Files_Edges_Node) GetAnnotation() *string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.Annotation
+}
+func (t *GetFiles_Files_Edges_Node) GetCategory() *string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.Category
+}
+func (t *GetFiles_Files_Edges_Node) GetContentType() string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.ContentType
+}
+func (t *GetFiles_Files_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetFiles_Files_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetFiles_Files_Edges_Node) GetFileExtension() string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.FileExtension
+}
+func (t *GetFiles_Files_Edges_Node) GetFileName() string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.FileName
+}
+func (t *GetFiles_Files_Edges_Node) GetFileSize() *int64 {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.FileSize
+}
+func (t *GetFiles_Files_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetFiles_Files_Edges_Node) GetStoreKey() string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.StoreKey
+}
+func (t *GetFiles_Files_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetFiles_Files_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetFiles_Files_Edges_Node) GetUser() *GetFiles_Files_Edges_Node_User {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.User
+}
+func (t *GetFiles_Files_Edges_Node) GetOrganization() []*GetFiles_Files_Edges_Node_Organization {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.Organization
+}
+func (t *GetFiles_Files_Edges_Node) GetGroup() []*GetFiles_Files_Edges_Node_Group {
+	if t == nil {
+		t = &GetFiles_Files_Edges_Node{}
+	}
+	return t.Group
+}
+
+type GetFiles_Files_Edges struct {
+	Node *GetFiles_Files_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetFiles_Files_Edges) GetNode() *GetFiles_Files_Edges_Node {
+	if t == nil {
+		t = &GetFiles_Files_Edges{}
+	}
+	return t.Node
+}
+
+type GetFiles_Files struct {
+	Edges []*GetFiles_Files_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetFiles_Files) GetEdges() []*GetFiles_Files_Edges {
+	if t == nil {
+		t = &GetFiles_Files{}
 	}
 	return t.Edges
 }
@@ -16985,72 +16985,72 @@ func (t *UpdateSubscriber_UpdateSubscriber) GetSubscriber() *UpdateSubscriber_Up
 	return &t.Subscriber
 }
 
-type CreateTemplate_CreateTemplate_Template_Owner struct {
+type CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
 
-func (t *CreateTemplate_CreateTemplate_Template_Owner) GetID() string {
+func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner) GetID() string {
 	if t == nil {
-		t = &CreateTemplate_CreateTemplate_Template_Owner{}
+		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner{}
 	}
 	return t.ID
 }
 
-type CreateTemplate_CreateTemplate_Template struct {
-	Description *string                                       "json:\"description,omitempty\" graphql:\"description\""
-	ID          string                                        "json:\"id\" graphql:\"id\""
-	Jsonconfig  json.RawMessage                               "json:\"jsonconfig\" graphql:\"jsonconfig\""
-	Name        string                                        "json:\"name\" graphql:\"name\""
-	Uischema    json.RawMessage                               "json:\"uischema,omitempty\" graphql:\"uischema\""
-	Owner       *CreateTemplate_CreateTemplate_Template_Owner "json:\"owner,omitempty\" graphql:\"owner\""
+type CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates struct {
+	Description *string                                                      "json:\"description,omitempty\" graphql:\"description\""
+	ID          string                                                       "json:\"id\" graphql:\"id\""
+	Jsonconfig  json.RawMessage                                              "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Name        string                                                       "json:\"name\" graphql:\"name\""
+	Uischema    json.RawMessage                                              "json:\"uischema,omitempty\" graphql:\"uischema\""
+	Owner       *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
-func (t *CreateTemplate_CreateTemplate_Template) GetDescription() *string {
+func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetDescription() *string {
 	if t == nil {
-		t = &CreateTemplate_CreateTemplate_Template{}
+		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
 	}
 	return t.Description
 }
-func (t *CreateTemplate_CreateTemplate_Template) GetID() string {
+func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetID() string {
 	if t == nil {
-		t = &CreateTemplate_CreateTemplate_Template{}
+		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
 	}
 	return t.ID
 }
-func (t *CreateTemplate_CreateTemplate_Template) GetJsonconfig() *json.RawMessage {
+func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetJsonconfig() *json.RawMessage {
 	if t == nil {
-		t = &CreateTemplate_CreateTemplate_Template{}
+		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
 	}
 	return &t.Jsonconfig
 }
-func (t *CreateTemplate_CreateTemplate_Template) GetName() string {
+func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetName() string {
 	if t == nil {
-		t = &CreateTemplate_CreateTemplate_Template{}
+		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
 	}
 	return t.Name
 }
-func (t *CreateTemplate_CreateTemplate_Template) GetUischema() *json.RawMessage {
+func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetUischema() *json.RawMessage {
 	if t == nil {
-		t = &CreateTemplate_CreateTemplate_Template{}
+		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
 	}
 	return &t.Uischema
 }
-func (t *CreateTemplate_CreateTemplate_Template) GetOwner() *CreateTemplate_CreateTemplate_Template_Owner {
+func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetOwner() *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner {
 	if t == nil {
-		t = &CreateTemplate_CreateTemplate_Template{}
+		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
 	}
 	return t.Owner
 }
 
-type CreateTemplate_CreateTemplate struct {
-	Template CreateTemplate_CreateTemplate_Template "json:\"template\" graphql:\"template\""
+type CreateBulkCSVTemplate_CreateBulkCSVTemplate struct {
+	Templates []*CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates "json:\"templates,omitempty\" graphql:\"templates\""
 }
 
-func (t *CreateTemplate_CreateTemplate) GetTemplate() *CreateTemplate_CreateTemplate_Template {
+func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate) GetTemplates() []*CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates {
 	if t == nil {
-		t = &CreateTemplate_CreateTemplate{}
+		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate{}
 	}
-	return &t.Template
+	return t.Templates
 }
 
 type CreateBulkTemplate_CreateBulkTemplate_Templates_Owner struct {
@@ -17121,166 +17121,70 @@ func (t *CreateBulkTemplate_CreateBulkTemplate) GetTemplates() []*CreateBulkTemp
 	return t.Templates
 }
 
-type CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner struct {
+type CreateTemplate_CreateTemplate_Template_Owner struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
 
-func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner) GetID() string {
+func (t *CreateTemplate_CreateTemplate_Template_Owner) GetID() string {
 	if t == nil {
-		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner{}
+		t = &CreateTemplate_CreateTemplate_Template_Owner{}
 	}
 	return t.ID
 }
 
-type CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates struct {
-	Description *string                                                      "json:\"description,omitempty\" graphql:\"description\""
-	ID          string                                                       "json:\"id\" graphql:\"id\""
-	Jsonconfig  json.RawMessage                                              "json:\"jsonconfig\" graphql:\"jsonconfig\""
-	Name        string                                                       "json:\"name\" graphql:\"name\""
-	Uischema    json.RawMessage                                              "json:\"uischema,omitempty\" graphql:\"uischema\""
-	Owner       *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner "json:\"owner,omitempty\" graphql:\"owner\""
-}
-
-func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetDescription() *string {
-	if t == nil {
-		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
-	}
-	return t.Description
-}
-func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetID() string {
-	if t == nil {
-		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
-	}
-	return t.ID
-}
-func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetJsonconfig() *json.RawMessage {
-	if t == nil {
-		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
-	}
-	return &t.Jsonconfig
-}
-func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetName() string {
-	if t == nil {
-		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
-	}
-	return t.Name
-}
-func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetUischema() *json.RawMessage {
-	if t == nil {
-		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
-	}
-	return &t.Uischema
-}
-func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates) GetOwner() *CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates_Owner {
-	if t == nil {
-		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates{}
-	}
-	return t.Owner
-}
-
-type CreateBulkCSVTemplate_CreateBulkCSVTemplate struct {
-	Templates []*CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates "json:\"templates,omitempty\" graphql:\"templates\""
-}
-
-func (t *CreateBulkCSVTemplate_CreateBulkCSVTemplate) GetTemplates() []*CreateBulkCSVTemplate_CreateBulkCSVTemplate_Templates {
-	if t == nil {
-		t = &CreateBulkCSVTemplate_CreateBulkCSVTemplate{}
-	}
-	return t.Templates
-}
-
-type UpdateTemplate_UpdateTemplate_Template_Owner struct {
-	ID string "json:\"id\" graphql:\"id\""
-}
-
-func (t *UpdateTemplate_UpdateTemplate_Template_Owner) GetID() string {
-	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template_Owner{}
-	}
-	return t.ID
-}
-
-type UpdateTemplate_UpdateTemplate_Template struct {
-	CreatedAt   *time.Time                                    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string                                       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+type CreateTemplate_CreateTemplate_Template struct {
 	Description *string                                       "json:\"description,omitempty\" graphql:\"description\""
 	ID          string                                        "json:\"id\" graphql:\"id\""
 	Jsonconfig  json.RawMessage                               "json:\"jsonconfig\" graphql:\"jsonconfig\""
 	Name        string                                        "json:\"name\" graphql:\"name\""
 	Uischema    json.RawMessage                               "json:\"uischema,omitempty\" graphql:\"uischema\""
-	UpdatedAt   *time.Time                                    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string                                       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Owner       *UpdateTemplate_UpdateTemplate_Template_Owner "json:\"owner,omitempty\" graphql:\"owner\""
+	Owner       *CreateTemplate_CreateTemplate_Template_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
-func (t *UpdateTemplate_UpdateTemplate_Template) GetCreatedAt() *time.Time {
+func (t *CreateTemplate_CreateTemplate_Template) GetDescription() *string {
 	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
-	}
-	return t.CreatedAt
-}
-func (t *UpdateTemplate_UpdateTemplate_Template) GetCreatedBy() *string {
-	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
-	}
-	return t.CreatedBy
-}
-func (t *UpdateTemplate_UpdateTemplate_Template) GetDescription() *string {
-	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
+		t = &CreateTemplate_CreateTemplate_Template{}
 	}
 	return t.Description
 }
-func (t *UpdateTemplate_UpdateTemplate_Template) GetID() string {
+func (t *CreateTemplate_CreateTemplate_Template) GetID() string {
 	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
+		t = &CreateTemplate_CreateTemplate_Template{}
 	}
 	return t.ID
 }
-func (t *UpdateTemplate_UpdateTemplate_Template) GetJsonconfig() *json.RawMessage {
+func (t *CreateTemplate_CreateTemplate_Template) GetJsonconfig() *json.RawMessage {
 	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
+		t = &CreateTemplate_CreateTemplate_Template{}
 	}
 	return &t.Jsonconfig
 }
-func (t *UpdateTemplate_UpdateTemplate_Template) GetName() string {
+func (t *CreateTemplate_CreateTemplate_Template) GetName() string {
 	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
+		t = &CreateTemplate_CreateTemplate_Template{}
 	}
 	return t.Name
 }
-func (t *UpdateTemplate_UpdateTemplate_Template) GetUischema() *json.RawMessage {
+func (t *CreateTemplate_CreateTemplate_Template) GetUischema() *json.RawMessage {
 	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
+		t = &CreateTemplate_CreateTemplate_Template{}
 	}
 	return &t.Uischema
 }
-func (t *UpdateTemplate_UpdateTemplate_Template) GetUpdatedAt() *time.Time {
+func (t *CreateTemplate_CreateTemplate_Template) GetOwner() *CreateTemplate_CreateTemplate_Template_Owner {
 	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
-	}
-	return t.UpdatedAt
-}
-func (t *UpdateTemplate_UpdateTemplate_Template) GetUpdatedBy() *string {
-	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
-	}
-	return t.UpdatedBy
-}
-func (t *UpdateTemplate_UpdateTemplate_Template) GetOwner() *UpdateTemplate_UpdateTemplate_Template_Owner {
-	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
+		t = &CreateTemplate_CreateTemplate_Template{}
 	}
 	return t.Owner
 }
 
-type UpdateTemplate_UpdateTemplate struct {
-	Template UpdateTemplate_UpdateTemplate_Template "json:\"template\" graphql:\"template\""
+type CreateTemplate_CreateTemplate struct {
+	Template CreateTemplate_CreateTemplate_Template "json:\"template\" graphql:\"template\""
 }
 
-func (t *UpdateTemplate_UpdateTemplate) GetTemplate() *UpdateTemplate_UpdateTemplate_Template {
+func (t *CreateTemplate_CreateTemplate) GetTemplate() *CreateTemplate_CreateTemplate_Template {
 	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate{}
+		t = &CreateTemplate_CreateTemplate{}
 	}
 	return &t.Template
 }
@@ -17477,266 +17381,100 @@ func (t *GetTemplateByID_Template) GetOwner() *GetTemplateByID_Template_Owner {
 	return t.Owner
 }
 
-type GetAllTemplateHistories_TemplateHistories_Edges_Node struct {
-	CreatedAt    *time.Time         "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy    *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description  *string            "json:\"description,omitempty\" graphql:\"description\""
-	HistoryTime  time.Time          "json:\"historyTime\" graphql:\"historyTime\""
-	ID           string             "json:\"id\" graphql:\"id\""
-	Jsonconfig   json.RawMessage    "json:\"jsonconfig\" graphql:\"jsonconfig\""
-	Name         string             "json:\"name\" graphql:\"name\""
-	Operation    enthistory.OpType  "json:\"operation\" graphql:\"operation\""
-	OwnerID      *string            "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Ref          *string            "json:\"ref,omitempty\" graphql:\"ref\""
-	Tags         []string           "json:\"tags,omitempty\" graphql:\"tags\""
-	TemplateType enums.DocumentType "json:\"templateType\" graphql:\"templateType\""
-	Uischema     json.RawMessage    "json:\"uischema,omitempty\" graphql:\"uischema\""
-	UpdatedAt    *time.Time         "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy    *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+type UpdateTemplate_UpdateTemplate_Template_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
 }
 
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetCreatedAt() *time.Time {
+func (t *UpdateTemplate_UpdateTemplate_Template_Owner) GetID() string {
 	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.CreatedAt
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetCreatedBy() *string {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.CreatedBy
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetDescription() *string {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.Description
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetHistoryTime() *time.Time {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return &t.HistoryTime
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetID() string {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template_Owner{}
 	}
 	return t.ID
 }
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetJsonconfig() *json.RawMessage {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return &t.Jsonconfig
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetName() string {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.Name
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetOperation() *enthistory.OpType {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return &t.Operation
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetOwnerID() *string {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.OwnerID
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetRef() *string {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.Ref
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetTags() []string {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.Tags
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetTemplateType() *enums.DocumentType {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return &t.TemplateType
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetUischema() *json.RawMessage {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return &t.Uischema
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.UpdatedAt
-}
-func (t *GetAllTemplateHistories_TemplateHistories_Edges_Node) GetUpdatedBy() *string {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.UpdatedBy
+
+type UpdateTemplate_UpdateTemplate_Template struct {
+	CreatedAt   *time.Time                                    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string                                       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string                                       "json:\"description,omitempty\" graphql:\"description\""
+	ID          string                                        "json:\"id\" graphql:\"id\""
+	Jsonconfig  json.RawMessage                               "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Name        string                                        "json:\"name\" graphql:\"name\""
+	Uischema    json.RawMessage                               "json:\"uischema,omitempty\" graphql:\"uischema\""
+	UpdatedAt   *time.Time                                    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Owner       *UpdateTemplate_UpdateTemplate_Template_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
-type GetAllTemplateHistories_TemplateHistories_Edges struct {
-	Node *GetAllTemplateHistories_TemplateHistories_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
-}
-
-func (t *GetAllTemplateHistories_TemplateHistories_Edges) GetNode() *GetAllTemplateHistories_TemplateHistories_Edges_Node {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetCreatedAt() *time.Time {
 	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories_Edges{}
-	}
-	return t.Node
-}
-
-type GetAllTemplateHistories_TemplateHistories struct {
-	Edges []*GetAllTemplateHistories_TemplateHistories_Edges "json:\"edges,omitempty\" graphql:\"edges\""
-}
-
-func (t *GetAllTemplateHistories_TemplateHistories) GetEdges() []*GetAllTemplateHistories_TemplateHistories_Edges {
-	if t == nil {
-		t = &GetAllTemplateHistories_TemplateHistories{}
-	}
-	return t.Edges
-}
-
-type GetTemplateHistories_TemplateHistories_Edges_Node struct {
-	CreatedAt    *time.Time         "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy    *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description  *string            "json:\"description,omitempty\" graphql:\"description\""
-	HistoryTime  time.Time          "json:\"historyTime\" graphql:\"historyTime\""
-	ID           string             "json:\"id\" graphql:\"id\""
-	Jsonconfig   json.RawMessage    "json:\"jsonconfig\" graphql:\"jsonconfig\""
-	Name         string             "json:\"name\" graphql:\"name\""
-	Operation    enthistory.OpType  "json:\"operation\" graphql:\"operation\""
-	OwnerID      *string            "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Ref          *string            "json:\"ref,omitempty\" graphql:\"ref\""
-	Tags         []string           "json:\"tags,omitempty\" graphql:\"tags\""
-	TemplateType enums.DocumentType "json:\"templateType\" graphql:\"templateType\""
-	Uischema     json.RawMessage    "json:\"uischema,omitempty\" graphql:\"uischema\""
-	UpdatedAt    *time.Time         "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy    *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-}
-
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return t.CreatedAt
 }
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetCreatedBy() *string {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetCreatedBy() *string {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return t.CreatedBy
 }
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetDescription() *string {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetDescription() *string {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return t.Description
 }
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetHistoryTime() *time.Time {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetID() string {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return &t.HistoryTime
-}
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetID() string {
-	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return t.ID
 }
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetJsonconfig() *json.RawMessage {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetJsonconfig() *json.RawMessage {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return &t.Jsonconfig
 }
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetName() string {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetName() string {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return t.Name
 }
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetOperation() *enthistory.OpType {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetUischema() *json.RawMessage {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return &t.Operation
-}
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetOwnerID() *string {
-	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.OwnerID
-}
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetRef() *string {
-	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.Ref
-}
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetTags() []string {
-	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return t.Tags
-}
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetTemplateType() *enums.DocumentType {
-	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
-	}
-	return &t.TemplateType
-}
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetUischema() *json.RawMessage {
-	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return &t.Uischema
 }
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetUpdatedAt() *time.Time {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetUpdatedAt() *time.Time {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return t.UpdatedAt
 }
-func (t *GetTemplateHistories_TemplateHistories_Edges_Node) GetUpdatedBy() *string {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetUpdatedBy() *string {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges_Node{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
 	return t.UpdatedBy
 }
-
-type GetTemplateHistories_TemplateHistories_Edges struct {
-	Node *GetTemplateHistories_TemplateHistories_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
-}
-
-func (t *GetTemplateHistories_TemplateHistories_Edges) GetNode() *GetTemplateHistories_TemplateHistories_Edges_Node {
+func (t *UpdateTemplate_UpdateTemplate_Template) GetOwner() *UpdateTemplate_UpdateTemplate_Template_Owner {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories_Edges{}
+		t = &UpdateTemplate_UpdateTemplate_Template{}
 	}
-	return t.Node
+	return t.Owner
 }
 
-type GetTemplateHistories_TemplateHistories struct {
-	Edges []*GetTemplateHistories_TemplateHistories_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+type UpdateTemplate_UpdateTemplate struct {
+	Template UpdateTemplate_UpdateTemplate_Template "json:\"template\" graphql:\"template\""
 }
 
-func (t *GetTemplateHistories_TemplateHistories) GetEdges() []*GetTemplateHistories_TemplateHistories_Edges {
+func (t *UpdateTemplate_UpdateTemplate) GetTemplate() *UpdateTemplate_UpdateTemplate_Template {
 	if t == nil {
-		t = &GetTemplateHistories_TemplateHistories{}
+		t = &UpdateTemplate_UpdateTemplate{}
 	}
-	return t.Edges
+	return &t.Template
 }
 
 type CreateTFASetting_CreateTFASetting_TfaSetting struct {
@@ -17773,31 +17511,6 @@ func (t *CreateTFASetting_CreateTFASetting) GetTfaSetting() *CreateTFASetting_Cr
 		t = &CreateTFASetting_CreateTFASetting{}
 	}
 	return &t.TfaSetting
-}
-
-type GetTFASetting_TfaSetting struct {
-	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
-	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
-	Verified      bool     "json:\"verified\" graphql:\"verified\""
-}
-
-func (t *GetTFASetting_TfaSetting) GetRecoveryCodes() []string {
-	if t == nil {
-		t = &GetTFASetting_TfaSetting{}
-	}
-	return t.RecoveryCodes
-}
-func (t *GetTFASetting_TfaSetting) GetTotpAllowed() *bool {
-	if t == nil {
-		t = &GetTFASetting_TfaSetting{}
-	}
-	return t.TotpAllowed
-}
-func (t *GetTFASetting_TfaSetting) GetVerified() bool {
-	if t == nil {
-		t = &GetTFASetting_TfaSetting{}
-	}
-	return t.Verified
 }
 
 type GetAllTFASettings_TfaSettings_Edges_Node struct {
@@ -17845,6 +17558,31 @@ func (t *GetAllTFASettings_TfaSettings) GetEdges() []*GetAllTFASettings_TfaSetti
 		t = &GetAllTFASettings_TfaSettings{}
 	}
 	return t.Edges
+}
+
+type GetTFASetting_TfaSetting struct {
+	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	Verified      bool     "json:\"verified\" graphql:\"verified\""
+}
+
+func (t *GetTFASetting_TfaSetting) GetRecoveryCodes() []string {
+	if t == nil {
+		t = &GetTFASetting_TfaSetting{}
+	}
+	return t.RecoveryCodes
+}
+func (t *GetTFASetting_TfaSetting) GetTotpAllowed() *bool {
+	if t == nil {
+		t = &GetTFASetting_TfaSetting{}
+	}
+	return t.TotpAllowed
+}
+func (t *GetTFASetting_TfaSetting) GetVerified() bool {
+	if t == nil {
+		t = &GetTFASetting_TfaSetting{}
+	}
+	return t.Verified
 }
 
 type UpdateTFASetting_UpdateTFASetting_TfaSetting struct {
@@ -21336,17 +21074,6 @@ func (t *DeleteAPIToken) GetDeleteAPIToken() *DeleteAPIToken_DeleteAPIToken {
 	return &t.DeleteAPIToken
 }
 
-type GetDocumentDataByID struct {
-	DocumentData GetDocumentDataByID_DocumentData "json:\"documentData\" graphql:\"documentData\""
-}
-
-func (t *GetDocumentDataByID) GetDocumentData() *GetDocumentDataByID_DocumentData {
-	if t == nil {
-		t = &GetDocumentDataByID{}
-	}
-	return &t.DocumentData
-}
-
 type CreateDocumentData struct {
 	CreateDocumentData CreateDocumentData_CreateDocumentData "json:\"createDocumentData\" graphql:\"createDocumentData\""
 }
@@ -21358,17 +21085,6 @@ func (t *CreateDocumentData) GetCreateDocumentData() *CreateDocumentData_CreateD
 	return &t.CreateDocumentData
 }
 
-type UpdateDocumentData struct {
-	UpdateDocumentData UpdateDocumentData_UpdateDocumentData "json:\"updateDocumentData\" graphql:\"updateDocumentData\""
-}
-
-func (t *UpdateDocumentData) GetUpdateDocumentData() *UpdateDocumentData_UpdateDocumentData {
-	if t == nil {
-		t = &UpdateDocumentData{}
-	}
-	return &t.UpdateDocumentData
-}
-
 type DeleteDocumentData struct {
 	DeleteDocumentData DeleteDocumentData_DeleteDocumentData "json:\"deleteDocumentData\" graphql:\"deleteDocumentData\""
 }
@@ -21378,6 +21094,28 @@ func (t *DeleteDocumentData) GetDeleteDocumentData() *DeleteDocumentData_DeleteD
 		t = &DeleteDocumentData{}
 	}
 	return &t.DeleteDocumentData
+}
+
+type GetDocumentDataByID struct {
+	DocumentData GetDocumentDataByID_DocumentData "json:\"documentData\" graphql:\"documentData\""
+}
+
+func (t *GetDocumentDataByID) GetDocumentData() *GetDocumentDataByID_DocumentData {
+	if t == nil {
+		t = &GetDocumentDataByID{}
+	}
+	return &t.DocumentData
+}
+
+type UpdateDocumentData struct {
+	UpdateDocumentData UpdateDocumentData_UpdateDocumentData "json:\"updateDocumentData\" graphql:\"updateDocumentData\""
+}
+
+func (t *UpdateDocumentData) GetUpdateDocumentData() *UpdateDocumentData_UpdateDocumentData {
+	if t == nil {
+		t = &UpdateDocumentData{}
+	}
+	return &t.UpdateDocumentData
 }
 
 type CreateBulkCSVEntitlement struct {
@@ -21864,17 +21602,6 @@ func (t *DeleteFile) GetDeleteFile() *DeleteFile_DeleteFile {
 	return &t.DeleteFile
 }
 
-type GetFiles struct {
-	Files GetFiles_Files "json:\"files\" graphql:\"files\""
-}
-
-func (t *GetFiles) GetFiles() *GetFiles_Files {
-	if t == nil {
-		t = &GetFiles{}
-	}
-	return &t.Files
-}
-
 type GetAllFiles struct {
 	Files GetAllFiles_Files "json:\"files\" graphql:\"files\""
 }
@@ -21882,6 +21609,17 @@ type GetAllFiles struct {
 func (t *GetAllFiles) GetFiles() *GetAllFiles_Files {
 	if t == nil {
 		t = &GetAllFiles{}
+	}
+	return &t.Files
+}
+
+type GetFiles struct {
+	Files GetFiles_Files "json:\"files\" graphql:\"files\""
+}
+
+func (t *GetFiles) GetFiles() *GetFiles_Files {
+	if t == nil {
+		t = &GetFiles{}
 	}
 	return &t.Files
 }
@@ -22931,15 +22669,15 @@ func (t *UpdateSubscriber) GetUpdateSubscriber() *UpdateSubscriber_UpdateSubscri
 	return &t.UpdateSubscriber
 }
 
-type CreateTemplate struct {
-	CreateTemplate CreateTemplate_CreateTemplate "json:\"createTemplate\" graphql:\"createTemplate\""
+type CreateBulkCSVTemplate struct {
+	CreateBulkCSVTemplate CreateBulkCSVTemplate_CreateBulkCSVTemplate "json:\"createBulkCSVTemplate\" graphql:\"createBulkCSVTemplate\""
 }
 
-func (t *CreateTemplate) GetCreateTemplate() *CreateTemplate_CreateTemplate {
+func (t *CreateBulkCSVTemplate) GetCreateBulkCSVTemplate() *CreateBulkCSVTemplate_CreateBulkCSVTemplate {
 	if t == nil {
-		t = &CreateTemplate{}
+		t = &CreateBulkCSVTemplate{}
 	}
-	return &t.CreateTemplate
+	return &t.CreateBulkCSVTemplate
 }
 
 type CreateBulkTemplate struct {
@@ -22953,26 +22691,15 @@ func (t *CreateBulkTemplate) GetCreateBulkTemplate() *CreateBulkTemplate_CreateB
 	return &t.CreateBulkTemplate
 }
 
-type CreateBulkCSVTemplate struct {
-	CreateBulkCSVTemplate CreateBulkCSVTemplate_CreateBulkCSVTemplate "json:\"createBulkCSVTemplate\" graphql:\"createBulkCSVTemplate\""
+type CreateTemplate struct {
+	CreateTemplate CreateTemplate_CreateTemplate "json:\"createTemplate\" graphql:\"createTemplate\""
 }
 
-func (t *CreateBulkCSVTemplate) GetCreateBulkCSVTemplate() *CreateBulkCSVTemplate_CreateBulkCSVTemplate {
+func (t *CreateTemplate) GetCreateTemplate() *CreateTemplate_CreateTemplate {
 	if t == nil {
-		t = &CreateBulkCSVTemplate{}
+		t = &CreateTemplate{}
 	}
-	return &t.CreateBulkCSVTemplate
-}
-
-type UpdateTemplate struct {
-	UpdateTemplate UpdateTemplate_UpdateTemplate "json:\"updateTemplate\" graphql:\"updateTemplate\""
-}
-
-func (t *UpdateTemplate) GetUpdateTemplate() *UpdateTemplate_UpdateTemplate {
-	if t == nil {
-		t = &UpdateTemplate{}
-	}
-	return &t.UpdateTemplate
+	return &t.CreateTemplate
 }
 
 type GetAllTemplates struct {
@@ -22997,26 +22724,15 @@ func (t *GetTemplateByID) GetTemplate() *GetTemplateByID_Template {
 	return &t.Template
 }
 
-type GetAllTemplateHistories struct {
-	TemplateHistories GetAllTemplateHistories_TemplateHistories "json:\"templateHistories\" graphql:\"templateHistories\""
+type UpdateTemplate struct {
+	UpdateTemplate UpdateTemplate_UpdateTemplate "json:\"updateTemplate\" graphql:\"updateTemplate\""
 }
 
-func (t *GetAllTemplateHistories) GetTemplateHistories() *GetAllTemplateHistories_TemplateHistories {
+func (t *UpdateTemplate) GetUpdateTemplate() *UpdateTemplate_UpdateTemplate {
 	if t == nil {
-		t = &GetAllTemplateHistories{}
+		t = &UpdateTemplate{}
 	}
-	return &t.TemplateHistories
-}
-
-type GetTemplateHistories struct {
-	TemplateHistories GetTemplateHistories_TemplateHistories "json:\"templateHistories\" graphql:\"templateHistories\""
-}
-
-func (t *GetTemplateHistories) GetTemplateHistories() *GetTemplateHistories_TemplateHistories {
-	if t == nil {
-		t = &GetTemplateHistories{}
-	}
-	return &t.TemplateHistories
+	return &t.UpdateTemplate
 }
 
 type CreateTFASetting struct {
@@ -23030,17 +22746,6 @@ func (t *CreateTFASetting) GetCreateTFASetting() *CreateTFASetting_CreateTFASett
 	return &t.CreateTFASetting
 }
 
-type GetTFASetting struct {
-	TfaSetting GetTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
-}
-
-func (t *GetTFASetting) GetTfaSetting() *GetTFASetting_TfaSetting {
-	if t == nil {
-		t = &GetTFASetting{}
-	}
-	return &t.TfaSetting
-}
-
 type GetAllTFASettings struct {
 	TfaSettings GetAllTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
 }
@@ -23050,6 +22755,17 @@ func (t *GetAllTFASettings) GetTfaSettings() *GetAllTFASettings_TfaSettings {
 		t = &GetAllTFASettings{}
 	}
 	return &t.TfaSettings
+}
+
+type GetTFASetting struct {
+	TfaSetting GetTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
+}
+
+func (t *GetTFASetting) GetTfaSetting() *GetTFASetting_TfaSetting {
+	if t == nil {
+		t = &GetTFASetting{}
+	}
+	return &t.TfaSetting
 }
 
 type UpdateTFASetting struct {
@@ -23495,36 +23211,6 @@ func (c *Client) DeleteAPIToken(ctx context.Context, deleteAPITokenID string, in
 	return &res, nil
 }
 
-const GetDocumentDataByIDDocument = `query GetDocumentDataByID ($documentDataId: ID!) {
-	documentData(id: $documentDataId) {
-		id
-		templateID
-		data
-		createdAt
-		createdBy
-		updatedAt
-		updatedBy
-	}
-}
-`
-
-func (c *Client) GetDocumentDataByID(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentDataByID, error) {
-	vars := map[string]any{
-		"documentDataId": documentDataID,
-	}
-
-	var res GetDocumentDataByID
-	if err := c.Client.Post(ctx, "GetDocumentDataByID", GetDocumentDataByIDDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
 const CreateDocumentDataDocument = `mutation CreateDocumentData ($input: CreateDocumentDataInput!) {
 	createDocumentData(input: $input) {
 		documentData {
@@ -23547,6 +23233,60 @@ func (c *Client) CreateDocumentData(ctx context.Context, input CreateDocumentDat
 
 	var res CreateDocumentData
 	if err := c.Client.Post(ctx, "CreateDocumentData", CreateDocumentDataDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteDocumentDataDocument = `mutation DeleteDocumentData ($deleteDocumentDataId: ID!) {
+	deleteDocumentData(id: $deleteDocumentDataId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteDocumentData(ctx context.Context, deleteDocumentDataID string, interceptors ...clientv2.RequestInterceptor) (*DeleteDocumentData, error) {
+	vars := map[string]any{
+		"deleteDocumentDataId": deleteDocumentDataID,
+	}
+
+	var res DeleteDocumentData
+	if err := c.Client.Post(ctx, "DeleteDocumentData", DeleteDocumentDataDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetDocumentDataByIDDocument = `query GetDocumentDataByID ($documentDataId: ID!) {
+	documentData(id: $documentDataId) {
+		id
+		templateID
+		data
+		createdAt
+		createdBy
+		updatedAt
+		updatedBy
+	}
+}
+`
+
+func (c *Client) GetDocumentDataByID(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentDataByID, error) {
+	vars := map[string]any{
+		"documentDataId": documentDataID,
+	}
+
+	var res GetDocumentDataByID
+	if err := c.Client.Post(ctx, "GetDocumentDataByID", GetDocumentDataByIDDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -23580,30 +23320,6 @@ func (c *Client) UpdateDocumentData(ctx context.Context, updateDocumentDataID st
 
 	var res UpdateDocumentData
 	if err := c.Client.Post(ctx, "UpdateDocumentData", UpdateDocumentDataDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const DeleteDocumentDataDocument = `mutation DeleteDocumentData ($deleteDocumentDataId: ID!) {
-	deleteDocumentData(id: $deleteDocumentDataId) {
-		deletedID
-	}
-}
-`
-
-func (c *Client) DeleteDocumentData(ctx context.Context, deleteDocumentDataID string, interceptors ...clientv2.RequestInterceptor) (*DeleteDocumentData, error) {
-	vars := map[string]any{
-		"deleteDocumentDataId": deleteDocumentDataID,
-	}
-
-	var res DeleteDocumentData
-	if err := c.Client.Post(ctx, "DeleteDocumentData", DeleteDocumentDataDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -25348,6 +25064,52 @@ func (c *Client) DeleteFile(ctx context.Context, deleteFileID string, intercepto
 	return &res, nil
 }
 
+const GetAllFilesDocument = `query GetAllFiles {
+	files {
+		edges {
+			node {
+				annotation
+				category
+				contentType
+				createdAt
+				createdBy
+				fileExtension
+				fileName
+				fileSize
+				id
+				storeKey
+				updatedAt
+				updatedBy
+				user {
+					id
+				}
+				organization {
+					id
+				}
+				group {
+					id
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllFiles(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllFiles, error) {
+	vars := map[string]any{}
+
+	var res GetAllFiles
+	if err := c.Client.Post(ctx, "GetAllFiles", GetAllFilesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const GetFilesDocument = `query GetFiles ($where: FileWhereInput) {
 	files(where: $where) {
 		edges {
@@ -25386,52 +25148,6 @@ func (c *Client) GetFiles(ctx context.Context, where *FileWhereInput, intercepto
 
 	var res GetFiles
 	if err := c.Client.Post(ctx, "GetFiles", GetFilesDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const GetAllFilesDocument = `query GetAllFiles {
-	files {
-		edges {
-			node {
-				annotation
-				category
-				contentType
-				createdAt
-				createdBy
-				fileExtension
-				fileName
-				fileSize
-				id
-				storeKey
-				updatedAt
-				updatedBy
-				user {
-					id
-				}
-				organization {
-					id
-				}
-				group {
-					id
-				}
-			}
-		}
-	}
-}
-`
-
-func (c *Client) GetAllFiles(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllFiles, error) {
-	vars := map[string]any{}
-
-	var res GetAllFiles
-	if err := c.Client.Post(ctx, "GetAllFiles", GetAllFilesDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -29245,9 +28961,9 @@ func (c *Client) UpdateSubscriber(ctx context.Context, email string, input Updat
 	return &res, nil
 }
 
-const CreateTemplateDocument = `mutation CreateTemplate ($input: CreateTemplateInput!) {
-	createTemplate(input: $input) {
-		template {
+const CreateBulkCSVTemplateDocument = `mutation CreateBulkCSVTemplate ($input: Upload!) {
+	createBulkCSVTemplate(input: $input) {
+		templates {
 			description
 			id
 			jsonconfig
@@ -29261,13 +28977,13 @@ const CreateTemplateDocument = `mutation CreateTemplate ($input: CreateTemplateI
 }
 `
 
-func (c *Client) CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error) {
+func (c *Client) CreateBulkCSVTemplate(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVTemplate, error) {
 	vars := map[string]any{
 		"input": input,
 	}
 
-	var res CreateTemplate
-	if err := c.Client.Post(ctx, "CreateTemplate", CreateTemplateDocument, &res, vars, interceptors...); err != nil {
+	var res CreateBulkCSVTemplate
+	if err := c.Client.Post(ctx, "CreateBulkCSVTemplate", CreateBulkCSVTemplateDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -29311,9 +29027,9 @@ func (c *Client) CreateBulkTemplate(ctx context.Context, input []*CreateTemplate
 	return &res, nil
 }
 
-const CreateBulkCSVTemplateDocument = `mutation CreateBulkCSVTemplate ($input: Upload!) {
-	createBulkCSVTemplate(input: $input) {
-		templates {
+const CreateTemplateDocument = `mutation CreateTemplate ($input: CreateTemplateInput!) {
+	createTemplate(input: $input) {
+		template {
 			description
 			id
 			jsonconfig
@@ -29327,51 +29043,13 @@ const CreateBulkCSVTemplateDocument = `mutation CreateBulkCSVTemplate ($input: U
 }
 `
 
-func (c *Client) CreateBulkCSVTemplate(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVTemplate, error) {
+func (c *Client) CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error) {
 	vars := map[string]any{
 		"input": input,
 	}
 
-	var res CreateBulkCSVTemplate
-	if err := c.Client.Post(ctx, "CreateBulkCSVTemplate", CreateBulkCSVTemplateDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const UpdateTemplateDocument = `mutation UpdateTemplate ($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
-	updateTemplate(id: $updateTemplateId, input: $input) {
-		template {
-			createdAt
-			createdBy
-			description
-			id
-			jsonconfig
-			name
-			uischema
-			updatedAt
-			updatedBy
-			owner {
-				id
-			}
-		}
-	}
-}
-`
-
-func (c *Client) UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error) {
-	vars := map[string]any{
-		"updateTemplateId": updateTemplateID,
-		"input":            input,
-	}
-
-	var res UpdateTemplate
-	if err := c.Client.Post(ctx, "UpdateTemplate", UpdateTemplateDocument, &res, vars, interceptors...); err != nil {
+	var res CreateTemplate
+	if err := c.Client.Post(ctx, "CreateTemplate", CreateTemplateDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -29454,78 +29132,34 @@ func (c *Client) GetTemplateByID(ctx context.Context, getTemplateID string, inte
 	return &res, nil
 }
 
-const GetAllTemplateHistoriesDocument = `query GetAllTemplateHistories {
-	templateHistories {
-		edges {
-			node {
-				createdAt
-				createdBy
-				description
-				historyTime
+const UpdateTemplateDocument = `mutation UpdateTemplate ($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
+	updateTemplate(id: $updateTemplateId, input: $input) {
+		template {
+			createdAt
+			createdBy
+			description
+			id
+			jsonconfig
+			name
+			uischema
+			updatedAt
+			updatedBy
+			owner {
 				id
-				jsonconfig
-				name
-				operation
-				ownerID
-				ref
-				tags
-				templateType
-				uischema
-				updatedAt
-				updatedBy
 			}
 		}
 	}
 }
 `
 
-func (c *Client) GetAllTemplateHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTemplateHistories, error) {
-	vars := map[string]any{}
-
-	var res GetAllTemplateHistories
-	if err := c.Client.Post(ctx, "GetAllTemplateHistories", GetAllTemplateHistoriesDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
-const GetTemplateHistoriesDocument = `query GetTemplateHistories ($where: TemplateHistoryWhereInput) {
-	templateHistories(where: $where) {
-		edges {
-			node {
-				createdAt
-				createdBy
-				description
-				historyTime
-				id
-				jsonconfig
-				name
-				operation
-				ownerID
-				ref
-				tags
-				templateType
-				uischema
-				updatedAt
-				updatedBy
-			}
-		}
-	}
-}
-`
-
-func (c *Client) GetTemplateHistories(ctx context.Context, where *TemplateHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetTemplateHistories, error) {
+func (c *Client) UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error) {
 	vars := map[string]any{
-		"where": where,
+		"updateTemplateId": updateTemplateID,
+		"input":            input,
 	}
 
-	var res GetTemplateHistories
-	if err := c.Client.Post(ctx, "GetTemplateHistories", GetTemplateHistoriesDocument, &res, vars, interceptors...); err != nil {
+	var res UpdateTemplate
+	if err := c.Client.Post(ctx, "UpdateTemplate", UpdateTemplateDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -29564,30 +29198,6 @@ func (c *Client) CreateTFASetting(ctx context.Context, input CreateTFASettingInp
 	return &res, nil
 }
 
-const GetTFASettingDocument = `query GetTFASetting {
-	tfaSetting {
-		recoveryCodes
-		totpAllowed
-		verified
-	}
-}
-`
-
-func (c *Client) GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error) {
-	vars := map[string]any{}
-
-	var res GetTFASetting
-	if err := c.Client.Post(ctx, "GetTFASetting", GetTFASettingDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
 const GetAllTFASettingsDocument = `query GetAllTFASettings {
 	tfaSettings {
 		edges {
@@ -29606,6 +29216,30 @@ func (c *Client) GetAllTFASettings(ctx context.Context, interceptors ...clientv2
 
 	var res GetAllTFASettings
 	if err := c.Client.Post(ctx, "GetAllTFASettings", GetAllTFASettingsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetTFASettingDocument = `query GetTFASetting {
+	tfaSetting {
+		recoveryCodes
+		totpAllowed
+		verified
+	}
+}
+`
+
+func (c *Client) GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error) {
+	vars := map[string]any{}
+
+	var res GetTFASetting
+	if err := c.Client.Post(ctx, "GetTFASetting", GetTFASettingDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -30579,10 +30213,10 @@ var DocumentOperationNames = map[string]string{
 	GetAllAPITokensDocument:                     "GetAllAPITokens",
 	GetAPITokenByIDDocument:                     "GetAPITokenByID",
 	DeleteAPITokenDocument:                      "DeleteAPIToken",
-	GetDocumentDataByIDDocument:                 "GetDocumentDataByID",
 	CreateDocumentDataDocument:                  "CreateDocumentData",
-	UpdateDocumentDataDocument:                  "UpdateDocumentData",
 	DeleteDocumentDataDocument:                  "DeleteDocumentData",
+	GetDocumentDataByIDDocument:                 "GetDocumentDataByID",
+	UpdateDocumentDataDocument:                  "UpdateDocumentData",
 	CreateBulkCSVEntitlementDocument:            "CreateBulkCSVEntitlement",
 	CreateBulkEntitlementDocument:               "CreateBulkEntitlement",
 	CreateEntitlementDocument:                   "CreateEntitlement",
@@ -30627,8 +30261,8 @@ var DocumentOperationNames = map[string]string{
 	CreateBulkFileDocument:                      "CreateBulkFile",
 	CreateFileDocument:                          "CreateFile",
 	DeleteFileDocument:                          "DeleteFile",
-	GetFilesDocument:                            "GetFiles",
 	GetAllFilesDocument:                         "GetAllFiles",
+	GetFilesDocument:                            "GetFiles",
 	UpdateFileDocument:                          "UpdateFile",
 	CreateBulkCSVGroupDocument:                  "CreateBulkCSVGroup",
 	CreateBulkGroupDocument:                     "CreateBulkGroup",
@@ -30710,15 +30344,15 @@ var DocumentOperationNames = map[string]string{
 	GetSubscriberByEmailDocument:                "GetSubscriberByEmail",
 	GetSubscribersDocument:                      "GetSubscribers",
 	UpdateSubscriberDocument:                    "UpdateSubscriber",
-	CreateTemplateDocument:                      "CreateTemplate",
-	CreateBulkTemplateDocument:                  "CreateBulkTemplate",
 	CreateBulkCSVTemplateDocument:               "CreateBulkCSVTemplate",
-	UpdateTemplateDocument:                      "UpdateTemplate",
+	CreateBulkTemplateDocument:                  "CreateBulkTemplate",
+	CreateTemplateDocument:                      "CreateTemplate",
 	GetAllTemplatesDocument:                     "GetAllTemplates",
 	GetTemplateByIDDocument:                     "GetTemplateByID",
+	UpdateTemplateDocument:                      "UpdateTemplate",
 	CreateTFASettingDocument:                    "CreateTFASetting",
-	GetTFASettingDocument:                       "GetTFASetting",
 	GetAllTFASettingsDocument:                   "GetAllTFASettings",
+	GetTFASettingDocument:                       "GetTFASetting",
 	UpdateTFASettingDocument:                    "UpdateTFASetting",
 	CreateUserDocument:                          "CreateUser",
 	DeleteUserDocument:                          "DeleteUser",

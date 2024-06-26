@@ -29,8 +29,8 @@ func consoleOutput(e any) error {
 
 	// check the type of the plans and print them in a table format
 	switch v := e.(type) {
-	case *datumclient.GetEntitlementPlans:
-		var nodes []*datumclient.GetEntitlementPlans_EntitlementPlans_Edges_Node
+	case *datumclient.GetAllEntitlementPlans:
+		var nodes []*datumclient.GetAllEntitlementPlans_EntitlementPlans_Edges_Node
 
 		for _, i := range v.EntitlementPlans.Edges {
 			nodes = append(nodes, i.Node)

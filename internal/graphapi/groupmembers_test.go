@@ -89,7 +89,7 @@ func (suite *GraphTestSuite) TestQueryGroupMembers() {
 
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.GroupMemberships)
-			assert.Equal(t, tc.expected.UserID, resp.GroupMemberships.Edges[0].Node.UserID)
+			assert.Equal(t, tc.expected.UserID, resp.GroupMemberships.Edges[0].Node.GetUser().GetID())
 			assert.Equal(t, tc.expected.Role, resp.GroupMemberships.Edges[0].Node.Role)
 		})
 	}
@@ -245,8 +245,8 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.CreateGroupMembership)
-			assert.Equal(t, tc.userID, resp.CreateGroupMembership.GroupMembership.UserID)
-			assert.Equal(t, tc.groupID, resp.CreateGroupMembership.GroupMembership.GroupID)
+			assert.Equal(t, tc.userID, resp.CreateGroupMembership.GroupMembership.GetUser().GetID())
+			assert.Equal(t, tc.groupID, resp.CreateGroupMembership.GroupMembership.GetGroup().GetID())
 			assert.Equal(t, tc.role, resp.CreateGroupMembership.GroupMembership.Role)
 		})
 	}

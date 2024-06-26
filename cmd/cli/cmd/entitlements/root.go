@@ -77,15 +77,10 @@ func jsonOutput(out any) error {
 
 // tableOutput prints the entitlements in a table format
 func tableOutput(out []datumclient.Entitlement) {
-	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "PlanID", "ExpiresAt", "Expires", "Cancelled")
+	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "PlanID", "PlanName", "OrganizationID", "OrganizationName", "ExpiresAt", "Expires", "Cancelled")
 
 	for _, i := range out {
-		planID := ""
-		if i.Plan != nil {
-			planID = i.Plan.ID
-		}
-
-		writer.AddRow(i.ID, planID, i.ExpiresAt, i.Expires, i.Cancelled)
+		writer.AddRow(i.ID, i.Plan.ID, i.Plan.Name, i.Organization.ID, i.Organization.Name, i.ExpiresAt, i.Expires, i.Cancelled)
 	}
 
 	writer.Render()

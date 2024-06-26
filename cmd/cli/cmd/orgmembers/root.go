@@ -76,6 +76,7 @@ func jsonOutput(out any) error {
 // tableOutput prints the output in a table format
 func tableOutput(out []datumclient.OrgMembership) {
 	writer := tables.NewTableWriter(cmd.OutOrStdout(), "UserID", "DisplayName", "FirstName", "LastName", "Email", "Role")
+
 	for _, i := range out {
 		userID := i.UserID
 		if userID == "" && i.User != nil {

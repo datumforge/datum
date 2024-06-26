@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetEventByID:
+		e = v.Event
 	case *datumclient.CreateEvent:
 		e = v.CreateEvent.Event
 	case *datumclient.UpdateEvent:

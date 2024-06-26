@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetUserByID:
+		e = v.User
 	case *datumclient.CreateUser:
 		e = v.CreateUser.User
 	case *datumclient.UpdateUser:

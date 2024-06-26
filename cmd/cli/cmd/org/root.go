@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetOrganizationByID:
+		e = v.Organization
 	case *datumclient.CreateOrganization:
 		e = v.CreateOrganization.Organization
 	case *datumclient.UpdateOrganization:

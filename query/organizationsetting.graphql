@@ -15,6 +15,7 @@ query GetOrganizationSettingByID($organizationSettingId: ID!) {
     updatedBy
     organization {
       id
+      name
     }
   }
 }
@@ -38,6 +39,7 @@ query GetAllOrganizationSettings {
         updatedBy
         organization {
           id
+          name
         }
       }
     }
@@ -63,6 +65,7 @@ query GetOrganizationSettings($where: OrganizationSettingWhereInput!) {
         updatedBy
         organization {
           id
+          name
         }
       }
     }
@@ -87,6 +90,7 @@ mutation UpdateOrganizationSetting($updateOrganizationSettingId: ID!, $input: Up
       updatedBy
       organization {
         id
+        name
       }
     }
   }

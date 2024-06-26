@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetInviteByID:
+		e = v.Invite
 	case *datumclient.CreateInvite:
 		e = v.CreateInvite.Invite
 	case *datumclient.DeleteInvite:

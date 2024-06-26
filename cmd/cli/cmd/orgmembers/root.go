@@ -77,7 +77,26 @@ func jsonOutput(out any) error {
 func tableOutput(out []datumclient.OrgMembership) {
 	writer := tables.NewTableWriter(cmd.OutOrStdout(), "UserID", "DisplayName", "FirstName", "LastName", "Email", "Role")
 	for _, i := range out {
-		writer.AddRow(i.UserID, i.User.DisplayName, *i.User.FirstName, *i.User.LastName, i.User.Email, i.Role)
+		userID := i.UserID
+		if userID == "" && i.User != nil {
+			userID = i.User.ID
+		}
+
+		var (
+			displayName string
+			firstName   string
+			lastName    string
+			email       string
+		)
+
+		if i.User != nil {
+			displayName = i.User.DisplayName
+			firstName = *i.User.FirstName
+			lastName = *i.User.LastName
+			email = i.User.Email
+		}
+
+		writer.AddRow(userID, displayName, firstName, lastName, email, i.Role)
 	}
 
 	writer.Render()

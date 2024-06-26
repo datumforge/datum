@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetPersonalAccessTokenByID:
+		e = v.PersonalAccessToken
 	case *datumclient.CreatePersonalAccessToken:
 		e = v.CreatePersonalAccessToken.PersonalAccessToken
 	case *datumclient.UpdatePersonalAccessToken:

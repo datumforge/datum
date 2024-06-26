@@ -38,6 +38,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetAPITokenByID:
+		e = v.APIToken
 	case *datumclient.CreateAPIToken:
 		e = v.CreateAPIToken.APIToken
 	case *datumclient.UpdateAPIToken:

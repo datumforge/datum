@@ -38,6 +38,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetUserSettingByID:
+		e = v.UserSetting
 	case *datumclient.UpdateUserSetting:
 		e = v.UpdateUserSetting.UserSetting
 	}

@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetGroupByID:
+		e = v.Group
 	case *datumclient.CreateGroup:
 		e = v.CreateGroup.Group
 	case *datumclient.UpdateGroup:

@@ -10,6 +10,7 @@ query GetAllGroupSettings {
         visibility
         group {
           id
+          name
         }
         createdAt
         createdBy
@@ -30,6 +31,7 @@ query GetGroupSettingByID($groupSettingId: ID!) {
     visibility
     group {
       id
+      name
     }
     createdAt
     createdBy
@@ -50,6 +52,7 @@ query GetGroupSettings($where: GroupSettingWhereInput!) {
         visibility
         group {
           id
+          name
         }
         createdAt
         createdBy
@@ -71,6 +74,7 @@ mutation UpdateGroupSetting($updateGroupSettingId: ID!, $input: UpdateGroupSetti
       visibility
       group {
         id
+        name
       }
       createdAt
       createdBy

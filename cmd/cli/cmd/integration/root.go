@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetIntegrationByID:
+		e = v.Integration
 	case *datumclient.CreateIntegration:
 		e = v.CreateIntegration.Integration
 	case *datumclient.UpdateIntegration:

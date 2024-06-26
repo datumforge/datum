@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetWebhookByID:
+		e = v.Webhook
 	case *datumclient.CreateWebhook:
 		e = v.CreateWebhook.Webhook
 	case *datumclient.UpdateWebhook:

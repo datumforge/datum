@@ -38,6 +38,16 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetAllOrganizationSettings:
+		var nodes []*datumclient.GetAllOrganizationSettings_OrganizationSettings_Edges_Node
+
+		for _, i := range v.OrganizationSettings.Edges {
+			nodes = append(nodes, i.Node)
+		}
+
+		e = nodes
+	case *datumclient.GetOrganizationSettingByID:
+		e = v.OrganizationSetting
 	case *datumclient.UpdateOrganizationSetting:
 		e = v.UpdateOrganizationSetting.OrganizationSetting
 	}
@@ -71,9 +81,29 @@ func jsonOutput(out any) error {
 
 // tableOutput prints the output in a table format
 func tableOutput(out []datumclient.OrganizationSetting) {
-	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "OrganizationName", "BillingContact", "BillingAddress", "BillingEmail", "BillingPhone", "GeoLocation", "TaxIdentifier", "Tags", "Domains")
+	writer := tables.NewTableWriter(cmd.OutOrStdout(),
+		"ID",
+		"OrganizationName",
+		"BillingContact",
+		"BillingAddress",
+		"BillingEmail",
+		"BillingPhone",
+		"GeoLocation",
+		"TaxIdentifier",
+		"Tags",
+		"Domains",
+	)
 	for _, i := range out {
-		writer.AddRow(i.ID, i.Organization.Name, *i.BillingContact, *i.BillingAddress, *i.BillingEmail, *i.BillingPhone, *i.GeoLocation, *i.TaxIdentifier, strings.Join(i.Tags, ", "), strings.Join(i.Domains, ", "))
+		writer.AddRow(i.ID,
+			i.Organization.Name,
+			*i.BillingContact,
+			*i.BillingAddress,
+			*i.BillingEmail,
+			*i.BillingPhone,
+			*i.GeoLocation,
+			*i.TaxIdentifier,
+			strings.Join(i.Tags, ", "),
+			strings.Join(i.Domains, ", "))
 	}
 
 	writer.Render()

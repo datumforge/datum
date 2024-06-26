@@ -30,14 +30,16 @@ func consoleOutput(e any) error {
 
 	// check the type of the output and print them in a table format
 	switch v := e.(type) {
-	case *datumclient.GetGroupSettings:
-		var nodes []*datumclient.GetGroupSettings_GroupSettings_Edges_Node
+	case *datumclient.GetAllGroupSettings:
+		var nodes []*datumclient.GetAllGroupSettings_GroupSettings_Edges_Node
 
 		for _, i := range v.GroupSettings.Edges {
 			nodes = append(nodes, i.Node)
 		}
 
 		e = nodes
+	case *datumclient.GetGroupSettingByID:
+		e = v.GroupSetting
 	case *datumclient.UpdateGroupSetting:
 		e = v.UpdateGroupSetting.GroupSetting
 	}

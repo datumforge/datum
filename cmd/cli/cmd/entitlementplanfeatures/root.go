@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetEntitlementPlanFeatureByID:
+		e = v.EntitlementPlanFeature
 	case *datumclient.CreateEntitlementPlanFeature:
 		e = v.CreateEntitlementPlanFeature.EntitlementPlanFeature
 	case *datumclient.UpdateEntitlementPlanFeature:

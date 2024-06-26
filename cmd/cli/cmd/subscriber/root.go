@@ -37,6 +37,14 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetAllSubscribers:
+		var nodes []*datumclient.GetAllSubscribers_Subscribers_Edges_Node
+
+		for _, i := range v.Subscribers.Edges {
+			nodes = append(nodes, i.Node)
+		}
+
+		e = nodes
 	case *datumclient.GetSubscriberByEmail:
 		e = v.Subscriber
 	case *datumclient.CreateBulkSubscriber:

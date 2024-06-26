@@ -37,6 +37,8 @@ func consoleOutput(e any) error {
 		}
 
 		e = nodes
+	case *datumclient.GetFeatureByID:
+		e = v.Feature
 	case *datumclient.CreateFeature:
 		e = v.CreateFeature.Feature
 	case *datumclient.UpdateFeature:

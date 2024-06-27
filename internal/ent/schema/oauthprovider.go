@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -61,6 +62,7 @@ func (OauthProvider) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entx.QueryGenSkip(true),
 		entfga.Annotations{
 			ObjectType:      "organization",
 			IncludeHooks:    false,

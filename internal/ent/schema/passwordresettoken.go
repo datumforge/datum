@@ -86,6 +86,7 @@ func (PasswordResetToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
 		entx.SchemaGenSkip(true),
+		entx.QueryGenSkip(true),
 		enthistory.Annotations{
 			Exclude: true,
 		},

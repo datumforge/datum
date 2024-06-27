@@ -1,0 +1,45 @@
+
+
+query GetAllFeatureHistories {
+  featureHistories {
+    edges {
+      node {
+        createdAt
+        createdBy
+        description
+        enabled
+        global
+        historyTime
+        id
+        name
+        operation
+        ref
+        tags
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+
+query GetFeatureHistories($where: FeatureHistoryWhereInput) {
+  featureHistories(where: $where) {
+    edges {
+      node {
+        createdAt
+        createdBy
+        description
+        enabled
+        global
+        historyTime
+        id
+        name
+        operation
+        ref
+        tags
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}

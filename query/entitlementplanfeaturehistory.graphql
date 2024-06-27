@@ -1,18 +1,14 @@
-query GetAllEntitlementHistories {
-  entitlementHistories {
+query GetAllEntitlementPlanFeatureHistories {
+  entitlementPlanFeatureHistories {
     edges {
       node {
-        cancelled
         createdAt
         createdBy
-        expires
-        expiresAt
-        externalCustomerID
-        externalSubscriptionID
+        featureID
         historyTime
         id
+        metadata
         operation
-        organizationID
         ownerID
         planID
         ref
@@ -24,21 +20,17 @@ query GetAllEntitlementHistories {
   }
 }
 
-query GetEntitlementHistories($where: EntitlementHistoryWhereInput) {
-  entitlementHistories(where: $where) {
+query GetEntitlementPlanFeatureHistories($where: EntitlementPlanFeatureHistoryWhereInput) {
+  entitlementPlanFeatureHistories(where: $where) {
     edges {
       node {
-        cancelled
         createdAt
         createdBy
-        expires
-        expiresAt
-        externalCustomerID
-        externalSubscriptionID
+        featureID
         historyTime
         id
+        metadata
         operation
-        organizationID
         ownerID
         planID
         ref

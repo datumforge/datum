@@ -1,14 +1,13 @@
 
 
-query GetAllFeatureHistories {
-  featureHistories {
+query GetAllEntitlementPlanHistories {
+  entitlementPlanHistories {
     edges {
       node {
         createdAt
         createdBy
         description
         displayName
-        enabled
         historyTime
         id
         metadata
@@ -19,20 +18,20 @@ query GetAllFeatureHistories {
         tags
         updatedAt
         updatedBy
+        version
       }
     }
   }
 }
 
-query GetFeatureHistories($where: FeatureHistoryWhereInput) {
-  featureHistories(where: $where) {
+query GetEntitlementPlanHistories($where: EntitlementPlanHistoryWhereInput) {
+  entitlementPlanHistories(where: $where) {
     edges {
       node {
         createdAt
         createdBy
         description
         displayName
-        enabled
         historyTime
         id
         metadata
@@ -43,6 +42,7 @@ query GetFeatureHistories($where: FeatureHistoryWhereInput) {
         tags
         updatedAt
         updatedBy
+        version
       }
     }
   }

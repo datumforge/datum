@@ -15,7 +15,7 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "generate",
+	Use:   "",
 	Short: "generate the stub files for a given cli cmd",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		initConfiguration(cmd)

@@ -47,7 +47,7 @@ require (
 	github.com/prometheus/client_golang v1.19.1
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e
 	github.com/redis/go-redis/v9 v9.5.3
-	github.com/samber/lo v1.39.0
+	github.com/samber/lo v1.41.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
@@ -245,8 +245,8 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
-	github.com/datumforge/echox v0.1.1
 	github.com/datumforge/entx v0.3.1
+	github.com/datumforge/echox v0.1.2
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/flopp/go-findfont v0.1.0

@@ -245,7 +245,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
-	github.com/datumforge/echox v0.1.1
+	github.com/datumforge/echox v0.1.2
 	github.com/datumforge/entx v0.3.0
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/fatih/color v1.17.0 // indirect

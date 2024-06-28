@@ -7,12 +7,14 @@ query GetAllFeatureHistories {
         createdAt
         createdBy
         description
+        displayName
         enabled
-        global
         historyTime
         id
+        metadata
         name
         operation
+        ownerID
         ref
         tags
         updatedAt
@@ -29,12 +31,14 @@ query GetFeatureHistories($where: FeatureHistoryWhereInput) {
         createdAt
         createdBy
         description
+        displayName
         enabled
-        global
         historyTime
         id
+        metadata
         name
         operation
+        ownerID
         ref
         tags
         updatedAt

@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 // Entitlement is the model entity for the Entitlement schema.
@@ -38,8 +38,10 @@ type Entitlement struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
-	// Tier holds the value of the "tier" field.
-	Tier enums.Tier `json:"tier,omitempty"`
+	// the plan to which the entitlement belongs
+	PlanID string `json:"plan_id,omitempty"`
+	// the organization to which the entitlement belongs
+	OrganizationID string `json:"organization_id,omitempty"`
 	// used to store references to external systems, e.g. Stripe
 	ExternalCustomerID string `json:"external_customer_id,omitempty"`
 	// used to store references to external systems, e.g. Stripe
@@ -60,18 +62,19 @@ type Entitlement struct {
 type EntitlementEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *Organization `json:"owner,omitempty"`
-	// Features holds the value of the features edge.
-	Features []*Feature `json:"features,omitempty"`
+	// Plan holds the value of the plan edge.
+	Plan *EntitlementPlan `json:"plan,omitempty"`
+	// Organization holds the value of the organization edge.
+	Organization *Organization `json:"organization,omitempty"`
 	// Events holds the value of the events edge.
 	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
-	namedFeatures map[string][]*Feature
-	namedEvents   map[string][]*Event
+	namedEvents map[string][]*Event
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -85,19 +88,32 @@ func (e EntitlementEdges) OwnerOrErr() (*Organization, error) {
 	return nil, &NotLoadedError{edge: "owner"}
 }
 
-// FeaturesOrErr returns the Features value or an error if the edge
-// was not loaded in eager-loading.
-func (e EntitlementEdges) FeaturesOrErr() ([]*Feature, error) {
-	if e.loadedTypes[1] {
-		return e.Features, nil
+// PlanOrErr returns the Plan value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntitlementEdges) PlanOrErr() (*EntitlementPlan, error) {
+	if e.Plan != nil {
+		return e.Plan, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: entitlementplan.Label}
 	}
-	return nil, &NotLoadedError{edge: "features"}
+	return nil, &NotLoadedError{edge: "plan"}
+}
+
+// OrganizationOrErr returns the Organization value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntitlementEdges) OrganizationOrErr() (*Organization, error) {
+	if e.Organization != nil {
+		return e.Organization, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: organization.Label}
+	}
+	return nil, &NotLoadedError{edge: "organization"}
 }
 
 // EventsOrErr returns the Events value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntitlementEdges) EventsOrErr() ([]*Event, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Events, nil
 	}
 	return nil, &NotLoadedError{edge: "events"}
@@ -112,7 +128,7 @@ func (*Entitlement) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case entitlement.FieldExpires, entitlement.FieldCancelled:
 			values[i] = new(sql.NullBool)
-		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldMappingID, entitlement.FieldDeletedBy, entitlement.FieldOwnerID, entitlement.FieldTier, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID:
+		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldMappingID, entitlement.FieldDeletedBy, entitlement.FieldOwnerID, entitlement.FieldPlanID, entitlement.FieldOrganizationID, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID:
 			values[i] = new(sql.NullString)
 		case entitlement.FieldCreatedAt, entitlement.FieldUpdatedAt, entitlement.FieldDeletedAt, entitlement.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
@@ -193,11 +209,17 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.OwnerID = value.String
 			}
-		case entitlement.FieldTier:
+		case entitlement.FieldPlanID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field tier", values[i])
+				return fmt.Errorf("unexpected type %T for field plan_id", values[i])
 			} else if value.Valid {
-				e.Tier = enums.Tier(value.String)
+				e.PlanID = value.String
+			}
+		case entitlement.FieldOrganizationID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
+			} else if value.Valid {
+				e.OrganizationID = value.String
 			}
 		case entitlement.FieldExternalCustomerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -248,9 +270,14 @@ func (e *Entitlement) QueryOwner() *OrganizationQuery {
 	return NewEntitlementClient(e.config).QueryOwner(e)
 }
 
-// QueryFeatures queries the "features" edge of the Entitlement entity.
-func (e *Entitlement) QueryFeatures() *FeatureQuery {
-	return NewEntitlementClient(e.config).QueryFeatures(e)
+// QueryPlan queries the "plan" edge of the Entitlement entity.
+func (e *Entitlement) QueryPlan() *EntitlementPlanQuery {
+	return NewEntitlementClient(e.config).QueryPlan(e)
+}
+
+// QueryOrganization queries the "organization" edge of the Entitlement entity.
+func (e *Entitlement) QueryOrganization() *OrganizationQuery {
+	return NewEntitlementClient(e.config).QueryOrganization(e)
 }
 
 // QueryEvents queries the "events" edge of the Entitlement entity.
@@ -308,8 +335,11 @@ func (e *Entitlement) String() string {
 	builder.WriteString("owner_id=")
 	builder.WriteString(e.OwnerID)
 	builder.WriteString(", ")
-	builder.WriteString("tier=")
-	builder.WriteString(fmt.Sprintf("%v", e.Tier))
+	builder.WriteString("plan_id=")
+	builder.WriteString(e.PlanID)
+	builder.WriteString(", ")
+	builder.WriteString("organization_id=")
+	builder.WriteString(e.OrganizationID)
 	builder.WriteString(", ")
 	builder.WriteString("external_customer_id=")
 	builder.WriteString(e.ExternalCustomerID)
@@ -329,30 +359,6 @@ func (e *Entitlement) String() string {
 	builder.WriteString(fmt.Sprintf("%v", e.Cancelled))
 	builder.WriteByte(')')
 	return builder.String()
-}
-
-// NamedFeatures returns the Features named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (e *Entitlement) NamedFeatures(name string) ([]*Feature, error) {
-	if e.Edges.namedFeatures == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := e.Edges.namedFeatures[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (e *Entitlement) appendNamedFeatures(name string, edges ...*Feature) {
-	if e.Edges.namedFeatures == nil {
-		e.Edges.namedFeatures = make(map[string][]*Feature)
-	}
-	if len(edges) == 0 {
-		e.Edges.namedFeatures[name] = []*Feature{}
-	} else {
-		e.Edges.namedFeatures[name] = append(e.Edges.namedFeatures[name], edges...)
-	}
 }
 
 // NamedEvents returns the Events named value or an error if the edge was not

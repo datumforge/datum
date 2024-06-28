@@ -110,14 +110,19 @@ func MappingID(v string) predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldEQ(FieldMappingID, v))
 }
 
+// OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
+func OwnerID(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEQ(FieldOwnerID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldEQ(FieldName, v))
 }
 
-// Global applies equality check predicate on the "global" field. It's identical to GlobalEQ.
-func Global(v bool) predicate.FeatureHistory {
-	return predicate.FeatureHistory(sql.FieldEQ(FieldGlobal, v))
+// DisplayName applies equality check predicate on the "display_name" field. It's identical to DisplayNameEQ.
+func DisplayName(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEQ(FieldDisplayName, v))
 }
 
 // Enabled applies equality check predicate on the "enabled" field. It's identical to EnabledEQ.
@@ -715,6 +720,81 @@ func TagsNotNil() predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldNotNull(FieldTags))
 }
 
+// OwnerIDEQ applies the EQ predicate on the "owner_id" field.
+func OwnerIDEQ(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEQ(FieldOwnerID, v))
+}
+
+// OwnerIDNEQ applies the NEQ predicate on the "owner_id" field.
+func OwnerIDNEQ(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNEQ(FieldOwnerID, v))
+}
+
+// OwnerIDIn applies the In predicate on the "owner_id" field.
+func OwnerIDIn(vs ...string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDNotIn applies the NotIn predicate on the "owner_id" field.
+func OwnerIDNotIn(vs ...string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNotIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDGT applies the GT predicate on the "owner_id" field.
+func OwnerIDGT(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldGT(FieldOwnerID, v))
+}
+
+// OwnerIDGTE applies the GTE predicate on the "owner_id" field.
+func OwnerIDGTE(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldGTE(FieldOwnerID, v))
+}
+
+// OwnerIDLT applies the LT predicate on the "owner_id" field.
+func OwnerIDLT(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldLT(FieldOwnerID, v))
+}
+
+// OwnerIDLTE applies the LTE predicate on the "owner_id" field.
+func OwnerIDLTE(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldLTE(FieldOwnerID, v))
+}
+
+// OwnerIDContains applies the Contains predicate on the "owner_id" field.
+func OwnerIDContains(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldContains(FieldOwnerID, v))
+}
+
+// OwnerIDHasPrefix applies the HasPrefix predicate on the "owner_id" field.
+func OwnerIDHasPrefix(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldHasPrefix(FieldOwnerID, v))
+}
+
+// OwnerIDHasSuffix applies the HasSuffix predicate on the "owner_id" field.
+func OwnerIDHasSuffix(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldHasSuffix(FieldOwnerID, v))
+}
+
+// OwnerIDIsNil applies the IsNil predicate on the "owner_id" field.
+func OwnerIDIsNil() predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldIsNull(FieldOwnerID))
+}
+
+// OwnerIDNotNil applies the NotNil predicate on the "owner_id" field.
+func OwnerIDNotNil() predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNotNull(FieldOwnerID))
+}
+
+// OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
+func OwnerIDEqualFold(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEqualFold(FieldOwnerID, v))
+}
+
+// OwnerIDContainsFold applies the ContainsFold predicate on the "owner_id" field.
+func OwnerIDContainsFold(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldContainsFold(FieldOwnerID, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldEQ(FieldName, v))
@@ -780,14 +860,79 @@ func NameContainsFold(v string) predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldContainsFold(FieldName, v))
 }
 
-// GlobalEQ applies the EQ predicate on the "global" field.
-func GlobalEQ(v bool) predicate.FeatureHistory {
-	return predicate.FeatureHistory(sql.FieldEQ(FieldGlobal, v))
+// DisplayNameEQ applies the EQ predicate on the "display_name" field.
+func DisplayNameEQ(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEQ(FieldDisplayName, v))
 }
 
-// GlobalNEQ applies the NEQ predicate on the "global" field.
-func GlobalNEQ(v bool) predicate.FeatureHistory {
-	return predicate.FeatureHistory(sql.FieldNEQ(FieldGlobal, v))
+// DisplayNameNEQ applies the NEQ predicate on the "display_name" field.
+func DisplayNameNEQ(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNEQ(FieldDisplayName, v))
+}
+
+// DisplayNameIn applies the In predicate on the "display_name" field.
+func DisplayNameIn(vs ...string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldIn(FieldDisplayName, vs...))
+}
+
+// DisplayNameNotIn applies the NotIn predicate on the "display_name" field.
+func DisplayNameNotIn(vs ...string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNotIn(FieldDisplayName, vs...))
+}
+
+// DisplayNameGT applies the GT predicate on the "display_name" field.
+func DisplayNameGT(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldGT(FieldDisplayName, v))
+}
+
+// DisplayNameGTE applies the GTE predicate on the "display_name" field.
+func DisplayNameGTE(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldGTE(FieldDisplayName, v))
+}
+
+// DisplayNameLT applies the LT predicate on the "display_name" field.
+func DisplayNameLT(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldLT(FieldDisplayName, v))
+}
+
+// DisplayNameLTE applies the LTE predicate on the "display_name" field.
+func DisplayNameLTE(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldLTE(FieldDisplayName, v))
+}
+
+// DisplayNameContains applies the Contains predicate on the "display_name" field.
+func DisplayNameContains(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldContains(FieldDisplayName, v))
+}
+
+// DisplayNameHasPrefix applies the HasPrefix predicate on the "display_name" field.
+func DisplayNameHasPrefix(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldHasPrefix(FieldDisplayName, v))
+}
+
+// DisplayNameHasSuffix applies the HasSuffix predicate on the "display_name" field.
+func DisplayNameHasSuffix(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldHasSuffix(FieldDisplayName, v))
+}
+
+// DisplayNameIsNil applies the IsNil predicate on the "display_name" field.
+func DisplayNameIsNil() predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldIsNull(FieldDisplayName))
+}
+
+// DisplayNameNotNil applies the NotNil predicate on the "display_name" field.
+func DisplayNameNotNil() predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNotNull(FieldDisplayName))
+}
+
+// DisplayNameEqualFold applies the EqualFold predicate on the "display_name" field.
+func DisplayNameEqualFold(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldEqualFold(FieldDisplayName, v))
+}
+
+// DisplayNameContainsFold applies the ContainsFold predicate on the "display_name" field.
+func DisplayNameContainsFold(v string) predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldContainsFold(FieldDisplayName, v))
 }
 
 // EnabledEQ applies the EQ predicate on the "enabled" field.
@@ -873,6 +1018,16 @@ func DescriptionEqualFold(v string) predicate.FeatureHistory {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.FeatureHistory {
 	return predicate.FeatureHistory(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// MetadataIsNil applies the IsNil predicate on the "metadata" field.
+func MetadataIsNil() predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldIsNull(FieldMetadata))
+}
+
+// MetadataNotNil applies the NotNil predicate on the "metadata" field.
+func MetadataNotNil() predicate.FeatureHistory {
+	return predicate.FeatureHistory(sql.FieldNotNull(FieldMetadata))
 }
 
 // And groups predicates with the AND operator between them.

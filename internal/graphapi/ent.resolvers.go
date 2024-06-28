@@ -46,6 +46,50 @@ func (r *queryResolver) EntitlementHistories(ctx context.Context, after *entgql.
 	return withTransactionalMutation(ctx).EntitlementHistory.Query().Paginate(ctx, after, first, before, last, generated.WithEntitlementHistoryFilter(where.Filter))
 }
 
+// EntitlementPlans is the resolver for the entitlementPlans field.
+func (r *queryResolver) EntitlementPlans(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementPlanWhereInput) (*generated.EntitlementPlanConnection, error) {
+	return withTransactionalMutation(ctx).EntitlementPlan.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithEntitlementPlanFilter(where.Filter))
+}
+
+// EntitlementPlanFeatures is the resolver for the entitlementPlanFeatures field.
+func (r *queryResolver) EntitlementPlanFeatures(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementPlanFeatureWhereInput) (*generated.EntitlementPlanFeatureConnection, error) {
+	return withTransactionalMutation(ctx).EntitlementPlanFeature.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithEntitlementPlanFeatureFilter(where.Filter))
+}
+
+// EntitlementPlanFeatureHistories is the resolver for the entitlementPlanFeatureHistories field.
+func (r *queryResolver) EntitlementPlanFeatureHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementPlanFeatureHistoryWhereInput) (*generated.EntitlementPlanFeatureHistoryConnection, error) {
+	return withTransactionalMutation(ctx).EntitlementPlanFeatureHistory.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithEntitlementPlanFeatureHistoryFilter(where.Filter))
+}
+
+// EntitlementPlanHistories is the resolver for the entitlementPlanHistories field.
+func (r *queryResolver) EntitlementPlanHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementPlanHistoryWhereInput) (*generated.EntitlementPlanHistoryConnection, error) {
+	return withTransactionalMutation(ctx).EntitlementPlanHistory.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithEntitlementPlanHistoryFilter(where.Filter))
+}
+
 // Events is the resolver for the events field.
 func (r *queryResolver) Events(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EventWhereInput) (*generated.EventConnection, error) {
 	return withTransactionalMutation(ctx).Event.Query().Paginate(ctx, after, first, before, last, generated.WithEventFilter(where.Filter))

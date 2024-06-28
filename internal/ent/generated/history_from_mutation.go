@@ -288,8 +288,12 @@ func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error
 		create = create.SetOwnerID(ownerID)
 	}
 
-	if tier, exists := m.Tier(); exists {
-		create = create.SetTier(tier)
+	if planID, exists := m.PlanID(); exists {
+		create = create.SetPlanID(planID)
+	}
+
+	if organizationID, exists := m.OrganizationID(); exists {
+		create = create.SetOrganizationID(organizationID)
 	}
 
 	if externalCustomerID, exists := m.ExternalCustomerID(); exists {
@@ -396,10 +400,16 @@ func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error
 			create = create.SetOwnerID(entitlement.OwnerID)
 		}
 
-		if tier, exists := m.Tier(); exists {
-			create = create.SetTier(tier)
+		if planID, exists := m.PlanID(); exists {
+			create = create.SetPlanID(planID)
 		} else {
-			create = create.SetTier(entitlement.Tier)
+			create = create.SetPlanID(entitlement.PlanID)
+		}
+
+		if organizationID, exists := m.OrganizationID(); exists {
+			create = create.SetOrganizationID(organizationID)
+		} else {
+			create = create.SetOrganizationID(entitlement.OrganizationID)
 		}
 
 		if externalCustomerID, exists := m.ExternalCustomerID(); exists {
@@ -473,12 +483,471 @@ func (m *EntitlementMutation) CreateHistoryFromDelete(ctx context.Context) error
 			SetDeletedAt(entitlement.DeletedAt).
 			SetDeletedBy(entitlement.DeletedBy).
 			SetOwnerID(entitlement.OwnerID).
-			SetTier(entitlement.Tier).
+			SetPlanID(entitlement.PlanID).
+			SetOrganizationID(entitlement.OrganizationID).
 			SetExternalCustomerID(entitlement.ExternalCustomerID).
 			SetExternalSubscriptionID(entitlement.ExternalSubscriptionID).
 			SetExpires(entitlement.Expires).
 			SetNillableExpiresAt(entitlement.ExpiresAt).
 			SetCancelled(entitlement.Cancelled).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EntitlementPlanMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.EntitlementPlanHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if displayName, exists := m.DisplayName(); exists {
+		create = create.SetDisplayName(displayName)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if version, exists := m.Version(); exists {
+		create = create.SetVersion(version)
+	}
+
+	if metadata, exists := m.Metadata(); exists {
+		create = create.SetMetadata(metadata)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *EntitlementPlanMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		entitlementplan, err := client.EntitlementPlan.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.EntitlementPlanHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(entitlementplan.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(entitlementplan.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(entitlementplan.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(entitlementplan.UpdatedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(entitlementplan.MappingID)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(entitlementplan.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(entitlementplan.DeletedBy)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(entitlementplan.Tags)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(entitlementplan.OwnerID)
+		}
+
+		if displayName, exists := m.DisplayName(); exists {
+			create = create.SetDisplayName(displayName)
+		} else {
+			create = create.SetDisplayName(entitlementplan.DisplayName)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(entitlementplan.Name)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(entitlementplan.Description)
+		}
+
+		if version, exists := m.Version(); exists {
+			create = create.SetVersion(version)
+		} else {
+			create = create.SetVersion(entitlementplan.Version)
+		}
+
+		if metadata, exists := m.Metadata(); exists {
+			create = create.SetMetadata(metadata)
+		} else {
+			create = create.SetMetadata(entitlementplan.Metadata)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EntitlementPlanMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		entitlementplan, err := client.EntitlementPlan.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.EntitlementPlanHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(entitlementplan.CreatedAt).
+			SetUpdatedAt(entitlementplan.UpdatedAt).
+			SetCreatedBy(entitlementplan.CreatedBy).
+			SetUpdatedBy(entitlementplan.UpdatedBy).
+			SetMappingID(entitlementplan.MappingID).
+			SetDeletedAt(entitlementplan.DeletedAt).
+			SetDeletedBy(entitlementplan.DeletedBy).
+			SetTags(entitlementplan.Tags).
+			SetOwnerID(entitlementplan.OwnerID).
+			SetDisplayName(entitlementplan.DisplayName).
+			SetName(entitlementplan.Name).
+			SetDescription(entitlementplan.Description).
+			SetVersion(entitlementplan.Version).
+			SetMetadata(entitlementplan.Metadata).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EntitlementPlanFeatureMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.EntitlementPlanFeatureHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if metadata, exists := m.Metadata(); exists {
+		create = create.SetMetadata(metadata)
+	}
+
+	if planID, exists := m.PlanID(); exists {
+		create = create.SetPlanID(planID)
+	}
+
+	if featureID, exists := m.FeatureID(); exists {
+		create = create.SetFeatureID(featureID)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *EntitlementPlanFeatureMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		entitlementplanfeature, err := client.EntitlementPlanFeature.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.EntitlementPlanFeatureHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(entitlementplanfeature.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(entitlementplanfeature.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(entitlementplanfeature.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(entitlementplanfeature.UpdatedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(entitlementplanfeature.MappingID)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(entitlementplanfeature.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(entitlementplanfeature.DeletedBy)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(entitlementplanfeature.Tags)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(entitlementplanfeature.OwnerID)
+		}
+
+		if metadata, exists := m.Metadata(); exists {
+			create = create.SetMetadata(metadata)
+		} else {
+			create = create.SetMetadata(entitlementplanfeature.Metadata)
+		}
+
+		if planID, exists := m.PlanID(); exists {
+			create = create.SetPlanID(planID)
+		} else {
+			create = create.SetPlanID(entitlementplanfeature.PlanID)
+		}
+
+		if featureID, exists := m.FeatureID(); exists {
+			create = create.SetFeatureID(featureID)
+		} else {
+			create = create.SetFeatureID(entitlementplanfeature.FeatureID)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EntitlementPlanFeatureMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		entitlementplanfeature, err := client.EntitlementPlanFeature.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.EntitlementPlanFeatureHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(entitlementplanfeature.CreatedAt).
+			SetUpdatedAt(entitlementplanfeature.UpdatedAt).
+			SetCreatedBy(entitlementplanfeature.CreatedBy).
+			SetUpdatedBy(entitlementplanfeature.UpdatedBy).
+			SetMappingID(entitlementplanfeature.MappingID).
+			SetDeletedAt(entitlementplanfeature.DeletedAt).
+			SetDeletedBy(entitlementplanfeature.DeletedBy).
+			SetTags(entitlementplanfeature.Tags).
+			SetOwnerID(entitlementplanfeature.OwnerID).
+			SetMetadata(entitlementplanfeature.Metadata).
+			SetPlanID(entitlementplanfeature.PlanID).
+			SetFeatureID(entitlementplanfeature.FeatureID).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -731,12 +1200,16 @@ func (m *FeatureMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetTags(tags)
 	}
 
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
 	if name, exists := m.Name(); exists {
 		create = create.SetName(name)
 	}
 
-	if global, exists := m.Global(); exists {
-		create = create.SetGlobal(global)
+	if displayName, exists := m.DisplayName(); exists {
+		create = create.SetDisplayName(displayName)
 	}
 
 	if enabled, exists := m.Enabled(); exists {
@@ -745,6 +1218,10 @@ func (m *FeatureMutation) CreateHistoryFromCreate(ctx context.Context) error {
 
 	if description, exists := m.Description(); exists {
 		create = create.SetNillableDescription(&description)
+	}
+
+	if metadata, exists := m.Metadata(); exists {
+		create = create.SetMetadata(metadata)
 	}
 
 	_, err := create.Save(ctx)
@@ -825,16 +1302,22 @@ func (m *FeatureMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 			create = create.SetTags(feature.Tags)
 		}
 
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(feature.OwnerID)
+		}
+
 		if name, exists := m.Name(); exists {
 			create = create.SetName(name)
 		} else {
 			create = create.SetName(feature.Name)
 		}
 
-		if global, exists := m.Global(); exists {
-			create = create.SetGlobal(global)
+		if displayName, exists := m.DisplayName(); exists {
+			create = create.SetDisplayName(displayName)
 		} else {
-			create = create.SetGlobal(feature.Global)
+			create = create.SetDisplayName(feature.DisplayName)
 		}
 
 		if enabled, exists := m.Enabled(); exists {
@@ -847,6 +1330,12 @@ func (m *FeatureMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 			create = create.SetNillableDescription(&description)
 		} else {
 			create = create.SetNillableDescription(feature.Description)
+		}
+
+		if metadata, exists := m.Metadata(); exists {
+			create = create.SetMetadata(metadata)
+		} else {
+			create = create.SetMetadata(feature.Metadata)
 		}
 
 		if _, err := create.Save(ctx); err != nil {
@@ -889,10 +1378,12 @@ func (m *FeatureMutation) CreateHistoryFromDelete(ctx context.Context) error {
 			SetDeletedBy(feature.DeletedBy).
 			SetMappingID(feature.MappingID).
 			SetTags(feature.Tags).
+			SetOwnerID(feature.OwnerID).
 			SetName(feature.Name).
-			SetGlobal(feature.Global).
+			SetDisplayName(feature.DisplayName).
 			SetEnabled(feature.Enabled).
 			SetNillableDescription(feature.Description).
+			SetMetadata(feature.Metadata).
 			Save(ctx)
 		if err != nil {
 			return err

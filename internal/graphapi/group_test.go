@@ -110,7 +110,7 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 			},
 		}
 
-		resp, err := suite.client.datum.GroupsWhere(reqCtx, whereInput)
+		resp, err := suite.client.datum.GetGroups(reqCtx, whereInput)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -143,7 +143,7 @@ func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
 			},
 		}
 
-		resp, err = suite.client.datum.GroupsWhere(reqCtx, whereInput)
+		resp, err = suite.client.datum.GetGroups(reqCtx, whereInput)
 
 		require.NoError(t, err)
 		require.Empty(t, resp.Groups.Edges)

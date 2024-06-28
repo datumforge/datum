@@ -15,11 +15,12 @@ query GetOrganizationSettingByID($organizationSettingId: ID!) {
     updatedBy
     organization {
       id
+      name
     }
   }
 }
 
-query GetOrganizationSettings {
+query GetAllOrganizationSettings {
   organizationSettings {
     edges {
       node {
@@ -38,13 +39,14 @@ query GetOrganizationSettings {
         updatedBy
         organization {
           id
+          name
         }
       }
     }
   }
 }
 
-query GetOrganizationSettingWhere($where: OrganizationSettingWhereInput!) {
+query GetOrganizationSettings($where: OrganizationSettingWhereInput!) {
   organizationSettings(where: $where) {
     edges {
       node {
@@ -63,6 +65,7 @@ query GetOrganizationSettingWhere($where: OrganizationSettingWhereInput!) {
         updatedBy
         organization {
           id
+          name
         }
       }
     }
@@ -87,6 +90,7 @@ mutation UpdateOrganizationSetting($updateOrganizationSettingId: ID!, $input: Up
       updatedBy
       organization {
         id
+        name
       }
     }
   }

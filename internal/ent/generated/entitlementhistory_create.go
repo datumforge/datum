@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
-	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/enthistory"
 )
 
@@ -174,17 +173,15 @@ func (ehc *EntitlementHistoryCreate) SetNillableOwnerID(s *string) *EntitlementH
 	return ehc
 }
 
-// SetTier sets the "tier" field.
-func (ehc *EntitlementHistoryCreate) SetTier(e enums.Tier) *EntitlementHistoryCreate {
-	ehc.mutation.SetTier(e)
+// SetPlanID sets the "plan_id" field.
+func (ehc *EntitlementHistoryCreate) SetPlanID(s string) *EntitlementHistoryCreate {
+	ehc.mutation.SetPlanID(s)
 	return ehc
 }
 
-// SetNillableTier sets the "tier" field if the given value is not nil.
-func (ehc *EntitlementHistoryCreate) SetNillableTier(e *enums.Tier) *EntitlementHistoryCreate {
-	if e != nil {
-		ehc.SetTier(*e)
-	}
+// SetOrganizationID sets the "organization_id" field.
+func (ehc *EntitlementHistoryCreate) SetOrganizationID(s string) *EntitlementHistoryCreate {
+	ehc.mutation.SetOrganizationID(s)
 	return ehc
 }
 
@@ -327,10 +324,6 @@ func (ehc *EntitlementHistoryCreate) defaults() {
 		v := entitlementhistory.DefaultTags
 		ehc.mutation.SetTags(v)
 	}
-	if _, ok := ehc.mutation.Tier(); !ok {
-		v := entitlementhistory.DefaultTier
-		ehc.mutation.SetTier(v)
-	}
 	if _, ok := ehc.mutation.Expires(); !ok {
 		v := entitlementhistory.DefaultExpires
 		ehc.mutation.SetExpires(v)
@@ -361,13 +354,11 @@ func (ehc *EntitlementHistoryCreate) check() error {
 	if _, ok := ehc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "EntitlementHistory.mapping_id"`)}
 	}
-	if _, ok := ehc.mutation.Tier(); !ok {
-		return &ValidationError{Name: "tier", err: errors.New(`generated: missing required field "EntitlementHistory.tier"`)}
+	if _, ok := ehc.mutation.PlanID(); !ok {
+		return &ValidationError{Name: "plan_id", err: errors.New(`generated: missing required field "EntitlementHistory.plan_id"`)}
 	}
-	if v, ok := ehc.mutation.Tier(); ok {
-		if err := entitlementhistory.TierValidator(v); err != nil {
-			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "EntitlementHistory.tier": %w`, err)}
-		}
+	if _, ok := ehc.mutation.OrganizationID(); !ok {
+		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "EntitlementHistory.organization_id"`)}
 	}
 	if _, ok := ehc.mutation.Expires(); !ok {
 		return &ValidationError{Name: "expires", err: errors.New(`generated: missing required field "EntitlementHistory.expires"`)}
@@ -459,9 +450,13 @@ func (ehc *EntitlementHistoryCreate) createSpec() (*EntitlementHistory, *sqlgrap
 		_spec.SetField(entitlementhistory.FieldOwnerID, field.TypeString, value)
 		_node.OwnerID = value
 	}
-	if value, ok := ehc.mutation.Tier(); ok {
-		_spec.SetField(entitlementhistory.FieldTier, field.TypeEnum, value)
-		_node.Tier = value
+	if value, ok := ehc.mutation.PlanID(); ok {
+		_spec.SetField(entitlementhistory.FieldPlanID, field.TypeString, value)
+		_node.PlanID = value
+	}
+	if value, ok := ehc.mutation.OrganizationID(); ok {
+		_spec.SetField(entitlementhistory.FieldOrganizationID, field.TypeString, value)
+		_node.OrganizationID = value
 	}
 	if value, ok := ehc.mutation.ExternalCustomerID(); ok {
 		_spec.SetField(entitlementhistory.FieldExternalCustomerID, field.TypeString, value)

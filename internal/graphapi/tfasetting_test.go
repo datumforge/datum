@@ -203,7 +203,7 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 			}
 
 			// make sure user setting was not updated
-			userSettings, err := suite.client.datum.GetUserSettings(reqCtx)
+			userSettings, err := suite.client.datum.GetAllUserSettings(reqCtx)
 			require.NoError(t, err)
 			require.Len(t, userSettings.UserSettings.Edges, 1)
 

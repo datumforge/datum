@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
-	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/enthistory"
 )
 
@@ -44,8 +43,10 @@ type EntitlementHistory struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
-	// Tier holds the value of the "tier" field.
-	Tier enums.Tier `json:"tier,omitempty"`
+	// the plan to which the entitlement belongs
+	PlanID string `json:"plan_id,omitempty"`
+	// the organization to which the entitlement belongs
+	OrganizationID string `json:"organization_id,omitempty"`
 	// used to store references to external systems, e.g. Stripe
 	ExternalCustomerID string `json:"external_customer_id,omitempty"`
 	// used to store references to external systems, e.g. Stripe
@@ -70,7 +71,7 @@ func (*EntitlementHistory) scanValues(columns []string) ([]any, error) {
 			values[i] = new(enthistory.OpType)
 		case entitlementhistory.FieldExpires, entitlementhistory.FieldCancelled:
 			values[i] = new(sql.NullBool)
-		case entitlementhistory.FieldID, entitlementhistory.FieldRef, entitlementhistory.FieldCreatedBy, entitlementhistory.FieldUpdatedBy, entitlementhistory.FieldMappingID, entitlementhistory.FieldDeletedBy, entitlementhistory.FieldOwnerID, entitlementhistory.FieldTier, entitlementhistory.FieldExternalCustomerID, entitlementhistory.FieldExternalSubscriptionID:
+		case entitlementhistory.FieldID, entitlementhistory.FieldRef, entitlementhistory.FieldCreatedBy, entitlementhistory.FieldUpdatedBy, entitlementhistory.FieldMappingID, entitlementhistory.FieldDeletedBy, entitlementhistory.FieldOwnerID, entitlementhistory.FieldPlanID, entitlementhistory.FieldOrganizationID, entitlementhistory.FieldExternalCustomerID, entitlementhistory.FieldExternalSubscriptionID:
 			values[i] = new(sql.NullString)
 		case entitlementhistory.FieldHistoryTime, entitlementhistory.FieldCreatedAt, entitlementhistory.FieldUpdatedAt, entitlementhistory.FieldDeletedAt, entitlementhistory.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
@@ -169,11 +170,17 @@ func (eh *EntitlementHistory) assignValues(columns []string, values []any) error
 			} else if value.Valid {
 				eh.OwnerID = value.String
 			}
-		case entitlementhistory.FieldTier:
+		case entitlementhistory.FieldPlanID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field tier", values[i])
+				return fmt.Errorf("unexpected type %T for field plan_id", values[i])
 			} else if value.Valid {
-				eh.Tier = enums.Tier(value.String)
+				eh.PlanID = value.String
+			}
+		case entitlementhistory.FieldOrganizationID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
+			} else if value.Valid {
+				eh.OrganizationID = value.String
 			}
 		case entitlementhistory.FieldExternalCustomerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -278,8 +285,11 @@ func (eh *EntitlementHistory) String() string {
 	builder.WriteString("owner_id=")
 	builder.WriteString(eh.OwnerID)
 	builder.WriteString(", ")
-	builder.WriteString("tier=")
-	builder.WriteString(fmt.Sprintf("%v", eh.Tier))
+	builder.WriteString("plan_id=")
+	builder.WriteString(eh.PlanID)
+	builder.WriteString(", ")
+	builder.WriteString("organization_id=")
+	builder.WriteString(eh.OrganizationID)
 	builder.WriteString(", ")
 	builder.WriteString("external_customer_id=")
 	builder.WriteString(eh.ExternalCustomerID)

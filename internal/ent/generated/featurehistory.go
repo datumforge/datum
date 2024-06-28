@@ -41,14 +41,18 @@ type FeatureHistory struct {
 	MappingID string `json:"mapping_id,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// Name holds the value of the "name" field.
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
+	// the unique name of the feature
 	Name string `json:"name,omitempty"`
-	// Global holds the value of the "global" field.
-	Global bool `json:"global,omitempty"`
-	// Enabled holds the value of the "enabled" field.
+	// the displayed 'friendly' name of the feature
+	DisplayName string `json:"display_name,omitempty"`
+	// enabled features are available for use
 	Enabled bool `json:"enabled,omitempty"`
-	// Description holds the value of the "description" field.
-	Description  *string `json:"description,omitempty"`
+	// a description of the feature
+	Description *string `json:"description,omitempty"`
+	// metadata for the feature
+	Metadata     map[string]interface{} `json:"metadata,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -57,13 +61,13 @@ func (*FeatureHistory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case featurehistory.FieldTags:
+		case featurehistory.FieldTags, featurehistory.FieldMetadata:
 			values[i] = new([]byte)
 		case featurehistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
-		case featurehistory.FieldGlobal, featurehistory.FieldEnabled:
+		case featurehistory.FieldEnabled:
 			values[i] = new(sql.NullBool)
-		case featurehistory.FieldID, featurehistory.FieldRef, featurehistory.FieldCreatedBy, featurehistory.FieldUpdatedBy, featurehistory.FieldDeletedBy, featurehistory.FieldMappingID, featurehistory.FieldName, featurehistory.FieldDescription:
+		case featurehistory.FieldID, featurehistory.FieldRef, featurehistory.FieldCreatedBy, featurehistory.FieldUpdatedBy, featurehistory.FieldDeletedBy, featurehistory.FieldMappingID, featurehistory.FieldOwnerID, featurehistory.FieldName, featurehistory.FieldDisplayName, featurehistory.FieldDescription:
 			values[i] = new(sql.NullString)
 		case featurehistory.FieldHistoryTime, featurehistory.FieldCreatedAt, featurehistory.FieldUpdatedAt, featurehistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -156,17 +160,23 @@ func (fh *FeatureHistory) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
 			}
+		case featurehistory.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				fh.OwnerID = value.String
+			}
 		case featurehistory.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				fh.Name = value.String
 			}
-		case featurehistory.FieldGlobal:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field global", values[i])
+		case featurehistory.FieldDisplayName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field display_name", values[i])
 			} else if value.Valid {
-				fh.Global = value.Bool
+				fh.DisplayName = value.String
 			}
 		case featurehistory.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -180,6 +190,14 @@ func (fh *FeatureHistory) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				fh.Description = new(string)
 				*fh.Description = value.String
+			}
+		case featurehistory.FieldMetadata:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field metadata", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &fh.Metadata); err != nil {
+					return fmt.Errorf("unmarshal field metadata: %w", err)
+				}
 			}
 		default:
 			fh.selectValues.Set(columns[i], values[i])
@@ -250,11 +268,14 @@ func (fh *FeatureHistory) String() string {
 	builder.WriteString("tags=")
 	builder.WriteString(fmt.Sprintf("%v", fh.Tags))
 	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(fh.OwnerID)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(fh.Name)
 	builder.WriteString(", ")
-	builder.WriteString("global=")
-	builder.WriteString(fmt.Sprintf("%v", fh.Global))
+	builder.WriteString("display_name=")
+	builder.WriteString(fh.DisplayName)
 	builder.WriteString(", ")
 	builder.WriteString("enabled=")
 	builder.WriteString(fmt.Sprintf("%v", fh.Enabled))
@@ -263,6 +284,9 @@ func (fh *FeatureHistory) String() string {
 		builder.WriteString("description=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("metadata=")
+	builder.WriteString(fmt.Sprintf("%v", fh.Metadata))
 	builder.WriteByte(')')
 	return builder.String()
 }

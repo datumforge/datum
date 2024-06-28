@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
 // Feature is the model entity for the Feature schema.
@@ -34,14 +35,18 @@ type Feature struct {
 	MappingID string `json:"mapping_id,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// Name holds the value of the "name" field.
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
+	// the unique name of the feature
 	Name string `json:"name,omitempty"`
-	// Global holds the value of the "global" field.
-	Global bool `json:"global,omitempty"`
-	// Enabled holds the value of the "enabled" field.
+	// the displayed 'friendly' name of the feature
+	DisplayName string `json:"display_name,omitempty"`
+	// enabled features are available for use
 	Enabled bool `json:"enabled,omitempty"`
-	// Description holds the value of the "description" field.
+	// a description of the feature
 	Description *string `json:"description,omitempty"`
+	// metadata for the feature
+	Metadata map[string]interface{} `json:"metadata,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FeatureQuery when eager-loading is set.
 	Edges        FeatureEdges `json:"edges"`
@@ -50,72 +55,61 @@ type Feature struct {
 
 // FeatureEdges holds the relations/edges for other nodes in the graph.
 type FeatureEdges struct {
-	// Users holds the value of the users edge.
-	Users []*User `json:"users,omitempty"`
-	// Groups holds the value of the groups edge.
-	Groups []*Group `json:"groups,omitempty"`
-	// Entitlements holds the value of the entitlements edge.
-	Entitlements []*Entitlement `json:"entitlements,omitempty"`
-	// Organizations holds the value of the organizations edge.
-	Organizations []*Organization `json:"organizations,omitempty"`
+	// Owner holds the value of the owner edge.
+	Owner *Organization `json:"owner,omitempty"`
+	// Plans holds the value of the plans edge.
+	Plans []*EntitlementPlan `json:"plans,omitempty"`
 	// Events holds the value of the events edge.
 	Events []*Event `json:"events,omitempty"`
+	// Features holds the value of the features edge.
+	Features []*EntitlementPlanFeature `json:"features,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [5]map[string]int
+	totalCount [4]map[string]int
 
-	namedUsers         map[string][]*User
-	namedGroups        map[string][]*Group
-	namedEntitlements  map[string][]*Entitlement
-	namedOrganizations map[string][]*Organization
-	namedEvents        map[string][]*Event
+	namedPlans    map[string][]*EntitlementPlan
+	namedEvents   map[string][]*Event
+	namedFeatures map[string][]*EntitlementPlanFeature
 }
 
-// UsersOrErr returns the Users value or an error if the edge
-// was not loaded in eager-loading.
-func (e FeatureEdges) UsersOrErr() ([]*User, error) {
-	if e.loadedTypes[0] {
-		return e.Users, nil
+// OwnerOrErr returns the Owner value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FeatureEdges) OwnerOrErr() (*Organization, error) {
+	if e.Owner != nil {
+		return e.Owner, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: organization.Label}
 	}
-	return nil, &NotLoadedError{edge: "users"}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
-// GroupsOrErr returns the Groups value or an error if the edge
+// PlansOrErr returns the Plans value or an error if the edge
 // was not loaded in eager-loading.
-func (e FeatureEdges) GroupsOrErr() ([]*Group, error) {
+func (e FeatureEdges) PlansOrErr() ([]*EntitlementPlan, error) {
 	if e.loadedTypes[1] {
-		return e.Groups, nil
+		return e.Plans, nil
 	}
-	return nil, &NotLoadedError{edge: "groups"}
-}
-
-// EntitlementsOrErr returns the Entitlements value or an error if the edge
-// was not loaded in eager-loading.
-func (e FeatureEdges) EntitlementsOrErr() ([]*Entitlement, error) {
-	if e.loadedTypes[2] {
-		return e.Entitlements, nil
-	}
-	return nil, &NotLoadedError{edge: "entitlements"}
-}
-
-// OrganizationsOrErr returns the Organizations value or an error if the edge
-// was not loaded in eager-loading.
-func (e FeatureEdges) OrganizationsOrErr() ([]*Organization, error) {
-	if e.loadedTypes[3] {
-		return e.Organizations, nil
-	}
-	return nil, &NotLoadedError{edge: "organizations"}
+	return nil, &NotLoadedError{edge: "plans"}
 }
 
 // EventsOrErr returns the Events value or an error if the edge
 // was not loaded in eager-loading.
 func (e FeatureEdges) EventsOrErr() ([]*Event, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[2] {
 		return e.Events, nil
 	}
 	return nil, &NotLoadedError{edge: "events"}
+}
+
+// FeaturesOrErr returns the Features value or an error if the edge
+// was not loaded in eager-loading.
+func (e FeatureEdges) FeaturesOrErr() ([]*EntitlementPlanFeature, error) {
+	if e.loadedTypes[3] {
+		return e.Features, nil
+	}
+	return nil, &NotLoadedError{edge: "features"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -123,11 +117,11 @@ func (*Feature) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case feature.FieldTags:
+		case feature.FieldTags, feature.FieldMetadata:
 			values[i] = new([]byte)
-		case feature.FieldGlobal, feature.FieldEnabled:
+		case feature.FieldEnabled:
 			values[i] = new(sql.NullBool)
-		case feature.FieldID, feature.FieldCreatedBy, feature.FieldUpdatedBy, feature.FieldDeletedBy, feature.FieldMappingID, feature.FieldName, feature.FieldDescription:
+		case feature.FieldID, feature.FieldCreatedBy, feature.FieldUpdatedBy, feature.FieldDeletedBy, feature.FieldMappingID, feature.FieldOwnerID, feature.FieldName, feature.FieldDisplayName, feature.FieldDescription:
 			values[i] = new(sql.NullString)
 		case feature.FieldCreatedAt, feature.FieldUpdatedAt, feature.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -202,17 +196,23 @@ func (f *Feature) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
 			}
+		case feature.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				f.OwnerID = value.String
+			}
 		case feature.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				f.Name = value.String
 			}
-		case feature.FieldGlobal:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field global", values[i])
+		case feature.FieldDisplayName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field display_name", values[i])
 			} else if value.Valid {
-				f.Global = value.Bool
+				f.DisplayName = value.String
 			}
 		case feature.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -227,6 +227,14 @@ func (f *Feature) assignValues(columns []string, values []any) error {
 				f.Description = new(string)
 				*f.Description = value.String
 			}
+		case feature.FieldMetadata:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field metadata", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &f.Metadata); err != nil {
+					return fmt.Errorf("unmarshal field metadata: %w", err)
+				}
+			}
 		default:
 			f.selectValues.Set(columns[i], values[i])
 		}
@@ -240,29 +248,24 @@ func (f *Feature) Value(name string) (ent.Value, error) {
 	return f.selectValues.Get(name)
 }
 
-// QueryUsers queries the "users" edge of the Feature entity.
-func (f *Feature) QueryUsers() *UserQuery {
-	return NewFeatureClient(f.config).QueryUsers(f)
+// QueryOwner queries the "owner" edge of the Feature entity.
+func (f *Feature) QueryOwner() *OrganizationQuery {
+	return NewFeatureClient(f.config).QueryOwner(f)
 }
 
-// QueryGroups queries the "groups" edge of the Feature entity.
-func (f *Feature) QueryGroups() *GroupQuery {
-	return NewFeatureClient(f.config).QueryGroups(f)
-}
-
-// QueryEntitlements queries the "entitlements" edge of the Feature entity.
-func (f *Feature) QueryEntitlements() *EntitlementQuery {
-	return NewFeatureClient(f.config).QueryEntitlements(f)
-}
-
-// QueryOrganizations queries the "organizations" edge of the Feature entity.
-func (f *Feature) QueryOrganizations() *OrganizationQuery {
-	return NewFeatureClient(f.config).QueryOrganizations(f)
+// QueryPlans queries the "plans" edge of the Feature entity.
+func (f *Feature) QueryPlans() *EntitlementPlanQuery {
+	return NewFeatureClient(f.config).QueryPlans(f)
 }
 
 // QueryEvents queries the "events" edge of the Feature entity.
 func (f *Feature) QueryEvents() *EventQuery {
 	return NewFeatureClient(f.config).QueryEvents(f)
+}
+
+// QueryFeatures queries the "features" edge of the Feature entity.
+func (f *Feature) QueryFeatures() *EntitlementPlanFeatureQuery {
+	return NewFeatureClient(f.config).QueryFeatures(f)
 }
 
 // Update returns a builder for updating this Feature.
@@ -312,11 +315,14 @@ func (f *Feature) String() string {
 	builder.WriteString("tags=")
 	builder.WriteString(fmt.Sprintf("%v", f.Tags))
 	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(f.OwnerID)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(f.Name)
 	builder.WriteString(", ")
-	builder.WriteString("global=")
-	builder.WriteString(fmt.Sprintf("%v", f.Global))
+	builder.WriteString("display_name=")
+	builder.WriteString(f.DisplayName)
 	builder.WriteString(", ")
 	builder.WriteString("enabled=")
 	builder.WriteString(fmt.Sprintf("%v", f.Enabled))
@@ -325,103 +331,34 @@ func (f *Feature) String() string {
 		builder.WriteString("description=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("metadata=")
+	builder.WriteString(fmt.Sprintf("%v", f.Metadata))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// NamedUsers returns the Users named value or an error if the edge was not
+// NamedPlans returns the Plans named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (f *Feature) NamedUsers(name string) ([]*User, error) {
-	if f.Edges.namedUsers == nil {
+func (f *Feature) NamedPlans(name string) ([]*EntitlementPlan, error) {
+	if f.Edges.namedPlans == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := f.Edges.namedUsers[name]
+	nodes, ok := f.Edges.namedPlans[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (f *Feature) appendNamedUsers(name string, edges ...*User) {
-	if f.Edges.namedUsers == nil {
-		f.Edges.namedUsers = make(map[string][]*User)
+func (f *Feature) appendNamedPlans(name string, edges ...*EntitlementPlan) {
+	if f.Edges.namedPlans == nil {
+		f.Edges.namedPlans = make(map[string][]*EntitlementPlan)
 	}
 	if len(edges) == 0 {
-		f.Edges.namedUsers[name] = []*User{}
+		f.Edges.namedPlans[name] = []*EntitlementPlan{}
 	} else {
-		f.Edges.namedUsers[name] = append(f.Edges.namedUsers[name], edges...)
-	}
-}
-
-// NamedGroups returns the Groups named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (f *Feature) NamedGroups(name string) ([]*Group, error) {
-	if f.Edges.namedGroups == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := f.Edges.namedGroups[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (f *Feature) appendNamedGroups(name string, edges ...*Group) {
-	if f.Edges.namedGroups == nil {
-		f.Edges.namedGroups = make(map[string][]*Group)
-	}
-	if len(edges) == 0 {
-		f.Edges.namedGroups[name] = []*Group{}
-	} else {
-		f.Edges.namedGroups[name] = append(f.Edges.namedGroups[name], edges...)
-	}
-}
-
-// NamedEntitlements returns the Entitlements named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (f *Feature) NamedEntitlements(name string) ([]*Entitlement, error) {
-	if f.Edges.namedEntitlements == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := f.Edges.namedEntitlements[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (f *Feature) appendNamedEntitlements(name string, edges ...*Entitlement) {
-	if f.Edges.namedEntitlements == nil {
-		f.Edges.namedEntitlements = make(map[string][]*Entitlement)
-	}
-	if len(edges) == 0 {
-		f.Edges.namedEntitlements[name] = []*Entitlement{}
-	} else {
-		f.Edges.namedEntitlements[name] = append(f.Edges.namedEntitlements[name], edges...)
-	}
-}
-
-// NamedOrganizations returns the Organizations named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (f *Feature) NamedOrganizations(name string) ([]*Organization, error) {
-	if f.Edges.namedOrganizations == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := f.Edges.namedOrganizations[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (f *Feature) appendNamedOrganizations(name string, edges ...*Organization) {
-	if f.Edges.namedOrganizations == nil {
-		f.Edges.namedOrganizations = make(map[string][]*Organization)
-	}
-	if len(edges) == 0 {
-		f.Edges.namedOrganizations[name] = []*Organization{}
-	} else {
-		f.Edges.namedOrganizations[name] = append(f.Edges.namedOrganizations[name], edges...)
+		f.Edges.namedPlans[name] = append(f.Edges.namedPlans[name], edges...)
 	}
 }
 
@@ -446,6 +383,30 @@ func (f *Feature) appendNamedEvents(name string, edges ...*Event) {
 		f.Edges.namedEvents[name] = []*Event{}
 	} else {
 		f.Edges.namedEvents[name] = append(f.Edges.namedEvents[name], edges...)
+	}
+}
+
+// NamedFeatures returns the Features named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (f *Feature) NamedFeatures(name string) ([]*EntitlementPlanFeature, error) {
+	if f.Edges.namedFeatures == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := f.Edges.namedFeatures[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (f *Feature) appendNamedFeatures(name string, edges ...*EntitlementPlanFeature) {
+	if f.Edges.namedFeatures == nil {
+		f.Edges.namedFeatures = make(map[string][]*EntitlementPlanFeature)
+	}
+	if len(edges) == 0 {
+		f.Edges.namedFeatures[name] = []*EntitlementPlanFeature{}
+	} else {
+		f.Edges.namedFeatures[name] = append(f.Edges.namedFeatures[name], edges...)
 	}
 }
 

@@ -5,17 +5,19 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 // Entitlement holds the schema definition for the Entitlement entity.
@@ -26,9 +28,14 @@ type Entitlement struct {
 // Fields of the Entitlement.
 func (Entitlement) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("tier").
-			GoType(enums.Tier("")).
-			Default(string(enums.TierFree)),
+		field.String("plan_id").
+			Comment("the plan to which the entitlement belongs").
+			NotEmpty().
+			Immutable(),
+		field.String("organization_id").
+			Comment("the organization to which the entitlement belongs").
+			NotEmpty().
+			Immutable(),
 		field.String("external_customer_id").
 			Comment("used to store references to external systems, e.g. Stripe").
 			Optional(),
@@ -37,6 +44,14 @@ func (Entitlement) Fields() []ent.Field {
 			Optional(),
 		field.Bool("expires").
 			Comment("whether or not the customers entitlement expires - expires_at will show the time").
+			Annotations(
+				entgql.Skip(
+					// skip these fields in the mutation
+					// it will automatically be set based on the value of expires_at
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			).
 			Default(false),
 		field.Time("expires_at").
 			Comment("the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month").
@@ -48,10 +63,31 @@ func (Entitlement) Fields() []ent.Field {
 	}
 }
 
+// Indexes of the Entitlement
+func (Entitlement) Indexes() []ent.Index {
+	return []ent.Index{
+		// organizations should only have one active entitlement
+		index.Fields("organization_id", "owner_id").
+			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL and cancelled = false")),
+	}
+}
+
 // Edges of the Entitlement
 func (Entitlement) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("features", Feature.Type),
+		edge.From("plan", EntitlementPlan.Type).
+			Field("plan_id").
+			Unique().
+			Required().
+			Immutable().
+			Ref("entitlements"),
+		// Organization that is assigned the entitlement
+		edge.From("organization", Organization.Type).
+			Ref("organization_entitlement").
+			Field("organization_id").
+			Required().
+			Immutable().
+			Unique(),
 		edge.To("events", Event.Type),
 	}
 }
@@ -82,6 +118,13 @@ func (Entitlement) Mixin() []ent.Mixin {
 		OrgOwnerMixin{
 			Ref: "entitlements",
 		},
+	}
+}
+
+// Hooks of the Entitlement
+func (Entitlement) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookEntitlement(),
 	}
 }
 

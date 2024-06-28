@@ -128,10 +128,13 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
 			),
+		// organization that owns the entitlement
 		edge.To("entitlements", Entitlement.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
 			),
+		// Organization that is assigned the entitlement
+		edge.To("organization_entitlement", Entitlement.Type),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type),
 		edge.To("api_tokens", APIToken.Type),
 		edge.To("oauthprovider", OauthProvider.Type),
@@ -148,6 +151,10 @@ func (Organization) Edges() []ent.Edge {
 		edge.To("secrets", Hush.Type),
 		edge.To("features", Feature.Type),
 		edge.To("files", File.Type),
+		edge.To("entitlementplans", EntitlementPlan.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("entitlementplanfeatures", EntitlementPlanFeature.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
 	}
 }
 

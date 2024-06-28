@@ -8,7 +8,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/pkg/enums"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -106,6 +105,16 @@ func DeletedBy(v string) predicate.Entitlement {
 // OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
 func OwnerID(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldOwnerID, v))
+}
+
+// PlanID applies equality check predicate on the "plan_id" field. It's identical to PlanIDEQ.
+func PlanID(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldPlanID, v))
+}
+
+// OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
+func OrganizationID(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldOrganizationID, v))
 }
 
 // ExternalCustomerID applies equality check predicate on the "external_customer_id" field. It's identical to ExternalCustomerIDEQ.
@@ -658,34 +667,134 @@ func OwnerIDContainsFold(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldContainsFold(FieldOwnerID, v))
 }
 
-// TierEQ applies the EQ predicate on the "tier" field.
-func TierEQ(v enums.Tier) predicate.Entitlement {
-	vc := v
-	return predicate.Entitlement(sql.FieldEQ(FieldTier, vc))
+// PlanIDEQ applies the EQ predicate on the "plan_id" field.
+func PlanIDEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldPlanID, v))
 }
 
-// TierNEQ applies the NEQ predicate on the "tier" field.
-func TierNEQ(v enums.Tier) predicate.Entitlement {
-	vc := v
-	return predicate.Entitlement(sql.FieldNEQ(FieldTier, vc))
+// PlanIDNEQ applies the NEQ predicate on the "plan_id" field.
+func PlanIDNEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldPlanID, v))
 }
 
-// TierIn applies the In predicate on the "tier" field.
-func TierIn(vs ...enums.Tier) predicate.Entitlement {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Entitlement(sql.FieldIn(FieldTier, v...))
+// PlanIDIn applies the In predicate on the "plan_id" field.
+func PlanIDIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldPlanID, vs...))
 }
 
-// TierNotIn applies the NotIn predicate on the "tier" field.
-func TierNotIn(vs ...enums.Tier) predicate.Entitlement {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Entitlement(sql.FieldNotIn(FieldTier, v...))
+// PlanIDNotIn applies the NotIn predicate on the "plan_id" field.
+func PlanIDNotIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldPlanID, vs...))
+}
+
+// PlanIDGT applies the GT predicate on the "plan_id" field.
+func PlanIDGT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldPlanID, v))
+}
+
+// PlanIDGTE applies the GTE predicate on the "plan_id" field.
+func PlanIDGTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldPlanID, v))
+}
+
+// PlanIDLT applies the LT predicate on the "plan_id" field.
+func PlanIDLT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldPlanID, v))
+}
+
+// PlanIDLTE applies the LTE predicate on the "plan_id" field.
+func PlanIDLTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldPlanID, v))
+}
+
+// PlanIDContains applies the Contains predicate on the "plan_id" field.
+func PlanIDContains(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContains(FieldPlanID, v))
+}
+
+// PlanIDHasPrefix applies the HasPrefix predicate on the "plan_id" field.
+func PlanIDHasPrefix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasPrefix(FieldPlanID, v))
+}
+
+// PlanIDHasSuffix applies the HasSuffix predicate on the "plan_id" field.
+func PlanIDHasSuffix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasSuffix(FieldPlanID, v))
+}
+
+// PlanIDEqualFold applies the EqualFold predicate on the "plan_id" field.
+func PlanIDEqualFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEqualFold(FieldPlanID, v))
+}
+
+// PlanIDContainsFold applies the ContainsFold predicate on the "plan_id" field.
+func PlanIDContainsFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContainsFold(FieldPlanID, v))
+}
+
+// OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
+func OrganizationIDEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDNEQ applies the NEQ predicate on the "organization_id" field.
+func OrganizationIDNEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDIn applies the In predicate on the "organization_id" field.
+func OrganizationIDIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDNotIn applies the NotIn predicate on the "organization_id" field.
+func OrganizationIDNotIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDGT applies the GT predicate on the "organization_id" field.
+func OrganizationIDGT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldOrganizationID, v))
+}
+
+// OrganizationIDGTE applies the GTE predicate on the "organization_id" field.
+func OrganizationIDGTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDLT applies the LT predicate on the "organization_id" field.
+func OrganizationIDLT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldOrganizationID, v))
+}
+
+// OrganizationIDLTE applies the LTE predicate on the "organization_id" field.
+func OrganizationIDLTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDContains applies the Contains predicate on the "organization_id" field.
+func OrganizationIDContains(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContains(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasPrefix applies the HasPrefix predicate on the "organization_id" field.
+func OrganizationIDHasPrefix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasPrefix(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasSuffix applies the HasSuffix predicate on the "organization_id" field.
+func OrganizationIDHasSuffix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasSuffix(FieldOrganizationID, v))
+}
+
+// OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
+func OrganizationIDEqualFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEqualFold(FieldOrganizationID, v))
+}
+
+// OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
+func OrganizationIDContainsFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContainsFold(FieldOrganizationID, v))
 }
 
 // ExternalCustomerIDEQ applies the EQ predicate on the "external_customer_id" field.
@@ -937,27 +1046,56 @@ func HasOwnerWith(preds ...predicate.Organization) predicate.Entitlement {
 	})
 }
 
-// HasFeatures applies the HasEdge predicate on the "features" edge.
-func HasFeatures() predicate.Entitlement {
+// HasPlan applies the HasEdge predicate on the "plan" edge.
+func HasPlan() predicate.Entitlement {
 	return predicate.Entitlement(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, PlanTable, PlanColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Feature
-		step.Edge.Schema = schemaConfig.EntitlementFeatures
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.Entitlement
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasFeaturesWith applies the HasEdge predicate on the "features" edge with a given conditions (other predicates).
-func HasFeaturesWith(preds ...predicate.Feature) predicate.Entitlement {
+// HasPlanWith applies the HasEdge predicate on the "plan" edge with a given conditions (other predicates).
+func HasPlanWith(preds ...predicate.EntitlementPlan) predicate.Entitlement {
 	return predicate.Entitlement(func(s *sql.Selector) {
-		step := newFeaturesStep()
+		step := newPlanStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Feature
-		step.Edge.Schema = schemaConfig.EntitlementFeatures
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.Entitlement
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOrganization applies the HasEdge predicate on the "organization" edge.
+func HasOrganization() predicate.Entitlement {
+	return predicate.Entitlement(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTable, OrganizationColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Entitlement
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOrganizationWith applies the HasEdge predicate on the "organization" edge with a given conditions (other predicates).
+func HasOrganizationWith(preds ...predicate.Organization) predicate.Entitlement {
+	return predicate.Entitlement(func(s *sql.Selector) {
+		step := newOrganizationStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Entitlement
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

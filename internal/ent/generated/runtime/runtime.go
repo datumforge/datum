@@ -12,6 +12,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -306,12 +310,15 @@ func init() {
 	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
 	entitlementMixinHooks3 := entitlementMixin[3].Hooks()
 	entitlementMixinHooks4 := entitlementMixin[4].Hooks()
+	entitlementHooks := schema.Entitlement{}.Hooks()
 
 	entitlement.Hooks[1] = entitlementMixinHooks0[0]
 
 	entitlement.Hooks[2] = entitlementMixinHooks3[0]
 
 	entitlement.Hooks[3] = entitlementMixinHooks4[0]
+
+	entitlement.Hooks[4] = entitlementHooks[0]
 	entitlementMixinInters3 := entitlementMixin[3].Interceptors()
 	entitlementMixinInters4 := entitlementMixin[4].Interceptors()
 	entitlement.Interceptors[0] = entitlementMixinInters3[0]
@@ -348,12 +355,20 @@ func init() {
 	entitlementDescOwnerID := entitlementMixinFields4[0].Descriptor()
 	// entitlement.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	entitlement.OwnerIDValidator = entitlementDescOwnerID.Validators[0].(func(string) error)
+	// entitlementDescPlanID is the schema descriptor for plan_id field.
+	entitlementDescPlanID := entitlementFields[0].Descriptor()
+	// entitlement.PlanIDValidator is a validator for the "plan_id" field. It is called by the builders before save.
+	entitlement.PlanIDValidator = entitlementDescPlanID.Validators[0].(func(string) error)
+	// entitlementDescOrganizationID is the schema descriptor for organization_id field.
+	entitlementDescOrganizationID := entitlementFields[1].Descriptor()
+	// entitlement.OrganizationIDValidator is a validator for the "organization_id" field. It is called by the builders before save.
+	entitlement.OrganizationIDValidator = entitlementDescOrganizationID.Validators[0].(func(string) error)
 	// entitlementDescExpires is the schema descriptor for expires field.
-	entitlementDescExpires := entitlementFields[3].Descriptor()
+	entitlementDescExpires := entitlementFields[4].Descriptor()
 	// entitlement.DefaultExpires holds the default value on creation for the expires field.
 	entitlement.DefaultExpires = entitlementDescExpires.Default.(bool)
 	// entitlementDescCancelled is the schema descriptor for cancelled field.
-	entitlementDescCancelled := entitlementFields[5].Descriptor()
+	entitlementDescCancelled := entitlementFields[6].Descriptor()
 	// entitlement.DefaultCancelled holds the default value on creation for the cancelled field.
 	entitlement.DefaultCancelled = entitlementDescCancelled.Default.(bool)
 	// entitlementDescID is the schema descriptor for id field.
@@ -383,17 +398,206 @@ func init() {
 	// entitlementhistory.DefaultTags holds the default value on creation for the tags field.
 	entitlementhistory.DefaultTags = entitlementhistoryDescTags.Default.([]string)
 	// entitlementhistoryDescExpires is the schema descriptor for expires field.
-	entitlementhistoryDescExpires := entitlementhistoryFields[16].Descriptor()
+	entitlementhistoryDescExpires := entitlementhistoryFields[17].Descriptor()
 	// entitlementhistory.DefaultExpires holds the default value on creation for the expires field.
 	entitlementhistory.DefaultExpires = entitlementhistoryDescExpires.Default.(bool)
 	// entitlementhistoryDescCancelled is the schema descriptor for cancelled field.
-	entitlementhistoryDescCancelled := entitlementhistoryFields[18].Descriptor()
+	entitlementhistoryDescCancelled := entitlementhistoryFields[19].Descriptor()
 	// entitlementhistory.DefaultCancelled holds the default value on creation for the cancelled field.
 	entitlementhistory.DefaultCancelled = entitlementhistoryDescCancelled.Default.(bool)
 	// entitlementhistoryDescID is the schema descriptor for id field.
 	entitlementhistoryDescID := entitlementhistoryFields[7].Descriptor()
 	// entitlementhistory.DefaultID holds the default value on creation for the id field.
 	entitlementhistory.DefaultID = entitlementhistoryDescID.Default.(func() string)
+	entitlementplanMixin := schema.EntitlementPlan{}.Mixin()
+	entitlementplan.Policy = privacy.NewPolicies(schema.EntitlementPlan{})
+	entitlementplan.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := entitlementplan.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	entitlementplanMixinHooks0 := entitlementplanMixin[0].Hooks()
+	entitlementplanMixinHooks2 := entitlementplanMixin[2].Hooks()
+	entitlementplanMixinHooks4 := entitlementplanMixin[4].Hooks()
+	entitlementplanHooks := schema.EntitlementPlan{}.Hooks()
+
+	entitlementplan.Hooks[1] = entitlementplanMixinHooks0[0]
+
+	entitlementplan.Hooks[2] = entitlementplanMixinHooks2[0]
+
+	entitlementplan.Hooks[3] = entitlementplanMixinHooks4[0]
+
+	entitlementplan.Hooks[4] = entitlementplanHooks[0]
+	entitlementplanMixinInters2 := entitlementplanMixin[2].Interceptors()
+	entitlementplanMixinInters4 := entitlementplanMixin[4].Interceptors()
+	entitlementplan.Interceptors[0] = entitlementplanMixinInters2[0]
+	entitlementplan.Interceptors[1] = entitlementplanMixinInters4[0]
+	entitlementplanMixinFields0 := entitlementplanMixin[0].Fields()
+	_ = entitlementplanMixinFields0
+	entitlementplanMixinFields1 := entitlementplanMixin[1].Fields()
+	_ = entitlementplanMixinFields1
+	entitlementplanMixinFields3 := entitlementplanMixin[3].Fields()
+	_ = entitlementplanMixinFields3
+	entitlementplanMixinFields4 := entitlementplanMixin[4].Fields()
+	_ = entitlementplanMixinFields4
+	entitlementplanFields := schema.EntitlementPlan{}.Fields()
+	_ = entitlementplanFields
+	// entitlementplanDescCreatedAt is the schema descriptor for created_at field.
+	entitlementplanDescCreatedAt := entitlementplanMixinFields0[0].Descriptor()
+	// entitlementplan.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entitlementplan.DefaultCreatedAt = entitlementplanDescCreatedAt.Default.(func() time.Time)
+	// entitlementplanDescUpdatedAt is the schema descriptor for updated_at field.
+	entitlementplanDescUpdatedAt := entitlementplanMixinFields0[1].Descriptor()
+	// entitlementplan.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entitlementplan.DefaultUpdatedAt = entitlementplanDescUpdatedAt.Default.(func() time.Time)
+	// entitlementplan.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	entitlementplan.UpdateDefaultUpdatedAt = entitlementplanDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// entitlementplanDescMappingID is the schema descriptor for mapping_id field.
+	entitlementplanDescMappingID := entitlementplanMixinFields1[1].Descriptor()
+	// entitlementplan.DefaultMappingID holds the default value on creation for the mapping_id field.
+	entitlementplan.DefaultMappingID = entitlementplanDescMappingID.Default.(func() string)
+	// entitlementplanDescTags is the schema descriptor for tags field.
+	entitlementplanDescTags := entitlementplanMixinFields3[0].Descriptor()
+	// entitlementplan.DefaultTags holds the default value on creation for the tags field.
+	entitlementplan.DefaultTags = entitlementplanDescTags.Default.([]string)
+	// entitlementplanDescOwnerID is the schema descriptor for owner_id field.
+	entitlementplanDescOwnerID := entitlementplanMixinFields4[0].Descriptor()
+	// entitlementplan.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	entitlementplan.OwnerIDValidator = entitlementplanDescOwnerID.Validators[0].(func(string) error)
+	// entitlementplanDescName is the schema descriptor for name field.
+	entitlementplanDescName := entitlementplanFields[1].Descriptor()
+	// entitlementplan.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	entitlementplan.NameValidator = entitlementplanDescName.Validators[0].(func(string) error)
+	// entitlementplanDescVersion is the schema descriptor for version field.
+	entitlementplanDescVersion := entitlementplanFields[3].Descriptor()
+	// entitlementplan.VersionValidator is a validator for the "version" field. It is called by the builders before save.
+	entitlementplan.VersionValidator = entitlementplanDescVersion.Validators[0].(func(string) error)
+	// entitlementplanDescID is the schema descriptor for id field.
+	entitlementplanDescID := entitlementplanMixinFields1[0].Descriptor()
+	// entitlementplan.DefaultID holds the default value on creation for the id field.
+	entitlementplan.DefaultID = entitlementplanDescID.Default.(func() string)
+	entitlementplanhistoryFields := schema.EntitlementPlanHistory{}.Fields()
+	_ = entitlementplanhistoryFields
+	// entitlementplanhistoryDescHistoryTime is the schema descriptor for history_time field.
+	entitlementplanhistoryDescHistoryTime := entitlementplanhistoryFields[0].Descriptor()
+	// entitlementplanhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	entitlementplanhistory.DefaultHistoryTime = entitlementplanhistoryDescHistoryTime.Default.(func() time.Time)
+	// entitlementplanhistoryDescCreatedAt is the schema descriptor for created_at field.
+	entitlementplanhistoryDescCreatedAt := entitlementplanhistoryFields[3].Descriptor()
+	// entitlementplanhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entitlementplanhistory.DefaultCreatedAt = entitlementplanhistoryDescCreatedAt.Default.(func() time.Time)
+	// entitlementplanhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	entitlementplanhistoryDescUpdatedAt := entitlementplanhistoryFields[4].Descriptor()
+	// entitlementplanhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entitlementplanhistory.DefaultUpdatedAt = entitlementplanhistoryDescUpdatedAt.Default.(func() time.Time)
+	// entitlementplanhistoryDescMappingID is the schema descriptor for mapping_id field.
+	entitlementplanhistoryDescMappingID := entitlementplanhistoryFields[8].Descriptor()
+	// entitlementplanhistory.DefaultMappingID holds the default value on creation for the mapping_id field.
+	entitlementplanhistory.DefaultMappingID = entitlementplanhistoryDescMappingID.Default.(func() string)
+	// entitlementplanhistoryDescTags is the schema descriptor for tags field.
+	entitlementplanhistoryDescTags := entitlementplanhistoryFields[11].Descriptor()
+	// entitlementplanhistory.DefaultTags holds the default value on creation for the tags field.
+	entitlementplanhistory.DefaultTags = entitlementplanhistoryDescTags.Default.([]string)
+	// entitlementplanhistoryDescID is the schema descriptor for id field.
+	entitlementplanhistoryDescID := entitlementplanhistoryFields[7].Descriptor()
+	// entitlementplanhistory.DefaultID holds the default value on creation for the id field.
+	entitlementplanhistory.DefaultID = entitlementplanhistoryDescID.Default.(func() string)
+	entitlementplanfeatureMixin := schema.EntitlementPlanFeature{}.Mixin()
+	entitlementplanfeature.Policy = privacy.NewPolicies(schema.EntitlementPlanFeature{})
+	entitlementplanfeature.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := entitlementplanfeature.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	entitlementplanfeatureMixinHooks0 := entitlementplanfeatureMixin[0].Hooks()
+	entitlementplanfeatureMixinHooks2 := entitlementplanfeatureMixin[2].Hooks()
+	entitlementplanfeatureMixinHooks4 := entitlementplanfeatureMixin[4].Hooks()
+
+	entitlementplanfeature.Hooks[1] = entitlementplanfeatureMixinHooks0[0]
+
+	entitlementplanfeature.Hooks[2] = entitlementplanfeatureMixinHooks2[0]
+
+	entitlementplanfeature.Hooks[3] = entitlementplanfeatureMixinHooks4[0]
+	entitlementplanfeatureMixinInters2 := entitlementplanfeatureMixin[2].Interceptors()
+	entitlementplanfeatureMixinInters4 := entitlementplanfeatureMixin[4].Interceptors()
+	entitlementplanfeature.Interceptors[0] = entitlementplanfeatureMixinInters2[0]
+	entitlementplanfeature.Interceptors[1] = entitlementplanfeatureMixinInters4[0]
+	entitlementplanfeatureMixinFields0 := entitlementplanfeatureMixin[0].Fields()
+	_ = entitlementplanfeatureMixinFields0
+	entitlementplanfeatureMixinFields1 := entitlementplanfeatureMixin[1].Fields()
+	_ = entitlementplanfeatureMixinFields1
+	entitlementplanfeatureMixinFields3 := entitlementplanfeatureMixin[3].Fields()
+	_ = entitlementplanfeatureMixinFields3
+	entitlementplanfeatureMixinFields4 := entitlementplanfeatureMixin[4].Fields()
+	_ = entitlementplanfeatureMixinFields4
+	entitlementplanfeatureFields := schema.EntitlementPlanFeature{}.Fields()
+	_ = entitlementplanfeatureFields
+	// entitlementplanfeatureDescCreatedAt is the schema descriptor for created_at field.
+	entitlementplanfeatureDescCreatedAt := entitlementplanfeatureMixinFields0[0].Descriptor()
+	// entitlementplanfeature.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entitlementplanfeature.DefaultCreatedAt = entitlementplanfeatureDescCreatedAt.Default.(func() time.Time)
+	// entitlementplanfeatureDescUpdatedAt is the schema descriptor for updated_at field.
+	entitlementplanfeatureDescUpdatedAt := entitlementplanfeatureMixinFields0[1].Descriptor()
+	// entitlementplanfeature.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entitlementplanfeature.DefaultUpdatedAt = entitlementplanfeatureDescUpdatedAt.Default.(func() time.Time)
+	// entitlementplanfeature.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	entitlementplanfeature.UpdateDefaultUpdatedAt = entitlementplanfeatureDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// entitlementplanfeatureDescMappingID is the schema descriptor for mapping_id field.
+	entitlementplanfeatureDescMappingID := entitlementplanfeatureMixinFields1[1].Descriptor()
+	// entitlementplanfeature.DefaultMappingID holds the default value on creation for the mapping_id field.
+	entitlementplanfeature.DefaultMappingID = entitlementplanfeatureDescMappingID.Default.(func() string)
+	// entitlementplanfeatureDescTags is the schema descriptor for tags field.
+	entitlementplanfeatureDescTags := entitlementplanfeatureMixinFields3[0].Descriptor()
+	// entitlementplanfeature.DefaultTags holds the default value on creation for the tags field.
+	entitlementplanfeature.DefaultTags = entitlementplanfeatureDescTags.Default.([]string)
+	// entitlementplanfeatureDescOwnerID is the schema descriptor for owner_id field.
+	entitlementplanfeatureDescOwnerID := entitlementplanfeatureMixinFields4[0].Descriptor()
+	// entitlementplanfeature.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	entitlementplanfeature.OwnerIDValidator = entitlementplanfeatureDescOwnerID.Validators[0].(func(string) error)
+	// entitlementplanfeatureDescPlanID is the schema descriptor for plan_id field.
+	entitlementplanfeatureDescPlanID := entitlementplanfeatureFields[1].Descriptor()
+	// entitlementplanfeature.PlanIDValidator is a validator for the "plan_id" field. It is called by the builders before save.
+	entitlementplanfeature.PlanIDValidator = entitlementplanfeatureDescPlanID.Validators[0].(func(string) error)
+	// entitlementplanfeatureDescFeatureID is the schema descriptor for feature_id field.
+	entitlementplanfeatureDescFeatureID := entitlementplanfeatureFields[2].Descriptor()
+	// entitlementplanfeature.FeatureIDValidator is a validator for the "feature_id" field. It is called by the builders before save.
+	entitlementplanfeature.FeatureIDValidator = entitlementplanfeatureDescFeatureID.Validators[0].(func(string) error)
+	// entitlementplanfeatureDescID is the schema descriptor for id field.
+	entitlementplanfeatureDescID := entitlementplanfeatureMixinFields1[0].Descriptor()
+	// entitlementplanfeature.DefaultID holds the default value on creation for the id field.
+	entitlementplanfeature.DefaultID = entitlementplanfeatureDescID.Default.(func() string)
+	entitlementplanfeaturehistoryFields := schema.EntitlementPlanFeatureHistory{}.Fields()
+	_ = entitlementplanfeaturehistoryFields
+	// entitlementplanfeaturehistoryDescHistoryTime is the schema descriptor for history_time field.
+	entitlementplanfeaturehistoryDescHistoryTime := entitlementplanfeaturehistoryFields[0].Descriptor()
+	// entitlementplanfeaturehistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	entitlementplanfeaturehistory.DefaultHistoryTime = entitlementplanfeaturehistoryDescHistoryTime.Default.(func() time.Time)
+	// entitlementplanfeaturehistoryDescCreatedAt is the schema descriptor for created_at field.
+	entitlementplanfeaturehistoryDescCreatedAt := entitlementplanfeaturehistoryFields[3].Descriptor()
+	// entitlementplanfeaturehistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entitlementplanfeaturehistory.DefaultCreatedAt = entitlementplanfeaturehistoryDescCreatedAt.Default.(func() time.Time)
+	// entitlementplanfeaturehistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	entitlementplanfeaturehistoryDescUpdatedAt := entitlementplanfeaturehistoryFields[4].Descriptor()
+	// entitlementplanfeaturehistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entitlementplanfeaturehistory.DefaultUpdatedAt = entitlementplanfeaturehistoryDescUpdatedAt.Default.(func() time.Time)
+	// entitlementplanfeaturehistoryDescMappingID is the schema descriptor for mapping_id field.
+	entitlementplanfeaturehistoryDescMappingID := entitlementplanfeaturehistoryFields[8].Descriptor()
+	// entitlementplanfeaturehistory.DefaultMappingID holds the default value on creation for the mapping_id field.
+	entitlementplanfeaturehistory.DefaultMappingID = entitlementplanfeaturehistoryDescMappingID.Default.(func() string)
+	// entitlementplanfeaturehistoryDescTags is the schema descriptor for tags field.
+	entitlementplanfeaturehistoryDescTags := entitlementplanfeaturehistoryFields[11].Descriptor()
+	// entitlementplanfeaturehistory.DefaultTags holds the default value on creation for the tags field.
+	entitlementplanfeaturehistory.DefaultTags = entitlementplanfeaturehistoryDescTags.Default.([]string)
+	// entitlementplanfeaturehistoryDescID is the schema descriptor for id field.
+	entitlementplanfeaturehistoryDescID := entitlementplanfeaturehistoryFields[7].Descriptor()
+	// entitlementplanfeaturehistory.DefaultID holds the default value on creation for the id field.
+	entitlementplanfeaturehistory.DefaultID = entitlementplanfeaturehistoryDescID.Default.(func() string)
 	eventMixin := schema.Event{}.Mixin()
 	eventMixinHooks0 := eventMixin[0].Hooks()
 	event.Hooks[0] = eventMixinHooks0[0]
@@ -454,18 +658,39 @@ func init() {
 	// eventhistory.DefaultID holds the default value on creation for the id field.
 	eventhistory.DefaultID = eventhistoryDescID.Default.(func() string)
 	featureMixin := schema.Feature{}.Mixin()
+	feature.Policy = privacy.NewPolicies(schema.Feature{})
+	feature.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := feature.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	featureMixinHooks0 := featureMixin[0].Hooks()
 	featureMixinHooks1 := featureMixin[1].Hooks()
-	feature.Hooks[0] = featureMixinHooks0[0]
-	feature.Hooks[1] = featureMixinHooks1[0]
+	featureMixinHooks4 := featureMixin[4].Hooks()
+	featureHooks := schema.Feature{}.Hooks()
+
+	feature.Hooks[1] = featureMixinHooks0[0]
+
+	feature.Hooks[2] = featureMixinHooks1[0]
+
+	feature.Hooks[3] = featureMixinHooks4[0]
+
+	feature.Hooks[4] = featureHooks[0]
 	featureMixinInters1 := featureMixin[1].Interceptors()
+	featureMixinInters4 := featureMixin[4].Interceptors()
 	feature.Interceptors[0] = featureMixinInters1[0]
+	feature.Interceptors[1] = featureMixinInters4[0]
 	featureMixinFields0 := featureMixin[0].Fields()
 	_ = featureMixinFields0
 	featureMixinFields2 := featureMixin[2].Fields()
 	_ = featureMixinFields2
 	featureMixinFields3 := featureMixin[3].Fields()
 	_ = featureMixinFields3
+	featureMixinFields4 := featureMixin[4].Fields()
+	_ = featureMixinFields4
 	featureFields := schema.Feature{}.Fields()
 	_ = featureFields
 	// featureDescCreatedAt is the schema descriptor for created_at field.
@@ -486,14 +711,14 @@ func init() {
 	featureDescTags := featureMixinFields3[0].Descriptor()
 	// feature.DefaultTags holds the default value on creation for the tags field.
 	feature.DefaultTags = featureDescTags.Default.([]string)
+	// featureDescOwnerID is the schema descriptor for owner_id field.
+	featureDescOwnerID := featureMixinFields4[0].Descriptor()
+	// feature.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	feature.OwnerIDValidator = featureDescOwnerID.Validators[0].(func(string) error)
 	// featureDescName is the schema descriptor for name field.
 	featureDescName := featureFields[0].Descriptor()
 	// feature.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	feature.NameValidator = featureDescName.Validators[0].(func(string) error)
-	// featureDescGlobal is the schema descriptor for global field.
-	featureDescGlobal := featureFields[1].Descriptor()
-	// feature.DefaultGlobal holds the default value on creation for the global field.
-	feature.DefaultGlobal = featureDescGlobal.Default.(bool)
 	// featureDescEnabled is the schema descriptor for enabled field.
 	featureDescEnabled := featureFields[2].Descriptor()
 	// feature.DefaultEnabled holds the default value on creation for the enabled field.
@@ -524,12 +749,8 @@ func init() {
 	featurehistoryDescTags := featurehistoryFields[11].Descriptor()
 	// featurehistory.DefaultTags holds the default value on creation for the tags field.
 	featurehistory.DefaultTags = featurehistoryDescTags.Default.([]string)
-	// featurehistoryDescGlobal is the schema descriptor for global field.
-	featurehistoryDescGlobal := featurehistoryFields[13].Descriptor()
-	// featurehistory.DefaultGlobal holds the default value on creation for the global field.
-	featurehistory.DefaultGlobal = featurehistoryDescGlobal.Default.(bool)
 	// featurehistoryDescEnabled is the schema descriptor for enabled field.
-	featurehistoryDescEnabled := featurehistoryFields[14].Descriptor()
+	featurehistoryDescEnabled := featurehistoryFields[15].Descriptor()
 	// featurehistory.DefaultEnabled holds the default value on creation for the enabled field.
 	featurehistory.DefaultEnabled = featurehistoryDescEnabled.Default.(bool)
 	// featurehistoryDescID is the schema descriptor for id field.

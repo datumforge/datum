@@ -1,6 +1,6 @@
-mutation CreateTemplate($input: CreateTemplateInput!) {
-  createTemplate(input: $input) {
-    template {
+mutation CreateBulkCSVTemplate($input: Upload!) {
+  createBulkCSVTemplate(input: $input) {
+    templates {
       description
       id
       jsonconfig
@@ -28,33 +28,14 @@ mutation CreateBulkTemplate($input: [CreateTemplateInput!]) {
   }
 }
 
-mutation CreateBulkCSVTemplate($input: Upload!) {
-  createBulkCSVTemplate(input: $input) {
-   templates {
-      description
-      id
-      jsonconfig
-      name
-      uischema
-      owner {
-        id
-      }
-    }
-  }
-}
-
-mutation UpdateTemplate($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
-  updateTemplate(id: $updateTemplateId, input: $input) {
+mutation CreateTemplate($input: CreateTemplateInput!) {
+  createTemplate(input: $input) {
     template {
-      createdAt
-      createdBy
       description
       id
       jsonconfig
       name
       uischema
-      updatedAt
-      updatedBy
       owner {
         id
       }
@@ -83,7 +64,7 @@ query GetAllTemplates {
   }
 }
 
-query GetTemplate($getTemplateId: ID!) {
+query GetTemplateByID($getTemplateId: ID!) {
   template(id: $getTemplateId) {
     createdAt
     createdBy
@@ -96,6 +77,25 @@ query GetTemplate($getTemplateId: ID!) {
     updatedBy
     owner {
       id
+    }
+  }
+}
+
+mutation UpdateTemplate($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
+  updateTemplate(id: $updateTemplateId, input: $input) {
+    template {
+      createdAt
+      createdBy
+      description
+      id
+      jsonconfig
+      name
+      uischema
+      updatedAt
+      updatedBy
+      owner {
+        id
+      }
     }
   }
 }

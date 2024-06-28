@@ -26,6 +26,7 @@ func ({{ . }}) Mixin() []ent.Mixin {
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
+		emixin.TagMixin{},
     }
 }
 
@@ -34,6 +35,11 @@ func ({{ . }}) Edges() []ent.Edge {
 	return []ent.Edge{
 		// Edges go here
 	}
+}
+
+// Indexes of the {{ . }}
+func ({{ . }}) Indexes() []ent.Index {
+	return []ent.Index{}
 }
 
 // Annotations of the {{ . }}
@@ -46,4 +52,14 @@ func ({{ . }}) Annotations() []schema.Annotation {
         // if you do not need the graphql bits, also be certain to add an exclusion to scripts/files_to_skip.txt
 		entgql.Skip(entgql.SkipAll),
 	}
+}
+
+// Hooks of the {{ . }}
+func ({{ . }}) Hooks() []ent.Hook {
+	return []ent.Hook{}
+}
+
+// Interceptors of the {{ . }}
+func ({{ . }}) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{}
 }

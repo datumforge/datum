@@ -3,10 +3,14 @@ package main
 import (
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 
-	// since the cmds are no longer part of the same package
+	// since the cmds are not part of the same package
 	// they must all be imported in main
 	_ "github.com/datumforge/datum/cmd/cli/cmd/apitokens"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/entitlementplan"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/entitlementplanfeatures"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/entitlements"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/events"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/features"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/group"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/groupmembers"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/groupsetting"

@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/enthistory"
 )
 
@@ -41,8 +40,10 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldOwnerID holds the string denoting the owner_id field in the database.
 	FieldOwnerID = "owner_id"
-	// FieldTier holds the string denoting the tier field in the database.
-	FieldTier = "tier"
+	// FieldPlanID holds the string denoting the plan_id field in the database.
+	FieldPlanID = "plan_id"
+	// FieldOrganizationID holds the string denoting the organization_id field in the database.
+	FieldOrganizationID = "organization_id"
 	// FieldExternalCustomerID holds the string denoting the external_customer_id field in the database.
 	FieldExternalCustomerID = "external_customer_id"
 	// FieldExternalSubscriptionID holds the string denoting the external_subscription_id field in the database.
@@ -72,7 +73,8 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldOwnerID,
-	FieldTier,
+	FieldPlanID,
+	FieldOrganizationID,
 	FieldExternalCustomerID,
 	FieldExternalSubscriptionID,
 	FieldExpires,
@@ -116,18 +118,6 @@ func OperationValidator(o enthistory.OpType) error {
 		return nil
 	default:
 		return fmt.Errorf("entitlementhistory: invalid enum value for operation field: %q", o)
-	}
-}
-
-const DefaultTier enums.Tier = "FREE"
-
-// TierValidator is a validator for the "tier" field enum values. It is called by the builders before save.
-func TierValidator(t enums.Tier) error {
-	switch t.String() {
-	case "FREE", "PRO", "ENTERPRISE":
-		return nil
-	default:
-		return fmt.Errorf("entitlementhistory: invalid enum value for tier field: %q", t)
 	}
 }
 
@@ -194,9 +184,14 @@ func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOwnerID, opts...).ToFunc()
 }
 
-// ByTier orders the results by the tier field.
-func ByTier(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTier, opts...).ToFunc()
+// ByPlanID orders the results by the plan_id field.
+func ByPlanID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPlanID, opts...).ToFunc()
+}
+
+// ByOrganizationID orders the results by the organization_id field.
+func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
 }
 
 // ByExternalCustomerID orders the results by the external_customer_id field.
@@ -229,11 +224,4 @@ var (
 	_ graphql.Marshaler = (*enthistory.OpType)(nil)
 	// enthistory.OpType must implement graphql.Unmarshaler.
 	_ graphql.Unmarshaler = (*enthistory.OpType)(nil)
-)
-
-var (
-	// enums.Tier must implement graphql.Marshaler.
-	_ graphql.Marshaler = (*enums.Tier)(nil)
-	// enums.Tier must implement graphql.Unmarshaler.
-	_ graphql.Unmarshaler = (*enums.Tier)(nil)
 )

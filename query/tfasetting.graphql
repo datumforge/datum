@@ -8,15 +8,7 @@ mutation CreateTFASetting($input: CreateTFASettingInput!) {
   }
 }
 
-query GetTFASetting {
-  tfaSetting {
-    recoveryCodes
-    totpAllowed
-    verified
-  }
-}
-
-query GetTFASettings {
+query GetAllTFASettings {
   tfaSettings {
     edges {
       node {
@@ -25,6 +17,14 @@ query GetTFASettings {
         verified
       }
     }
+  }
+}
+
+query GetTFASetting {
+  tfaSetting {
+    recoveryCodes
+    totpAllowed
+    verified
   }
 }
 

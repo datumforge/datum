@@ -14,10 +14,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/event"
-	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/pkg/enums"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -145,20 +143,6 @@ func (eu *EntitlementUpdate) ClearOwnerID() *EntitlementUpdate {
 	return eu
 }
 
-// SetTier sets the "tier" field.
-func (eu *EntitlementUpdate) SetTier(e enums.Tier) *EntitlementUpdate {
-	eu.mutation.SetTier(e)
-	return eu
-}
-
-// SetNillableTier sets the "tier" field if the given value is not nil.
-func (eu *EntitlementUpdate) SetNillableTier(e *enums.Tier) *EntitlementUpdate {
-	if e != nil {
-		eu.SetTier(*e)
-	}
-	return eu
-}
-
 // SetExternalCustomerID sets the "external_customer_id" field.
 func (eu *EntitlementUpdate) SetExternalCustomerID(s string) *EntitlementUpdate {
 	eu.mutation.SetExternalCustomerID(s)
@@ -252,21 +236,6 @@ func (eu *EntitlementUpdate) SetOwner(o *Organization) *EntitlementUpdate {
 	return eu.SetOwnerID(o.ID)
 }
 
-// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
-func (eu *EntitlementUpdate) AddFeatureIDs(ids ...string) *EntitlementUpdate {
-	eu.mutation.AddFeatureIDs(ids...)
-	return eu
-}
-
-// AddFeatures adds the "features" edges to the Feature entity.
-func (eu *EntitlementUpdate) AddFeatures(f ...*Feature) *EntitlementUpdate {
-	ids := make([]string, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return eu.AddFeatureIDs(ids...)
-}
-
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
 func (eu *EntitlementUpdate) AddEventIDs(ids ...string) *EntitlementUpdate {
 	eu.mutation.AddEventIDs(ids...)
@@ -291,27 +260,6 @@ func (eu *EntitlementUpdate) Mutation() *EntitlementMutation {
 func (eu *EntitlementUpdate) ClearOwner() *EntitlementUpdate {
 	eu.mutation.ClearOwner()
 	return eu
-}
-
-// ClearFeatures clears all "features" edges to the Feature entity.
-func (eu *EntitlementUpdate) ClearFeatures() *EntitlementUpdate {
-	eu.mutation.ClearFeatures()
-	return eu
-}
-
-// RemoveFeatureIDs removes the "features" edge to Feature entities by IDs.
-func (eu *EntitlementUpdate) RemoveFeatureIDs(ids ...string) *EntitlementUpdate {
-	eu.mutation.RemoveFeatureIDs(ids...)
-	return eu
-}
-
-// RemoveFeatures removes "features" edges to Feature entities.
-func (eu *EntitlementUpdate) RemoveFeatures(f ...*Feature) *EntitlementUpdate {
-	ids := make([]string, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return eu.RemoveFeatureIDs(ids...)
 }
 
 // ClearEvents clears all "events" edges to the Event entity.
@@ -384,10 +332,11 @@ func (eu *EntitlementUpdate) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.owner_id": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.Tier(); ok {
-		if err := entitlement.TierValidator(v); err != nil {
-			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "Entitlement.tier": %w`, err)}
-		}
+	if _, ok := eu.mutation.PlanID(); eu.mutation.PlanCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Entitlement.plan"`)
+	}
+	if _, ok := eu.mutation.OrganizationID(); eu.mutation.OrganizationCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Entitlement.organization"`)
 	}
 	return nil
 }
@@ -445,9 +394,6 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if eu.mutation.DeletedByCleared() {
 		_spec.ClearField(entitlement.FieldDeletedBy, field.TypeString)
 	}
-	if value, ok := eu.mutation.Tier(); ok {
-		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)
-	}
 	if value, ok := eu.mutation.ExternalCustomerID(); ok {
 		_spec.SetField(entitlement.FieldExternalCustomerID, field.TypeString, value)
 	}
@@ -498,54 +444,6 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = eu.schemaConfig.Entitlement
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if eu.mutation.FeaturesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   entitlement.FeaturesTable,
-			Columns: entitlement.FeaturesPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = eu.schemaConfig.EntitlementFeatures
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := eu.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !eu.mutation.FeaturesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   entitlement.FeaturesTable,
-			Columns: entitlement.FeaturesPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = eu.schemaConfig.EntitlementFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := eu.mutation.FeaturesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   entitlement.FeaturesTable,
-			Columns: entitlement.FeaturesPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = eu.schemaConfig.EntitlementFeatures
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -731,20 +629,6 @@ func (euo *EntitlementUpdateOne) ClearOwnerID() *EntitlementUpdateOne {
 	return euo
 }
 
-// SetTier sets the "tier" field.
-func (euo *EntitlementUpdateOne) SetTier(e enums.Tier) *EntitlementUpdateOne {
-	euo.mutation.SetTier(e)
-	return euo
-}
-
-// SetNillableTier sets the "tier" field if the given value is not nil.
-func (euo *EntitlementUpdateOne) SetNillableTier(e *enums.Tier) *EntitlementUpdateOne {
-	if e != nil {
-		euo.SetTier(*e)
-	}
-	return euo
-}
-
 // SetExternalCustomerID sets the "external_customer_id" field.
 func (euo *EntitlementUpdateOne) SetExternalCustomerID(s string) *EntitlementUpdateOne {
 	euo.mutation.SetExternalCustomerID(s)
@@ -838,21 +722,6 @@ func (euo *EntitlementUpdateOne) SetOwner(o *Organization) *EntitlementUpdateOne
 	return euo.SetOwnerID(o.ID)
 }
 
-// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
-func (euo *EntitlementUpdateOne) AddFeatureIDs(ids ...string) *EntitlementUpdateOne {
-	euo.mutation.AddFeatureIDs(ids...)
-	return euo
-}
-
-// AddFeatures adds the "features" edges to the Feature entity.
-func (euo *EntitlementUpdateOne) AddFeatures(f ...*Feature) *EntitlementUpdateOne {
-	ids := make([]string, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return euo.AddFeatureIDs(ids...)
-}
-
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
 func (euo *EntitlementUpdateOne) AddEventIDs(ids ...string) *EntitlementUpdateOne {
 	euo.mutation.AddEventIDs(ids...)
@@ -877,27 +746,6 @@ func (euo *EntitlementUpdateOne) Mutation() *EntitlementMutation {
 func (euo *EntitlementUpdateOne) ClearOwner() *EntitlementUpdateOne {
 	euo.mutation.ClearOwner()
 	return euo
-}
-
-// ClearFeatures clears all "features" edges to the Feature entity.
-func (euo *EntitlementUpdateOne) ClearFeatures() *EntitlementUpdateOne {
-	euo.mutation.ClearFeatures()
-	return euo
-}
-
-// RemoveFeatureIDs removes the "features" edge to Feature entities by IDs.
-func (euo *EntitlementUpdateOne) RemoveFeatureIDs(ids ...string) *EntitlementUpdateOne {
-	euo.mutation.RemoveFeatureIDs(ids...)
-	return euo
-}
-
-// RemoveFeatures removes "features" edges to Feature entities.
-func (euo *EntitlementUpdateOne) RemoveFeatures(f ...*Feature) *EntitlementUpdateOne {
-	ids := make([]string, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return euo.RemoveFeatureIDs(ids...)
 }
 
 // ClearEvents clears all "events" edges to the Event entity.
@@ -983,10 +831,11 @@ func (euo *EntitlementUpdateOne) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.owner_id": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.Tier(); ok {
-		if err := entitlement.TierValidator(v); err != nil {
-			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "Entitlement.tier": %w`, err)}
-		}
+	if _, ok := euo.mutation.PlanID(); euo.mutation.PlanCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Entitlement.plan"`)
+	}
+	if _, ok := euo.mutation.OrganizationID(); euo.mutation.OrganizationCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Entitlement.organization"`)
 	}
 	return nil
 }
@@ -1061,9 +910,6 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 	if euo.mutation.DeletedByCleared() {
 		_spec.ClearField(entitlement.FieldDeletedBy, field.TypeString)
 	}
-	if value, ok := euo.mutation.Tier(); ok {
-		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)
-	}
 	if value, ok := euo.mutation.ExternalCustomerID(); ok {
 		_spec.SetField(entitlement.FieldExternalCustomerID, field.TypeString, value)
 	}
@@ -1114,54 +960,6 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 			},
 		}
 		edge.Schema = euo.schemaConfig.Entitlement
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if euo.mutation.FeaturesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   entitlement.FeaturesTable,
-			Columns: entitlement.FeaturesPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = euo.schemaConfig.EntitlementFeatures
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := euo.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !euo.mutation.FeaturesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   entitlement.FeaturesTable,
-			Columns: entitlement.FeaturesPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = euo.schemaConfig.EntitlementFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := euo.mutation.FeaturesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   entitlement.FeaturesTable,
-			Columns: entitlement.FeaturesPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = euo.schemaConfig.EntitlementFeatures
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -14,6 +14,12 @@ func (c *Client) WithHistory() {
 	for _, hook := range enthistory.HistoryHooks[*EntitlementMutation]() {
 		c.Entitlement.Use(hook)
 	}
+	for _, hook := range enthistory.HistoryHooks[*EntitlementPlanMutation]() {
+		c.EntitlementPlan.Use(hook)
+	}
+	for _, hook := range enthistory.HistoryHooks[*EntitlementPlanFeatureMutation]() {
+		c.EntitlementPlanFeature.Use(hook)
+	}
 	for _, hook := range enthistory.HistoryHooks[*EventMutation]() {
 		c.Event.Use(hook)
 	}

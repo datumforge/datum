@@ -156,6 +156,70 @@ type SubscriberCleanup struct {
 	Email string
 }
 
+type FeatureBuilder struct {
+	client *client
+
+	// Fields
+	Name        string
+	Description string
+	DisplayName string
+}
+
+type FeatureCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
+type EntitlementBuilder struct {
+	client *client
+
+	// Fields
+	PlanID         string
+	OrganizationID string
+}
+
+type EntitlementCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
+type EntitlementPlanBuilder struct {
+	client *client
+
+	// Fields
+	Name        string
+	Description string
+	DisplayName string
+	Version     string
+}
+
+type EntitlementPlanCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
+type EntitlementPlanFeatureBuilder struct {
+	client *client
+
+	// Fields
+	PlanID    string
+	FeatureID string
+	MetaData  map[string]interface{}
+}
+
+type EntitlementPlanFeatureCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
 // MustNew organization builder is used to create, without authz checks, orgs in the database
 func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Organization {
 	if !o.PersonalOrg {
@@ -256,7 +320,7 @@ func (u *UserCleanup) MustDelete(ctx context.Context, t *testing.T) {
 	mock_fga.ClearMocks(u.client.fga)
 }
 
-// MustNew user builder is used to create, without authz checks, org members in the database
+// MustNew tfa settings builder is used to create, without authz checks, tfa settings in the database
 func (tf *TFASettingBuilder) MustNew(ctx context.Context, t *testing.T, userID string) *ent.TFASetting {
 	return tf.client.db.TFASetting.Create().
 		SetTotpAllowed(true).
@@ -264,7 +328,7 @@ func (tf *TFASettingBuilder) MustNew(ctx context.Context, t *testing.T, userID s
 		SaveX(ctx)
 }
 
-// MustNew user builder is used to create, without authz checks, org members in the database
+// MustNew org members builder is used to create, without authz checks, org members in the database
 func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgMembership {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -421,7 +485,7 @@ func (i *SubscriberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Subs
 	return sub
 }
 
-// MustNew group builder is used to create, without authz checks, personal access tokens in the database
+// MustNew personal access tokens builder is used to create, without authz checks, personal access tokens in the database
 func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.PersonalAccessToken {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -457,7 +521,7 @@ func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T
 	return token
 }
 
-// MustNew group builder is used to create, without authz checks, api tokens in the database
+// MustNew api tokens builder is used to create, without authz checks, api tokens in the database
 func (at *APITokenTokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.APIToken {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -526,4 +590,114 @@ func (gm *GroupMemberCleanup) MustDelete(ctx context.Context, t *testing.T) {
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(gm.client.fga)
+}
+
+// MustNew feature builder is used to create, without authz checks, features in the database
+func (f *FeatureBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Feature {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if f.Name == "" {
+		f.Name = gofakeit.AppName()
+	}
+
+	if f.Description == "" {
+		f.Description = gofakeit.HipsterSentence(5)
+	}
+
+	feature := f.client.db.Feature.Create().
+		SetName(f.Name).
+		SetDescription(f.Description).
+		SetDisplayName(f.DisplayName).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(f.client.fga)
+
+	return feature
+}
+
+// MustNew plan builder is used to create, without authz checks, plans in the database
+func (p *EntitlementPlanBuilder) MustNew(ctx context.Context, t *testing.T) *ent.EntitlementPlan {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if p.Name == "" {
+		p.Name = gofakeit.AppName()
+	}
+
+	if p.Description == "" {
+		p.Description = gofakeit.HipsterSentence(5)
+	}
+
+	if p.Version == "" {
+		p.Version = fmt.Sprintf("v%d", gofakeit.Number(1, 10))
+	}
+
+	plan := p.client.db.EntitlementPlan.Create().
+		SetName(p.Name).
+		SetVersion(p.Version).
+		SetDescription(p.Description).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(p.client.fga)
+
+	return plan
+}
+
+// MustNew entitlement builder is used to create, without authz checks, entitlements in the database
+func (e *EntitlementBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Entitlement {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if e.PlanID == "" {
+		plan := (&EntitlementPlanBuilder{client: e.client}).MustNew(ctx, t)
+		e.PlanID = plan.ID
+	}
+
+	if e.OrganizationID == "" {
+		org := (&OrganizationBuilder{client: e.client}).MustNew(ctx, t)
+		e.OrganizationID = org.ID
+	}
+
+	entitlement := e.client.db.Entitlement.Create().
+		SetPlanID(e.PlanID).
+		SetOrganizationID(e.OrganizationID).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+
+	return entitlement
+}
+
+// MustNew entitlement plan feature builder is used to create, without authz checks, plan features in the database
+func (e *EntitlementPlanFeatureBuilder) MustNew(ctx context.Context, t *testing.T) *ent.EntitlementPlanFeature {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if e.PlanID == "" {
+		plan := (&EntitlementPlanBuilder{client: e.client}).MustNew(ctx, t)
+		e.PlanID = plan.ID
+	}
+
+	if e.FeatureID == "" {
+		feature := (&FeatureBuilder{client: e.client}).MustNew(ctx, t)
+		e.FeatureID = feature.ID
+	}
+
+	if e.MetaData == nil {
+		e.MetaData = map[string]interface{}{
+			"limit_type": "days",
+			"limit":      30,
+		}
+	}
+
+	planFeature := e.client.db.EntitlementPlanFeature.Create().
+		SetPlanID(e.PlanID).
+		SetFeatureID(e.FeatureID).
+		SetMetadata(e.MetaData).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+
+	return planFeature
 }

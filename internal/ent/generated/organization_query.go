@@ -15,6 +15,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
@@ -39,50 +41,56 @@ import (
 // OrganizationQuery is the builder for querying Organization entities.
 type OrganizationQuery struct {
 	config
-	ctx                           *QueryContext
-	order                         []organization.OrderOption
-	inters                        []Interceptor
-	predicates                    []predicate.Organization
-	withParent                    *OrganizationQuery
-	withChildren                  *OrganizationQuery
-	withGroups                    *GroupQuery
-	withTemplates                 *TemplateQuery
-	withIntegrations              *IntegrationQuery
-	withSetting                   *OrganizationSettingQuery
-	withDocumentdata              *DocumentDataQuery
-	withEntitlements              *EntitlementQuery
-	withPersonalAccessTokens      *PersonalAccessTokenQuery
-	withAPITokens                 *APITokenQuery
-	withOauthprovider             *OauthProviderQuery
-	withUsers                     *UserQuery
-	withInvites                   *InviteQuery
-	withSubscribers               *SubscriberQuery
-	withWebhooks                  *WebhookQuery
-	withEvents                    *EventQuery
-	withSecrets                   *HushQuery
-	withFeatures                  *FeatureQuery
-	withFiles                     *FileQuery
-	withMembers                   *OrgMembershipQuery
-	modifiers                     []func(*sql.Selector)
-	loadTotal                     []func(context.Context, []*Organization) error
-	withNamedChildren             map[string]*OrganizationQuery
-	withNamedGroups               map[string]*GroupQuery
-	withNamedTemplates            map[string]*TemplateQuery
-	withNamedIntegrations         map[string]*IntegrationQuery
-	withNamedDocumentdata         map[string]*DocumentDataQuery
-	withNamedEntitlements         map[string]*EntitlementQuery
-	withNamedPersonalAccessTokens map[string]*PersonalAccessTokenQuery
-	withNamedAPITokens            map[string]*APITokenQuery
-	withNamedOauthprovider        map[string]*OauthProviderQuery
-	withNamedUsers                map[string]*UserQuery
-	withNamedInvites              map[string]*InviteQuery
-	withNamedSubscribers          map[string]*SubscriberQuery
-	withNamedWebhooks             map[string]*WebhookQuery
-	withNamedEvents               map[string]*EventQuery
-	withNamedSecrets              map[string]*HushQuery
-	withNamedFeatures             map[string]*FeatureQuery
-	withNamedFiles                map[string]*FileQuery
-	withNamedMembers              map[string]*OrgMembershipQuery
+	ctx                              *QueryContext
+	order                            []organization.OrderOption
+	inters                           []Interceptor
+	predicates                       []predicate.Organization
+	withParent                       *OrganizationQuery
+	withChildren                     *OrganizationQuery
+	withGroups                       *GroupQuery
+	withTemplates                    *TemplateQuery
+	withIntegrations                 *IntegrationQuery
+	withSetting                      *OrganizationSettingQuery
+	withDocumentdata                 *DocumentDataQuery
+	withEntitlements                 *EntitlementQuery
+	withOrganizationEntitlement      *EntitlementQuery
+	withPersonalAccessTokens         *PersonalAccessTokenQuery
+	withAPITokens                    *APITokenQuery
+	withOauthprovider                *OauthProviderQuery
+	withUsers                        *UserQuery
+	withInvites                      *InviteQuery
+	withSubscribers                  *SubscriberQuery
+	withWebhooks                     *WebhookQuery
+	withEvents                       *EventQuery
+	withSecrets                      *HushQuery
+	withFeatures                     *FeatureQuery
+	withFiles                        *FileQuery
+	withEntitlementplans             *EntitlementPlanQuery
+	withEntitlementplanfeatures      *EntitlementPlanFeatureQuery
+	withMembers                      *OrgMembershipQuery
+	modifiers                        []func(*sql.Selector)
+	loadTotal                        []func(context.Context, []*Organization) error
+	withNamedChildren                map[string]*OrganizationQuery
+	withNamedGroups                  map[string]*GroupQuery
+	withNamedTemplates               map[string]*TemplateQuery
+	withNamedIntegrations            map[string]*IntegrationQuery
+	withNamedDocumentdata            map[string]*DocumentDataQuery
+	withNamedEntitlements            map[string]*EntitlementQuery
+	withNamedOrganizationEntitlement map[string]*EntitlementQuery
+	withNamedPersonalAccessTokens    map[string]*PersonalAccessTokenQuery
+	withNamedAPITokens               map[string]*APITokenQuery
+	withNamedOauthprovider           map[string]*OauthProviderQuery
+	withNamedUsers                   map[string]*UserQuery
+	withNamedInvites                 map[string]*InviteQuery
+	withNamedSubscribers             map[string]*SubscriberQuery
+	withNamedWebhooks                map[string]*WebhookQuery
+	withNamedEvents                  map[string]*EventQuery
+	withNamedSecrets                 map[string]*HushQuery
+	withNamedFeatures                map[string]*FeatureQuery
+	withNamedFiles                   map[string]*FileQuery
+	withNamedEntitlementplans        map[string]*EntitlementPlanQuery
+	withNamedEntitlementplanfeatures map[string]*EntitlementPlanFeatureQuery
+	withNamedMembers                 map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -309,6 +317,31 @@ func (oq *OrganizationQuery) QueryEntitlements() *EntitlementQuery {
 			sqlgraph.From(organization.Table, organization.FieldID, selector),
 			sqlgraph.To(entitlement.Table, entitlement.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.EntitlementsTable, organization.EntitlementsColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Entitlement
+		step.Edge.Schema = schemaConfig.Entitlement
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOrganizationEntitlement chains the current query on the "organization_entitlement" edge.
+func (oq *OrganizationQuery) QueryOrganizationEntitlement() *EntitlementQuery {
+	query := (&EntitlementClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(entitlement.Table, entitlement.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.OrganizationEntitlementTable, organization.OrganizationEntitlementColumn),
 		)
 		schemaConfig := oq.schemaConfig
 		step.To.Schema = schemaConfig.Entitlement
@@ -558,11 +591,11 @@ func (oq *OrganizationQuery) QueryFeatures() *FeatureQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, selector),
 			sqlgraph.To(feature.Table, feature.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, organization.FeaturesTable, organization.FeaturesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.FeaturesTable, organization.FeaturesColumn),
 		)
 		schemaConfig := oq.schemaConfig
 		step.To.Schema = schemaConfig.Feature
-		step.Edge.Schema = schemaConfig.OrganizationFeatures
+		step.Edge.Schema = schemaConfig.Feature
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -588,6 +621,56 @@ func (oq *OrganizationQuery) QueryFiles() *FileQuery {
 		schemaConfig := oq.schemaConfig
 		step.To.Schema = schemaConfig.File
 		step.Edge.Schema = schemaConfig.OrganizationFiles
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntitlementplans chains the current query on the "entitlementplans" edge.
+func (oq *OrganizationQuery) QueryEntitlementplans() *EntitlementPlanQuery {
+	query := (&EntitlementPlanClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(entitlementplan.Table, entitlementplan.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.EntitlementplansTable, organization.EntitlementplansColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.EntitlementPlan
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntitlementplanfeatures chains the current query on the "entitlementplanfeatures" edge.
+func (oq *OrganizationQuery) QueryEntitlementplanfeatures() *EntitlementPlanFeatureQuery {
+	query := (&EntitlementPlanFeatureClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(entitlementplanfeature.Table, entitlementplanfeature.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.EntitlementplanfeaturesTable, organization.EntitlementplanfeaturesColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlanFeature
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -806,31 +889,34 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		return nil
 	}
 	return &OrganizationQuery{
-		config:                   oq.config,
-		ctx:                      oq.ctx.Clone(),
-		order:                    append([]organization.OrderOption{}, oq.order...),
-		inters:                   append([]Interceptor{}, oq.inters...),
-		predicates:               append([]predicate.Organization{}, oq.predicates...),
-		withParent:               oq.withParent.Clone(),
-		withChildren:             oq.withChildren.Clone(),
-		withGroups:               oq.withGroups.Clone(),
-		withTemplates:            oq.withTemplates.Clone(),
-		withIntegrations:         oq.withIntegrations.Clone(),
-		withSetting:              oq.withSetting.Clone(),
-		withDocumentdata:         oq.withDocumentdata.Clone(),
-		withEntitlements:         oq.withEntitlements.Clone(),
-		withPersonalAccessTokens: oq.withPersonalAccessTokens.Clone(),
-		withAPITokens:            oq.withAPITokens.Clone(),
-		withOauthprovider:        oq.withOauthprovider.Clone(),
-		withUsers:                oq.withUsers.Clone(),
-		withInvites:              oq.withInvites.Clone(),
-		withSubscribers:          oq.withSubscribers.Clone(),
-		withWebhooks:             oq.withWebhooks.Clone(),
-		withEvents:               oq.withEvents.Clone(),
-		withSecrets:              oq.withSecrets.Clone(),
-		withFeatures:             oq.withFeatures.Clone(),
-		withFiles:                oq.withFiles.Clone(),
-		withMembers:              oq.withMembers.Clone(),
+		config:                      oq.config,
+		ctx:                         oq.ctx.Clone(),
+		order:                       append([]organization.OrderOption{}, oq.order...),
+		inters:                      append([]Interceptor{}, oq.inters...),
+		predicates:                  append([]predicate.Organization{}, oq.predicates...),
+		withParent:                  oq.withParent.Clone(),
+		withChildren:                oq.withChildren.Clone(),
+		withGroups:                  oq.withGroups.Clone(),
+		withTemplates:               oq.withTemplates.Clone(),
+		withIntegrations:            oq.withIntegrations.Clone(),
+		withSetting:                 oq.withSetting.Clone(),
+		withDocumentdata:            oq.withDocumentdata.Clone(),
+		withEntitlements:            oq.withEntitlements.Clone(),
+		withOrganizationEntitlement: oq.withOrganizationEntitlement.Clone(),
+		withPersonalAccessTokens:    oq.withPersonalAccessTokens.Clone(),
+		withAPITokens:               oq.withAPITokens.Clone(),
+		withOauthprovider:           oq.withOauthprovider.Clone(),
+		withUsers:                   oq.withUsers.Clone(),
+		withInvites:                 oq.withInvites.Clone(),
+		withSubscribers:             oq.withSubscribers.Clone(),
+		withWebhooks:                oq.withWebhooks.Clone(),
+		withEvents:                  oq.withEvents.Clone(),
+		withSecrets:                 oq.withSecrets.Clone(),
+		withFeatures:                oq.withFeatures.Clone(),
+		withFiles:                   oq.withFiles.Clone(),
+		withEntitlementplans:        oq.withEntitlementplans.Clone(),
+		withEntitlementplanfeatures: oq.withEntitlementplanfeatures.Clone(),
+		withMembers:                 oq.withMembers.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
 		path: oq.path,
@@ -922,6 +1008,17 @@ func (oq *OrganizationQuery) WithEntitlements(opts ...func(*EntitlementQuery)) *
 		opt(query)
 	}
 	oq.withEntitlements = query
+	return oq
+}
+
+// WithOrganizationEntitlement tells the query-builder to eager-load the nodes that are connected to
+// the "organization_entitlement" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithOrganizationEntitlement(opts ...func(*EntitlementQuery)) *OrganizationQuery {
+	query := (&EntitlementClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withOrganizationEntitlement = query
 	return oq
 }
 
@@ -1046,6 +1143,28 @@ func (oq *OrganizationQuery) WithFiles(opts ...func(*FileQuery)) *OrganizationQu
 	return oq
 }
 
+// WithEntitlementplans tells the query-builder to eager-load the nodes that are connected to
+// the "entitlementplans" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithEntitlementplans(opts ...func(*EntitlementPlanQuery)) *OrganizationQuery {
+	query := (&EntitlementPlanClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withEntitlementplans = query
+	return oq
+}
+
+// WithEntitlementplanfeatures tells the query-builder to eager-load the nodes that are connected to
+// the "entitlementplanfeatures" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithEntitlementplanfeatures(opts ...func(*EntitlementPlanFeatureQuery)) *OrganizationQuery {
+	query := (&EntitlementPlanFeatureClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withEntitlementplanfeatures = query
+	return oq
+}
+
 // WithMembers tells the query-builder to eager-load the nodes that are connected to
 // the "members" edge. The optional arguments are used to configure the query builder of the edge.
 func (oq *OrganizationQuery) WithMembers(opts ...func(*OrgMembershipQuery)) *OrganizationQuery {
@@ -1141,7 +1260,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [20]bool{
+		loadedTypes = [23]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
@@ -1150,6 +1269,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withSetting != nil,
 			oq.withDocumentdata != nil,
 			oq.withEntitlements != nil,
+			oq.withOrganizationEntitlement != nil,
 			oq.withPersonalAccessTokens != nil,
 			oq.withAPITokens != nil,
 			oq.withOauthprovider != nil,
@@ -1161,6 +1281,8 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withSecrets != nil,
 			oq.withFeatures != nil,
 			oq.withFiles != nil,
+			oq.withEntitlementplans != nil,
+			oq.withEntitlementplanfeatures != nil,
 			oq.withMembers != nil,
 		}
 	)
@@ -1238,6 +1360,15 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadEntitlements(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Entitlements = []*Entitlement{} },
 			func(n *Organization, e *Entitlement) { n.Edges.Entitlements = append(n.Edges.Entitlements, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withOrganizationEntitlement; query != nil {
+		if err := oq.loadOrganizationEntitlement(ctx, query, nodes,
+			func(n *Organization) { n.Edges.OrganizationEntitlement = []*Entitlement{} },
+			func(n *Organization, e *Entitlement) {
+				n.Edges.OrganizationEntitlement = append(n.Edges.OrganizationEntitlement, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -1320,6 +1451,24 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withEntitlementplans; query != nil {
+		if err := oq.loadEntitlementplans(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Entitlementplans = []*EntitlementPlan{} },
+			func(n *Organization, e *EntitlementPlan) {
+				n.Edges.Entitlementplans = append(n.Edges.Entitlementplans, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withEntitlementplanfeatures; query != nil {
+		if err := oq.loadEntitlementplanfeatures(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Entitlementplanfeatures = []*EntitlementPlanFeature{} },
+			func(n *Organization, e *EntitlementPlanFeature) {
+				n.Edges.Entitlementplanfeatures = append(n.Edges.Entitlementplanfeatures, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
 	if query := oq.withMembers; query != nil {
 		if err := oq.loadMembers(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Members = []*OrgMembership{} },
@@ -1366,6 +1515,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadEntitlements(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedEntitlements(name) },
 			func(n *Organization, e *Entitlement) { n.appendNamedEntitlements(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedOrganizationEntitlement {
+		if err := oq.loadOrganizationEntitlement(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedOrganizationEntitlement(name) },
+			func(n *Organization, e *Entitlement) { n.appendNamedOrganizationEntitlement(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1443,6 +1599,20 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadFiles(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedFiles(name) },
 			func(n *Organization, e *File) { n.appendNamedFiles(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedEntitlementplans {
+		if err := oq.loadEntitlementplans(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedEntitlementplans(name) },
+			func(n *Organization, e *EntitlementPlan) { n.appendNamedEntitlementplans(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedEntitlementplanfeatures {
+		if err := oq.loadEntitlementplanfeatures(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedEntitlementplanfeatures(name) },
+			func(n *Organization, e *EntitlementPlanFeature) { n.appendNamedEntitlementplanfeatures(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1693,6 +1863,36 @@ func (oq *OrganizationQuery) loadEntitlements(ctx context.Context, query *Entitl
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadOrganizationEntitlement(ctx context.Context, query *EntitlementQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Entitlement)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(entitlement.FieldOrganizationID)
+	}
+	query.Where(predicate.Entitlement(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.OrganizationEntitlementColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OrganizationID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "organization_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -2097,64 +2297,32 @@ func (oq *OrganizationQuery) loadSecrets(ctx context.Context, query *HushQuery, 
 	return nil
 }
 func (oq *OrganizationQuery) loadFeatures(ctx context.Context, query *FeatureQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Feature)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[string]*Organization)
-	nids := make(map[string]map[*Organization]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 		if init != nil {
-			init(node)
+			init(nodes[i])
 		}
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(organization.FeaturesTable)
-		joinT.Schema(oq.schemaConfig.OrganizationFeatures)
-		s.Join(joinT).On(s.C(feature.FieldID), joinT.C(organization.FeaturesPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(organization.FeaturesPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(organization.FeaturesPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(feature.FieldOwnerID)
 	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullString)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := values[0].(*sql.NullString).String
-				inValue := values[1].(*sql.NullString).String
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Organization]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Feature](ctx, query, qr, query.inters)
+	query.Where(predicate.Feature(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.FeaturesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected "features" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -2217,6 +2385,66 @@ func (oq *OrganizationQuery) loadFiles(ctx context.Context, query *FileQuery, no
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadEntitlementplans(ctx context.Context, query *EntitlementPlanQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *EntitlementPlan)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(entitlementplan.FieldOwnerID)
+	}
+	query.Where(predicate.EntitlementPlan(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.EntitlementplansColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadEntitlementplanfeatures(ctx context.Context, query *EntitlementPlanFeatureQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *EntitlementPlanFeature)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(entitlementplanfeature.FieldOwnerID)
+	}
+	query.Where(predicate.EntitlementPlanFeature(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.EntitlementplanfeaturesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -2427,6 +2655,20 @@ func (oq *OrganizationQuery) WithNamedEntitlements(name string, opts ...func(*En
 	return oq
 }
 
+// WithNamedOrganizationEntitlement tells the query-builder to eager-load the nodes that are connected to the "organization_entitlement"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedOrganizationEntitlement(name string, opts ...func(*EntitlementQuery)) *OrganizationQuery {
+	query := (&EntitlementClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedOrganizationEntitlement == nil {
+		oq.withNamedOrganizationEntitlement = make(map[string]*EntitlementQuery)
+	}
+	oq.withNamedOrganizationEntitlement[name] = query
+	return oq
+}
+
 // WithNamedPersonalAccessTokens tells the query-builder to eager-load the nodes that are connected to the "personal_access_tokens"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (oq *OrganizationQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*PersonalAccessTokenQuery)) *OrganizationQuery {
@@ -2578,6 +2820,34 @@ func (oq *OrganizationQuery) WithNamedFiles(name string, opts ...func(*FileQuery
 		oq.withNamedFiles = make(map[string]*FileQuery)
 	}
 	oq.withNamedFiles[name] = query
+	return oq
+}
+
+// WithNamedEntitlementplans tells the query-builder to eager-load the nodes that are connected to the "entitlementplans"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedEntitlementplans(name string, opts ...func(*EntitlementPlanQuery)) *OrganizationQuery {
+	query := (&EntitlementPlanClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedEntitlementplans == nil {
+		oq.withNamedEntitlementplans = make(map[string]*EntitlementPlanQuery)
+	}
+	oq.withNamedEntitlementplans[name] = query
+	return oq
+}
+
+// WithNamedEntitlementplanfeatures tells the query-builder to eager-load the nodes that are connected to the "entitlementplanfeatures"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedEntitlementplanfeatures(name string, opts ...func(*EntitlementPlanFeatureQuery)) *OrganizationQuery {
+	query := (&EntitlementPlanFeatureClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedEntitlementplanfeatures == nil {
+		oq.withNamedEntitlementplanfeatures = make(map[string]*EntitlementPlanFeatureQuery)
+	}
+	oq.withNamedEntitlementplanfeatures[name] = query
 	return oq
 }
 

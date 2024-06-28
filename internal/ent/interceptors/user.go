@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/pkg/auth"
+	sliceutil "github.com/datumforge/datum/pkg/utils/slice"
 )
 
 // InterceptorUser returns an ent interceptor for user that filters users based on the context of the query
@@ -85,7 +86,14 @@ func filterType(ctx context.Context) string {
 	// the extended resolvers allow members to be adding on creation or update of a group
 	// so we need to filter for the org
 	if rootFieldCtx != nil {
-		if rootFieldCtx.Object == "updateGroup" || rootFieldCtx.Object == "createGroup" {
+		allowedCtx := []string{
+			"createGroup",
+			"updateGroup",
+			"createGroupMembership",
+			"updateGroupMembership",
+		}
+
+		if sliceutil.Contains(allowedCtx, rootFieldCtx.Object) {
 			return "org"
 		}
 	}

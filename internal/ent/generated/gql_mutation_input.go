@@ -200,14 +200,13 @@ func (c *DocumentDataUpdateOne) SetInput(i UpdateDocumentDataInput) *DocumentDat
 // CreateEntitlementInput represents a mutation input for creating entitlements.
 type CreateEntitlementInput struct {
 	Tags                   []string
-	Tier                   *enums.Tier
 	ExternalCustomerID     *string
 	ExternalSubscriptionID *string
-	Expires                *bool
 	ExpiresAt              *time.Time
 	Cancelled              *bool
 	OwnerID                *string
-	FeatureIDs             []string
+	PlanID                 string
+	OrganizationID         string
 	EventIDs               []string
 }
 
@@ -216,17 +215,11 @@ func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
-	if v := i.Tier; v != nil {
-		m.SetTier(*v)
-	}
 	if v := i.ExternalCustomerID; v != nil {
 		m.SetExternalCustomerID(*v)
 	}
 	if v := i.ExternalSubscriptionID; v != nil {
 		m.SetExternalSubscriptionID(*v)
-	}
-	if v := i.Expires; v != nil {
-		m.SetExpires(*v)
 	}
 	if v := i.ExpiresAt; v != nil {
 		m.SetExpiresAt(*v)
@@ -237,9 +230,8 @@ func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
-	if v := i.FeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
+	m.SetPlanID(i.PlanID)
+	m.SetOrganizationID(i.OrganizationID)
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
@@ -256,20 +248,15 @@ type UpdateEntitlementInput struct {
 	ClearTags                   bool
 	Tags                        []string
 	AppendTags                  []string
-	Tier                        *enums.Tier
 	ClearExternalCustomerID     bool
 	ExternalCustomerID          *string
 	ClearExternalSubscriptionID bool
 	ExternalSubscriptionID      *string
-	Expires                     *bool
 	ClearExpiresAt              bool
 	ExpiresAt                   *time.Time
 	Cancelled                   *bool
 	ClearOwner                  bool
 	OwnerID                     *string
-	ClearFeatures               bool
-	AddFeatureIDs               []string
-	RemoveFeatureIDs            []string
 	ClearEvents                 bool
 	AddEventIDs                 []string
 	RemoveEventIDs              []string
@@ -286,9 +273,6 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
-	if v := i.Tier; v != nil {
-		m.SetTier(*v)
-	}
 	if i.ClearExternalCustomerID {
 		m.ClearExternalCustomerID()
 	}
@@ -300,9 +284,6 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	}
 	if v := i.ExternalSubscriptionID; v != nil {
 		m.SetExternalSubscriptionID(*v)
-	}
-	if v := i.Expires; v != nil {
-		m.SetExpires(*v)
 	}
 	if i.ClearExpiresAt {
 		m.ClearExpiresAt()
@@ -318,15 +299,6 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
-	}
-	if i.ClearFeatures {
-		m.ClearFeatures()
-	}
-	if v := i.AddFeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
-	if v := i.RemoveFeatureIDs; len(v) > 0 {
-		m.RemoveFeatureIDs(v...)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()
@@ -351,6 +323,250 @@ func (c *EntitlementUpdateOne) SetInput(i UpdateEntitlementInput) *EntitlementUp
 	return c
 }
 
+// CreateEntitlementPlanInput represents a mutation input for creating entitlementplans.
+type CreateEntitlementPlanInput struct {
+	Tags           []string
+	DisplayName    *string
+	Name           string
+	Description    *string
+	Version        string
+	Metadata       map[string]interface{}
+	OwnerID        *string
+	EntitlementIDs []string
+	BaseFeatureIDs []string
+	EventIDs       []string
+}
+
+// Mutate applies the CreateEntitlementPlanInput on the EntitlementPlanMutation builder.
+func (i *CreateEntitlementPlanInput) Mutate(m *EntitlementPlanMutation) {
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
+	}
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	m.SetVersion(i.Version)
+	if v := i.Metadata; v != nil {
+		m.SetMetadata(v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if v := i.EntitlementIDs; len(v) > 0 {
+		m.AddEntitlementIDs(v...)
+	}
+	if v := i.BaseFeatureIDs; len(v) > 0 {
+		m.AddBaseFeatureIDs(v...)
+	}
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateEntitlementPlanInput on the EntitlementPlanCreate builder.
+func (c *EntitlementPlanCreate) SetInput(i CreateEntitlementPlanInput) *EntitlementPlanCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateEntitlementPlanInput represents a mutation input for updating entitlementplans.
+type UpdateEntitlementPlanInput struct {
+	ClearTags            bool
+	Tags                 []string
+	AppendTags           []string
+	ClearDisplayName     bool
+	DisplayName          *string
+	ClearDescription     bool
+	Description          *string
+	ClearMetadata        bool
+	Metadata             map[string]interface{}
+	ClearOwner           bool
+	OwnerID              *string
+	ClearEntitlements    bool
+	AddEntitlementIDs    []string
+	RemoveEntitlementIDs []string
+	ClearBaseFeatures    bool
+	AddBaseFeatureIDs    []string
+	RemoveBaseFeatureIDs []string
+	ClearEvents          bool
+	AddEventIDs          []string
+	RemoveEventIDs       []string
+}
+
+// Mutate applies the UpdateEntitlementPlanInput on the EntitlementPlanMutation builder.
+func (i *UpdateEntitlementPlanInput) Mutate(m *EntitlementPlanMutation) {
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if i.ClearDisplayName {
+		m.ClearDisplayName()
+	}
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if i.ClearMetadata {
+		m.ClearMetadata()
+	}
+	if v := i.Metadata; v != nil {
+		m.SetMetadata(v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearEntitlements {
+		m.ClearEntitlements()
+	}
+	if v := i.AddEntitlementIDs; len(v) > 0 {
+		m.AddEntitlementIDs(v...)
+	}
+	if v := i.RemoveEntitlementIDs; len(v) > 0 {
+		m.RemoveEntitlementIDs(v...)
+	}
+	if i.ClearBaseFeatures {
+		m.ClearBaseFeatures()
+	}
+	if v := i.AddBaseFeatureIDs; len(v) > 0 {
+		m.AddBaseFeatureIDs(v...)
+	}
+	if v := i.RemoveBaseFeatureIDs; len(v) > 0 {
+		m.RemoveBaseFeatureIDs(v...)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateEntitlementPlanInput on the EntitlementPlanUpdate builder.
+func (c *EntitlementPlanUpdate) SetInput(i UpdateEntitlementPlanInput) *EntitlementPlanUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateEntitlementPlanInput on the EntitlementPlanUpdateOne builder.
+func (c *EntitlementPlanUpdateOne) SetInput(i UpdateEntitlementPlanInput) *EntitlementPlanUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateEntitlementPlanFeatureInput represents a mutation input for creating entitlementplanfeatures.
+type CreateEntitlementPlanFeatureInput struct {
+	Tags      []string
+	Metadata  map[string]interface{}
+	OwnerID   *string
+	PlanID    string
+	FeatureID string
+	EventIDs  []string
+}
+
+// Mutate applies the CreateEntitlementPlanFeatureInput on the EntitlementPlanFeatureMutation builder.
+func (i *CreateEntitlementPlanFeatureInput) Mutate(m *EntitlementPlanFeatureMutation) {
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if v := i.Metadata; v != nil {
+		m.SetMetadata(v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	m.SetPlanID(i.PlanID)
+	m.SetFeatureID(i.FeatureID)
+	if v := i.EventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateEntitlementPlanFeatureInput on the EntitlementPlanFeatureCreate builder.
+func (c *EntitlementPlanFeatureCreate) SetInput(i CreateEntitlementPlanFeatureInput) *EntitlementPlanFeatureCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateEntitlementPlanFeatureInput represents a mutation input for updating entitlementplanfeatures.
+type UpdateEntitlementPlanFeatureInput struct {
+	ClearTags      bool
+	Tags           []string
+	AppendTags     []string
+	ClearMetadata  bool
+	Metadata       map[string]interface{}
+	ClearOwner     bool
+	OwnerID        *string
+	ClearEvents    bool
+	AddEventIDs    []string
+	RemoveEventIDs []string
+}
+
+// Mutate applies the UpdateEntitlementPlanFeatureInput on the EntitlementPlanFeatureMutation builder.
+func (i *UpdateEntitlementPlanFeatureInput) Mutate(m *EntitlementPlanFeatureMutation) {
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if i.ClearMetadata {
+		m.ClearMetadata()
+	}
+	if v := i.Metadata; v != nil {
+		m.SetMetadata(v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearEvents {
+		m.ClearEvents()
+	}
+	if v := i.AddEventIDs; len(v) > 0 {
+		m.AddEventIDs(v...)
+	}
+	if v := i.RemoveEventIDs; len(v) > 0 {
+		m.RemoveEventIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateEntitlementPlanFeatureInput on the EntitlementPlanFeatureUpdate builder.
+func (c *EntitlementPlanFeatureUpdate) SetInput(i UpdateEntitlementPlanFeatureInput) *EntitlementPlanFeatureUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateEntitlementPlanFeatureInput on the EntitlementPlanFeatureUpdateOne builder.
+func (c *EntitlementPlanFeatureUpdateOne) SetInput(i UpdateEntitlementPlanFeatureInput) *EntitlementPlanFeatureUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateEventInput represents a mutation input for creating events.
 type CreateEventInput struct {
 	Tags                   []string
@@ -364,6 +580,7 @@ type CreateEventInput struct {
 	OrganizationIDs        []string
 	InviteIDs              []string
 	FeatureIDs             []string
+	EntitlementplanIDs     []string
 	PersonalAccessTokenIDs []string
 	Oauth2tokenIDs         []string
 	HushIDs                []string
@@ -404,6 +621,9 @@ func (i *CreateEventInput) Mutate(m *EventMutation) {
 	}
 	if v := i.FeatureIDs; len(v) > 0 {
 		m.AddFeatureIDs(v...)
+	}
+	if v := i.EntitlementplanIDs; len(v) > 0 {
+		m.AddEntitlementplanIDs(v...)
 	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
@@ -461,6 +681,9 @@ type UpdateEventInput struct {
 	ClearFeature                 bool
 	AddFeatureIDs                []string
 	RemoveFeatureIDs             []string
+	ClearEntitlementplan         bool
+	AddEntitlementplanIDs        []string
+	RemoveEntitlementplanIDs     []string
 	ClearPersonalAccessToken     bool
 	AddPersonalAccessTokenIDs    []string
 	RemovePersonalAccessTokenIDs []string
@@ -567,6 +790,15 @@ func (i *UpdateEventInput) Mutate(m *EventMutation) {
 	if v := i.RemoveFeatureIDs; len(v) > 0 {
 		m.RemoveFeatureIDs(v...)
 	}
+	if i.ClearEntitlementplan {
+		m.ClearEntitlementplan()
+	}
+	if v := i.AddEntitlementplanIDs; len(v) > 0 {
+		m.AddEntitlementplanIDs(v...)
+	}
+	if v := i.RemoveEntitlementplanIDs; len(v) > 0 {
+		m.RemoveEntitlementplanIDs(v...)
+	}
 	if i.ClearPersonalAccessToken {
 		m.ClearPersonalAccessToken()
 	}
@@ -637,16 +869,15 @@ func (c *EventUpdateOne) SetInput(i UpdateEventInput) *EventUpdateOne {
 
 // CreateFeatureInput represents a mutation input for creating features.
 type CreateFeatureInput struct {
-	Tags            []string
-	Name            string
-	Global          *bool
-	Enabled         *bool
-	Description     *string
-	UserIDs         []string
-	GroupIDs        []string
-	EntitlementIDs  []string
-	OrganizationIDs []string
-	EventIDs        []string
+	Tags        []string
+	Name        string
+	DisplayName *string
+	Enabled     *bool
+	Description *string
+	Metadata    map[string]interface{}
+	OwnerID     *string
+	PlanIDs     []string
+	EventIDs    []string
 }
 
 // Mutate applies the CreateFeatureInput on the FeatureMutation builder.
@@ -655,8 +886,8 @@ func (i *CreateFeatureInput) Mutate(m *FeatureMutation) {
 		m.SetTags(v)
 	}
 	m.SetName(i.Name)
-	if v := i.Global; v != nil {
-		m.SetGlobal(*v)
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
 	}
 	if v := i.Enabled; v != nil {
 		m.SetEnabled(*v)
@@ -664,17 +895,14 @@ func (i *CreateFeatureInput) Mutate(m *FeatureMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	if v := i.UserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
+	if v := i.Metadata; v != nil {
+		m.SetMetadata(v)
 	}
-	if v := i.GroupIDs; len(v) > 0 {
-		m.AddGroupIDs(v...)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
-	if v := i.EntitlementIDs; len(v) > 0 {
-		m.AddEntitlementIDs(v...)
-	}
-	if v := i.OrganizationIDs; len(v) > 0 {
-		m.AddOrganizationIDs(v...)
+	if v := i.PlanIDs; len(v) > 0 {
+		m.AddPlanIDs(v...)
 	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
@@ -689,28 +917,24 @@ func (c *FeatureCreate) SetInput(i CreateFeatureInput) *FeatureCreate {
 
 // UpdateFeatureInput represents a mutation input for updating features.
 type UpdateFeatureInput struct {
-	ClearTags             bool
-	Tags                  []string
-	AppendTags            []string
-	Global                *bool
-	Enabled               *bool
-	ClearDescription      bool
-	Description           *string
-	ClearUsers            bool
-	AddUserIDs            []string
-	RemoveUserIDs         []string
-	ClearGroups           bool
-	AddGroupIDs           []string
-	RemoveGroupIDs        []string
-	ClearEntitlements     bool
-	AddEntitlementIDs     []string
-	RemoveEntitlementIDs  []string
-	ClearOrganizations    bool
-	AddOrganizationIDs    []string
-	RemoveOrganizationIDs []string
-	ClearEvents           bool
-	AddEventIDs           []string
-	RemoveEventIDs        []string
+	ClearTags        bool
+	Tags             []string
+	AppendTags       []string
+	ClearDisplayName bool
+	DisplayName      *string
+	Enabled          *bool
+	ClearDescription bool
+	Description      *string
+	ClearMetadata    bool
+	Metadata         map[string]interface{}
+	ClearOwner       bool
+	OwnerID          *string
+	ClearPlans       bool
+	AddPlanIDs       []string
+	RemovePlanIDs    []string
+	ClearEvents      bool
+	AddEventIDs      []string
+	RemoveEventIDs   []string
 }
 
 // Mutate applies the UpdateFeatureInput on the FeatureMutation builder.
@@ -724,8 +948,11 @@ func (i *UpdateFeatureInput) Mutate(m *FeatureMutation) {
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
-	if v := i.Global; v != nil {
-		m.SetGlobal(*v)
+	if i.ClearDisplayName {
+		m.ClearDisplayName()
+	}
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
 	}
 	if v := i.Enabled; v != nil {
 		m.SetEnabled(*v)
@@ -736,41 +963,26 @@ func (i *UpdateFeatureInput) Mutate(m *FeatureMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	if i.ClearUsers {
-		m.ClearUsers()
+	if i.ClearMetadata {
+		m.ClearMetadata()
 	}
-	if v := i.AddUserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
+	if v := i.Metadata; v != nil {
+		m.SetMetadata(v)
 	}
-	if v := i.RemoveUserIDs; len(v) > 0 {
-		m.RemoveUserIDs(v...)
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
-	if i.ClearGroups {
-		m.ClearGroups()
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
-	if v := i.AddGroupIDs; len(v) > 0 {
-		m.AddGroupIDs(v...)
+	if i.ClearPlans {
+		m.ClearPlans()
 	}
-	if v := i.RemoveGroupIDs; len(v) > 0 {
-		m.RemoveGroupIDs(v...)
+	if v := i.AddPlanIDs; len(v) > 0 {
+		m.AddPlanIDs(v...)
 	}
-	if i.ClearEntitlements {
-		m.ClearEntitlements()
-	}
-	if v := i.AddEntitlementIDs; len(v) > 0 {
-		m.AddEntitlementIDs(v...)
-	}
-	if v := i.RemoveEntitlementIDs; len(v) > 0 {
-		m.RemoveEntitlementIDs(v...)
-	}
-	if i.ClearOrganizations {
-		m.ClearOrganizations()
-	}
-	if v := i.AddOrganizationIDs; len(v) > 0 {
-		m.AddOrganizationIDs(v...)
-	}
-	if v := i.RemoveOrganizationIDs; len(v) > 0 {
-		m.RemoveOrganizationIDs(v...)
+	if v := i.RemovePlanIDs; len(v) > 0 {
+		m.RemovePlanIDs(v...)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()
@@ -960,7 +1172,6 @@ type CreateGroupInput struct {
 	OwnerID         *string
 	SettingID       string
 	UserIDs         []string
-	FeatureIDs      []string
 	EventIDs        []string
 	IntegrationIDs  []string
 	FileIDs         []string
@@ -990,9 +1201,6 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	m.SetSettingID(i.SettingID)
 	if v := i.UserIDs; len(v) > 0 {
 		m.AddUserIDs(v...)
-	}
-	if v := i.FeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
 	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
@@ -1030,9 +1238,6 @@ type UpdateGroupInput struct {
 	ClearUsers           bool
 	AddUserIDs           []string
 	RemoveUserIDs        []string
-	ClearFeatures        bool
-	AddFeatureIDs        []string
-	RemoveFeatureIDs     []string
 	ClearEvents          bool
 	AddEventIDs          []string
 	RemoveEventIDs       []string
@@ -1096,15 +1301,6 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.RemoveUserIDs; len(v) > 0 {
 		m.RemoveUserIDs(v...)
-	}
-	if i.ClearFeatures {
-		m.ClearFeatures()
-	}
-	if v := i.AddFeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
-	if v := i.RemoveFeatureIDs; len(v) > 0 {
-		m.RemoveFeatureIDs(v...)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()
@@ -2057,31 +2253,33 @@ func (c *OrgMembershipUpdateOne) SetInput(i UpdateOrgMembershipInput) *OrgMember
 
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
-	Tags                   []string
-	Name                   string
-	DisplayName            *string
-	Description            *string
-	PersonalOrg            *bool
-	AvatarRemoteURL        *string
-	DedicatedDb            *bool
-	ParentID               *string
-	GroupIDs               []string
-	TemplateIDs            []string
-	IntegrationIDs         []string
-	SettingID              *string
-	DocumentdatumIDs       []string
-	EntitlementIDs         []string
-	PersonalAccessTokenIDs []string
-	APITokenIDs            []string
-	OauthproviderIDs       []string
-	UserIDs                []string
-	InviteIDs              []string
-	SubscriberIDs          []string
-	WebhookIDs             []string
-	EventIDs               []string
-	SecretIDs              []string
-	FeatureIDs             []string
-	FileIDs                []string
+	Tags                       []string
+	Name                       string
+	DisplayName                *string
+	Description                *string
+	PersonalOrg                *bool
+	AvatarRemoteURL            *string
+	DedicatedDb                *bool
+	ParentID                   *string
+	GroupIDs                   []string
+	TemplateIDs                []string
+	IntegrationIDs             []string
+	SettingID                  *string
+	DocumentdatumIDs           []string
+	EntitlementIDs             []string
+	OrganizationEntitlementIDs []string
+	PersonalAccessTokenIDs     []string
+	APITokenIDs                []string
+	OauthproviderIDs           []string
+	UserIDs                    []string
+	InviteIDs                  []string
+	SubscriberIDs              []string
+	WebhookIDs                 []string
+	EventIDs                   []string
+	SecretIDs                  []string
+	FeatureIDs                 []string
+	FileIDs                    []string
+	EntitlementplanIDs         []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -2126,6 +2324,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.EntitlementIDs; len(v) > 0 {
 		m.AddEntitlementIDs(v...)
 	}
+	if v := i.OrganizationEntitlementIDs; len(v) > 0 {
+		m.AddOrganizationEntitlementIDs(v...)
+	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
@@ -2159,6 +2360,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.FileIDs; len(v) > 0 {
 		m.AddFileIDs(v...)
 	}
+	if v := i.EntitlementplanIDs; len(v) > 0 {
+		m.AddEntitlementplanIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -2169,65 +2373,71 @@ func (c *OrganizationCreate) SetInput(i CreateOrganizationInput) *OrganizationCr
 
 // UpdateOrganizationInput represents a mutation input for updating organizations.
 type UpdateOrganizationInput struct {
-	ClearTags                    bool
-	Tags                         []string
-	AppendTags                   []string
-	Name                         *string
-	DisplayName                  *string
-	ClearDescription             bool
-	Description                  *string
-	ClearAvatarRemoteURL         bool
-	AvatarRemoteURL              *string
-	ClearGroups                  bool
-	AddGroupIDs                  []string
-	RemoveGroupIDs               []string
-	ClearTemplates               bool
-	AddTemplateIDs               []string
-	RemoveTemplateIDs            []string
-	ClearIntegrations            bool
-	AddIntegrationIDs            []string
-	RemoveIntegrationIDs         []string
-	ClearSetting                 bool
-	SettingID                    *string
-	ClearDocumentdata            bool
-	AddDocumentdatumIDs          []string
-	RemoveDocumentdatumIDs       []string
-	ClearEntitlements            bool
-	AddEntitlementIDs            []string
-	RemoveEntitlementIDs         []string
-	ClearPersonalAccessTokens    bool
-	AddPersonalAccessTokenIDs    []string
-	RemovePersonalAccessTokenIDs []string
-	ClearAPITokens               bool
-	AddAPITokenIDs               []string
-	RemoveAPITokenIDs            []string
-	ClearOauthprovider           bool
-	AddOauthproviderIDs          []string
-	RemoveOauthproviderIDs       []string
-	ClearUsers                   bool
-	AddUserIDs                   []string
-	RemoveUserIDs                []string
-	ClearInvites                 bool
-	AddInviteIDs                 []string
-	RemoveInviteIDs              []string
-	ClearSubscribers             bool
-	AddSubscriberIDs             []string
-	RemoveSubscriberIDs          []string
-	ClearWebhooks                bool
-	AddWebhookIDs                []string
-	RemoveWebhookIDs             []string
-	ClearEvents                  bool
-	AddEventIDs                  []string
-	RemoveEventIDs               []string
-	ClearSecrets                 bool
-	AddSecretIDs                 []string
-	RemoveSecretIDs              []string
-	ClearFeatures                bool
-	AddFeatureIDs                []string
-	RemoveFeatureIDs             []string
-	ClearFiles                   bool
-	AddFileIDs                   []string
-	RemoveFileIDs                []string
+	ClearTags                        bool
+	Tags                             []string
+	AppendTags                       []string
+	Name                             *string
+	DisplayName                      *string
+	ClearDescription                 bool
+	Description                      *string
+	ClearAvatarRemoteURL             bool
+	AvatarRemoteURL                  *string
+	ClearGroups                      bool
+	AddGroupIDs                      []string
+	RemoveGroupIDs                   []string
+	ClearTemplates                   bool
+	AddTemplateIDs                   []string
+	RemoveTemplateIDs                []string
+	ClearIntegrations                bool
+	AddIntegrationIDs                []string
+	RemoveIntegrationIDs             []string
+	ClearSetting                     bool
+	SettingID                        *string
+	ClearDocumentdata                bool
+	AddDocumentdatumIDs              []string
+	RemoveDocumentdatumIDs           []string
+	ClearEntitlements                bool
+	AddEntitlementIDs                []string
+	RemoveEntitlementIDs             []string
+	ClearOrganizationEntitlement     bool
+	AddOrganizationEntitlementIDs    []string
+	RemoveOrganizationEntitlementIDs []string
+	ClearPersonalAccessTokens        bool
+	AddPersonalAccessTokenIDs        []string
+	RemovePersonalAccessTokenIDs     []string
+	ClearAPITokens                   bool
+	AddAPITokenIDs                   []string
+	RemoveAPITokenIDs                []string
+	ClearOauthprovider               bool
+	AddOauthproviderIDs              []string
+	RemoveOauthproviderIDs           []string
+	ClearUsers                       bool
+	AddUserIDs                       []string
+	RemoveUserIDs                    []string
+	ClearInvites                     bool
+	AddInviteIDs                     []string
+	RemoveInviteIDs                  []string
+	ClearSubscribers                 bool
+	AddSubscriberIDs                 []string
+	RemoveSubscriberIDs              []string
+	ClearWebhooks                    bool
+	AddWebhookIDs                    []string
+	RemoveWebhookIDs                 []string
+	ClearEvents                      bool
+	AddEventIDs                      []string
+	RemoveEventIDs                   []string
+	ClearSecrets                     bool
+	AddSecretIDs                     []string
+	RemoveSecretIDs                  []string
+	ClearFeatures                    bool
+	AddFeatureIDs                    []string
+	RemoveFeatureIDs                 []string
+	ClearFiles                       bool
+	AddFileIDs                       []string
+	RemoveFileIDs                    []string
+	ClearEntitlementplans            bool
+	AddEntitlementplanIDs            []string
+	RemoveEntitlementplanIDs         []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -2309,6 +2519,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveEntitlementIDs; len(v) > 0 {
 		m.RemoveEntitlementIDs(v...)
+	}
+	if i.ClearOrganizationEntitlement {
+		m.ClearOrganizationEntitlement()
+	}
+	if v := i.AddOrganizationEntitlementIDs; len(v) > 0 {
+		m.AddOrganizationEntitlementIDs(v...)
+	}
+	if v := i.RemoveOrganizationEntitlementIDs; len(v) > 0 {
+		m.RemoveOrganizationEntitlementIDs(v...)
 	}
 	if i.ClearPersonalAccessTokens {
 		m.ClearPersonalAccessTokens()
@@ -2408,6 +2627,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveFileIDs; len(v) > 0 {
 		m.RemoveFileIDs(v...)
+	}
+	if i.ClearEntitlementplans {
+		m.ClearEntitlementplans()
+	}
+	if v := i.AddEntitlementplanIDs; len(v) > 0 {
+		m.AddEntitlementplanIDs(v...)
+	}
+	if v := i.RemoveEntitlementplanIDs; len(v) > 0 {
+		m.RemoveEntitlementplanIDs(v...)
 	}
 }
 
@@ -3020,7 +3248,6 @@ type CreateUserInput struct {
 	WebauthnIDs               []string
 	FileIDs                   []string
 	EventIDs                  []string
-	FeatureIDs                []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -3088,9 +3315,6 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
-	if v := i.FeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
 }
 
 // SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
@@ -3153,9 +3377,6 @@ type UpdateUserInput struct {
 	ClearEvents                     bool
 	AddEventIDs                     []string
 	RemoveEventIDs                  []string
-	ClearFeatures                   bool
-	AddFeatureIDs                   []string
-	RemoveFeatureIDs                []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -3315,15 +3536,6 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemoveEventIDs; len(v) > 0 {
 		m.RemoveEventIDs(v...)
-	}
-	if i.ClearFeatures {
-		m.ClearFeatures()
-	}
-	if v := i.AddFeatureIDs; len(v) > 0 {
-		m.AddFeatureIDs(v...)
-	}
-	if v := i.RemoveFeatureIDs; len(v) > 0 {
-		m.RemoveFeatureIDs(v...)
 	}
 }
 

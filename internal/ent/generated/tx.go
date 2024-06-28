@@ -24,6 +24,14 @@ type Tx struct {
 	Entitlement *EntitlementClient
 	// EntitlementHistory is the client for interacting with the EntitlementHistory builders.
 	EntitlementHistory *EntitlementHistoryClient
+	// EntitlementPlan is the client for interacting with the EntitlementPlan builders.
+	EntitlementPlan *EntitlementPlanClient
+	// EntitlementPlanHistory is the client for interacting with the EntitlementPlanHistory builders.
+	EntitlementPlanHistory *EntitlementPlanHistoryClient
+	// EntitlementPlanFeature is the client for interacting with the EntitlementPlanFeature builders.
+	EntitlementPlanFeature *EntitlementPlanFeatureClient
+	// EntitlementPlanFeatureHistory is the client for interacting with the EntitlementPlanFeatureHistory builders.
+	EntitlementPlanFeatureHistory *EntitlementPlanFeatureHistoryClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
 	// EventHistory is the client for interacting with the EventHistory builders.
@@ -239,6 +247,10 @@ func (tx *Tx) init() {
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
 	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.EntitlementHistory = NewEntitlementHistoryClient(tx.config)
+	tx.EntitlementPlan = NewEntitlementPlanClient(tx.config)
+	tx.EntitlementPlanHistory = NewEntitlementPlanHistoryClient(tx.config)
+	tx.EntitlementPlanFeature = NewEntitlementPlanFeatureClient(tx.config)
+	tx.EntitlementPlanFeatureHistory = NewEntitlementPlanFeatureHistoryClient(tx.config)
 	tx.Event = NewEventClient(tx.config)
 	tx.EventHistory = NewEventHistoryClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)

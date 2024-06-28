@@ -1,53 +1,76 @@
-query GetOrganizationByID($organizationId: ID!) {
-  organization(id: $organizationId) {
-    id
-    name
-    displayName
-    description
-    personalOrg
-    tags
-    parent {
+mutation CreateBulkCSVOrganization($input: Upload!) {
+  createBulkCSVOrganization(input: $input) {
+    organizations {
       id
       name
+      displayName
+      description
+      personalOrg
+      tags
     }
-    children {
-      edges {
-        node {
-          id
-          name
-          displayName
-          description
+  }
+}
+
+mutation CreateBulkOrganization($input: [CreateOrganizationInput!]) {
+  createBulkOrganization(input: $input) {
+    organizations {
+      id
+      name
+      displayName
+      description
+      personalOrg
+      tags
+    }
+  }
+}
+
+mutation CreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    organization {
+      id
+      name
+      displayName
+      description
+      personalOrg
+      tags
+      createdAt
+      updatedAt
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        domains
+        billingContact
+        billingEmail
+        billingPhone
+        billingAddress
+        taxIdentifier
+        geoLocation
+        tags
+      }
+      parent {
+        id
+        name
+      }
+      children {
+        edges {
+          node {
+            id
+            name
+            displayName
+            description
+          }
         }
       }
     }
-    members {
-      id
-      role
-      user {
-        id
-        firstName
-        lastName
-      }
-    }
-    setting {
-      id
-      createdAt
-      updatedAt
-      createdBy
-      updatedBy
-      domains
-      billingContact
-      billingEmail
-      billingPhone
-      billingAddress
-      taxIdentifier
-      geoLocation
-      tags
-    }
-    createdAt
-    createdBy
-    updatedAt
-    updatedBy
+  }
+}
+
+mutation DeleteOrganization($deleteOrganizationId: ID!) {
+  deleteOrganization(id: $deleteOrganizationId) {
+    deletedID
   }
 }
 
@@ -106,9 +129,62 @@ query GetAllOrganizations {
   }
 }
 
-query OrganizationsWhere($where: OrganizationWhereInput) {
-  organizations(where: $where) {
+query GetOrganizationByID($organizationId: ID!) {
+  organization(id: $organizationId) {
+    id
+    name
+    displayName
+    description
+    personalOrg
+    tags
+    parent {
+      id
+      name
+    }
+    children {
       edges {
+        node {
+          id
+          name
+          displayName
+          description
+        }
+      }
+    }
+    members {
+      id
+      role
+      user {
+        id
+        firstName
+        lastName
+      }
+    }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      domains
+      billingContact
+      billingEmail
+      billingPhone
+      billingAddress
+      taxIdentifier
+      geoLocation
+      tags
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+
+query GetOrganizations($where: OrganizationWhereInput) {
+  organizations(where: $where) {
+    edges {
       node {
         id
         name
@@ -161,76 +237,6 @@ query OrganizationsWhere($where: OrganizationWhereInput) {
   }
 }
 
-mutation CreateOrganization($input: CreateOrganizationInput!) {
-  createOrganization(input: $input) {
-    organization {
-      id
-      name
-      displayName
-      description
-      personalOrg
-      tags
-      createdAt
-      updatedAt
-      setting {
-        id
-        createdAt
-        updatedAt
-        createdBy
-        updatedBy
-        domains
-        billingContact
-        billingEmail
-        billingPhone
-        billingAddress
-        taxIdentifier
-        geoLocation
-        tags
-      }
-      parent {
-        id
-        name
-      }
-      children {
-        edges {
-          node {
-            id
-            name
-            displayName
-            description
-          }
-        }
-      }
-    }
-  }
-}
-
-mutation CreateBulkOrganization($input: [CreateOrganizationInput!]) {
-  createBulkOrganization(input: $input) {
-    organizations {
-      id
-      name
-      displayName
-      description
-      personalOrg
-      tags
-    }
-  }
-}
-
-mutation CreateBulkCSVOrganization($input: Upload!) {
-  createBulkCSVOrganization(input: $input) {
-   organizations {
-      id
-      name
-      displayName
-      description
-      personalOrg
-      tags
-    }
-  }
-}
-
 mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizationInput!) {
   updateOrganization(id: $updateOrganizationId, input: $input) {
     organization {
@@ -238,6 +244,7 @@ mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizati
       name
       displayName
       description
+      personalOrg
       tags
       members {
         id
@@ -260,11 +267,5 @@ mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizati
         tags
       }
     }
-  }
-}
-
-mutation DeleteOrganization($deleteOrganizationId: ID!) {
-  deleteOrganization(id: $deleteOrganizationId) {
-    deletedID
   }
 }

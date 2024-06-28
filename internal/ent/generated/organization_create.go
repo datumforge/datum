@@ -13,6 +13,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
@@ -374,6 +376,21 @@ func (oc *OrganizationCreate) AddEntitlements(e ...*Entitlement) *OrganizationCr
 	return oc.AddEntitlementIDs(ids...)
 }
 
+// AddOrganizationEntitlementIDs adds the "organization_entitlement" edge to the Entitlement entity by IDs.
+func (oc *OrganizationCreate) AddOrganizationEntitlementIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddOrganizationEntitlementIDs(ids...)
+	return oc
+}
+
+// AddOrganizationEntitlement adds the "organization_entitlement" edges to the Entitlement entity.
+func (oc *OrganizationCreate) AddOrganizationEntitlement(e ...*Entitlement) *OrganizationCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oc.AddOrganizationEntitlementIDs(ids...)
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
 func (oc *OrganizationCreate) AddPersonalAccessTokenIDs(ids ...string) *OrganizationCreate {
 	oc.mutation.AddPersonalAccessTokenIDs(ids...)
@@ -537,6 +554,36 @@ func (oc *OrganizationCreate) AddFiles(f ...*File) *OrganizationCreate {
 		ids[i] = f[i].ID
 	}
 	return oc.AddFileIDs(ids...)
+}
+
+// AddEntitlementplanIDs adds the "entitlementplans" edge to the EntitlementPlan entity by IDs.
+func (oc *OrganizationCreate) AddEntitlementplanIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddEntitlementplanIDs(ids...)
+	return oc
+}
+
+// AddEntitlementplans adds the "entitlementplans" edges to the EntitlementPlan entity.
+func (oc *OrganizationCreate) AddEntitlementplans(e ...*EntitlementPlan) *OrganizationCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oc.AddEntitlementplanIDs(ids...)
+}
+
+// AddEntitlementplanfeatureIDs adds the "entitlementplanfeatures" edge to the EntitlementPlanFeature entity by IDs.
+func (oc *OrganizationCreate) AddEntitlementplanfeatureIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddEntitlementplanfeatureIDs(ids...)
+	return oc
+}
+
+// AddEntitlementplanfeatures adds the "entitlementplanfeatures" edges to the EntitlementPlanFeature entity.
+func (oc *OrganizationCreate) AddEntitlementplanfeatures(e ...*EntitlementPlanFeature) *OrganizationCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oc.AddEntitlementplanfeatureIDs(ids...)
 }
 
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
@@ -896,6 +943,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := oc.mutation.OrganizationEntitlementIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OrganizationEntitlementTable,
+			Columns: []string{organization.OrganizationEntitlementColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := oc.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -1058,16 +1122,16 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	}
 	if nodes := oc.mutation.FeaturesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   organization.FeaturesTable,
-			Columns: organization.FeaturesPrimaryKey,
+			Columns: []string{organization.FeaturesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = oc.schemaConfig.OrganizationFeatures
+		edge.Schema = oc.schemaConfig.Feature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1085,6 +1149,40 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.OrganizationFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.EntitlementplansIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementplansTable,
+			Columns: []string{organization.EntitlementplansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.EntitlementPlan
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.EntitlementplanfeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementplanfeaturesTable,
+			Columns: []string{organization.EntitlementplanfeaturesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.EntitlementPlanFeature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

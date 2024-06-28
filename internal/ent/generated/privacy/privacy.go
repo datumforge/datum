@@ -255,6 +255,102 @@ func (f EntitlementHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m 
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementHistoryMutation", m)
 }
 
+// The EntitlementPlanQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EntitlementPlanQueryRuleFunc func(context.Context, *generated.EntitlementPlanQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EntitlementPlanQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EntitlementPlanQuery", q)
+}
+
+// The EntitlementPlanMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EntitlementPlanMutationRuleFunc func(context.Context, *generated.EntitlementPlanMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EntitlementPlanMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EntitlementPlanMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementPlanMutation", m)
+}
+
+// The EntitlementPlanHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EntitlementPlanHistoryQueryRuleFunc func(context.Context, *generated.EntitlementPlanHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EntitlementPlanHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EntitlementPlanHistoryQuery", q)
+}
+
+// The EntitlementPlanHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EntitlementPlanHistoryMutationRuleFunc func(context.Context, *generated.EntitlementPlanHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EntitlementPlanHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EntitlementPlanHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementPlanHistoryMutation", m)
+}
+
+// The EntitlementPlanFeatureQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EntitlementPlanFeatureQueryRuleFunc func(context.Context, *generated.EntitlementPlanFeatureQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EntitlementPlanFeatureQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanFeatureQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EntitlementPlanFeatureQuery", q)
+}
+
+// The EntitlementPlanFeatureMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EntitlementPlanFeatureMutationRuleFunc func(context.Context, *generated.EntitlementPlanFeatureMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EntitlementPlanFeatureMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EntitlementPlanFeatureMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementPlanFeatureMutation", m)
+}
+
+// The EntitlementPlanFeatureHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EntitlementPlanFeatureHistoryQueryRuleFunc func(context.Context, *generated.EntitlementPlanFeatureHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EntitlementPlanFeatureHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanFeatureHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EntitlementPlanFeatureHistoryQuery", q)
+}
+
+// The EntitlementPlanFeatureHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EntitlementPlanFeatureHistoryMutationRuleFunc func(context.Context, *generated.EntitlementPlanFeatureHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EntitlementPlanFeatureHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EntitlementPlanFeatureHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementPlanFeatureHistoryMutation", m)
+}
+
 // The EventQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EventQueryRuleFunc func(context.Context, *generated.EventQuery) error
@@ -1238,6 +1334,14 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.EntitlementHistoryQuery:
 		return q.Filter(), nil
+	case *generated.EntitlementPlanQuery:
+		return q.Filter(), nil
+	case *generated.EntitlementPlanHistoryQuery:
+		return q.Filter(), nil
+	case *generated.EntitlementPlanFeatureQuery:
+		return q.Filter(), nil
+	case *generated.EntitlementPlanFeatureHistoryQuery:
+		return q.Filter(), nil
 	case *generated.EventQuery:
 		return q.Filter(), nil
 	case *generated.EventHistoryQuery:
@@ -1334,6 +1438,14 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.EntitlementMutation:
 		return m.Filter(), nil
 	case *generated.EntitlementHistoryMutation:
+		return m.Filter(), nil
+	case *generated.EntitlementPlanMutation:
+		return m.Filter(), nil
+	case *generated.EntitlementPlanHistoryMutation:
+		return m.Filter(), nil
+	case *generated.EntitlementPlanFeatureMutation:
+		return m.Filter(), nil
+	case *generated.EntitlementPlanFeatureHistoryMutation:
 		return m.Filter(), nil
 	case *generated.EventMutation:
 		return m.Filter(), nil

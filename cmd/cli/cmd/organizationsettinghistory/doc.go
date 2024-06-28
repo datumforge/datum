@@ -1,0 +1,2 @@
+// Package datumorganizationsettinghistory is our cobra cli for organizationSettingHistory endpoints
+package datumorganizationsettinghistory

@@ -31,6 +31,26 @@ import (
 	_ "github.com/datumforge/datum/cmd/cli/cmd/usersetting"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/version"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/webhook"
+
+	// history commands
+	_ "github.com/datumforge/datum/cmd/cli/cmd/documentdatahistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/entitlementhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/eventhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/featurehistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/filehistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/grouphistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/groupmembershiphistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/groupsettinghistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/hushhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/integrationhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/oauthproviderhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/organizationhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/organizationsettinghistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/orgmembershiphistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/templatehistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/userhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/usersettinghistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/webhookhistory"
 )
 
 func main() {

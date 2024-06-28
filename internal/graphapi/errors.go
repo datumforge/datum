@@ -7,6 +7,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/pkg/rout"
 	"go.uber.org/zap"
 )
 
@@ -72,6 +73,25 @@ type action struct {
 	action string
 }
 
+// ForeignKeyError is returned when an object does not exist in the related table
+type ForeignKeyError struct {
+	Action string
+	ObjectType string
+}
+
+// Error returns the ForeignKeyError in string format
+func (e *ForeignKeyError) Error() string {
+	return fmt.Sprintf("unable to complete the action '%s' because the record '%s' does not exist. please try again", e.Action, e.ObjectType)
+}
+
+// newForeignKeyError returns a ForeignKeyError
+func newForeignKeyError(action, objecttype string) *ForeignKeyError {
+	return &ForeignKeyError{
+		Action: action,
+		ObjectType: objecttype,
+	}
+}
+
 // parseRequestError logs and parses the error and returns the appropriate error type for the client
 // TODO: cleanup return error messages
 func parseRequestError(err error, a action, logger *zap.SugaredLogger) error {
@@ -93,6 +113,11 @@ func parseRequestError(err error, a action, logger *zap.SugaredLogger) error {
 		// Check for unique (or UNIQUE in sqlite) constraint error
 		if strings.Contains(strings.ToLower(constraintError.Error()), "unique") {
 			return newAlreadyExistsError(a.object)
+		}
+
+		// Check for foreign key constraint error
+		if rout.IsForeignKeyConstraintError(constraintError.Error()) {
+			return newForeignKeyError(a.action, a.object)
 		}
 
 		return constraintError

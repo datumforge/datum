@@ -46,6 +46,15 @@ On top of this powerful core we also have an incredible amount of pluggable, ext
 - External Database Providers: Leverage Turso, or other PostgreSQL / SQLite compatible vendors and libraries
 - Data Isolation and Management: Heirarchal organizations and granular permissions controls
 
+## Setup
+
+While working on Datum, you can take advantage of the included [Hermit](https://cashapp.github.io/hermit/) dev
+environment to get Go & other tooling without having to install them separately on your local machine. There are some installations that will be required on top of what hermit provides, though. To get started, just use the following command to activate the environment:
+
+```zsh
+. ./bin/activate-hermit
+```
+Once you've done this, you can then run `task install` to have the remaining local dependencies setup for you. This takes advantage of the `hermit` package manager as well as `brew` for the additional installations. Today our local environment is generally specific to MacOS, but we're working on expanding this to other platforms; you can use our published Docker images / docker compose files to get started with a local development environment if you don't want to perform the local installation steps.
 
 ## Development
 

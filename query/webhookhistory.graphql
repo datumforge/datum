@@ -1,5 +1,3 @@
-
-
 query GetAllWebhookHistories {
   webhookHistories {
     edges {

@@ -1,11 +1,6 @@
 {
-    "extends": [
-        "config:base"
-    ],
-    "postUpdateOptions": [
-        "gomodTidy"
-    ],
-    "labels": [
-        "dependencies"
-    ]
+    "extends": ["config:base"],
+    "postUpdateOptions": ["gomodTidy"],
+    "labels": ["dependencies"],
+    "enabledManagers": ["hermit"]
 }

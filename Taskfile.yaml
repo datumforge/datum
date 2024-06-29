@@ -26,20 +26,6 @@ env:
   TEST_FGA_URL: "localhost:8080"
   ENV: config
 
-dotenv:
-  - .env
-
-vars:
-  PROJECT_NAME: terraform-aws-alb
-  ORGANIZATION: hadenlabs
-  REVIEWERS: luismayta
-  PYTHON_VERSION: 3.9.2
-  NODE_VERSION: 16.6.1
-  GIT_IGNORES: python,node,go,zsh,sonar,terraform,linux
-  GOLANGCI_VERSION: 1.42.0
-  README_FILE: README.md
-  GIT_IGNORES_CUSTOM: >-
-    bin .scannerwork .secrets public TMP_CHANGELOG.md .task .terraform.lock.hcl *.lock.hcl *.zip .external_modules #magic___^_^___line
 tasks:
   default:
     silent: true
@@ -155,7 +141,6 @@ tasks:
     desc: installs all dependencies for the project
     aliases: [install]
     cmds:
-      - task: go:dist
       - task: install:tools
       - task: brew-install
       - task: local-setup

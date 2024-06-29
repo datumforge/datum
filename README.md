@@ -46,36 +46,15 @@ On top of this powerful core we also have an incredible amount of pluggable, ext
 - External Database Providers: Leverage Turso, or other PostgreSQL / SQLite compatible vendors and libraries
 - Data Isolation and Management: Heirarchal organizations and granular permissions controls
 
-
-### Hermit
+## Setup
 
 While working on Datum, you can take advantage of the included [Hermit](https://cashapp.github.io/hermit/) dev
-environment to get Go & other tooling without having to install them separately on your local machine.
-
-Just use the following command to activate the environment, and you're good to go:
+environment to get Go & other tooling without having to install them separately on your local machine. There are some installations that will be required on top of what hermit provides, though. To get started, just use the following command to activate the environment:
 
 ```zsh
 . ./bin/activate-hermit
 ```
-
-### Mac GUI Editors
-
-For other editors and IDEs, the best solution in lieu of native plugins is to
-open up a terminal, activate the Hermit environment, then launch the editor
-from the terminal. This is not ideal, but does work until a plugin is
-available.
-
-1. Close your editor.
-2. From a terminal activate your Hermit environment: `. ./bin/activate-hermit`
-3. Launch your editor from the terminal:
-
-	| Editor     | Launch command |
-	|------------|----------------|
-	| [Sublime](https://www.sublimetext.com/docs/3/osx_command_line.html)  | `subl -and .`   |
-	| [Visual Studio Code](https://code.visualstudio.com/docs/setup/mac)    | `code .`   |
-
-At this point your editor should be running with environment variables from
-the Hermit environment.
+Once you've done this, you can then run `task install` to have the remaining local dependencies setup for you. This takes advantage of the `hermit` package manager as well as `brew` for the additional installations. Today our local environment is generally specific to MacOS, but we're working on expanding this to other platforms; you can use our published Docker images / docker compose files to get started with a local development environment if you don't want to perform the local installation steps.
 
 ## Development
 

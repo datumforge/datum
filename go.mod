@@ -48,7 +48,7 @@ require (
 	github.com/prometheus/client_golang v1.19.1
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e
 	github.com/redis/go-redis/v9 v9.5.3
-	github.com/samber/lo v1.43.0
+	github.com/samber/lo v1.44.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0

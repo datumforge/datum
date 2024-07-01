@@ -117,11 +117,13 @@ func HookOrgMembersDelete() ent.Hook {
 				return nil, err
 			}
 
+			// execute the delete operation
 			retValue, err := next.Mutate(ctx, mutation)
 			if err != nil {
 				return nil, err
 			}
 
+			// check to see if the default org needs to be updated for the user
 			allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			if _, err = checkAndUpdateDefaultOrg(allowCtx, orgMembership.UserID, orgMembership.OrganizationID, mutation.Client()); err != nil {
 				return nil, err
@@ -129,7 +131,7 @@ func HookOrgMembersDelete() ent.Hook {
 
 			return retValue, err
 		})
-	}, ent.OpDeleteOne|ent.OpDelete|ent.OpUpdate|ent.OpUpdateOne)
+	}, ent.OpDeleteOne|ent.OpDelete|ent.OpUpdate|ent.OpUpdateOne) // handle soft deletes as well as hard deletes
 }
 
 // updateOrgMemberDefaultOrgOnCreate updates the user's default org if the user has no default org or

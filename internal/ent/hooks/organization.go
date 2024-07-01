@@ -203,8 +203,9 @@ func updateUserDefaultOrgOnDelete(ctx context.Context, mutation *generated.Organ
 	return checkAndUpdateDefaultOrg(ctx, currentUserID, deletedOrgID, mutation.Client())
 }
 
-// checkAndUpdateDefaultOrg checks if the org being deleted is the user's default org and updates it if needed
-func checkAndUpdateDefaultOrg(ctx context.Context, userID string, oldOrg string, client *generated.Client) (string, error) {
+// checkAndUpdateDefaultOrg checks if the old organization is the user's default org and updates it if needed
+// this is used when an organization is deleted, as well as when a user is removed from an organization
+func checkAndUpdateDefaultOrg(ctx context.Context, userID string, oldOrgID string, client *generated.Client) (string, error) {
 	// check if this is the user's default org
 	userSetting, err := client.
 		UserSetting.
@@ -219,7 +220,7 @@ func checkAndUpdateDefaultOrg(ctx context.Context, userID string, oldOrg string,
 	}
 
 	// if the user's default org was deleted this will now be nil
-	if userSetting.Edges.DefaultOrg == nil || userSetting.Edges.DefaultOrg.ID == oldOrg {
+	if userSetting.Edges.DefaultOrg == nil || userSetting.Edges.DefaultOrg.ID == oldOrgID {
 		// set the user's default org another org
 		// get the first org that was not the org being deleted
 		newDefaultOrgID, err := client.
@@ -390,6 +391,8 @@ func createServiceTuple(ctx context.Context, oID string, m *generated.Organizati
 
 // updateDefaultOrgIfPersonal updates the user's default org if the user has no default org or
 // the default org is their personal org
+// the client must be passed in, rather than using the client in the context  because
+// this function is sometimes called from a REST handler where the client is not available in the context
 func updateDefaultOrgIfPersonal(ctx context.Context, userID, orgID string, client *generated.Client) error {
 	// check if the user has a default org
 	userSetting, err := client.
@@ -405,8 +408,7 @@ func updateDefaultOrgIfPersonal(ctx context.Context, userID, orgID string, clien
 	}
 
 	// if the user has no default org, or the default org is the personal org, set the new org as the default org
-	if userSetting.Edges.DefaultOrg == nil ||
-		userSetting.Edges.DefaultOrg.ID == "" ||
+	if userSetting.Edges.DefaultOrg == nil || userSetting.Edges.DefaultOrg.ID == "" ||
 		userSetting.Edges.DefaultOrg.PersonalOrg {
 		if _, err = client.UserSetting.
 			UpdateOneID(userSetting.ID).
@@ -414,8 +416,6 @@ func updateDefaultOrgIfPersonal(ctx context.Context, userID, orgID string, clien
 			Save(ctx); err != nil {
 			return err
 		}
-
-		return nil
 	}
 
 	return nil

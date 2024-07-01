@@ -132,6 +132,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			if tt.expectedStatus == http.StatusOK {
 				assert.NotNil(t, out.AccessToken)
 				assert.NotNil(t, out.RefreshToken)
+				assert.True(t, out.Success)
 				assert.Equal(t, "Bearer", out.TokenType)
 			}
 		})

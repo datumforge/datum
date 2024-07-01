@@ -166,7 +166,6 @@ func (User) Edges() []ent.Edge {
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("files", File.Type),
 		edge.To("events", Event.Type),
-		edge.To("features", Feature.Type),
 	}
 }
 

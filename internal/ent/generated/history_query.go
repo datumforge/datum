@@ -10,6 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
 	"github.com/datumforge/datum/internal/ent/generated/filehistory"
@@ -117,6 +119,98 @@ func (ehq *EntitlementHistoryQuery) AsOf(ctx context.Context, time time.Time) (*
 	return ehq.
 		Where(entitlementhistory.HistoryTimeLTE(time)).
 		Order(entitlementhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ep *EntitlementPlan) History() *EntitlementPlanHistoryQuery {
+	historyClient := NewEntitlementPlanHistoryClient(ep.config)
+	return historyClient.Query().Where(entitlementplanhistory.Ref(ep.ID))
+}
+
+func (eph *EntitlementPlanHistory) Next(ctx context.Context) (*EntitlementPlanHistory, error) {
+	client := NewEntitlementPlanHistoryClient(eph.config)
+	return client.Query().
+		Where(
+			entitlementplanhistory.Ref(eph.Ref),
+			entitlementplanhistory.HistoryTimeGT(eph.HistoryTime),
+		).
+		Order(entitlementplanhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (eph *EntitlementPlanHistory) Prev(ctx context.Context) (*EntitlementPlanHistory, error) {
+	client := NewEntitlementPlanHistoryClient(eph.config)
+	return client.Query().
+		Where(
+			entitlementplanhistory.Ref(eph.Ref),
+			entitlementplanhistory.HistoryTimeLT(eph.HistoryTime),
+		).
+		Order(entitlementplanhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ephq *EntitlementPlanHistoryQuery) Earliest(ctx context.Context) (*EntitlementPlanHistory, error) {
+	return ephq.
+		Order(entitlementplanhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ephq *EntitlementPlanHistoryQuery) Latest(ctx context.Context) (*EntitlementPlanHistory, error) {
+	return ephq.
+		Order(entitlementplanhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ephq *EntitlementPlanHistoryQuery) AsOf(ctx context.Context, time time.Time) (*EntitlementPlanHistory, error) {
+	return ephq.
+		Where(entitlementplanhistory.HistoryTimeLTE(time)).
+		Order(entitlementplanhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (epf *EntitlementPlanFeature) History() *EntitlementPlanFeatureHistoryQuery {
+	historyClient := NewEntitlementPlanFeatureHistoryClient(epf.config)
+	return historyClient.Query().Where(entitlementplanfeaturehistory.Ref(epf.ID))
+}
+
+func (epfh *EntitlementPlanFeatureHistory) Next(ctx context.Context) (*EntitlementPlanFeatureHistory, error) {
+	client := NewEntitlementPlanFeatureHistoryClient(epfh.config)
+	return client.Query().
+		Where(
+			entitlementplanfeaturehistory.Ref(epfh.Ref),
+			entitlementplanfeaturehistory.HistoryTimeGT(epfh.HistoryTime),
+		).
+		Order(entitlementplanfeaturehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (epfh *EntitlementPlanFeatureHistory) Prev(ctx context.Context) (*EntitlementPlanFeatureHistory, error) {
+	client := NewEntitlementPlanFeatureHistoryClient(epfh.config)
+	return client.Query().
+		Where(
+			entitlementplanfeaturehistory.Ref(epfh.Ref),
+			entitlementplanfeaturehistory.HistoryTimeLT(epfh.HistoryTime),
+		).
+		Order(entitlementplanfeaturehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (epfhq *EntitlementPlanFeatureHistoryQuery) Earliest(ctx context.Context) (*EntitlementPlanFeatureHistory, error) {
+	return epfhq.
+		Order(entitlementplanfeaturehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (epfhq *EntitlementPlanFeatureHistoryQuery) Latest(ctx context.Context) (*EntitlementPlanFeatureHistory, error) {
+	return epfhq.
+		Order(entitlementplanfeaturehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (epfhq *EntitlementPlanFeatureHistoryQuery) AsOf(ctx context.Context, time time.Time) (*EntitlementPlanFeatureHistory, error) {
+	return epfhq.
+		Where(entitlementplanfeaturehistory.HistoryTimeLTE(time)).
+		Order(entitlementplanfeaturehistory.ByHistoryTime(sql.OrderDesc())).
 		First(ctx)
 }
 

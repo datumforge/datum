@@ -83,6 +83,54 @@ type EntitlementDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+// Return response for createBulkEntitlementPlan mutation
+type EntitlementPlanBulkCreatePayload struct {
+	// Created entitlementPlans
+	EntitlementPlans []*generated.EntitlementPlan `json:"entitlementPlans,omitempty"`
+}
+
+// Return response for createEntitlementPlan mutation
+type EntitlementPlanCreatePayload struct {
+	// Created entitlementPlan
+	EntitlementPlan *generated.EntitlementPlan `json:"entitlementPlan"`
+}
+
+// Return response for deleteEntitlementPlan mutation
+type EntitlementPlanDeletePayload struct {
+	// Deleted entitlementPlan ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for createBulkEntitlementPlanFeature mutation
+type EntitlementPlanFeatureBulkCreatePayload struct {
+	// Created entitlementPlanFeatures
+	EntitlementPlanFeatures []*generated.EntitlementPlanFeature `json:"entitlementPlanFeatures,omitempty"`
+}
+
+// Return response for createEntitlementPlanFeature mutation
+type EntitlementPlanFeatureCreatePayload struct {
+	// Created entitlementPlanFeature
+	EntitlementPlanFeature *generated.EntitlementPlanFeature `json:"entitlementPlanFeature"`
+}
+
+// Return response for deleteEntitlementPlanFeature mutation
+type EntitlementPlanFeatureDeletePayload struct {
+	// Deleted entitlementPlanFeature ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateEntitlementPlanFeature mutation
+type EntitlementPlanFeatureUpdatePayload struct {
+	// Updated entitlementPlanFeature
+	EntitlementPlanFeature *generated.EntitlementPlanFeature `json:"entitlementPlanFeature"`
+}
+
+// Return response for updateEntitlementPlan mutation
+type EntitlementPlanUpdatePayload struct {
+	// Updated entitlementPlan
+	EntitlementPlan *generated.EntitlementPlan `json:"entitlementPlan"`
+}
+
 // Return response for updateEntitlement mutation
 type EntitlementUpdatePayload struct {
 	// Updated entitlement

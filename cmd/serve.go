@@ -22,8 +22,9 @@ import (
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start the Datum API Server",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return serve(cmd.Context())
+	Run: func(cmd *cobra.Command, args []string) {
+		err := serve(cmd.Context())
+		cobra.CheckErr(err)
 	},
 }
 

@@ -12,13 +12,12 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
-	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
-	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -126,17 +125,43 @@ func (fu *FeatureUpdate) ClearTags() *FeatureUpdate {
 	return fu
 }
 
-// SetGlobal sets the "global" field.
-func (fu *FeatureUpdate) SetGlobal(b bool) *FeatureUpdate {
-	fu.mutation.SetGlobal(b)
+// SetOwnerID sets the "owner_id" field.
+func (fu *FeatureUpdate) SetOwnerID(s string) *FeatureUpdate {
+	fu.mutation.SetOwnerID(s)
 	return fu
 }
 
-// SetNillableGlobal sets the "global" field if the given value is not nil.
-func (fu *FeatureUpdate) SetNillableGlobal(b *bool) *FeatureUpdate {
-	if b != nil {
-		fu.SetGlobal(*b)
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (fu *FeatureUpdate) SetNillableOwnerID(s *string) *FeatureUpdate {
+	if s != nil {
+		fu.SetOwnerID(*s)
 	}
+	return fu
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (fu *FeatureUpdate) ClearOwnerID() *FeatureUpdate {
+	fu.mutation.ClearOwnerID()
+	return fu
+}
+
+// SetDisplayName sets the "display_name" field.
+func (fu *FeatureUpdate) SetDisplayName(s string) *FeatureUpdate {
+	fu.mutation.SetDisplayName(s)
+	return fu
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (fu *FeatureUpdate) SetNillableDisplayName(s *string) *FeatureUpdate {
+	if s != nil {
+		fu.SetDisplayName(*s)
+	}
+	return fu
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (fu *FeatureUpdate) ClearDisplayName() *FeatureUpdate {
+	fu.mutation.ClearDisplayName()
 	return fu
 }
 
@@ -174,64 +199,36 @@ func (fu *FeatureUpdate) ClearDescription() *FeatureUpdate {
 	return fu
 }
 
-// AddUserIDs adds the "users" edge to the User entity by IDs.
-func (fu *FeatureUpdate) AddUserIDs(ids ...string) *FeatureUpdate {
-	fu.mutation.AddUserIDs(ids...)
+// SetMetadata sets the "metadata" field.
+func (fu *FeatureUpdate) SetMetadata(m map[string]interface{}) *FeatureUpdate {
+	fu.mutation.SetMetadata(m)
 	return fu
 }
 
-// AddUsers adds the "users" edges to the User entity.
-func (fu *FeatureUpdate) AddUsers(u ...*User) *FeatureUpdate {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fu.AddUserIDs(ids...)
-}
-
-// AddGroupIDs adds the "groups" edge to the Group entity by IDs.
-func (fu *FeatureUpdate) AddGroupIDs(ids ...string) *FeatureUpdate {
-	fu.mutation.AddGroupIDs(ids...)
+// ClearMetadata clears the value of the "metadata" field.
+func (fu *FeatureUpdate) ClearMetadata() *FeatureUpdate {
+	fu.mutation.ClearMetadata()
 	return fu
 }
 
-// AddGroups adds the "groups" edges to the Group entity.
-func (fu *FeatureUpdate) AddGroups(g ...*Group) *FeatureUpdate {
-	ids := make([]string, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
-	}
-	return fu.AddGroupIDs(ids...)
+// SetOwner sets the "owner" edge to the Organization entity.
+func (fu *FeatureUpdate) SetOwner(o *Organization) *FeatureUpdate {
+	return fu.SetOwnerID(o.ID)
 }
 
-// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
-func (fu *FeatureUpdate) AddEntitlementIDs(ids ...string) *FeatureUpdate {
-	fu.mutation.AddEntitlementIDs(ids...)
+// AddPlanIDs adds the "plans" edge to the EntitlementPlan entity by IDs.
+func (fu *FeatureUpdate) AddPlanIDs(ids ...string) *FeatureUpdate {
+	fu.mutation.AddPlanIDs(ids...)
 	return fu
 }
 
-// AddEntitlements adds the "entitlements" edges to the Entitlement entity.
-func (fu *FeatureUpdate) AddEntitlements(e ...*Entitlement) *FeatureUpdate {
+// AddPlans adds the "plans" edges to the EntitlementPlan entity.
+func (fu *FeatureUpdate) AddPlans(e ...*EntitlementPlan) *FeatureUpdate {
 	ids := make([]string, len(e))
 	for i := range e {
 		ids[i] = e[i].ID
 	}
-	return fu.AddEntitlementIDs(ids...)
-}
-
-// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
-func (fu *FeatureUpdate) AddOrganizationIDs(ids ...string) *FeatureUpdate {
-	fu.mutation.AddOrganizationIDs(ids...)
-	return fu
-}
-
-// AddOrganizations adds the "organizations" edges to the Organization entity.
-func (fu *FeatureUpdate) AddOrganizations(o ...*Organization) *FeatureUpdate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return fu.AddOrganizationIDs(ids...)
+	return fu.AddPlanIDs(ids...)
 }
 
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
@@ -249,93 +246,51 @@ func (fu *FeatureUpdate) AddEvents(e ...*Event) *FeatureUpdate {
 	return fu.AddEventIDs(ids...)
 }
 
+// AddFeatureIDs adds the "features" edge to the EntitlementPlanFeature entity by IDs.
+func (fu *FeatureUpdate) AddFeatureIDs(ids ...string) *FeatureUpdate {
+	fu.mutation.AddFeatureIDs(ids...)
+	return fu
+}
+
+// AddFeatures adds the "features" edges to the EntitlementPlanFeature entity.
+func (fu *FeatureUpdate) AddFeatures(e ...*EntitlementPlanFeature) *FeatureUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return fu.AddFeatureIDs(ids...)
+}
+
 // Mutation returns the FeatureMutation object of the builder.
 func (fu *FeatureUpdate) Mutation() *FeatureMutation {
 	return fu.mutation
 }
 
-// ClearUsers clears all "users" edges to the User entity.
-func (fu *FeatureUpdate) ClearUsers() *FeatureUpdate {
-	fu.mutation.ClearUsers()
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (fu *FeatureUpdate) ClearOwner() *FeatureUpdate {
+	fu.mutation.ClearOwner()
 	return fu
 }
 
-// RemoveUserIDs removes the "users" edge to User entities by IDs.
-func (fu *FeatureUpdate) RemoveUserIDs(ids ...string) *FeatureUpdate {
-	fu.mutation.RemoveUserIDs(ids...)
+// ClearPlans clears all "plans" edges to the EntitlementPlan entity.
+func (fu *FeatureUpdate) ClearPlans() *FeatureUpdate {
+	fu.mutation.ClearPlans()
 	return fu
 }
 
-// RemoveUsers removes "users" edges to User entities.
-func (fu *FeatureUpdate) RemoveUsers(u ...*User) *FeatureUpdate {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fu.RemoveUserIDs(ids...)
-}
-
-// ClearGroups clears all "groups" edges to the Group entity.
-func (fu *FeatureUpdate) ClearGroups() *FeatureUpdate {
-	fu.mutation.ClearGroups()
+// RemovePlanIDs removes the "plans" edge to EntitlementPlan entities by IDs.
+func (fu *FeatureUpdate) RemovePlanIDs(ids ...string) *FeatureUpdate {
+	fu.mutation.RemovePlanIDs(ids...)
 	return fu
 }
 
-// RemoveGroupIDs removes the "groups" edge to Group entities by IDs.
-func (fu *FeatureUpdate) RemoveGroupIDs(ids ...string) *FeatureUpdate {
-	fu.mutation.RemoveGroupIDs(ids...)
-	return fu
-}
-
-// RemoveGroups removes "groups" edges to Group entities.
-func (fu *FeatureUpdate) RemoveGroups(g ...*Group) *FeatureUpdate {
-	ids := make([]string, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
-	}
-	return fu.RemoveGroupIDs(ids...)
-}
-
-// ClearEntitlements clears all "entitlements" edges to the Entitlement entity.
-func (fu *FeatureUpdate) ClearEntitlements() *FeatureUpdate {
-	fu.mutation.ClearEntitlements()
-	return fu
-}
-
-// RemoveEntitlementIDs removes the "entitlements" edge to Entitlement entities by IDs.
-func (fu *FeatureUpdate) RemoveEntitlementIDs(ids ...string) *FeatureUpdate {
-	fu.mutation.RemoveEntitlementIDs(ids...)
-	return fu
-}
-
-// RemoveEntitlements removes "entitlements" edges to Entitlement entities.
-func (fu *FeatureUpdate) RemoveEntitlements(e ...*Entitlement) *FeatureUpdate {
+// RemovePlans removes "plans" edges to EntitlementPlan entities.
+func (fu *FeatureUpdate) RemovePlans(e ...*EntitlementPlan) *FeatureUpdate {
 	ids := make([]string, len(e))
 	for i := range e {
 		ids[i] = e[i].ID
 	}
-	return fu.RemoveEntitlementIDs(ids...)
-}
-
-// ClearOrganizations clears all "organizations" edges to the Organization entity.
-func (fu *FeatureUpdate) ClearOrganizations() *FeatureUpdate {
-	fu.mutation.ClearOrganizations()
-	return fu
-}
-
-// RemoveOrganizationIDs removes the "organizations" edge to Organization entities by IDs.
-func (fu *FeatureUpdate) RemoveOrganizationIDs(ids ...string) *FeatureUpdate {
-	fu.mutation.RemoveOrganizationIDs(ids...)
-	return fu
-}
-
-// RemoveOrganizations removes "organizations" edges to Organization entities.
-func (fu *FeatureUpdate) RemoveOrganizations(o ...*Organization) *FeatureUpdate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return fu.RemoveOrganizationIDs(ids...)
+	return fu.RemovePlanIDs(ids...)
 }
 
 // ClearEvents clears all "events" edges to the Event entity.
@@ -357,6 +312,27 @@ func (fu *FeatureUpdate) RemoveEvents(e ...*Event) *FeatureUpdate {
 		ids[i] = e[i].ID
 	}
 	return fu.RemoveEventIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to the EntitlementPlanFeature entity.
+func (fu *FeatureUpdate) ClearFeatures() *FeatureUpdate {
+	fu.mutation.ClearFeatures()
+	return fu
+}
+
+// RemoveFeatureIDs removes the "features" edge to EntitlementPlanFeature entities by IDs.
+func (fu *FeatureUpdate) RemoveFeatureIDs(ids ...string) *FeatureUpdate {
+	fu.mutation.RemoveFeatureIDs(ids...)
+	return fu
+}
+
+// RemoveFeatures removes "features" edges to EntitlementPlanFeature entities.
+func (fu *FeatureUpdate) RemoveFeatures(e ...*EntitlementPlanFeature) *FeatureUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return fu.RemoveFeatureIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -401,7 +377,20 @@ func (fu *FeatureUpdate) defaults() error {
 	return nil
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (fu *FeatureUpdate) check() error {
+	if v, ok := fu.mutation.OwnerID(); ok {
+		if err := feature.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Feature.owner_id": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (fu *FeatureUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := fu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(feature.Table, feature.Columns, sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString))
 	if ps := fu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -451,8 +440,11 @@ func (fu *FeatureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if fu.mutation.TagsCleared() {
 		_spec.ClearField(feature.FieldTags, field.TypeJSON)
 	}
-	if value, ok := fu.mutation.Global(); ok {
-		_spec.SetField(feature.FieldGlobal, field.TypeBool, value)
+	if value, ok := fu.mutation.DisplayName(); ok {
+		_spec.SetField(feature.FieldDisplayName, field.TypeString, value)
+	}
+	if fu.mutation.DisplayNameCleared() {
+		_spec.ClearField(feature.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := fu.mutation.Enabled(); ok {
 		_spec.SetField(feature.FieldEnabled, field.TypeBool, value)
@@ -463,195 +455,109 @@ func (fu *FeatureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if fu.mutation.DescriptionCleared() {
 		_spec.ClearField(feature.FieldDescription, field.TypeString)
 	}
-	if fu.mutation.UsersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.UsersTable,
-			Columns: feature.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.UserFeatures
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := fu.mutation.Metadata(); ok {
+		_spec.SetField(feature.FieldMetadata, field.TypeJSON, value)
 	}
-	if nodes := fu.mutation.RemovedUsersIDs(); len(nodes) > 0 && !fu.mutation.UsersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.UsersTable,
-			Columns: feature.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.UserFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if fu.mutation.MetadataCleared() {
+		_spec.ClearField(feature.FieldMetadata, field.TypeJSON)
 	}
-	if nodes := fu.mutation.UsersIDs(); len(nodes) > 0 {
+	if fu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   feature.UsersTable,
-			Columns: feature.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.UserFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fu.mutation.GroupsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.GroupsTable,
-			Columns: feature.GroupsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.GroupFeatures
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.RemovedGroupsIDs(); len(nodes) > 0 && !fu.mutation.GroupsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.GroupsTable,
-			Columns: feature.GroupsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.GroupFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.GroupsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.GroupsTable,
-			Columns: feature.GroupsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.GroupFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fu.mutation.EntitlementsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.EntitlementsTable,
-			Columns: feature.EntitlementsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.EntitlementFeatures
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.RemovedEntitlementsIDs(); len(nodes) > 0 && !fu.mutation.EntitlementsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.EntitlementsTable,
-			Columns: feature.EntitlementsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.EntitlementFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.EntitlementsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.EntitlementsTable,
-			Columns: feature.EntitlementsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fu.schemaConfig.EntitlementFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fu.mutation.OrganizationsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.OrganizationsTable,
-			Columns: feature.OrganizationsPrimaryKey,
+			Table:   feature.OwnerTable,
+			Columns: []string{feature.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = fu.schemaConfig.OrganizationFeatures
+		edge.Schema = fu.schemaConfig.Feature
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fu.mutation.RemovedOrganizationsIDs(); len(nodes) > 0 && !fu.mutation.OrganizationsCleared() {
+	if nodes := fu.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   feature.OrganizationsTable,
-			Columns: feature.OrganizationsPrimaryKey,
+			Table:   feature.OwnerTable,
+			Columns: []string{feature.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = fu.schemaConfig.OrganizationFeatures
+		edge.Schema = fu.schemaConfig.Feature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fu.mutation.PlansCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   feature.PlansTable,
+			Columns: feature.PlansPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fu.schemaConfig.EntitlementPlanFeature
+		createE := &EntitlementPlanFeatureCreate{config: fu.config, mutation: newEntitlementPlanFeatureMutation(fu.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fu.mutation.OrganizationsIDs(); len(nodes) > 0 {
+	if nodes := fu.mutation.RemovedPlansIDs(); len(nodes) > 0 && !fu.mutation.PlansCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.OrganizationsTable,
-			Columns: feature.OrganizationsPrimaryKey,
+			Inverse: false,
+			Table:   feature.PlansTable,
+			Columns: feature.PlansPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = fu.schemaConfig.OrganizationFeatures
+		edge.Schema = fu.schemaConfig.EntitlementPlanFeature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &EntitlementPlanFeatureCreate{config: fu.config, mutation: newEntitlementPlanFeatureMutation(fu.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.PlansIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   feature.PlansTable,
+			Columns: feature.PlansPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fu.schemaConfig.EntitlementPlanFeature
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &EntitlementPlanFeatureCreate{config: fu.config, mutation: newEntitlementPlanFeatureMutation(fu.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
@@ -698,6 +604,54 @@ func (fu *FeatureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = fu.schemaConfig.FeatureEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   feature.FeaturesTable,
+			Columns: []string{feature.FeaturesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fu.schemaConfig.EntitlementPlanFeature
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !fu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   feature.FeaturesTable,
+			Columns: []string{feature.FeaturesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fu.schemaConfig.EntitlementPlanFeature
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   feature.FeaturesTable,
+			Columns: []string{feature.FeaturesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fu.schemaConfig.EntitlementPlanFeature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -815,17 +769,43 @@ func (fuo *FeatureUpdateOne) ClearTags() *FeatureUpdateOne {
 	return fuo
 }
 
-// SetGlobal sets the "global" field.
-func (fuo *FeatureUpdateOne) SetGlobal(b bool) *FeatureUpdateOne {
-	fuo.mutation.SetGlobal(b)
+// SetOwnerID sets the "owner_id" field.
+func (fuo *FeatureUpdateOne) SetOwnerID(s string) *FeatureUpdateOne {
+	fuo.mutation.SetOwnerID(s)
 	return fuo
 }
 
-// SetNillableGlobal sets the "global" field if the given value is not nil.
-func (fuo *FeatureUpdateOne) SetNillableGlobal(b *bool) *FeatureUpdateOne {
-	if b != nil {
-		fuo.SetGlobal(*b)
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (fuo *FeatureUpdateOne) SetNillableOwnerID(s *string) *FeatureUpdateOne {
+	if s != nil {
+		fuo.SetOwnerID(*s)
 	}
+	return fuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (fuo *FeatureUpdateOne) ClearOwnerID() *FeatureUpdateOne {
+	fuo.mutation.ClearOwnerID()
+	return fuo
+}
+
+// SetDisplayName sets the "display_name" field.
+func (fuo *FeatureUpdateOne) SetDisplayName(s string) *FeatureUpdateOne {
+	fuo.mutation.SetDisplayName(s)
+	return fuo
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (fuo *FeatureUpdateOne) SetNillableDisplayName(s *string) *FeatureUpdateOne {
+	if s != nil {
+		fuo.SetDisplayName(*s)
+	}
+	return fuo
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (fuo *FeatureUpdateOne) ClearDisplayName() *FeatureUpdateOne {
+	fuo.mutation.ClearDisplayName()
 	return fuo
 }
 
@@ -863,64 +843,36 @@ func (fuo *FeatureUpdateOne) ClearDescription() *FeatureUpdateOne {
 	return fuo
 }
 
-// AddUserIDs adds the "users" edge to the User entity by IDs.
-func (fuo *FeatureUpdateOne) AddUserIDs(ids ...string) *FeatureUpdateOne {
-	fuo.mutation.AddUserIDs(ids...)
+// SetMetadata sets the "metadata" field.
+func (fuo *FeatureUpdateOne) SetMetadata(m map[string]interface{}) *FeatureUpdateOne {
+	fuo.mutation.SetMetadata(m)
 	return fuo
 }
 
-// AddUsers adds the "users" edges to the User entity.
-func (fuo *FeatureUpdateOne) AddUsers(u ...*User) *FeatureUpdateOne {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fuo.AddUserIDs(ids...)
-}
-
-// AddGroupIDs adds the "groups" edge to the Group entity by IDs.
-func (fuo *FeatureUpdateOne) AddGroupIDs(ids ...string) *FeatureUpdateOne {
-	fuo.mutation.AddGroupIDs(ids...)
+// ClearMetadata clears the value of the "metadata" field.
+func (fuo *FeatureUpdateOne) ClearMetadata() *FeatureUpdateOne {
+	fuo.mutation.ClearMetadata()
 	return fuo
 }
 
-// AddGroups adds the "groups" edges to the Group entity.
-func (fuo *FeatureUpdateOne) AddGroups(g ...*Group) *FeatureUpdateOne {
-	ids := make([]string, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
-	}
-	return fuo.AddGroupIDs(ids...)
+// SetOwner sets the "owner" edge to the Organization entity.
+func (fuo *FeatureUpdateOne) SetOwner(o *Organization) *FeatureUpdateOne {
+	return fuo.SetOwnerID(o.ID)
 }
 
-// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
-func (fuo *FeatureUpdateOne) AddEntitlementIDs(ids ...string) *FeatureUpdateOne {
-	fuo.mutation.AddEntitlementIDs(ids...)
+// AddPlanIDs adds the "plans" edge to the EntitlementPlan entity by IDs.
+func (fuo *FeatureUpdateOne) AddPlanIDs(ids ...string) *FeatureUpdateOne {
+	fuo.mutation.AddPlanIDs(ids...)
 	return fuo
 }
 
-// AddEntitlements adds the "entitlements" edges to the Entitlement entity.
-func (fuo *FeatureUpdateOne) AddEntitlements(e ...*Entitlement) *FeatureUpdateOne {
+// AddPlans adds the "plans" edges to the EntitlementPlan entity.
+func (fuo *FeatureUpdateOne) AddPlans(e ...*EntitlementPlan) *FeatureUpdateOne {
 	ids := make([]string, len(e))
 	for i := range e {
 		ids[i] = e[i].ID
 	}
-	return fuo.AddEntitlementIDs(ids...)
-}
-
-// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
-func (fuo *FeatureUpdateOne) AddOrganizationIDs(ids ...string) *FeatureUpdateOne {
-	fuo.mutation.AddOrganizationIDs(ids...)
-	return fuo
-}
-
-// AddOrganizations adds the "organizations" edges to the Organization entity.
-func (fuo *FeatureUpdateOne) AddOrganizations(o ...*Organization) *FeatureUpdateOne {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return fuo.AddOrganizationIDs(ids...)
+	return fuo.AddPlanIDs(ids...)
 }
 
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
@@ -938,93 +890,51 @@ func (fuo *FeatureUpdateOne) AddEvents(e ...*Event) *FeatureUpdateOne {
 	return fuo.AddEventIDs(ids...)
 }
 
+// AddFeatureIDs adds the "features" edge to the EntitlementPlanFeature entity by IDs.
+func (fuo *FeatureUpdateOne) AddFeatureIDs(ids ...string) *FeatureUpdateOne {
+	fuo.mutation.AddFeatureIDs(ids...)
+	return fuo
+}
+
+// AddFeatures adds the "features" edges to the EntitlementPlanFeature entity.
+func (fuo *FeatureUpdateOne) AddFeatures(e ...*EntitlementPlanFeature) *FeatureUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return fuo.AddFeatureIDs(ids...)
+}
+
 // Mutation returns the FeatureMutation object of the builder.
 func (fuo *FeatureUpdateOne) Mutation() *FeatureMutation {
 	return fuo.mutation
 }
 
-// ClearUsers clears all "users" edges to the User entity.
-func (fuo *FeatureUpdateOne) ClearUsers() *FeatureUpdateOne {
-	fuo.mutation.ClearUsers()
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (fuo *FeatureUpdateOne) ClearOwner() *FeatureUpdateOne {
+	fuo.mutation.ClearOwner()
 	return fuo
 }
 
-// RemoveUserIDs removes the "users" edge to User entities by IDs.
-func (fuo *FeatureUpdateOne) RemoveUserIDs(ids ...string) *FeatureUpdateOne {
-	fuo.mutation.RemoveUserIDs(ids...)
+// ClearPlans clears all "plans" edges to the EntitlementPlan entity.
+func (fuo *FeatureUpdateOne) ClearPlans() *FeatureUpdateOne {
+	fuo.mutation.ClearPlans()
 	return fuo
 }
 
-// RemoveUsers removes "users" edges to User entities.
-func (fuo *FeatureUpdateOne) RemoveUsers(u ...*User) *FeatureUpdateOne {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fuo.RemoveUserIDs(ids...)
-}
-
-// ClearGroups clears all "groups" edges to the Group entity.
-func (fuo *FeatureUpdateOne) ClearGroups() *FeatureUpdateOne {
-	fuo.mutation.ClearGroups()
+// RemovePlanIDs removes the "plans" edge to EntitlementPlan entities by IDs.
+func (fuo *FeatureUpdateOne) RemovePlanIDs(ids ...string) *FeatureUpdateOne {
+	fuo.mutation.RemovePlanIDs(ids...)
 	return fuo
 }
 
-// RemoveGroupIDs removes the "groups" edge to Group entities by IDs.
-func (fuo *FeatureUpdateOne) RemoveGroupIDs(ids ...string) *FeatureUpdateOne {
-	fuo.mutation.RemoveGroupIDs(ids...)
-	return fuo
-}
-
-// RemoveGroups removes "groups" edges to Group entities.
-func (fuo *FeatureUpdateOne) RemoveGroups(g ...*Group) *FeatureUpdateOne {
-	ids := make([]string, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
-	}
-	return fuo.RemoveGroupIDs(ids...)
-}
-
-// ClearEntitlements clears all "entitlements" edges to the Entitlement entity.
-func (fuo *FeatureUpdateOne) ClearEntitlements() *FeatureUpdateOne {
-	fuo.mutation.ClearEntitlements()
-	return fuo
-}
-
-// RemoveEntitlementIDs removes the "entitlements" edge to Entitlement entities by IDs.
-func (fuo *FeatureUpdateOne) RemoveEntitlementIDs(ids ...string) *FeatureUpdateOne {
-	fuo.mutation.RemoveEntitlementIDs(ids...)
-	return fuo
-}
-
-// RemoveEntitlements removes "entitlements" edges to Entitlement entities.
-func (fuo *FeatureUpdateOne) RemoveEntitlements(e ...*Entitlement) *FeatureUpdateOne {
+// RemovePlans removes "plans" edges to EntitlementPlan entities.
+func (fuo *FeatureUpdateOne) RemovePlans(e ...*EntitlementPlan) *FeatureUpdateOne {
 	ids := make([]string, len(e))
 	for i := range e {
 		ids[i] = e[i].ID
 	}
-	return fuo.RemoveEntitlementIDs(ids...)
-}
-
-// ClearOrganizations clears all "organizations" edges to the Organization entity.
-func (fuo *FeatureUpdateOne) ClearOrganizations() *FeatureUpdateOne {
-	fuo.mutation.ClearOrganizations()
-	return fuo
-}
-
-// RemoveOrganizationIDs removes the "organizations" edge to Organization entities by IDs.
-func (fuo *FeatureUpdateOne) RemoveOrganizationIDs(ids ...string) *FeatureUpdateOne {
-	fuo.mutation.RemoveOrganizationIDs(ids...)
-	return fuo
-}
-
-// RemoveOrganizations removes "organizations" edges to Organization entities.
-func (fuo *FeatureUpdateOne) RemoveOrganizations(o ...*Organization) *FeatureUpdateOne {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return fuo.RemoveOrganizationIDs(ids...)
+	return fuo.RemovePlanIDs(ids...)
 }
 
 // ClearEvents clears all "events" edges to the Event entity.
@@ -1046,6 +956,27 @@ func (fuo *FeatureUpdateOne) RemoveEvents(e ...*Event) *FeatureUpdateOne {
 		ids[i] = e[i].ID
 	}
 	return fuo.RemoveEventIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to the EntitlementPlanFeature entity.
+func (fuo *FeatureUpdateOne) ClearFeatures() *FeatureUpdateOne {
+	fuo.mutation.ClearFeatures()
+	return fuo
+}
+
+// RemoveFeatureIDs removes the "features" edge to EntitlementPlanFeature entities by IDs.
+func (fuo *FeatureUpdateOne) RemoveFeatureIDs(ids ...string) *FeatureUpdateOne {
+	fuo.mutation.RemoveFeatureIDs(ids...)
+	return fuo
+}
+
+// RemoveFeatures removes "features" edges to EntitlementPlanFeature entities.
+func (fuo *FeatureUpdateOne) RemoveFeatures(e ...*EntitlementPlanFeature) *FeatureUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return fuo.RemoveFeatureIDs(ids...)
 }
 
 // Where appends a list predicates to the FeatureUpdate builder.
@@ -1103,7 +1034,20 @@ func (fuo *FeatureUpdateOne) defaults() error {
 	return nil
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (fuo *FeatureUpdateOne) check() error {
+	if v, ok := fuo.mutation.OwnerID(); ok {
+		if err := feature.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Feature.owner_id": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (_node *Feature, err error) {
+	if err := fuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(feature.Table, feature.Columns, sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString))
 	id, ok := fuo.mutation.ID()
 	if !ok {
@@ -1170,8 +1114,11 @@ func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (_node *Feature, err e
 	if fuo.mutation.TagsCleared() {
 		_spec.ClearField(feature.FieldTags, field.TypeJSON)
 	}
-	if value, ok := fuo.mutation.Global(); ok {
-		_spec.SetField(feature.FieldGlobal, field.TypeBool, value)
+	if value, ok := fuo.mutation.DisplayName(); ok {
+		_spec.SetField(feature.FieldDisplayName, field.TypeString, value)
+	}
+	if fuo.mutation.DisplayNameCleared() {
+		_spec.ClearField(feature.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := fuo.mutation.Enabled(); ok {
 		_spec.SetField(feature.FieldEnabled, field.TypeBool, value)
@@ -1182,195 +1129,109 @@ func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (_node *Feature, err e
 	if fuo.mutation.DescriptionCleared() {
 		_spec.ClearField(feature.FieldDescription, field.TypeString)
 	}
-	if fuo.mutation.UsersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.UsersTable,
-			Columns: feature.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.UserFeatures
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := fuo.mutation.Metadata(); ok {
+		_spec.SetField(feature.FieldMetadata, field.TypeJSON, value)
 	}
-	if nodes := fuo.mutation.RemovedUsersIDs(); len(nodes) > 0 && !fuo.mutation.UsersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.UsersTable,
-			Columns: feature.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.UserFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if fuo.mutation.MetadataCleared() {
+		_spec.ClearField(feature.FieldMetadata, field.TypeJSON)
 	}
-	if nodes := fuo.mutation.UsersIDs(); len(nodes) > 0 {
+	if fuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   feature.UsersTable,
-			Columns: feature.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.UserFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fuo.mutation.GroupsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.GroupsTable,
-			Columns: feature.GroupsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.GroupFeatures
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.RemovedGroupsIDs(); len(nodes) > 0 && !fuo.mutation.GroupsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.GroupsTable,
-			Columns: feature.GroupsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.GroupFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.GroupsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.GroupsTable,
-			Columns: feature.GroupsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.GroupFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fuo.mutation.EntitlementsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.EntitlementsTable,
-			Columns: feature.EntitlementsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.EntitlementFeatures
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.RemovedEntitlementsIDs(); len(nodes) > 0 && !fuo.mutation.EntitlementsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.EntitlementsTable,
-			Columns: feature.EntitlementsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.EntitlementFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.EntitlementsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.EntitlementsTable,
-			Columns: feature.EntitlementsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fuo.schemaConfig.EntitlementFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if fuo.mutation.OrganizationsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.OrganizationsTable,
-			Columns: feature.OrganizationsPrimaryKey,
+			Table:   feature.OwnerTable,
+			Columns: []string{feature.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = fuo.schemaConfig.OrganizationFeatures
+		edge.Schema = fuo.schemaConfig.Feature
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fuo.mutation.RemovedOrganizationsIDs(); len(nodes) > 0 && !fuo.mutation.OrganizationsCleared() {
+	if nodes := fuo.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   feature.OrganizationsTable,
-			Columns: feature.OrganizationsPrimaryKey,
+			Table:   feature.OwnerTable,
+			Columns: []string{feature.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = fuo.schemaConfig.OrganizationFeatures
+		edge.Schema = fuo.schemaConfig.Feature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fuo.mutation.PlansCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   feature.PlansTable,
+			Columns: feature.PlansPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fuo.schemaConfig.EntitlementPlanFeature
+		createE := &EntitlementPlanFeatureCreate{config: fuo.config, mutation: newEntitlementPlanFeatureMutation(fuo.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fuo.mutation.OrganizationsIDs(); len(nodes) > 0 {
+	if nodes := fuo.mutation.RemovedPlansIDs(); len(nodes) > 0 && !fuo.mutation.PlansCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.OrganizationsTable,
-			Columns: feature.OrganizationsPrimaryKey,
+			Inverse: false,
+			Table:   feature.PlansTable,
+			Columns: feature.PlansPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = fuo.schemaConfig.OrganizationFeatures
+		edge.Schema = fuo.schemaConfig.EntitlementPlanFeature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &EntitlementPlanFeatureCreate{config: fuo.config, mutation: newEntitlementPlanFeatureMutation(fuo.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.PlansIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   feature.PlansTable,
+			Columns: feature.PlansPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fuo.schemaConfig.EntitlementPlanFeature
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &EntitlementPlanFeatureCreate{config: fuo.config, mutation: newEntitlementPlanFeatureMutation(fuo.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
@@ -1417,6 +1278,54 @@ func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (_node *Feature, err e
 			},
 		}
 		edge.Schema = fuo.schemaConfig.FeatureEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fuo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   feature.FeaturesTable,
+			Columns: []string{feature.FeaturesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fuo.schemaConfig.EntitlementPlanFeature
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !fuo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   feature.FeaturesTable,
+			Columns: []string{feature.FeaturesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fuo.schemaConfig.EntitlementPlanFeature
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   feature.FeaturesTable,
+			Columns: []string{feature.FeaturesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fuo.schemaConfig.EntitlementPlanFeature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

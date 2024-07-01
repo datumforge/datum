@@ -49,7 +49,7 @@ mutation DeleteInvite($deleteInviteId: ID!) {
   }
 }
 
-query GetInvite($inviteId: ID!) {
+query GetInviteByID($inviteId: ID!) {
   invite(id: $inviteId) {
     expires
     id
@@ -70,7 +70,7 @@ query GetInvite($inviteId: ID!) {
   }
 }
 
-query GetInvites {
+query GetAllInvites {
   invites {
     edges {
       node {

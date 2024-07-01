@@ -74,7 +74,7 @@ func (suite *GraphTestSuite) TestQuerySubscriber() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.GetSubscriber(reqCtx, tc.email)
+			resp, err := suite.client.datum.GetSubscriberByEmail(reqCtx, tc.email)
 
 			if tc.wantErr {
 				require.Error(t, err)
@@ -143,7 +143,7 @@ func (suite *GraphTestSuite) TestQuerySubscribers() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.Subscribers(tc.context, nil)
+			resp, err := suite.client.datum.GetAllSubscribers(tc.context)
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)

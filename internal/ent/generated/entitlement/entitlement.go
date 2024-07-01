@@ -3,14 +3,11 @@
 package entitlement
 
 import (
-	"fmt"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/99designs/gqlgen/graphql"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 const (
@@ -36,8 +33,10 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldOwnerID holds the string denoting the owner_id field in the database.
 	FieldOwnerID = "owner_id"
-	// FieldTier holds the string denoting the tier field in the database.
-	FieldTier = "tier"
+	// FieldPlanID holds the string denoting the plan_id field in the database.
+	FieldPlanID = "plan_id"
+	// FieldOrganizationID holds the string denoting the organization_id field in the database.
+	FieldOrganizationID = "organization_id"
 	// FieldExternalCustomerID holds the string denoting the external_customer_id field in the database.
 	FieldExternalCustomerID = "external_customer_id"
 	// FieldExternalSubscriptionID holds the string denoting the external_subscription_id field in the database.
@@ -50,8 +49,10 @@ const (
 	FieldCancelled = "cancelled"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
-	// EdgeFeatures holds the string denoting the features edge name in mutations.
-	EdgeFeatures = "features"
+	// EdgePlan holds the string denoting the plan edge name in mutations.
+	EdgePlan = "plan"
+	// EdgeOrganization holds the string denoting the organization edge name in mutations.
+	EdgeOrganization = "organization"
 	// EdgeEvents holds the string denoting the events edge name in mutations.
 	EdgeEvents = "events"
 	// Table holds the table name of the entitlement in the database.
@@ -63,11 +64,20 @@ const (
 	OwnerInverseTable = "organizations"
 	// OwnerColumn is the table column denoting the owner relation/edge.
 	OwnerColumn = "owner_id"
-	// FeaturesTable is the table that holds the features relation/edge. The primary key declared below.
-	FeaturesTable = "entitlement_features"
-	// FeaturesInverseTable is the table name for the Feature entity.
-	// It exists in this package in order to avoid circular dependency with the "feature" package.
-	FeaturesInverseTable = "features"
+	// PlanTable is the table that holds the plan relation/edge.
+	PlanTable = "entitlements"
+	// PlanInverseTable is the table name for the EntitlementPlan entity.
+	// It exists in this package in order to avoid circular dependency with the "entitlementplan" package.
+	PlanInverseTable = "entitlement_plans"
+	// PlanColumn is the table column denoting the plan relation/edge.
+	PlanColumn = "plan_id"
+	// OrganizationTable is the table that holds the organization relation/edge.
+	OrganizationTable = "entitlements"
+	// OrganizationInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationInverseTable = "organizations"
+	// OrganizationColumn is the table column denoting the organization relation/edge.
+	OrganizationColumn = "organization_id"
 	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
 	EventsTable = "entitlement_events"
 	// EventsInverseTable is the table name for the Event entity.
@@ -87,7 +97,8 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldOwnerID,
-	FieldTier,
+	FieldPlanID,
+	FieldOrganizationID,
 	FieldExternalCustomerID,
 	FieldExternalSubscriptionID,
 	FieldExpires,
@@ -96,9 +107,6 @@ var Columns = []string{
 }
 
 var (
-	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
-	// primary key for the features relation (M2M).
-	FeaturesPrimaryKey = []string{"entitlement_id", "feature_id"}
 	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
 	// primary key for the events relation (M2M).
 	EventsPrimaryKey = []string{"entitlement_id", "event_id"}
@@ -120,7 +128,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [4]ent.Hook
+	Hooks        [5]ent.Hook
 	Interceptors [2]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -135,6 +143,10 @@ var (
 	DefaultTags []string
 	// OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
 	OwnerIDValidator func(string) error
+	// PlanIDValidator is a validator for the "plan_id" field. It is called by the builders before save.
+	PlanIDValidator func(string) error
+	// OrganizationIDValidator is a validator for the "organization_id" field. It is called by the builders before save.
+	OrganizationIDValidator func(string) error
 	// DefaultExpires holds the default value on creation for the "expires" field.
 	DefaultExpires bool
 	// DefaultCancelled holds the default value on creation for the "cancelled" field.
@@ -142,18 +154,6 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
-
-const DefaultTier enums.Tier = "FREE"
-
-// TierValidator is a validator for the "tier" field enum values. It is called by the builders before save.
-func TierValidator(t enums.Tier) error {
-	switch t.String() {
-	case "FREE", "PRO", "ENTERPRISE":
-		return nil
-	default:
-		return fmt.Errorf("entitlement: invalid enum value for tier field: %q", t)
-	}
-}
 
 // OrderOption defines the ordering options for the Entitlement queries.
 type OrderOption func(*sql.Selector)
@@ -203,9 +203,14 @@ func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOwnerID, opts...).ToFunc()
 }
 
-// ByTier orders the results by the tier field.
-func ByTier(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTier, opts...).ToFunc()
+// ByPlanID orders the results by the plan_id field.
+func ByPlanID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPlanID, opts...).ToFunc()
+}
+
+// ByOrganizationID orders the results by the organization_id field.
+func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
 }
 
 // ByExternalCustomerID orders the results by the external_customer_id field.
@@ -240,17 +245,17 @@ func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByFeaturesCount orders the results by features count.
-func ByFeaturesCount(opts ...sql.OrderTermOption) OrderOption {
+// ByPlanField orders the results by plan field.
+func ByPlanField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newFeaturesStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newPlanStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByFeatures orders the results by features terms.
-func ByFeatures(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByOrganizationField orders the results by organization field.
+func ByOrganizationField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newFeaturesStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newOrganizationStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -274,11 +279,18 @@ func newOwnerStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 	)
 }
-func newFeaturesStep() *sqlgraph.Step {
+func newPlanStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(FeaturesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+		sqlgraph.To(PlanInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, PlanTable, PlanColumn),
+	)
+}
+func newOrganizationStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OrganizationInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTable, OrganizationColumn),
 	)
 }
 func newEventsStep() *sqlgraph.Step {
@@ -288,10 +300,3 @@ func newEventsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
 	)
 }
-
-var (
-	// enums.Tier must implement graphql.Marshaler.
-	_ graphql.Marshaler = (*enums.Tier)(nil)
-	// enums.Tier must implement graphql.Unmarshaler.
-	_ graphql.Unmarshaler = (*enums.Tier)(nil)
-)

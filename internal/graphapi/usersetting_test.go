@@ -97,7 +97,7 @@ func (suite *GraphTestSuite) TestQueryUserSettings() {
 	t.Run("Get User Settings", func(t *testing.T) {
 		defer mock_fga.ClearMocks(suite.client.fga)
 
-		resp, err := suite.client.datum.GetUserSettings(reqCtx)
+		resp, err := suite.client.datum.GetAllUserSettings(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -110,7 +110,7 @@ func (suite *GraphTestSuite) TestQueryUserSettings() {
 		reqCtx, err := userContextWithID(user1.ID)
 		require.NoError(t, err)
 
-		resp, err = suite.client.datum.GetUserSettings(reqCtx)
+		resp, err = suite.client.datum.GetAllUserSettings(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)

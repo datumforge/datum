@@ -129,17 +129,43 @@ func (fhu *FeatureHistoryUpdate) ClearTags() *FeatureHistoryUpdate {
 	return fhu
 }
 
-// SetGlobal sets the "global" field.
-func (fhu *FeatureHistoryUpdate) SetGlobal(b bool) *FeatureHistoryUpdate {
-	fhu.mutation.SetGlobal(b)
+// SetOwnerID sets the "owner_id" field.
+func (fhu *FeatureHistoryUpdate) SetOwnerID(s string) *FeatureHistoryUpdate {
+	fhu.mutation.SetOwnerID(s)
 	return fhu
 }
 
-// SetNillableGlobal sets the "global" field if the given value is not nil.
-func (fhu *FeatureHistoryUpdate) SetNillableGlobal(b *bool) *FeatureHistoryUpdate {
-	if b != nil {
-		fhu.SetGlobal(*b)
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (fhu *FeatureHistoryUpdate) SetNillableOwnerID(s *string) *FeatureHistoryUpdate {
+	if s != nil {
+		fhu.SetOwnerID(*s)
 	}
+	return fhu
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (fhu *FeatureHistoryUpdate) ClearOwnerID() *FeatureHistoryUpdate {
+	fhu.mutation.ClearOwnerID()
+	return fhu
+}
+
+// SetDisplayName sets the "display_name" field.
+func (fhu *FeatureHistoryUpdate) SetDisplayName(s string) *FeatureHistoryUpdate {
+	fhu.mutation.SetDisplayName(s)
+	return fhu
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (fhu *FeatureHistoryUpdate) SetNillableDisplayName(s *string) *FeatureHistoryUpdate {
+	if s != nil {
+		fhu.SetDisplayName(*s)
+	}
+	return fhu
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (fhu *FeatureHistoryUpdate) ClearDisplayName() *FeatureHistoryUpdate {
+	fhu.mutation.ClearDisplayName()
 	return fhu
 }
 
@@ -174,6 +200,18 @@ func (fhu *FeatureHistoryUpdate) SetNillableDescription(s *string) *FeatureHisto
 // ClearDescription clears the value of the "description" field.
 func (fhu *FeatureHistoryUpdate) ClearDescription() *FeatureHistoryUpdate {
 	fhu.mutation.ClearDescription()
+	return fhu
+}
+
+// SetMetadata sets the "metadata" field.
+func (fhu *FeatureHistoryUpdate) SetMetadata(m map[string]interface{}) *FeatureHistoryUpdate {
+	fhu.mutation.SetMetadata(m)
+	return fhu
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (fhu *FeatureHistoryUpdate) ClearMetadata() *FeatureHistoryUpdate {
+	fhu.mutation.ClearMetadata()
 	return fhu
 }
 
@@ -262,8 +300,17 @@ func (fhu *FeatureHistoryUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if fhu.mutation.TagsCleared() {
 		_spec.ClearField(featurehistory.FieldTags, field.TypeJSON)
 	}
-	if value, ok := fhu.mutation.Global(); ok {
-		_spec.SetField(featurehistory.FieldGlobal, field.TypeBool, value)
+	if value, ok := fhu.mutation.OwnerID(); ok {
+		_spec.SetField(featurehistory.FieldOwnerID, field.TypeString, value)
+	}
+	if fhu.mutation.OwnerIDCleared() {
+		_spec.ClearField(featurehistory.FieldOwnerID, field.TypeString)
+	}
+	if value, ok := fhu.mutation.DisplayName(); ok {
+		_spec.SetField(featurehistory.FieldDisplayName, field.TypeString, value)
+	}
+	if fhu.mutation.DisplayNameCleared() {
+		_spec.ClearField(featurehistory.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := fhu.mutation.Enabled(); ok {
 		_spec.SetField(featurehistory.FieldEnabled, field.TypeBool, value)
@@ -273,6 +320,12 @@ func (fhu *FeatureHistoryUpdate) sqlSave(ctx context.Context) (n int, err error)
 	}
 	if fhu.mutation.DescriptionCleared() {
 		_spec.ClearField(featurehistory.FieldDescription, field.TypeString)
+	}
+	if value, ok := fhu.mutation.Metadata(); ok {
+		_spec.SetField(featurehistory.FieldMetadata, field.TypeJSON, value)
+	}
+	if fhu.mutation.MetadataCleared() {
+		_spec.ClearField(featurehistory.FieldMetadata, field.TypeJSON)
 	}
 	_spec.Node.Schema = fhu.schemaConfig.FeatureHistory
 	ctx = internal.NewSchemaConfigContext(ctx, fhu.schemaConfig)
@@ -394,17 +447,43 @@ func (fhuo *FeatureHistoryUpdateOne) ClearTags() *FeatureHistoryUpdateOne {
 	return fhuo
 }
 
-// SetGlobal sets the "global" field.
-func (fhuo *FeatureHistoryUpdateOne) SetGlobal(b bool) *FeatureHistoryUpdateOne {
-	fhuo.mutation.SetGlobal(b)
+// SetOwnerID sets the "owner_id" field.
+func (fhuo *FeatureHistoryUpdateOne) SetOwnerID(s string) *FeatureHistoryUpdateOne {
+	fhuo.mutation.SetOwnerID(s)
 	return fhuo
 }
 
-// SetNillableGlobal sets the "global" field if the given value is not nil.
-func (fhuo *FeatureHistoryUpdateOne) SetNillableGlobal(b *bool) *FeatureHistoryUpdateOne {
-	if b != nil {
-		fhuo.SetGlobal(*b)
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (fhuo *FeatureHistoryUpdateOne) SetNillableOwnerID(s *string) *FeatureHistoryUpdateOne {
+	if s != nil {
+		fhuo.SetOwnerID(*s)
 	}
+	return fhuo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (fhuo *FeatureHistoryUpdateOne) ClearOwnerID() *FeatureHistoryUpdateOne {
+	fhuo.mutation.ClearOwnerID()
+	return fhuo
+}
+
+// SetDisplayName sets the "display_name" field.
+func (fhuo *FeatureHistoryUpdateOne) SetDisplayName(s string) *FeatureHistoryUpdateOne {
+	fhuo.mutation.SetDisplayName(s)
+	return fhuo
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (fhuo *FeatureHistoryUpdateOne) SetNillableDisplayName(s *string) *FeatureHistoryUpdateOne {
+	if s != nil {
+		fhuo.SetDisplayName(*s)
+	}
+	return fhuo
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (fhuo *FeatureHistoryUpdateOne) ClearDisplayName() *FeatureHistoryUpdateOne {
+	fhuo.mutation.ClearDisplayName()
 	return fhuo
 }
 
@@ -439,6 +518,18 @@ func (fhuo *FeatureHistoryUpdateOne) SetNillableDescription(s *string) *FeatureH
 // ClearDescription clears the value of the "description" field.
 func (fhuo *FeatureHistoryUpdateOne) ClearDescription() *FeatureHistoryUpdateOne {
 	fhuo.mutation.ClearDescription()
+	return fhuo
+}
+
+// SetMetadata sets the "metadata" field.
+func (fhuo *FeatureHistoryUpdateOne) SetMetadata(m map[string]interface{}) *FeatureHistoryUpdateOne {
+	fhuo.mutation.SetMetadata(m)
+	return fhuo
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (fhuo *FeatureHistoryUpdateOne) ClearMetadata() *FeatureHistoryUpdateOne {
+	fhuo.mutation.ClearMetadata()
 	return fhuo
 }
 
@@ -557,8 +648,17 @@ func (fhuo *FeatureHistoryUpdateOne) sqlSave(ctx context.Context) (_node *Featur
 	if fhuo.mutation.TagsCleared() {
 		_spec.ClearField(featurehistory.FieldTags, field.TypeJSON)
 	}
-	if value, ok := fhuo.mutation.Global(); ok {
-		_spec.SetField(featurehistory.FieldGlobal, field.TypeBool, value)
+	if value, ok := fhuo.mutation.OwnerID(); ok {
+		_spec.SetField(featurehistory.FieldOwnerID, field.TypeString, value)
+	}
+	if fhuo.mutation.OwnerIDCleared() {
+		_spec.ClearField(featurehistory.FieldOwnerID, field.TypeString)
+	}
+	if value, ok := fhuo.mutation.DisplayName(); ok {
+		_spec.SetField(featurehistory.FieldDisplayName, field.TypeString, value)
+	}
+	if fhuo.mutation.DisplayNameCleared() {
+		_spec.ClearField(featurehistory.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := fhuo.mutation.Enabled(); ok {
 		_spec.SetField(featurehistory.FieldEnabled, field.TypeBool, value)
@@ -568,6 +668,12 @@ func (fhuo *FeatureHistoryUpdateOne) sqlSave(ctx context.Context) (_node *Featur
 	}
 	if fhuo.mutation.DescriptionCleared() {
 		_spec.ClearField(featurehistory.FieldDescription, field.TypeString)
+	}
+	if value, ok := fhuo.mutation.Metadata(); ok {
+		_spec.SetField(featurehistory.FieldMetadata, field.TypeJSON, value)
+	}
+	if fhuo.mutation.MetadataCleared() {
+		_spec.ClearField(featurehistory.FieldMetadata, field.TypeJSON)
 	}
 	_spec.Node.Schema = fhuo.schemaConfig.FeatureHistory
 	ctx = internal.NewSchemaConfigContext(ctx, fhuo.schemaConfig)

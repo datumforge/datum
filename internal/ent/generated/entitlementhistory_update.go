@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/pkg/enums"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -150,20 +149,6 @@ func (ehu *EntitlementHistoryUpdate) ClearOwnerID() *EntitlementHistoryUpdate {
 	return ehu
 }
 
-// SetTier sets the "tier" field.
-func (ehu *EntitlementHistoryUpdate) SetTier(e enums.Tier) *EntitlementHistoryUpdate {
-	ehu.mutation.SetTier(e)
-	return ehu
-}
-
-// SetNillableTier sets the "tier" field if the given value is not nil.
-func (ehu *EntitlementHistoryUpdate) SetNillableTier(e *enums.Tier) *EntitlementHistoryUpdate {
-	if e != nil {
-		ehu.SetTier(*e)
-	}
-	return ehu
-}
-
 // SetExternalCustomerID sets the "external_customer_id" field.
 func (ehu *EntitlementHistoryUpdate) SetExternalCustomerID(s string) *EntitlementHistoryUpdate {
 	ehu.mutation.SetExternalCustomerID(s)
@@ -284,20 +269,7 @@ func (ehu *EntitlementHistoryUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (ehu *EntitlementHistoryUpdate) check() error {
-	if v, ok := ehu.mutation.Tier(); ok {
-		if err := entitlementhistory.TierValidator(v); err != nil {
-			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "EntitlementHistory.tier": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (ehu *EntitlementHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := ehu.check(); err != nil {
-		return n, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(entitlementhistory.Table, entitlementhistory.Columns, sqlgraph.NewFieldSpec(entitlementhistory.FieldID, field.TypeString))
 	if ps := ehu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -355,9 +327,6 @@ func (ehu *EntitlementHistoryUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if ehu.mutation.OwnerIDCleared() {
 		_spec.ClearField(entitlementhistory.FieldOwnerID, field.TypeString)
-	}
-	if value, ok := ehu.mutation.Tier(); ok {
-		_spec.SetField(entitlementhistory.FieldTier, field.TypeEnum, value)
 	}
 	if value, ok := ehu.mutation.ExternalCustomerID(); ok {
 		_spec.SetField(entitlementhistory.FieldExternalCustomerID, field.TypeString, value)
@@ -523,20 +492,6 @@ func (ehuo *EntitlementHistoryUpdateOne) ClearOwnerID() *EntitlementHistoryUpdat
 	return ehuo
 }
 
-// SetTier sets the "tier" field.
-func (ehuo *EntitlementHistoryUpdateOne) SetTier(e enums.Tier) *EntitlementHistoryUpdateOne {
-	ehuo.mutation.SetTier(e)
-	return ehuo
-}
-
-// SetNillableTier sets the "tier" field if the given value is not nil.
-func (ehuo *EntitlementHistoryUpdateOne) SetNillableTier(e *enums.Tier) *EntitlementHistoryUpdateOne {
-	if e != nil {
-		ehuo.SetTier(*e)
-	}
-	return ehuo
-}
-
 // SetExternalCustomerID sets the "external_customer_id" field.
 func (ehuo *EntitlementHistoryUpdateOne) SetExternalCustomerID(s string) *EntitlementHistoryUpdateOne {
 	ehuo.mutation.SetExternalCustomerID(s)
@@ -670,20 +625,7 @@ func (ehuo *EntitlementHistoryUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (ehuo *EntitlementHistoryUpdateOne) check() error {
-	if v, ok := ehuo.mutation.Tier(); ok {
-		if err := entitlementhistory.TierValidator(v); err != nil {
-			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "EntitlementHistory.tier": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (ehuo *EntitlementHistoryUpdateOne) sqlSave(ctx context.Context) (_node *EntitlementHistory, err error) {
-	if err := ehuo.check(); err != nil {
-		return _node, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(entitlementhistory.Table, entitlementhistory.Columns, sqlgraph.NewFieldSpec(entitlementhistory.FieldID, field.TypeString))
 	id, ok := ehuo.mutation.ID()
 	if !ok {
@@ -758,9 +700,6 @@ func (ehuo *EntitlementHistoryUpdateOne) sqlSave(ctx context.Context) (_node *En
 	}
 	if ehuo.mutation.OwnerIDCleared() {
 		_spec.ClearField(entitlementhistory.FieldOwnerID, field.TypeString)
-	}
-	if value, ok := ehuo.mutation.Tier(); ok {
-		_spec.SetField(entitlementhistory.FieldTier, field.TypeEnum, value)
 	}
 	if value, ok := ehuo.mutation.ExternalCustomerID(); ok {
 		_spec.SetField(entitlementhistory.FieldExternalCustomerID, field.TypeString, value)

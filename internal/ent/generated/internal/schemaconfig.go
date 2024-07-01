@@ -12,9 +12,14 @@ type SchemaConfig struct {
 	DocumentDataHistory              string // DocumentDataHistory table.
 	EmailVerificationToken           string // EmailVerificationToken table.
 	Entitlement                      string // Entitlement table.
-	EntitlementFeatures              string // Entitlement-features->Feature table.
 	EntitlementEvents                string // Entitlement-events->Event table.
 	EntitlementHistory               string // EntitlementHistory table.
+	EntitlementPlan                  string // EntitlementPlan table.
+	EntitlementPlanEvents            string // EntitlementPlan-events->Event table.
+	EntitlementPlanHistory           string // EntitlementPlanHistory table.
+	EntitlementPlanFeature           string // EntitlementPlanFeature table.
+	EntitlementPlanFeatureEvents     string // EntitlementPlanFeature-events->Event table.
+	EntitlementPlanFeatureHistory    string // EntitlementPlanFeatureHistory table.
 	Event                            string // Event table.
 	EventHistory                     string // EventHistory table.
 	Feature                          string // Feature table.
@@ -23,7 +28,6 @@ type SchemaConfig struct {
 	File                             string // File table.
 	FileHistory                      string // FileHistory table.
 	Group                            string // Group table.
-	GroupFeatures                    string // Group-features->Feature table.
 	GroupEvents                      string // Group-events->Event table.
 	GroupFiles                       string // Group-files->File table.
 	GroupHistory                     string // GroupHistory table.
@@ -54,7 +58,6 @@ type SchemaConfig struct {
 	OrganizationPersonalAccessTokens string // Organization-personal_access_tokens->PersonalAccessToken table.
 	OrganizationEvents               string // Organization-events->Event table.
 	OrganizationSecrets              string // Organization-secrets->Hush table.
-	OrganizationFeatures             string // Organization-features->Feature table.
 	OrganizationFiles                string // Organization-files->File table.
 	OrganizationHistory              string // OrganizationHistory table.
 	OrganizationSetting              string // OrganizationSetting table.
@@ -69,7 +72,6 @@ type SchemaConfig struct {
 	TemplateHistory                  string // TemplateHistory table.
 	User                             string // User table.
 	UserEvents                       string // User-events->Event table.
-	UserFeatures                     string // User-features->Feature table.
 	UserHistory                      string // UserHistory table.
 	UserSetting                      string // UserSetting table.
 	UserSettingHistory               string // UserSettingHistory table.

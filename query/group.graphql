@@ -190,7 +190,7 @@ query GetGroupByID($groupId: ID!) {
   }
 }
 
-query GroupsWhere($where: GroupWhereInput) {
+query GetGroups($where: GroupWhereInput) {
   groups(where: $where) {
     edges {
       node {

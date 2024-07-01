@@ -9,6 +9,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -66,6 +68,34 @@ func EntitlementEdgeCleanup(ctx context.Context, id string) error {
 func EntitlementHistoryEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementhistory edge"))
+
+	return nil
+}
+
+func EntitlementPlanEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplan edge"))
+
+	return nil
+}
+
+func EntitlementPlanHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplanhistory edge"))
+
+	return nil
+}
+
+func EntitlementPlanFeatureEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplanfeature edge"))
+
+	return nil
+}
+
+func EntitlementPlanFeatureHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplanfeaturehistory edge"))
 
 	return nil
 }
@@ -308,6 +338,20 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	if exists, err := FromContext(ctx).Webhook.Query().Where((webhook.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
 		if webhookCount, err := FromContext(ctx).Webhook.Delete().Where(webhook.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting webhook", "count", webhookCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).EntitlementPlan.Query().Where((entitlementplan.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if entitlementplanCount, err := FromContext(ctx).EntitlementPlan.Delete().Where(entitlementplan.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting entitlementplan", "count", entitlementplanCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).EntitlementPlanFeature.Query().Where((entitlementplanfeature.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if entitlementplanfeatureCount, err := FromContext(ctx).EntitlementPlanFeature.Delete().Where(entitlementplanfeature.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting entitlementplanfeature", "count", entitlementplanfeatureCount, "err", err)
 			return err
 		}
 	}

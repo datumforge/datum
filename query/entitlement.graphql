@@ -1,22 +1,19 @@
-mutation CreateEntitlement($input: CreateEntitlementInput!) {
-  createEntitlement(input: $input) {
-    entitlement {
-      cancelled
-      expires
-      expiresAt
-      externalCustomerID
-      externalSubscriptionID
+mutation CreateBulkCSVEntitlement($input: Upload!) {
+  createBulkCSVEntitlement(input: $input) {
+    entitlements {
       id
-      tier
-      owner {
-        id
-      }
-      features {
+      plan {
         id
         name
-        global
-        enabled
-        description
+      }
+      expires
+      expiresAt
+      cancelled
+      externalCustomerID
+      externalSubscriptionID
+      organization {
+        id
+        name
       }
     }
   }
@@ -25,51 +22,41 @@ mutation CreateEntitlement($input: CreateEntitlementInput!) {
 mutation CreateBulkEntitlement($input: [CreateEntitlementInput!]) {
   createBulkEntitlement(input: $input) {
     entitlements {
-      cancelled
-      expires
-      expiresAt
-      externalCustomerID
-      externalSubscriptionID
       id
-      tier
-    }
-  }
-}
-
-mutation CreateBulkCSVEntitlement($input: Upload!) {
-  createBulkCSVEntitlement(input: $input) {
-   entitlements {
-      cancelled
-      expires
-      expiresAt
-      externalCustomerID
-      externalSubscriptionID
-      id
-      tier
-    }
-  }
-}
-
-mutation UpdateEntitlement($updateEntitlementId: ID!, $input: UpdateEntitlementInput!) {
-  updateEntitlement(id: $updateEntitlementId, input: $input) {
-    entitlement {
-      cancelled
-      expires
-      expiresAt
-      externalCustomerID
-      externalSubscriptionID
-      id
-      tier
-      owner {
-        id
-      }
-      features {
-        description
-        enabled
-        global
+      plan {
         id
         name
       }
+      organization {
+        id
+        name
+      }
+      expires
+      expiresAt
+      cancelled
+      externalCustomerID
+      externalSubscriptionID
+    }
+  }
+}
+
+mutation CreateEntitlement($input: CreateEntitlementInput!) {
+  createEntitlement(input: $input) {
+    entitlement {
+      id
+      plan {
+        id
+        name
+      }
+      organization {
+        id
+        name
+      }
+      expires
+      expiresAt
+      cancelled
+      externalCustomerID
+      externalSubscriptionID
     }
   }
 }
@@ -80,35 +67,105 @@ mutation DeleteEntitlement($deleteEntitlementId: ID!) {
   }
 }
 
+query GetAllEntitlements {
+  entitlements {
+    edges {
+      node {
+        id
+        plan {
+          id
+          name
+          features {
+            metadata
+            feature {
+              id
+              name
+            }
+          }
+        }
+        organization {
+          id
+          name
+        }
+        expires
+        expiresAt
+        cancelled
+        externalCustomerID
+        externalSubscriptionID
+      }
+    }
+  }
+}
+
+query GetEntitlementByID($entitlementId: ID!) {
+  entitlement(id: $entitlementId) {
+    id
+    plan {
+      id
+      name
+      features {
+        metadata
+        feature {
+          id
+          name
+        }
+      }
+    }
+    organization {
+      id
+      name
+    }
+    expires
+    expiresAt
+    cancelled
+    externalCustomerID
+    externalSubscriptionID
+  }
+}
+
 query GetEntitlements($where: EntitlementWhereInput) {
   entitlements(where: $where) {
     edges {
       node {
-        cancelled
-        createdAt
-        createdBy
+        id
+        plan {
+          id
+          name
+          features {
+            metadata
+            feature {
+              id
+              name
+            }
+          }
+        }
+        organization {
+          id
+          name
+        }
         expires
         expiresAt
+        cancelled
         externalCustomerID
         externalSubscriptionID
-        id
-        tier
-        updatedAt
-        updatedBy
-        owner {
-          id
-          name
-        }
-        features {
-          enabled
-          id
-          name
-        }
-        events {
-          eventType
-          metadata
-        }
       }
+    }
+  }
+}
+
+mutation UpdateEntitlement($updateEntitlementId: ID!, $input: UpdateEntitlementInput!) {
+  updateEntitlement(id: $updateEntitlementId, input: $input) {
+    entitlement {
+      id
+      plan {
+        id
+        name
+      }
+      expires
+      expiresAt
+      cancelled
+      externalCustomerID
+      externalSubscriptionID
     }
   }
 }

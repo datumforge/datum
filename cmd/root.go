@@ -22,8 +22,9 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   appName,
 	Short: "A datum cli for interacting with the Datum Server",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		return initCmdFlags(cmd)
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		err := initCmdFlags(cmd)
+		cobra.CheckErr(err)
 	},
 }
 

@@ -11,10 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
 	"github.com/datumforge/datum/internal/ent/generated/event"
-	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 // EntitlementCreate is the builder for creating a Entitlement entity.
@@ -142,17 +141,15 @@ func (ec *EntitlementCreate) SetNillableOwnerID(s *string) *EntitlementCreate {
 	return ec
 }
 
-// SetTier sets the "tier" field.
-func (ec *EntitlementCreate) SetTier(e enums.Tier) *EntitlementCreate {
-	ec.mutation.SetTier(e)
+// SetPlanID sets the "plan_id" field.
+func (ec *EntitlementCreate) SetPlanID(s string) *EntitlementCreate {
+	ec.mutation.SetPlanID(s)
 	return ec
 }
 
-// SetNillableTier sets the "tier" field if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableTier(e *enums.Tier) *EntitlementCreate {
-	if e != nil {
-		ec.SetTier(*e)
-	}
+// SetOrganizationID sets the "organization_id" field.
+func (ec *EntitlementCreate) SetOrganizationID(s string) *EntitlementCreate {
+	ec.mutation.SetOrganizationID(s)
 	return ec
 }
 
@@ -245,19 +242,14 @@ func (ec *EntitlementCreate) SetOwner(o *Organization) *EntitlementCreate {
 	return ec.SetOwnerID(o.ID)
 }
 
-// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
-func (ec *EntitlementCreate) AddFeatureIDs(ids ...string) *EntitlementCreate {
-	ec.mutation.AddFeatureIDs(ids...)
-	return ec
+// SetPlan sets the "plan" edge to the EntitlementPlan entity.
+func (ec *EntitlementCreate) SetPlan(e *EntitlementPlan) *EntitlementCreate {
+	return ec.SetPlanID(e.ID)
 }
 
-// AddFeatures adds the "features" edges to the Feature entity.
-func (ec *EntitlementCreate) AddFeatures(f ...*Feature) *EntitlementCreate {
-	ids := make([]string, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return ec.AddFeatureIDs(ids...)
+// SetOrganization sets the "organization" edge to the Organization entity.
+func (ec *EntitlementCreate) SetOrganization(o *Organization) *EntitlementCreate {
+	return ec.SetOrganizationID(o.ID)
 }
 
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
@@ -337,10 +329,6 @@ func (ec *EntitlementCreate) defaults() error {
 		v := entitlement.DefaultTags
 		ec.mutation.SetTags(v)
 	}
-	if _, ok := ec.mutation.Tier(); !ok {
-		v := entitlement.DefaultTier
-		ec.mutation.SetTier(v)
-	}
 	if _, ok := ec.mutation.Expires(); !ok {
 		v := entitlement.DefaultExpires
 		ec.mutation.SetExpires(v)
@@ -369,12 +357,20 @@ func (ec *EntitlementCreate) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.owner_id": %w`, err)}
 		}
 	}
-	if _, ok := ec.mutation.Tier(); !ok {
-		return &ValidationError{Name: "tier", err: errors.New(`generated: missing required field "Entitlement.tier"`)}
+	if _, ok := ec.mutation.PlanID(); !ok {
+		return &ValidationError{Name: "plan_id", err: errors.New(`generated: missing required field "Entitlement.plan_id"`)}
 	}
-	if v, ok := ec.mutation.Tier(); ok {
-		if err := entitlement.TierValidator(v); err != nil {
-			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "Entitlement.tier": %w`, err)}
+	if v, ok := ec.mutation.PlanID(); ok {
+		if err := entitlement.PlanIDValidator(v); err != nil {
+			return &ValidationError{Name: "plan_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.plan_id": %w`, err)}
+		}
+	}
+	if _, ok := ec.mutation.OrganizationID(); !ok {
+		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "Entitlement.organization_id"`)}
+	}
+	if v, ok := ec.mutation.OrganizationID(); ok {
+		if err := entitlement.OrganizationIDValidator(v); err != nil {
+			return &ValidationError{Name: "organization_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.organization_id": %w`, err)}
 		}
 	}
 	if _, ok := ec.mutation.Expires(); !ok {
@@ -382,6 +378,12 @@ func (ec *EntitlementCreate) check() error {
 	}
 	if _, ok := ec.mutation.Cancelled(); !ok {
 		return &ValidationError{Name: "cancelled", err: errors.New(`generated: missing required field "Entitlement.cancelled"`)}
+	}
+	if _, ok := ec.mutation.PlanID(); !ok {
+		return &ValidationError{Name: "plan", err: errors.New(`generated: missing required edge "Entitlement.plan"`)}
+	}
+	if _, ok := ec.mutation.OrganizationID(); !ok {
+		return &ValidationError{Name: "organization", err: errors.New(`generated: missing required edge "Entitlement.organization"`)}
 	}
 	return nil
 }
@@ -451,10 +453,6 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 		_spec.SetField(entitlement.FieldDeletedBy, field.TypeString, value)
 		_node.DeletedBy = value
 	}
-	if value, ok := ec.mutation.Tier(); ok {
-		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)
-		_node.Tier = value
-	}
 	if value, ok := ec.mutation.ExternalCustomerID(); ok {
 		_spec.SetField(entitlement.FieldExternalCustomerID, field.TypeString, value)
 		_node.ExternalCustomerID = value
@@ -493,21 +491,40 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 		_node.OwnerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.FeaturesIDs(); len(nodes) > 0 {
+	if nodes := ec.mutation.PlanIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   entitlement.FeaturesTable,
-			Columns: entitlement.FeaturesPrimaryKey,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entitlement.PlanTable,
+			Columns: []string{entitlement.PlanColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = ec.schemaConfig.EntitlementFeatures
+		edge.Schema = ec.schemaConfig.Entitlement
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.PlanID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.OrganizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entitlement.OrganizationTable,
+			Columns: []string{entitlement.OrganizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ec.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.OrganizationID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := ec.mutation.EventsIDs(); len(nodes) > 0 {

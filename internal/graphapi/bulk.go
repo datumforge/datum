@@ -65,6 +65,44 @@ func (r *mutationResolver) bulkCreateEntitlement(ctx context.Context, input []*g
 	}, nil
 }
 
+// bulkCreateEntitlementPlan uses the CreateBulk function to create multiple EntitlementPlan entities
+func (r *mutationResolver) bulkCreateEntitlementPlan(ctx context.Context, input []*generated.CreateEntitlementPlanInput) (*EntitlementPlanBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+	builders := make([]*generated.EntitlementPlanCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.EntitlementPlan.Create().SetInput(*data)
+	}
+
+	res, err := c.EntitlementPlan.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "entitlementplan"}, r.logger)
+	}
+
+	// return response
+	return &EntitlementPlanBulkCreatePayload{
+		EntitlementPlans: res,
+	}, nil
+}
+
+// bulkCreateEntitlementPlanFeature uses the CreateBulk function to create multiple EntitlementPlanFeature entities
+func (r *mutationResolver) bulkCreateEntitlementPlanFeature(ctx context.Context, input []*generated.CreateEntitlementPlanFeatureInput) (*EntitlementPlanFeatureBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+	builders := make([]*generated.EntitlementPlanFeatureCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.EntitlementPlanFeature.Create().SetInput(*data)
+	}
+
+	res, err := c.EntitlementPlanFeature.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "entitlementplanfeature"}, r.logger)
+	}
+
+	// return response
+	return &EntitlementPlanFeatureBulkCreatePayload{
+		EntitlementPlanFeatures: res,
+	}, nil
+}
+
 // bulkCreateEvent uses the CreateBulk function to create multiple Event entities
 func (r *mutationResolver) bulkCreateEvent(ctx context.Context, input []*generated.CreateEventInput) (*EventBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)

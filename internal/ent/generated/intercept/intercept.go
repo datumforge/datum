@@ -14,6 +14,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -272,6 +276,114 @@ func (f TraverseEntitlementHistory) Traverse(ctx context.Context, q generated.Qu
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementHistoryQuery", q)
+}
+
+// The EntitlementPlanFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntitlementPlanFunc func(context.Context, *generated.EntitlementPlanQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntitlementPlanFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntitlementPlanQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanQuery", q)
+}
+
+// The TraverseEntitlementPlan type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntitlementPlan func(context.Context, *generated.EntitlementPlanQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntitlementPlan) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntitlementPlan) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanQuery", q)
+}
+
+// The EntitlementPlanHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntitlementPlanHistoryFunc func(context.Context, *generated.EntitlementPlanHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntitlementPlanHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntitlementPlanHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanHistoryQuery", q)
+}
+
+// The TraverseEntitlementPlanHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntitlementPlanHistory func(context.Context, *generated.EntitlementPlanHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntitlementPlanHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntitlementPlanHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanHistoryQuery", q)
+}
+
+// The EntitlementPlanFeatureFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntitlementPlanFeatureFunc func(context.Context, *generated.EntitlementPlanFeatureQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntitlementPlanFeatureFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntitlementPlanFeatureQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanFeatureQuery", q)
+}
+
+// The TraverseEntitlementPlanFeature type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntitlementPlanFeature func(context.Context, *generated.EntitlementPlanFeatureQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntitlementPlanFeature) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntitlementPlanFeature) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanFeatureQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanFeatureQuery", q)
+}
+
+// The EntitlementPlanFeatureHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntitlementPlanFeatureHistoryFunc func(context.Context, *generated.EntitlementPlanFeatureHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntitlementPlanFeatureHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntitlementPlanFeatureHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanFeatureHistoryQuery", q)
+}
+
+// The TraverseEntitlementPlanFeatureHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntitlementPlanFeatureHistory func(context.Context, *generated.EntitlementPlanFeatureHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntitlementPlanFeatureHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntitlementPlanFeatureHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanFeatureHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanFeatureHistoryQuery", q)
 }
 
 // The EventFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -1342,6 +1454,14 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.EntitlementQuery, predicate.Entitlement, entitlement.OrderOption]{typ: generated.TypeEntitlement, tq: q}, nil
 	case *generated.EntitlementHistoryQuery:
 		return &query[*generated.EntitlementHistoryQuery, predicate.EntitlementHistory, entitlementhistory.OrderOption]{typ: generated.TypeEntitlementHistory, tq: q}, nil
+	case *generated.EntitlementPlanQuery:
+		return &query[*generated.EntitlementPlanQuery, predicate.EntitlementPlan, entitlementplan.OrderOption]{typ: generated.TypeEntitlementPlan, tq: q}, nil
+	case *generated.EntitlementPlanHistoryQuery:
+		return &query[*generated.EntitlementPlanHistoryQuery, predicate.EntitlementPlanHistory, entitlementplanhistory.OrderOption]{typ: generated.TypeEntitlementPlanHistory, tq: q}, nil
+	case *generated.EntitlementPlanFeatureQuery:
+		return &query[*generated.EntitlementPlanFeatureQuery, predicate.EntitlementPlanFeature, entitlementplanfeature.OrderOption]{typ: generated.TypeEntitlementPlanFeature, tq: q}, nil
+	case *generated.EntitlementPlanFeatureHistoryQuery:
+		return &query[*generated.EntitlementPlanFeatureHistoryQuery, predicate.EntitlementPlanFeatureHistory, entitlementplanfeaturehistory.OrderOption]{typ: generated.TypeEntitlementPlanFeatureHistory, tq: q}, nil
 	case *generated.EventQuery:
 		return &query[*generated.EventQuery, predicate.Event, event.OrderOption]{typ: generated.TypeEvent, tq: q}, nil
 	case *generated.EventHistoryQuery:

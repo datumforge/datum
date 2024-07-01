@@ -76,6 +76,36 @@ mutation DeleteFile($deleteFileId: ID!) {
   }
 }
 
+query GetAllFiles {
+  files {
+    edges {
+      node {
+        annotation
+        category
+        contentType
+        createdAt
+        createdBy
+        fileExtension
+        fileName
+        fileSize
+        id
+        storeKey
+        updatedAt
+        updatedBy
+        user {
+          id
+        }
+        organization {
+          id
+        }
+        group {
+          id
+        }
+      }
+    }
+  }
+}
+
 query GetFiles($where: FileWhereInput) {
   files(where: $where) {
     edges {

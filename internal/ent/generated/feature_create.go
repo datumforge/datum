@@ -10,12 +10,11 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
-	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
 // FeatureCreate is the builder for creating a Feature entity.
@@ -129,22 +128,36 @@ func (fc *FeatureCreate) SetTags(s []string) *FeatureCreate {
 	return fc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (fc *FeatureCreate) SetOwnerID(s string) *FeatureCreate {
+	fc.mutation.SetOwnerID(s)
+	return fc
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (fc *FeatureCreate) SetNillableOwnerID(s *string) *FeatureCreate {
+	if s != nil {
+		fc.SetOwnerID(*s)
+	}
+	return fc
+}
+
 // SetName sets the "name" field.
 func (fc *FeatureCreate) SetName(s string) *FeatureCreate {
 	fc.mutation.SetName(s)
 	return fc
 }
 
-// SetGlobal sets the "global" field.
-func (fc *FeatureCreate) SetGlobal(b bool) *FeatureCreate {
-	fc.mutation.SetGlobal(b)
+// SetDisplayName sets the "display_name" field.
+func (fc *FeatureCreate) SetDisplayName(s string) *FeatureCreate {
+	fc.mutation.SetDisplayName(s)
 	return fc
 }
 
-// SetNillableGlobal sets the "global" field if the given value is not nil.
-func (fc *FeatureCreate) SetNillableGlobal(b *bool) *FeatureCreate {
-	if b != nil {
-		fc.SetGlobal(*b)
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (fc *FeatureCreate) SetNillableDisplayName(s *string) *FeatureCreate {
+	if s != nil {
+		fc.SetDisplayName(*s)
 	}
 	return fc
 }
@@ -177,6 +190,12 @@ func (fc *FeatureCreate) SetNillableDescription(s *string) *FeatureCreate {
 	return fc
 }
 
+// SetMetadata sets the "metadata" field.
+func (fc *FeatureCreate) SetMetadata(m map[string]interface{}) *FeatureCreate {
+	fc.mutation.SetMetadata(m)
+	return fc
+}
+
 // SetID sets the "id" field.
 func (fc *FeatureCreate) SetID(s string) *FeatureCreate {
 	fc.mutation.SetID(s)
@@ -191,64 +210,24 @@ func (fc *FeatureCreate) SetNillableID(s *string) *FeatureCreate {
 	return fc
 }
 
-// AddUserIDs adds the "users" edge to the User entity by IDs.
-func (fc *FeatureCreate) AddUserIDs(ids ...string) *FeatureCreate {
-	fc.mutation.AddUserIDs(ids...)
+// SetOwner sets the "owner" edge to the Organization entity.
+func (fc *FeatureCreate) SetOwner(o *Organization) *FeatureCreate {
+	return fc.SetOwnerID(o.ID)
+}
+
+// AddPlanIDs adds the "plans" edge to the EntitlementPlan entity by IDs.
+func (fc *FeatureCreate) AddPlanIDs(ids ...string) *FeatureCreate {
+	fc.mutation.AddPlanIDs(ids...)
 	return fc
 }
 
-// AddUsers adds the "users" edges to the User entity.
-func (fc *FeatureCreate) AddUsers(u ...*User) *FeatureCreate {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return fc.AddUserIDs(ids...)
-}
-
-// AddGroupIDs adds the "groups" edge to the Group entity by IDs.
-func (fc *FeatureCreate) AddGroupIDs(ids ...string) *FeatureCreate {
-	fc.mutation.AddGroupIDs(ids...)
-	return fc
-}
-
-// AddGroups adds the "groups" edges to the Group entity.
-func (fc *FeatureCreate) AddGroups(g ...*Group) *FeatureCreate {
-	ids := make([]string, len(g))
-	for i := range g {
-		ids[i] = g[i].ID
-	}
-	return fc.AddGroupIDs(ids...)
-}
-
-// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
-func (fc *FeatureCreate) AddEntitlementIDs(ids ...string) *FeatureCreate {
-	fc.mutation.AddEntitlementIDs(ids...)
-	return fc
-}
-
-// AddEntitlements adds the "entitlements" edges to the Entitlement entity.
-func (fc *FeatureCreate) AddEntitlements(e ...*Entitlement) *FeatureCreate {
+// AddPlans adds the "plans" edges to the EntitlementPlan entity.
+func (fc *FeatureCreate) AddPlans(e ...*EntitlementPlan) *FeatureCreate {
 	ids := make([]string, len(e))
 	for i := range e {
 		ids[i] = e[i].ID
 	}
-	return fc.AddEntitlementIDs(ids...)
-}
-
-// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
-func (fc *FeatureCreate) AddOrganizationIDs(ids ...string) *FeatureCreate {
-	fc.mutation.AddOrganizationIDs(ids...)
-	return fc
-}
-
-// AddOrganizations adds the "organizations" edges to the Organization entity.
-func (fc *FeatureCreate) AddOrganizations(o ...*Organization) *FeatureCreate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return fc.AddOrganizationIDs(ids...)
+	return fc.AddPlanIDs(ids...)
 }
 
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
@@ -264,6 +243,21 @@ func (fc *FeatureCreate) AddEvents(e ...*Event) *FeatureCreate {
 		ids[i] = e[i].ID
 	}
 	return fc.AddEventIDs(ids...)
+}
+
+// AddFeatureIDs adds the "features" edge to the EntitlementPlanFeature entity by IDs.
+func (fc *FeatureCreate) AddFeatureIDs(ids ...string) *FeatureCreate {
+	fc.mutation.AddFeatureIDs(ids...)
+	return fc
+}
+
+// AddFeatures adds the "features" edges to the EntitlementPlanFeature entity.
+func (fc *FeatureCreate) AddFeatures(e ...*EntitlementPlanFeature) *FeatureCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return fc.AddFeatureIDs(ids...)
 }
 
 // Mutation returns the FeatureMutation object of the builder.
@@ -328,10 +322,6 @@ func (fc *FeatureCreate) defaults() error {
 		v := feature.DefaultTags
 		fc.mutation.SetTags(v)
 	}
-	if _, ok := fc.mutation.Global(); !ok {
-		v := feature.DefaultGlobal
-		fc.mutation.SetGlobal(v)
-	}
 	if _, ok := fc.mutation.Enabled(); !ok {
 		v := feature.DefaultEnabled
 		fc.mutation.SetEnabled(v)
@@ -351,6 +341,11 @@ func (fc *FeatureCreate) check() error {
 	if _, ok := fc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Feature.mapping_id"`)}
 	}
+	if v, ok := fc.mutation.OwnerID(); ok {
+		if err := feature.OwnerIDValidator(v); err != nil {
+			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Feature.owner_id": %w`, err)}
+		}
+	}
 	if _, ok := fc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Feature.name"`)}
 	}
@@ -358,9 +353,6 @@ func (fc *FeatureCreate) check() error {
 		if err := feature.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Feature.name": %w`, err)}
 		}
-	}
-	if _, ok := fc.mutation.Global(); !ok {
-		return &ValidationError{Name: "global", err: errors.New(`generated: missing required field "Feature.global"`)}
 	}
 	if _, ok := fc.mutation.Enabled(); !ok {
 		return &ValidationError{Name: "enabled", err: errors.New(`generated: missing required field "Feature.enabled"`)}
@@ -437,9 +429,9 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 		_spec.SetField(feature.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := fc.mutation.Global(); ok {
-		_spec.SetField(feature.FieldGlobal, field.TypeBool, value)
-		_node.Global = value
+	if value, ok := fc.mutation.DisplayName(); ok {
+		_spec.SetField(feature.FieldDisplayName, field.TypeString, value)
+		_node.DisplayName = value
 	}
 	if value, ok := fc.mutation.Enabled(); ok {
 		_spec.SetField(feature.FieldEnabled, field.TypeBool, value)
@@ -449,71 +441,49 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 		_spec.SetField(feature.FieldDescription, field.TypeString, value)
 		_node.Description = &value
 	}
-	if nodes := fc.mutation.UsersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.UsersTable,
-			Columns: feature.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fc.schemaConfig.UserFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := fc.mutation.Metadata(); ok {
+		_spec.SetField(feature.FieldMetadata, field.TypeJSON, value)
+		_node.Metadata = value
 	}
-	if nodes := fc.mutation.GroupsIDs(); len(nodes) > 0 {
+	if nodes := fc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   feature.GroupsTable,
-			Columns: feature.GroupsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fc.schemaConfig.GroupFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := fc.mutation.EntitlementsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.EntitlementsTable,
-			Columns: feature.EntitlementsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = fc.schemaConfig.EntitlementFeatures
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := fc.mutation.OrganizationsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   feature.OrganizationsTable,
-			Columns: feature.OrganizationsPrimaryKey,
+			Table:   feature.OwnerTable,
+			Columns: []string{feature.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = fc.schemaConfig.OrganizationFeatures
+		edge.Schema = fc.schemaConfig.Feature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.PlansIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   feature.PlansTable,
+			Columns: feature.PlansPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplan.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fc.schemaConfig.EntitlementPlanFeature
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &EntitlementPlanFeatureCreate{config: fc.config, mutation: newEntitlementPlanFeatureMutation(fc.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
@@ -529,6 +499,23 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = fc.schemaConfig.FeatureEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   feature.FeaturesTable,
+			Columns: []string{feature.FeaturesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlementplanfeature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fc.schemaConfig.EntitlementPlanFeature
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -24,6 +24,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -94,6 +98,14 @@ type Client struct {
 	Entitlement *EntitlementClient
 	// EntitlementHistory is the client for interacting with the EntitlementHistory builders.
 	EntitlementHistory *EntitlementHistoryClient
+	// EntitlementPlan is the client for interacting with the EntitlementPlan builders.
+	EntitlementPlan *EntitlementPlanClient
+	// EntitlementPlanHistory is the client for interacting with the EntitlementPlanHistory builders.
+	EntitlementPlanHistory *EntitlementPlanHistoryClient
+	// EntitlementPlanFeature is the client for interacting with the EntitlementPlanFeature builders.
+	EntitlementPlanFeature *EntitlementPlanFeatureClient
+	// EntitlementPlanFeatureHistory is the client for interacting with the EntitlementPlanFeatureHistory builders.
+	EntitlementPlanFeatureHistory *EntitlementPlanFeatureHistoryClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
 	// EventHistory is the client for interacting with the EventHistory builders.
@@ -194,6 +206,10 @@ func (c *Client) init() {
 	c.EmailVerificationToken = NewEmailVerificationTokenClient(c.config)
 	c.Entitlement = NewEntitlementClient(c.config)
 	c.EntitlementHistory = NewEntitlementHistoryClient(c.config)
+	c.EntitlementPlan = NewEntitlementPlanClient(c.config)
+	c.EntitlementPlanHistory = NewEntitlementPlanHistoryClient(c.config)
+	c.EntitlementPlanFeature = NewEntitlementPlanFeatureClient(c.config)
+	c.EntitlementPlanFeatureHistory = NewEntitlementPlanFeatureHistoryClient(c.config)
 	c.Event = NewEventClient(c.config)
 	c.EventHistory = NewEventHistoryClient(c.config)
 	c.Feature = NewFeatureClient(c.config)
@@ -429,53 +445,57 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                        ctx,
-		config:                     cfg,
-		APIToken:                   NewAPITokenClient(cfg),
-		DocumentData:               NewDocumentDataClient(cfg),
-		DocumentDataHistory:        NewDocumentDataHistoryClient(cfg),
-		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
-		Entitlement:                NewEntitlementClient(cfg),
-		EntitlementHistory:         NewEntitlementHistoryClient(cfg),
-		Event:                      NewEventClient(cfg),
-		EventHistory:               NewEventHistoryClient(cfg),
-		Feature:                    NewFeatureClient(cfg),
-		FeatureHistory:             NewFeatureHistoryClient(cfg),
-		File:                       NewFileClient(cfg),
-		FileHistory:                NewFileHistoryClient(cfg),
-		Group:                      NewGroupClient(cfg),
-		GroupHistory:               NewGroupHistoryClient(cfg),
-		GroupMembership:            NewGroupMembershipClient(cfg),
-		GroupMembershipHistory:     NewGroupMembershipHistoryClient(cfg),
-		GroupSetting:               NewGroupSettingClient(cfg),
-		GroupSettingHistory:        NewGroupSettingHistoryClient(cfg),
-		Hush:                       NewHushClient(cfg),
-		HushHistory:                NewHushHistoryClient(cfg),
-		Integration:                NewIntegrationClient(cfg),
-		IntegrationHistory:         NewIntegrationHistoryClient(cfg),
-		Invite:                     NewInviteClient(cfg),
-		OauthProvider:              NewOauthProviderClient(cfg),
-		OauthProviderHistory:       NewOauthProviderHistoryClient(cfg),
-		OhAuthTooToken:             NewOhAuthTooTokenClient(cfg),
-		OrgMembership:              NewOrgMembershipClient(cfg),
-		OrgMembershipHistory:       NewOrgMembershipHistoryClient(cfg),
-		Organization:               NewOrganizationClient(cfg),
-		OrganizationHistory:        NewOrganizationHistoryClient(cfg),
-		OrganizationSetting:        NewOrganizationSettingClient(cfg),
-		OrganizationSettingHistory: NewOrganizationSettingHistoryClient(cfg),
-		PasswordResetToken:         NewPasswordResetTokenClient(cfg),
-		PersonalAccessToken:        NewPersonalAccessTokenClient(cfg),
-		Subscriber:                 NewSubscriberClient(cfg),
-		TFASetting:                 NewTFASettingClient(cfg),
-		Template:                   NewTemplateClient(cfg),
-		TemplateHistory:            NewTemplateHistoryClient(cfg),
-		User:                       NewUserClient(cfg),
-		UserHistory:                NewUserHistoryClient(cfg),
-		UserSetting:                NewUserSettingClient(cfg),
-		UserSettingHistory:         NewUserSettingHistoryClient(cfg),
-		Webauthn:                   NewWebauthnClient(cfg),
-		Webhook:                    NewWebhookClient(cfg),
-		WebhookHistory:             NewWebhookHistoryClient(cfg),
+		ctx:                           ctx,
+		config:                        cfg,
+		APIToken:                      NewAPITokenClient(cfg),
+		DocumentData:                  NewDocumentDataClient(cfg),
+		DocumentDataHistory:           NewDocumentDataHistoryClient(cfg),
+		EmailVerificationToken:        NewEmailVerificationTokenClient(cfg),
+		Entitlement:                   NewEntitlementClient(cfg),
+		EntitlementHistory:            NewEntitlementHistoryClient(cfg),
+		EntitlementPlan:               NewEntitlementPlanClient(cfg),
+		EntitlementPlanHistory:        NewEntitlementPlanHistoryClient(cfg),
+		EntitlementPlanFeature:        NewEntitlementPlanFeatureClient(cfg),
+		EntitlementPlanFeatureHistory: NewEntitlementPlanFeatureHistoryClient(cfg),
+		Event:                         NewEventClient(cfg),
+		EventHistory:                  NewEventHistoryClient(cfg),
+		Feature:                       NewFeatureClient(cfg),
+		FeatureHistory:                NewFeatureHistoryClient(cfg),
+		File:                          NewFileClient(cfg),
+		FileHistory:                   NewFileHistoryClient(cfg),
+		Group:                         NewGroupClient(cfg),
+		GroupHistory:                  NewGroupHistoryClient(cfg),
+		GroupMembership:               NewGroupMembershipClient(cfg),
+		GroupMembershipHistory:        NewGroupMembershipHistoryClient(cfg),
+		GroupSetting:                  NewGroupSettingClient(cfg),
+		GroupSettingHistory:           NewGroupSettingHistoryClient(cfg),
+		Hush:                          NewHushClient(cfg),
+		HushHistory:                   NewHushHistoryClient(cfg),
+		Integration:                   NewIntegrationClient(cfg),
+		IntegrationHistory:            NewIntegrationHistoryClient(cfg),
+		Invite:                        NewInviteClient(cfg),
+		OauthProvider:                 NewOauthProviderClient(cfg),
+		OauthProviderHistory:          NewOauthProviderHistoryClient(cfg),
+		OhAuthTooToken:                NewOhAuthTooTokenClient(cfg),
+		OrgMembership:                 NewOrgMembershipClient(cfg),
+		OrgMembershipHistory:          NewOrgMembershipHistoryClient(cfg),
+		Organization:                  NewOrganizationClient(cfg),
+		OrganizationHistory:           NewOrganizationHistoryClient(cfg),
+		OrganizationSetting:           NewOrganizationSettingClient(cfg),
+		OrganizationSettingHistory:    NewOrganizationSettingHistoryClient(cfg),
+		PasswordResetToken:            NewPasswordResetTokenClient(cfg),
+		PersonalAccessToken:           NewPersonalAccessTokenClient(cfg),
+		Subscriber:                    NewSubscriberClient(cfg),
+		TFASetting:                    NewTFASettingClient(cfg),
+		Template:                      NewTemplateClient(cfg),
+		TemplateHistory:               NewTemplateHistoryClient(cfg),
+		User:                          NewUserClient(cfg),
+		UserHistory:                   NewUserHistoryClient(cfg),
+		UserSetting:                   NewUserSettingClient(cfg),
+		UserSettingHistory:            NewUserSettingHistoryClient(cfg),
+		Webauthn:                      NewWebauthnClient(cfg),
+		Webhook:                       NewWebhookClient(cfg),
+		WebhookHistory:                NewWebhookHistoryClient(cfg),
 	}, nil
 }
 
@@ -493,53 +513,57 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                        ctx,
-		config:                     cfg,
-		APIToken:                   NewAPITokenClient(cfg),
-		DocumentData:               NewDocumentDataClient(cfg),
-		DocumentDataHistory:        NewDocumentDataHistoryClient(cfg),
-		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
-		Entitlement:                NewEntitlementClient(cfg),
-		EntitlementHistory:         NewEntitlementHistoryClient(cfg),
-		Event:                      NewEventClient(cfg),
-		EventHistory:               NewEventHistoryClient(cfg),
-		Feature:                    NewFeatureClient(cfg),
-		FeatureHistory:             NewFeatureHistoryClient(cfg),
-		File:                       NewFileClient(cfg),
-		FileHistory:                NewFileHistoryClient(cfg),
-		Group:                      NewGroupClient(cfg),
-		GroupHistory:               NewGroupHistoryClient(cfg),
-		GroupMembership:            NewGroupMembershipClient(cfg),
-		GroupMembershipHistory:     NewGroupMembershipHistoryClient(cfg),
-		GroupSetting:               NewGroupSettingClient(cfg),
-		GroupSettingHistory:        NewGroupSettingHistoryClient(cfg),
-		Hush:                       NewHushClient(cfg),
-		HushHistory:                NewHushHistoryClient(cfg),
-		Integration:                NewIntegrationClient(cfg),
-		IntegrationHistory:         NewIntegrationHistoryClient(cfg),
-		Invite:                     NewInviteClient(cfg),
-		OauthProvider:              NewOauthProviderClient(cfg),
-		OauthProviderHistory:       NewOauthProviderHistoryClient(cfg),
-		OhAuthTooToken:             NewOhAuthTooTokenClient(cfg),
-		OrgMembership:              NewOrgMembershipClient(cfg),
-		OrgMembershipHistory:       NewOrgMembershipHistoryClient(cfg),
-		Organization:               NewOrganizationClient(cfg),
-		OrganizationHistory:        NewOrganizationHistoryClient(cfg),
-		OrganizationSetting:        NewOrganizationSettingClient(cfg),
-		OrganizationSettingHistory: NewOrganizationSettingHistoryClient(cfg),
-		PasswordResetToken:         NewPasswordResetTokenClient(cfg),
-		PersonalAccessToken:        NewPersonalAccessTokenClient(cfg),
-		Subscriber:                 NewSubscriberClient(cfg),
-		TFASetting:                 NewTFASettingClient(cfg),
-		Template:                   NewTemplateClient(cfg),
-		TemplateHistory:            NewTemplateHistoryClient(cfg),
-		User:                       NewUserClient(cfg),
-		UserHistory:                NewUserHistoryClient(cfg),
-		UserSetting:                NewUserSettingClient(cfg),
-		UserSettingHistory:         NewUserSettingHistoryClient(cfg),
-		Webauthn:                   NewWebauthnClient(cfg),
-		Webhook:                    NewWebhookClient(cfg),
-		WebhookHistory:             NewWebhookHistoryClient(cfg),
+		ctx:                           ctx,
+		config:                        cfg,
+		APIToken:                      NewAPITokenClient(cfg),
+		DocumentData:                  NewDocumentDataClient(cfg),
+		DocumentDataHistory:           NewDocumentDataHistoryClient(cfg),
+		EmailVerificationToken:        NewEmailVerificationTokenClient(cfg),
+		Entitlement:                   NewEntitlementClient(cfg),
+		EntitlementHistory:            NewEntitlementHistoryClient(cfg),
+		EntitlementPlan:               NewEntitlementPlanClient(cfg),
+		EntitlementPlanHistory:        NewEntitlementPlanHistoryClient(cfg),
+		EntitlementPlanFeature:        NewEntitlementPlanFeatureClient(cfg),
+		EntitlementPlanFeatureHistory: NewEntitlementPlanFeatureHistoryClient(cfg),
+		Event:                         NewEventClient(cfg),
+		EventHistory:                  NewEventHistoryClient(cfg),
+		Feature:                       NewFeatureClient(cfg),
+		FeatureHistory:                NewFeatureHistoryClient(cfg),
+		File:                          NewFileClient(cfg),
+		FileHistory:                   NewFileHistoryClient(cfg),
+		Group:                         NewGroupClient(cfg),
+		GroupHistory:                  NewGroupHistoryClient(cfg),
+		GroupMembership:               NewGroupMembershipClient(cfg),
+		GroupMembershipHistory:        NewGroupMembershipHistoryClient(cfg),
+		GroupSetting:                  NewGroupSettingClient(cfg),
+		GroupSettingHistory:           NewGroupSettingHistoryClient(cfg),
+		Hush:                          NewHushClient(cfg),
+		HushHistory:                   NewHushHistoryClient(cfg),
+		Integration:                   NewIntegrationClient(cfg),
+		IntegrationHistory:            NewIntegrationHistoryClient(cfg),
+		Invite:                        NewInviteClient(cfg),
+		OauthProvider:                 NewOauthProviderClient(cfg),
+		OauthProviderHistory:          NewOauthProviderHistoryClient(cfg),
+		OhAuthTooToken:                NewOhAuthTooTokenClient(cfg),
+		OrgMembership:                 NewOrgMembershipClient(cfg),
+		OrgMembershipHistory:          NewOrgMembershipHistoryClient(cfg),
+		Organization:                  NewOrganizationClient(cfg),
+		OrganizationHistory:           NewOrganizationHistoryClient(cfg),
+		OrganizationSetting:           NewOrganizationSettingClient(cfg),
+		OrganizationSettingHistory:    NewOrganizationSettingHistoryClient(cfg),
+		PasswordResetToken:            NewPasswordResetTokenClient(cfg),
+		PersonalAccessToken:           NewPersonalAccessTokenClient(cfg),
+		Subscriber:                    NewSubscriberClient(cfg),
+		TFASetting:                    NewTFASettingClient(cfg),
+		Template:                      NewTemplateClient(cfg),
+		TemplateHistory:               NewTemplateHistoryClient(cfg),
+		User:                          NewUserClient(cfg),
+		UserHistory:                   NewUserHistoryClient(cfg),
+		UserSetting:                   NewUserSettingClient(cfg),
+		UserSettingHistory:            NewUserSettingHistoryClient(cfg),
+		Webauthn:                      NewWebauthnClient(cfg),
+		Webhook:                       NewWebhookClient(cfg),
+		WebhookHistory:                NewWebhookHistoryClient(cfg),
 	}, nil
 }
 
@@ -570,7 +594,9 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.APIToken, c.DocumentData, c.DocumentDataHistory, c.EmailVerificationToken,
-		c.Entitlement, c.EntitlementHistory, c.Event, c.EventHistory, c.Feature,
+		c.Entitlement, c.EntitlementHistory, c.EntitlementPlan,
+		c.EntitlementPlanHistory, c.EntitlementPlanFeature,
+		c.EntitlementPlanFeatureHistory, c.Event, c.EventHistory, c.Feature,
 		c.FeatureHistory, c.File, c.FileHistory, c.Group, c.GroupHistory,
 		c.GroupMembership, c.GroupMembershipHistory, c.GroupSetting,
 		c.GroupSettingHistory, c.Hush, c.HushHistory, c.Integration,
@@ -590,7 +616,9 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.APIToken, c.DocumentData, c.DocumentDataHistory, c.EmailVerificationToken,
-		c.Entitlement, c.EntitlementHistory, c.Event, c.EventHistory, c.Feature,
+		c.Entitlement, c.EntitlementHistory, c.EntitlementPlan,
+		c.EntitlementPlanHistory, c.EntitlementPlanFeature,
+		c.EntitlementPlanFeatureHistory, c.Event, c.EventHistory, c.Feature,
 		c.FeatureHistory, c.File, c.FileHistory, c.Group, c.GroupHistory,
 		c.GroupMembership, c.GroupMembershipHistory, c.GroupSetting,
 		c.GroupSettingHistory, c.Hush, c.HushHistory, c.Integration,
@@ -620,6 +648,14 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Entitlement.mutate(ctx, m)
 	case *EntitlementHistoryMutation:
 		return c.EntitlementHistory.mutate(ctx, m)
+	case *EntitlementPlanMutation:
+		return c.EntitlementPlan.mutate(ctx, m)
+	case *EntitlementPlanHistoryMutation:
+		return c.EntitlementPlanHistory.mutate(ctx, m)
+	case *EntitlementPlanFeatureMutation:
+		return c.EntitlementPlanFeature.mutate(ctx, m)
+	case *EntitlementPlanFeatureHistoryMutation:
+		return c.EntitlementPlanFeatureHistory.mutate(ctx, m)
 	case *EventMutation:
 		return c.Event.mutate(ctx, m)
 	case *EventHistoryMutation:
@@ -1444,19 +1480,38 @@ func (c *EntitlementClient) QueryOwner(e *Entitlement) *OrganizationQuery {
 	return query
 }
 
-// QueryFeatures queries the features edge of a Entitlement.
-func (c *EntitlementClient) QueryFeatures(e *Entitlement) *FeatureQuery {
-	query := (&FeatureClient{config: c.config}).Query()
+// QueryPlan queries the plan edge of a Entitlement.
+func (c *EntitlementClient) QueryPlan(e *Entitlement) *EntitlementPlanQuery {
+	query := (&EntitlementPlanClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := e.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entitlement.Table, entitlement.FieldID, id),
-			sqlgraph.To(feature.Table, feature.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, entitlement.FeaturesTable, entitlement.FeaturesPrimaryKey...),
+			sqlgraph.To(entitlementplan.Table, entitlementplan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entitlement.PlanTable, entitlement.PlanColumn),
 		)
 		schemaConfig := e.schemaConfig
-		step.To.Schema = schemaConfig.Feature
-		step.Edge.Schema = schemaConfig.EntitlementFeatures
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.Entitlement
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrganization queries the organization edge of a Entitlement.
+func (c *EntitlementClient) QueryOrganization(e *Entitlement) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlement.Table, entitlement.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entitlement.OrganizationTable, entitlement.OrganizationColumn),
+		)
+		schemaConfig := e.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Entitlement
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1639,6 +1694,713 @@ func (c *EntitlementHistoryClient) mutate(ctx context.Context, m *EntitlementHis
 		return (&EntitlementHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown EntitlementHistory mutation op: %q", m.Op())
+	}
+}
+
+// EntitlementPlanClient is a client for the EntitlementPlan schema.
+type EntitlementPlanClient struct {
+	config
+}
+
+// NewEntitlementPlanClient returns a client for the EntitlementPlan from the given config.
+func NewEntitlementPlanClient(c config) *EntitlementPlanClient {
+	return &EntitlementPlanClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `entitlementplan.Hooks(f(g(h())))`.
+func (c *EntitlementPlanClient) Use(hooks ...Hook) {
+	c.hooks.EntitlementPlan = append(c.hooks.EntitlementPlan, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `entitlementplan.Intercept(f(g(h())))`.
+func (c *EntitlementPlanClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EntitlementPlan = append(c.inters.EntitlementPlan, interceptors...)
+}
+
+// Create returns a builder for creating a EntitlementPlan entity.
+func (c *EntitlementPlanClient) Create() *EntitlementPlanCreate {
+	mutation := newEntitlementPlanMutation(c.config, OpCreate)
+	return &EntitlementPlanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EntitlementPlan entities.
+func (c *EntitlementPlanClient) CreateBulk(builders ...*EntitlementPlanCreate) *EntitlementPlanCreateBulk {
+	return &EntitlementPlanCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EntitlementPlanClient) MapCreateBulk(slice any, setFunc func(*EntitlementPlanCreate, int)) *EntitlementPlanCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EntitlementPlanCreateBulk{err: fmt.Errorf("calling to EntitlementPlanClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EntitlementPlanCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EntitlementPlanCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EntitlementPlan.
+func (c *EntitlementPlanClient) Update() *EntitlementPlanUpdate {
+	mutation := newEntitlementPlanMutation(c.config, OpUpdate)
+	return &EntitlementPlanUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EntitlementPlanClient) UpdateOne(ep *EntitlementPlan) *EntitlementPlanUpdateOne {
+	mutation := newEntitlementPlanMutation(c.config, OpUpdateOne, withEntitlementPlan(ep))
+	return &EntitlementPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EntitlementPlanClient) UpdateOneID(id string) *EntitlementPlanUpdateOne {
+	mutation := newEntitlementPlanMutation(c.config, OpUpdateOne, withEntitlementPlanID(id))
+	return &EntitlementPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EntitlementPlan.
+func (c *EntitlementPlanClient) Delete() *EntitlementPlanDelete {
+	mutation := newEntitlementPlanMutation(c.config, OpDelete)
+	return &EntitlementPlanDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EntitlementPlanClient) DeleteOne(ep *EntitlementPlan) *EntitlementPlanDeleteOne {
+	return c.DeleteOneID(ep.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EntitlementPlanClient) DeleteOneID(id string) *EntitlementPlanDeleteOne {
+	builder := c.Delete().Where(entitlementplan.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EntitlementPlanDeleteOne{builder}
+}
+
+// Query returns a query builder for EntitlementPlan.
+func (c *EntitlementPlanClient) Query() *EntitlementPlanQuery {
+	return &EntitlementPlanQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEntitlementPlan},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EntitlementPlan entity by its id.
+func (c *EntitlementPlanClient) Get(ctx context.Context, id string) (*EntitlementPlan, error) {
+	return c.Query().Where(entitlementplan.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EntitlementPlanClient) GetX(ctx context.Context, id string) *EntitlementPlan {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a EntitlementPlan.
+func (c *EntitlementPlanClient) QueryOwner(ep *EntitlementPlan) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplan.Table, entitlementplan.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entitlementplan.OwnerTable, entitlementplan.OwnerColumn),
+		)
+		schemaConfig := ep.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.EntitlementPlan
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntitlements queries the entitlements edge of a EntitlementPlan.
+func (c *EntitlementPlanClient) QueryEntitlements(ep *EntitlementPlan) *EntitlementQuery {
+	query := (&EntitlementClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplan.Table, entitlementplan.FieldID, id),
+			sqlgraph.To(entitlement.Table, entitlement.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, entitlementplan.EntitlementsTable, entitlementplan.EntitlementsColumn),
+		)
+		schemaConfig := ep.schemaConfig
+		step.To.Schema = schemaConfig.Entitlement
+		step.Edge.Schema = schemaConfig.Entitlement
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBaseFeatures queries the base_features edge of a EntitlementPlan.
+func (c *EntitlementPlanClient) QueryBaseFeatures(ep *EntitlementPlan) *FeatureQuery {
+	query := (&FeatureClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplan.Table, entitlementplan.FieldID, id),
+			sqlgraph.To(feature.Table, feature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, entitlementplan.BaseFeaturesTable, entitlementplan.BaseFeaturesPrimaryKey...),
+		)
+		schemaConfig := ep.schemaConfig
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEvents queries the events edge of a EntitlementPlan.
+func (c *EntitlementPlanClient) QueryEvents(ep *EntitlementPlan) *EventQuery {
+	query := (&EventClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplan.Table, entitlementplan.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, entitlementplan.EventsTable, entitlementplan.EventsPrimaryKey...),
+		)
+		schemaConfig := ep.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.EntitlementPlanEvents
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFeatures queries the features edge of a EntitlementPlan.
+func (c *EntitlementPlanClient) QueryFeatures(ep *EntitlementPlan) *EntitlementPlanFeatureQuery {
+	query := (&EntitlementPlanFeatureClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplan.Table, entitlementplan.FieldID, id),
+			sqlgraph.To(entitlementplanfeature.Table, entitlementplanfeature.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, entitlementplan.FeaturesTable, entitlementplan.FeaturesColumn),
+		)
+		schemaConfig := ep.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlanFeature
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EntitlementPlanClient) Hooks() []Hook {
+	hooks := c.hooks.EntitlementPlan
+	return append(hooks[:len(hooks):len(hooks)], entitlementplan.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *EntitlementPlanClient) Interceptors() []Interceptor {
+	inters := c.inters.EntitlementPlan
+	return append(inters[:len(inters):len(inters)], entitlementplan.Interceptors[:]...)
+}
+
+func (c *EntitlementPlanClient) mutate(ctx context.Context, m *EntitlementPlanMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EntitlementPlanCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EntitlementPlanUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EntitlementPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EntitlementPlanDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown EntitlementPlan mutation op: %q", m.Op())
+	}
+}
+
+// EntitlementPlanHistoryClient is a client for the EntitlementPlanHistory schema.
+type EntitlementPlanHistoryClient struct {
+	config
+}
+
+// NewEntitlementPlanHistoryClient returns a client for the EntitlementPlanHistory from the given config.
+func NewEntitlementPlanHistoryClient(c config) *EntitlementPlanHistoryClient {
+	return &EntitlementPlanHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `entitlementplanhistory.Hooks(f(g(h())))`.
+func (c *EntitlementPlanHistoryClient) Use(hooks ...Hook) {
+	c.hooks.EntitlementPlanHistory = append(c.hooks.EntitlementPlanHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `entitlementplanhistory.Intercept(f(g(h())))`.
+func (c *EntitlementPlanHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EntitlementPlanHistory = append(c.inters.EntitlementPlanHistory, interceptors...)
+}
+
+// Create returns a builder for creating a EntitlementPlanHistory entity.
+func (c *EntitlementPlanHistoryClient) Create() *EntitlementPlanHistoryCreate {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpCreate)
+	return &EntitlementPlanHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EntitlementPlanHistory entities.
+func (c *EntitlementPlanHistoryClient) CreateBulk(builders ...*EntitlementPlanHistoryCreate) *EntitlementPlanHistoryCreateBulk {
+	return &EntitlementPlanHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EntitlementPlanHistoryClient) MapCreateBulk(slice any, setFunc func(*EntitlementPlanHistoryCreate, int)) *EntitlementPlanHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EntitlementPlanHistoryCreateBulk{err: fmt.Errorf("calling to EntitlementPlanHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EntitlementPlanHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EntitlementPlanHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EntitlementPlanHistory.
+func (c *EntitlementPlanHistoryClient) Update() *EntitlementPlanHistoryUpdate {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdate)
+	return &EntitlementPlanHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EntitlementPlanHistoryClient) UpdateOne(eph *EntitlementPlanHistory) *EntitlementPlanHistoryUpdateOne {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdateOne, withEntitlementPlanHistory(eph))
+	return &EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EntitlementPlanHistoryClient) UpdateOneID(id string) *EntitlementPlanHistoryUpdateOne {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdateOne, withEntitlementPlanHistoryID(id))
+	return &EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EntitlementPlanHistory.
+func (c *EntitlementPlanHistoryClient) Delete() *EntitlementPlanHistoryDelete {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpDelete)
+	return &EntitlementPlanHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EntitlementPlanHistoryClient) DeleteOne(eph *EntitlementPlanHistory) *EntitlementPlanHistoryDeleteOne {
+	return c.DeleteOneID(eph.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EntitlementPlanHistoryClient) DeleteOneID(id string) *EntitlementPlanHistoryDeleteOne {
+	builder := c.Delete().Where(entitlementplanhistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EntitlementPlanHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for EntitlementPlanHistory.
+func (c *EntitlementPlanHistoryClient) Query() *EntitlementPlanHistoryQuery {
+	return &EntitlementPlanHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEntitlementPlanHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EntitlementPlanHistory entity by its id.
+func (c *EntitlementPlanHistoryClient) Get(ctx context.Context, id string) (*EntitlementPlanHistory, error) {
+	return c.Query().Where(entitlementplanhistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EntitlementPlanHistoryClient) GetX(ctx context.Context, id string) *EntitlementPlanHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EntitlementPlanHistoryClient) Hooks() []Hook {
+	return c.hooks.EntitlementPlanHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *EntitlementPlanHistoryClient) Interceptors() []Interceptor {
+	return c.inters.EntitlementPlanHistory
+}
+
+func (c *EntitlementPlanHistoryClient) mutate(ctx context.Context, m *EntitlementPlanHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EntitlementPlanHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EntitlementPlanHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EntitlementPlanHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown EntitlementPlanHistory mutation op: %q", m.Op())
+	}
+}
+
+// EntitlementPlanFeatureClient is a client for the EntitlementPlanFeature schema.
+type EntitlementPlanFeatureClient struct {
+	config
+}
+
+// NewEntitlementPlanFeatureClient returns a client for the EntitlementPlanFeature from the given config.
+func NewEntitlementPlanFeatureClient(c config) *EntitlementPlanFeatureClient {
+	return &EntitlementPlanFeatureClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `entitlementplanfeature.Hooks(f(g(h())))`.
+func (c *EntitlementPlanFeatureClient) Use(hooks ...Hook) {
+	c.hooks.EntitlementPlanFeature = append(c.hooks.EntitlementPlanFeature, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `entitlementplanfeature.Intercept(f(g(h())))`.
+func (c *EntitlementPlanFeatureClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EntitlementPlanFeature = append(c.inters.EntitlementPlanFeature, interceptors...)
+}
+
+// Create returns a builder for creating a EntitlementPlanFeature entity.
+func (c *EntitlementPlanFeatureClient) Create() *EntitlementPlanFeatureCreate {
+	mutation := newEntitlementPlanFeatureMutation(c.config, OpCreate)
+	return &EntitlementPlanFeatureCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EntitlementPlanFeature entities.
+func (c *EntitlementPlanFeatureClient) CreateBulk(builders ...*EntitlementPlanFeatureCreate) *EntitlementPlanFeatureCreateBulk {
+	return &EntitlementPlanFeatureCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EntitlementPlanFeatureClient) MapCreateBulk(slice any, setFunc func(*EntitlementPlanFeatureCreate, int)) *EntitlementPlanFeatureCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EntitlementPlanFeatureCreateBulk{err: fmt.Errorf("calling to EntitlementPlanFeatureClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EntitlementPlanFeatureCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EntitlementPlanFeatureCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EntitlementPlanFeature.
+func (c *EntitlementPlanFeatureClient) Update() *EntitlementPlanFeatureUpdate {
+	mutation := newEntitlementPlanFeatureMutation(c.config, OpUpdate)
+	return &EntitlementPlanFeatureUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EntitlementPlanFeatureClient) UpdateOne(epf *EntitlementPlanFeature) *EntitlementPlanFeatureUpdateOne {
+	mutation := newEntitlementPlanFeatureMutation(c.config, OpUpdateOne, withEntitlementPlanFeature(epf))
+	return &EntitlementPlanFeatureUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EntitlementPlanFeatureClient) UpdateOneID(id string) *EntitlementPlanFeatureUpdateOne {
+	mutation := newEntitlementPlanFeatureMutation(c.config, OpUpdateOne, withEntitlementPlanFeatureID(id))
+	return &EntitlementPlanFeatureUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EntitlementPlanFeature.
+func (c *EntitlementPlanFeatureClient) Delete() *EntitlementPlanFeatureDelete {
+	mutation := newEntitlementPlanFeatureMutation(c.config, OpDelete)
+	return &EntitlementPlanFeatureDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EntitlementPlanFeatureClient) DeleteOne(epf *EntitlementPlanFeature) *EntitlementPlanFeatureDeleteOne {
+	return c.DeleteOneID(epf.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EntitlementPlanFeatureClient) DeleteOneID(id string) *EntitlementPlanFeatureDeleteOne {
+	builder := c.Delete().Where(entitlementplanfeature.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EntitlementPlanFeatureDeleteOne{builder}
+}
+
+// Query returns a query builder for EntitlementPlanFeature.
+func (c *EntitlementPlanFeatureClient) Query() *EntitlementPlanFeatureQuery {
+	return &EntitlementPlanFeatureQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEntitlementPlanFeature},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EntitlementPlanFeature entity by its id.
+func (c *EntitlementPlanFeatureClient) Get(ctx context.Context, id string) (*EntitlementPlanFeature, error) {
+	return c.Query().Where(entitlementplanfeature.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EntitlementPlanFeatureClient) GetX(ctx context.Context, id string) *EntitlementPlanFeature {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a EntitlementPlanFeature.
+func (c *EntitlementPlanFeatureClient) QueryOwner(epf *EntitlementPlanFeature) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := epf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplanfeature.Table, entitlementplanfeature.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entitlementplanfeature.OwnerTable, entitlementplanfeature.OwnerColumn),
+		)
+		schemaConfig := epf.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
+		fromV = sqlgraph.Neighbors(epf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPlan queries the plan edge of a EntitlementPlanFeature.
+func (c *EntitlementPlanFeatureClient) QueryPlan(epf *EntitlementPlanFeature) *EntitlementPlanQuery {
+	query := (&EntitlementPlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := epf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplanfeature.Table, entitlementplanfeature.FieldID, id),
+			sqlgraph.To(entitlementplan.Table, entitlementplan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, entitlementplanfeature.PlanTable, entitlementplanfeature.PlanColumn),
+		)
+		schemaConfig := epf.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
+		fromV = sqlgraph.Neighbors(epf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFeature queries the feature edge of a EntitlementPlanFeature.
+func (c *EntitlementPlanFeatureClient) QueryFeature(epf *EntitlementPlanFeature) *FeatureQuery {
+	query := (&FeatureClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := epf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplanfeature.Table, entitlementplanfeature.FieldID, id),
+			sqlgraph.To(feature.Table, feature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, entitlementplanfeature.FeatureTable, entitlementplanfeature.FeatureColumn),
+		)
+		schemaConfig := epf.schemaConfig
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
+		fromV = sqlgraph.Neighbors(epf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEvents queries the events edge of a EntitlementPlanFeature.
+func (c *EntitlementPlanFeatureClient) QueryEvents(epf *EntitlementPlanFeature) *EventQuery {
+	query := (&EventClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := epf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlementplanfeature.Table, entitlementplanfeature.FieldID, id),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, entitlementplanfeature.EventsTable, entitlementplanfeature.EventsPrimaryKey...),
+		)
+		schemaConfig := epf.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeatureEvents
+		fromV = sqlgraph.Neighbors(epf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EntitlementPlanFeatureClient) Hooks() []Hook {
+	hooks := c.hooks.EntitlementPlanFeature
+	return append(hooks[:len(hooks):len(hooks)], entitlementplanfeature.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *EntitlementPlanFeatureClient) Interceptors() []Interceptor {
+	inters := c.inters.EntitlementPlanFeature
+	return append(inters[:len(inters):len(inters)], entitlementplanfeature.Interceptors[:]...)
+}
+
+func (c *EntitlementPlanFeatureClient) mutate(ctx context.Context, m *EntitlementPlanFeatureMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EntitlementPlanFeatureCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EntitlementPlanFeatureUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EntitlementPlanFeatureUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EntitlementPlanFeatureDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown EntitlementPlanFeature mutation op: %q", m.Op())
+	}
+}
+
+// EntitlementPlanFeatureHistoryClient is a client for the EntitlementPlanFeatureHistory schema.
+type EntitlementPlanFeatureHistoryClient struct {
+	config
+}
+
+// NewEntitlementPlanFeatureHistoryClient returns a client for the EntitlementPlanFeatureHistory from the given config.
+func NewEntitlementPlanFeatureHistoryClient(c config) *EntitlementPlanFeatureHistoryClient {
+	return &EntitlementPlanFeatureHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `entitlementplanfeaturehistory.Hooks(f(g(h())))`.
+func (c *EntitlementPlanFeatureHistoryClient) Use(hooks ...Hook) {
+	c.hooks.EntitlementPlanFeatureHistory = append(c.hooks.EntitlementPlanFeatureHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `entitlementplanfeaturehistory.Intercept(f(g(h())))`.
+func (c *EntitlementPlanFeatureHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EntitlementPlanFeatureHistory = append(c.inters.EntitlementPlanFeatureHistory, interceptors...)
+}
+
+// Create returns a builder for creating a EntitlementPlanFeatureHistory entity.
+func (c *EntitlementPlanFeatureHistoryClient) Create() *EntitlementPlanFeatureHistoryCreate {
+	mutation := newEntitlementPlanFeatureHistoryMutation(c.config, OpCreate)
+	return &EntitlementPlanFeatureHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EntitlementPlanFeatureHistory entities.
+func (c *EntitlementPlanFeatureHistoryClient) CreateBulk(builders ...*EntitlementPlanFeatureHistoryCreate) *EntitlementPlanFeatureHistoryCreateBulk {
+	return &EntitlementPlanFeatureHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EntitlementPlanFeatureHistoryClient) MapCreateBulk(slice any, setFunc func(*EntitlementPlanFeatureHistoryCreate, int)) *EntitlementPlanFeatureHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EntitlementPlanFeatureHistoryCreateBulk{err: fmt.Errorf("calling to EntitlementPlanFeatureHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EntitlementPlanFeatureHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EntitlementPlanFeatureHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EntitlementPlanFeatureHistory.
+func (c *EntitlementPlanFeatureHistoryClient) Update() *EntitlementPlanFeatureHistoryUpdate {
+	mutation := newEntitlementPlanFeatureHistoryMutation(c.config, OpUpdate)
+	return &EntitlementPlanFeatureHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EntitlementPlanFeatureHistoryClient) UpdateOne(epfh *EntitlementPlanFeatureHistory) *EntitlementPlanFeatureHistoryUpdateOne {
+	mutation := newEntitlementPlanFeatureHistoryMutation(c.config, OpUpdateOne, withEntitlementPlanFeatureHistory(epfh))
+	return &EntitlementPlanFeatureHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EntitlementPlanFeatureHistoryClient) UpdateOneID(id string) *EntitlementPlanFeatureHistoryUpdateOne {
+	mutation := newEntitlementPlanFeatureHistoryMutation(c.config, OpUpdateOne, withEntitlementPlanFeatureHistoryID(id))
+	return &EntitlementPlanFeatureHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EntitlementPlanFeatureHistory.
+func (c *EntitlementPlanFeatureHistoryClient) Delete() *EntitlementPlanFeatureHistoryDelete {
+	mutation := newEntitlementPlanFeatureHistoryMutation(c.config, OpDelete)
+	return &EntitlementPlanFeatureHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EntitlementPlanFeatureHistoryClient) DeleteOne(epfh *EntitlementPlanFeatureHistory) *EntitlementPlanFeatureHistoryDeleteOne {
+	return c.DeleteOneID(epfh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EntitlementPlanFeatureHistoryClient) DeleteOneID(id string) *EntitlementPlanFeatureHistoryDeleteOne {
+	builder := c.Delete().Where(entitlementplanfeaturehistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EntitlementPlanFeatureHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for EntitlementPlanFeatureHistory.
+func (c *EntitlementPlanFeatureHistoryClient) Query() *EntitlementPlanFeatureHistoryQuery {
+	return &EntitlementPlanFeatureHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEntitlementPlanFeatureHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EntitlementPlanFeatureHistory entity by its id.
+func (c *EntitlementPlanFeatureHistoryClient) Get(ctx context.Context, id string) (*EntitlementPlanFeatureHistory, error) {
+	return c.Query().Where(entitlementplanfeaturehistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EntitlementPlanFeatureHistoryClient) GetX(ctx context.Context, id string) *EntitlementPlanFeatureHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EntitlementPlanFeatureHistoryClient) Hooks() []Hook {
+	return c.hooks.EntitlementPlanFeatureHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *EntitlementPlanFeatureHistoryClient) Interceptors() []Interceptor {
+	return c.inters.EntitlementPlanFeatureHistory
+}
+
+func (c *EntitlementPlanFeatureHistoryClient) mutate(ctx context.Context, m *EntitlementPlanFeatureHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EntitlementPlanFeatureHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EntitlementPlanFeatureHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EntitlementPlanFeatureHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EntitlementPlanFeatureHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown EntitlementPlanFeatureHistory mutation op: %q", m.Op())
 	}
 }
 
@@ -1858,6 +2620,44 @@ func (c *EventClient) QueryFeature(e *Event) *FeatureQuery {
 		schemaConfig := e.schemaConfig
 		step.To.Schema = schemaConfig.Feature
 		step.Edge.Schema = schemaConfig.FeatureEvents
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntitlementplan queries the entitlementplan edge of a Event.
+func (c *EventClient) QueryEntitlementplan(e *Event) *EntitlementPlanQuery {
+	query := (&EntitlementPlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(entitlementplan.Table, entitlementplan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, event.EntitlementplanTable, event.EntitlementplanPrimaryKey...),
+		)
+		schemaConfig := e.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.EntitlementPlanEvents
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntitlementplanfeature queries the entitlementplanfeature edge of a Event.
+func (c *EventClient) QueryEntitlementplanfeature(e *Event) *EntitlementPlanFeatureQuery {
+	query := (&EntitlementPlanFeatureClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(event.Table, event.FieldID, id),
+			sqlgraph.To(entitlementplanfeature.Table, entitlementplanfeature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, event.EntitlementplanfeatureTable, event.EntitlementplanfeaturePrimaryKey...),
+		)
+		schemaConfig := e.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlanFeature
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeatureEvents
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -2283,76 +3083,38 @@ func (c *FeatureClient) GetX(ctx context.Context, id string) *Feature {
 	return obj
 }
 
-// QueryUsers queries the users edge of a Feature.
-func (c *FeatureClient) QueryUsers(f *Feature) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := f.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(feature.Table, feature.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, feature.UsersTable, feature.UsersPrimaryKey...),
-		)
-		schemaConfig := f.schemaConfig
-		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.UserFeatures
-		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryGroups queries the groups edge of a Feature.
-func (c *FeatureClient) QueryGroups(f *Feature) *GroupQuery {
-	query := (&GroupClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := f.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(feature.Table, feature.FieldID, id),
-			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, feature.GroupsTable, feature.GroupsPrimaryKey...),
-		)
-		schemaConfig := f.schemaConfig
-		step.To.Schema = schemaConfig.Group
-		step.Edge.Schema = schemaConfig.GroupFeatures
-		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryEntitlements queries the entitlements edge of a Feature.
-func (c *FeatureClient) QueryEntitlements(f *Feature) *EntitlementQuery {
-	query := (&EntitlementClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := f.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(feature.Table, feature.FieldID, id),
-			sqlgraph.To(entitlement.Table, entitlement.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, feature.EntitlementsTable, feature.EntitlementsPrimaryKey...),
-		)
-		schemaConfig := f.schemaConfig
-		step.To.Schema = schemaConfig.Entitlement
-		step.Edge.Schema = schemaConfig.EntitlementFeatures
-		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryOrganizations queries the organizations edge of a Feature.
-func (c *FeatureClient) QueryOrganizations(f *Feature) *OrganizationQuery {
+// QueryOwner queries the owner edge of a Feature.
+func (c *FeatureClient) QueryOwner(f *Feature) *OrganizationQuery {
 	query := (&OrganizationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := f.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(feature.Table, feature.FieldID, id),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, feature.OrganizationsTable, feature.OrganizationsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, feature.OwnerTable, feature.OwnerColumn),
 		)
 		schemaConfig := f.schemaConfig
 		step.To.Schema = schemaConfig.Organization
-		step.Edge.Schema = schemaConfig.OrganizationFeatures
+		step.Edge.Schema = schemaConfig.Feature
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPlans queries the plans edge of a Feature.
+func (c *FeatureClient) QueryPlans(f *Feature) *EntitlementPlanQuery {
+	query := (&EntitlementPlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(feature.Table, feature.FieldID, id),
+			sqlgraph.To(entitlementplan.Table, entitlementplan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, feature.PlansTable, feature.PlansPrimaryKey...),
+		)
+		schemaConfig := f.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
 		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -2372,6 +3134,25 @@ func (c *FeatureClient) QueryEvents(f *Feature) *EventQuery {
 		schemaConfig := f.schemaConfig
 		step.To.Schema = schemaConfig.Event
 		step.Edge.Schema = schemaConfig.FeatureEvents
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFeatures queries the features edge of a Feature.
+func (c *FeatureClient) QueryFeatures(f *Feature) *EntitlementPlanFeatureQuery {
+	query := (&EntitlementPlanFeatureClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(feature.Table, feature.FieldID, id),
+			sqlgraph.To(entitlementplanfeature.Table, entitlementplanfeature.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, feature.FeaturesTable, feature.FeaturesColumn),
+		)
+		schemaConfig := f.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlanFeature
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
 		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -3022,25 +3803,6 @@ func (c *GroupClient) QueryUsers(gr *Group) *UserQuery {
 		schemaConfig := gr.schemaConfig
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.GroupMembership
-		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryFeatures queries the features edge of a Group.
-func (c *GroupClient) QueryFeatures(gr *Group) *FeatureQuery {
-	query := (&FeatureClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := gr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(group.Table, group.FieldID, id),
-			sqlgraph.To(feature.Table, feature.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, group.FeaturesTable, group.FeaturesPrimaryKey...),
-		)
-		schemaConfig := gr.schemaConfig
-		step.To.Schema = schemaConfig.Feature
-		step.Edge.Schema = schemaConfig.GroupFeatures
 		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -5799,6 +6561,25 @@ func (c *OrganizationClient) QueryEntitlements(o *Organization) *EntitlementQuer
 	return query
 }
 
+// QueryOrganizationEntitlement queries the organization_entitlement edge of a Organization.
+func (c *OrganizationClient) QueryOrganizationEntitlement(o *Organization) *EntitlementQuery {
+	query := (&EntitlementClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(entitlement.Table, entitlement.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.OrganizationEntitlementTable, organization.OrganizationEntitlementColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Entitlement
+		step.Edge.Schema = schemaConfig.Entitlement
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryPersonalAccessTokens queries the personal_access_tokens edge of a Organization.
 func (c *OrganizationClient) QueryPersonalAccessTokens(o *Organization) *PersonalAccessTokenQuery {
 	query := (&PersonalAccessTokenClient{config: c.config}).Query()
@@ -5978,11 +6759,11 @@ func (c *OrganizationClient) QueryFeatures(o *Organization) *FeatureQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, id),
 			sqlgraph.To(feature.Table, feature.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, organization.FeaturesTable, organization.FeaturesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.FeaturesTable, organization.FeaturesColumn),
 		)
 		schemaConfig := o.schemaConfig
 		step.To.Schema = schemaConfig.Feature
-		step.Edge.Schema = schemaConfig.OrganizationFeatures
+		step.Edge.Schema = schemaConfig.Feature
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -6002,6 +6783,44 @@ func (c *OrganizationClient) QueryFiles(o *Organization) *FileQuery {
 		schemaConfig := o.schemaConfig
 		step.To.Schema = schemaConfig.File
 		step.Edge.Schema = schemaConfig.OrganizationFiles
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntitlementplans queries the entitlementplans edge of a Organization.
+func (c *OrganizationClient) QueryEntitlementplans(o *Organization) *EntitlementPlanQuery {
+	query := (&EntitlementPlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(entitlementplan.Table, entitlementplan.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.EntitlementplansTable, organization.EntitlementplansColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlan
+		step.Edge.Schema = schemaConfig.EntitlementPlan
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntitlementplanfeatures queries the entitlementplanfeatures edge of a Organization.
+func (c *OrganizationClient) QueryEntitlementplanfeatures(o *Organization) *EntitlementPlanFeatureQuery {
+	query := (&EntitlementPlanFeatureClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(entitlementplanfeature.Table, entitlementplanfeature.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.EntitlementplanfeaturesTable, organization.EntitlementplanfeaturesColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.EntitlementPlanFeature
+		step.Edge.Schema = schemaConfig.EntitlementPlanFeature
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -7751,25 +8570,6 @@ func (c *UserClient) QueryEvents(u *User) *EventQuery {
 	return query
 }
 
-// QueryFeatures queries the features edge of a User.
-func (c *UserClient) QueryFeatures(u *User) *FeatureQuery {
-	query := (&FeatureClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(feature.Table, feature.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.FeaturesTable, user.FeaturesPrimaryKey...),
-		)
-		schemaConfig := u.schemaConfig
-		step.To.Schema = schemaConfig.Feature
-		step.Edge.Schema = schemaConfig.UserFeatures
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryGroupMemberships queries the group_memberships edge of a User.
 func (c *UserClient) QueryGroupMemberships(u *User) *GroupMembershipQuery {
 	query := (&GroupMembershipClient{config: c.config}).Query()
@@ -8757,27 +9557,30 @@ func (c *WebhookHistoryClient) mutate(ctx context.Context, m *WebhookHistoryMuta
 type (
 	hooks struct {
 		APIToken, DocumentData, DocumentDataHistory, EmailVerificationToken,
-		Entitlement, EntitlementHistory, Event, EventHistory, Feature, FeatureHistory,
-		File, FileHistory, Group, GroupHistory, GroupMembership,
-		GroupMembershipHistory, GroupSetting, GroupSettingHistory, Hush, HushHistory,
-		Integration, IntegrationHistory, Invite, OauthProvider, OauthProviderHistory,
-		OhAuthTooToken, OrgMembership, OrgMembershipHistory, Organization,
-		OrganizationHistory, OrganizationSetting, OrganizationSettingHistory,
-		PasswordResetToken, PersonalAccessToken, Subscriber, TFASetting, Template,
-		TemplateHistory, User, UserHistory, UserSetting, UserSettingHistory, Webauthn,
-		Webhook, WebhookHistory []ent.Hook
+		Entitlement, EntitlementHistory, EntitlementPlan, EntitlementPlanHistory,
+		EntitlementPlanFeature, EntitlementPlanFeatureHistory, Event, EventHistory,
+		Feature, FeatureHistory, File, FileHistory, Group, GroupHistory,
+		GroupMembership, GroupMembershipHistory, GroupSetting, GroupSettingHistory,
+		Hush, HushHistory, Integration, IntegrationHistory, Invite, OauthProvider,
+		OauthProviderHistory, OhAuthTooToken, OrgMembership, OrgMembershipHistory,
+		Organization, OrganizationHistory, OrganizationSetting,
+		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
+		Subscriber, TFASetting, Template, TemplateHistory, User, UserHistory,
+		UserSetting, UserSettingHistory, Webauthn, Webhook, WebhookHistory []ent.Hook
 	}
 	inters struct {
 		APIToken, DocumentData, DocumentDataHistory, EmailVerificationToken,
-		Entitlement, EntitlementHistory, Event, EventHistory, Feature, FeatureHistory,
-		File, FileHistory, Group, GroupHistory, GroupMembership,
-		GroupMembershipHistory, GroupSetting, GroupSettingHistory, Hush, HushHistory,
-		Integration, IntegrationHistory, Invite, OauthProvider, OauthProviderHistory,
-		OhAuthTooToken, OrgMembership, OrgMembershipHistory, Organization,
-		OrganizationHistory, OrganizationSetting, OrganizationSettingHistory,
-		PasswordResetToken, PersonalAccessToken, Subscriber, TFASetting, Template,
-		TemplateHistory, User, UserHistory, UserSetting, UserSettingHistory, Webauthn,
-		Webhook, WebhookHistory []ent.Interceptor
+		Entitlement, EntitlementHistory, EntitlementPlan, EntitlementPlanHistory,
+		EntitlementPlanFeature, EntitlementPlanFeatureHistory, Event, EventHistory,
+		Feature, FeatureHistory, File, FileHistory, Group, GroupHistory,
+		GroupMembership, GroupMembershipHistory, GroupSetting, GroupSettingHistory,
+		Hush, HushHistory, Integration, IntegrationHistory, Invite, OauthProvider,
+		OauthProviderHistory, OhAuthTooToken, OrgMembership, OrgMembershipHistory,
+		Organization, OrganizationHistory, OrganizationSetting,
+		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
+		Subscriber, TFASetting, Template, TemplateHistory, User, UserHistory,
+		UserSetting, UserSettingHistory, Webauthn, Webhook,
+		WebhookHistory []ent.Interceptor
 	}
 )
 

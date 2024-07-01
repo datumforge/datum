@@ -90,7 +90,6 @@ func (Group) Edges() []ent.Edge {
 		edge.From("users", User.Type).
 			Ref("groups").
 			Through("members", GroupMembership.Type),
-		edge.To("features", Feature.Type),
 		edge.To("events", Event.Type),
 		edge.To("integrations", Integration.Type),
 		edge.To("files", File.Type),

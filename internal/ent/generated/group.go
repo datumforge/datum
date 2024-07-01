@@ -62,8 +62,6 @@ type GroupEdges struct {
 	Setting *GroupSetting `json:"setting,omitempty"`
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
-	// Features holds the value of the features edge.
-	Features []*Feature `json:"features,omitempty"`
 	// Events holds the value of the events edge.
 	Events []*Event `json:"events,omitempty"`
 	// Integrations holds the value of the integrations edge.
@@ -74,12 +72,11 @@ type GroupEdges struct {
 	Members []*GroupMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [7]bool
 	// totalCount holds the count of the edges above.
-	totalCount [8]map[string]int
+	totalCount [7]map[string]int
 
 	namedUsers        map[string][]*User
-	namedFeatures     map[string][]*Feature
 	namedEvents       map[string][]*Event
 	namedIntegrations map[string][]*Integration
 	namedFiles        map[string][]*File
@@ -117,19 +114,10 @@ func (e GroupEdges) UsersOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "users"}
 }
 
-// FeaturesOrErr returns the Features value or an error if the edge
-// was not loaded in eager-loading.
-func (e GroupEdges) FeaturesOrErr() ([]*Feature, error) {
-	if e.loadedTypes[3] {
-		return e.Features, nil
-	}
-	return nil, &NotLoadedError{edge: "features"}
-}
-
 // EventsOrErr returns the Events value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) EventsOrErr() ([]*Event, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.Events, nil
 	}
 	return nil, &NotLoadedError{edge: "events"}
@@ -138,7 +126,7 @@ func (e GroupEdges) EventsOrErr() ([]*Event, error) {
 // IntegrationsOrErr returns the Integrations value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) IntegrationsOrErr() ([]*Integration, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		return e.Integrations, nil
 	}
 	return nil, &NotLoadedError{edge: "integrations"}
@@ -147,7 +135,7 @@ func (e GroupEdges) IntegrationsOrErr() ([]*Integration, error) {
 // FilesOrErr returns the Files value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) FilesOrErr() ([]*File, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[5] {
 		return e.Files, nil
 	}
 	return nil, &NotLoadedError{edge: "files"}
@@ -156,7 +144,7 @@ func (e GroupEdges) FilesOrErr() ([]*File, error) {
 // MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) MembersOrErr() ([]*GroupMembership, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[6] {
 		return e.Members, nil
 	}
 	return nil, &NotLoadedError{edge: "members"}
@@ -308,11 +296,6 @@ func (gr *Group) QueryUsers() *UserQuery {
 	return NewGroupClient(gr.config).QueryUsers(gr)
 }
 
-// QueryFeatures queries the "features" edge of the Group entity.
-func (gr *Group) QueryFeatures() *FeatureQuery {
-	return NewGroupClient(gr.config).QueryFeatures(gr)
-}
-
 // QueryEvents queries the "events" edge of the Group entity.
 func (gr *Group) QueryEvents() *EventQuery {
 	return NewGroupClient(gr.config).QueryEvents(gr)
@@ -422,30 +405,6 @@ func (gr *Group) appendNamedUsers(name string, edges ...*User) {
 		gr.Edges.namedUsers[name] = []*User{}
 	} else {
 		gr.Edges.namedUsers[name] = append(gr.Edges.namedUsers[name], edges...)
-	}
-}
-
-// NamedFeatures returns the Features named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (gr *Group) NamedFeatures(name string) ([]*Feature, error) {
-	if gr.Edges.namedFeatures == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := gr.Edges.namedFeatures[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (gr *Group) appendNamedFeatures(name string, edges ...*Feature) {
-	if gr.Edges.namedFeatures == nil {
-		gr.Edges.namedFeatures = make(map[string][]*Feature)
-	}
-	if len(edges) == 0 {
-		gr.Edges.namedFeatures[name] = []*Feature{}
-	} else {
-		gr.Edges.namedFeatures[name] = append(gr.Edges.namedFeatures[name], edges...)
 	}
 }
 

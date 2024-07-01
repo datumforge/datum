@@ -19,6 +19,7 @@ import (
 
 	"github.com/datumforge/enthistory"
 	"github.com/datumforge/entx"
+	"github.com/datumforge/entx/genhooks"
 	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
 	"github.com/datumforge/datum/pkg/analytics"
@@ -29,8 +30,9 @@ import (
 	"github.com/datumforge/datum/pkg/utils/totp"
 )
 
-var (
+const (
 	graphSchemaDir = "./schema/"
+	graphQueryDir  = "./query/"
 )
 
 func main() {
@@ -68,7 +70,8 @@ func main() {
 		Target:    "./internal/ent/generated",
 		Templates: entgql.AllTemplates,
 		Hooks: []gen.Hook{
-			entx.GenSchema(graphSchemaDir),
+			genhooks.GenSchema(graphSchemaDir),
+			genhooks.GenQuery(graphQueryDir),
 		},
 		Package: "github.com/datumforge/datum/internal/ent/generated",
 		Features: []gen.Feature{

@@ -18,6 +18,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -71,51 +75,55 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAPIToken                   = "APIToken"
-	TypeDocumentData               = "DocumentData"
-	TypeDocumentDataHistory        = "DocumentDataHistory"
-	TypeEmailVerificationToken     = "EmailVerificationToken"
-	TypeEntitlement                = "Entitlement"
-	TypeEntitlementHistory         = "EntitlementHistory"
-	TypeEvent                      = "Event"
-	TypeEventHistory               = "EventHistory"
-	TypeFeature                    = "Feature"
-	TypeFeatureHistory             = "FeatureHistory"
-	TypeFile                       = "File"
-	TypeFileHistory                = "FileHistory"
-	TypeGroup                      = "Group"
-	TypeGroupHistory               = "GroupHistory"
-	TypeGroupMembership            = "GroupMembership"
-	TypeGroupMembershipHistory     = "GroupMembershipHistory"
-	TypeGroupSetting               = "GroupSetting"
-	TypeGroupSettingHistory        = "GroupSettingHistory"
-	TypeHush                       = "Hush"
-	TypeHushHistory                = "HushHistory"
-	TypeIntegration                = "Integration"
-	TypeIntegrationHistory         = "IntegrationHistory"
-	TypeInvite                     = "Invite"
-	TypeOauthProvider              = "OauthProvider"
-	TypeOauthProviderHistory       = "OauthProviderHistory"
-	TypeOhAuthTooToken             = "OhAuthTooToken"
-	TypeOrgMembership              = "OrgMembership"
-	TypeOrgMembershipHistory       = "OrgMembershipHistory"
-	TypeOrganization               = "Organization"
-	TypeOrganizationHistory        = "OrganizationHistory"
-	TypeOrganizationSetting        = "OrganizationSetting"
-	TypeOrganizationSettingHistory = "OrganizationSettingHistory"
-	TypePasswordResetToken         = "PasswordResetToken"
-	TypePersonalAccessToken        = "PersonalAccessToken"
-	TypeSubscriber                 = "Subscriber"
-	TypeTFASetting                 = "TFASetting"
-	TypeTemplate                   = "Template"
-	TypeTemplateHistory            = "TemplateHistory"
-	TypeUser                       = "User"
-	TypeUserHistory                = "UserHistory"
-	TypeUserSetting                = "UserSetting"
-	TypeUserSettingHistory         = "UserSettingHistory"
-	TypeWebauthn                   = "Webauthn"
-	TypeWebhook                    = "Webhook"
-	TypeWebhookHistory             = "WebhookHistory"
+	TypeAPIToken                      = "APIToken"
+	TypeDocumentData                  = "DocumentData"
+	TypeDocumentDataHistory           = "DocumentDataHistory"
+	TypeEmailVerificationToken        = "EmailVerificationToken"
+	TypeEntitlement                   = "Entitlement"
+	TypeEntitlementHistory            = "EntitlementHistory"
+	TypeEntitlementPlan               = "EntitlementPlan"
+	TypeEntitlementPlanHistory        = "EntitlementPlanHistory"
+	TypeEntitlementPlanFeature        = "EntitlementPlanFeature"
+	TypeEntitlementPlanFeatureHistory = "EntitlementPlanFeatureHistory"
+	TypeEvent                         = "Event"
+	TypeEventHistory                  = "EventHistory"
+	TypeFeature                       = "Feature"
+	TypeFeatureHistory                = "FeatureHistory"
+	TypeFile                          = "File"
+	TypeFileHistory                   = "FileHistory"
+	TypeGroup                         = "Group"
+	TypeGroupHistory                  = "GroupHistory"
+	TypeGroupMembership               = "GroupMembership"
+	TypeGroupMembershipHistory        = "GroupMembershipHistory"
+	TypeGroupSetting                  = "GroupSetting"
+	TypeGroupSettingHistory           = "GroupSettingHistory"
+	TypeHush                          = "Hush"
+	TypeHushHistory                   = "HushHistory"
+	TypeIntegration                   = "Integration"
+	TypeIntegrationHistory            = "IntegrationHistory"
+	TypeInvite                        = "Invite"
+	TypeOauthProvider                 = "OauthProvider"
+	TypeOauthProviderHistory          = "OauthProviderHistory"
+	TypeOhAuthTooToken                = "OhAuthTooToken"
+	TypeOrgMembership                 = "OrgMembership"
+	TypeOrgMembershipHistory          = "OrgMembershipHistory"
+	TypeOrganization                  = "Organization"
+	TypeOrganizationHistory           = "OrganizationHistory"
+	TypeOrganizationSetting           = "OrganizationSetting"
+	TypeOrganizationSettingHistory    = "OrganizationSettingHistory"
+	TypePasswordResetToken            = "PasswordResetToken"
+	TypePersonalAccessToken           = "PersonalAccessToken"
+	TypeSubscriber                    = "Subscriber"
+	TypeTFASetting                    = "TFASetting"
+	TypeTemplate                      = "Template"
+	TypeTemplateHistory               = "TemplateHistory"
+	TypeUser                          = "User"
+	TypeUserHistory                   = "UserHistory"
+	TypeUserSetting                   = "UserSetting"
+	TypeUserSettingHistory            = "UserSettingHistory"
+	TypeWebauthn                      = "Webauthn"
+	TypeWebhook                       = "Webhook"
+	TypeWebhookHistory                = "WebhookHistory"
 )
 
 // APITokenMutation represents an operation that mutates the APIToken nodes in the graph.
@@ -5006,7 +5014,6 @@ type EntitlementMutation struct {
 	appendtags               []string
 	deleted_at               *time.Time
 	deleted_by               *string
-	tier                     *enums.Tier
 	external_customer_id     *string
 	external_subscription_id *string
 	expires                  *bool
@@ -5015,9 +5022,10 @@ type EntitlementMutation struct {
 	clearedFields            map[string]struct{}
 	owner                    *string
 	clearedowner             bool
-	features                 map[string]struct{}
-	removedfeatures          map[string]struct{}
-	clearedfeatures          bool
+	plan                     *string
+	clearedplan              bool
+	organization             *string
+	clearedorganization      bool
 	events                   map[string]struct{}
 	removedevents            map[string]struct{}
 	clearedevents            bool
@@ -5574,40 +5582,76 @@ func (m *EntitlementMutation) ResetOwnerID() {
 	delete(m.clearedFields, entitlement.FieldOwnerID)
 }
 
-// SetTier sets the "tier" field.
-func (m *EntitlementMutation) SetTier(e enums.Tier) {
-	m.tier = &e
+// SetPlanID sets the "plan_id" field.
+func (m *EntitlementMutation) SetPlanID(s string) {
+	m.plan = &s
 }
 
-// Tier returns the value of the "tier" field in the mutation.
-func (m *EntitlementMutation) Tier() (r enums.Tier, exists bool) {
-	v := m.tier
+// PlanID returns the value of the "plan_id" field in the mutation.
+func (m *EntitlementMutation) PlanID() (r string, exists bool) {
+	v := m.plan
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTier returns the old "tier" field's value of the Entitlement entity.
+// OldPlanID returns the old "plan_id" field's value of the Entitlement entity.
 // If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntitlementMutation) OldTier(ctx context.Context) (v enums.Tier, err error) {
+func (m *EntitlementMutation) OldPlanID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTier is only allowed on UpdateOne operations")
+		return v, errors.New("OldPlanID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTier requires an ID field in the mutation")
+		return v, errors.New("OldPlanID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTier: %w", err)
+		return v, fmt.Errorf("querying old value for OldPlanID: %w", err)
 	}
-	return oldValue.Tier, nil
+	return oldValue.PlanID, nil
 }
 
-// ResetTier resets all changes to the "tier" field.
-func (m *EntitlementMutation) ResetTier() {
-	m.tier = nil
+// ResetPlanID resets all changes to the "plan_id" field.
+func (m *EntitlementMutation) ResetPlanID() {
+	m.plan = nil
+}
+
+// SetOrganizationID sets the "organization_id" field.
+func (m *EntitlementMutation) SetOrganizationID(s string) {
+	m.organization = &s
+}
+
+// OrganizationID returns the value of the "organization_id" field in the mutation.
+func (m *EntitlementMutation) OrganizationID() (r string, exists bool) {
+	v := m.organization
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrganizationID returns the old "organization_id" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldOrganizationID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrganizationID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrganizationID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrganizationID: %w", err)
+	}
+	return oldValue.OrganizationID, nil
+}
+
+// ResetOrganizationID resets all changes to the "organization_id" field.
+func (m *EntitlementMutation) ResetOrganizationID() {
+	m.organization = nil
 }
 
 // SetExternalCustomerID sets the "external_customer_id" field.
@@ -5856,58 +5900,58 @@ func (m *EntitlementMutation) ResetOwner() {
 	m.clearedowner = false
 }
 
-// AddFeatureIDs adds the "features" edge to the Feature entity by ids.
-func (m *EntitlementMutation) AddFeatureIDs(ids ...string) {
-	if m.features == nil {
-		m.features = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.features[ids[i]] = struct{}{}
-	}
+// ClearPlan clears the "plan" edge to the EntitlementPlan entity.
+func (m *EntitlementMutation) ClearPlan() {
+	m.clearedplan = true
+	m.clearedFields[entitlement.FieldPlanID] = struct{}{}
 }
 
-// ClearFeatures clears the "features" edge to the Feature entity.
-func (m *EntitlementMutation) ClearFeatures() {
-	m.clearedfeatures = true
+// PlanCleared reports if the "plan" edge to the EntitlementPlan entity was cleared.
+func (m *EntitlementMutation) PlanCleared() bool {
+	return m.clearedplan
 }
 
-// FeaturesCleared reports if the "features" edge to the Feature entity was cleared.
-func (m *EntitlementMutation) FeaturesCleared() bool {
-	return m.clearedfeatures
-}
-
-// RemoveFeatureIDs removes the "features" edge to the Feature entity by IDs.
-func (m *EntitlementMutation) RemoveFeatureIDs(ids ...string) {
-	if m.removedfeatures == nil {
-		m.removedfeatures = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.features, ids[i])
-		m.removedfeatures[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedFeatures returns the removed IDs of the "features" edge to the Feature entity.
-func (m *EntitlementMutation) RemovedFeaturesIDs() (ids []string) {
-	for id := range m.removedfeatures {
-		ids = append(ids, id)
+// PlanIDs returns the "plan" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PlanID instead. It exists only for internal usage by the builders.
+func (m *EntitlementMutation) PlanIDs() (ids []string) {
+	if id := m.plan; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// FeaturesIDs returns the "features" edge IDs in the mutation.
-func (m *EntitlementMutation) FeaturesIDs() (ids []string) {
-	for id := range m.features {
-		ids = append(ids, id)
+// ResetPlan resets all changes to the "plan" edge.
+func (m *EntitlementMutation) ResetPlan() {
+	m.plan = nil
+	m.clearedplan = false
+}
+
+// ClearOrganization clears the "organization" edge to the Organization entity.
+func (m *EntitlementMutation) ClearOrganization() {
+	m.clearedorganization = true
+	m.clearedFields[entitlement.FieldOrganizationID] = struct{}{}
+}
+
+// OrganizationCleared reports if the "organization" edge to the Organization entity was cleared.
+func (m *EntitlementMutation) OrganizationCleared() bool {
+	return m.clearedorganization
+}
+
+// OrganizationIDs returns the "organization" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OrganizationID instead. It exists only for internal usage by the builders.
+func (m *EntitlementMutation) OrganizationIDs() (ids []string) {
+	if id := m.organization; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetFeatures resets all changes to the "features" edge.
-func (m *EntitlementMutation) ResetFeatures() {
-	m.features = nil
-	m.clearedfeatures = false
-	m.removedfeatures = nil
+// ResetOrganization resets all changes to the "organization" edge.
+func (m *EntitlementMutation) ResetOrganization() {
+	m.organization = nil
+	m.clearedorganization = false
 }
 
 // AddEventIDs adds the "events" edge to the Event entity by ids.
@@ -5998,7 +6042,7 @@ func (m *EntitlementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntitlementMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, entitlement.FieldCreatedAt)
 	}
@@ -6026,8 +6070,11 @@ func (m *EntitlementMutation) Fields() []string {
 	if m.owner != nil {
 		fields = append(fields, entitlement.FieldOwnerID)
 	}
-	if m.tier != nil {
-		fields = append(fields, entitlement.FieldTier)
+	if m.plan != nil {
+		fields = append(fields, entitlement.FieldPlanID)
+	}
+	if m.organization != nil {
+		fields = append(fields, entitlement.FieldOrganizationID)
 	}
 	if m.external_customer_id != nil {
 		fields = append(fields, entitlement.FieldExternalCustomerID)
@@ -6070,8 +6117,10 @@ func (m *EntitlementMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case entitlement.FieldOwnerID:
 		return m.OwnerID()
-	case entitlement.FieldTier:
-		return m.Tier()
+	case entitlement.FieldPlanID:
+		return m.PlanID()
+	case entitlement.FieldOrganizationID:
+		return m.OrganizationID()
 	case entitlement.FieldExternalCustomerID:
 		return m.ExternalCustomerID()
 	case entitlement.FieldExternalSubscriptionID:
@@ -6109,8 +6158,10 @@ func (m *EntitlementMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldDeletedBy(ctx)
 	case entitlement.FieldOwnerID:
 		return m.OldOwnerID(ctx)
-	case entitlement.FieldTier:
-		return m.OldTier(ctx)
+	case entitlement.FieldPlanID:
+		return m.OldPlanID(ctx)
+	case entitlement.FieldOrganizationID:
+		return m.OldOrganizationID(ctx)
 	case entitlement.FieldExternalCustomerID:
 		return m.OldExternalCustomerID(ctx)
 	case entitlement.FieldExternalSubscriptionID:
@@ -6193,12 +6244,19 @@ func (m *EntitlementMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOwnerID(v)
 		return nil
-	case entitlement.FieldTier:
-		v, ok := value.(enums.Tier)
+	case entitlement.FieldPlanID:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetTier(v)
+		m.SetPlanID(v)
+		return nil
+	case entitlement.FieldOrganizationID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrganizationID(v)
 		return nil
 	case entitlement.FieldExternalCustomerID:
 		v, ok := value.(string)
@@ -6380,8 +6438,11 @@ func (m *EntitlementMutation) ResetField(name string) error {
 	case entitlement.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
-	case entitlement.FieldTier:
-		m.ResetTier()
+	case entitlement.FieldPlanID:
+		m.ResetPlanID()
+		return nil
+	case entitlement.FieldOrganizationID:
+		m.ResetOrganizationID()
 		return nil
 	case entitlement.FieldExternalCustomerID:
 		m.ResetExternalCustomerID()
@@ -6404,12 +6465,15 @@ func (m *EntitlementMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EntitlementMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.owner != nil {
 		edges = append(edges, entitlement.EdgeOwner)
 	}
-	if m.features != nil {
-		edges = append(edges, entitlement.EdgeFeatures)
+	if m.plan != nil {
+		edges = append(edges, entitlement.EdgePlan)
+	}
+	if m.organization != nil {
+		edges = append(edges, entitlement.EdgeOrganization)
 	}
 	if m.events != nil {
 		edges = append(edges, entitlement.EdgeEvents)
@@ -6425,12 +6489,14 @@ func (m *EntitlementMutation) AddedIDs(name string) []ent.Value {
 		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
-	case entitlement.EdgeFeatures:
-		ids := make([]ent.Value, 0, len(m.features))
-		for id := range m.features {
-			ids = append(ids, id)
+	case entitlement.EdgePlan:
+		if id := m.plan; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
+	case entitlement.EdgeOrganization:
+		if id := m.organization; id != nil {
+			return []ent.Value{*id}
+		}
 	case entitlement.EdgeEvents:
 		ids := make([]ent.Value, 0, len(m.events))
 		for id := range m.events {
@@ -6443,10 +6509,7 @@ func (m *EntitlementMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EntitlementMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.removedfeatures != nil {
-		edges = append(edges, entitlement.EdgeFeatures)
-	}
+	edges := make([]string, 0, 4)
 	if m.removedevents != nil {
 		edges = append(edges, entitlement.EdgeEvents)
 	}
@@ -6457,12 +6520,6 @@ func (m *EntitlementMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *EntitlementMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case entitlement.EdgeFeatures:
-		ids := make([]ent.Value, 0, len(m.removedfeatures))
-		for id := range m.removedfeatures {
-			ids = append(ids, id)
-		}
-		return ids
 	case entitlement.EdgeEvents:
 		ids := make([]ent.Value, 0, len(m.removedevents))
 		for id := range m.removedevents {
@@ -6475,12 +6532,15 @@ func (m *EntitlementMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EntitlementMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedowner {
 		edges = append(edges, entitlement.EdgeOwner)
 	}
-	if m.clearedfeatures {
-		edges = append(edges, entitlement.EdgeFeatures)
+	if m.clearedplan {
+		edges = append(edges, entitlement.EdgePlan)
+	}
+	if m.clearedorganization {
+		edges = append(edges, entitlement.EdgeOrganization)
 	}
 	if m.clearedevents {
 		edges = append(edges, entitlement.EdgeEvents)
@@ -6494,8 +6554,10 @@ func (m *EntitlementMutation) EdgeCleared(name string) bool {
 	switch name {
 	case entitlement.EdgeOwner:
 		return m.clearedowner
-	case entitlement.EdgeFeatures:
-		return m.clearedfeatures
+	case entitlement.EdgePlan:
+		return m.clearedplan
+	case entitlement.EdgeOrganization:
+		return m.clearedorganization
 	case entitlement.EdgeEvents:
 		return m.clearedevents
 	}
@@ -6509,6 +6571,12 @@ func (m *EntitlementMutation) ClearEdge(name string) error {
 	case entitlement.EdgeOwner:
 		m.ClearOwner()
 		return nil
+	case entitlement.EdgePlan:
+		m.ClearPlan()
+		return nil
+	case entitlement.EdgeOrganization:
+		m.ClearOrganization()
+		return nil
 	}
 	return fmt.Errorf("unknown Entitlement unique edge %s", name)
 }
@@ -6520,8 +6588,11 @@ func (m *EntitlementMutation) ResetEdge(name string) error {
 	case entitlement.EdgeOwner:
 		m.ResetOwner()
 		return nil
-	case entitlement.EdgeFeatures:
-		m.ResetFeatures()
+	case entitlement.EdgePlan:
+		m.ResetPlan()
+		return nil
+	case entitlement.EdgeOrganization:
+		m.ResetOrganization()
 		return nil
 	case entitlement.EdgeEvents:
 		m.ResetEvents()
@@ -6549,7 +6620,8 @@ type EntitlementHistoryMutation struct {
 	deleted_at               *time.Time
 	deleted_by               *string
 	owner_id                 *string
-	tier                     *enums.Tier
+	plan_id                  *string
+	organization_id          *string
 	external_customer_id     *string
 	external_subscription_id *string
 	expires                  *bool
@@ -7230,40 +7302,76 @@ func (m *EntitlementHistoryMutation) ResetOwnerID() {
 	delete(m.clearedFields, entitlementhistory.FieldOwnerID)
 }
 
-// SetTier sets the "tier" field.
-func (m *EntitlementHistoryMutation) SetTier(e enums.Tier) {
-	m.tier = &e
+// SetPlanID sets the "plan_id" field.
+func (m *EntitlementHistoryMutation) SetPlanID(s string) {
+	m.plan_id = &s
 }
 
-// Tier returns the value of the "tier" field in the mutation.
-func (m *EntitlementHistoryMutation) Tier() (r enums.Tier, exists bool) {
-	v := m.tier
+// PlanID returns the value of the "plan_id" field in the mutation.
+func (m *EntitlementHistoryMutation) PlanID() (r string, exists bool) {
+	v := m.plan_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTier returns the old "tier" field's value of the EntitlementHistory entity.
+// OldPlanID returns the old "plan_id" field's value of the EntitlementHistory entity.
 // If the EntitlementHistory object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntitlementHistoryMutation) OldTier(ctx context.Context) (v enums.Tier, err error) {
+func (m *EntitlementHistoryMutation) OldPlanID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTier is only allowed on UpdateOne operations")
+		return v, errors.New("OldPlanID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTier requires an ID field in the mutation")
+		return v, errors.New("OldPlanID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTier: %w", err)
+		return v, fmt.Errorf("querying old value for OldPlanID: %w", err)
 	}
-	return oldValue.Tier, nil
+	return oldValue.PlanID, nil
 }
 
-// ResetTier resets all changes to the "tier" field.
-func (m *EntitlementHistoryMutation) ResetTier() {
-	m.tier = nil
+// ResetPlanID resets all changes to the "plan_id" field.
+func (m *EntitlementHistoryMutation) ResetPlanID() {
+	m.plan_id = nil
+}
+
+// SetOrganizationID sets the "organization_id" field.
+func (m *EntitlementHistoryMutation) SetOrganizationID(s string) {
+	m.organization_id = &s
+}
+
+// OrganizationID returns the value of the "organization_id" field in the mutation.
+func (m *EntitlementHistoryMutation) OrganizationID() (r string, exists bool) {
+	v := m.organization_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrganizationID returns the old "organization_id" field's value of the EntitlementHistory entity.
+// If the EntitlementHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementHistoryMutation) OldOrganizationID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrganizationID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrganizationID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrganizationID: %w", err)
+	}
+	return oldValue.OrganizationID, nil
+}
+
+// ResetOrganizationID resets all changes to the "organization_id" field.
+func (m *EntitlementHistoryMutation) ResetOrganizationID() {
+	m.organization_id = nil
 }
 
 // SetExternalCustomerID sets the "external_customer_id" field.
@@ -7519,7 +7627,7 @@ func (m *EntitlementHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntitlementHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.history_time != nil {
 		fields = append(fields, entitlementhistory.FieldHistoryTime)
 	}
@@ -7556,8 +7664,11 @@ func (m *EntitlementHistoryMutation) Fields() []string {
 	if m.owner_id != nil {
 		fields = append(fields, entitlementhistory.FieldOwnerID)
 	}
-	if m.tier != nil {
-		fields = append(fields, entitlementhistory.FieldTier)
+	if m.plan_id != nil {
+		fields = append(fields, entitlementhistory.FieldPlanID)
+	}
+	if m.organization_id != nil {
+		fields = append(fields, entitlementhistory.FieldOrganizationID)
 	}
 	if m.external_customer_id != nil {
 		fields = append(fields, entitlementhistory.FieldExternalCustomerID)
@@ -7606,8 +7717,10 @@ func (m *EntitlementHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case entitlementhistory.FieldOwnerID:
 		return m.OwnerID()
-	case entitlementhistory.FieldTier:
-		return m.Tier()
+	case entitlementhistory.FieldPlanID:
+		return m.PlanID()
+	case entitlementhistory.FieldOrganizationID:
+		return m.OrganizationID()
 	case entitlementhistory.FieldExternalCustomerID:
 		return m.ExternalCustomerID()
 	case entitlementhistory.FieldExternalSubscriptionID:
@@ -7651,8 +7764,10 @@ func (m *EntitlementHistoryMutation) OldField(ctx context.Context, name string) 
 		return m.OldDeletedBy(ctx)
 	case entitlementhistory.FieldOwnerID:
 		return m.OldOwnerID(ctx)
-	case entitlementhistory.FieldTier:
-		return m.OldTier(ctx)
+	case entitlementhistory.FieldPlanID:
+		return m.OldPlanID(ctx)
+	case entitlementhistory.FieldOrganizationID:
+		return m.OldOrganizationID(ctx)
 	case entitlementhistory.FieldExternalCustomerID:
 		return m.OldExternalCustomerID(ctx)
 	case entitlementhistory.FieldExternalSubscriptionID:
@@ -7756,12 +7871,19 @@ func (m *EntitlementHistoryMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetOwnerID(v)
 		return nil
-	case entitlementhistory.FieldTier:
-		v, ok := value.(enums.Tier)
+	case entitlementhistory.FieldPlanID:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetTier(v)
+		m.SetPlanID(v)
+		return nil
+	case entitlementhistory.FieldOrganizationID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrganizationID(v)
 		return nil
 	case entitlementhistory.FieldExternalCustomerID:
 		v, ok := value.(string)
@@ -7958,8 +8080,11 @@ func (m *EntitlementHistoryMutation) ResetField(name string) error {
 	case entitlementhistory.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
-	case entitlementhistory.FieldTier:
-		m.ResetTier()
+	case entitlementhistory.FieldPlanID:
+		m.ResetPlanID()
+		return nil
+	case entitlementhistory.FieldOrganizationID:
+		m.ResetOrganizationID()
 		return nil
 	case entitlementhistory.FieldExternalCustomerID:
 		m.ResetExternalCustomerID()
@@ -8028,69 +8153,5816 @@ func (m *EntitlementHistoryMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown EntitlementHistory edge %s", name)
 }
 
+// EntitlementPlanMutation represents an operation that mutates the EntitlementPlan nodes in the graph.
+type EntitlementPlanMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *string
+	created_at           *time.Time
+	updated_at           *time.Time
+	created_by           *string
+	updated_by           *string
+	mapping_id           *string
+	deleted_at           *time.Time
+	deleted_by           *string
+	tags                 *[]string
+	appendtags           []string
+	display_name         *string
+	name                 *string
+	description          *string
+	version              *string
+	metadata             *map[string]interface{}
+	clearedFields        map[string]struct{}
+	owner                *string
+	clearedowner         bool
+	entitlements         map[string]struct{}
+	removedentitlements  map[string]struct{}
+	clearedentitlements  bool
+	base_features        map[string]struct{}
+	removedbase_features map[string]struct{}
+	clearedbase_features bool
+	events               map[string]struct{}
+	removedevents        map[string]struct{}
+	clearedevents        bool
+	features             map[string]struct{}
+	removedfeatures      map[string]struct{}
+	clearedfeatures      bool
+	done                 bool
+	oldValue             func(context.Context) (*EntitlementPlan, error)
+	predicates           []predicate.EntitlementPlan
+}
+
+var _ ent.Mutation = (*EntitlementPlanMutation)(nil)
+
+// entitlementplanOption allows management of the mutation configuration using functional options.
+type entitlementplanOption func(*EntitlementPlanMutation)
+
+// newEntitlementPlanMutation creates new mutation for the EntitlementPlan entity.
+func newEntitlementPlanMutation(c config, op Op, opts ...entitlementplanOption) *EntitlementPlanMutation {
+	m := &EntitlementPlanMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeEntitlementPlan,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withEntitlementPlanID sets the ID field of the mutation.
+func withEntitlementPlanID(id string) entitlementplanOption {
+	return func(m *EntitlementPlanMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *EntitlementPlan
+		)
+		m.oldValue = func(ctx context.Context) (*EntitlementPlan, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().EntitlementPlan.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withEntitlementPlan sets the old EntitlementPlan of the mutation.
+func withEntitlementPlan(node *EntitlementPlan) entitlementplanOption {
+	return func(m *EntitlementPlanMutation) {
+		m.oldValue = func(context.Context) (*EntitlementPlan, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m EntitlementPlanMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m EntitlementPlanMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of EntitlementPlan entities.
+func (m *EntitlementPlanMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *EntitlementPlanMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *EntitlementPlanMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().EntitlementPlan.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *EntitlementPlanMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *EntitlementPlanMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *EntitlementPlanMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[entitlementplan.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *EntitlementPlanMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, entitlementplan.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *EntitlementPlanMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *EntitlementPlanMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *EntitlementPlanMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[entitlementplan.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *EntitlementPlanMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, entitlementplan.FieldUpdatedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *EntitlementPlanMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *EntitlementPlanMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *EntitlementPlanMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[entitlementplan.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *EntitlementPlanMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, entitlementplan.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *EntitlementPlanMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *EntitlementPlanMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *EntitlementPlanMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[entitlementplan.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *EntitlementPlanMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, entitlementplan.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *EntitlementPlanMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EntitlementPlanMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EntitlementPlanMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *EntitlementPlanMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *EntitlementPlanMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *EntitlementPlanMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[entitlementplan.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *EntitlementPlanMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, entitlementplan.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *EntitlementPlanMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *EntitlementPlanMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *EntitlementPlanMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[entitlementplan.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *EntitlementPlanMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, entitlementplan.FieldDeletedBy)
+}
+
+// SetTags sets the "tags" field.
+func (m *EntitlementPlanMutation) SetTags(s []string) {
+	m.tags = &s
+	m.appendtags = nil
+}
+
+// Tags returns the value of the "tags" field in the mutation.
+func (m *EntitlementPlanMutation) Tags() (r []string, exists bool) {
+	v := m.tags
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTags returns the old "tags" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldTags(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTags is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTags requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTags: %w", err)
+	}
+	return oldValue.Tags, nil
+}
+
+// AppendTags adds s to the "tags" field.
+func (m *EntitlementPlanMutation) AppendTags(s []string) {
+	m.appendtags = append(m.appendtags, s...)
+}
+
+// AppendedTags returns the list of values that were appended to the "tags" field in this mutation.
+func (m *EntitlementPlanMutation) AppendedTags() ([]string, bool) {
+	if len(m.appendtags) == 0 {
+		return nil, false
+	}
+	return m.appendtags, true
+}
+
+// ClearTags clears the value of the "tags" field.
+func (m *EntitlementPlanMutation) ClearTags() {
+	m.tags = nil
+	m.appendtags = nil
+	m.clearedFields[entitlementplan.FieldTags] = struct{}{}
+}
+
+// TagsCleared returns if the "tags" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) TagsCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldTags]
+	return ok
+}
+
+// ResetTags resets all changes to the "tags" field.
+func (m *EntitlementPlanMutation) ResetTags() {
+	m.tags = nil
+	m.appendtags = nil
+	delete(m.clearedFields, entitlementplan.FieldTags)
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (m *EntitlementPlanMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *EntitlementPlanMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *EntitlementPlanMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[entitlementplan.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *EntitlementPlanMutation) ResetOwnerID() {
+	m.owner = nil
+	delete(m.clearedFields, entitlementplan.FieldOwnerID)
+}
+
+// SetDisplayName sets the "display_name" field.
+func (m *EntitlementPlanMutation) SetDisplayName(s string) {
+	m.display_name = &s
+}
+
+// DisplayName returns the value of the "display_name" field in the mutation.
+func (m *EntitlementPlanMutation) DisplayName() (r string, exists bool) {
+	v := m.display_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisplayName returns the old "display_name" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldDisplayName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisplayName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
+	}
+	return oldValue.DisplayName, nil
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (m *EntitlementPlanMutation) ClearDisplayName() {
+	m.display_name = nil
+	m.clearedFields[entitlementplan.FieldDisplayName] = struct{}{}
+}
+
+// DisplayNameCleared returns if the "display_name" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) DisplayNameCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldDisplayName]
+	return ok
+}
+
+// ResetDisplayName resets all changes to the "display_name" field.
+func (m *EntitlementPlanMutation) ResetDisplayName() {
+	m.display_name = nil
+	delete(m.clearedFields, entitlementplan.FieldDisplayName)
+}
+
+// SetName sets the "name" field.
+func (m *EntitlementPlanMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *EntitlementPlanMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *EntitlementPlanMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *EntitlementPlanMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *EntitlementPlanMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *EntitlementPlanMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[entitlementplan.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *EntitlementPlanMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, entitlementplan.FieldDescription)
+}
+
+// SetVersion sets the "version" field.
+func (m *EntitlementPlanMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *EntitlementPlanMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *EntitlementPlanMutation) ResetVersion() {
+	m.version = nil
+}
+
+// SetMetadata sets the "metadata" field.
+func (m *EntitlementPlanMutation) SetMetadata(value map[string]interface{}) {
+	m.metadata = &value
+}
+
+// Metadata returns the value of the "metadata" field in the mutation.
+func (m *EntitlementPlanMutation) Metadata() (r map[string]interface{}, exists bool) {
+	v := m.metadata
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetadata returns the old "metadata" field's value of the EntitlementPlan entity.
+// If the EntitlementPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanMutation) OldMetadata(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetadata is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetadata requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetadata: %w", err)
+	}
+	return oldValue.Metadata, nil
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (m *EntitlementPlanMutation) ClearMetadata() {
+	m.metadata = nil
+	m.clearedFields[entitlementplan.FieldMetadata] = struct{}{}
+}
+
+// MetadataCleared returns if the "metadata" field was cleared in this mutation.
+func (m *EntitlementPlanMutation) MetadataCleared() bool {
+	_, ok := m.clearedFields[entitlementplan.FieldMetadata]
+	return ok
+}
+
+// ResetMetadata resets all changes to the "metadata" field.
+func (m *EntitlementPlanMutation) ResetMetadata() {
+	m.metadata = nil
+	delete(m.clearedFields, entitlementplan.FieldMetadata)
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (m *EntitlementPlanMutation) ClearOwner() {
+	m.clearedowner = true
+	m.clearedFields[entitlementplan.FieldOwnerID] = struct{}{}
+}
+
+// OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
+func (m *EntitlementPlanMutation) OwnerCleared() bool {
+	return m.OwnerIDCleared() || m.clearedowner
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *EntitlementPlanMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *EntitlementPlanMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
+// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by ids.
+func (m *EntitlementPlanMutation) AddEntitlementIDs(ids ...string) {
+	if m.entitlements == nil {
+		m.entitlements = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.entitlements[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEntitlements clears the "entitlements" edge to the Entitlement entity.
+func (m *EntitlementPlanMutation) ClearEntitlements() {
+	m.clearedentitlements = true
+}
+
+// EntitlementsCleared reports if the "entitlements" edge to the Entitlement entity was cleared.
+func (m *EntitlementPlanMutation) EntitlementsCleared() bool {
+	return m.clearedentitlements
+}
+
+// RemoveEntitlementIDs removes the "entitlements" edge to the Entitlement entity by IDs.
+func (m *EntitlementPlanMutation) RemoveEntitlementIDs(ids ...string) {
+	if m.removedentitlements == nil {
+		m.removedentitlements = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.entitlements, ids[i])
+		m.removedentitlements[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEntitlements returns the removed IDs of the "entitlements" edge to the Entitlement entity.
+func (m *EntitlementPlanMutation) RemovedEntitlementsIDs() (ids []string) {
+	for id := range m.removedentitlements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EntitlementsIDs returns the "entitlements" edge IDs in the mutation.
+func (m *EntitlementPlanMutation) EntitlementsIDs() (ids []string) {
+	for id := range m.entitlements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEntitlements resets all changes to the "entitlements" edge.
+func (m *EntitlementPlanMutation) ResetEntitlements() {
+	m.entitlements = nil
+	m.clearedentitlements = false
+	m.removedentitlements = nil
+}
+
+// AddBaseFeatureIDs adds the "base_features" edge to the Feature entity by ids.
+func (m *EntitlementPlanMutation) AddBaseFeatureIDs(ids ...string) {
+	if m.base_features == nil {
+		m.base_features = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.base_features[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBaseFeatures clears the "base_features" edge to the Feature entity.
+func (m *EntitlementPlanMutation) ClearBaseFeatures() {
+	m.clearedbase_features = true
+}
+
+// BaseFeaturesCleared reports if the "base_features" edge to the Feature entity was cleared.
+func (m *EntitlementPlanMutation) BaseFeaturesCleared() bool {
+	return m.clearedbase_features
+}
+
+// RemoveBaseFeatureIDs removes the "base_features" edge to the Feature entity by IDs.
+func (m *EntitlementPlanMutation) RemoveBaseFeatureIDs(ids ...string) {
+	if m.removedbase_features == nil {
+		m.removedbase_features = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.base_features, ids[i])
+		m.removedbase_features[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBaseFeatures returns the removed IDs of the "base_features" edge to the Feature entity.
+func (m *EntitlementPlanMutation) RemovedBaseFeaturesIDs() (ids []string) {
+	for id := range m.removedbase_features {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BaseFeaturesIDs returns the "base_features" edge IDs in the mutation.
+func (m *EntitlementPlanMutation) BaseFeaturesIDs() (ids []string) {
+	for id := range m.base_features {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBaseFeatures resets all changes to the "base_features" edge.
+func (m *EntitlementPlanMutation) ResetBaseFeatures() {
+	m.base_features = nil
+	m.clearedbase_features = false
+	m.removedbase_features = nil
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by ids.
+func (m *EntitlementPlanMutation) AddEventIDs(ids ...string) {
+	if m.events == nil {
+		m.events = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.events[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEvents clears the "events" edge to the Event entity.
+func (m *EntitlementPlanMutation) ClearEvents() {
+	m.clearedevents = true
+}
+
+// EventsCleared reports if the "events" edge to the Event entity was cleared.
+func (m *EntitlementPlanMutation) EventsCleared() bool {
+	return m.clearedevents
+}
+
+// RemoveEventIDs removes the "events" edge to the Event entity by IDs.
+func (m *EntitlementPlanMutation) RemoveEventIDs(ids ...string) {
+	if m.removedevents == nil {
+		m.removedevents = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.events, ids[i])
+		m.removedevents[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEvents returns the removed IDs of the "events" edge to the Event entity.
+func (m *EntitlementPlanMutation) RemovedEventsIDs() (ids []string) {
+	for id := range m.removedevents {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EventsIDs returns the "events" edge IDs in the mutation.
+func (m *EntitlementPlanMutation) EventsIDs() (ids []string) {
+	for id := range m.events {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEvents resets all changes to the "events" edge.
+func (m *EntitlementPlanMutation) ResetEvents() {
+	m.events = nil
+	m.clearedevents = false
+	m.removedevents = nil
+}
+
+// AddFeatureIDs adds the "features" edge to the EntitlementPlanFeature entity by ids.
+func (m *EntitlementPlanMutation) AddFeatureIDs(ids ...string) {
+	if m.features == nil {
+		m.features = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.features[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFeatures clears the "features" edge to the EntitlementPlanFeature entity.
+func (m *EntitlementPlanMutation) ClearFeatures() {
+	m.clearedfeatures = true
+}
+
+// FeaturesCleared reports if the "features" edge to the EntitlementPlanFeature entity was cleared.
+func (m *EntitlementPlanMutation) FeaturesCleared() bool {
+	return m.clearedfeatures
+}
+
+// RemoveFeatureIDs removes the "features" edge to the EntitlementPlanFeature entity by IDs.
+func (m *EntitlementPlanMutation) RemoveFeatureIDs(ids ...string) {
+	if m.removedfeatures == nil {
+		m.removedfeatures = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.features, ids[i])
+		m.removedfeatures[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFeatures returns the removed IDs of the "features" edge to the EntitlementPlanFeature entity.
+func (m *EntitlementPlanMutation) RemovedFeaturesIDs() (ids []string) {
+	for id := range m.removedfeatures {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FeaturesIDs returns the "features" edge IDs in the mutation.
+func (m *EntitlementPlanMutation) FeaturesIDs() (ids []string) {
+	for id := range m.features {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFeatures resets all changes to the "features" edge.
+func (m *EntitlementPlanMutation) ResetFeatures() {
+	m.features = nil
+	m.clearedfeatures = false
+	m.removedfeatures = nil
+}
+
+// Where appends a list predicates to the EntitlementPlanMutation builder.
+func (m *EntitlementPlanMutation) Where(ps ...predicate.EntitlementPlan) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the EntitlementPlanMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *EntitlementPlanMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.EntitlementPlan, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *EntitlementPlanMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *EntitlementPlanMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (EntitlementPlan).
+func (m *EntitlementPlanMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *EntitlementPlanMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.created_at != nil {
+		fields = append(fields, entitlementplan.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, entitlementplan.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, entitlementplan.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, entitlementplan.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, entitlementplan.FieldMappingID)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, entitlementplan.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, entitlementplan.FieldDeletedBy)
+	}
+	if m.tags != nil {
+		fields = append(fields, entitlementplan.FieldTags)
+	}
+	if m.owner != nil {
+		fields = append(fields, entitlementplan.FieldOwnerID)
+	}
+	if m.display_name != nil {
+		fields = append(fields, entitlementplan.FieldDisplayName)
+	}
+	if m.name != nil {
+		fields = append(fields, entitlementplan.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, entitlementplan.FieldDescription)
+	}
+	if m.version != nil {
+		fields = append(fields, entitlementplan.FieldVersion)
+	}
+	if m.metadata != nil {
+		fields = append(fields, entitlementplan.FieldMetadata)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *EntitlementPlanMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case entitlementplan.FieldCreatedAt:
+		return m.CreatedAt()
+	case entitlementplan.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case entitlementplan.FieldCreatedBy:
+		return m.CreatedBy()
+	case entitlementplan.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case entitlementplan.FieldMappingID:
+		return m.MappingID()
+	case entitlementplan.FieldDeletedAt:
+		return m.DeletedAt()
+	case entitlementplan.FieldDeletedBy:
+		return m.DeletedBy()
+	case entitlementplan.FieldTags:
+		return m.Tags()
+	case entitlementplan.FieldOwnerID:
+		return m.OwnerID()
+	case entitlementplan.FieldDisplayName:
+		return m.DisplayName()
+	case entitlementplan.FieldName:
+		return m.Name()
+	case entitlementplan.FieldDescription:
+		return m.Description()
+	case entitlementplan.FieldVersion:
+		return m.Version()
+	case entitlementplan.FieldMetadata:
+		return m.Metadata()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *EntitlementPlanMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case entitlementplan.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case entitlementplan.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case entitlementplan.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case entitlementplan.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case entitlementplan.FieldMappingID:
+		return m.OldMappingID(ctx)
+	case entitlementplan.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case entitlementplan.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case entitlementplan.FieldTags:
+		return m.OldTags(ctx)
+	case entitlementplan.FieldOwnerID:
+		return m.OldOwnerID(ctx)
+	case entitlementplan.FieldDisplayName:
+		return m.OldDisplayName(ctx)
+	case entitlementplan.FieldName:
+		return m.OldName(ctx)
+	case entitlementplan.FieldDescription:
+		return m.OldDescription(ctx)
+	case entitlementplan.FieldVersion:
+		return m.OldVersion(ctx)
+	case entitlementplan.FieldMetadata:
+		return m.OldMetadata(ctx)
+	}
+	return nil, fmt.Errorf("unknown EntitlementPlan field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EntitlementPlanMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case entitlementplan.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case entitlementplan.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case entitlementplan.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case entitlementplan.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case entitlementplan.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
+		return nil
+	case entitlementplan.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case entitlementplan.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case entitlementplan.FieldTags:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTags(v)
+		return nil
+	case entitlementplan.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
+	case entitlementplan.FieldDisplayName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisplayName(v)
+		return nil
+	case entitlementplan.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case entitlementplan.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case entitlementplan.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case entitlementplan.FieldMetadata:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetadata(v)
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlan field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *EntitlementPlanMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *EntitlementPlanMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EntitlementPlanMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown EntitlementPlan numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *EntitlementPlanMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(entitlementplan.FieldCreatedAt) {
+		fields = append(fields, entitlementplan.FieldCreatedAt)
+	}
+	if m.FieldCleared(entitlementplan.FieldUpdatedAt) {
+		fields = append(fields, entitlementplan.FieldUpdatedAt)
+	}
+	if m.FieldCleared(entitlementplan.FieldCreatedBy) {
+		fields = append(fields, entitlementplan.FieldCreatedBy)
+	}
+	if m.FieldCleared(entitlementplan.FieldUpdatedBy) {
+		fields = append(fields, entitlementplan.FieldUpdatedBy)
+	}
+	if m.FieldCleared(entitlementplan.FieldDeletedAt) {
+		fields = append(fields, entitlementplan.FieldDeletedAt)
+	}
+	if m.FieldCleared(entitlementplan.FieldDeletedBy) {
+		fields = append(fields, entitlementplan.FieldDeletedBy)
+	}
+	if m.FieldCleared(entitlementplan.FieldTags) {
+		fields = append(fields, entitlementplan.FieldTags)
+	}
+	if m.FieldCleared(entitlementplan.FieldOwnerID) {
+		fields = append(fields, entitlementplan.FieldOwnerID)
+	}
+	if m.FieldCleared(entitlementplan.FieldDisplayName) {
+		fields = append(fields, entitlementplan.FieldDisplayName)
+	}
+	if m.FieldCleared(entitlementplan.FieldDescription) {
+		fields = append(fields, entitlementplan.FieldDescription)
+	}
+	if m.FieldCleared(entitlementplan.FieldMetadata) {
+		fields = append(fields, entitlementplan.FieldMetadata)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *EntitlementPlanMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *EntitlementPlanMutation) ClearField(name string) error {
+	switch name {
+	case entitlementplan.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case entitlementplan.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case entitlementplan.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case entitlementplan.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case entitlementplan.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case entitlementplan.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case entitlementplan.FieldTags:
+		m.ClearTags()
+		return nil
+	case entitlementplan.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
+	case entitlementplan.FieldDisplayName:
+		m.ClearDisplayName()
+		return nil
+	case entitlementplan.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case entitlementplan.FieldMetadata:
+		m.ClearMetadata()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlan nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *EntitlementPlanMutation) ResetField(name string) error {
+	switch name {
+	case entitlementplan.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case entitlementplan.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case entitlementplan.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case entitlementplan.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case entitlementplan.FieldMappingID:
+		m.ResetMappingID()
+		return nil
+	case entitlementplan.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case entitlementplan.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case entitlementplan.FieldTags:
+		m.ResetTags()
+		return nil
+	case entitlementplan.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
+	case entitlementplan.FieldDisplayName:
+		m.ResetDisplayName()
+		return nil
+	case entitlementplan.FieldName:
+		m.ResetName()
+		return nil
+	case entitlementplan.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case entitlementplan.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case entitlementplan.FieldMetadata:
+		m.ResetMetadata()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlan field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *EntitlementPlanMutation) AddedEdges() []string {
+	edges := make([]string, 0, 5)
+	if m.owner != nil {
+		edges = append(edges, entitlementplan.EdgeOwner)
+	}
+	if m.entitlements != nil {
+		edges = append(edges, entitlementplan.EdgeEntitlements)
+	}
+	if m.base_features != nil {
+		edges = append(edges, entitlementplan.EdgeBaseFeatures)
+	}
+	if m.events != nil {
+		edges = append(edges, entitlementplan.EdgeEvents)
+	}
+	if m.features != nil {
+		edges = append(edges, entitlementplan.EdgeFeatures)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *EntitlementPlanMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case entitlementplan.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	case entitlementplan.EdgeEntitlements:
+		ids := make([]ent.Value, 0, len(m.entitlements))
+		for id := range m.entitlements {
+			ids = append(ids, id)
+		}
+		return ids
+	case entitlementplan.EdgeBaseFeatures:
+		ids := make([]ent.Value, 0, len(m.base_features))
+		for id := range m.base_features {
+			ids = append(ids, id)
+		}
+		return ids
+	case entitlementplan.EdgeEvents:
+		ids := make([]ent.Value, 0, len(m.events))
+		for id := range m.events {
+			ids = append(ids, id)
+		}
+		return ids
+	case entitlementplan.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.features))
+		for id := range m.features {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *EntitlementPlanMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 5)
+	if m.removedentitlements != nil {
+		edges = append(edges, entitlementplan.EdgeEntitlements)
+	}
+	if m.removedbase_features != nil {
+		edges = append(edges, entitlementplan.EdgeBaseFeatures)
+	}
+	if m.removedevents != nil {
+		edges = append(edges, entitlementplan.EdgeEvents)
+	}
+	if m.removedfeatures != nil {
+		edges = append(edges, entitlementplan.EdgeFeatures)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *EntitlementPlanMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case entitlementplan.EdgeEntitlements:
+		ids := make([]ent.Value, 0, len(m.removedentitlements))
+		for id := range m.removedentitlements {
+			ids = append(ids, id)
+		}
+		return ids
+	case entitlementplan.EdgeBaseFeatures:
+		ids := make([]ent.Value, 0, len(m.removedbase_features))
+		for id := range m.removedbase_features {
+			ids = append(ids, id)
+		}
+		return ids
+	case entitlementplan.EdgeEvents:
+		ids := make([]ent.Value, 0, len(m.removedevents))
+		for id := range m.removedevents {
+			ids = append(ids, id)
+		}
+		return ids
+	case entitlementplan.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.removedfeatures))
+		for id := range m.removedfeatures {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *EntitlementPlanMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 5)
+	if m.clearedowner {
+		edges = append(edges, entitlementplan.EdgeOwner)
+	}
+	if m.clearedentitlements {
+		edges = append(edges, entitlementplan.EdgeEntitlements)
+	}
+	if m.clearedbase_features {
+		edges = append(edges, entitlementplan.EdgeBaseFeatures)
+	}
+	if m.clearedevents {
+		edges = append(edges, entitlementplan.EdgeEvents)
+	}
+	if m.clearedfeatures {
+		edges = append(edges, entitlementplan.EdgeFeatures)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *EntitlementPlanMutation) EdgeCleared(name string) bool {
+	switch name {
+	case entitlementplan.EdgeOwner:
+		return m.clearedowner
+	case entitlementplan.EdgeEntitlements:
+		return m.clearedentitlements
+	case entitlementplan.EdgeBaseFeatures:
+		return m.clearedbase_features
+	case entitlementplan.EdgeEvents:
+		return m.clearedevents
+	case entitlementplan.EdgeFeatures:
+		return m.clearedfeatures
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *EntitlementPlanMutation) ClearEdge(name string) error {
+	switch name {
+	case entitlementplan.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlan unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *EntitlementPlanMutation) ResetEdge(name string) error {
+	switch name {
+	case entitlementplan.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	case entitlementplan.EdgeEntitlements:
+		m.ResetEntitlements()
+		return nil
+	case entitlementplan.EdgeBaseFeatures:
+		m.ResetBaseFeatures()
+		return nil
+	case entitlementplan.EdgeEvents:
+		m.ResetEvents()
+		return nil
+	case entitlementplan.EdgeFeatures:
+		m.ResetFeatures()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlan edge %s", name)
+}
+
+// EntitlementPlanHistoryMutation represents an operation that mutates the EntitlementPlanHistory nodes in the graph.
+type EntitlementPlanHistoryMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *string
+	history_time  *time.Time
+	operation     *enthistory.OpType
+	ref           *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	created_by    *string
+	updated_by    *string
+	mapping_id    *string
+	deleted_at    *time.Time
+	deleted_by    *string
+	tags          *[]string
+	appendtags    []string
+	owner_id      *string
+	display_name  *string
+	name          *string
+	description   *string
+	version       *string
+	metadata      *map[string]interface{}
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*EntitlementPlanHistory, error)
+	predicates    []predicate.EntitlementPlanHistory
+}
+
+var _ ent.Mutation = (*EntitlementPlanHistoryMutation)(nil)
+
+// entitlementplanhistoryOption allows management of the mutation configuration using functional options.
+type entitlementplanhistoryOption func(*EntitlementPlanHistoryMutation)
+
+// newEntitlementPlanHistoryMutation creates new mutation for the EntitlementPlanHistory entity.
+func newEntitlementPlanHistoryMutation(c config, op Op, opts ...entitlementplanhistoryOption) *EntitlementPlanHistoryMutation {
+	m := &EntitlementPlanHistoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeEntitlementPlanHistory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withEntitlementPlanHistoryID sets the ID field of the mutation.
+func withEntitlementPlanHistoryID(id string) entitlementplanhistoryOption {
+	return func(m *EntitlementPlanHistoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *EntitlementPlanHistory
+		)
+		m.oldValue = func(ctx context.Context) (*EntitlementPlanHistory, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().EntitlementPlanHistory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withEntitlementPlanHistory sets the old EntitlementPlanHistory of the mutation.
+func withEntitlementPlanHistory(node *EntitlementPlanHistory) entitlementplanhistoryOption {
+	return func(m *EntitlementPlanHistoryMutation) {
+		m.oldValue = func(context.Context) (*EntitlementPlanHistory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m EntitlementPlanHistoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m EntitlementPlanHistoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of EntitlementPlanHistory entities.
+func (m *EntitlementPlanHistoryMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *EntitlementPlanHistoryMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *EntitlementPlanHistoryMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().EntitlementPlanHistory.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetHistoryTime sets the "history_time" field.
+func (m *EntitlementPlanHistoryMutation) SetHistoryTime(t time.Time) {
+	m.history_time = &t
+}
+
+// HistoryTime returns the value of the "history_time" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) HistoryTime() (r time.Time, exists bool) {
+	v := m.history_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHistoryTime returns the old "history_time" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldHistoryTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHistoryTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHistoryTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHistoryTime: %w", err)
+	}
+	return oldValue.HistoryTime, nil
+}
+
+// ResetHistoryTime resets all changes to the "history_time" field.
+func (m *EntitlementPlanHistoryMutation) ResetHistoryTime() {
+	m.history_time = nil
+}
+
+// SetOperation sets the "operation" field.
+func (m *EntitlementPlanHistoryMutation) SetOperation(et enthistory.OpType) {
+	m.operation = &et
+}
+
+// Operation returns the value of the "operation" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) Operation() (r enthistory.OpType, exists bool) {
+	v := m.operation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperation returns the old "operation" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldOperation(ctx context.Context) (v enthistory.OpType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperation: %w", err)
+	}
+	return oldValue.Operation, nil
+}
+
+// ResetOperation resets all changes to the "operation" field.
+func (m *EntitlementPlanHistoryMutation) ResetOperation() {
+	m.operation = nil
+}
+
+// SetRef sets the "ref" field.
+func (m *EntitlementPlanHistoryMutation) SetRef(s string) {
+	m.ref = &s
+}
+
+// Ref returns the value of the "ref" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) Ref() (r string, exists bool) {
+	v := m.ref
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRef returns the old "ref" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldRef(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRef is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRef requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRef: %w", err)
+	}
+	return oldValue.Ref, nil
+}
+
+// ClearRef clears the value of the "ref" field.
+func (m *EntitlementPlanHistoryMutation) ClearRef() {
+	m.ref = nil
+	m.clearedFields[entitlementplanhistory.FieldRef] = struct{}{}
+}
+
+// RefCleared returns if the "ref" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) RefCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldRef]
+	return ok
+}
+
+// ResetRef resets all changes to the "ref" field.
+func (m *EntitlementPlanHistoryMutation) ResetRef() {
+	m.ref = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldRef)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *EntitlementPlanHistoryMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *EntitlementPlanHistoryMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[entitlementplanhistory.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *EntitlementPlanHistoryMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *EntitlementPlanHistoryMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *EntitlementPlanHistoryMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[entitlementplanhistory.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *EntitlementPlanHistoryMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldUpdatedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *EntitlementPlanHistoryMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *EntitlementPlanHistoryMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[entitlementplanhistory.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *EntitlementPlanHistoryMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *EntitlementPlanHistoryMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *EntitlementPlanHistoryMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[entitlementplanhistory.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *EntitlementPlanHistoryMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *EntitlementPlanHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EntitlementPlanHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *EntitlementPlanHistoryMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *EntitlementPlanHistoryMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[entitlementplanhistory.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *EntitlementPlanHistoryMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *EntitlementPlanHistoryMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *EntitlementPlanHistoryMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[entitlementplanhistory.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *EntitlementPlanHistoryMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldDeletedBy)
+}
+
+// SetTags sets the "tags" field.
+func (m *EntitlementPlanHistoryMutation) SetTags(s []string) {
+	m.tags = &s
+	m.appendtags = nil
+}
+
+// Tags returns the value of the "tags" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) Tags() (r []string, exists bool) {
+	v := m.tags
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTags returns the old "tags" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldTags(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTags is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTags requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTags: %w", err)
+	}
+	return oldValue.Tags, nil
+}
+
+// AppendTags adds s to the "tags" field.
+func (m *EntitlementPlanHistoryMutation) AppendTags(s []string) {
+	m.appendtags = append(m.appendtags, s...)
+}
+
+// AppendedTags returns the list of values that were appended to the "tags" field in this mutation.
+func (m *EntitlementPlanHistoryMutation) AppendedTags() ([]string, bool) {
+	if len(m.appendtags) == 0 {
+		return nil, false
+	}
+	return m.appendtags, true
+}
+
+// ClearTags clears the value of the "tags" field.
+func (m *EntitlementPlanHistoryMutation) ClearTags() {
+	m.tags = nil
+	m.appendtags = nil
+	m.clearedFields[entitlementplanhistory.FieldTags] = struct{}{}
+}
+
+// TagsCleared returns if the "tags" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) TagsCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldTags]
+	return ok
+}
+
+// ResetTags resets all changes to the "tags" field.
+func (m *EntitlementPlanHistoryMutation) ResetTags() {
+	m.tags = nil
+	m.appendtags = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldTags)
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (m *EntitlementPlanHistoryMutation) SetOwnerID(s string) {
+	m.owner_id = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) OwnerID() (r string, exists bool) {
+	v := m.owner_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *EntitlementPlanHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[entitlementplanhistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *EntitlementPlanHistoryMutation) ResetOwnerID() {
+	m.owner_id = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldOwnerID)
+}
+
+// SetDisplayName sets the "display_name" field.
+func (m *EntitlementPlanHistoryMutation) SetDisplayName(s string) {
+	m.display_name = &s
+}
+
+// DisplayName returns the value of the "display_name" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) DisplayName() (r string, exists bool) {
+	v := m.display_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisplayName returns the old "display_name" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldDisplayName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisplayName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
+	}
+	return oldValue.DisplayName, nil
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (m *EntitlementPlanHistoryMutation) ClearDisplayName() {
+	m.display_name = nil
+	m.clearedFields[entitlementplanhistory.FieldDisplayName] = struct{}{}
+}
+
+// DisplayNameCleared returns if the "display_name" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) DisplayNameCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldDisplayName]
+	return ok
+}
+
+// ResetDisplayName resets all changes to the "display_name" field.
+func (m *EntitlementPlanHistoryMutation) ResetDisplayName() {
+	m.display_name = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldDisplayName)
+}
+
+// SetName sets the "name" field.
+func (m *EntitlementPlanHistoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *EntitlementPlanHistoryMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *EntitlementPlanHistoryMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *EntitlementPlanHistoryMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[entitlementplanhistory.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *EntitlementPlanHistoryMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldDescription)
+}
+
+// SetVersion sets the "version" field.
+func (m *EntitlementPlanHistoryMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *EntitlementPlanHistoryMutation) ResetVersion() {
+	m.version = nil
+}
+
+// SetMetadata sets the "metadata" field.
+func (m *EntitlementPlanHistoryMutation) SetMetadata(value map[string]interface{}) {
+	m.metadata = &value
+}
+
+// Metadata returns the value of the "metadata" field in the mutation.
+func (m *EntitlementPlanHistoryMutation) Metadata() (r map[string]interface{}, exists bool) {
+	v := m.metadata
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetadata returns the old "metadata" field's value of the EntitlementPlanHistory entity.
+// If the EntitlementPlanHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanHistoryMutation) OldMetadata(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetadata is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetadata requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetadata: %w", err)
+	}
+	return oldValue.Metadata, nil
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (m *EntitlementPlanHistoryMutation) ClearMetadata() {
+	m.metadata = nil
+	m.clearedFields[entitlementplanhistory.FieldMetadata] = struct{}{}
+}
+
+// MetadataCleared returns if the "metadata" field was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) MetadataCleared() bool {
+	_, ok := m.clearedFields[entitlementplanhistory.FieldMetadata]
+	return ok
+}
+
+// ResetMetadata resets all changes to the "metadata" field.
+func (m *EntitlementPlanHistoryMutation) ResetMetadata() {
+	m.metadata = nil
+	delete(m.clearedFields, entitlementplanhistory.FieldMetadata)
+}
+
+// Where appends a list predicates to the EntitlementPlanHistoryMutation builder.
+func (m *EntitlementPlanHistoryMutation) Where(ps ...predicate.EntitlementPlanHistory) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the EntitlementPlanHistoryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *EntitlementPlanHistoryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.EntitlementPlanHistory, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *EntitlementPlanHistoryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *EntitlementPlanHistoryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (EntitlementPlanHistory).
+func (m *EntitlementPlanHistoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *EntitlementPlanHistoryMutation) Fields() []string {
+	fields := make([]string, 0, 17)
+	if m.history_time != nil {
+		fields = append(fields, entitlementplanhistory.FieldHistoryTime)
+	}
+	if m.operation != nil {
+		fields = append(fields, entitlementplanhistory.FieldOperation)
+	}
+	if m.ref != nil {
+		fields = append(fields, entitlementplanhistory.FieldRef)
+	}
+	if m.created_at != nil {
+		fields = append(fields, entitlementplanhistory.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, entitlementplanhistory.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, entitlementplanhistory.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, entitlementplanhistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, entitlementplanhistory.FieldMappingID)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, entitlementplanhistory.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, entitlementplanhistory.FieldDeletedBy)
+	}
+	if m.tags != nil {
+		fields = append(fields, entitlementplanhistory.FieldTags)
+	}
+	if m.owner_id != nil {
+		fields = append(fields, entitlementplanhistory.FieldOwnerID)
+	}
+	if m.display_name != nil {
+		fields = append(fields, entitlementplanhistory.FieldDisplayName)
+	}
+	if m.name != nil {
+		fields = append(fields, entitlementplanhistory.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, entitlementplanhistory.FieldDescription)
+	}
+	if m.version != nil {
+		fields = append(fields, entitlementplanhistory.FieldVersion)
+	}
+	if m.metadata != nil {
+		fields = append(fields, entitlementplanhistory.FieldMetadata)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *EntitlementPlanHistoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case entitlementplanhistory.FieldHistoryTime:
+		return m.HistoryTime()
+	case entitlementplanhistory.FieldOperation:
+		return m.Operation()
+	case entitlementplanhistory.FieldRef:
+		return m.Ref()
+	case entitlementplanhistory.FieldCreatedAt:
+		return m.CreatedAt()
+	case entitlementplanhistory.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case entitlementplanhistory.FieldCreatedBy:
+		return m.CreatedBy()
+	case entitlementplanhistory.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case entitlementplanhistory.FieldMappingID:
+		return m.MappingID()
+	case entitlementplanhistory.FieldDeletedAt:
+		return m.DeletedAt()
+	case entitlementplanhistory.FieldDeletedBy:
+		return m.DeletedBy()
+	case entitlementplanhistory.FieldTags:
+		return m.Tags()
+	case entitlementplanhistory.FieldOwnerID:
+		return m.OwnerID()
+	case entitlementplanhistory.FieldDisplayName:
+		return m.DisplayName()
+	case entitlementplanhistory.FieldName:
+		return m.Name()
+	case entitlementplanhistory.FieldDescription:
+		return m.Description()
+	case entitlementplanhistory.FieldVersion:
+		return m.Version()
+	case entitlementplanhistory.FieldMetadata:
+		return m.Metadata()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *EntitlementPlanHistoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case entitlementplanhistory.FieldHistoryTime:
+		return m.OldHistoryTime(ctx)
+	case entitlementplanhistory.FieldOperation:
+		return m.OldOperation(ctx)
+	case entitlementplanhistory.FieldRef:
+		return m.OldRef(ctx)
+	case entitlementplanhistory.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case entitlementplanhistory.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case entitlementplanhistory.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case entitlementplanhistory.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case entitlementplanhistory.FieldMappingID:
+		return m.OldMappingID(ctx)
+	case entitlementplanhistory.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case entitlementplanhistory.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case entitlementplanhistory.FieldTags:
+		return m.OldTags(ctx)
+	case entitlementplanhistory.FieldOwnerID:
+		return m.OldOwnerID(ctx)
+	case entitlementplanhistory.FieldDisplayName:
+		return m.OldDisplayName(ctx)
+	case entitlementplanhistory.FieldName:
+		return m.OldName(ctx)
+	case entitlementplanhistory.FieldDescription:
+		return m.OldDescription(ctx)
+	case entitlementplanhistory.FieldVersion:
+		return m.OldVersion(ctx)
+	case entitlementplanhistory.FieldMetadata:
+		return m.OldMetadata(ctx)
+	}
+	return nil, fmt.Errorf("unknown EntitlementPlanHistory field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EntitlementPlanHistoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case entitlementplanhistory.FieldHistoryTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHistoryTime(v)
+		return nil
+	case entitlementplanhistory.FieldOperation:
+		v, ok := value.(enthistory.OpType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperation(v)
+		return nil
+	case entitlementplanhistory.FieldRef:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRef(v)
+		return nil
+	case entitlementplanhistory.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case entitlementplanhistory.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case entitlementplanhistory.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case entitlementplanhistory.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case entitlementplanhistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
+		return nil
+	case entitlementplanhistory.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case entitlementplanhistory.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case entitlementplanhistory.FieldTags:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTags(v)
+		return nil
+	case entitlementplanhistory.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
+	case entitlementplanhistory.FieldDisplayName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisplayName(v)
+		return nil
+	case entitlementplanhistory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case entitlementplanhistory.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case entitlementplanhistory.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case entitlementplanhistory.FieldMetadata:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetadata(v)
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanHistory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *EntitlementPlanHistoryMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *EntitlementPlanHistoryMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EntitlementPlanHistoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown EntitlementPlanHistory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *EntitlementPlanHistoryMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(entitlementplanhistory.FieldRef) {
+		fields = append(fields, entitlementplanhistory.FieldRef)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldCreatedAt) {
+		fields = append(fields, entitlementplanhistory.FieldCreatedAt)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldUpdatedAt) {
+		fields = append(fields, entitlementplanhistory.FieldUpdatedAt)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldCreatedBy) {
+		fields = append(fields, entitlementplanhistory.FieldCreatedBy)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldUpdatedBy) {
+		fields = append(fields, entitlementplanhistory.FieldUpdatedBy)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldDeletedAt) {
+		fields = append(fields, entitlementplanhistory.FieldDeletedAt)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldDeletedBy) {
+		fields = append(fields, entitlementplanhistory.FieldDeletedBy)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldTags) {
+		fields = append(fields, entitlementplanhistory.FieldTags)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldOwnerID) {
+		fields = append(fields, entitlementplanhistory.FieldOwnerID)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldDisplayName) {
+		fields = append(fields, entitlementplanhistory.FieldDisplayName)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldDescription) {
+		fields = append(fields, entitlementplanhistory.FieldDescription)
+	}
+	if m.FieldCleared(entitlementplanhistory.FieldMetadata) {
+		fields = append(fields, entitlementplanhistory.FieldMetadata)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *EntitlementPlanHistoryMutation) ClearField(name string) error {
+	switch name {
+	case entitlementplanhistory.FieldRef:
+		m.ClearRef()
+		return nil
+	case entitlementplanhistory.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case entitlementplanhistory.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case entitlementplanhistory.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case entitlementplanhistory.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case entitlementplanhistory.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case entitlementplanhistory.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case entitlementplanhistory.FieldTags:
+		m.ClearTags()
+		return nil
+	case entitlementplanhistory.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
+	case entitlementplanhistory.FieldDisplayName:
+		m.ClearDisplayName()
+		return nil
+	case entitlementplanhistory.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case entitlementplanhistory.FieldMetadata:
+		m.ClearMetadata()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanHistory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *EntitlementPlanHistoryMutation) ResetField(name string) error {
+	switch name {
+	case entitlementplanhistory.FieldHistoryTime:
+		m.ResetHistoryTime()
+		return nil
+	case entitlementplanhistory.FieldOperation:
+		m.ResetOperation()
+		return nil
+	case entitlementplanhistory.FieldRef:
+		m.ResetRef()
+		return nil
+	case entitlementplanhistory.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case entitlementplanhistory.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case entitlementplanhistory.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case entitlementplanhistory.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case entitlementplanhistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
+	case entitlementplanhistory.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case entitlementplanhistory.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case entitlementplanhistory.FieldTags:
+		m.ResetTags()
+		return nil
+	case entitlementplanhistory.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
+	case entitlementplanhistory.FieldDisplayName:
+		m.ResetDisplayName()
+		return nil
+	case entitlementplanhistory.FieldName:
+		m.ResetName()
+		return nil
+	case entitlementplanhistory.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case entitlementplanhistory.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case entitlementplanhistory.FieldMetadata:
+		m.ResetMetadata()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanHistory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *EntitlementPlanHistoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *EntitlementPlanHistoryMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *EntitlementPlanHistoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *EntitlementPlanHistoryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *EntitlementPlanHistoryMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *EntitlementPlanHistoryMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown EntitlementPlanHistory unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *EntitlementPlanHistoryMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown EntitlementPlanHistory edge %s", name)
+}
+
+// EntitlementPlanFeatureMutation represents an operation that mutates the EntitlementPlanFeature nodes in the graph.
+type EntitlementPlanFeatureMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *string
+	created_at     *time.Time
+	updated_at     *time.Time
+	created_by     *string
+	updated_by     *string
+	mapping_id     *string
+	deleted_at     *time.Time
+	deleted_by     *string
+	tags           *[]string
+	appendtags     []string
+	metadata       *map[string]interface{}
+	clearedFields  map[string]struct{}
+	owner          *string
+	clearedowner   bool
+	plan           *string
+	clearedplan    bool
+	feature        *string
+	clearedfeature bool
+	events         map[string]struct{}
+	removedevents  map[string]struct{}
+	clearedevents  bool
+	done           bool
+	oldValue       func(context.Context) (*EntitlementPlanFeature, error)
+	predicates     []predicate.EntitlementPlanFeature
+}
+
+var _ ent.Mutation = (*EntitlementPlanFeatureMutation)(nil)
+
+// entitlementplanfeatureOption allows management of the mutation configuration using functional options.
+type entitlementplanfeatureOption func(*EntitlementPlanFeatureMutation)
+
+// newEntitlementPlanFeatureMutation creates new mutation for the EntitlementPlanFeature entity.
+func newEntitlementPlanFeatureMutation(c config, op Op, opts ...entitlementplanfeatureOption) *EntitlementPlanFeatureMutation {
+	m := &EntitlementPlanFeatureMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeEntitlementPlanFeature,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withEntitlementPlanFeatureID sets the ID field of the mutation.
+func withEntitlementPlanFeatureID(id string) entitlementplanfeatureOption {
+	return func(m *EntitlementPlanFeatureMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *EntitlementPlanFeature
+		)
+		m.oldValue = func(ctx context.Context) (*EntitlementPlanFeature, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().EntitlementPlanFeature.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withEntitlementPlanFeature sets the old EntitlementPlanFeature of the mutation.
+func withEntitlementPlanFeature(node *EntitlementPlanFeature) entitlementplanfeatureOption {
+	return func(m *EntitlementPlanFeatureMutation) {
+		m.oldValue = func(context.Context) (*EntitlementPlanFeature, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m EntitlementPlanFeatureMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m EntitlementPlanFeatureMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of EntitlementPlanFeature entities.
+func (m *EntitlementPlanFeatureMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *EntitlementPlanFeatureMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *EntitlementPlanFeatureMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().EntitlementPlanFeature.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *EntitlementPlanFeatureMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *EntitlementPlanFeatureMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[entitlementplanfeature.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *EntitlementPlanFeatureMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *EntitlementPlanFeatureMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *EntitlementPlanFeatureMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[entitlementplanfeature.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *EntitlementPlanFeatureMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldUpdatedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *EntitlementPlanFeatureMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *EntitlementPlanFeatureMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[entitlementplanfeature.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *EntitlementPlanFeatureMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *EntitlementPlanFeatureMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *EntitlementPlanFeatureMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[entitlementplanfeature.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *EntitlementPlanFeatureMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *EntitlementPlanFeatureMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EntitlementPlanFeatureMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *EntitlementPlanFeatureMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *EntitlementPlanFeatureMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[entitlementplanfeature.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *EntitlementPlanFeatureMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *EntitlementPlanFeatureMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *EntitlementPlanFeatureMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[entitlementplanfeature.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *EntitlementPlanFeatureMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldDeletedBy)
+}
+
+// SetTags sets the "tags" field.
+func (m *EntitlementPlanFeatureMutation) SetTags(s []string) {
+	m.tags = &s
+	m.appendtags = nil
+}
+
+// Tags returns the value of the "tags" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) Tags() (r []string, exists bool) {
+	v := m.tags
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTags returns the old "tags" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldTags(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTags is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTags requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTags: %w", err)
+	}
+	return oldValue.Tags, nil
+}
+
+// AppendTags adds s to the "tags" field.
+func (m *EntitlementPlanFeatureMutation) AppendTags(s []string) {
+	m.appendtags = append(m.appendtags, s...)
+}
+
+// AppendedTags returns the list of values that were appended to the "tags" field in this mutation.
+func (m *EntitlementPlanFeatureMutation) AppendedTags() ([]string, bool) {
+	if len(m.appendtags) == 0 {
+		return nil, false
+	}
+	return m.appendtags, true
+}
+
+// ClearTags clears the value of the "tags" field.
+func (m *EntitlementPlanFeatureMutation) ClearTags() {
+	m.tags = nil
+	m.appendtags = nil
+	m.clearedFields[entitlementplanfeature.FieldTags] = struct{}{}
+}
+
+// TagsCleared returns if the "tags" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) TagsCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldTags]
+	return ok
+}
+
+// ResetTags resets all changes to the "tags" field.
+func (m *EntitlementPlanFeatureMutation) ResetTags() {
+	m.tags = nil
+	m.appendtags = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldTags)
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (m *EntitlementPlanFeatureMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *EntitlementPlanFeatureMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[entitlementplanfeature.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *EntitlementPlanFeatureMutation) ResetOwnerID() {
+	m.owner = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldOwnerID)
+}
+
+// SetMetadata sets the "metadata" field.
+func (m *EntitlementPlanFeatureMutation) SetMetadata(value map[string]interface{}) {
+	m.metadata = &value
+}
+
+// Metadata returns the value of the "metadata" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) Metadata() (r map[string]interface{}, exists bool) {
+	v := m.metadata
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetadata returns the old "metadata" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldMetadata(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetadata is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetadata requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetadata: %w", err)
+	}
+	return oldValue.Metadata, nil
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (m *EntitlementPlanFeatureMutation) ClearMetadata() {
+	m.metadata = nil
+	m.clearedFields[entitlementplanfeature.FieldMetadata] = struct{}{}
+}
+
+// MetadataCleared returns if the "metadata" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) MetadataCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeature.FieldMetadata]
+	return ok
+}
+
+// ResetMetadata resets all changes to the "metadata" field.
+func (m *EntitlementPlanFeatureMutation) ResetMetadata() {
+	m.metadata = nil
+	delete(m.clearedFields, entitlementplanfeature.FieldMetadata)
+}
+
+// SetPlanID sets the "plan_id" field.
+func (m *EntitlementPlanFeatureMutation) SetPlanID(s string) {
+	m.plan = &s
+}
+
+// PlanID returns the value of the "plan_id" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) PlanID() (r string, exists bool) {
+	v := m.plan
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlanID returns the old "plan_id" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldPlanID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlanID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlanID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlanID: %w", err)
+	}
+	return oldValue.PlanID, nil
+}
+
+// ResetPlanID resets all changes to the "plan_id" field.
+func (m *EntitlementPlanFeatureMutation) ResetPlanID() {
+	m.plan = nil
+}
+
+// SetFeatureID sets the "feature_id" field.
+func (m *EntitlementPlanFeatureMutation) SetFeatureID(s string) {
+	m.feature = &s
+}
+
+// FeatureID returns the value of the "feature_id" field in the mutation.
+func (m *EntitlementPlanFeatureMutation) FeatureID() (r string, exists bool) {
+	v := m.feature
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFeatureID returns the old "feature_id" field's value of the EntitlementPlanFeature entity.
+// If the EntitlementPlanFeature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureMutation) OldFeatureID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFeatureID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFeatureID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFeatureID: %w", err)
+	}
+	return oldValue.FeatureID, nil
+}
+
+// ResetFeatureID resets all changes to the "feature_id" field.
+func (m *EntitlementPlanFeatureMutation) ResetFeatureID() {
+	m.feature = nil
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (m *EntitlementPlanFeatureMutation) ClearOwner() {
+	m.clearedowner = true
+	m.clearedFields[entitlementplanfeature.FieldOwnerID] = struct{}{}
+}
+
+// OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
+func (m *EntitlementPlanFeatureMutation) OwnerCleared() bool {
+	return m.OwnerIDCleared() || m.clearedowner
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *EntitlementPlanFeatureMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *EntitlementPlanFeatureMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
+// ClearPlan clears the "plan" edge to the EntitlementPlan entity.
+func (m *EntitlementPlanFeatureMutation) ClearPlan() {
+	m.clearedplan = true
+	m.clearedFields[entitlementplanfeature.FieldPlanID] = struct{}{}
+}
+
+// PlanCleared reports if the "plan" edge to the EntitlementPlan entity was cleared.
+func (m *EntitlementPlanFeatureMutation) PlanCleared() bool {
+	return m.clearedplan
+}
+
+// PlanIDs returns the "plan" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PlanID instead. It exists only for internal usage by the builders.
+func (m *EntitlementPlanFeatureMutation) PlanIDs() (ids []string) {
+	if id := m.plan; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPlan resets all changes to the "plan" edge.
+func (m *EntitlementPlanFeatureMutation) ResetPlan() {
+	m.plan = nil
+	m.clearedplan = false
+}
+
+// ClearFeature clears the "feature" edge to the Feature entity.
+func (m *EntitlementPlanFeatureMutation) ClearFeature() {
+	m.clearedfeature = true
+	m.clearedFields[entitlementplanfeature.FieldFeatureID] = struct{}{}
+}
+
+// FeatureCleared reports if the "feature" edge to the Feature entity was cleared.
+func (m *EntitlementPlanFeatureMutation) FeatureCleared() bool {
+	return m.clearedfeature
+}
+
+// FeatureIDs returns the "feature" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// FeatureID instead. It exists only for internal usage by the builders.
+func (m *EntitlementPlanFeatureMutation) FeatureIDs() (ids []string) {
+	if id := m.feature; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFeature resets all changes to the "feature" edge.
+func (m *EntitlementPlanFeatureMutation) ResetFeature() {
+	m.feature = nil
+	m.clearedfeature = false
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by ids.
+func (m *EntitlementPlanFeatureMutation) AddEventIDs(ids ...string) {
+	if m.events == nil {
+		m.events = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.events[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEvents clears the "events" edge to the Event entity.
+func (m *EntitlementPlanFeatureMutation) ClearEvents() {
+	m.clearedevents = true
+}
+
+// EventsCleared reports if the "events" edge to the Event entity was cleared.
+func (m *EntitlementPlanFeatureMutation) EventsCleared() bool {
+	return m.clearedevents
+}
+
+// RemoveEventIDs removes the "events" edge to the Event entity by IDs.
+func (m *EntitlementPlanFeatureMutation) RemoveEventIDs(ids ...string) {
+	if m.removedevents == nil {
+		m.removedevents = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.events, ids[i])
+		m.removedevents[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEvents returns the removed IDs of the "events" edge to the Event entity.
+func (m *EntitlementPlanFeatureMutation) RemovedEventsIDs() (ids []string) {
+	for id := range m.removedevents {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EventsIDs returns the "events" edge IDs in the mutation.
+func (m *EntitlementPlanFeatureMutation) EventsIDs() (ids []string) {
+	for id := range m.events {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEvents resets all changes to the "events" edge.
+func (m *EntitlementPlanFeatureMutation) ResetEvents() {
+	m.events = nil
+	m.clearedevents = false
+	m.removedevents = nil
+}
+
+// Where appends a list predicates to the EntitlementPlanFeatureMutation builder.
+func (m *EntitlementPlanFeatureMutation) Where(ps ...predicate.EntitlementPlanFeature) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the EntitlementPlanFeatureMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *EntitlementPlanFeatureMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.EntitlementPlanFeature, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *EntitlementPlanFeatureMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *EntitlementPlanFeatureMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (EntitlementPlanFeature).
+func (m *EntitlementPlanFeatureMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *EntitlementPlanFeatureMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_at != nil {
+		fields = append(fields, entitlementplanfeature.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, entitlementplanfeature.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, entitlementplanfeature.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, entitlementplanfeature.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, entitlementplanfeature.FieldMappingID)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, entitlementplanfeature.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, entitlementplanfeature.FieldDeletedBy)
+	}
+	if m.tags != nil {
+		fields = append(fields, entitlementplanfeature.FieldTags)
+	}
+	if m.owner != nil {
+		fields = append(fields, entitlementplanfeature.FieldOwnerID)
+	}
+	if m.metadata != nil {
+		fields = append(fields, entitlementplanfeature.FieldMetadata)
+	}
+	if m.plan != nil {
+		fields = append(fields, entitlementplanfeature.FieldPlanID)
+	}
+	if m.feature != nil {
+		fields = append(fields, entitlementplanfeature.FieldFeatureID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *EntitlementPlanFeatureMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case entitlementplanfeature.FieldCreatedAt:
+		return m.CreatedAt()
+	case entitlementplanfeature.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case entitlementplanfeature.FieldCreatedBy:
+		return m.CreatedBy()
+	case entitlementplanfeature.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case entitlementplanfeature.FieldMappingID:
+		return m.MappingID()
+	case entitlementplanfeature.FieldDeletedAt:
+		return m.DeletedAt()
+	case entitlementplanfeature.FieldDeletedBy:
+		return m.DeletedBy()
+	case entitlementplanfeature.FieldTags:
+		return m.Tags()
+	case entitlementplanfeature.FieldOwnerID:
+		return m.OwnerID()
+	case entitlementplanfeature.FieldMetadata:
+		return m.Metadata()
+	case entitlementplanfeature.FieldPlanID:
+		return m.PlanID()
+	case entitlementplanfeature.FieldFeatureID:
+		return m.FeatureID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *EntitlementPlanFeatureMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case entitlementplanfeature.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case entitlementplanfeature.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case entitlementplanfeature.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case entitlementplanfeature.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case entitlementplanfeature.FieldMappingID:
+		return m.OldMappingID(ctx)
+	case entitlementplanfeature.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case entitlementplanfeature.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case entitlementplanfeature.FieldTags:
+		return m.OldTags(ctx)
+	case entitlementplanfeature.FieldOwnerID:
+		return m.OldOwnerID(ctx)
+	case entitlementplanfeature.FieldMetadata:
+		return m.OldMetadata(ctx)
+	case entitlementplanfeature.FieldPlanID:
+		return m.OldPlanID(ctx)
+	case entitlementplanfeature.FieldFeatureID:
+		return m.OldFeatureID(ctx)
+	}
+	return nil, fmt.Errorf("unknown EntitlementPlanFeature field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EntitlementPlanFeatureMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case entitlementplanfeature.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case entitlementplanfeature.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case entitlementplanfeature.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case entitlementplanfeature.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case entitlementplanfeature.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
+		return nil
+	case entitlementplanfeature.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case entitlementplanfeature.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case entitlementplanfeature.FieldTags:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTags(v)
+		return nil
+	case entitlementplanfeature.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
+	case entitlementplanfeature.FieldMetadata:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetadata(v)
+		return nil
+	case entitlementplanfeature.FieldPlanID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlanID(v)
+		return nil
+	case entitlementplanfeature.FieldFeatureID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFeatureID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeature field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *EntitlementPlanFeatureMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *EntitlementPlanFeatureMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EntitlementPlanFeatureMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeature numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *EntitlementPlanFeatureMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(entitlementplanfeature.FieldCreatedAt) {
+		fields = append(fields, entitlementplanfeature.FieldCreatedAt)
+	}
+	if m.FieldCleared(entitlementplanfeature.FieldUpdatedAt) {
+		fields = append(fields, entitlementplanfeature.FieldUpdatedAt)
+	}
+	if m.FieldCleared(entitlementplanfeature.FieldCreatedBy) {
+		fields = append(fields, entitlementplanfeature.FieldCreatedBy)
+	}
+	if m.FieldCleared(entitlementplanfeature.FieldUpdatedBy) {
+		fields = append(fields, entitlementplanfeature.FieldUpdatedBy)
+	}
+	if m.FieldCleared(entitlementplanfeature.FieldDeletedAt) {
+		fields = append(fields, entitlementplanfeature.FieldDeletedAt)
+	}
+	if m.FieldCleared(entitlementplanfeature.FieldDeletedBy) {
+		fields = append(fields, entitlementplanfeature.FieldDeletedBy)
+	}
+	if m.FieldCleared(entitlementplanfeature.FieldTags) {
+		fields = append(fields, entitlementplanfeature.FieldTags)
+	}
+	if m.FieldCleared(entitlementplanfeature.FieldOwnerID) {
+		fields = append(fields, entitlementplanfeature.FieldOwnerID)
+	}
+	if m.FieldCleared(entitlementplanfeature.FieldMetadata) {
+		fields = append(fields, entitlementplanfeature.FieldMetadata)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *EntitlementPlanFeatureMutation) ClearField(name string) error {
+	switch name {
+	case entitlementplanfeature.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case entitlementplanfeature.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case entitlementplanfeature.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case entitlementplanfeature.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case entitlementplanfeature.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case entitlementplanfeature.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case entitlementplanfeature.FieldTags:
+		m.ClearTags()
+		return nil
+	case entitlementplanfeature.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
+	case entitlementplanfeature.FieldMetadata:
+		m.ClearMetadata()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeature nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *EntitlementPlanFeatureMutation) ResetField(name string) error {
+	switch name {
+	case entitlementplanfeature.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case entitlementplanfeature.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case entitlementplanfeature.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case entitlementplanfeature.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case entitlementplanfeature.FieldMappingID:
+		m.ResetMappingID()
+		return nil
+	case entitlementplanfeature.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case entitlementplanfeature.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case entitlementplanfeature.FieldTags:
+		m.ResetTags()
+		return nil
+	case entitlementplanfeature.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
+	case entitlementplanfeature.FieldMetadata:
+		m.ResetMetadata()
+		return nil
+	case entitlementplanfeature.FieldPlanID:
+		m.ResetPlanID()
+		return nil
+	case entitlementplanfeature.FieldFeatureID:
+		m.ResetFeatureID()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeature field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *EntitlementPlanFeatureMutation) AddedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.owner != nil {
+		edges = append(edges, entitlementplanfeature.EdgeOwner)
+	}
+	if m.plan != nil {
+		edges = append(edges, entitlementplanfeature.EdgePlan)
+	}
+	if m.feature != nil {
+		edges = append(edges, entitlementplanfeature.EdgeFeature)
+	}
+	if m.events != nil {
+		edges = append(edges, entitlementplanfeature.EdgeEvents)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *EntitlementPlanFeatureMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case entitlementplanfeature.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	case entitlementplanfeature.EdgePlan:
+		if id := m.plan; id != nil {
+			return []ent.Value{*id}
+		}
+	case entitlementplanfeature.EdgeFeature:
+		if id := m.feature; id != nil {
+			return []ent.Value{*id}
+		}
+	case entitlementplanfeature.EdgeEvents:
+		ids := make([]ent.Value, 0, len(m.events))
+		for id := range m.events {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *EntitlementPlanFeatureMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.removedevents != nil {
+		edges = append(edges, entitlementplanfeature.EdgeEvents)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *EntitlementPlanFeatureMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case entitlementplanfeature.EdgeEvents:
+		ids := make([]ent.Value, 0, len(m.removedevents))
+		for id := range m.removedevents {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.clearedowner {
+		edges = append(edges, entitlementplanfeature.EdgeOwner)
+	}
+	if m.clearedplan {
+		edges = append(edges, entitlementplanfeature.EdgePlan)
+	}
+	if m.clearedfeature {
+		edges = append(edges, entitlementplanfeature.EdgeFeature)
+	}
+	if m.clearedevents {
+		edges = append(edges, entitlementplanfeature.EdgeEvents)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *EntitlementPlanFeatureMutation) EdgeCleared(name string) bool {
+	switch name {
+	case entitlementplanfeature.EdgeOwner:
+		return m.clearedowner
+	case entitlementplanfeature.EdgePlan:
+		return m.clearedplan
+	case entitlementplanfeature.EdgeFeature:
+		return m.clearedfeature
+	case entitlementplanfeature.EdgeEvents:
+		return m.clearedevents
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *EntitlementPlanFeatureMutation) ClearEdge(name string) error {
+	switch name {
+	case entitlementplanfeature.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	case entitlementplanfeature.EdgePlan:
+		m.ClearPlan()
+		return nil
+	case entitlementplanfeature.EdgeFeature:
+		m.ClearFeature()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeature unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *EntitlementPlanFeatureMutation) ResetEdge(name string) error {
+	switch name {
+	case entitlementplanfeature.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	case entitlementplanfeature.EdgePlan:
+		m.ResetPlan()
+		return nil
+	case entitlementplanfeature.EdgeFeature:
+		m.ResetFeature()
+		return nil
+	case entitlementplanfeature.EdgeEvents:
+		m.ResetEvents()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeature edge %s", name)
+}
+
+// EntitlementPlanFeatureHistoryMutation represents an operation that mutates the EntitlementPlanFeatureHistory nodes in the graph.
+type EntitlementPlanFeatureHistoryMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *string
+	history_time  *time.Time
+	operation     *enthistory.OpType
+	ref           *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	created_by    *string
+	updated_by    *string
+	mapping_id    *string
+	deleted_at    *time.Time
+	deleted_by    *string
+	tags          *[]string
+	appendtags    []string
+	owner_id      *string
+	metadata      *map[string]interface{}
+	plan_id       *string
+	feature_id    *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*EntitlementPlanFeatureHistory, error)
+	predicates    []predicate.EntitlementPlanFeatureHistory
+}
+
+var _ ent.Mutation = (*EntitlementPlanFeatureHistoryMutation)(nil)
+
+// entitlementplanfeaturehistoryOption allows management of the mutation configuration using functional options.
+type entitlementplanfeaturehistoryOption func(*EntitlementPlanFeatureHistoryMutation)
+
+// newEntitlementPlanFeatureHistoryMutation creates new mutation for the EntitlementPlanFeatureHistory entity.
+func newEntitlementPlanFeatureHistoryMutation(c config, op Op, opts ...entitlementplanfeaturehistoryOption) *EntitlementPlanFeatureHistoryMutation {
+	m := &EntitlementPlanFeatureHistoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeEntitlementPlanFeatureHistory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withEntitlementPlanFeatureHistoryID sets the ID field of the mutation.
+func withEntitlementPlanFeatureHistoryID(id string) entitlementplanfeaturehistoryOption {
+	return func(m *EntitlementPlanFeatureHistoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *EntitlementPlanFeatureHistory
+		)
+		m.oldValue = func(ctx context.Context) (*EntitlementPlanFeatureHistory, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().EntitlementPlanFeatureHistory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withEntitlementPlanFeatureHistory sets the old EntitlementPlanFeatureHistory of the mutation.
+func withEntitlementPlanFeatureHistory(node *EntitlementPlanFeatureHistory) entitlementplanfeaturehistoryOption {
+	return func(m *EntitlementPlanFeatureHistoryMutation) {
+		m.oldValue = func(context.Context) (*EntitlementPlanFeatureHistory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m EntitlementPlanFeatureHistoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m EntitlementPlanFeatureHistoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of EntitlementPlanFeatureHistory entities.
+func (m *EntitlementPlanFeatureHistoryMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *EntitlementPlanFeatureHistoryMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().EntitlementPlanFeatureHistory.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetHistoryTime sets the "history_time" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetHistoryTime(t time.Time) {
+	m.history_time = &t
+}
+
+// HistoryTime returns the value of the "history_time" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) HistoryTime() (r time.Time, exists bool) {
+	v := m.history_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHistoryTime returns the old "history_time" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldHistoryTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHistoryTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHistoryTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHistoryTime: %w", err)
+	}
+	return oldValue.HistoryTime, nil
+}
+
+// ResetHistoryTime resets all changes to the "history_time" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetHistoryTime() {
+	m.history_time = nil
+}
+
+// SetOperation sets the "operation" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetOperation(et enthistory.OpType) {
+	m.operation = &et
+}
+
+// Operation returns the value of the "operation" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) Operation() (r enthistory.OpType, exists bool) {
+	v := m.operation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperation returns the old "operation" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldOperation(ctx context.Context) (v enthistory.OpType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperation: %w", err)
+	}
+	return oldValue.Operation, nil
+}
+
+// ResetOperation resets all changes to the "operation" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetOperation() {
+	m.operation = nil
+}
+
+// SetRef sets the "ref" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetRef(s string) {
+	m.ref = &s
+}
+
+// Ref returns the value of the "ref" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) Ref() (r string, exists bool) {
+	v := m.ref
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRef returns the old "ref" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldRef(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRef is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRef requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRef: %w", err)
+	}
+	return oldValue.Ref, nil
+}
+
+// ClearRef clears the value of the "ref" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearRef() {
+	m.ref = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldRef] = struct{}{}
+}
+
+// RefCleared returns if the "ref" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) RefCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldRef]
+	return ok
+}
+
+// ResetRef resets all changes to the "ref" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetRef() {
+	m.ref = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldRef)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldUpdatedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldUpdatedBy)
+}
+
+// SetMappingID sets the "mapping_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetMappingID(s string) {
+	m.mapping_id = &s
+}
+
+// MappingID returns the value of the "mapping_id" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) MappingID() (r string, exists bool) {
+	v := m.mapping_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMappingID returns the old "mapping_id" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldMappingID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMappingID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMappingID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMappingID: %w", err)
+	}
+	return oldValue.MappingID, nil
+}
+
+// ResetMappingID resets all changes to the "mapping_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetMappingID() {
+	m.mapping_id = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldDeletedBy)
+}
+
+// SetTags sets the "tags" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetTags(s []string) {
+	m.tags = &s
+	m.appendtags = nil
+}
+
+// Tags returns the value of the "tags" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) Tags() (r []string, exists bool) {
+	v := m.tags
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTags returns the old "tags" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldTags(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTags is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTags requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTags: %w", err)
+	}
+	return oldValue.Tags, nil
+}
+
+// AppendTags adds s to the "tags" field.
+func (m *EntitlementPlanFeatureHistoryMutation) AppendTags(s []string) {
+	m.appendtags = append(m.appendtags, s...)
+}
+
+// AppendedTags returns the list of values that were appended to the "tags" field in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) AppendedTags() ([]string, bool) {
+	if len(m.appendtags) == 0 {
+		return nil, false
+	}
+	return m.appendtags, true
+}
+
+// ClearTags clears the value of the "tags" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearTags() {
+	m.tags = nil
+	m.appendtags = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldTags] = struct{}{}
+}
+
+// TagsCleared returns if the "tags" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) TagsCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldTags]
+	return ok
+}
+
+// ResetTags resets all changes to the "tags" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetTags() {
+	m.tags = nil
+	m.appendtags = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldTags)
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetOwnerID(s string) {
+	m.owner_id = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) OwnerID() (r string, exists bool) {
+	v := m.owner_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetOwnerID() {
+	m.owner_id = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldOwnerID)
+}
+
+// SetMetadata sets the "metadata" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetMetadata(value map[string]interface{}) {
+	m.metadata = &value
+}
+
+// Metadata returns the value of the "metadata" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) Metadata() (r map[string]interface{}, exists bool) {
+	v := m.metadata
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetadata returns the old "metadata" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldMetadata(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetadata is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetadata requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetadata: %w", err)
+	}
+	return oldValue.Metadata, nil
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearMetadata() {
+	m.metadata = nil
+	m.clearedFields[entitlementplanfeaturehistory.FieldMetadata] = struct{}{}
+}
+
+// MetadataCleared returns if the "metadata" field was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) MetadataCleared() bool {
+	_, ok := m.clearedFields[entitlementplanfeaturehistory.FieldMetadata]
+	return ok
+}
+
+// ResetMetadata resets all changes to the "metadata" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetMetadata() {
+	m.metadata = nil
+	delete(m.clearedFields, entitlementplanfeaturehistory.FieldMetadata)
+}
+
+// SetPlanID sets the "plan_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetPlanID(s string) {
+	m.plan_id = &s
+}
+
+// PlanID returns the value of the "plan_id" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) PlanID() (r string, exists bool) {
+	v := m.plan_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlanID returns the old "plan_id" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldPlanID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlanID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlanID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlanID: %w", err)
+	}
+	return oldValue.PlanID, nil
+}
+
+// ResetPlanID resets all changes to the "plan_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetPlanID() {
+	m.plan_id = nil
+}
+
+// SetFeatureID sets the "feature_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) SetFeatureID(s string) {
+	m.feature_id = &s
+}
+
+// FeatureID returns the value of the "feature_id" field in the mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) FeatureID() (r string, exists bool) {
+	v := m.feature_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFeatureID returns the old "feature_id" field's value of the EntitlementPlanFeatureHistory entity.
+// If the EntitlementPlanFeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementPlanFeatureHistoryMutation) OldFeatureID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFeatureID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFeatureID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFeatureID: %w", err)
+	}
+	return oldValue.FeatureID, nil
+}
+
+// ResetFeatureID resets all changes to the "feature_id" field.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetFeatureID() {
+	m.feature_id = nil
+}
+
+// Where appends a list predicates to the EntitlementPlanFeatureHistoryMutation builder.
+func (m *EntitlementPlanFeatureHistoryMutation) Where(ps ...predicate.EntitlementPlanFeatureHistory) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the EntitlementPlanFeatureHistoryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *EntitlementPlanFeatureHistoryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.EntitlementPlanFeatureHistory, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *EntitlementPlanFeatureHistoryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *EntitlementPlanFeatureHistoryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (EntitlementPlanFeatureHistory).
+func (m *EntitlementPlanFeatureHistoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *EntitlementPlanFeatureHistoryMutation) Fields() []string {
+	fields := make([]string, 0, 15)
+	if m.history_time != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldHistoryTime)
+	}
+	if m.operation != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldOperation)
+	}
+	if m.ref != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldRef)
+	}
+	if m.created_at != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldUpdatedBy)
+	}
+	if m.mapping_id != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldMappingID)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldDeletedBy)
+	}
+	if m.tags != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldTags)
+	}
+	if m.owner_id != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldOwnerID)
+	}
+	if m.metadata != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldMetadata)
+	}
+	if m.plan_id != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldPlanID)
+	}
+	if m.feature_id != nil {
+		fields = append(fields, entitlementplanfeaturehistory.FieldFeatureID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *EntitlementPlanFeatureHistoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case entitlementplanfeaturehistory.FieldHistoryTime:
+		return m.HistoryTime()
+	case entitlementplanfeaturehistory.FieldOperation:
+		return m.Operation()
+	case entitlementplanfeaturehistory.FieldRef:
+		return m.Ref()
+	case entitlementplanfeaturehistory.FieldCreatedAt:
+		return m.CreatedAt()
+	case entitlementplanfeaturehistory.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case entitlementplanfeaturehistory.FieldCreatedBy:
+		return m.CreatedBy()
+	case entitlementplanfeaturehistory.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case entitlementplanfeaturehistory.FieldMappingID:
+		return m.MappingID()
+	case entitlementplanfeaturehistory.FieldDeletedAt:
+		return m.DeletedAt()
+	case entitlementplanfeaturehistory.FieldDeletedBy:
+		return m.DeletedBy()
+	case entitlementplanfeaturehistory.FieldTags:
+		return m.Tags()
+	case entitlementplanfeaturehistory.FieldOwnerID:
+		return m.OwnerID()
+	case entitlementplanfeaturehistory.FieldMetadata:
+		return m.Metadata()
+	case entitlementplanfeaturehistory.FieldPlanID:
+		return m.PlanID()
+	case entitlementplanfeaturehistory.FieldFeatureID:
+		return m.FeatureID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *EntitlementPlanFeatureHistoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case entitlementplanfeaturehistory.FieldHistoryTime:
+		return m.OldHistoryTime(ctx)
+	case entitlementplanfeaturehistory.FieldOperation:
+		return m.OldOperation(ctx)
+	case entitlementplanfeaturehistory.FieldRef:
+		return m.OldRef(ctx)
+	case entitlementplanfeaturehistory.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case entitlementplanfeaturehistory.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case entitlementplanfeaturehistory.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case entitlementplanfeaturehistory.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case entitlementplanfeaturehistory.FieldMappingID:
+		return m.OldMappingID(ctx)
+	case entitlementplanfeaturehistory.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case entitlementplanfeaturehistory.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case entitlementplanfeaturehistory.FieldTags:
+		return m.OldTags(ctx)
+	case entitlementplanfeaturehistory.FieldOwnerID:
+		return m.OldOwnerID(ctx)
+	case entitlementplanfeaturehistory.FieldMetadata:
+		return m.OldMetadata(ctx)
+	case entitlementplanfeaturehistory.FieldPlanID:
+		return m.OldPlanID(ctx)
+	case entitlementplanfeaturehistory.FieldFeatureID:
+		return m.OldFeatureID(ctx)
+	}
+	return nil, fmt.Errorf("unknown EntitlementPlanFeatureHistory field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EntitlementPlanFeatureHistoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case entitlementplanfeaturehistory.FieldHistoryTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHistoryTime(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldOperation:
+		v, ok := value.(enthistory.OpType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperation(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldRef:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRef(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldMappingID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMappingID(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldTags:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTags(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldMetadata:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetadata(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldPlanID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlanID(v)
+		return nil
+	case entitlementplanfeaturehistory.FieldFeatureID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFeatureID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeatureHistory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *EntitlementPlanFeatureHistoryMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *EntitlementPlanFeatureHistoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeatureHistory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldRef) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldRef)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldCreatedAt) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldCreatedAt)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldUpdatedAt) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldUpdatedAt)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldCreatedBy) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldCreatedBy)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldUpdatedBy) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldUpdatedBy)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldDeletedAt) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldDeletedAt)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldDeletedBy) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldDeletedBy)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldTags) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldTags)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldOwnerID) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldOwnerID)
+	}
+	if m.FieldCleared(entitlementplanfeaturehistory.FieldMetadata) {
+		fields = append(fields, entitlementplanfeaturehistory.FieldMetadata)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearField(name string) error {
+	switch name {
+	case entitlementplanfeaturehistory.FieldRef:
+		m.ClearRef()
+		return nil
+	case entitlementplanfeaturehistory.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case entitlementplanfeaturehistory.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case entitlementplanfeaturehistory.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case entitlementplanfeaturehistory.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case entitlementplanfeaturehistory.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case entitlementplanfeaturehistory.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case entitlementplanfeaturehistory.FieldTags:
+		m.ClearTags()
+		return nil
+	case entitlementplanfeaturehistory.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
+	case entitlementplanfeaturehistory.FieldMetadata:
+		m.ClearMetadata()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeatureHistory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetField(name string) error {
+	switch name {
+	case entitlementplanfeaturehistory.FieldHistoryTime:
+		m.ResetHistoryTime()
+		return nil
+	case entitlementplanfeaturehistory.FieldOperation:
+		m.ResetOperation()
+		return nil
+	case entitlementplanfeaturehistory.FieldRef:
+		m.ResetRef()
+		return nil
+	case entitlementplanfeaturehistory.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case entitlementplanfeaturehistory.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case entitlementplanfeaturehistory.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case entitlementplanfeaturehistory.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case entitlementplanfeaturehistory.FieldMappingID:
+		m.ResetMappingID()
+		return nil
+	case entitlementplanfeaturehistory.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case entitlementplanfeaturehistory.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case entitlementplanfeaturehistory.FieldTags:
+		m.ResetTags()
+		return nil
+	case entitlementplanfeaturehistory.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
+	case entitlementplanfeaturehistory.FieldMetadata:
+		m.ResetMetadata()
+		return nil
+	case entitlementplanfeaturehistory.FieldPlanID:
+		m.ResetPlanID()
+		return nil
+	case entitlementplanfeaturehistory.FieldFeatureID:
+		m.ResetFeatureID()
+		return nil
+	}
+	return fmt.Errorf("unknown EntitlementPlanFeatureHistory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *EntitlementPlanFeatureHistoryMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *EntitlementPlanFeatureHistoryMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown EntitlementPlanFeatureHistory unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *EntitlementPlanFeatureHistoryMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown EntitlementPlanFeatureHistory edge %s", name)
+}
+
 // EventMutation represents an operation that mutates the Event nodes in the graph.
 type EventMutation struct {
 	config
-	op                           Op
-	typ                          string
-	id                           *string
-	created_at                   *time.Time
-	updated_at                   *time.Time
-	created_by                   *string
-	updated_by                   *string
-	mapping_id                   *string
-	tags                         *[]string
-	appendtags                   []string
-	event_id                     *string
-	correlation_id               *string
-	event_type                   *string
-	metadata                     *map[string]interface{}
-	clearedFields                map[string]struct{}
-	user                         map[string]struct{}
-	removeduser                  map[string]struct{}
-	cleareduser                  bool
-	group                        map[string]struct{}
-	removedgroup                 map[string]struct{}
-	clearedgroup                 bool
-	integration                  map[string]struct{}
-	removedintegration           map[string]struct{}
-	clearedintegration           bool
-	organization                 map[string]struct{}
-	removedorganization          map[string]struct{}
-	clearedorganization          bool
-	invite                       map[string]struct{}
-	removedinvite                map[string]struct{}
-	clearedinvite                bool
-	feature                      map[string]struct{}
-	removedfeature               map[string]struct{}
-	clearedfeature               bool
-	personal_access_token        map[string]struct{}
-	removedpersonal_access_token map[string]struct{}
-	clearedpersonal_access_token bool
-	oauth2token                  map[string]struct{}
-	removedoauth2token           map[string]struct{}
-	clearedoauth2token           bool
-	hush                         map[string]struct{}
-	removedhush                  map[string]struct{}
-	clearedhush                  bool
-	orgmembership                map[string]struct{}
-	removedorgmembership         map[string]struct{}
-	clearedorgmembership         bool
-	groupmembership              map[string]struct{}
-	removedgroupmembership       map[string]struct{}
-	clearedgroupmembership       bool
-	entitlement                  map[string]struct{}
-	removedentitlement           map[string]struct{}
-	clearedentitlement           bool
-	webhook                      map[string]struct{}
-	removedwebhook               map[string]struct{}
-	clearedwebhook               bool
-	subscriber                   map[string]struct{}
-	removedsubscriber            map[string]struct{}
-	clearedsubscriber            bool
-	done                         bool
-	oldValue                     func(context.Context) (*Event, error)
-	predicates                   []predicate.Event
+	op                            Op
+	typ                           string
+	id                            *string
+	created_at                    *time.Time
+	updated_at                    *time.Time
+	created_by                    *string
+	updated_by                    *string
+	mapping_id                    *string
+	tags                          *[]string
+	appendtags                    []string
+	event_id                      *string
+	correlation_id                *string
+	event_type                    *string
+	metadata                      *map[string]interface{}
+	clearedFields                 map[string]struct{}
+	user                          map[string]struct{}
+	removeduser                   map[string]struct{}
+	cleareduser                   bool
+	group                         map[string]struct{}
+	removedgroup                  map[string]struct{}
+	clearedgroup                  bool
+	integration                   map[string]struct{}
+	removedintegration            map[string]struct{}
+	clearedintegration            bool
+	organization                  map[string]struct{}
+	removedorganization           map[string]struct{}
+	clearedorganization           bool
+	invite                        map[string]struct{}
+	removedinvite                 map[string]struct{}
+	clearedinvite                 bool
+	feature                       map[string]struct{}
+	removedfeature                map[string]struct{}
+	clearedfeature                bool
+	entitlementplan               map[string]struct{}
+	removedentitlementplan        map[string]struct{}
+	clearedentitlementplan        bool
+	entitlementplanfeature        map[string]struct{}
+	removedentitlementplanfeature map[string]struct{}
+	clearedentitlementplanfeature bool
+	personal_access_token         map[string]struct{}
+	removedpersonal_access_token  map[string]struct{}
+	clearedpersonal_access_token  bool
+	oauth2token                   map[string]struct{}
+	removedoauth2token            map[string]struct{}
+	clearedoauth2token            bool
+	hush                          map[string]struct{}
+	removedhush                   map[string]struct{}
+	clearedhush                   bool
+	orgmembership                 map[string]struct{}
+	removedorgmembership          map[string]struct{}
+	clearedorgmembership          bool
+	groupmembership               map[string]struct{}
+	removedgroupmembership        map[string]struct{}
+	clearedgroupmembership        bool
+	entitlement                   map[string]struct{}
+	removedentitlement            map[string]struct{}
+	clearedentitlement            bool
+	webhook                       map[string]struct{}
+	removedwebhook                map[string]struct{}
+	clearedwebhook                bool
+	subscriber                    map[string]struct{}
+	removedsubscriber             map[string]struct{}
+	clearedsubscriber             bool
+	done                          bool
+	oldValue                      func(context.Context) (*Event, error)
+	predicates                    []predicate.Event
 }
 
 var _ ent.Mutation = (*EventMutation)(nil)
@@ -9001,6 +14873,114 @@ func (m *EventMutation) ResetFeature() {
 	m.removedfeature = nil
 }
 
+// AddEntitlementplanIDs adds the "entitlementplan" edge to the EntitlementPlan entity by ids.
+func (m *EventMutation) AddEntitlementplanIDs(ids ...string) {
+	if m.entitlementplan == nil {
+		m.entitlementplan = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.entitlementplan[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEntitlementplan clears the "entitlementplan" edge to the EntitlementPlan entity.
+func (m *EventMutation) ClearEntitlementplan() {
+	m.clearedentitlementplan = true
+}
+
+// EntitlementplanCleared reports if the "entitlementplan" edge to the EntitlementPlan entity was cleared.
+func (m *EventMutation) EntitlementplanCleared() bool {
+	return m.clearedentitlementplan
+}
+
+// RemoveEntitlementplanIDs removes the "entitlementplan" edge to the EntitlementPlan entity by IDs.
+func (m *EventMutation) RemoveEntitlementplanIDs(ids ...string) {
+	if m.removedentitlementplan == nil {
+		m.removedentitlementplan = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.entitlementplan, ids[i])
+		m.removedentitlementplan[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEntitlementplan returns the removed IDs of the "entitlementplan" edge to the EntitlementPlan entity.
+func (m *EventMutation) RemovedEntitlementplanIDs() (ids []string) {
+	for id := range m.removedentitlementplan {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EntitlementplanIDs returns the "entitlementplan" edge IDs in the mutation.
+func (m *EventMutation) EntitlementplanIDs() (ids []string) {
+	for id := range m.entitlementplan {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEntitlementplan resets all changes to the "entitlementplan" edge.
+func (m *EventMutation) ResetEntitlementplan() {
+	m.entitlementplan = nil
+	m.clearedentitlementplan = false
+	m.removedentitlementplan = nil
+}
+
+// AddEntitlementplanfeatureIDs adds the "entitlementplanfeature" edge to the EntitlementPlanFeature entity by ids.
+func (m *EventMutation) AddEntitlementplanfeatureIDs(ids ...string) {
+	if m.entitlementplanfeature == nil {
+		m.entitlementplanfeature = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.entitlementplanfeature[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEntitlementplanfeature clears the "entitlementplanfeature" edge to the EntitlementPlanFeature entity.
+func (m *EventMutation) ClearEntitlementplanfeature() {
+	m.clearedentitlementplanfeature = true
+}
+
+// EntitlementplanfeatureCleared reports if the "entitlementplanfeature" edge to the EntitlementPlanFeature entity was cleared.
+func (m *EventMutation) EntitlementplanfeatureCleared() bool {
+	return m.clearedentitlementplanfeature
+}
+
+// RemoveEntitlementplanfeatureIDs removes the "entitlementplanfeature" edge to the EntitlementPlanFeature entity by IDs.
+func (m *EventMutation) RemoveEntitlementplanfeatureIDs(ids ...string) {
+	if m.removedentitlementplanfeature == nil {
+		m.removedentitlementplanfeature = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.entitlementplanfeature, ids[i])
+		m.removedentitlementplanfeature[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEntitlementplanfeature returns the removed IDs of the "entitlementplanfeature" edge to the EntitlementPlanFeature entity.
+func (m *EventMutation) RemovedEntitlementplanfeatureIDs() (ids []string) {
+	for id := range m.removedentitlementplanfeature {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EntitlementplanfeatureIDs returns the "entitlementplanfeature" edge IDs in the mutation.
+func (m *EventMutation) EntitlementplanfeatureIDs() (ids []string) {
+	for id := range m.entitlementplanfeature {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEntitlementplanfeature resets all changes to the "entitlementplanfeature" edge.
+func (m *EventMutation) ResetEntitlementplanfeature() {
+	m.entitlementplanfeature = nil
+	m.clearedentitlementplanfeature = false
+	m.removedentitlementplanfeature = nil
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_token" edge to the PersonalAccessToken entity by ids.
 func (m *EventMutation) AddPersonalAccessTokenIDs(ids ...string) {
 	if m.personal_access_token == nil {
@@ -9770,7 +15750,7 @@ func (m *EventMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EventMutation) AddedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 16)
 	if m.user != nil {
 		edges = append(edges, event.EdgeUser)
 	}
@@ -9788,6 +15768,12 @@ func (m *EventMutation) AddedEdges() []string {
 	}
 	if m.feature != nil {
 		edges = append(edges, event.EdgeFeature)
+	}
+	if m.entitlementplan != nil {
+		edges = append(edges, event.EdgeEntitlementplan)
+	}
+	if m.entitlementplanfeature != nil {
+		edges = append(edges, event.EdgeEntitlementplanfeature)
 	}
 	if m.personal_access_token != nil {
 		edges = append(edges, event.EdgePersonalAccessToken)
@@ -9856,6 +15842,18 @@ func (m *EventMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case event.EdgeEntitlementplan:
+		ids := make([]ent.Value, 0, len(m.entitlementplan))
+		for id := range m.entitlementplan {
+			ids = append(ids, id)
+		}
+		return ids
+	case event.EdgeEntitlementplanfeature:
+		ids := make([]ent.Value, 0, len(m.entitlementplanfeature))
+		for id := range m.entitlementplanfeature {
+			ids = append(ids, id)
+		}
+		return ids
 	case event.EdgePersonalAccessToken:
 		ids := make([]ent.Value, 0, len(m.personal_access_token))
 		for id := range m.personal_access_token {
@@ -9910,7 +15908,7 @@ func (m *EventMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EventMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 16)
 	if m.removeduser != nil {
 		edges = append(edges, event.EdgeUser)
 	}
@@ -9928,6 +15926,12 @@ func (m *EventMutation) RemovedEdges() []string {
 	}
 	if m.removedfeature != nil {
 		edges = append(edges, event.EdgeFeature)
+	}
+	if m.removedentitlementplan != nil {
+		edges = append(edges, event.EdgeEntitlementplan)
+	}
+	if m.removedentitlementplanfeature != nil {
+		edges = append(edges, event.EdgeEntitlementplanfeature)
 	}
 	if m.removedpersonal_access_token != nil {
 		edges = append(edges, event.EdgePersonalAccessToken)
@@ -9996,6 +16000,18 @@ func (m *EventMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case event.EdgeEntitlementplan:
+		ids := make([]ent.Value, 0, len(m.removedentitlementplan))
+		for id := range m.removedentitlementplan {
+			ids = append(ids, id)
+		}
+		return ids
+	case event.EdgeEntitlementplanfeature:
+		ids := make([]ent.Value, 0, len(m.removedentitlementplanfeature))
+		for id := range m.removedentitlementplanfeature {
+			ids = append(ids, id)
+		}
+		return ids
 	case event.EdgePersonalAccessToken:
 		ids := make([]ent.Value, 0, len(m.removedpersonal_access_token))
 		for id := range m.removedpersonal_access_token {
@@ -10050,7 +16066,7 @@ func (m *EventMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EventMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 14)
+	edges := make([]string, 0, 16)
 	if m.cleareduser {
 		edges = append(edges, event.EdgeUser)
 	}
@@ -10068,6 +16084,12 @@ func (m *EventMutation) ClearedEdges() []string {
 	}
 	if m.clearedfeature {
 		edges = append(edges, event.EdgeFeature)
+	}
+	if m.clearedentitlementplan {
+		edges = append(edges, event.EdgeEntitlementplan)
+	}
+	if m.clearedentitlementplanfeature {
+		edges = append(edges, event.EdgeEntitlementplanfeature)
 	}
 	if m.clearedpersonal_access_token {
 		edges = append(edges, event.EdgePersonalAccessToken)
@@ -10112,6 +16134,10 @@ func (m *EventMutation) EdgeCleared(name string) bool {
 		return m.clearedinvite
 	case event.EdgeFeature:
 		return m.clearedfeature
+	case event.EdgeEntitlementplan:
+		return m.clearedentitlementplan
+	case event.EdgeEntitlementplanfeature:
+		return m.clearedentitlementplanfeature
 	case event.EdgePersonalAccessToken:
 		return m.clearedpersonal_access_token
 	case event.EdgeOauth2token:
@@ -10161,6 +16187,12 @@ func (m *EventMutation) ResetEdge(name string) error {
 		return nil
 	case event.EdgeFeature:
 		m.ResetFeature()
+		return nil
+	case event.EdgeEntitlementplan:
+		m.ResetEntitlementplan()
+		return nil
+	case event.EdgeEntitlementplanfeature:
+		m.ResetEntitlementplanfeature()
 		return nil
 	case event.EdgePersonalAccessToken:
 		m.ResetPersonalAccessToken()
@@ -11364,41 +17396,38 @@ func (m *EventHistoryMutation) ResetEdge(name string) error {
 // FeatureMutation represents an operation that mutates the Feature nodes in the graph.
 type FeatureMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *string
-	created_at           *time.Time
-	updated_at           *time.Time
-	created_by           *string
-	updated_by           *string
-	deleted_at           *time.Time
-	deleted_by           *string
-	mapping_id           *string
-	tags                 *[]string
-	appendtags           []string
-	name                 *string
-	global               *bool
-	enabled              *bool
-	description          *string
-	clearedFields        map[string]struct{}
-	users                map[string]struct{}
-	removedusers         map[string]struct{}
-	clearedusers         bool
-	groups               map[string]struct{}
-	removedgroups        map[string]struct{}
-	clearedgroups        bool
-	entitlements         map[string]struct{}
-	removedentitlements  map[string]struct{}
-	clearedentitlements  bool
-	organizations        map[string]struct{}
-	removedorganizations map[string]struct{}
-	clearedorganizations bool
-	events               map[string]struct{}
-	removedevents        map[string]struct{}
-	clearedevents        bool
-	done                 bool
-	oldValue             func(context.Context) (*Feature, error)
-	predicates           []predicate.Feature
+	op              Op
+	typ             string
+	id              *string
+	created_at      *time.Time
+	updated_at      *time.Time
+	created_by      *string
+	updated_by      *string
+	deleted_at      *time.Time
+	deleted_by      *string
+	mapping_id      *string
+	tags            *[]string
+	appendtags      []string
+	name            *string
+	display_name    *string
+	enabled         *bool
+	description     *string
+	metadata        *map[string]interface{}
+	clearedFields   map[string]struct{}
+	owner           *string
+	clearedowner    bool
+	plans           map[string]struct{}
+	removedplans    map[string]struct{}
+	clearedplans    bool
+	events          map[string]struct{}
+	removedevents   map[string]struct{}
+	clearedevents   bool
+	features        map[string]struct{}
+	removedfeatures map[string]struct{}
+	clearedfeatures bool
+	done            bool
+	oldValue        func(context.Context) (*Feature, error)
+	predicates      []predicate.Feature
 }
 
 var _ ent.Mutation = (*FeatureMutation)(nil)
@@ -11900,6 +17929,55 @@ func (m *FeatureMutation) ResetTags() {
 	delete(m.clearedFields, feature.FieldTags)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *FeatureMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *FeatureMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the Feature entity.
+// If the Feature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FeatureMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *FeatureMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[feature.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *FeatureMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[feature.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *FeatureMutation) ResetOwnerID() {
+	m.owner = nil
+	delete(m.clearedFields, feature.FieldOwnerID)
+}
+
 // SetName sets the "name" field.
 func (m *FeatureMutation) SetName(s string) {
 	m.name = &s
@@ -11936,40 +18014,53 @@ func (m *FeatureMutation) ResetName() {
 	m.name = nil
 }
 
-// SetGlobal sets the "global" field.
-func (m *FeatureMutation) SetGlobal(b bool) {
-	m.global = &b
+// SetDisplayName sets the "display_name" field.
+func (m *FeatureMutation) SetDisplayName(s string) {
+	m.display_name = &s
 }
 
-// Global returns the value of the "global" field in the mutation.
-func (m *FeatureMutation) Global() (r bool, exists bool) {
-	v := m.global
+// DisplayName returns the value of the "display_name" field in the mutation.
+func (m *FeatureMutation) DisplayName() (r string, exists bool) {
+	v := m.display_name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldGlobal returns the old "global" field's value of the Feature entity.
+// OldDisplayName returns the old "display_name" field's value of the Feature entity.
 // If the Feature object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *FeatureMutation) OldGlobal(ctx context.Context) (v bool, err error) {
+func (m *FeatureMutation) OldDisplayName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldGlobal is only allowed on UpdateOne operations")
+		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldGlobal requires an ID field in the mutation")
+		return v, errors.New("OldDisplayName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldGlobal: %w", err)
+		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
 	}
-	return oldValue.Global, nil
+	return oldValue.DisplayName, nil
 }
 
-// ResetGlobal resets all changes to the "global" field.
-func (m *FeatureMutation) ResetGlobal() {
-	m.global = nil
+// ClearDisplayName clears the value of the "display_name" field.
+func (m *FeatureMutation) ClearDisplayName() {
+	m.display_name = nil
+	m.clearedFields[feature.FieldDisplayName] = struct{}{}
+}
+
+// DisplayNameCleared returns if the "display_name" field was cleared in this mutation.
+func (m *FeatureMutation) DisplayNameCleared() bool {
+	_, ok := m.clearedFields[feature.FieldDisplayName]
+	return ok
+}
+
+// ResetDisplayName resets all changes to the "display_name" field.
+func (m *FeatureMutation) ResetDisplayName() {
+	m.display_name = nil
+	delete(m.clearedFields, feature.FieldDisplayName)
 }
 
 // SetEnabled sets the "enabled" field.
@@ -12057,220 +18148,134 @@ func (m *FeatureMutation) ResetDescription() {
 	delete(m.clearedFields, feature.FieldDescription)
 }
 
-// AddUserIDs adds the "users" edge to the User entity by ids.
-func (m *FeatureMutation) AddUserIDs(ids ...string) {
-	if m.users == nil {
-		m.users = make(map[string]struct{})
+// SetMetadata sets the "metadata" field.
+func (m *FeatureMutation) SetMetadata(value map[string]interface{}) {
+	m.metadata = &value
+}
+
+// Metadata returns the value of the "metadata" field in the mutation.
+func (m *FeatureMutation) Metadata() (r map[string]interface{}, exists bool) {
+	v := m.metadata
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetadata returns the old "metadata" field's value of the Feature entity.
+// If the Feature object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FeatureMutation) OldMetadata(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetadata is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetadata requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetadata: %w", err)
+	}
+	return oldValue.Metadata, nil
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (m *FeatureMutation) ClearMetadata() {
+	m.metadata = nil
+	m.clearedFields[feature.FieldMetadata] = struct{}{}
+}
+
+// MetadataCleared returns if the "metadata" field was cleared in this mutation.
+func (m *FeatureMutation) MetadataCleared() bool {
+	_, ok := m.clearedFields[feature.FieldMetadata]
+	return ok
+}
+
+// ResetMetadata resets all changes to the "metadata" field.
+func (m *FeatureMutation) ResetMetadata() {
+	m.metadata = nil
+	delete(m.clearedFields, feature.FieldMetadata)
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (m *FeatureMutation) ClearOwner() {
+	m.clearedowner = true
+	m.clearedFields[feature.FieldOwnerID] = struct{}{}
+}
+
+// OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
+func (m *FeatureMutation) OwnerCleared() bool {
+	return m.OwnerIDCleared() || m.clearedowner
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *FeatureMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *FeatureMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
+// AddPlanIDs adds the "plans" edge to the EntitlementPlan entity by ids.
+func (m *FeatureMutation) AddPlanIDs(ids ...string) {
+	if m.plans == nil {
+		m.plans = make(map[string]struct{})
 	}
 	for i := range ids {
-		m.users[ids[i]] = struct{}{}
+		m.plans[ids[i]] = struct{}{}
 	}
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (m *FeatureMutation) ClearUsers() {
-	m.clearedusers = true
+// ClearPlans clears the "plans" edge to the EntitlementPlan entity.
+func (m *FeatureMutation) ClearPlans() {
+	m.clearedplans = true
 }
 
-// UsersCleared reports if the "users" edge to the User entity was cleared.
-func (m *FeatureMutation) UsersCleared() bool {
-	return m.clearedusers
+// PlansCleared reports if the "plans" edge to the EntitlementPlan entity was cleared.
+func (m *FeatureMutation) PlansCleared() bool {
+	return m.clearedplans
 }
 
-// RemoveUserIDs removes the "users" edge to the User entity by IDs.
-func (m *FeatureMutation) RemoveUserIDs(ids ...string) {
-	if m.removedusers == nil {
-		m.removedusers = make(map[string]struct{})
+// RemovePlanIDs removes the "plans" edge to the EntitlementPlan entity by IDs.
+func (m *FeatureMutation) RemovePlanIDs(ids ...string) {
+	if m.removedplans == nil {
+		m.removedplans = make(map[string]struct{})
 	}
 	for i := range ids {
-		delete(m.users, ids[i])
-		m.removedusers[ids[i]] = struct{}{}
+		delete(m.plans, ids[i])
+		m.removedplans[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedUsers returns the removed IDs of the "users" edge to the User entity.
-func (m *FeatureMutation) RemovedUsersIDs() (ids []string) {
-	for id := range m.removedusers {
+// RemovedPlans returns the removed IDs of the "plans" edge to the EntitlementPlan entity.
+func (m *FeatureMutation) RemovedPlansIDs() (ids []string) {
+	for id := range m.removedplans {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// UsersIDs returns the "users" edge IDs in the mutation.
-func (m *FeatureMutation) UsersIDs() (ids []string) {
-	for id := range m.users {
+// PlansIDs returns the "plans" edge IDs in the mutation.
+func (m *FeatureMutation) PlansIDs() (ids []string) {
+	for id := range m.plans {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetUsers resets all changes to the "users" edge.
-func (m *FeatureMutation) ResetUsers() {
-	m.users = nil
-	m.clearedusers = false
-	m.removedusers = nil
-}
-
-// AddGroupIDs adds the "groups" edge to the Group entity by ids.
-func (m *FeatureMutation) AddGroupIDs(ids ...string) {
-	if m.groups == nil {
-		m.groups = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.groups[ids[i]] = struct{}{}
-	}
-}
-
-// ClearGroups clears the "groups" edge to the Group entity.
-func (m *FeatureMutation) ClearGroups() {
-	m.clearedgroups = true
-}
-
-// GroupsCleared reports if the "groups" edge to the Group entity was cleared.
-func (m *FeatureMutation) GroupsCleared() bool {
-	return m.clearedgroups
-}
-
-// RemoveGroupIDs removes the "groups" edge to the Group entity by IDs.
-func (m *FeatureMutation) RemoveGroupIDs(ids ...string) {
-	if m.removedgroups == nil {
-		m.removedgroups = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.groups, ids[i])
-		m.removedgroups[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedGroups returns the removed IDs of the "groups" edge to the Group entity.
-func (m *FeatureMutation) RemovedGroupsIDs() (ids []string) {
-	for id := range m.removedgroups {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// GroupsIDs returns the "groups" edge IDs in the mutation.
-func (m *FeatureMutation) GroupsIDs() (ids []string) {
-	for id := range m.groups {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetGroups resets all changes to the "groups" edge.
-func (m *FeatureMutation) ResetGroups() {
-	m.groups = nil
-	m.clearedgroups = false
-	m.removedgroups = nil
-}
-
-// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by ids.
-func (m *FeatureMutation) AddEntitlementIDs(ids ...string) {
-	if m.entitlements == nil {
-		m.entitlements = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.entitlements[ids[i]] = struct{}{}
-	}
-}
-
-// ClearEntitlements clears the "entitlements" edge to the Entitlement entity.
-func (m *FeatureMutation) ClearEntitlements() {
-	m.clearedentitlements = true
-}
-
-// EntitlementsCleared reports if the "entitlements" edge to the Entitlement entity was cleared.
-func (m *FeatureMutation) EntitlementsCleared() bool {
-	return m.clearedentitlements
-}
-
-// RemoveEntitlementIDs removes the "entitlements" edge to the Entitlement entity by IDs.
-func (m *FeatureMutation) RemoveEntitlementIDs(ids ...string) {
-	if m.removedentitlements == nil {
-		m.removedentitlements = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.entitlements, ids[i])
-		m.removedentitlements[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedEntitlements returns the removed IDs of the "entitlements" edge to the Entitlement entity.
-func (m *FeatureMutation) RemovedEntitlementsIDs() (ids []string) {
-	for id := range m.removedentitlements {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// EntitlementsIDs returns the "entitlements" edge IDs in the mutation.
-func (m *FeatureMutation) EntitlementsIDs() (ids []string) {
-	for id := range m.entitlements {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetEntitlements resets all changes to the "entitlements" edge.
-func (m *FeatureMutation) ResetEntitlements() {
-	m.entitlements = nil
-	m.clearedentitlements = false
-	m.removedentitlements = nil
-}
-
-// AddOrganizationIDs adds the "organizations" edge to the Organization entity by ids.
-func (m *FeatureMutation) AddOrganizationIDs(ids ...string) {
-	if m.organizations == nil {
-		m.organizations = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.organizations[ids[i]] = struct{}{}
-	}
-}
-
-// ClearOrganizations clears the "organizations" edge to the Organization entity.
-func (m *FeatureMutation) ClearOrganizations() {
-	m.clearedorganizations = true
-}
-
-// OrganizationsCleared reports if the "organizations" edge to the Organization entity was cleared.
-func (m *FeatureMutation) OrganizationsCleared() bool {
-	return m.clearedorganizations
-}
-
-// RemoveOrganizationIDs removes the "organizations" edge to the Organization entity by IDs.
-func (m *FeatureMutation) RemoveOrganizationIDs(ids ...string) {
-	if m.removedorganizations == nil {
-		m.removedorganizations = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.organizations, ids[i])
-		m.removedorganizations[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedOrganizations returns the removed IDs of the "organizations" edge to the Organization entity.
-func (m *FeatureMutation) RemovedOrganizationsIDs() (ids []string) {
-	for id := range m.removedorganizations {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// OrganizationsIDs returns the "organizations" edge IDs in the mutation.
-func (m *FeatureMutation) OrganizationsIDs() (ids []string) {
-	for id := range m.organizations {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetOrganizations resets all changes to the "organizations" edge.
-func (m *FeatureMutation) ResetOrganizations() {
-	m.organizations = nil
-	m.clearedorganizations = false
-	m.removedorganizations = nil
+// ResetPlans resets all changes to the "plans" edge.
+func (m *FeatureMutation) ResetPlans() {
+	m.plans = nil
+	m.clearedplans = false
+	m.removedplans = nil
 }
 
 // AddEventIDs adds the "events" edge to the Event entity by ids.
@@ -12327,6 +18332,60 @@ func (m *FeatureMutation) ResetEvents() {
 	m.removedevents = nil
 }
 
+// AddFeatureIDs adds the "features" edge to the EntitlementPlanFeature entity by ids.
+func (m *FeatureMutation) AddFeatureIDs(ids ...string) {
+	if m.features == nil {
+		m.features = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.features[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFeatures clears the "features" edge to the EntitlementPlanFeature entity.
+func (m *FeatureMutation) ClearFeatures() {
+	m.clearedfeatures = true
+}
+
+// FeaturesCleared reports if the "features" edge to the EntitlementPlanFeature entity was cleared.
+func (m *FeatureMutation) FeaturesCleared() bool {
+	return m.clearedfeatures
+}
+
+// RemoveFeatureIDs removes the "features" edge to the EntitlementPlanFeature entity by IDs.
+func (m *FeatureMutation) RemoveFeatureIDs(ids ...string) {
+	if m.removedfeatures == nil {
+		m.removedfeatures = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.features, ids[i])
+		m.removedfeatures[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFeatures returns the removed IDs of the "features" edge to the EntitlementPlanFeature entity.
+func (m *FeatureMutation) RemovedFeaturesIDs() (ids []string) {
+	for id := range m.removedfeatures {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FeaturesIDs returns the "features" edge IDs in the mutation.
+func (m *FeatureMutation) FeaturesIDs() (ids []string) {
+	for id := range m.features {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFeatures resets all changes to the "features" edge.
+func (m *FeatureMutation) ResetFeatures() {
+	m.features = nil
+	m.clearedfeatures = false
+	m.removedfeatures = nil
+}
+
 // Where appends a list predicates to the FeatureMutation builder.
 func (m *FeatureMutation) Where(ps ...predicate.Feature) {
 	m.predicates = append(m.predicates, ps...)
@@ -12361,7 +18420,7 @@ func (m *FeatureMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FeatureMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, feature.FieldCreatedAt)
 	}
@@ -12386,17 +18445,23 @@ func (m *FeatureMutation) Fields() []string {
 	if m.tags != nil {
 		fields = append(fields, feature.FieldTags)
 	}
+	if m.owner != nil {
+		fields = append(fields, feature.FieldOwnerID)
+	}
 	if m.name != nil {
 		fields = append(fields, feature.FieldName)
 	}
-	if m.global != nil {
-		fields = append(fields, feature.FieldGlobal)
+	if m.display_name != nil {
+		fields = append(fields, feature.FieldDisplayName)
 	}
 	if m.enabled != nil {
 		fields = append(fields, feature.FieldEnabled)
 	}
 	if m.description != nil {
 		fields = append(fields, feature.FieldDescription)
+	}
+	if m.metadata != nil {
+		fields = append(fields, feature.FieldMetadata)
 	}
 	return fields
 }
@@ -12422,14 +18487,18 @@ func (m *FeatureMutation) Field(name string) (ent.Value, bool) {
 		return m.MappingID()
 	case feature.FieldTags:
 		return m.Tags()
+	case feature.FieldOwnerID:
+		return m.OwnerID()
 	case feature.FieldName:
 		return m.Name()
-	case feature.FieldGlobal:
-		return m.Global()
+	case feature.FieldDisplayName:
+		return m.DisplayName()
 	case feature.FieldEnabled:
 		return m.Enabled()
 	case feature.FieldDescription:
 		return m.Description()
+	case feature.FieldMetadata:
+		return m.Metadata()
 	}
 	return nil, false
 }
@@ -12455,14 +18524,18 @@ func (m *FeatureMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldMappingID(ctx)
 	case feature.FieldTags:
 		return m.OldTags(ctx)
+	case feature.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case feature.FieldName:
 		return m.OldName(ctx)
-	case feature.FieldGlobal:
-		return m.OldGlobal(ctx)
+	case feature.FieldDisplayName:
+		return m.OldDisplayName(ctx)
 	case feature.FieldEnabled:
 		return m.OldEnabled(ctx)
 	case feature.FieldDescription:
 		return m.OldDescription(ctx)
+	case feature.FieldMetadata:
+		return m.OldMetadata(ctx)
 	}
 	return nil, fmt.Errorf("unknown Feature field %s", name)
 }
@@ -12528,6 +18601,13 @@ func (m *FeatureMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTags(v)
 		return nil
+	case feature.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
 	case feature.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -12535,12 +18615,12 @@ func (m *FeatureMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
-	case feature.FieldGlobal:
-		v, ok := value.(bool)
+	case feature.FieldDisplayName:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetGlobal(v)
+		m.SetDisplayName(v)
 		return nil
 	case feature.FieldEnabled:
 		v, ok := value.(bool)
@@ -12555,6 +18635,13 @@ func (m *FeatureMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case feature.FieldMetadata:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetadata(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Feature field %s", name)
@@ -12607,8 +18694,17 @@ func (m *FeatureMutation) ClearedFields() []string {
 	if m.FieldCleared(feature.FieldTags) {
 		fields = append(fields, feature.FieldTags)
 	}
+	if m.FieldCleared(feature.FieldOwnerID) {
+		fields = append(fields, feature.FieldOwnerID)
+	}
+	if m.FieldCleared(feature.FieldDisplayName) {
+		fields = append(fields, feature.FieldDisplayName)
+	}
 	if m.FieldCleared(feature.FieldDescription) {
 		fields = append(fields, feature.FieldDescription)
+	}
+	if m.FieldCleared(feature.FieldMetadata) {
+		fields = append(fields, feature.FieldMetadata)
 	}
 	return fields
 }
@@ -12645,8 +18741,17 @@ func (m *FeatureMutation) ClearField(name string) error {
 	case feature.FieldTags:
 		m.ClearTags()
 		return nil
+	case feature.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
+	case feature.FieldDisplayName:
+		m.ClearDisplayName()
+		return nil
 	case feature.FieldDescription:
 		m.ClearDescription()
+		return nil
+	case feature.FieldMetadata:
+		m.ClearMetadata()
 		return nil
 	}
 	return fmt.Errorf("unknown Feature nullable field %s", name)
@@ -12680,11 +18785,14 @@ func (m *FeatureMutation) ResetField(name string) error {
 	case feature.FieldTags:
 		m.ResetTags()
 		return nil
+	case feature.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
 	case feature.FieldName:
 		m.ResetName()
 		return nil
-	case feature.FieldGlobal:
-		m.ResetGlobal()
+	case feature.FieldDisplayName:
+		m.ResetDisplayName()
 		return nil
 	case feature.FieldEnabled:
 		m.ResetEnabled()
@@ -12692,27 +18800,27 @@ func (m *FeatureMutation) ResetField(name string) error {
 	case feature.FieldDescription:
 		m.ResetDescription()
 		return nil
+	case feature.FieldMetadata:
+		m.ResetMetadata()
+		return nil
 	}
 	return fmt.Errorf("unknown Feature field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *FeatureMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
-	if m.users != nil {
-		edges = append(edges, feature.EdgeUsers)
+	edges := make([]string, 0, 4)
+	if m.owner != nil {
+		edges = append(edges, feature.EdgeOwner)
 	}
-	if m.groups != nil {
-		edges = append(edges, feature.EdgeGroups)
-	}
-	if m.entitlements != nil {
-		edges = append(edges, feature.EdgeEntitlements)
-	}
-	if m.organizations != nil {
-		edges = append(edges, feature.EdgeOrganizations)
+	if m.plans != nil {
+		edges = append(edges, feature.EdgePlans)
 	}
 	if m.events != nil {
 		edges = append(edges, feature.EdgeEvents)
+	}
+	if m.features != nil {
+		edges = append(edges, feature.EdgeFeatures)
 	}
 	return edges
 }
@@ -12721,27 +18829,13 @@ func (m *FeatureMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *FeatureMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case feature.EdgeUsers:
-		ids := make([]ent.Value, 0, len(m.users))
-		for id := range m.users {
-			ids = append(ids, id)
+	case feature.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
-	case feature.EdgeGroups:
-		ids := make([]ent.Value, 0, len(m.groups))
-		for id := range m.groups {
-			ids = append(ids, id)
-		}
-		return ids
-	case feature.EdgeEntitlements:
-		ids := make([]ent.Value, 0, len(m.entitlements))
-		for id := range m.entitlements {
-			ids = append(ids, id)
-		}
-		return ids
-	case feature.EdgeOrganizations:
-		ids := make([]ent.Value, 0, len(m.organizations))
-		for id := range m.organizations {
+	case feature.EdgePlans:
+		ids := make([]ent.Value, 0, len(m.plans))
+		for id := range m.plans {
 			ids = append(ids, id)
 		}
 		return ids
@@ -12751,27 +18845,27 @@ func (m *FeatureMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case feature.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.features))
+		for id := range m.features {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *FeatureMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
-	if m.removedusers != nil {
-		edges = append(edges, feature.EdgeUsers)
-	}
-	if m.removedgroups != nil {
-		edges = append(edges, feature.EdgeGroups)
-	}
-	if m.removedentitlements != nil {
-		edges = append(edges, feature.EdgeEntitlements)
-	}
-	if m.removedorganizations != nil {
-		edges = append(edges, feature.EdgeOrganizations)
+	edges := make([]string, 0, 4)
+	if m.removedplans != nil {
+		edges = append(edges, feature.EdgePlans)
 	}
 	if m.removedevents != nil {
 		edges = append(edges, feature.EdgeEvents)
+	}
+	if m.removedfeatures != nil {
+		edges = append(edges, feature.EdgeFeatures)
 	}
 	return edges
 }
@@ -12780,27 +18874,9 @@ func (m *FeatureMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *FeatureMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case feature.EdgeUsers:
-		ids := make([]ent.Value, 0, len(m.removedusers))
-		for id := range m.removedusers {
-			ids = append(ids, id)
-		}
-		return ids
-	case feature.EdgeGroups:
-		ids := make([]ent.Value, 0, len(m.removedgroups))
-		for id := range m.removedgroups {
-			ids = append(ids, id)
-		}
-		return ids
-	case feature.EdgeEntitlements:
-		ids := make([]ent.Value, 0, len(m.removedentitlements))
-		for id := range m.removedentitlements {
-			ids = append(ids, id)
-		}
-		return ids
-	case feature.EdgeOrganizations:
-		ids := make([]ent.Value, 0, len(m.removedorganizations))
-		for id := range m.removedorganizations {
+	case feature.EdgePlans:
+		ids := make([]ent.Value, 0, len(m.removedplans))
+		for id := range m.removedplans {
 			ids = append(ids, id)
 		}
 		return ids
@@ -12810,27 +18886,30 @@ func (m *FeatureMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case feature.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.removedfeatures))
+		for id := range m.removedfeatures {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *FeatureMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
-	if m.clearedusers {
-		edges = append(edges, feature.EdgeUsers)
+	edges := make([]string, 0, 4)
+	if m.clearedowner {
+		edges = append(edges, feature.EdgeOwner)
 	}
-	if m.clearedgroups {
-		edges = append(edges, feature.EdgeGroups)
-	}
-	if m.clearedentitlements {
-		edges = append(edges, feature.EdgeEntitlements)
-	}
-	if m.clearedorganizations {
-		edges = append(edges, feature.EdgeOrganizations)
+	if m.clearedplans {
+		edges = append(edges, feature.EdgePlans)
 	}
 	if m.clearedevents {
 		edges = append(edges, feature.EdgeEvents)
+	}
+	if m.clearedfeatures {
+		edges = append(edges, feature.EdgeFeatures)
 	}
 	return edges
 }
@@ -12839,16 +18918,14 @@ func (m *FeatureMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *FeatureMutation) EdgeCleared(name string) bool {
 	switch name {
-	case feature.EdgeUsers:
-		return m.clearedusers
-	case feature.EdgeGroups:
-		return m.clearedgroups
-	case feature.EdgeEntitlements:
-		return m.clearedentitlements
-	case feature.EdgeOrganizations:
-		return m.clearedorganizations
+	case feature.EdgeOwner:
+		return m.clearedowner
+	case feature.EdgePlans:
+		return m.clearedplans
 	case feature.EdgeEvents:
 		return m.clearedevents
+	case feature.EdgeFeatures:
+		return m.clearedfeatures
 	}
 	return false
 }
@@ -12857,6 +18934,9 @@ func (m *FeatureMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *FeatureMutation) ClearEdge(name string) error {
 	switch name {
+	case feature.EdgeOwner:
+		m.ClearOwner()
+		return nil
 	}
 	return fmt.Errorf("unknown Feature unique edge %s", name)
 }
@@ -12865,20 +18945,17 @@ func (m *FeatureMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *FeatureMutation) ResetEdge(name string) error {
 	switch name {
-	case feature.EdgeUsers:
-		m.ResetUsers()
+	case feature.EdgeOwner:
+		m.ResetOwner()
 		return nil
-	case feature.EdgeGroups:
-		m.ResetGroups()
-		return nil
-	case feature.EdgeEntitlements:
-		m.ResetEntitlements()
-		return nil
-	case feature.EdgeOrganizations:
-		m.ResetOrganizations()
+	case feature.EdgePlans:
+		m.ResetPlans()
 		return nil
 	case feature.EdgeEvents:
 		m.ResetEvents()
+		return nil
+	case feature.EdgeFeatures:
+		m.ResetFeatures()
 		return nil
 	}
 	return fmt.Errorf("unknown Feature edge %s", name)
@@ -12902,10 +18979,12 @@ type FeatureHistoryMutation struct {
 	mapping_id    *string
 	tags          *[]string
 	appendtags    []string
+	owner_id      *string
 	name          *string
-	global        *bool
+	display_name  *string
 	enabled       *bool
 	description   *string
+	metadata      *map[string]interface{}
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*FeatureHistory, error)
@@ -13532,6 +19611,55 @@ func (m *FeatureHistoryMutation) ResetTags() {
 	delete(m.clearedFields, featurehistory.FieldTags)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *FeatureHistoryMutation) SetOwnerID(s string) {
+	m.owner_id = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *FeatureHistoryMutation) OwnerID() (r string, exists bool) {
+	v := m.owner_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the FeatureHistory entity.
+// If the FeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FeatureHistoryMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *FeatureHistoryMutation) ClearOwnerID() {
+	m.owner_id = nil
+	m.clearedFields[featurehistory.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *FeatureHistoryMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[featurehistory.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *FeatureHistoryMutation) ResetOwnerID() {
+	m.owner_id = nil
+	delete(m.clearedFields, featurehistory.FieldOwnerID)
+}
+
 // SetName sets the "name" field.
 func (m *FeatureHistoryMutation) SetName(s string) {
 	m.name = &s
@@ -13568,40 +19696,53 @@ func (m *FeatureHistoryMutation) ResetName() {
 	m.name = nil
 }
 
-// SetGlobal sets the "global" field.
-func (m *FeatureHistoryMutation) SetGlobal(b bool) {
-	m.global = &b
+// SetDisplayName sets the "display_name" field.
+func (m *FeatureHistoryMutation) SetDisplayName(s string) {
+	m.display_name = &s
 }
 
-// Global returns the value of the "global" field in the mutation.
-func (m *FeatureHistoryMutation) Global() (r bool, exists bool) {
-	v := m.global
+// DisplayName returns the value of the "display_name" field in the mutation.
+func (m *FeatureHistoryMutation) DisplayName() (r string, exists bool) {
+	v := m.display_name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldGlobal returns the old "global" field's value of the FeatureHistory entity.
+// OldDisplayName returns the old "display_name" field's value of the FeatureHistory entity.
 // If the FeatureHistory object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *FeatureHistoryMutation) OldGlobal(ctx context.Context) (v bool, err error) {
+func (m *FeatureHistoryMutation) OldDisplayName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldGlobal is only allowed on UpdateOne operations")
+		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldGlobal requires an ID field in the mutation")
+		return v, errors.New("OldDisplayName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldGlobal: %w", err)
+		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
 	}
-	return oldValue.Global, nil
+	return oldValue.DisplayName, nil
 }
 
-// ResetGlobal resets all changes to the "global" field.
-func (m *FeatureHistoryMutation) ResetGlobal() {
-	m.global = nil
+// ClearDisplayName clears the value of the "display_name" field.
+func (m *FeatureHistoryMutation) ClearDisplayName() {
+	m.display_name = nil
+	m.clearedFields[featurehistory.FieldDisplayName] = struct{}{}
+}
+
+// DisplayNameCleared returns if the "display_name" field was cleared in this mutation.
+func (m *FeatureHistoryMutation) DisplayNameCleared() bool {
+	_, ok := m.clearedFields[featurehistory.FieldDisplayName]
+	return ok
+}
+
+// ResetDisplayName resets all changes to the "display_name" field.
+func (m *FeatureHistoryMutation) ResetDisplayName() {
+	m.display_name = nil
+	delete(m.clearedFields, featurehistory.FieldDisplayName)
 }
 
 // SetEnabled sets the "enabled" field.
@@ -13689,6 +19830,55 @@ func (m *FeatureHistoryMutation) ResetDescription() {
 	delete(m.clearedFields, featurehistory.FieldDescription)
 }
 
+// SetMetadata sets the "metadata" field.
+func (m *FeatureHistoryMutation) SetMetadata(value map[string]interface{}) {
+	m.metadata = &value
+}
+
+// Metadata returns the value of the "metadata" field in the mutation.
+func (m *FeatureHistoryMutation) Metadata() (r map[string]interface{}, exists bool) {
+	v := m.metadata
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetadata returns the old "metadata" field's value of the FeatureHistory entity.
+// If the FeatureHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FeatureHistoryMutation) OldMetadata(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetadata is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetadata requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetadata: %w", err)
+	}
+	return oldValue.Metadata, nil
+}
+
+// ClearMetadata clears the value of the "metadata" field.
+func (m *FeatureHistoryMutation) ClearMetadata() {
+	m.metadata = nil
+	m.clearedFields[featurehistory.FieldMetadata] = struct{}{}
+}
+
+// MetadataCleared returns if the "metadata" field was cleared in this mutation.
+func (m *FeatureHistoryMutation) MetadataCleared() bool {
+	_, ok := m.clearedFields[featurehistory.FieldMetadata]
+	return ok
+}
+
+// ResetMetadata resets all changes to the "metadata" field.
+func (m *FeatureHistoryMutation) ResetMetadata() {
+	m.metadata = nil
+	delete(m.clearedFields, featurehistory.FieldMetadata)
+}
+
 // Where appends a list predicates to the FeatureHistoryMutation builder.
 func (m *FeatureHistoryMutation) Where(ps ...predicate.FeatureHistory) {
 	m.predicates = append(m.predicates, ps...)
@@ -13723,7 +19913,7 @@ func (m *FeatureHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FeatureHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 17)
 	if m.history_time != nil {
 		fields = append(fields, featurehistory.FieldHistoryTime)
 	}
@@ -13757,17 +19947,23 @@ func (m *FeatureHistoryMutation) Fields() []string {
 	if m.tags != nil {
 		fields = append(fields, featurehistory.FieldTags)
 	}
+	if m.owner_id != nil {
+		fields = append(fields, featurehistory.FieldOwnerID)
+	}
 	if m.name != nil {
 		fields = append(fields, featurehistory.FieldName)
 	}
-	if m.global != nil {
-		fields = append(fields, featurehistory.FieldGlobal)
+	if m.display_name != nil {
+		fields = append(fields, featurehistory.FieldDisplayName)
 	}
 	if m.enabled != nil {
 		fields = append(fields, featurehistory.FieldEnabled)
 	}
 	if m.description != nil {
 		fields = append(fields, featurehistory.FieldDescription)
+	}
+	if m.metadata != nil {
+		fields = append(fields, featurehistory.FieldMetadata)
 	}
 	return fields
 }
@@ -13799,14 +19995,18 @@ func (m *FeatureHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.MappingID()
 	case featurehistory.FieldTags:
 		return m.Tags()
+	case featurehistory.FieldOwnerID:
+		return m.OwnerID()
 	case featurehistory.FieldName:
 		return m.Name()
-	case featurehistory.FieldGlobal:
-		return m.Global()
+	case featurehistory.FieldDisplayName:
+		return m.DisplayName()
 	case featurehistory.FieldEnabled:
 		return m.Enabled()
 	case featurehistory.FieldDescription:
 		return m.Description()
+	case featurehistory.FieldMetadata:
+		return m.Metadata()
 	}
 	return nil, false
 }
@@ -13838,14 +20038,18 @@ func (m *FeatureHistoryMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldMappingID(ctx)
 	case featurehistory.FieldTags:
 		return m.OldTags(ctx)
+	case featurehistory.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case featurehistory.FieldName:
 		return m.OldName(ctx)
-	case featurehistory.FieldGlobal:
-		return m.OldGlobal(ctx)
+	case featurehistory.FieldDisplayName:
+		return m.OldDisplayName(ctx)
 	case featurehistory.FieldEnabled:
 		return m.OldEnabled(ctx)
 	case featurehistory.FieldDescription:
 		return m.OldDescription(ctx)
+	case featurehistory.FieldMetadata:
+		return m.OldMetadata(ctx)
 	}
 	return nil, fmt.Errorf("unknown FeatureHistory field %s", name)
 }
@@ -13932,6 +20136,13 @@ func (m *FeatureHistoryMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTags(v)
 		return nil
+	case featurehistory.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
 	case featurehistory.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -13939,12 +20150,12 @@ func (m *FeatureHistoryMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
-	case featurehistory.FieldGlobal:
-		v, ok := value.(bool)
+	case featurehistory.FieldDisplayName:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetGlobal(v)
+		m.SetDisplayName(v)
 		return nil
 	case featurehistory.FieldEnabled:
 		v, ok := value.(bool)
@@ -13959,6 +20170,13 @@ func (m *FeatureHistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case featurehistory.FieldMetadata:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetadata(v)
 		return nil
 	}
 	return fmt.Errorf("unknown FeatureHistory field %s", name)
@@ -14014,8 +20232,17 @@ func (m *FeatureHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(featurehistory.FieldTags) {
 		fields = append(fields, featurehistory.FieldTags)
 	}
+	if m.FieldCleared(featurehistory.FieldOwnerID) {
+		fields = append(fields, featurehistory.FieldOwnerID)
+	}
+	if m.FieldCleared(featurehistory.FieldDisplayName) {
+		fields = append(fields, featurehistory.FieldDisplayName)
+	}
 	if m.FieldCleared(featurehistory.FieldDescription) {
 		fields = append(fields, featurehistory.FieldDescription)
+	}
+	if m.FieldCleared(featurehistory.FieldMetadata) {
+		fields = append(fields, featurehistory.FieldMetadata)
 	}
 	return fields
 }
@@ -14055,8 +20282,17 @@ func (m *FeatureHistoryMutation) ClearField(name string) error {
 	case featurehistory.FieldTags:
 		m.ClearTags()
 		return nil
+	case featurehistory.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
+	case featurehistory.FieldDisplayName:
+		m.ClearDisplayName()
+		return nil
 	case featurehistory.FieldDescription:
 		m.ClearDescription()
+		return nil
+	case featurehistory.FieldMetadata:
+		m.ClearMetadata()
 		return nil
 	}
 	return fmt.Errorf("unknown FeatureHistory nullable field %s", name)
@@ -14099,17 +20335,23 @@ func (m *FeatureHistoryMutation) ResetField(name string) error {
 	case featurehistory.FieldTags:
 		m.ResetTags()
 		return nil
+	case featurehistory.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
 	case featurehistory.FieldName:
 		m.ResetName()
 		return nil
-	case featurehistory.FieldGlobal:
-		m.ResetGlobal()
+	case featurehistory.FieldDisplayName:
+		m.ResetDisplayName()
 		return nil
 	case featurehistory.FieldEnabled:
 		m.ResetEnabled()
 		return nil
 	case featurehistory.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case featurehistory.FieldMetadata:
+		m.ResetMetadata()
 		return nil
 	}
 	return fmt.Errorf("unknown FeatureHistory field %s", name)
@@ -17277,9 +23519,6 @@ type GroupMutation struct {
 	users               map[string]struct{}
 	removedusers        map[string]struct{}
 	clearedusers        bool
-	features            map[string]struct{}
-	removedfeatures     map[string]struct{}
-	clearedfeatures     bool
 	events              map[string]struct{}
 	removedevents       map[string]struct{}
 	clearedevents       bool
@@ -18184,60 +24423,6 @@ func (m *GroupMutation) ResetUsers() {
 	m.removedusers = nil
 }
 
-// AddFeatureIDs adds the "features" edge to the Feature entity by ids.
-func (m *GroupMutation) AddFeatureIDs(ids ...string) {
-	if m.features == nil {
-		m.features = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.features[ids[i]] = struct{}{}
-	}
-}
-
-// ClearFeatures clears the "features" edge to the Feature entity.
-func (m *GroupMutation) ClearFeatures() {
-	m.clearedfeatures = true
-}
-
-// FeaturesCleared reports if the "features" edge to the Feature entity was cleared.
-func (m *GroupMutation) FeaturesCleared() bool {
-	return m.clearedfeatures
-}
-
-// RemoveFeatureIDs removes the "features" edge to the Feature entity by IDs.
-func (m *GroupMutation) RemoveFeatureIDs(ids ...string) {
-	if m.removedfeatures == nil {
-		m.removedfeatures = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.features, ids[i])
-		m.removedfeatures[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedFeatures returns the removed IDs of the "features" edge to the Feature entity.
-func (m *GroupMutation) RemovedFeaturesIDs() (ids []string) {
-	for id := range m.removedfeatures {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// FeaturesIDs returns the "features" edge IDs in the mutation.
-func (m *GroupMutation) FeaturesIDs() (ids []string) {
-	for id := range m.features {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetFeatures resets all changes to the "features" edge.
-func (m *GroupMutation) ResetFeatures() {
-	m.features = nil
-	m.clearedfeatures = false
-	m.removedfeatures = nil
-}
-
 // AddEventIDs adds the "events" edge to the Event entity by ids.
 func (m *GroupMutation) AddEventIDs(ids ...string) {
 	if m.events == nil {
@@ -18877,7 +25062,7 @@ func (m *GroupMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *GroupMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 7)
 	if m.owner != nil {
 		edges = append(edges, group.EdgeOwner)
 	}
@@ -18886,9 +25071,6 @@ func (m *GroupMutation) AddedEdges() []string {
 	}
 	if m.users != nil {
 		edges = append(edges, group.EdgeUsers)
-	}
-	if m.features != nil {
-		edges = append(edges, group.EdgeFeatures)
 	}
 	if m.events != nil {
 		edges = append(edges, group.EdgeEvents)
@@ -18923,12 +25105,6 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case group.EdgeFeatures:
-		ids := make([]ent.Value, 0, len(m.features))
-		for id := range m.features {
-			ids = append(ids, id)
-		}
-		return ids
 	case group.EdgeEvents:
 		ids := make([]ent.Value, 0, len(m.events))
 		for id := range m.events {
@@ -18959,12 +25135,9 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *GroupMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 7)
 	if m.removedusers != nil {
 		edges = append(edges, group.EdgeUsers)
-	}
-	if m.removedfeatures != nil {
-		edges = append(edges, group.EdgeFeatures)
 	}
 	if m.removedevents != nil {
 		edges = append(edges, group.EdgeEvents)
@@ -18988,12 +25161,6 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 	case group.EdgeUsers:
 		ids := make([]ent.Value, 0, len(m.removedusers))
 		for id := range m.removedusers {
-			ids = append(ids, id)
-		}
-		return ids
-	case group.EdgeFeatures:
-		ids := make([]ent.Value, 0, len(m.removedfeatures))
-		for id := range m.removedfeatures {
 			ids = append(ids, id)
 		}
 		return ids
@@ -19027,7 +25194,7 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *GroupMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 7)
 	if m.clearedowner {
 		edges = append(edges, group.EdgeOwner)
 	}
@@ -19036,9 +25203,6 @@ func (m *GroupMutation) ClearedEdges() []string {
 	}
 	if m.clearedusers {
 		edges = append(edges, group.EdgeUsers)
-	}
-	if m.clearedfeatures {
-		edges = append(edges, group.EdgeFeatures)
 	}
 	if m.clearedevents {
 		edges = append(edges, group.EdgeEvents)
@@ -19065,8 +25229,6 @@ func (m *GroupMutation) EdgeCleared(name string) bool {
 		return m.clearedsetting
 	case group.EdgeUsers:
 		return m.clearedusers
-	case group.EdgeFeatures:
-		return m.clearedfeatures
 	case group.EdgeEvents:
 		return m.clearedevents
 	case group.EdgeIntegrations:
@@ -19105,9 +25267,6 @@ func (m *GroupMutation) ResetEdge(name string) error {
 		return nil
 	case group.EdgeUsers:
 		m.ResetUsers()
-		return nil
-	case group.EdgeFeatures:
-		m.ResetFeatures()
 		return nil
 	case group.EdgeEvents:
 		m.ResetEvents()
@@ -39177,86 +45336,95 @@ func (m *OrgMembershipHistoryMutation) ResetEdge(name string) error {
 // OrganizationMutation represents an operation that mutates the Organization nodes in the graph.
 type OrganizationMutation struct {
 	config
-	op                            Op
-	typ                           string
-	id                            *string
-	created_at                    *time.Time
-	updated_at                    *time.Time
-	created_by                    *string
-	updated_by                    *string
-	mapping_id                    *string
-	tags                          *[]string
-	appendtags                    []string
-	deleted_at                    *time.Time
-	deleted_by                    *string
-	name                          *string
-	display_name                  *string
-	description                   *string
-	personal_org                  *bool
-	avatar_remote_url             *string
-	dedicated_db                  *bool
-	clearedFields                 map[string]struct{}
-	parent                        *string
-	clearedparent                 bool
-	children                      map[string]struct{}
-	removedchildren               map[string]struct{}
-	clearedchildren               bool
-	groups                        map[string]struct{}
-	removedgroups                 map[string]struct{}
-	clearedgroups                 bool
-	templates                     map[string]struct{}
-	removedtemplates              map[string]struct{}
-	clearedtemplates              bool
-	integrations                  map[string]struct{}
-	removedintegrations           map[string]struct{}
-	clearedintegrations           bool
-	setting                       *string
-	clearedsetting                bool
-	documentdata                  map[string]struct{}
-	removeddocumentdata           map[string]struct{}
-	cleareddocumentdata           bool
-	entitlements                  map[string]struct{}
-	removedentitlements           map[string]struct{}
-	clearedentitlements           bool
-	personal_access_tokens        map[string]struct{}
-	removedpersonal_access_tokens map[string]struct{}
-	clearedpersonal_access_tokens bool
-	api_tokens                    map[string]struct{}
-	removedapi_tokens             map[string]struct{}
-	clearedapi_tokens             bool
-	oauthprovider                 map[string]struct{}
-	removedoauthprovider          map[string]struct{}
-	clearedoauthprovider          bool
-	users                         map[string]struct{}
-	removedusers                  map[string]struct{}
-	clearedusers                  bool
-	invites                       map[string]struct{}
-	removedinvites                map[string]struct{}
-	clearedinvites                bool
-	subscribers                   map[string]struct{}
-	removedsubscribers            map[string]struct{}
-	clearedsubscribers            bool
-	webhooks                      map[string]struct{}
-	removedwebhooks               map[string]struct{}
-	clearedwebhooks               bool
-	events                        map[string]struct{}
-	removedevents                 map[string]struct{}
-	clearedevents                 bool
-	secrets                       map[string]struct{}
-	removedsecrets                map[string]struct{}
-	clearedsecrets                bool
-	features                      map[string]struct{}
-	removedfeatures               map[string]struct{}
-	clearedfeatures               bool
-	files                         map[string]struct{}
-	removedfiles                  map[string]struct{}
-	clearedfiles                  bool
-	members                       map[string]struct{}
-	removedmembers                map[string]struct{}
-	clearedmembers                bool
-	done                          bool
-	oldValue                      func(context.Context) (*Organization, error)
-	predicates                    []predicate.Organization
+	op                              Op
+	typ                             string
+	id                              *string
+	created_at                      *time.Time
+	updated_at                      *time.Time
+	created_by                      *string
+	updated_by                      *string
+	mapping_id                      *string
+	tags                            *[]string
+	appendtags                      []string
+	deleted_at                      *time.Time
+	deleted_by                      *string
+	name                            *string
+	display_name                    *string
+	description                     *string
+	personal_org                    *bool
+	avatar_remote_url               *string
+	dedicated_db                    *bool
+	clearedFields                   map[string]struct{}
+	parent                          *string
+	clearedparent                   bool
+	children                        map[string]struct{}
+	removedchildren                 map[string]struct{}
+	clearedchildren                 bool
+	groups                          map[string]struct{}
+	removedgroups                   map[string]struct{}
+	clearedgroups                   bool
+	templates                       map[string]struct{}
+	removedtemplates                map[string]struct{}
+	clearedtemplates                bool
+	integrations                    map[string]struct{}
+	removedintegrations             map[string]struct{}
+	clearedintegrations             bool
+	setting                         *string
+	clearedsetting                  bool
+	documentdata                    map[string]struct{}
+	removeddocumentdata             map[string]struct{}
+	cleareddocumentdata             bool
+	entitlements                    map[string]struct{}
+	removedentitlements             map[string]struct{}
+	clearedentitlements             bool
+	organization_entitlement        map[string]struct{}
+	removedorganization_entitlement map[string]struct{}
+	clearedorganization_entitlement bool
+	personal_access_tokens          map[string]struct{}
+	removedpersonal_access_tokens   map[string]struct{}
+	clearedpersonal_access_tokens   bool
+	api_tokens                      map[string]struct{}
+	removedapi_tokens               map[string]struct{}
+	clearedapi_tokens               bool
+	oauthprovider                   map[string]struct{}
+	removedoauthprovider            map[string]struct{}
+	clearedoauthprovider            bool
+	users                           map[string]struct{}
+	removedusers                    map[string]struct{}
+	clearedusers                    bool
+	invites                         map[string]struct{}
+	removedinvites                  map[string]struct{}
+	clearedinvites                  bool
+	subscribers                     map[string]struct{}
+	removedsubscribers              map[string]struct{}
+	clearedsubscribers              bool
+	webhooks                        map[string]struct{}
+	removedwebhooks                 map[string]struct{}
+	clearedwebhooks                 bool
+	events                          map[string]struct{}
+	removedevents                   map[string]struct{}
+	clearedevents                   bool
+	secrets                         map[string]struct{}
+	removedsecrets                  map[string]struct{}
+	clearedsecrets                  bool
+	features                        map[string]struct{}
+	removedfeatures                 map[string]struct{}
+	clearedfeatures                 bool
+	files                           map[string]struct{}
+	removedfiles                    map[string]struct{}
+	clearedfiles                    bool
+	entitlementplans                map[string]struct{}
+	removedentitlementplans         map[string]struct{}
+	clearedentitlementplans         bool
+	entitlementplanfeatures         map[string]struct{}
+	removedentitlementplanfeatures  map[string]struct{}
+	clearedentitlementplanfeatures  bool
+	members                         map[string]struct{}
+	removedmembers                  map[string]struct{}
+	clearedmembers                  bool
+	done                            bool
+	oldValue                        func(context.Context) (*Organization, error)
+	predicates                      []predicate.Organization
 }
 
 var _ ent.Mutation = (*OrganizationMutation)(nil)
@@ -40465,6 +46633,60 @@ func (m *OrganizationMutation) ResetEntitlements() {
 	m.removedentitlements = nil
 }
 
+// AddOrganizationEntitlementIDs adds the "organization_entitlement" edge to the Entitlement entity by ids.
+func (m *OrganizationMutation) AddOrganizationEntitlementIDs(ids ...string) {
+	if m.organization_entitlement == nil {
+		m.organization_entitlement = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.organization_entitlement[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOrganizationEntitlement clears the "organization_entitlement" edge to the Entitlement entity.
+func (m *OrganizationMutation) ClearOrganizationEntitlement() {
+	m.clearedorganization_entitlement = true
+}
+
+// OrganizationEntitlementCleared reports if the "organization_entitlement" edge to the Entitlement entity was cleared.
+func (m *OrganizationMutation) OrganizationEntitlementCleared() bool {
+	return m.clearedorganization_entitlement
+}
+
+// RemoveOrganizationEntitlementIDs removes the "organization_entitlement" edge to the Entitlement entity by IDs.
+func (m *OrganizationMutation) RemoveOrganizationEntitlementIDs(ids ...string) {
+	if m.removedorganization_entitlement == nil {
+		m.removedorganization_entitlement = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.organization_entitlement, ids[i])
+		m.removedorganization_entitlement[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOrganizationEntitlement returns the removed IDs of the "organization_entitlement" edge to the Entitlement entity.
+func (m *OrganizationMutation) RemovedOrganizationEntitlementIDs() (ids []string) {
+	for id := range m.removedorganization_entitlement {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OrganizationEntitlementIDs returns the "organization_entitlement" edge IDs in the mutation.
+func (m *OrganizationMutation) OrganizationEntitlementIDs() (ids []string) {
+	for id := range m.organization_entitlement {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOrganizationEntitlement resets all changes to the "organization_entitlement" edge.
+func (m *OrganizationMutation) ResetOrganizationEntitlement() {
+	m.organization_entitlement = nil
+	m.clearedorganization_entitlement = false
+	m.removedorganization_entitlement = nil
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by ids.
 func (m *OrganizationMutation) AddPersonalAccessTokenIDs(ids ...string) {
 	if m.personal_access_tokens == nil {
@@ -41059,6 +47281,114 @@ func (m *OrganizationMutation) ResetFiles() {
 	m.removedfiles = nil
 }
 
+// AddEntitlementplanIDs adds the "entitlementplans" edge to the EntitlementPlan entity by ids.
+func (m *OrganizationMutation) AddEntitlementplanIDs(ids ...string) {
+	if m.entitlementplans == nil {
+		m.entitlementplans = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.entitlementplans[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEntitlementplans clears the "entitlementplans" edge to the EntitlementPlan entity.
+func (m *OrganizationMutation) ClearEntitlementplans() {
+	m.clearedentitlementplans = true
+}
+
+// EntitlementplansCleared reports if the "entitlementplans" edge to the EntitlementPlan entity was cleared.
+func (m *OrganizationMutation) EntitlementplansCleared() bool {
+	return m.clearedentitlementplans
+}
+
+// RemoveEntitlementplanIDs removes the "entitlementplans" edge to the EntitlementPlan entity by IDs.
+func (m *OrganizationMutation) RemoveEntitlementplanIDs(ids ...string) {
+	if m.removedentitlementplans == nil {
+		m.removedentitlementplans = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.entitlementplans, ids[i])
+		m.removedentitlementplans[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEntitlementplans returns the removed IDs of the "entitlementplans" edge to the EntitlementPlan entity.
+func (m *OrganizationMutation) RemovedEntitlementplansIDs() (ids []string) {
+	for id := range m.removedentitlementplans {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EntitlementplansIDs returns the "entitlementplans" edge IDs in the mutation.
+func (m *OrganizationMutation) EntitlementplansIDs() (ids []string) {
+	for id := range m.entitlementplans {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEntitlementplans resets all changes to the "entitlementplans" edge.
+func (m *OrganizationMutation) ResetEntitlementplans() {
+	m.entitlementplans = nil
+	m.clearedentitlementplans = false
+	m.removedentitlementplans = nil
+}
+
+// AddEntitlementplanfeatureIDs adds the "entitlementplanfeatures" edge to the EntitlementPlanFeature entity by ids.
+func (m *OrganizationMutation) AddEntitlementplanfeatureIDs(ids ...string) {
+	if m.entitlementplanfeatures == nil {
+		m.entitlementplanfeatures = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.entitlementplanfeatures[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEntitlementplanfeatures clears the "entitlementplanfeatures" edge to the EntitlementPlanFeature entity.
+func (m *OrganizationMutation) ClearEntitlementplanfeatures() {
+	m.clearedentitlementplanfeatures = true
+}
+
+// EntitlementplanfeaturesCleared reports if the "entitlementplanfeatures" edge to the EntitlementPlanFeature entity was cleared.
+func (m *OrganizationMutation) EntitlementplanfeaturesCleared() bool {
+	return m.clearedentitlementplanfeatures
+}
+
+// RemoveEntitlementplanfeatureIDs removes the "entitlementplanfeatures" edge to the EntitlementPlanFeature entity by IDs.
+func (m *OrganizationMutation) RemoveEntitlementplanfeatureIDs(ids ...string) {
+	if m.removedentitlementplanfeatures == nil {
+		m.removedentitlementplanfeatures = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.entitlementplanfeatures, ids[i])
+		m.removedentitlementplanfeatures[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEntitlementplanfeatures returns the removed IDs of the "entitlementplanfeatures" edge to the EntitlementPlanFeature entity.
+func (m *OrganizationMutation) RemovedEntitlementplanfeaturesIDs() (ids []string) {
+	for id := range m.removedentitlementplanfeatures {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EntitlementplanfeaturesIDs returns the "entitlementplanfeatures" edge IDs in the mutation.
+func (m *OrganizationMutation) EntitlementplanfeaturesIDs() (ids []string) {
+	for id := range m.entitlementplanfeatures {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEntitlementplanfeatures resets all changes to the "entitlementplanfeatures" edge.
+func (m *OrganizationMutation) ResetEntitlementplanfeatures() {
+	m.entitlementplanfeatures = nil
+	m.clearedentitlementplanfeatures = false
+	m.removedentitlementplanfeatures = nil
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by ids.
 func (m *OrganizationMutation) AddMemberIDs(ids ...string) {
 	if m.members == nil {
@@ -41553,7 +47883,7 @@ func (m *OrganizationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 20)
+	edges := make([]string, 0, 23)
 	if m.parent != nil {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -41577,6 +47907,9 @@ func (m *OrganizationMutation) AddedEdges() []string {
 	}
 	if m.entitlements != nil {
 		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.organization_entitlement != nil {
+		edges = append(edges, organization.EdgeOrganizationEntitlement)
 	}
 	if m.personal_access_tokens != nil {
 		edges = append(edges, organization.EdgePersonalAccessTokens)
@@ -41610,6 +47943,12 @@ func (m *OrganizationMutation) AddedEdges() []string {
 	}
 	if m.files != nil {
 		edges = append(edges, organization.EdgeFiles)
+	}
+	if m.entitlementplans != nil {
+		edges = append(edges, organization.EdgeEntitlementplans)
+	}
+	if m.entitlementplanfeatures != nil {
+		edges = append(edges, organization.EdgeEntitlementplanfeatures)
 	}
 	if m.members != nil {
 		edges = append(edges, organization.EdgeMembers)
@@ -41662,6 +48001,12 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 	case organization.EdgeEntitlements:
 		ids := make([]ent.Value, 0, len(m.entitlements))
 		for id := range m.entitlements {
+			ids = append(ids, id)
+		}
+		return ids
+	case organization.EdgeOrganizationEntitlement:
+		ids := make([]ent.Value, 0, len(m.organization_entitlement))
+		for id := range m.organization_entitlement {
 			ids = append(ids, id)
 		}
 		return ids
@@ -41731,6 +48076,18 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgeEntitlementplans:
+		ids := make([]ent.Value, 0, len(m.entitlementplans))
+		for id := range m.entitlementplans {
+			ids = append(ids, id)
+		}
+		return ids
+	case organization.EdgeEntitlementplanfeatures:
+		ids := make([]ent.Value, 0, len(m.entitlementplanfeatures))
+		for id := range m.entitlementplanfeatures {
+			ids = append(ids, id)
+		}
+		return ids
 	case organization.EdgeMembers:
 		ids := make([]ent.Value, 0, len(m.members))
 		for id := range m.members {
@@ -41743,7 +48100,7 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 20)
+	edges := make([]string, 0, 23)
 	if m.removedchildren != nil {
 		edges = append(edges, organization.EdgeChildren)
 	}
@@ -41761,6 +48118,9 @@ func (m *OrganizationMutation) RemovedEdges() []string {
 	}
 	if m.removedentitlements != nil {
 		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.removedorganization_entitlement != nil {
+		edges = append(edges, organization.EdgeOrganizationEntitlement)
 	}
 	if m.removedpersonal_access_tokens != nil {
 		edges = append(edges, organization.EdgePersonalAccessTokens)
@@ -41794,6 +48154,12 @@ func (m *OrganizationMutation) RemovedEdges() []string {
 	}
 	if m.removedfiles != nil {
 		edges = append(edges, organization.EdgeFiles)
+	}
+	if m.removedentitlementplans != nil {
+		edges = append(edges, organization.EdgeEntitlementplans)
+	}
+	if m.removedentitlementplanfeatures != nil {
+		edges = append(edges, organization.EdgeEntitlementplanfeatures)
 	}
 	if m.removedmembers != nil {
 		edges = append(edges, organization.EdgeMembers)
@@ -41838,6 +48204,12 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 	case organization.EdgeEntitlements:
 		ids := make([]ent.Value, 0, len(m.removedentitlements))
 		for id := range m.removedentitlements {
+			ids = append(ids, id)
+		}
+		return ids
+	case organization.EdgeOrganizationEntitlement:
+		ids := make([]ent.Value, 0, len(m.removedorganization_entitlement))
+		for id := range m.removedorganization_entitlement {
 			ids = append(ids, id)
 		}
 		return ids
@@ -41907,6 +48279,18 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgeEntitlementplans:
+		ids := make([]ent.Value, 0, len(m.removedentitlementplans))
+		for id := range m.removedentitlementplans {
+			ids = append(ids, id)
+		}
+		return ids
+	case organization.EdgeEntitlementplanfeatures:
+		ids := make([]ent.Value, 0, len(m.removedentitlementplanfeatures))
+		for id := range m.removedentitlementplanfeatures {
+			ids = append(ids, id)
+		}
+		return ids
 	case organization.EdgeMembers:
 		ids := make([]ent.Value, 0, len(m.removedmembers))
 		for id := range m.removedmembers {
@@ -41919,7 +48303,7 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 20)
+	edges := make([]string, 0, 23)
 	if m.clearedparent {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -41943,6 +48327,9 @@ func (m *OrganizationMutation) ClearedEdges() []string {
 	}
 	if m.clearedentitlements {
 		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.clearedorganization_entitlement {
+		edges = append(edges, organization.EdgeOrganizationEntitlement)
 	}
 	if m.clearedpersonal_access_tokens {
 		edges = append(edges, organization.EdgePersonalAccessTokens)
@@ -41977,6 +48364,12 @@ func (m *OrganizationMutation) ClearedEdges() []string {
 	if m.clearedfiles {
 		edges = append(edges, organization.EdgeFiles)
 	}
+	if m.clearedentitlementplans {
+		edges = append(edges, organization.EdgeEntitlementplans)
+	}
+	if m.clearedentitlementplanfeatures {
+		edges = append(edges, organization.EdgeEntitlementplanfeatures)
+	}
 	if m.clearedmembers {
 		edges = append(edges, organization.EdgeMembers)
 	}
@@ -42003,6 +48396,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.cleareddocumentdata
 	case organization.EdgeEntitlements:
 		return m.clearedentitlements
+	case organization.EdgeOrganizationEntitlement:
+		return m.clearedorganization_entitlement
 	case organization.EdgePersonalAccessTokens:
 		return m.clearedpersonal_access_tokens
 	case organization.EdgeAPITokens:
@@ -42025,6 +48420,10 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.clearedfeatures
 	case organization.EdgeFiles:
 		return m.clearedfiles
+	case organization.EdgeEntitlementplans:
+		return m.clearedentitlementplans
+	case organization.EdgeEntitlementplanfeatures:
+		return m.clearedentitlementplanfeatures
 	case organization.EdgeMembers:
 		return m.clearedmembers
 	}
@@ -42073,6 +48472,9 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 	case organization.EdgeEntitlements:
 		m.ResetEntitlements()
 		return nil
+	case organization.EdgeOrganizationEntitlement:
+		m.ResetOrganizationEntitlement()
+		return nil
 	case organization.EdgePersonalAccessTokens:
 		m.ResetPersonalAccessTokens()
 		return nil
@@ -42105,6 +48507,12 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 		return nil
 	case organization.EdgeFiles:
 		m.ResetFiles()
+		return nil
+	case organization.EdgeEntitlementplans:
+		m.ResetEntitlementplans()
+		return nil
+	case organization.EdgeEntitlementplanfeatures:
+		m.ResetEntitlementplanfeatures()
 		return nil
 	case organization.EdgeMembers:
 		m.ResetMembers()
@@ -55225,9 +61633,6 @@ type UserMutation struct {
 	events                           map[string]struct{}
 	removedevents                    map[string]struct{}
 	clearedevents                    bool
-	features                         map[string]struct{}
-	removedfeatures                  map[string]struct{}
-	clearedfeatures                  bool
 	group_memberships                map[string]struct{}
 	removedgroup_memberships         map[string]struct{}
 	clearedgroup_memberships         bool
@@ -56812,60 +63217,6 @@ func (m *UserMutation) ResetEvents() {
 	m.removedevents = nil
 }
 
-// AddFeatureIDs adds the "features" edge to the Feature entity by ids.
-func (m *UserMutation) AddFeatureIDs(ids ...string) {
-	if m.features == nil {
-		m.features = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.features[ids[i]] = struct{}{}
-	}
-}
-
-// ClearFeatures clears the "features" edge to the Feature entity.
-func (m *UserMutation) ClearFeatures() {
-	m.clearedfeatures = true
-}
-
-// FeaturesCleared reports if the "features" edge to the Feature entity was cleared.
-func (m *UserMutation) FeaturesCleared() bool {
-	return m.clearedfeatures
-}
-
-// RemoveFeatureIDs removes the "features" edge to the Feature entity by IDs.
-func (m *UserMutation) RemoveFeatureIDs(ids ...string) {
-	if m.removedfeatures == nil {
-		m.removedfeatures = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.features, ids[i])
-		m.removedfeatures[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedFeatures returns the removed IDs of the "features" edge to the Feature entity.
-func (m *UserMutation) RemovedFeaturesIDs() (ids []string) {
-	for id := range m.removedfeatures {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// FeaturesIDs returns the "features" edge IDs in the mutation.
-func (m *UserMutation) FeaturesIDs() (ids []string) {
-	for id := range m.features {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetFeatures resets all changes to the "features" edge.
-func (m *UserMutation) ResetFeatures() {
-	m.features = nil
-	m.clearedfeatures = false
-	m.removedfeatures = nil
-}
-
 // AddGroupMembershipIDs adds the "group_memberships" edge to the GroupMembership entity by ids.
 func (m *UserMutation) AddGroupMembershipIDs(ids ...string) {
 	if m.group_memberships == nil {
@@ -57529,7 +63880,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 13)
+	edges := make([]string, 0, 12)
 	if m.personal_access_tokens != nil {
 		edges = append(edges, user.EdgePersonalAccessTokens)
 	}
@@ -57559,9 +63910,6 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.events != nil {
 		edges = append(edges, user.EdgeEvents)
-	}
-	if m.features != nil {
-		edges = append(edges, user.EdgeFeatures)
 	}
 	if m.group_memberships != nil {
 		edges = append(edges, user.EdgeGroupMemberships)
@@ -57634,12 +63982,6 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeFeatures:
-		ids := make([]ent.Value, 0, len(m.features))
-		for id := range m.features {
-			ids = append(ids, id)
-		}
-		return ids
 	case user.EdgeGroupMemberships:
 		ids := make([]ent.Value, 0, len(m.group_memberships))
 		for id := range m.group_memberships {
@@ -57658,7 +64000,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 13)
+	edges := make([]string, 0, 12)
 	if m.removedpersonal_access_tokens != nil {
 		edges = append(edges, user.EdgePersonalAccessTokens)
 	}
@@ -57685,9 +64027,6 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedevents != nil {
 		edges = append(edges, user.EdgeEvents)
-	}
-	if m.removedfeatures != nil {
-		edges = append(edges, user.EdgeFeatures)
 	}
 	if m.removedgroup_memberships != nil {
 		edges = append(edges, user.EdgeGroupMemberships)
@@ -57756,12 +64095,6 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeFeatures:
-		ids := make([]ent.Value, 0, len(m.removedfeatures))
-		for id := range m.removedfeatures {
-			ids = append(ids, id)
-		}
-		return ids
 	case user.EdgeGroupMemberships:
 		ids := make([]ent.Value, 0, len(m.removedgroup_memberships))
 		for id := range m.removedgroup_memberships {
@@ -57780,7 +64113,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 13)
+	edges := make([]string, 0, 12)
 	if m.clearedpersonal_access_tokens {
 		edges = append(edges, user.EdgePersonalAccessTokens)
 	}
@@ -57810,9 +64143,6 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedevents {
 		edges = append(edges, user.EdgeEvents)
-	}
-	if m.clearedfeatures {
-		edges = append(edges, user.EdgeFeatures)
 	}
 	if m.clearedgroup_memberships {
 		edges = append(edges, user.EdgeGroupMemberships)
@@ -57847,8 +64177,6 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedfiles
 	case user.EdgeEvents:
 		return m.clearedevents
-	case user.EdgeFeatures:
-		return m.clearedfeatures
 	case user.EdgeGroupMemberships:
 		return m.clearedgroup_memberships
 	case user.EdgeOrgMemberships:
@@ -57901,9 +64229,6 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeEvents:
 		m.ResetEvents()
-		return nil
-	case user.EdgeFeatures:
-		m.ResetFeatures()
 		return nil
 	case user.EdgeGroupMemberships:
 		m.ResetGroupMemberships()

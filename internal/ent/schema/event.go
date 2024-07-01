@@ -34,6 +34,8 @@ func (Event) Edges() []ent.Edge {
 		edge.From("organization", Organization.Type).Ref("events"),
 		edge.From("invite", Invite.Type).Ref("events"),
 		edge.From("feature", Feature.Type).Ref("events"),
+		edge.From("entitlementplan", EntitlementPlan.Type).Ref("events"),
+		edge.From("entitlementplanfeature", EntitlementPlanFeature.Type).Ref("events"),
 		edge.From("personal_access_token", PersonalAccessToken.Type).Ref("events"),
 		edge.From("oauth2token", OhAuthTooToken.Type).Ref("events"),
 		edge.From("hush", Hush.Type).Ref("events"),

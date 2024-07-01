@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/event"
-	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -48,7 +47,6 @@ type UserQuery struct {
 	withWebauthn                     *WebauthnQuery
 	withFiles                        *FileQuery
 	withEvents                       *EventQuery
-	withFeatures                     *FeatureQuery
 	withGroupMemberships             *GroupMembershipQuery
 	withOrgMemberships               *OrgMembershipQuery
 	modifiers                        []func(*sql.Selector)
@@ -62,7 +60,6 @@ type UserQuery struct {
 	withNamedWebauthn                map[string]*WebauthnQuery
 	withNamedFiles                   map[string]*FileQuery
 	withNamedEvents                  map[string]*EventQuery
-	withNamedFeatures                map[string]*FeatureQuery
 	withNamedGroupMemberships        map[string]*GroupMembershipQuery
 	withNamedOrgMemberships          map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
@@ -351,31 +348,6 @@ func (uq *UserQuery) QueryEvents() *EventQuery {
 	return query
 }
 
-// QueryFeatures chains the current query on the "features" edge.
-func (uq *UserQuery) QueryFeatures() *FeatureQuery {
-	query := (&FeatureClient{config: uq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := uq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := uq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(feature.Table, feature.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.FeaturesTable, user.FeaturesPrimaryKey...),
-		)
-		schemaConfig := uq.schemaConfig
-		step.To.Schema = schemaConfig.Feature
-		step.Edge.Schema = schemaConfig.UserFeatures
-		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // QueryGroupMemberships chains the current query on the "group_memberships" edge.
 func (uq *UserQuery) QueryGroupMemberships() *GroupMembershipQuery {
 	query := (&GroupMembershipClient{config: uq.config}).Query()
@@ -628,7 +600,6 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withWebauthn:                uq.withWebauthn.Clone(),
 		withFiles:                   uq.withFiles.Clone(),
 		withEvents:                  uq.withEvents.Clone(),
-		withFeatures:                uq.withFeatures.Clone(),
 		withGroupMemberships:        uq.withGroupMemberships.Clone(),
 		withOrgMemberships:          uq.withOrgMemberships.Clone(),
 		// clone intermediate query.
@@ -747,17 +718,6 @@ func (uq *UserQuery) WithEvents(opts ...func(*EventQuery)) *UserQuery {
 	return uq
 }
 
-// WithFeatures tells the query-builder to eager-load the nodes that are connected to
-// the "features" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithFeatures(opts ...func(*FeatureQuery)) *UserQuery {
-	query := (&FeatureClient{config: uq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	uq.withFeatures = query
-	return uq
-}
-
 // WithGroupMemberships tells the query-builder to eager-load the nodes that are connected to
 // the "group_memberships" edge. The optional arguments are used to configure the query builder of the edge.
 func (uq *UserQuery) WithGroupMemberships(opts ...func(*GroupMembershipQuery)) *UserQuery {
@@ -864,7 +824,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [13]bool{
+		loadedTypes = [12]bool{
 			uq.withPersonalAccessTokens != nil,
 			uq.withTfaSettings != nil,
 			uq.withSetting != nil,
@@ -875,7 +835,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withWebauthn != nil,
 			uq.withFiles != nil,
 			uq.withEvents != nil,
-			uq.withFeatures != nil,
 			uq.withGroupMemberships != nil,
 			uq.withOrgMemberships != nil,
 		}
@@ -978,13 +937,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withFeatures; query != nil {
-		if err := uq.loadFeatures(ctx, query, nodes,
-			func(n *User) { n.Edges.Features = []*Feature{} },
-			func(n *User, e *Feature) { n.Edges.Features = append(n.Edges.Features, e) }); err != nil {
-			return nil, err
-		}
-	}
 	if query := uq.withGroupMemberships; query != nil {
 		if err := uq.loadGroupMemberships(ctx, query, nodes,
 			func(n *User) { n.Edges.GroupMemberships = []*GroupMembership{} },
@@ -1059,13 +1011,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadEvents(ctx, query, nodes,
 			func(n *User) { n.appendNamedEvents(name) },
 			func(n *User, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
-			return nil, err
-		}
-	}
-	for name, query := range uq.withNamedFeatures {
-		if err := uq.loadFeatures(ctx, query, nodes,
-			func(n *User) { n.appendNamedFeatures(name) },
-			func(n *User, e *Feature) { n.appendNamedFeatures(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1486,68 +1431,6 @@ func (uq *UserQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []
 	}
 	return nil
 }
-func (uq *UserQuery) loadFeatures(ctx context.Context, query *FeatureQuery, nodes []*User, init func(*User), assign func(*User, *Feature)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[string]*User)
-	nids := make(map[string]map[*User]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
-		}
-	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(user.FeaturesTable)
-		joinT.Schema(uq.schemaConfig.UserFeatures)
-		s.Join(joinT).On(s.C(feature.FieldID), joinT.C(user.FeaturesPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(user.FeaturesPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(user.FeaturesPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullString)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := values[0].(*sql.NullString).String
-				inValue := values[1].(*sql.NullString).String
-				if nids[inValue] == nil {
-					nids[inValue] = map[*User]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Feature](ctx, query, qr, query.inters)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected "features" node returned %v`, n.ID)
-		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
-	}
-	return nil
-}
 func (uq *UserQuery) loadGroupMemberships(ctx context.Context, query *GroupMembershipQuery, nodes []*User, init func(*User), assign func(*User, *GroupMembership)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*User)
@@ -1821,20 +1704,6 @@ func (uq *UserQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *Us
 		uq.withNamedEvents = make(map[string]*EventQuery)
 	}
 	uq.withNamedEvents[name] = query
-	return uq
-}
-
-// WithNamedFeatures tells the query-builder to eager-load the nodes that are connected to the "features"
-// edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithNamedFeatures(name string, opts ...func(*FeatureQuery)) *UserQuery {
-	query := (&FeatureClient{config: uq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	if uq.withNamedFeatures == nil {
-		uq.withNamedFeatures = make(map[string]*FeatureQuery)
-	}
-	uq.withNamedFeatures[name] = query
 	return uq
 }
 

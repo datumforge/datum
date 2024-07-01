@@ -43,17 +43,6 @@ mutation DeleteFeature($deleteFeatureId: ID!) {
   }
 }
 
-query GetFeatureByID($featureId: ID!) {
-  feature(id: $featureId) {
-    description
-    enabled
-    id
-    name
-    displayName
-    tags
-  }
-}
-
 query GetAllFeatures {
   features {
     edges {
@@ -66,6 +55,17 @@ query GetAllFeatures {
         tags
       }
     }
+  }
+}
+
+query GetFeatureByID($featureId: ID!) {
+  feature(id: $featureId) {
+    description
+    enabled
+    id
+    name
+    displayName
+    tags
   }
 }
 

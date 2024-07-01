@@ -1,5 +1,3 @@
-
-
 query GetAllEntitlementPlanHistories {
   entitlementPlanHistories {
     edges {

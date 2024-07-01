@@ -148,8 +148,6 @@ func HookInviteAccepted() ent.Hook {
 				Role:           &role,
 			}
 
-			m.Logger.Debugw("setting input", "input", input)
-
 			// add user to the inviting org
 			if _, err := m.Client().OrgMembership.Create().SetInput(input).Save(ctx); err != nil {
 				m.Logger.Errorw("unable to add user to organization", "error", err)

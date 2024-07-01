@@ -200,13 +200,13 @@ func updateUserDefaultOrgOnDelete(ctx context.Context, mutation *generated.Organ
 		return "", nil
 	}
 
-	return checkAndUpdateDefaultOrg(ctx, currentUserID, deletedOrgID)
+	return checkAndUpdateDefaultOrg(ctx, currentUserID, deletedOrgID, mutation.Client())
 }
 
 // checkAndUpdateDefaultOrg checks if the org being deleted is the user's default org and updates it if needed
-func checkAndUpdateDefaultOrg(ctx context.Context, userID string, oldOrg string) (string, error) {
+func checkAndUpdateDefaultOrg(ctx context.Context, userID string, oldOrg string, client *generated.Client) (string, error) {
 	// check if this is the user's default org
-	userSetting, err := generated.FromContext(ctx).
+	userSetting, err := client.
 		UserSetting.
 		Query().
 		Where(
@@ -222,7 +222,7 @@ func checkAndUpdateDefaultOrg(ctx context.Context, userID string, oldOrg string)
 	if userSetting.Edges.DefaultOrg == nil || userSetting.Edges.DefaultOrg.ID == oldOrg {
 		// set the user's default org another org
 		// get the first org that was not the org being deleted
-		newDefaultOrgID, err := generated.FromContext(ctx).
+		newDefaultOrgID, err := client.
 			Organization.
 			Query().
 			FirstID(ctx)
@@ -230,7 +230,7 @@ func checkAndUpdateDefaultOrg(ctx context.Context, userID string, oldOrg string)
 			return "", err
 		}
 
-		if _, err = generated.FromContext(ctx).UserSetting.
+		if _, err = client.UserSetting.
 			UpdateOneID(userSetting.ID).
 			SetDefaultOrgID(newDefaultOrgID).
 			Save(ctx); err != nil {

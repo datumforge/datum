@@ -123,7 +123,7 @@ func HookOrgMembersDelete() ent.Hook {
 			}
 
 			allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			if _, err = checkAndUpdateDefaultOrg(allowCtx, orgMembership.UserID, orgMembership.OrganizationID); err != nil {
+			if _, err = checkAndUpdateDefaultOrg(allowCtx, orgMembership.UserID, orgMembership.OrganizationID, mutation.Client()); err != nil {
 				return nil, err
 			}
 
@@ -135,15 +135,16 @@ func HookOrgMembersDelete() ent.Hook {
 // updateOrgMemberDefaultOrgOnCreate updates the user's default org if the user has no default org or
 // the default org is their personal org
 func updateOrgMemberDefaultOrgOnCreate(ctx context.Context, mutation *generated.OrgMembershipMutation, orgID string) error {
-	// allow access to the user settings; this is required to update the default org
-	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
-
 	// get the user id from the mutation, this is a required field
 	userID, ok := mutation.UserID()
 	if !ok {
 		// this should never happen because the mutation should have already failed
 		return fmt.Errorf("%w: %s", ErrInvalidInput, "user id is required")
 	}
+
+	// allow the request, which is for a user other than the authenticated user
+	// to update the default org
+	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
 
 	return updateDefaultOrgIfPersonal(allowCtx, userID, orgID, mutation.Client())
 }

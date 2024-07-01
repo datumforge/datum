@@ -11,6 +11,9 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/enums"
 )
 
@@ -222,13 +225,28 @@ type EntitlementPlanFeatureCleanup struct {
 
 // MustNew organization builder is used to create, without authz checks, orgs in the database
 func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Organization {
+	// no auth, so allow policy
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
 	if !o.PersonalOrg {
 		// mock writes
 		mock_fga.WriteOnce(t, o.client.fga)
-	}
 
-	// no auth, so allow policy
-	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+		// mock check if the personal org should be updated
+		userID, err := auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			panic(err)
+		}
+
+		setting := o.client.db.UserSetting.Query().
+			Where(usersetting.HasUserWith(user.ID(userID))).
+			WithDefaultOrg().
+			OnlyX(ctx)
+
+		if setting.Edges.DefaultOrg.PersonalOrg {
+			mock_fga.CheckAny(t, o.client.fga, true)
+		}
+	}
 
 	if o.Name == "" {
 		o.Name = gofakeit.LetterN(40)

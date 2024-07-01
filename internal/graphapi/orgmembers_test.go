@@ -226,6 +226,13 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 			assert.Equal(t, tc.userID, resp.CreateOrgMembership.OrgMembership.UserID)
 			assert.Equal(t, tc.orgID, resp.CreateOrgMembership.OrgMembership.OrganizationID)
 			assert.Equal(t, tc.role, resp.CreateOrgMembership.OrgMembership.Role)
+
+			// make sure the user default org is set to the new org
+			allowCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
+			userResp, err := suite.client.datum.GetUserByID(allowCtx, resp.CreateOrgMembership.OrgMembership.UserID)
+			require.NoError(t, err)
+			require.NotNil(t, userResp)
+			assert.Equal(t, tc.orgID, userResp.User.Setting.DefaultOrg.ID)
 		})
 	}
 
@@ -313,7 +320,7 @@ func (suite *GraphTestSuite) TestQueryUpdateOrgMembers() {
 	(&OrgMemberCleanup{client: suite.client, ID: om.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryDeleteOrgMembers() {
+func (suite *GraphTestSuite) TestMutationDeleteOrgMembers() {
 	t := suite.T()
 
 	// setup user context
@@ -334,4 +341,13 @@ func (suite *GraphTestSuite) TestQueryDeleteOrgMembers() {
 	require.NotNil(t, resp)
 	require.NotNil(t, resp.DeleteOrgMembership)
 	assert.Equal(t, om.ID, resp.DeleteOrgMembership.DeletedID)
+
+	// when an org membership is deleted, the user default org should be updated
+	// we need to allow the request because this is not for the user making the request
+	allowCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	userResp, err := suite.client.datum.GetUserByID(allowCtx, om.UserID)
+	require.NoError(t, err)
+
+	assert.NotEqual(t, om.OrganizationID, userResp.User.Setting.DefaultOrg.ID)
 }

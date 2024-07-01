@@ -350,6 +350,9 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 	// mock writes
 	mock_fga.WriteOnce(t, om.client.fga)
 
+	// checks when looking to see if the user's default org should be updated
+	mock_fga.CheckAny(t, om.client.fga, true)
+
 	orgMembers := om.client.db.OrgMembership.Create().
 		SetUserID(om.UserID).
 		SetOrganizationID(om.OrgID).

@@ -145,20 +145,22 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 	(&OrganizationCleanup{client: suite.client, OrgID: orgToDelete.ID}).MustDelete(reqCtx, t)
 
 	testCases := []struct {
-		name           string
-		orgName        string
-		displayName    string
-		orgDescription string
-		parentOrgID    string
-		settings       *datumclient.CreateOrganizationSettingInput
-		errorMsg       string
+		name                     string
+		orgName                  string
+		displayName              string
+		orgDescription           string
+		parentOrgID              string
+		settings                 *datumclient.CreateOrganizationSettingInput
+		expectedDefaultOrgUpdate bool
+		errorMsg                 string
 	}{
 		{
-			name:           "happy path organization",
-			orgName:        gofakeit.Name(),
-			displayName:    gofakeit.LetterN(50),
-			orgDescription: gofakeit.HipsterSentence(10),
-			parentOrgID:    "", // root org
+			name:                     "happy path organization",
+			orgName:                  gofakeit.Name(),
+			displayName:              gofakeit.LetterN(50),
+			orgDescription:           gofakeit.HipsterSentence(10),
+			expectedDefaultOrgUpdate: true, // only the first org created should update the default org
+			parentOrgID:              "",   // root org
 		},
 		{
 			name:           "happy path organization with settings",
@@ -292,6 +294,15 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 
 			if tc.settings != nil {
 				assert.Len(t, resp.CreateOrganization.Organization.Setting.Domains, 1)
+
+				// make sure default org is updated if it's the first org created
+				userResp, err := suite.client.datum.GetUserByID(reqCtx, testUser.ID)
+				require.NoError(t, err)
+				if tc.expectedDefaultOrgUpdate {
+					assert.Equal(t, resp.CreateOrganization.Organization.ID, userResp.User.Setting.DefaultOrg.ID)
+				} else {
+					assert.NotEqual(t, resp.CreateOrganization.Organization.ID, userResp.User.Setting.DefaultOrg.ID)
+				}
 			}
 
 			// cleanup org
@@ -341,7 +352,6 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 		{
 			name: "add member as admin",
 			updateInput: datumclient.UpdateOrganizationInput{
-				Name: &nameUpdate,
 				AddOrgMembers: []*datumclient.CreateOrgMembershipInput{
 					{
 						UserID: testUser1.ID,

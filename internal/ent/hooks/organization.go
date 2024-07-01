@@ -112,7 +112,7 @@ func HookOrganizationDelete() ent.Hook {
 				return v, err
 			}
 
-			newOrgID, err := updateUserDefaultOrg(ctx, mutation)
+			newOrgID, err := updateUserDefaultOrgOnDelete(ctx, mutation)
 			// if we got an error, return it
 			// if we didn't get a new org id, keep going and don't
 			// update the session cookie
@@ -187,8 +187,8 @@ func validateDeletion(ctx context.Context, mutation *generated.OrganizationMutat
 	return nil
 }
 
-// updateUserDefaultOrg updates the user's default org if the org being deleted is the user's default org
-func updateUserDefaultOrg(ctx context.Context, mutation *generated.OrganizationMutation) (string, error) {
+// updateUserDefaultOrgOnDelete updates the user's default org if the org being deleted is the user's default org
+func updateUserDefaultOrgOnDelete(ctx context.Context, mutation *generated.OrganizationMutation) (string, error) {
 	currentUserID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return "", err
@@ -200,12 +200,17 @@ func updateUserDefaultOrg(ctx context.Context, mutation *generated.OrganizationM
 		return "", nil
 	}
 
+	return checkAndUpdateDefaultOrg(ctx, currentUserID, deletedOrgID)
+}
+
+// checkAndUpdateDefaultOrg checks if the org being deleted is the user's default org and updates it if needed
+func checkAndUpdateDefaultOrg(ctx context.Context, userID string, oldOrg string) (string, error) {
 	// check if this is the user's default org
-	userSetting, err := mutation.Client().
+	userSetting, err := generated.FromContext(ctx).
 		UserSetting.
 		Query().
 		Where(
-			usersetting.UserIDEQ(currentUserID),
+			usersetting.UserIDEQ(userID),
 		).
 		WithDefaultOrg().
 		Only(ctx)
@@ -214,10 +219,10 @@ func updateUserDefaultOrg(ctx context.Context, mutation *generated.OrganizationM
 	}
 
 	// if the user's default org was deleted this will now be nil
-	if userSetting.Edges.DefaultOrg == nil || userSetting.Edges.DefaultOrg.ID == deletedOrgID {
+	if userSetting.Edges.DefaultOrg == nil || userSetting.Edges.DefaultOrg.ID == oldOrg {
 		// set the user's default org another org
 		// get the first org that was not the org being deleted
-		newDefaultOrgID, err := mutation.Client().
+		newDefaultOrgID, err := generated.FromContext(ctx).
 			Organization.
 			Query().
 			FirstID(ctx)
@@ -225,7 +230,7 @@ func updateUserDefaultOrg(ctx context.Context, mutation *generated.OrganizationM
 			return "", err
 		}
 
-		if _, err = mutation.Client().UserSetting.
+		if _, err = generated.FromContext(ctx).UserSetting.
 			UpdateOneID(userSetting.ID).
 			SetDefaultOrgID(newDefaultOrgID).
 			Save(ctx); err != nil {
@@ -351,7 +356,8 @@ func createOrgMemberOwner(ctx context.Context, oID string, m *generated.Organiza
 		return err
 	}
 
-	return nil
+	// set the user's default org to the new org
+	return updateDefaultOrgIfPersonal(ctx, userID, oID, m.Client())
 }
 
 // createServiceTuple creates a service tuple for the organization and api key so the organization can be accessed
@@ -378,6 +384,39 @@ func createServiceTuple(ctx context.Context, oID string, m *generated.Organizati
 	}
 
 	m.Logger.Debugw("created relationship tuples", "relation", role, "object", tuple.Object)
+
+	return nil
+}
+
+// updateDefaultOrgIfPersonal updates the user's default org if the user has no default org or
+// the default org is their personal org
+func updateDefaultOrgIfPersonal(ctx context.Context, userID, orgID string, client *generated.Client) error {
+	// check if the user has a default org
+	userSetting, err := client.
+		UserSetting.
+		Query().
+		Where(
+			usersetting.UserIDEQ(userID),
+		).
+		WithDefaultOrg().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+
+	// if the user has no default org, or the default org is the personal org, set the new org as the default org
+	if userSetting.Edges.DefaultOrg == nil ||
+		userSetting.Edges.DefaultOrg.ID == "" ||
+		userSetting.Edges.DefaultOrg.PersonalOrg {
+		if _, err = client.UserSetting.
+			UpdateOneID(userSetting.ID).
+			SetDefaultOrgID(orgID).
+			Save(ctx); err != nil {
+			return err
+		}
+
+		return nil
+	}
 
 	return nil
 }

@@ -91,6 +91,7 @@ func filterType(ctx context.Context) string {
 			"updateGroup",
 			"createGroupMembership",
 			"updateGroupMembership",
+			"organization",
 		}
 
 		if sliceutil.Contains(allowedCtx, rootFieldCtx.Object) {

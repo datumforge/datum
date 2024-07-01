@@ -170,6 +170,7 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 			assert.Equal(t, tt.want.Email, got.Email)
 			assert.Equal(t, tt.want.AuthProvider, got.AuthProvider)
 			assert.WithinDuration(t, now, *got.LastSeen, time.Second*5)
+
 			if tt.want.AvatarRemoteURL == nil {
 				assert.Empty(t, got.AvatarRemoteURL)
 			} else {

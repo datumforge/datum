@@ -431,6 +431,7 @@ func createUserInput(name, email string, provider enums.AuthProvider, image stri
 	input.Email = email
 	input.AuthProvider = &provider
 	input.LastSeen = &lastSeen
+
 	if image != "" {
 		input.AvatarRemoteURL = &image
 	}
@@ -446,6 +447,7 @@ func (h *Handler) updateUserAvatar(ctx context.Context, entUser, image string) e
 		h.Logger.Errorw("error updating user avatar", "error", err)
 		return err
 	}
+
 	return nil
 }
 

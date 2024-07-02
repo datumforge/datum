@@ -413,7 +413,7 @@ func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, pr
 	}
 
 	// update user avatar
-	if err := h.updateUserAvatar(ctx, entUser.ID, image); err != nil {
+	if err := h.updateUserAvatar(ctx, entUser, image); err != nil {
 		h.Logger.Errorw("error updating user avatar", "error", err)
 
 		return nil, err
@@ -439,13 +439,21 @@ func createUserInput(name, email string, provider enums.AuthProvider, image stri
 	return input
 }
 
-func (h *Handler) updateUserAvatar(ctx context.Context, entUser, image string) error {
+func (h *Handler) updateUserAvatar(ctx context.Context, user *ent.User, image string) error {
 	if _, err := transaction.FromContext(ctx).
-		User.UpdateOneID(entUser).
+		User.UpdateOneID(user.ID).
 		SetAvatarRemoteURL(image).
 		Save(ctx); err != nil {
 		h.Logger.Errorw("error updating user avatar", "error", err)
 		return err
+	}
+
+	if image == "" {
+		return nil
+	}
+
+	if user.AvatarRemoteURL != nil && *user.AvatarRemoteURL == image {
+		return nil
 	}
 
 	return nil

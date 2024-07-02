@@ -84,7 +84,7 @@ func TestCreateUserInput(t *testing.T) {
 				LastSeen:        lo.ToPtr(time.Now().UTC()),
 				AvatarRemoteURL: &image,
 			},
-			image: image,
+			image: "",
 		},
 		{
 			testName: "no image",

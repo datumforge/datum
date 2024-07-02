@@ -100,7 +100,7 @@ func (suite *GraphTestSuite) TestQueryOrgMembers() {
 	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
+func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
 	t := suite.T()
 
 	// setup user context
@@ -242,7 +242,7 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 	(&UserCleanup{client: suite.client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryUpdateOrgMembers() {
+func (suite *GraphTestSuite) TestMutationUpdateOrgMembers() {
 	t := suite.T()
 
 	// setup user context

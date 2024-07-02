@@ -64,3 +64,4 @@ results.txt
 *.env-dev
 *.config.yaml
 .task
+.hermit

@@ -1,25 +1,3 @@
-query GetOrganizationSettingByID($organizationSettingId: ID!) {
-  organizationSetting(id: $organizationSettingId) {
-    billingAddress
-    billingContact
-    billingEmail
-    billingPhone
-    createdAt
-    createdBy
-    domains
-    geoLocation
-    id
-    tags
-    taxIdentifier
-    updatedAt
-    updatedBy
-    organization {
-      id
-      name
-    }
-  }
-}
-
 query GetAllOrganizationSettings {
   organizationSettings {
     edges {
@@ -42,6 +20,28 @@ query GetAllOrganizationSettings {
           name
         }
       }
+    }
+  }
+}
+
+query GetOrganizationSettingByID($organizationSettingId: ID!) {
+  organizationSetting(id: $organizationSettingId) {
+    billingAddress
+    billingContact
+    billingEmail
+    billingPhone
+    createdAt
+    createdBy
+    domains
+    geoLocation
+    id
+    tags
+    taxIdentifier
+    updatedAt
+    updatedBy
+    organization {
+      id
+      name
     }
   }
 }

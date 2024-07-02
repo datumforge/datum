@@ -30,6 +30,10 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	orgMember := (&OrgMemberBuilder{client: suite.client, OrgID: org1.ID}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org1.ID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name     string
@@ -68,6 +72,17 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.Organization)
+			require.NotNil(t, resp.Organization.Members)
+			assert.Len(t, resp.Organization.Members, 2)
+
+			orgMemberFound := false
+			for _, m := range resp.Organization.Members {
+				if m.User.ID == orgMember.UserID {
+					orgMemberFound = true
+				}
+			}
+
+			assert.True(t, orgMemberFound)
 		})
 	}
 

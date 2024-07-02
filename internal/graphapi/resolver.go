@@ -162,6 +162,15 @@ func WithContextLevelCache(h *handler.Server) {
 	})
 }
 
+func WithSkipCache(h *handler.Server) {
+	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
+		if op := graphql.GetOperationContext(ctx).Operation; op != nil && op.Operation == ast.Mutation {
+			ctx = entcache.Skip(ctx)
+		}
+		return next(ctx)
+	})
+}
+
 func (r *Resolver) WithPool(maxWorkers int, maxCapacity int, options ...pond.Option) {
 	// create the pool
 	r.pool = soiree.NewNamedPondPool(maxWorkers, maxCapacity, "graph", options...)

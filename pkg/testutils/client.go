@@ -46,7 +46,7 @@ func DatumTestClient(t *testing.T, c *generated.Client) (*datumclient.DatumClien
 	})
 
 	graphapi.WithTransactions(srv, c)
-	graphapi.WithContextLevelCache(srv)
+	graphapi.WithSkipCache(srv)
 
 	httpClient := &httpsling.Client{
 		HTTPClient: &http.Client{Transport: localRoundTripper{handler: srv}},

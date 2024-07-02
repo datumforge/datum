@@ -1,7 +1,9 @@
 package graphapi_test
 
 import (
+	"context"
 	"testing"
+	"time"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
@@ -229,17 +231,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
 			assert.Equal(t, tc.role, resp.CreateOrgMembership.OrgMembership.Role)
 
 			// make sure the user default org is set to the new org
-			allowCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
-			where := datumclient.UserSettingWhereInput{
-				UserID: &tc.userID,
-			}
-
-			userResp, err := suite.client.datum.GetUserSettings(allowCtx, where)
-			require.NoError(t, err)
-			require.NotNil(t, userResp)
-			require.Len(t, userResp.UserSettings.Edges, 1)
-
-			assert.Equal(t, tc.orgID, userResp.UserSettings.Edges[0].Node.DefaultOrg.ID)
+			suite.assertDefaultOrgUpdate(reqCtx, tc.userID, tc.orgID, true)
 		})
 	}
 
@@ -349,16 +341,30 @@ func (suite *GraphTestSuite) TestMutationDeleteOrgMembers() {
 	require.NotNil(t, resp.DeleteOrgMembership)
 	assert.Equal(t, om.ID, resp.DeleteOrgMembership.DeletedID)
 
+	// make sure the user default org is not set to the deleted org
+	suite.assertDefaultOrgUpdate(reqCtx, om.UserID, om.OrganizationID, false)
+}
+
+func (suite *GraphTestSuite) assertDefaultOrgUpdate(ctx context.Context, userID, orgID string, isEqual bool) {
+	t := suite.T()
+
 	// when an org membership is deleted, the user default org should be updated
 	// we need to allow the request because this is not for the user making the request
-	allowCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
+	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
 
 	where := datumclient.UserSettingWhereInput{
-		UserID: &om.UserID,
+		UserID: &userID,
 	}
 
+	time.Sleep(2 * time.Second) // wait for the update to propagate
 	userSettingResp, err := suite.client.datum.GetUserSettings(allowCtx, where)
 	require.NoError(t, err)
+	require.NotNil(t, userSettingResp)
 	require.Len(t, userSettingResp.UserSettings.Edges, 1)
-	assert.NotEqual(t, om.OrganizationID, userSettingResp.UserSettings.Edges[0].Node.DefaultOrg.ID)
+
+	if isEqual {
+		assert.Equal(t, orgID, userSettingResp.UserSettings.Edges[0].Node.DefaultOrg.ID)
+	} else {
+		assert.NotEqual(t, orgID, userSettingResp.UserSettings.Edges[0].Node.DefaultOrg.ID)
+	}
 }

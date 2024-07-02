@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/enums"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 func (suite *GraphTestSuite) TestQueryOrgMembers() {
@@ -165,7 +166,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
 		{
 			name:      "invalid user",
 			orgID:     org1.ID,
-			userID:    "not-a-valid-user-id",
+			userID:    ulids.New().String(),
 			role:      enums.RoleMember,
 			checkOrg:  true,
 			checkRole: true,
@@ -173,7 +174,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
 		},
 		{
 			name:      "invalid org",
-			orgID:     "not-a-valid-org-id",
+			orgID:     ulids.New().String(),
 			userID:    testUser1.ID,
 			role:      enums.RoleMember,
 			checkOrg:  false,
@@ -229,10 +230,16 @@ func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
 
 			// make sure the user default org is set to the new org
 			allowCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
-			userResp, err := suite.client.datum.GetUserByID(allowCtx, resp.CreateOrgMembership.OrgMembership.UserID)
+			where := datumclient.UserSettingWhereInput{
+				UserID: &tc.userID,
+			}
+
+			userResp, err := suite.client.datum.GetUserSettings(allowCtx, where)
 			require.NoError(t, err)
 			require.NotNil(t, userResp)
-			assert.Equal(t, tc.orgID, userResp.User.Setting.DefaultOrg.ID)
+			require.Len(t, userResp.UserSettings.Edges, 1)
+
+			assert.Equal(t, tc.orgID, userResp.UserSettings.Edges[0].Node.DefaultOrg.ID)
 		})
 	}
 
@@ -346,8 +353,12 @@ func (suite *GraphTestSuite) TestMutationDeleteOrgMembers() {
 	// we need to allow the request because this is not for the user making the request
 	allowCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
-	userResp, err := suite.client.datum.GetUserByID(allowCtx, om.UserID)
-	require.NoError(t, err)
+	where := datumclient.UserSettingWhereInput{
+		UserID: &om.UserID,
+	}
 
-	assert.NotEqual(t, om.OrganizationID, userResp.User.Setting.DefaultOrg.ID)
+	userSettingResp, err := suite.client.datum.GetUserSettings(allowCtx, where)
+	require.NoError(t, err)
+	require.Len(t, userSettingResp.UserSettings.Edges, 1)
+	assert.NotEqual(t, om.OrganizationID, userSettingResp.UserSettings.Edges[0].Node.DefaultOrg.ID)
 }

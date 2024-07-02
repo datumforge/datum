@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/pkg/datumclient"
@@ -36,7 +38,15 @@ func DatumTestClient(t *testing.T, c *generated.Client) (*datumclient.DatumClien
 			graphapi.Config{Resolvers: graphapi.NewResolver(c).WithLogger(logger)},
 		))
 
+	// lower the cache size for testing
+	srv.SetQueryCache(lru.New(1000))
+
+	srv.Use(extension.AutomaticPersistedQuery{
+		Cache: lru.New(100), //nolint:mnd
+	})
+
 	graphapi.WithTransactions(srv, c)
+	graphapi.WithContextLevelCache(srv)
 
 	httpClient := &httpsling.Client{
 		HTTPClient: &http.Client{Transport: localRoundTripper{handler: srv}},

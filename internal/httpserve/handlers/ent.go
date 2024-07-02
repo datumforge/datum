@@ -440,20 +440,20 @@ func createUserInput(name, email string, provider enums.AuthProvider, image stri
 }
 
 func (h *Handler) updateUserAvatar(ctx context.Context, user *ent.User, image string) error {
-	if _, err := transaction.FromContext(ctx).
-		User.UpdateOneID(user.ID).
-		SetAvatarRemoteURL(image).
-		Save(ctx); err != nil {
-		h.Logger.Errorw("error updating user avatar", "error", err)
-		return err
-	}
-
 	if image == "" {
 		return nil
 	}
 
 	if user.AvatarRemoteURL != nil && *user.AvatarRemoteURL == image {
 		return nil
+	}
+
+	if _, err := transaction.FromContext(ctx).
+		User.UpdateOneID(user.ID).
+		SetAvatarRemoteURL(image).
+		Save(ctx); err != nil {
+		h.Logger.Errorw("error updating user avatar", "error", err)
+		return err
 	}
 
 	return nil

@@ -25,7 +25,7 @@ import (
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
 
-func (suite *HandlerTestSuite) TestResetPassword() {
+func (suite *HandlerTestSuite) TestResetPasswordHandler() {
 	t := suite.T()
 
 	// setup request request
@@ -203,7 +203,6 @@ func (suite *HandlerTestSuite) createUserWithResetToken(t *testing.T, ec context
 
 	// add mocks for writes
 	mock_fga.WriteAny(t, suite.fga)
-	mock_fga.CheckAny(t, suite.fga, true)
 
 	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(true).

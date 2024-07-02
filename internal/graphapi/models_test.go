@@ -11,9 +11,6 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersetting"
-	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/enums"
 )
 
@@ -231,21 +228,6 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Or
 	if !o.PersonalOrg {
 		// mock writes
 		mock_fga.WriteOnce(t, o.client.fga)
-
-		// mock check if the personal org should be updated
-		userID, err := auth.GetUserIDFromContext(ctx)
-		if err != nil {
-			panic(err)
-		}
-
-		setting := o.client.db.UserSetting.Query().
-			Where(usersetting.HasUserWith(user.ID(userID))).
-			WithDefaultOrg().
-			OnlyX(ctx)
-
-		if setting.Edges.DefaultOrg.PersonalOrg {
-			mock_fga.CheckAny(t, o.client.fga, true)
-		}
 	}
 
 	if o.Name == "" {
@@ -289,7 +271,6 @@ func (o *OrganizationCleanup) MustDelete(ctx context.Context, t *testing.T) {
 func (u *UserBuilder) MustNew(ctx context.Context, t *testing.T) *ent.User {
 	// mock writes
 	mock_fga.WriteOnce(t, u.client.fga)
-	mock_fga.CheckAny(t, u.client.fga, true)
 
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -367,9 +348,6 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 
 	// mock writes
 	mock_fga.WriteOnce(t, om.client.fga)
-
-	// checks when looking to see if the user's default org should be updated
-	mock_fga.CheckAny(t, om.client.fga, true)
 
 	orgMembers := om.client.db.OrgMembership.Create().
 		SetUserID(om.UserID).

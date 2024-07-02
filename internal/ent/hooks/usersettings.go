@@ -9,6 +9,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -48,6 +49,12 @@ func HookUserSetting() ent.Hook {
 
 // allowDefaultOrgUpdate checks if the user has access to the organization being updated as their default org
 func allowDefaultOrgUpdate(ctx context.Context, mutation *generated.UserSettingMutation, orgID string) bool {
+	// allow if explicitly allowed
+	if _, allow := privacy.DecisionFromContext(ctx); allow {
+		return true
+	}
+
+	// allow for org invite tokens
 	if rule.ContextHasPrivacyTokenOfType(ctx, &token.OrgInviteToken{}) {
 		return true
 	}

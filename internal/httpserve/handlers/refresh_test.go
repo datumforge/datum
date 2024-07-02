@@ -46,7 +46,6 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 
 	// add mocks for writes
 	mock_fga.WriteAny(t, suite.fga)
-	mock_fga.CheckAny(t, suite.fga, true)
 
 	// create user in the database
 	validUser := gofakeit.Email()

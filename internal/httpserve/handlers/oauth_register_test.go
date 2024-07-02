@@ -86,9 +86,6 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.writes {
-				// add mocks for check when user's default org is set
-				mock_fga.CheckAny(t, suite.fga, true)
-
 				// add mocks for writes when a new user is created
 				mock_fga.WriteOnce(t, suite.fga)
 			}

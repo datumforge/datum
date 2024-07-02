@@ -1,5 +1,8 @@
 default_stages: [pre-commit]
 fail_fast: true
+default_language_version:
+  golang: system
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -9,11 +12,11 @@ repos:
       - id: detect-private-key
         exclude: 'pkg/tokens/testdata/.*'
   - repo: https://github.com/google/yamlfmt
-    rev: v0.12.1
+    rev: v0.13.0
     hooks:
       - id: yamlfmt
   - repo: https://github.com/crate-ci/typos
-    rev: typos-dict-v0.11.20
+    rev: v1.22.9
     hooks:
       - id: typos
   - repo: local

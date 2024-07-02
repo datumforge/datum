@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // OauthRegister returns the TokenResponse for a verified authenticated external oauth user
@@ -62,6 +63,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	h.AnalyticsClient.UserProperties(user.ID, props)
 
 	out := models.LoginReply{
+		Reply:    rout.Reply{Success: true},
 		Message:  "success",
 		AuthData: *auth,
 	}

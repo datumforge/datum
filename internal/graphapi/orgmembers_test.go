@@ -3,7 +3,6 @@ package graphapi_test
 import (
 	"context"
 	"testing"
-	"time"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
@@ -356,7 +355,6 @@ func (suite *GraphTestSuite) assertDefaultOrgUpdate(ctx context.Context, userID,
 		UserID: &userID,
 	}
 
-	time.Sleep(2 * time.Second) // wait for the update to propagate
 	userSettingResp, err := suite.client.datum.GetUserSettings(allowCtx, where)
 	require.NoError(t, err)
 	require.NotNil(t, userSettingResp)

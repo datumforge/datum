@@ -153,6 +153,7 @@ func WithTransactions(h *handler.Server, c *ent.Client) {
 	h.Use(entgql.Transactioner{TxOpener: c})
 }
 
+// WithContextLevelCache adds a context level cache to the handler
 func WithContextLevelCache(h *handler.Server) {
 	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 		if op := graphql.GetOperationContext(ctx).Operation; op != nil && op.Operation == ast.Query {
@@ -162,12 +163,12 @@ func WithContextLevelCache(h *handler.Server) {
 	})
 }
 
+// WithSkipCache adds a skip cache middleware to the handler
+// This is useful for testing, where you don't want to cache responses
+// so you can see the changes immediately
 func WithSkipCache(h *handler.Server) {
 	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
-		if op := graphql.GetOperationContext(ctx).Operation; op != nil && op.Operation == ast.Mutation {
-			ctx = entcache.Skip(ctx)
-		}
-		return next(ctx)
+		return next(entcache.Skip(ctx))
 	})
 }
 

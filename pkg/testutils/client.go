@@ -46,6 +46,8 @@ func DatumTestClient(t *testing.T, c *generated.Client) (*datumclient.DatumClien
 	})
 
 	graphapi.WithTransactions(srv, c)
+
+	// if you do not want sleeps (the writer prefers naps anyways), skip cache
 	graphapi.WithSkipCache(srv)
 
 	httpClient := &httpsling.Client{

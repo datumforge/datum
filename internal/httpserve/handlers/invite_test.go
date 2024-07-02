@@ -158,6 +158,14 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 			assert.Equal(t, org.ID, out.JoinedOrgID)
 			assert.Equal(t, tc.email, out.Email)
 
+			// Test the default org is updated
+			user, err := suite.datum.GetUserByID(recipientCtx, recipient.ID)
+			require.NoError(t, err)
+			require.NotNil(t, user)
+			require.NotNil(t, user.User.Setting.DefaultOrg)
+
+			assert.Equal(t, org.ID, user.User.Setting.DefaultOrg.ID)
+
 			// Test that one email was sent for accepted invite
 			messages := []*mock.EmailMetadata{
 				{

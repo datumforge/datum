@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/authmanager"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/analytics"
+	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/testutils"
@@ -41,11 +42,12 @@ var (
 // HandlerTestSuite handles the setup and teardown between tests
 type HandlerTestSuite struct {
 	suite.Suite
-	e   *echo.Echo
-	db  *ent.Client
-	h   *handlers.Handler
-	fga *mock_fga.MockSdkClient
-	tf  *testutils.TestFixture
+	e     *echo.Echo
+	db    *ent.Client
+	datum *datumclient.DatumClient
+	h     *handlers.Handler
+	fga   *mock_fga.MockSdkClient
+	tf    *testutils.TestFixture
 }
 
 // TestHandlerTestSuite runs all the tests in the HandlerTestSuite
@@ -108,6 +110,10 @@ func (suite *HandlerTestSuite) SetupTest() {
 
 	// add db to test client
 	suite.db = db
+
+	// add the datum client
+	suite.datum, err = testutils.DatumTestClient(t, suite.db)
+	require.NoError(t, err)
 
 	// setup handler
 	suite.h = handlerSetup(t, suite.db, em, taskMan)

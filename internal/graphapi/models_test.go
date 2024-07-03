@@ -225,6 +225,11 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Or
 	// no auth, so allow policy
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
+	// add client to context
+	// the organization hook expects the client to be in the context
+	// which happens automatically when using the graph resolvers
+	ctx = ent.NewContext(ctx, o.client.db)
+
 	if !o.PersonalOrg {
 		// mock writes
 		mock_fga.WriteOnce(t, o.client.fga)

@@ -381,14 +381,14 @@ func (h *Handler) addDefaultOrgToUserQuery(ctx context.Context, user *ent.User) 
 
 // CheckAndCreateUser takes a user with an OauthTooToken set in the context and checks if the user is already created
 // if the user already exists, update last seen
-func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, provider enums.AuthProvider) (*ent.User, error) {
+func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, provider enums.AuthProvider, image string) (*ent.User, error) {
 	// check if users exists
 	entUser, err := h.getUserByEmail(ctx, email, provider)
 	if err != nil {
 		// if the user is not found, create now
 		if ent.IsNotFound(err) {
 			// create the input based on the provider
-			input := createUserInput(name, email, provider)
+			input := createUserInput(name, email, provider, image)
 
 			// create user in the database
 			entUser, err = h.createUser(ctx, input)
@@ -412,11 +412,18 @@ func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, pr
 		return nil, err
 	}
 
+	// update user avatar
+	if err := h.updateUserAvatar(ctx, entUser, image); err != nil {
+		h.Logger.Errorw("error updating user avatar", "error", err)
+
+		return nil, err
+	}
+
 	return entUser, nil
 }
 
-// createUserInput creates a new user input based on the name, email and provider
-func createUserInput(name, email string, provider enums.AuthProvider) ent.CreateUserInput {
+// createUserInput creates a new user input based on the name, email, image and provider
+func createUserInput(name, email string, provider enums.AuthProvider, image string) ent.CreateUserInput {
 	lastSeen := time.Now().UTC()
 
 	// create new user input
@@ -425,7 +432,31 @@ func createUserInput(name, email string, provider enums.AuthProvider) ent.Create
 	input.AuthProvider = &provider
 	input.LastSeen = &lastSeen
 
+	if image != "" {
+		input.AvatarRemoteURL = &image
+	}
+
 	return input
+}
+
+func (h *Handler) updateUserAvatar(ctx context.Context, user *ent.User, image string) error {
+	if image == "" {
+		return nil
+	}
+
+	if user.AvatarRemoteURL != nil && *user.AvatarRemoteURL == image {
+		return nil
+	}
+
+	if _, err := transaction.FromContext(ctx).
+		User.UpdateOneID(user.ID).
+		SetAvatarRemoteURL(image).
+		Save(ctx); err != nil {
+		h.Logger.Errorw("error updating user avatar", "error", err)
+		return err
+	}
+
+	return nil
 }
 
 // setWebauthnAllowed sets the user setting field is_webauthn_allowed to true within a transaction

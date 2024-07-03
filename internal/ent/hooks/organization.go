@@ -80,6 +80,17 @@ func HookOrganization() ent.Hook {
 						return v, err
 					}
 				}
+
+				// update the session to drop the user into the new organization
+				// if the org is not a personal org, as personal orgs are created during registration
+				// and sessions are already set
+				if !orgCreated.PersonalOrg {
+					as := newAuthSession(mutation.SessionConfig, mutation.TokenManager)
+
+					if err := updateUserAuthSession(ctx, as, orgCreated.ID); err != nil {
+						return v, err
+					}
+				}
 			}
 
 			return v, err

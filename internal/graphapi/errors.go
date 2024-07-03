@@ -81,7 +81,7 @@ type ForeignKeyError struct {
 
 // Error returns the ForeignKeyError in string format
 func (e *ForeignKeyError) Error() string {
-	return fmt.Sprintf("unable to complete the action '%s' because the record '%s' does not exist. please try again", e.Action, e.ObjectType)
+	return fmt.Sprintf("constraint failed, unable to complete the action '%s' because the record '%s' does not exist. please try again", e.Action, e.ObjectType)
 }
 
 // newForeignKeyError returns a ForeignKeyError

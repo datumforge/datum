@@ -36,7 +36,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	}
 
 	// check if users exists and create if not, updates last seen of existing user
-	user, err := h.CheckAndCreateUser(ctxWithToken, in.Name, in.Email, enums.AuthProvider(strings.ToUpper(in.AuthProvider)))
+	user, err := h.CheckAndCreateUser(ctxWithToken, in.Name, in.Email, enums.AuthProvider(strings.ToUpper(in.AuthProvider)), in.Image)
 	if err != nil {
 		return h.InternalServerError(ctx, err)
 	}

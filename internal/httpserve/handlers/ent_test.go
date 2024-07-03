@@ -82,7 +82,7 @@ func TestCreateUserInput(t *testing.T) {
 				Email:           email,
 				AuthProvider:    &enums.AuthProviderWebauthn,
 				LastSeen:        lo.ToPtr(time.Now().UTC()),
-				AvatarRemoteURL: &image,
+				AvatarRemoteURL: nil,
 			},
 			image: "",
 		},

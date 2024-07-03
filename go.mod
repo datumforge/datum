@@ -288,7 +288,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.14.0+incompatible
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/spf13/afero v1.11.0
-	github.com/trisacrypto/directory v1.7.7
+	github.com/trisacrypto/directory v1.7.8
 	github.com/urfave/cli/v2 v2.27.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0
 	github.com/valyala/fasttemplate v1.2.2 // indirect

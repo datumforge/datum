@@ -17,7 +17,7 @@ import (
 func AllowIfContextHasPrivacyTokenOfType(emptyToken token.PrivacyToken) privacy.QueryMutationRule {
 	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
 		if ContextHasPrivacyTokenOfType(ctx, emptyToken) {
-			return privacy.Allow
+			return privacy.Allowf("found token in context with type %T", emptyToken)
 		}
 
 		return privacy.Skipf("no token found from context with type %T", emptyToken)

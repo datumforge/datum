@@ -92,6 +92,7 @@ func (OrgMembership) Mixin() []ent.Mixin {
 func (OrgMembership) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookOrgMembers(),
+		hooks.HookOrgMembersDelete(),
 	}
 }
 

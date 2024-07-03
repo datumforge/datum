@@ -62,6 +62,7 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 	drvPrimary := entcache.NewDriver(
 		entConfig.GetPrimaryDB(),
 		entcache.TTL(c.CacheTTL), // set the TTL on the cache
+		entcache.ContextLevel(),
 	)
 
 	client.pc = client.createEntDBClient(entConfig.GetPrimaryDB())
@@ -81,6 +82,7 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 		drvSecondary := entcache.NewDriver(
 			entConfig.GetSecondaryDB(),
 			entcache.TTL(c.CacheTTL), // set the TTL on the cache
+			entcache.ContextLevel(),
 		)
 
 		client.sc = client.createEntDBClient(entConfig.GetSecondaryDB())
@@ -244,8 +246,8 @@ func NewTestClient(ctx context.Context, ctr *testutils.TestFixture, entOpts []en
 		Debug:           true,
 		DriverName:      ctr.Dialect,
 		PrimaryDBSource: ctr.URI,
-		EnableHistory:   true,             // enable history so the code path is checked during unit tests
-		CacheTTL:        -1 * time.Second, // do not cache results in tests
+		EnableHistory:   true,            // enable history so the code path is checked during unit tests
+		CacheTTL:        0 * time.Second, // do not cache results in tests
 	}
 
 	entOpts = append(entOpts, ent.Logger(*logger))

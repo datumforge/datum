@@ -80,6 +80,13 @@ func HookOrganization() ent.Hook {
 						return v, err
 					}
 				}
+
+				// update the session to drop the user into the new organization
+				as := newAuthSession(mutation.SessionConfig, mutation.TokenManager)
+
+				if err := updateUserAuthSession(ctx, as, orgCreated.ID); err != nil {
+					return v, err
+				}
 			}
 
 			return v, err

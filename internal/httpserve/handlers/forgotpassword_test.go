@@ -36,7 +36,6 @@ func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
 
 	// add mocks for writes
 	mock_fga.WriteAny(t, suite.fga)
-	mock_fga.CheckAny(t, suite.fga, true)
 
 	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(false).

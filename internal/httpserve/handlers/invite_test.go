@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/utils/emails"
@@ -43,14 +44,15 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 		SetLastName("Racoon").
 		SaveX(ctx)
 
-	reqCtx, err := auth.NewTestContextWithValidUser(requestor.ID)
+	reqCtx, err := userContextWithID(requestor.ID)
 	require.NoError(t, err)
 
-	reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
+	input := datumclient.CreateOrganizationInput{
+		Name: "avengers",
+	}
 
-	org := suite.db.Organization.Create().
-		SetName("avengers").
-		SaveX(reqCtx)
+	org, err := suite.datum.CreateOrganization(reqCtx, input)
+	require.NoError(t, err)
 
 	var groot = "groot@datum.net"
 
@@ -62,7 +64,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 		SetAuthProvider(enums.AuthProviderGoogle).
 		SaveX(ctx)
 
-	userCtx, err := auth.NewTestContextWithOrgID(requestor.ID, org.ID)
+	userCtx, err := auth.NewTestContextWithOrgID(requestor.ID, org.CreateOrganization.Organization.ID)
 	require.NoError(t, err)
 
 	userSetting, err := recipient.Setting(ctx)
@@ -155,8 +157,16 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 			}
 
 			assert.Equal(t, http.StatusCreated, recorder.Code)
-			assert.Equal(t, org.ID, out.JoinedOrgID)
+			assert.Equal(t, org.CreateOrganization.Organization.ID, out.JoinedOrgID)
 			assert.Equal(t, tc.email, out.Email)
+
+			// Test the default org is updated
+			user, err := suite.datum.GetUserByID(recipientCtx, recipient.ID)
+			require.NoError(t, err)
+			require.NotNil(t, user)
+			require.NotNil(t, user.User.Setting.DefaultOrg)
+
+			assert.Equal(t, org.CreateOrganization.Organization.ID, user.User.Setting.DefaultOrg.ID)
 
 			// Test that one email was sent for accepted invite
 			messages := []*mock.EmailMetadata{

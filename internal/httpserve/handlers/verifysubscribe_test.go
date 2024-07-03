@@ -20,6 +20,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
@@ -37,7 +38,6 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	mock_fga.WriteAny(t, suite.fga)
-	mock_fga.CheckAny(t, suite.fga, true)
 
 	// setup test data
 	user := suite.db.User.Create().
@@ -46,14 +46,17 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 		SetLastName(gofakeit.LastName()).
 		SaveX(ctx)
 
-	reqCtx, err := auth.NewTestContextWithValidUser(user.ID)
+	reqCtx, err := userContextWithID(user.ID)
 	require.NoError(t, err)
 
 	ctx = privacy.DecisionContext(reqCtx, privacy.Allow)
 
-	org := suite.db.Organization.Create().
-		SetName("mitb").
-		SaveX(ctx)
+	input := datumclient.CreateOrganizationInput{
+		Name: "mitb",
+	}
+
+	org, err := suite.datum.CreateOrganization(ctx, input)
+	require.NoError(t, err)
 
 	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
@@ -97,7 +100,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 
 			mock.ResetEmailMock()
 
-			sub := suite.createTestSubscriber(t, org.ID, tc.email, tc.ttl)
+			sub := suite.createTestSubscriber(t, org.CreateOrganization.Organization.ID, tc.email, tc.ttl)
 
 			target := "/subscribe/verify"
 			if tc.tokenSet {

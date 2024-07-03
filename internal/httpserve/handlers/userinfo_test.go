@@ -17,7 +17,7 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
-func (suite *HandlerTestSuite) TestHandler_UserInfo() {
+func (suite *HandlerTestSuite) TestUserInfoHandler() {
 	t := suite.T()
 
 	// bypass auth
@@ -25,7 +25,6 @@ func (suite *HandlerTestSuite) TestHandler_UserInfo() {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	mock_fga.WriteAny(t, suite.fga)
-	mock_fga.CheckAny(t, suite.fga, true)
 
 	// setup test data
 	user := suite.db.User.Create().

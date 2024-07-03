@@ -75,7 +75,7 @@ type action struct {
 
 // ForeignKeyError is returned when an object does not exist in the related table
 type ForeignKeyError struct {
-	Action string
+	Action     string
 	ObjectType string
 }
 
@@ -87,7 +87,7 @@ func (e *ForeignKeyError) Error() string {
 // newForeignKeyError returns a ForeignKeyError
 func newForeignKeyError(action, objecttype string) *ForeignKeyError {
 	return &ForeignKeyError{
-		Action: action,
+		Action:     action,
 		ObjectType: objecttype,
 	}
 }
@@ -116,7 +116,7 @@ func parseRequestError(err error, a action, logger *zap.SugaredLogger) error {
 		}
 
 		// Check for foreign key constraint error
-		if rout.IsForeignKeyConstraintError(constraintError.Error()) {
+		if rout.IsForeignKeyConstraintError(constraintError) {
 			return newForeignKeyError(a.action, a.object)
 		}
 

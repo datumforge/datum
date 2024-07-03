@@ -55,11 +55,15 @@ type DocumentDataEdges struct {
 	Owner *Organization `json:"owner,omitempty"`
 	// Template holds the value of the template edge.
 	Template *Template `json:"template,omitempty"`
+	// Entity holds the value of the entity edge.
+	Entity []*Entity `json:"entity,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
+
+	namedEntity map[string][]*Entity
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -82,6 +86,15 @@ func (e DocumentDataEdges) TemplateOrErr() (*Template, error) {
 		return nil, &NotFoundError{label: template.Label}
 	}
 	return nil, &NotLoadedError{edge: "template"}
+}
+
+// EntityOrErr returns the Entity value or an error if the edge
+// was not loaded in eager-loading.
+func (e DocumentDataEdges) EntityOrErr() ([]*Entity, error) {
+	if e.loadedTypes[2] {
+		return e.Entity, nil
+	}
+	return nil, &NotLoadedError{edge: "entity"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -209,6 +222,11 @@ func (dd *DocumentData) QueryTemplate() *TemplateQuery {
 	return NewDocumentDataClient(dd.config).QueryTemplate(dd)
 }
 
+// QueryEntity queries the "entity" edge of the DocumentData entity.
+func (dd *DocumentData) QueryEntity() *EntityQuery {
+	return NewDocumentDataClient(dd.config).QueryEntity(dd)
+}
+
 // Update returns a builder for updating this DocumentData.
 // Note that you need to call DocumentData.Unwrap() before calling this method if this DocumentData
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -266,6 +284,30 @@ func (dd *DocumentData) String() string {
 	builder.WriteString(fmt.Sprintf("%v", dd.Data))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedEntity returns the Entity named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (dd *DocumentData) NamedEntity(name string) ([]*Entity, error) {
+	if dd.Edges.namedEntity == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := dd.Edges.namedEntity[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (dd *DocumentData) appendNamedEntity(name string, edges ...*Entity) {
+	if dd.Edges.namedEntity == nil {
+		dd.Edges.namedEntity = make(map[string][]*Entity)
+	}
+	if len(edges) == 0 {
+		dd.Edges.namedEntity[name] = []*Entity{}
+	} else {
+		dd.Edges.namedEntity[name] = append(dd.Edges.namedEntity[name], edges...)
+	}
 }
 
 // DocumentDataSlice is a parsable slice of DocumentData.

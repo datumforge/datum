@@ -87,7 +87,7 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 	}
 
 	// delete created org
-	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, ID: org1.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestQueryOrganizations() {
@@ -142,7 +142,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 	// setup deleted org
 	orgToDelete := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 	// delete said org
-	(&OrganizationCleanup{client: suite.client, OrgID: orgToDelete.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, ID: orgToDelete.ID}).MustDelete(reqCtx, t)
 
 	testCases := []struct {
 		name                     string
@@ -306,11 +306,11 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			}
 
 			// cleanup org
-			(&OrganizationCleanup{client: suite.client, OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx, t)
+			(&OrganizationCleanup{client: suite.client, ID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx, t)
 		})
 	}
 
-	(&OrganizationCleanup{client: suite.client, OrgID: parentOrg.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, ID: parentOrg.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
@@ -466,8 +466,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 		})
 	}
 
-	(&OrganizationCleanup{client: suite.client, OrgID: org.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: suite.client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, ID: org.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, ID: testUser1.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationDeleteOrganization() {

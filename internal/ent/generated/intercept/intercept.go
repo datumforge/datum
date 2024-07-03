@@ -9,6 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
+	"github.com/datumforge/datum/internal/ent/generated/contact"
+	"github.com/datumforge/datum/internal/ent/generated/contacthistory"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
@@ -18,6 +20,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -141,6 +145,60 @@ func (f TraverseAPIToken) Traverse(ctx context.Context, q generated.Query) error
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.APITokenQuery", q)
+}
+
+// The ContactFunc type is an adapter to allow the use of ordinary function as a Querier.
+type ContactFunc func(context.Context, *generated.ContactQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f ContactFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.ContactQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.ContactQuery", q)
+}
+
+// The TraverseContact type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseContact func(context.Context, *generated.ContactQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseContact) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseContact) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.ContactQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.ContactQuery", q)
+}
+
+// The ContactHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type ContactHistoryFunc func(context.Context, *generated.ContactHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f ContactHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.ContactHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.ContactHistoryQuery", q)
+}
+
+// The TraverseContactHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseContactHistory func(context.Context, *generated.ContactHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseContactHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseContactHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.ContactHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.ContactHistoryQuery", q)
 }
 
 // The DocumentDataFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -384,6 +442,60 @@ func (f TraverseEntitlementPlanFeatureHistory) Traverse(ctx context.Context, q g
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanFeatureHistoryQuery", q)
+}
+
+// The EntityFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntityFunc func(context.Context, *generated.EntityQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntityFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntityQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntityQuery", q)
+}
+
+// The TraverseEntity type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntity func(context.Context, *generated.EntityQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntity) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntity) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntityQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntityQuery", q)
+}
+
+// The EntityHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntityHistoryFunc func(context.Context, *generated.EntityHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntityHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntityHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntityHistoryQuery", q)
+}
+
+// The TraverseEntityHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntityHistory func(context.Context, *generated.EntityHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntityHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntityHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntityHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntityHistoryQuery", q)
 }
 
 // The EventFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -1444,6 +1556,10 @@ func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
 	case *generated.APITokenQuery:
 		return &query[*generated.APITokenQuery, predicate.APIToken, apitoken.OrderOption]{typ: generated.TypeAPIToken, tq: q}, nil
+	case *generated.ContactQuery:
+		return &query[*generated.ContactQuery, predicate.Contact, contact.OrderOption]{typ: generated.TypeContact, tq: q}, nil
+	case *generated.ContactHistoryQuery:
+		return &query[*generated.ContactHistoryQuery, predicate.ContactHistory, contacthistory.OrderOption]{typ: generated.TypeContactHistory, tq: q}, nil
 	case *generated.DocumentDataQuery:
 		return &query[*generated.DocumentDataQuery, predicate.DocumentData, documentdata.OrderOption]{typ: generated.TypeDocumentData, tq: q}, nil
 	case *generated.DocumentDataHistoryQuery:
@@ -1462,6 +1578,10 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.EntitlementPlanFeatureQuery, predicate.EntitlementPlanFeature, entitlementplanfeature.OrderOption]{typ: generated.TypeEntitlementPlanFeature, tq: q}, nil
 	case *generated.EntitlementPlanFeatureHistoryQuery:
 		return &query[*generated.EntitlementPlanFeatureHistoryQuery, predicate.EntitlementPlanFeatureHistory, entitlementplanfeaturehistory.OrderOption]{typ: generated.TypeEntitlementPlanFeatureHistory, tq: q}, nil
+	case *generated.EntityQuery:
+		return &query[*generated.EntityQuery, predicate.Entity, entity.OrderOption]{typ: generated.TypeEntity, tq: q}, nil
+	case *generated.EntityHistoryQuery:
+		return &query[*generated.EntityHistoryQuery, predicate.EntityHistory, entityhistory.OrderOption]{typ: generated.TypeEntityHistory, tq: q}, nil
 	case *generated.EventQuery:
 		return &query[*generated.EventQuery, predicate.Event, event.OrderOption]{typ: generated.TypeEvent, tq: q}, nil
 	case *generated.EventHistoryQuery:

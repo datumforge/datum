@@ -9,6 +9,12 @@ import (
 // APIToken is the predicate function for apitoken builders.
 type APIToken func(*sql.Selector)
 
+// Contact is the predicate function for contact builders.
+type Contact func(*sql.Selector)
+
+// ContactHistory is the predicate function for contacthistory builders.
+type ContactHistory func(*sql.Selector)
+
 // DocumentData is the predicate function for documentdata builders.
 type DocumentData func(*sql.Selector)
 
@@ -35,6 +41,12 @@ type EntitlementPlanFeature func(*sql.Selector)
 
 // EntitlementPlanFeatureHistory is the predicate function for entitlementplanfeaturehistory builders.
 type EntitlementPlanFeatureHistory func(*sql.Selector)
+
+// Entity is the predicate function for entity builders.
+type Entity func(*sql.Selector)
+
+// EntityHistory is the predicate function for entityhistory builders.
+type EntityHistory func(*sql.Selector)
 
 // Event is the predicate function for event builders.
 type Event func(*sql.Selector)

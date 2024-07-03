@@ -11,10 +11,12 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
+	"github.com/datumforge/datum/internal/ent/generated/contact"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
+	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
@@ -584,6 +586,36 @@ func (oc *OrganizationCreate) AddEntitlementplanfeatures(e ...*EntitlementPlanFe
 		ids[i] = e[i].ID
 	}
 	return oc.AddEntitlementplanfeatureIDs(ids...)
+}
+
+// AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
+func (oc *OrganizationCreate) AddEntityIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddEntityIDs(ids...)
+	return oc
+}
+
+// AddEntities adds the "entities" edges to the Entity entity.
+func (oc *OrganizationCreate) AddEntities(e ...*Entity) *OrganizationCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oc.AddEntityIDs(ids...)
+}
+
+// AddContactIDs adds the "contacts" edge to the Contact entity by IDs.
+func (oc *OrganizationCreate) AddContactIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddContactIDs(ids...)
+	return oc
+}
+
+// AddContacts adds the "contacts" edges to the Contact entity.
+func (oc *OrganizationCreate) AddContacts(c ...*Contact) *OrganizationCreate {
+	ids := make([]string, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return oc.AddContactIDs(ids...)
 }
 
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
@@ -1183,6 +1215,40 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.EntitlementPlanFeature
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.EntitiesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitiesTable,
+			Columns: []string{organization.EntitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Entity
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.ContactsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.ContactsTable,
+			Columns: []string{organization.ContactsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(contact.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Contact
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

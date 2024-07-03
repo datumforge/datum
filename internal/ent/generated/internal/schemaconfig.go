@@ -8,6 +8,8 @@ import "context"
 // that can be passed at runtime.
 type SchemaConfig struct {
 	APIToken                         string // APIToken table.
+	Contact                          string // Contact table.
+	ContactHistory                   string // ContactHistory table.
 	DocumentData                     string // DocumentData table.
 	DocumentDataHistory              string // DocumentDataHistory table.
 	EmailVerificationToken           string // EmailVerificationToken table.
@@ -20,6 +22,10 @@ type SchemaConfig struct {
 	EntitlementPlanFeature           string // EntitlementPlanFeature table.
 	EntitlementPlanFeatureEvents     string // EntitlementPlanFeature-events->Event table.
 	EntitlementPlanFeatureHistory    string // EntitlementPlanFeatureHistory table.
+	Entity                           string // Entity table.
+	EntityContacts                   string // Entity-contacts->Contact table.
+	EntityDocuments                  string // Entity-documents->DocumentData table.
+	EntityHistory                    string // EntityHistory table.
 	Event                            string // Event table.
 	EventHistory                     string // EventHistory table.
 	Feature                          string // Feature table.

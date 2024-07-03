@@ -99,7 +99,7 @@ func (suite *GraphTestSuite) TestQueryOrgMembers() {
 	}
 
 	// delete created org
-	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, ID: org1.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
@@ -235,9 +235,9 @@ func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
 	}
 
 	// delete created org and users
-	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: suite.client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: suite.client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, ID: org1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, ID: testUser1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, ID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationUpdateOrgMembers() {

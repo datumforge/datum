@@ -21,6 +21,30 @@ func (f APITokenFunc) Mutate(ctx context.Context, m generated.Mutation) (generat
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.APITokenMutation", m)
 }
 
+// The ContactFunc type is an adapter to allow the use of ordinary
+// function as Contact mutator.
+type ContactFunc func(context.Context, *generated.ContactMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ContactFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.ContactMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.ContactMutation", m)
+}
+
+// The ContactHistoryFunc type is an adapter to allow the use of ordinary
+// function as ContactHistory mutator.
+type ContactHistoryFunc func(context.Context, *generated.ContactHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ContactHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.ContactHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.ContactHistoryMutation", m)
+}
+
 // The DocumentDataFunc type is an adapter to allow the use of ordinary
 // function as DocumentData mutator.
 type DocumentDataFunc func(context.Context, *generated.DocumentDataMutation) (generated.Value, error)
@@ -127,6 +151,30 @@ func (f EntitlementPlanFeatureHistoryFunc) Mutate(ctx context.Context, m generat
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementPlanFeatureHistoryMutation", m)
+}
+
+// The EntityFunc type is an adapter to allow the use of ordinary
+// function as Entity mutator.
+type EntityFunc func(context.Context, *generated.EntityMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntityFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EntityMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntityMutation", m)
+}
+
+// The EntityHistoryFunc type is an adapter to allow the use of ordinary
+// function as EntityHistory mutator.
+type EntityHistoryFunc func(context.Context, *generated.EntityHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntityHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EntityHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntityHistoryMutation", m)
 }
 
 // The EventFunc type is an adapter to allow the use of ordinary

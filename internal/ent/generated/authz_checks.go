@@ -168,6 +168,154 @@ func (m *APITokenMutation) CheckAccessForDelete(ctx context.Context) error {
 	return privacy.Deny
 }
 
+func (q *ContactQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*ContactWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
+func (m *ContactMutation) CheckAccessForEdit(ctx context.Context) error {
+	ac := fgax.AccessCheck{
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
+	}
+	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
+	if oErr != nil {
+		return oErr
+	}
+
+	ac.ObjectID = orgID
+
+	// request is for a list objects, will get filtered in interceptors
+	if ac.ObjectID == "" {
+		return privacy.Allowf("nil request, bypassing auth check")
+	}
+
+	m.Logger.Debugw("checking mutation access")
+
+	var err error
+	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	m.Logger.Infow("checking relationship tuples", "relation", ac.Relation, "object_id", ac.ObjectID)
+
+	access, err := m.Authz.CheckAccess(ctx, ac)
+	if err != nil {
+		return privacy.Skipf("unable to check access, %s", err.Error())
+	}
+
+	if access {
+		m.Logger.Debugw("access allowed", "relation", ac.Relation, "object_id", ac.ObjectID)
+
+		return privacy.Allow
+	}
+
+	// deny if it was a mutation is not allowed
+	return privacy.Deny
+}
+
+func (m *ContactMutation) CheckAccessForDelete(ctx context.Context) error {
+	ac := fgax.AccessCheck{
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
+	}
+
+	gCtx := graphql.GetFieldContext(ctx)
+
+	var ok bool
+	ac.ObjectID, ok = gCtx.Args["id"].(string)
+	if !ok {
+		return privacy.Allowf("nil request, bypassing auth check")
+	}
+
+	m.Logger.Debugw("checking mutation access")
+
+	var err error
+	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	m.Logger.Infow("checking relationship tuples", "relation", ac.Relation, "object_id", ac.ObjectID)
+
+	access, err := m.Authz.CheckAccess(ctx, ac)
+	if err != nil {
+		return privacy.Skipf("unable to check access, %s", err.Error())
+	}
+
+	if access {
+		m.Logger.Debugw("access allowed", "relation", ac.Relation, "object_id", ac.ObjectID)
+
+		return privacy.Allow
+	}
+
+	// deny if it was a mutation is not allowed
+	return privacy.Deny
+}
+
 func (q *DocumentDataQuery) CheckAccess(ctx context.Context) error {
 	gCtx := graphql.GetFieldContext(ctx)
 
@@ -721,6 +869,154 @@ func (m *EntitlementPlanFeatureMutation) CheckAccessForEdit(ctx context.Context)
 }
 
 func (m *EntitlementPlanFeatureMutation) CheckAccessForDelete(ctx context.Context) error {
+	ac := fgax.AccessCheck{
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
+	}
+
+	gCtx := graphql.GetFieldContext(ctx)
+
+	var ok bool
+	ac.ObjectID, ok = gCtx.Args["id"].(string)
+	if !ok {
+		return privacy.Allowf("nil request, bypassing auth check")
+	}
+
+	m.Logger.Debugw("checking mutation access")
+
+	var err error
+	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	m.Logger.Infow("checking relationship tuples", "relation", ac.Relation, "object_id", ac.ObjectID)
+
+	access, err := m.Authz.CheckAccess(ctx, ac)
+	if err != nil {
+		return privacy.Skipf("unable to check access, %s", err.Error())
+	}
+
+	if access {
+		m.Logger.Debugw("access allowed", "relation", ac.Relation, "object_id", ac.ObjectID)
+
+		return privacy.Allow
+	}
+
+	// deny if it was a mutation is not allowed
+	return privacy.Deny
+}
+
+func (q *EntityQuery) CheckAccess(ctx context.Context) error {
+	gCtx := graphql.GetFieldContext(ctx)
+
+	if gCtx != nil {
+		ac := fgax.AccessCheck{
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+		}
+
+		// check id from graphql arg context
+		// when all objects are requested, the interceptor will check object access
+		// check the where input first
+		whereArg := gCtx.Args["where"]
+		if whereArg != nil {
+			where, ok := whereArg.(*EntityWhereInput)
+			if ok && where != nil && where.OwnerID != nil {
+				ac.ObjectID = *where.OwnerID
+			}
+		}
+
+		// if that doesn't work, check for the id in the args
+		if ac.ObjectID == "" {
+			ac.ObjectID, _ = gCtx.Args["ownerid"].(string)
+		}
+
+		// if we still don't have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" && "id" != "ownerid" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Clone().Only(reqCtx)
+			if err != nil {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
+			ac.ObjectID = ob.OwnerID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+
+		var err error
+		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		access, err := q.Authz.CheckAccess(ctx, ac)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			return privacy.Allow
+		}
+	}
+
+	// Skip to the next privacy rule (equivalent to return nil)
+	return privacy.Skip
+}
+
+func (m *EntityMutation) CheckAccessForEdit(ctx context.Context) error {
+	ac := fgax.AccessCheck{
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
+	}
+	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
+	if oErr != nil {
+		return oErr
+	}
+
+	ac.ObjectID = orgID
+
+	// request is for a list objects, will get filtered in interceptors
+	if ac.ObjectID == "" {
+		return privacy.Allowf("nil request, bypassing auth check")
+	}
+
+	m.Logger.Debugw("checking mutation access")
+
+	var err error
+	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	m.Logger.Infow("checking relationship tuples", "relation", ac.Relation, "object_id", ac.ObjectID)
+
+	access, err := m.Authz.CheckAccess(ctx, ac)
+	if err != nil {
+		return privacy.Skipf("unable to check access, %s", err.Error())
+	}
+
+	if access {
+		m.Logger.Debugw("access allowed", "relation", ac.Relation, "object_id", ac.ObjectID)
+
+		return privacy.Allow
+	}
+
+	// deny if it was a mutation is not allowed
+	return privacy.Deny
+}
+
+func (m *EntityMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
 		Relation:    fgax.CanDelete,
 		ObjectType:  "organization",

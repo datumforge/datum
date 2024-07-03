@@ -76,8 +76,8 @@ func (suite *GraphTestSuite) TestQueryUserSetting() {
 		})
 	}
 
-	(&UserCleanup{client: suite.client, UserID: user1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: suite.client, UserID: user2.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, ID: user1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, ID: user2.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestQueryUserSettings() {

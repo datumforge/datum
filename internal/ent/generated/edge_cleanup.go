@@ -6,11 +6,13 @@ import (
 	"context"
 
 	"entgo.io/ent/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/contact"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
+	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -33,6 +35,20 @@ import (
 func APITokenEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup apitoken edge"))
+
+	return nil
+}
+
+func ContactEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup contact edge"))
+
+	return nil
+}
+
+func ContactHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup contacthistory edge"))
 
 	return nil
 }
@@ -96,6 +112,20 @@ func EntitlementPlanFeatureEdgeCleanup(ctx context.Context, id string) error {
 func EntitlementPlanFeatureHistoryEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplanfeaturehistory edge"))
+
+	return nil
+}
+
+func EntityEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entity edge"))
+
+	return nil
+}
+
+func EntityHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entityhistory edge"))
 
 	return nil
 }
@@ -352,6 +382,20 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	if exists, err := FromContext(ctx).EntitlementPlanFeature.Query().Where((entitlementplanfeature.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
 		if entitlementplanfeatureCount, err := FromContext(ctx).EntitlementPlanFeature.Delete().Where(entitlementplanfeature.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting entitlementplanfeature", "count", entitlementplanfeatureCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).Entity.Query().Where((entity.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if entityCount, err := FromContext(ctx).Entity.Delete().Where(entity.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting entity", "count", entityCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).Contact.Query().Where((contact.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if contactCount, err := FromContext(ctx).Contact.Delete().Where(contact.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting contact", "count", contactCount, "err", err)
 			return err
 		}
 	}

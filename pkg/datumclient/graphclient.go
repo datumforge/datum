@@ -20,6 +20,16 @@ type DatumGraphClient interface {
 	GetAllAPITokens(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllAPITokens, error)
 	GetAPITokenByID(ctx context.Context, apiTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetAPITokenByID, error)
 	DeleteAPIToken(ctx context.Context, deleteAPITokenID string, interceptors ...clientv2.RequestInterceptor) (*DeleteAPIToken, error)
+	CreateBulkCSVContact(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVContact, error)
+	CreateBulkContact(ctx context.Context, input []*CreateContactInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkContact, error)
+	CreateContact(ctx context.Context, input CreateContactInput, interceptors ...clientv2.RequestInterceptor) (*CreateContact, error)
+	DeleteContact(ctx context.Context, deleteContactID string, interceptors ...clientv2.RequestInterceptor) (*DeleteContact, error)
+	GetAllContacts(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllContacts, error)
+	GetContactByID(ctx context.Context, contactID string, interceptors ...clientv2.RequestInterceptor) (*GetContactByID, error)
+	GetContacts(ctx context.Context, where *ContactWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetContacts, error)
+	UpdateContact(ctx context.Context, updateContactID string, input UpdateContactInput, interceptors ...clientv2.RequestInterceptor) (*UpdateContact, error)
+	GetAllContactHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllContactHistories, error)
+	GetContactHistories(ctx context.Context, where *ContactHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetContactHistories, error)
 	CreateDocumentData(ctx context.Context, input CreateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*CreateDocumentData, error)
 	DeleteDocumentData(ctx context.Context, deleteDocumentDataID string, interceptors ...clientv2.RequestInterceptor) (*DeleteDocumentData, error)
 	GetDocumentDataByID(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentDataByID, error)
@@ -56,6 +66,16 @@ type DatumGraphClient interface {
 	GetEntitlementPlanFeatureHistories(ctx context.Context, where *EntitlementPlanFeatureHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntitlementPlanFeatureHistories, error)
 	GetAllEntitlementPlanHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntitlementPlanHistories, error)
 	GetEntitlementPlanHistories(ctx context.Context, where *EntitlementPlanHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntitlementPlanHistories, error)
+	CreateBulkCSVEntity(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVEntity, error)
+	CreateBulkEntity(ctx context.Context, input []*CreateEntityInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkEntity, error)
+	CreateEntity(ctx context.Context, input CreateEntityInput, interceptors ...clientv2.RequestInterceptor) (*CreateEntity, error)
+	DeleteEntity(ctx context.Context, deleteEntityID string, interceptors ...clientv2.RequestInterceptor) (*DeleteEntity, error)
+	GetAllEntities(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntities, error)
+	GetEntities(ctx context.Context, where *EntityWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntities, error)
+	GetEntityByID(ctx context.Context, entityID string, interceptors ...clientv2.RequestInterceptor) (*GetEntityByID, error)
+	UpdateEntity(ctx context.Context, updateEntityID string, input UpdateEntityInput, interceptors ...clientv2.RequestInterceptor) (*UpdateEntity, error)
+	GetAllEntityHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntityHistories, error)
+	GetEntityHistories(ctx context.Context, where *EntityHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntityHistories, error)
 	GetEvents(ctx context.Context, where *EventWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEvents, error)
 	GetEventByID(ctx context.Context, eventID string, interceptors ...clientv2.RequestInterceptor) (*GetEventByID, error)
 	GetAllEvents(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEvents, error)
@@ -677,6 +697,1109 @@ func (t *DeleteAPIToken_DeleteAPIToken) GetDeletedID() string {
 		t = &DeleteAPIToken_DeleteAPIToken{}
 	}
 	return t.DeletedID
+}
+
+type CreateBulkCSVContact_CreateBulkCSVContact_Contacts struct {
+	Address     *string          "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string          "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string          "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string           "json:\"fullName\" graphql:\"fullName\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string          "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Status      enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string          "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetAddress() *string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.Address
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetCompany() *string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.Company
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetEmail() *string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.Email
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetFullName() string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.FullName
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetID() string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.ID
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.OwnerID
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetPhoneNumber() *string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.PhoneNumber
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return &t.Status
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetTags() []string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.Tags
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetTitle() *string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.Title
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateBulkCSVContact_CreateBulkCSVContact_Contacts) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact_Contacts{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateBulkCSVContact_CreateBulkCSVContact struct {
+	Contacts []*CreateBulkCSVContact_CreateBulkCSVContact_Contacts "json:\"contacts,omitempty\" graphql:\"contacts\""
+}
+
+func (t *CreateBulkCSVContact_CreateBulkCSVContact) GetContacts() []*CreateBulkCSVContact_CreateBulkCSVContact_Contacts {
+	if t == nil {
+		t = &CreateBulkCSVContact_CreateBulkCSVContact{}
+	}
+	return t.Contacts
+}
+
+type CreateBulkContact_CreateBulkContact_Contacts struct {
+	Address     *string          "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string          "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string          "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string           "json:\"fullName\" graphql:\"fullName\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string          "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Status      enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string          "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetAddress() *string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.Address
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetCompany() *string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.Company
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetEmail() *string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.Email
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetFullName() string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.FullName
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetID() string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.ID
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.OwnerID
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetPhoneNumber() *string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.PhoneNumber
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return &t.Status
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetTags() []string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.Tags
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetTitle() *string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.Title
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateBulkContact_CreateBulkContact_Contacts) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact_Contacts{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateBulkContact_CreateBulkContact struct {
+	Contacts []*CreateBulkContact_CreateBulkContact_Contacts "json:\"contacts,omitempty\" graphql:\"contacts\""
+}
+
+func (t *CreateBulkContact_CreateBulkContact) GetContacts() []*CreateBulkContact_CreateBulkContact_Contacts {
+	if t == nil {
+		t = &CreateBulkContact_CreateBulkContact{}
+	}
+	return t.Contacts
+}
+
+type CreateContact_CreateContact_Contact struct {
+	Address     *string          "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string          "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string          "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string           "json:\"fullName\" graphql:\"fullName\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string          "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Status      enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string          "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateContact_CreateContact_Contact) GetAddress() *string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.Address
+}
+func (t *CreateContact_CreateContact_Contact) GetCompany() *string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.Company
+}
+func (t *CreateContact_CreateContact_Contact) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateContact_CreateContact_Contact) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateContact_CreateContact_Contact) GetEmail() *string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.Email
+}
+func (t *CreateContact_CreateContact_Contact) GetFullName() string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.FullName
+}
+func (t *CreateContact_CreateContact_Contact) GetID() string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.ID
+}
+func (t *CreateContact_CreateContact_Contact) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.OwnerID
+}
+func (t *CreateContact_CreateContact_Contact) GetPhoneNumber() *string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.PhoneNumber
+}
+func (t *CreateContact_CreateContact_Contact) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return &t.Status
+}
+func (t *CreateContact_CreateContact_Contact) GetTags() []string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.Tags
+}
+func (t *CreateContact_CreateContact_Contact) GetTitle() *string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.Title
+}
+func (t *CreateContact_CreateContact_Contact) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateContact_CreateContact_Contact) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateContact_CreateContact_Contact{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateContact_CreateContact struct {
+	Contact CreateContact_CreateContact_Contact "json:\"contact\" graphql:\"contact\""
+}
+
+func (t *CreateContact_CreateContact) GetContact() *CreateContact_CreateContact_Contact {
+	if t == nil {
+		t = &CreateContact_CreateContact{}
+	}
+	return &t.Contact
+}
+
+type DeleteContact_DeleteContact struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteContact_DeleteContact) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteContact_DeleteContact{}
+	}
+	return t.DeletedID
+}
+
+type GetAllContacts_Contacts_Edges_Node struct {
+	Address     *string          "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string          "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string          "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string           "json:\"fullName\" graphql:\"fullName\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string          "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Status      enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string          "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetAllContacts_Contacts_Edges_Node) GetAddress() *string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.Address
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetCompany() *string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.Company
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetEmail() *string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.Email
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetFullName() string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.FullName
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetPhoneNumber() *string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.PhoneNumber
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return &t.Status
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetTitle() *string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.Title
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllContacts_Contacts_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetAllContacts_Contacts_Edges struct {
+	Node *GetAllContacts_Contacts_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllContacts_Contacts_Edges) GetNode() *GetAllContacts_Contacts_Edges_Node {
+	if t == nil {
+		t = &GetAllContacts_Contacts_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllContacts_Contacts struct {
+	Edges []*GetAllContacts_Contacts_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllContacts_Contacts) GetEdges() []*GetAllContacts_Contacts_Edges {
+	if t == nil {
+		t = &GetAllContacts_Contacts{}
+	}
+	return t.Edges
+}
+
+type GetContactByID_Contact struct {
+	Address     *string          "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string          "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string          "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string           "json:\"fullName\" graphql:\"fullName\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string          "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Status      enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string          "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetContactByID_Contact) GetAddress() *string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.Address
+}
+func (t *GetContactByID_Contact) GetCompany() *string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.Company
+}
+func (t *GetContactByID_Contact) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.CreatedAt
+}
+func (t *GetContactByID_Contact) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.CreatedBy
+}
+func (t *GetContactByID_Contact) GetEmail() *string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.Email
+}
+func (t *GetContactByID_Contact) GetFullName() string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.FullName
+}
+func (t *GetContactByID_Contact) GetID() string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.ID
+}
+func (t *GetContactByID_Contact) GetOwnerID() *string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.OwnerID
+}
+func (t *GetContactByID_Contact) GetPhoneNumber() *string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.PhoneNumber
+}
+func (t *GetContactByID_Contact) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return &t.Status
+}
+func (t *GetContactByID_Contact) GetTags() []string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.Tags
+}
+func (t *GetContactByID_Contact) GetTitle() *string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.Title
+}
+func (t *GetContactByID_Contact) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetContactByID_Contact) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetContactByID_Contact{}
+	}
+	return t.UpdatedBy
+}
+
+type GetContacts_Contacts_Edges_Node struct {
+	Address     *string          "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string          "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string          "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string           "json:\"fullName\" graphql:\"fullName\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string          "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Status      enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string          "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetContacts_Contacts_Edges_Node) GetAddress() *string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.Address
+}
+func (t *GetContacts_Contacts_Edges_Node) GetCompany() *string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.Company
+}
+func (t *GetContacts_Contacts_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetContacts_Contacts_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetContacts_Contacts_Edges_Node) GetEmail() *string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.Email
+}
+func (t *GetContacts_Contacts_Edges_Node) GetFullName() string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.FullName
+}
+func (t *GetContacts_Contacts_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetContacts_Contacts_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetContacts_Contacts_Edges_Node) GetPhoneNumber() *string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.PhoneNumber
+}
+func (t *GetContacts_Contacts_Edges_Node) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return &t.Status
+}
+func (t *GetContacts_Contacts_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetContacts_Contacts_Edges_Node) GetTitle() *string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.Title
+}
+func (t *GetContacts_Contacts_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetContacts_Contacts_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetContacts_Contacts_Edges struct {
+	Node *GetContacts_Contacts_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetContacts_Contacts_Edges) GetNode() *GetContacts_Contacts_Edges_Node {
+	if t == nil {
+		t = &GetContacts_Contacts_Edges{}
+	}
+	return t.Node
+}
+
+type GetContacts_Contacts struct {
+	Edges []*GetContacts_Contacts_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetContacts_Contacts) GetEdges() []*GetContacts_Contacts_Edges {
+	if t == nil {
+		t = &GetContacts_Contacts{}
+	}
+	return t.Edges
+}
+
+type UpdateContact_UpdateContact_Contact struct {
+	Address     *string          "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string          "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string          "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string           "json:\"fullName\" graphql:\"fullName\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string          "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Status      enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string          "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *UpdateContact_UpdateContact_Contact) GetAddress() *string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.Address
+}
+func (t *UpdateContact_UpdateContact_Contact) GetCompany() *string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.Company
+}
+func (t *UpdateContact_UpdateContact_Contact) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateContact_UpdateContact_Contact) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateContact_UpdateContact_Contact) GetEmail() *string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.Email
+}
+func (t *UpdateContact_UpdateContact_Contact) GetFullName() string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.FullName
+}
+func (t *UpdateContact_UpdateContact_Contact) GetID() string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.ID
+}
+func (t *UpdateContact_UpdateContact_Contact) GetOwnerID() *string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.OwnerID
+}
+func (t *UpdateContact_UpdateContact_Contact) GetPhoneNumber() *string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.PhoneNumber
+}
+func (t *UpdateContact_UpdateContact_Contact) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return &t.Status
+}
+func (t *UpdateContact_UpdateContact_Contact) GetTags() []string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.Tags
+}
+func (t *UpdateContact_UpdateContact_Contact) GetTitle() *string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.Title
+}
+func (t *UpdateContact_UpdateContact_Contact) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateContact_UpdateContact_Contact) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateContact_UpdateContact_Contact{}
+	}
+	return t.UpdatedBy
+}
+
+type UpdateContact_UpdateContact struct {
+	Contact UpdateContact_UpdateContact_Contact "json:\"contact\" graphql:\"contact\""
+}
+
+func (t *UpdateContact_UpdateContact) GetContact() *UpdateContact_UpdateContact_Contact {
+	if t == nil {
+		t = &UpdateContact_UpdateContact{}
+	}
+	return &t.Contact
+}
+
+type GetAllContactHistories_ContactHistories_Edges_Node struct {
+	Address     *string           "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string           "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string           "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string            "json:\"fullName\" graphql:\"fullName\""
+	HistoryTime time.Time         "json:\"historyTime\" graphql:\"historyTime\""
+	ID          string            "json:\"id\" graphql:\"id\""
+	Operation   enthistory.OpType "json:\"operation\" graphql:\"operation\""
+	OwnerID     *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string           "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Ref         *string           "json:\"ref,omitempty\" graphql:\"ref\""
+	Status      enums.UserStatus  "json:\"status\" graphql:\"status\""
+	Tags        []string          "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string           "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetAddress() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Address
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetCompany() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Company
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetEmail() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Email
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetFullName() string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.FullName
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetHistoryTime() *time.Time {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return &t.HistoryTime
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetOperation() *enthistory.OpType {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return &t.Operation
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetPhoneNumber() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.PhoneNumber
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetRef() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Ref
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return &t.Status
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetTitle() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Title
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllContactHistories_ContactHistories_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetAllContactHistories_ContactHistories_Edges struct {
+	Node *GetAllContactHistories_ContactHistories_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllContactHistories_ContactHistories_Edges) GetNode() *GetAllContactHistories_ContactHistories_Edges_Node {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllContactHistories_ContactHistories struct {
+	Edges []*GetAllContactHistories_ContactHistories_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllContactHistories_ContactHistories) GetEdges() []*GetAllContactHistories_ContactHistories_Edges {
+	if t == nil {
+		t = &GetAllContactHistories_ContactHistories{}
+	}
+	return t.Edges
+}
+
+type GetContactHistories_ContactHistories_Edges_Node struct {
+	Address     *string           "json:\"address,omitempty\" graphql:\"address\""
+	Company     *string           "json:\"company,omitempty\" graphql:\"company\""
+	CreatedAt   *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Email       *string           "json:\"email,omitempty\" graphql:\"email\""
+	FullName    string            "json:\"fullName\" graphql:\"fullName\""
+	HistoryTime time.Time         "json:\"historyTime\" graphql:\"historyTime\""
+	ID          string            "json:\"id\" graphql:\"id\""
+	Operation   enthistory.OpType "json:\"operation\" graphql:\"operation\""
+	OwnerID     *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	PhoneNumber *string           "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+	Ref         *string           "json:\"ref,omitempty\" graphql:\"ref\""
+	Status      enums.UserStatus  "json:\"status\" graphql:\"status\""
+	Tags        []string          "json:\"tags,omitempty\" graphql:\"tags\""
+	Title       *string           "json:\"title,omitempty\" graphql:\"title\""
+	UpdatedAt   *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetAddress() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Address
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetCompany() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Company
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetEmail() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Email
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetFullName() string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.FullName
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetHistoryTime() *time.Time {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return &t.HistoryTime
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetOperation() *enthistory.OpType {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return &t.Operation
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetPhoneNumber() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.PhoneNumber
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetRef() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Ref
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return &t.Status
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetTitle() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.Title
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetContactHistories_ContactHistories_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetContactHistories_ContactHistories_Edges struct {
+	Node *GetContactHistories_ContactHistories_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetContactHistories_ContactHistories_Edges) GetNode() *GetContactHistories_ContactHistories_Edges_Node {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories_Edges{}
+	}
+	return t.Node
+}
+
+type GetContactHistories_ContactHistories struct {
+	Edges []*GetContactHistories_ContactHistories_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetContactHistories_ContactHistories) GetEdges() []*GetContactHistories_ContactHistories_Edges {
+	if t == nil {
+		t = &GetContactHistories_ContactHistories{}
+	}
+	return t.Edges
 }
 
 type CreateDocumentData_CreateDocumentData_DocumentData struct {
@@ -3964,6 +5087,980 @@ type GetEntitlementPlanHistories_EntitlementPlanHistories struct {
 func (t *GetEntitlementPlanHistories_EntitlementPlanHistories) GetEdges() []*GetEntitlementPlanHistories_EntitlementPlanHistories_Edges {
 	if t == nil {
 		t = &GetEntitlementPlanHistories_EntitlementPlanHistories{}
+	}
+	return t.Edges
+}
+
+type CreateBulkCSVEntity_CreateBulkCSVEntity_Entities struct {
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string          "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	Name        string           "json:\"name\" graphql:\"name\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetDescription() *string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.Description
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetDisplayName() string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.DisplayName
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return &t.EntityType
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetID() string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.ID
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetName() string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.Name
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.OwnerID
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetTags() []string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.Tags
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateBulkCSVEntity_CreateBulkCSVEntity struct {
+	Entities []*CreateBulkCSVEntity_CreateBulkCSVEntity_Entities "json:\"entities,omitempty\" graphql:\"entities\""
+}
+
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity) GetEntities() []*CreateBulkCSVEntity_CreateBulkCSVEntity_Entities {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity{}
+	}
+	return t.Entities
+}
+
+type CreateBulkEntity_CreateBulkEntity_Entities struct {
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string          "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	Name        string           "json:\"name\" graphql:\"name\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetDescription() *string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.Description
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetDisplayName() string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.DisplayName
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return &t.EntityType
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetID() string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.ID
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetName() string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.Name
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.OwnerID
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetTags() []string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.Tags
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateBulkEntity_CreateBulkEntity struct {
+	Entities []*CreateBulkEntity_CreateBulkEntity_Entities "json:\"entities,omitempty\" graphql:\"entities\""
+}
+
+func (t *CreateBulkEntity_CreateBulkEntity) GetEntities() []*CreateBulkEntity_CreateBulkEntity_Entities {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity{}
+	}
+	return t.Entities
+}
+
+type CreateEntity_CreateEntity_Entity struct {
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string          "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	Name        string           "json:\"name\" graphql:\"name\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateEntity_CreateEntity_Entity) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateEntity_CreateEntity_Entity) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateEntity_CreateEntity_Entity) GetDescription() *string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.Description
+}
+func (t *CreateEntity_CreateEntity_Entity) GetDisplayName() string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.DisplayName
+}
+func (t *CreateEntity_CreateEntity_Entity) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return &t.EntityType
+}
+func (t *CreateEntity_CreateEntity_Entity) GetID() string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.ID
+}
+func (t *CreateEntity_CreateEntity_Entity) GetName() string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.Name
+}
+func (t *CreateEntity_CreateEntity_Entity) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.OwnerID
+}
+func (t *CreateEntity_CreateEntity_Entity) GetTags() []string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.Tags
+}
+func (t *CreateEntity_CreateEntity_Entity) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateEntity_CreateEntity_Entity) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateEntity_CreateEntity struct {
+	Entity CreateEntity_CreateEntity_Entity "json:\"entity\" graphql:\"entity\""
+}
+
+func (t *CreateEntity_CreateEntity) GetEntity() *CreateEntity_CreateEntity_Entity {
+	if t == nil {
+		t = &CreateEntity_CreateEntity{}
+	}
+	return &t.Entity
+}
+
+type DeleteEntity_DeleteEntity struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteEntity_DeleteEntity) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteEntity_DeleteEntity{}
+	}
+	return t.DeletedID
+}
+
+type GetAllEntities_Entities_Edges_Node struct {
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string          "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	Name        string           "json:\"name\" graphql:\"name\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetAllEntities_Entities_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.Description
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return &t.EntityType
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllEntities_Entities_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetAllEntities_Entities_Edges struct {
+	Node *GetAllEntities_Entities_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllEntities_Entities_Edges) GetNode() *GetAllEntities_Entities_Edges_Node {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllEntities_Entities struct {
+	Edges []*GetAllEntities_Entities_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllEntities_Entities) GetEdges() []*GetAllEntities_Entities_Edges {
+	if t == nil {
+		t = &GetAllEntities_Entities{}
+	}
+	return t.Edges
+}
+
+type GetEntities_Entities_Edges_Node struct {
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string          "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	Name        string           "json:\"name\" graphql:\"name\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetEntities_Entities_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetEntities_Entities_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetEntities_Entities_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.Description
+}
+func (t *GetEntities_Entities_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GetEntities_Entities_Edges_Node) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return &t.EntityType
+}
+func (t *GetEntities_Entities_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetEntities_Entities_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetEntities_Entities_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetEntities_Entities_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetEntities_Entities_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetEntities_Entities_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetEntities_Entities_Edges struct {
+	Node *GetEntities_Entities_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetEntities_Entities_Edges) GetNode() *GetEntities_Entities_Edges_Node {
+	if t == nil {
+		t = &GetEntities_Entities_Edges{}
+	}
+	return t.Node
+}
+
+type GetEntities_Entities struct {
+	Edges []*GetEntities_Entities_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetEntities_Entities) GetEdges() []*GetEntities_Entities_Edges {
+	if t == nil {
+		t = &GetEntities_Entities{}
+	}
+	return t.Edges
+}
+
+type GetEntityByID_Entity_Contacts struct {
+	ID          string  "json:\"id\" graphql:\"id\""
+	FullName    string  "json:\"fullName\" graphql:\"fullName\""
+	Email       *string "json:\"email,omitempty\" graphql:\"email\""
+	Title       *string "json:\"title,omitempty\" graphql:\"title\""
+	Company     *string "json:\"company,omitempty\" graphql:\"company\""
+	Address     *string "json:\"address,omitempty\" graphql:\"address\""
+	PhoneNumber *string "json:\"phoneNumber,omitempty\" graphql:\"phoneNumber\""
+}
+
+func (t *GetEntityByID_Entity_Contacts) GetID() string {
+	if t == nil {
+		t = &GetEntityByID_Entity_Contacts{}
+	}
+	return t.ID
+}
+func (t *GetEntityByID_Entity_Contacts) GetFullName() string {
+	if t == nil {
+		t = &GetEntityByID_Entity_Contacts{}
+	}
+	return t.FullName
+}
+func (t *GetEntityByID_Entity_Contacts) GetEmail() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity_Contacts{}
+	}
+	return t.Email
+}
+func (t *GetEntityByID_Entity_Contacts) GetTitle() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity_Contacts{}
+	}
+	return t.Title
+}
+func (t *GetEntityByID_Entity_Contacts) GetCompany() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity_Contacts{}
+	}
+	return t.Company
+}
+func (t *GetEntityByID_Entity_Contacts) GetAddress() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity_Contacts{}
+	}
+	return t.Address
+}
+func (t *GetEntityByID_Entity_Contacts) GetPhoneNumber() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity_Contacts{}
+	}
+	return t.PhoneNumber
+}
+
+type GetEntityByID_Entity struct {
+	CreatedAt   *time.Time                       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string                          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string                          "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                           "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType                 "json:\"entityType\" graphql:\"entityType\""
+	ID          string                           "json:\"id\" graphql:\"id\""
+	Name        string                           "json:\"name\" graphql:\"name\""
+	OwnerID     *string                          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Contacts    []*GetEntityByID_Entity_Contacts "json:\"contacts,omitempty\" graphql:\"contacts\""
+	Tags        []string                         "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time                       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string                          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetEntityByID_Entity) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.CreatedAt
+}
+func (t *GetEntityByID_Entity) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.CreatedBy
+}
+func (t *GetEntityByID_Entity) GetDescription() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.Description
+}
+func (t *GetEntityByID_Entity) GetDisplayName() string {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.DisplayName
+}
+func (t *GetEntityByID_Entity) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return &t.EntityType
+}
+func (t *GetEntityByID_Entity) GetID() string {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.ID
+}
+func (t *GetEntityByID_Entity) GetName() string {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.Name
+}
+func (t *GetEntityByID_Entity) GetOwnerID() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.OwnerID
+}
+func (t *GetEntityByID_Entity) GetContacts() []*GetEntityByID_Entity_Contacts {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.Contacts
+}
+func (t *GetEntityByID_Entity) GetTags() []string {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.Tags
+}
+func (t *GetEntityByID_Entity) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetEntityByID_Entity) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetEntityByID_Entity{}
+	}
+	return t.UpdatedBy
+}
+
+type UpdateEntity_UpdateEntity_Entity struct {
+	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string          "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
+	ID          string           "json:\"id\" graphql:\"id\""
+	Name        string           "json:\"name\" graphql:\"name\""
+	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *UpdateEntity_UpdateEntity_Entity) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetDescription() *string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.Description
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetDisplayName() string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.DisplayName
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return &t.EntityType
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetID() string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.ID
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetName() string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.Name
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetOwnerID() *string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.OwnerID
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetTags() []string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.Tags
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateEntity_UpdateEntity_Entity) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity{}
+	}
+	return t.UpdatedBy
+}
+
+type UpdateEntity_UpdateEntity struct {
+	Entity UpdateEntity_UpdateEntity_Entity "json:\"entity\" graphql:\"entity\""
+}
+
+func (t *UpdateEntity_UpdateEntity) GetEntity() *UpdateEntity_UpdateEntity_Entity {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity{}
+	}
+	return &t.Entity
+}
+
+type GetAllEntityHistories_EntityHistories_Edges_Node struct {
+	CreatedAt   *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string           "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string            "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType  "json:\"entityType\" graphql:\"entityType\""
+	HistoryTime time.Time         "json:\"historyTime\" graphql:\"historyTime\""
+	ID          string            "json:\"id\" graphql:\"id\""
+	Name        string            "json:\"name\" graphql:\"name\""
+	Operation   enthistory.OpType "json:\"operation\" graphql:\"operation\""
+	OwnerID     *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Ref         *string           "json:\"ref,omitempty\" graphql:\"ref\""
+	Tags        []string          "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.Description
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return &t.EntityType
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetHistoryTime() *time.Time {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return &t.HistoryTime
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetOperation() *enthistory.OpType {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return &t.Operation
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetRef() *string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.Ref
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetAllEntityHistories_EntityHistories_Edges struct {
+	Node *GetAllEntityHistories_EntityHistories_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllEntityHistories_EntityHistories_Edges) GetNode() *GetAllEntityHistories_EntityHistories_Edges_Node {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllEntityHistories_EntityHistories struct {
+	Edges []*GetAllEntityHistories_EntityHistories_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllEntityHistories_EntityHistories) GetEdges() []*GetAllEntityHistories_EntityHistories_Edges {
+	if t == nil {
+		t = &GetAllEntityHistories_EntityHistories{}
+	}
+	return t.Edges
+}
+
+type GetEntityHistories_EntityHistories_Edges_Node struct {
+	CreatedAt   *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string           "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string            "json:\"displayName\" graphql:\"displayName\""
+	EntityType  enums.EntityType  "json:\"entityType\" graphql:\"entityType\""
+	HistoryTime time.Time         "json:\"historyTime\" graphql:\"historyTime\""
+	ID          string            "json:\"id\" graphql:\"id\""
+	Name        string            "json:\"name\" graphql:\"name\""
+	Operation   enthistory.OpType "json:\"operation\" graphql:\"operation\""
+	OwnerID     *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Ref         *string           "json:\"ref,omitempty\" graphql:\"ref\""
+	Tags        []string          "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.Description
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetEntityType() *enums.EntityType {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return &t.EntityType
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetHistoryTime() *time.Time {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return &t.HistoryTime
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetOperation() *enthistory.OpType {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return &t.Operation
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetRef() *string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.Ref
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetEntityHistories_EntityHistories_Edges struct {
+	Node *GetEntityHistories_EntityHistories_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetEntityHistories_EntityHistories_Edges) GetNode() *GetEntityHistories_EntityHistories_Edges_Node {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories_Edges{}
+	}
+	return t.Node
+}
+
+type GetEntityHistories_EntityHistories struct {
+	Edges []*GetEntityHistories_EntityHistories_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetEntityHistories_EntityHistories) GetEdges() []*GetEntityHistories_EntityHistories_Edges {
+	if t == nil {
+		t = &GetEntityHistories_EntityHistories{}
 	}
 	return t.Edges
 }
@@ -23939,6 +26036,116 @@ func (t *DeleteAPIToken) GetDeleteAPIToken() *DeleteAPIToken_DeleteAPIToken {
 	return &t.DeleteAPIToken
 }
 
+type CreateBulkCSVContact struct {
+	CreateBulkCSVContact CreateBulkCSVContact_CreateBulkCSVContact "json:\"createBulkCSVContact\" graphql:\"createBulkCSVContact\""
+}
+
+func (t *CreateBulkCSVContact) GetCreateBulkCSVContact() *CreateBulkCSVContact_CreateBulkCSVContact {
+	if t == nil {
+		t = &CreateBulkCSVContact{}
+	}
+	return &t.CreateBulkCSVContact
+}
+
+type CreateBulkContact struct {
+	CreateBulkContact CreateBulkContact_CreateBulkContact "json:\"createBulkContact\" graphql:\"createBulkContact\""
+}
+
+func (t *CreateBulkContact) GetCreateBulkContact() *CreateBulkContact_CreateBulkContact {
+	if t == nil {
+		t = &CreateBulkContact{}
+	}
+	return &t.CreateBulkContact
+}
+
+type CreateContact struct {
+	CreateContact CreateContact_CreateContact "json:\"createContact\" graphql:\"createContact\""
+}
+
+func (t *CreateContact) GetCreateContact() *CreateContact_CreateContact {
+	if t == nil {
+		t = &CreateContact{}
+	}
+	return &t.CreateContact
+}
+
+type DeleteContact struct {
+	DeleteContact DeleteContact_DeleteContact "json:\"deleteContact\" graphql:\"deleteContact\""
+}
+
+func (t *DeleteContact) GetDeleteContact() *DeleteContact_DeleteContact {
+	if t == nil {
+		t = &DeleteContact{}
+	}
+	return &t.DeleteContact
+}
+
+type GetAllContacts struct {
+	Contacts GetAllContacts_Contacts "json:\"contacts\" graphql:\"contacts\""
+}
+
+func (t *GetAllContacts) GetContacts() *GetAllContacts_Contacts {
+	if t == nil {
+		t = &GetAllContacts{}
+	}
+	return &t.Contacts
+}
+
+type GetContactByID struct {
+	Contact GetContactByID_Contact "json:\"contact\" graphql:\"contact\""
+}
+
+func (t *GetContactByID) GetContact() *GetContactByID_Contact {
+	if t == nil {
+		t = &GetContactByID{}
+	}
+	return &t.Contact
+}
+
+type GetContacts struct {
+	Contacts GetContacts_Contacts "json:\"contacts\" graphql:\"contacts\""
+}
+
+func (t *GetContacts) GetContacts() *GetContacts_Contacts {
+	if t == nil {
+		t = &GetContacts{}
+	}
+	return &t.Contacts
+}
+
+type UpdateContact struct {
+	UpdateContact UpdateContact_UpdateContact "json:\"updateContact\" graphql:\"updateContact\""
+}
+
+func (t *UpdateContact) GetUpdateContact() *UpdateContact_UpdateContact {
+	if t == nil {
+		t = &UpdateContact{}
+	}
+	return &t.UpdateContact
+}
+
+type GetAllContactHistories struct {
+	ContactHistories GetAllContactHistories_ContactHistories "json:\"contactHistories\" graphql:\"contactHistories\""
+}
+
+func (t *GetAllContactHistories) GetContactHistories() *GetAllContactHistories_ContactHistories {
+	if t == nil {
+		t = &GetAllContactHistories{}
+	}
+	return &t.ContactHistories
+}
+
+type GetContactHistories struct {
+	ContactHistories GetContactHistories_ContactHistories "json:\"contactHistories\" graphql:\"contactHistories\""
+}
+
+func (t *GetContactHistories) GetContactHistories() *GetContactHistories_ContactHistories {
+	if t == nil {
+		t = &GetContactHistories{}
+	}
+	return &t.ContactHistories
+}
+
 type CreateDocumentData struct {
 	CreateDocumentData CreateDocumentData_CreateDocumentData "json:\"createDocumentData\" graphql:\"createDocumentData\""
 }
@@ -24333,6 +26540,116 @@ func (t *GetEntitlementPlanHistories) GetEntitlementPlanHistories() *GetEntitlem
 		t = &GetEntitlementPlanHistories{}
 	}
 	return &t.EntitlementPlanHistories
+}
+
+type CreateBulkCSVEntity struct {
+	CreateBulkCSVEntity CreateBulkCSVEntity_CreateBulkCSVEntity "json:\"createBulkCSVEntity\" graphql:\"createBulkCSVEntity\""
+}
+
+func (t *CreateBulkCSVEntity) GetCreateBulkCSVEntity() *CreateBulkCSVEntity_CreateBulkCSVEntity {
+	if t == nil {
+		t = &CreateBulkCSVEntity{}
+	}
+	return &t.CreateBulkCSVEntity
+}
+
+type CreateBulkEntity struct {
+	CreateBulkEntity CreateBulkEntity_CreateBulkEntity "json:\"createBulkEntity\" graphql:\"createBulkEntity\""
+}
+
+func (t *CreateBulkEntity) GetCreateBulkEntity() *CreateBulkEntity_CreateBulkEntity {
+	if t == nil {
+		t = &CreateBulkEntity{}
+	}
+	return &t.CreateBulkEntity
+}
+
+type CreateEntity struct {
+	CreateEntity CreateEntity_CreateEntity "json:\"createEntity\" graphql:\"createEntity\""
+}
+
+func (t *CreateEntity) GetCreateEntity() *CreateEntity_CreateEntity {
+	if t == nil {
+		t = &CreateEntity{}
+	}
+	return &t.CreateEntity
+}
+
+type DeleteEntity struct {
+	DeleteEntity DeleteEntity_DeleteEntity "json:\"deleteEntity\" graphql:\"deleteEntity\""
+}
+
+func (t *DeleteEntity) GetDeleteEntity() *DeleteEntity_DeleteEntity {
+	if t == nil {
+		t = &DeleteEntity{}
+	}
+	return &t.DeleteEntity
+}
+
+type GetAllEntities struct {
+	Entities GetAllEntities_Entities "json:\"entities\" graphql:\"entities\""
+}
+
+func (t *GetAllEntities) GetEntities() *GetAllEntities_Entities {
+	if t == nil {
+		t = &GetAllEntities{}
+	}
+	return &t.Entities
+}
+
+type GetEntities struct {
+	Entities GetEntities_Entities "json:\"entities\" graphql:\"entities\""
+}
+
+func (t *GetEntities) GetEntities() *GetEntities_Entities {
+	if t == nil {
+		t = &GetEntities{}
+	}
+	return &t.Entities
+}
+
+type GetEntityByID struct {
+	Entity GetEntityByID_Entity "json:\"entity\" graphql:\"entity\""
+}
+
+func (t *GetEntityByID) GetEntity() *GetEntityByID_Entity {
+	if t == nil {
+		t = &GetEntityByID{}
+	}
+	return &t.Entity
+}
+
+type UpdateEntity struct {
+	UpdateEntity UpdateEntity_UpdateEntity "json:\"updateEntity\" graphql:\"updateEntity\""
+}
+
+func (t *UpdateEntity) GetUpdateEntity() *UpdateEntity_UpdateEntity {
+	if t == nil {
+		t = &UpdateEntity{}
+	}
+	return &t.UpdateEntity
+}
+
+type GetAllEntityHistories struct {
+	EntityHistories GetAllEntityHistories_EntityHistories "json:\"entityHistories\" graphql:\"entityHistories\""
+}
+
+func (t *GetAllEntityHistories) GetEntityHistories() *GetAllEntityHistories_EntityHistories {
+	if t == nil {
+		t = &GetAllEntityHistories{}
+	}
+	return &t.EntityHistories
+}
+
+type GetEntityHistories struct {
+	EntityHistories GetEntityHistories_EntityHistories "json:\"entityHistories\" graphql:\"entityHistories\""
+}
+
+func (t *GetEntityHistories) GetEntityHistories() *GetEntityHistories_EntityHistories {
+	if t == nil {
+		t = &GetEntityHistories{}
+	}
+	return &t.EntityHistories
 }
 
 type GetEvents struct {
@@ -26296,6 +28613,390 @@ func (c *Client) DeleteAPIToken(ctx context.Context, deleteAPITokenID string, in
 	return &res, nil
 }
 
+const CreateBulkCSVContactDocument = `mutation CreateBulkCSVContact ($input: Upload!) {
+	createBulkCSVContact(input: $input) {
+		contacts {
+			address
+			company
+			createdAt
+			createdBy
+			email
+			fullName
+			id
+			ownerID
+			phoneNumber
+			status
+			tags
+			title
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateBulkCSVContact(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVContact, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateBulkCSVContact
+	if err := c.Client.Post(ctx, "CreateBulkCSVContact", CreateBulkCSVContactDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateBulkContactDocument = `mutation CreateBulkContact ($input: [CreateContactInput!]) {
+	createBulkContact(input: $input) {
+		contacts {
+			address
+			company
+			createdAt
+			createdBy
+			email
+			fullName
+			id
+			ownerID
+			phoneNumber
+			status
+			tags
+			title
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateBulkContact(ctx context.Context, input []*CreateContactInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkContact, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateBulkContact
+	if err := c.Client.Post(ctx, "CreateBulkContact", CreateBulkContactDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateContactDocument = `mutation CreateContact ($input: CreateContactInput!) {
+	createContact(input: $input) {
+		contact {
+			address
+			company
+			createdAt
+			createdBy
+			email
+			fullName
+			id
+			ownerID
+			phoneNumber
+			status
+			tags
+			title
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateContact(ctx context.Context, input CreateContactInput, interceptors ...clientv2.RequestInterceptor) (*CreateContact, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateContact
+	if err := c.Client.Post(ctx, "CreateContact", CreateContactDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteContactDocument = `mutation DeleteContact ($deleteContactId: ID!) {
+	deleteContact(id: $deleteContactId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteContact(ctx context.Context, deleteContactID string, interceptors ...clientv2.RequestInterceptor) (*DeleteContact, error) {
+	vars := map[string]any{
+		"deleteContactId": deleteContactID,
+	}
+
+	var res DeleteContact
+	if err := c.Client.Post(ctx, "DeleteContact", DeleteContactDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllContactsDocument = `query GetAllContacts {
+	contacts {
+		edges {
+			node {
+				address
+				company
+				createdAt
+				createdBy
+				email
+				fullName
+				id
+				ownerID
+				phoneNumber
+				status
+				tags
+				title
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllContacts(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllContacts, error) {
+	vars := map[string]any{}
+
+	var res GetAllContacts
+	if err := c.Client.Post(ctx, "GetAllContacts", GetAllContactsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetContactByIDDocument = `query GetContactByID ($contactId: ID!) {
+	contact(id: $contactId) {
+		address
+		company
+		createdAt
+		createdBy
+		email
+		fullName
+		id
+		ownerID
+		phoneNumber
+		status
+		tags
+		title
+		updatedAt
+		updatedBy
+	}
+}
+`
+
+func (c *Client) GetContactByID(ctx context.Context, contactID string, interceptors ...clientv2.RequestInterceptor) (*GetContactByID, error) {
+	vars := map[string]any{
+		"contactId": contactID,
+	}
+
+	var res GetContactByID
+	if err := c.Client.Post(ctx, "GetContactByID", GetContactByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetContactsDocument = `query GetContacts ($where: ContactWhereInput) {
+	contacts(where: $where) {
+		edges {
+			node {
+				address
+				company
+				createdAt
+				createdBy
+				email
+				fullName
+				id
+				ownerID
+				phoneNumber
+				status
+				tags
+				title
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetContacts(ctx context.Context, where *ContactWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetContacts, error) {
+	vars := map[string]any{
+		"where": where,
+	}
+
+	var res GetContacts
+	if err := c.Client.Post(ctx, "GetContacts", GetContactsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateContactDocument = `mutation UpdateContact ($updateContactId: ID!, $input: UpdateContactInput!) {
+	updateContact(id: $updateContactId, input: $input) {
+		contact {
+			address
+			company
+			createdAt
+			createdBy
+			email
+			fullName
+			id
+			ownerID
+			phoneNumber
+			status
+			tags
+			title
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) UpdateContact(ctx context.Context, updateContactID string, input UpdateContactInput, interceptors ...clientv2.RequestInterceptor) (*UpdateContact, error) {
+	vars := map[string]any{
+		"updateContactId": updateContactID,
+		"input":           input,
+	}
+
+	var res UpdateContact
+	if err := c.Client.Post(ctx, "UpdateContact", UpdateContactDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllContactHistoriesDocument = `query GetAllContactHistories {
+	contactHistories {
+		edges {
+			node {
+				address
+				company
+				createdAt
+				createdBy
+				email
+				fullName
+				historyTime
+				id
+				operation
+				ownerID
+				phoneNumber
+				ref
+				status
+				tags
+				title
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllContactHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllContactHistories, error) {
+	vars := map[string]any{}
+
+	var res GetAllContactHistories
+	if err := c.Client.Post(ctx, "GetAllContactHistories", GetAllContactHistoriesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetContactHistoriesDocument = `query GetContactHistories ($where: ContactHistoryWhereInput) {
+	contactHistories(where: $where) {
+		edges {
+			node {
+				address
+				company
+				createdAt
+				createdBy
+				email
+				fullName
+				historyTime
+				id
+				operation
+				ownerID
+				phoneNumber
+				ref
+				status
+				tags
+				title
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetContactHistories(ctx context.Context, where *ContactHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetContactHistories, error) {
+	vars := map[string]any{
+		"where": where,
+	}
+
+	var res GetContactHistories
+	if err := c.Client.Post(ctx, "GetContactHistories", GetContactHistoriesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const CreateDocumentDataDocument = `mutation CreateDocumentData ($input: CreateDocumentDataInput!) {
 	createDocumentData(input: $input) {
 		documentData {
@@ -27588,6 +30289,372 @@ func (c *Client) GetEntitlementPlanHistories(ctx context.Context, where *Entitle
 
 	var res GetEntitlementPlanHistories
 	if err := c.Client.Post(ctx, "GetEntitlementPlanHistories", GetEntitlementPlanHistoriesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateBulkCSVEntityDocument = `mutation CreateBulkCSVEntity ($input: Upload!) {
+	createBulkCSVEntity(input: $input) {
+		entities {
+			createdAt
+			createdBy
+			description
+			displayName
+			entityType
+			id
+			name
+			ownerID
+			tags
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateBulkCSVEntity(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVEntity, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateBulkCSVEntity
+	if err := c.Client.Post(ctx, "CreateBulkCSVEntity", CreateBulkCSVEntityDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateBulkEntityDocument = `mutation CreateBulkEntity ($input: [CreateEntityInput!]) {
+	createBulkEntity(input: $input) {
+		entities {
+			createdAt
+			createdBy
+			description
+			displayName
+			entityType
+			id
+			name
+			ownerID
+			tags
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateBulkEntity(ctx context.Context, input []*CreateEntityInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkEntity, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateBulkEntity
+	if err := c.Client.Post(ctx, "CreateBulkEntity", CreateBulkEntityDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateEntityDocument = `mutation CreateEntity ($input: CreateEntityInput!) {
+	createEntity(input: $input) {
+		entity {
+			createdAt
+			createdBy
+			description
+			displayName
+			entityType
+			id
+			name
+			ownerID
+			tags
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateEntity(ctx context.Context, input CreateEntityInput, interceptors ...clientv2.RequestInterceptor) (*CreateEntity, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateEntity
+	if err := c.Client.Post(ctx, "CreateEntity", CreateEntityDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteEntityDocument = `mutation DeleteEntity ($deleteEntityId: ID!) {
+	deleteEntity(id: $deleteEntityId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteEntity(ctx context.Context, deleteEntityID string, interceptors ...clientv2.RequestInterceptor) (*DeleteEntity, error) {
+	vars := map[string]any{
+		"deleteEntityId": deleteEntityID,
+	}
+
+	var res DeleteEntity
+	if err := c.Client.Post(ctx, "DeleteEntity", DeleteEntityDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllEntitiesDocument = `query GetAllEntities {
+	entities {
+		edges {
+			node {
+				createdAt
+				createdBy
+				description
+				displayName
+				entityType
+				id
+				name
+				ownerID
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllEntities(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntities, error) {
+	vars := map[string]any{}
+
+	var res GetAllEntities
+	if err := c.Client.Post(ctx, "GetAllEntities", GetAllEntitiesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetEntitiesDocument = `query GetEntities ($where: EntityWhereInput) {
+	entities(where: $where) {
+		edges {
+			node {
+				createdAt
+				createdBy
+				description
+				displayName
+				entityType
+				id
+				name
+				ownerID
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetEntities(ctx context.Context, where *EntityWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntities, error) {
+	vars := map[string]any{
+		"where": where,
+	}
+
+	var res GetEntities
+	if err := c.Client.Post(ctx, "GetEntities", GetEntitiesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetEntityByIDDocument = `query GetEntityByID ($entityId: ID!) {
+	entity(id: $entityId) {
+		createdAt
+		createdBy
+		description
+		displayName
+		entityType
+		id
+		name
+		ownerID
+		contacts {
+			id
+			fullName
+			email
+			title
+			company
+			address
+			phoneNumber
+		}
+		tags
+		updatedAt
+		updatedBy
+	}
+}
+`
+
+func (c *Client) GetEntityByID(ctx context.Context, entityID string, interceptors ...clientv2.RequestInterceptor) (*GetEntityByID, error) {
+	vars := map[string]any{
+		"entityId": entityID,
+	}
+
+	var res GetEntityByID
+	if err := c.Client.Post(ctx, "GetEntityByID", GetEntityByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateEntityDocument = `mutation UpdateEntity ($updateEntityId: ID!, $input: UpdateEntityInput!) {
+	updateEntity(id: $updateEntityId, input: $input) {
+		entity {
+			createdAt
+			createdBy
+			description
+			displayName
+			entityType
+			id
+			name
+			ownerID
+			tags
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) UpdateEntity(ctx context.Context, updateEntityID string, input UpdateEntityInput, interceptors ...clientv2.RequestInterceptor) (*UpdateEntity, error) {
+	vars := map[string]any{
+		"updateEntityId": updateEntityID,
+		"input":          input,
+	}
+
+	var res UpdateEntity
+	if err := c.Client.Post(ctx, "UpdateEntity", UpdateEntityDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllEntityHistoriesDocument = `query GetAllEntityHistories {
+	entityHistories {
+		edges {
+			node {
+				createdAt
+				createdBy
+				description
+				displayName
+				entityType
+				historyTime
+				id
+				name
+				operation
+				ownerID
+				ref
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllEntityHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntityHistories, error) {
+	vars := map[string]any{}
+
+	var res GetAllEntityHistories
+	if err := c.Client.Post(ctx, "GetAllEntityHistories", GetAllEntityHistoriesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetEntityHistoriesDocument = `query GetEntityHistories ($where: EntityHistoryWhereInput) {
+	entityHistories(where: $where) {
+		edges {
+			node {
+				createdAt
+				createdBy
+				description
+				displayName
+				entityType
+				historyTime
+				id
+				name
+				operation
+				ownerID
+				ref
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetEntityHistories(ctx context.Context, where *EntityHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntityHistories, error) {
+	vars := map[string]any{
+		"where": where,
+	}
+
+	var res GetEntityHistories
+	if err := c.Client.Post(ctx, "GetEntityHistories", GetEntityHistoriesDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -34240,6 +37307,16 @@ var DocumentOperationNames = map[string]string{
 	GetAllAPITokensDocument:                       "GetAllAPITokens",
 	GetAPITokenByIDDocument:                       "GetAPITokenByID",
 	DeleteAPITokenDocument:                        "DeleteAPIToken",
+	CreateBulkCSVContactDocument:                  "CreateBulkCSVContact",
+	CreateBulkContactDocument:                     "CreateBulkContact",
+	CreateContactDocument:                         "CreateContact",
+	DeleteContactDocument:                         "DeleteContact",
+	GetAllContactsDocument:                        "GetAllContacts",
+	GetContactByIDDocument:                        "GetContactByID",
+	GetContactsDocument:                           "GetContacts",
+	UpdateContactDocument:                         "UpdateContact",
+	GetAllContactHistoriesDocument:                "GetAllContactHistories",
+	GetContactHistoriesDocument:                   "GetContactHistories",
 	CreateDocumentDataDocument:                    "CreateDocumentData",
 	DeleteDocumentDataDocument:                    "DeleteDocumentData",
 	GetDocumentDataByIDDocument:                   "GetDocumentDataByID",
@@ -34276,6 +37353,16 @@ var DocumentOperationNames = map[string]string{
 	GetEntitlementPlanFeatureHistoriesDocument:    "GetEntitlementPlanFeatureHistories",
 	GetAllEntitlementPlanHistoriesDocument:        "GetAllEntitlementPlanHistories",
 	GetEntitlementPlanHistoriesDocument:           "GetEntitlementPlanHistories",
+	CreateBulkCSVEntityDocument:                   "CreateBulkCSVEntity",
+	CreateBulkEntityDocument:                      "CreateBulkEntity",
+	CreateEntityDocument:                          "CreateEntity",
+	DeleteEntityDocument:                          "DeleteEntity",
+	GetAllEntitiesDocument:                        "GetAllEntities",
+	GetEntitiesDocument:                           "GetEntities",
+	GetEntityByIDDocument:                         "GetEntityByID",
+	UpdateEntityDocument:                          "UpdateEntity",
+	GetAllEntityHistoriesDocument:                 "GetAllEntityHistories",
+	GetEntityHistoriesDocument:                    "GetEntityHistories",
 	GetEventsDocument:                             "GetEvents",
 	GetEventByIDDocument:                          "GetEventByID",
 	GetAllEventsDocument:                          "GetAllEvents",

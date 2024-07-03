@@ -49,6 +49,76 @@ var (
 			},
 		},
 	}
+	// ContactsColumns holds the columns for the "contacts" table.
+	ContactsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "full_name", Type: field.TypeString, Size: 64},
+		{Name: "title", Type: field.TypeString, Nullable: true},
+		{Name: "company", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "phone_number", Type: field.TypeString, Nullable: true},
+		{Name: "address", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED", "ONBOARDING"}, Default: "ACTIVE"},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// ContactsTable holds the schema information for the "contacts" table.
+	ContactsTable = &schema.Table{
+		Name:       "contacts",
+		Columns:    ContactsColumns,
+		PrimaryKey: []*schema.Column{ContactsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "contacts_organizations_contacts",
+				Columns:    []*schema.Column{ContactsColumns[16]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ContactHistoryColumns holds the columns for the "contact_history" table.
+	ContactHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "full_name", Type: field.TypeString, Size: 64},
+		{Name: "title", Type: field.TypeString, Nullable: true},
+		{Name: "company", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "phone_number", Type: field.TypeString, Nullable: true},
+		{Name: "address", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED", "ONBOARDING"}, Default: "ACTIVE"},
+	}
+	// ContactHistoryTable holds the schema information for the "contact_history" table.
+	ContactHistoryTable = &schema.Table{
+		Name:       "contact_history",
+		Columns:    ContactHistoryColumns,
+		PrimaryKey: []*schema.Column{ContactHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "contacthistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{ContactHistoryColumns[1]},
+			},
+		},
+	}
 	// DocumentDataColumns holds the columns for the "document_data" table.
 	DocumentDataColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -404,6 +474,80 @@ var (
 				Name:    "entitlementplanfeaturehistory_history_time",
 				Unique:  false,
 				Columns: []*schema.Column{EntitlementPlanFeatureHistoryColumns[1]},
+			},
+		},
+	}
+	// EntitiesColumns holds the columns for the "entities" table.
+	EntitiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "name", Type: field.TypeString, Size: 160},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "entity_type", Type: field.TypeEnum, Enums: []string{"ORGANIZATION", "VENDOR"}, Default: "ORGANIZATION"},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// EntitiesTable holds the schema information for the "entities" table.
+	EntitiesTable = &schema.Table{
+		Name:       "entities",
+		Columns:    EntitiesColumns,
+		PrimaryKey: []*schema.Column{EntitiesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entities_organizations_entities",
+				Columns:    []*schema.Column{EntitiesColumns[13]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entity_name_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{EntitiesColumns[9], EntitiesColumns[13]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// EntityHistoryColumns holds the columns for the "entity_history" table.
+	EntityHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString, Size: 160},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "entity_type", Type: field.TypeEnum, Enums: []string{"ORGANIZATION", "VENDOR"}, Default: "ORGANIZATION"},
+	}
+	// EntityHistoryTable holds the schema information for the "entity_history" table.
+	EntityHistoryTable = &schema.Table{
+		Name:       "entity_history",
+		Columns:    EntityHistoryColumns,
+		PrimaryKey: []*schema.Column{EntityHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entityhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{EntityHistoryColumns[1]},
 			},
 		},
 	}
@@ -1646,7 +1790,7 @@ var (
 		{Name: "locked", Type: field.TypeBool, Default: false},
 		{Name: "silenced_at", Type: field.TypeTime, Nullable: true},
 		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED", "ONBOARDING"}, Default: "ACTIVE"},
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
@@ -1692,7 +1836,7 @@ var (
 		{Name: "locked", Type: field.TypeBool, Default: false},
 		{Name: "silenced_at", Type: field.TypeTime, Nullable: true},
 		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED", "ONBOARDING"}, Default: "ACTIVE"},
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
@@ -1903,6 +2047,56 @@ var (
 				Symbol:     "entitlement_plan_feature_events_event_id",
 				Columns:    []*schema.Column{EntitlementPlanFeatureEventsColumns[1]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// EntityContactsColumns holds the columns for the "entity_contacts" table.
+	EntityContactsColumns = []*schema.Column{
+		{Name: "entity_id", Type: field.TypeString},
+		{Name: "contact_id", Type: field.TypeString},
+	}
+	// EntityContactsTable holds the schema information for the "entity_contacts" table.
+	EntityContactsTable = &schema.Table{
+		Name:       "entity_contacts",
+		Columns:    EntityContactsColumns,
+		PrimaryKey: []*schema.Column{EntityContactsColumns[0], EntityContactsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entity_contacts_entity_id",
+				Columns:    []*schema.Column{EntityContactsColumns[0]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "entity_contacts_contact_id",
+				Columns:    []*schema.Column{EntityContactsColumns[1]},
+				RefColumns: []*schema.Column{ContactsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// EntityDocumentsColumns holds the columns for the "entity_documents" table.
+	EntityDocumentsColumns = []*schema.Column{
+		{Name: "entity_id", Type: field.TypeString},
+		{Name: "document_data_id", Type: field.TypeString},
+	}
+	// EntityDocumentsTable holds the schema information for the "entity_documents" table.
+	EntityDocumentsTable = &schema.Table{
+		Name:       "entity_documents",
+		Columns:    EntityDocumentsColumns,
+		PrimaryKey: []*schema.Column{EntityDocumentsColumns[0], EntityDocumentsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entity_documents_entity_id",
+				Columns:    []*schema.Column{EntityDocumentsColumns[0]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "entity_documents_document_data_id",
+				Columns:    []*schema.Column{EntityDocumentsColumns[1]},
+				RefColumns: []*schema.Column{DocumentDataColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -2410,6 +2604,8 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		APITokensTable,
+		ContactsTable,
+		ContactHistoryTable,
 		DocumentDataTable,
 		DocumentDataHistoryTable,
 		EmailVerificationTokensTable,
@@ -2419,6 +2615,8 @@ var (
 		EntitlementPlanHistoryTable,
 		EntitlementPlanFeaturesTable,
 		EntitlementPlanFeatureHistoryTable,
+		EntitiesTable,
+		EntityHistoryTable,
 		EventsTable,
 		EventHistoryTable,
 		FeaturesTable,
@@ -2461,6 +2659,8 @@ var (
 		EntitlementEventsTable,
 		EntitlementPlanEventsTable,
 		EntitlementPlanFeatureEventsTable,
+		EntityContactsTable,
+		EntityDocumentsTable,
 		FeatureEventsTable,
 		GroupEventsTable,
 		GroupFilesTable,
@@ -2486,6 +2686,10 @@ var (
 
 func init() {
 	APITokensTable.ForeignKeys[0].RefTable = OrganizationsTable
+	ContactsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	ContactHistoryTable.Annotation = &entsql.Annotation{
+		Table: "contact_history",
+	}
 	DocumentDataTable.ForeignKeys[0].RefTable = OrganizationsTable
 	DocumentDataTable.ForeignKeys[1].RefTable = TemplatesTable
 	DocumentDataHistoryTable.Annotation = &entsql.Annotation{
@@ -2507,6 +2711,10 @@ func init() {
 	EntitlementPlanFeaturesTable.ForeignKeys[2].RefTable = OrganizationsTable
 	EntitlementPlanFeatureHistoryTable.Annotation = &entsql.Annotation{
 		Table: "entitlement_plan_feature_history",
+	}
+	EntitiesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	EntityHistoryTable.Annotation = &entsql.Annotation{
+		Table: "entity_history",
 	}
 	EventHistoryTable.Annotation = &entsql.Annotation{
 		Table: "event_history",
@@ -2585,6 +2793,10 @@ func init() {
 	EntitlementPlanEventsTable.ForeignKeys[1].RefTable = EventsTable
 	EntitlementPlanFeatureEventsTable.ForeignKeys[0].RefTable = EntitlementPlanFeaturesTable
 	EntitlementPlanFeatureEventsTable.ForeignKeys[1].RefTable = EventsTable
+	EntityContactsTable.ForeignKeys[0].RefTable = EntitiesTable
+	EntityContactsTable.ForeignKeys[1].RefTable = ContactsTable
+	EntityDocumentsTable.ForeignKeys[0].RefTable = EntitiesTable
+	EntityDocumentsTable.ForeignKeys[1].RefTable = DocumentDataTable
 	FeatureEventsTable.ForeignKeys[0].RefTable = FeaturesTable
 	FeatureEventsTable.ForeignKeys[1].RefTable = EventsTable
 	GroupEventsTable.ForeignKeys[0].RefTable = GroupsTable

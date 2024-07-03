@@ -31,6 +31,10 @@ func TestToUserStatus(t *testing.T) {
 			expected: enums.UserStatusSuspended,
 		},
 		{
+			input:    "onboarding",
+			expected: enums.UserStatusOnboarding,
+		},
+		{
 			input:    "UNKNOWN",
 			expected: enums.UserStatusInvalid,
 		},

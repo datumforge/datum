@@ -11,10 +11,12 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/contacthistory"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
 	"github.com/datumforge/datum/internal/ent/generated/filehistory"
@@ -58,6 +60,81 @@ var (
 	MismatchedRefError    = errors.New("cannot take diff of histories with different Refs")
 	IdenticalHistoryError = errors.New("cannot take diff of identical history")
 )
+
+func (ch *ContactHistory) changes(new *ContactHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(ch.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(contacthistory.FieldCreatedAt, ch.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(ch.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(contacthistory.FieldUpdatedAt, ch.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(ch.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(contacthistory.FieldCreatedBy, ch.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(ch.MappingID, new.MappingID) {
+		changes = append(changes, NewChange(contacthistory.FieldMappingID, ch.MappingID, new.MappingID))
+	}
+	if !reflect.DeepEqual(ch.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(contacthistory.FieldDeletedAt, ch.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(ch.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(contacthistory.FieldDeletedBy, ch.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(ch.Tags, new.Tags) {
+		changes = append(changes, NewChange(contacthistory.FieldTags, ch.Tags, new.Tags))
+	}
+	if !reflect.DeepEqual(ch.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(contacthistory.FieldOwnerID, ch.OwnerID, new.OwnerID))
+	}
+	if !reflect.DeepEqual(ch.FullName, new.FullName) {
+		changes = append(changes, NewChange(contacthistory.FieldFullName, ch.FullName, new.FullName))
+	}
+	if !reflect.DeepEqual(ch.Title, new.Title) {
+		changes = append(changes, NewChange(contacthistory.FieldTitle, ch.Title, new.Title))
+	}
+	if !reflect.DeepEqual(ch.Company, new.Company) {
+		changes = append(changes, NewChange(contacthistory.FieldCompany, ch.Company, new.Company))
+	}
+	if !reflect.DeepEqual(ch.Email, new.Email) {
+		changes = append(changes, NewChange(contacthistory.FieldEmail, ch.Email, new.Email))
+	}
+	if !reflect.DeepEqual(ch.PhoneNumber, new.PhoneNumber) {
+		changes = append(changes, NewChange(contacthistory.FieldPhoneNumber, ch.PhoneNumber, new.PhoneNumber))
+	}
+	if !reflect.DeepEqual(ch.Address, new.Address) {
+		changes = append(changes, NewChange(contacthistory.FieldAddress, ch.Address, new.Address))
+	}
+	if !reflect.DeepEqual(ch.Status, new.Status) {
+		changes = append(changes, NewChange(contacthistory.FieldStatus, ch.Status, new.Status))
+	}
+	return changes
+}
+
+func (ch *ContactHistory) Diff(history *ContactHistory) (*HistoryDiff[ContactHistory], error) {
+	if ch.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	chUnix, historyUnix := ch.HistoryTime.Unix(), history.HistoryTime.Unix()
+	chOlder := chUnix < historyUnix || (chUnix == historyUnix && ch.ID < history.ID)
+	historyOlder := chUnix > historyUnix || (chUnix == historyUnix && ch.ID > history.ID)
+
+	if chOlder {
+		return &HistoryDiff[ContactHistory]{
+			Old:     ch,
+			New:     history,
+			Changes: ch.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[ContactHistory]{
+			Old:     history,
+			New:     ch,
+			Changes: history.changes(ch),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
 
 func (ddh *DocumentDataHistory) changes(new *DocumentDataHistory) []Change {
 	var changes []Change
@@ -321,6 +398,72 @@ func (epfh *EntitlementPlanFeatureHistory) Diff(history *EntitlementPlanFeatureH
 			Old:     history,
 			New:     epfh,
 			Changes: history.changes(epfh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
+func (eh *EntityHistory) changes(new *EntityHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(eh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(entityhistory.FieldCreatedAt, eh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(eh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(entityhistory.FieldUpdatedAt, eh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(eh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(entityhistory.FieldCreatedBy, eh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(eh.MappingID, new.MappingID) {
+		changes = append(changes, NewChange(entityhistory.FieldMappingID, eh.MappingID, new.MappingID))
+	}
+	if !reflect.DeepEqual(eh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(entityhistory.FieldDeletedAt, eh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(eh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(entityhistory.FieldDeletedBy, eh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(eh.Tags, new.Tags) {
+		changes = append(changes, NewChange(entityhistory.FieldTags, eh.Tags, new.Tags))
+	}
+	if !reflect.DeepEqual(eh.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(entityhistory.FieldOwnerID, eh.OwnerID, new.OwnerID))
+	}
+	if !reflect.DeepEqual(eh.Name, new.Name) {
+		changes = append(changes, NewChange(entityhistory.FieldName, eh.Name, new.Name))
+	}
+	if !reflect.DeepEqual(eh.DisplayName, new.DisplayName) {
+		changes = append(changes, NewChange(entityhistory.FieldDisplayName, eh.DisplayName, new.DisplayName))
+	}
+	if !reflect.DeepEqual(eh.Description, new.Description) {
+		changes = append(changes, NewChange(entityhistory.FieldDescription, eh.Description, new.Description))
+	}
+	if !reflect.DeepEqual(eh.EntityType, new.EntityType) {
+		changes = append(changes, NewChange(entityhistory.FieldEntityType, eh.EntityType, new.EntityType))
+	}
+	return changes
+}
+
+func (eh *EntityHistory) Diff(history *EntityHistory) (*HistoryDiff[EntityHistory], error) {
+	if eh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	ehUnix, historyUnix := eh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	ehOlder := ehUnix < historyUnix || (ehUnix == historyUnix && eh.ID < history.ID)
+	historyOlder := ehUnix > historyUnix || (ehUnix == historyUnix && eh.ID > history.ID)
+
+	if ehOlder {
+		return &HistoryDiff[EntityHistory]{
+			Old:     eh,
+			New:     history,
+			Changes: eh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[EntityHistory]{
+			Old:     history,
+			New:     eh,
+			Changes: history.changes(eh),
 		}, nil
 	}
 	return nil, IdenticalHistoryError
@@ -1479,6 +1622,12 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	}
 	var record [][]string
 	var err error
+	record, err = auditContactHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
 	record, err = auditDocumentDataHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
@@ -1498,6 +1647,12 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	records = append(records, record...)
 
 	record, err = auditEntitlementPlanFeatureHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
+	record, err = auditEntityHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
 	}
@@ -1625,6 +1780,58 @@ func (r *record) toRow() []string {
 		row[4] = fmt.Sprintf("%s\n%s", row[4], change.String(r.Operation))
 	}
 	return row
+}
+
+type contacthistoryref struct {
+	Ref string
+}
+
+func auditContactHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []contacthistoryref
+	client := NewContactHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(contacthistory.ByRef()).
+		Select(contacthistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(contacthistory.Ref(currRef.Ref)).
+			Order(contacthistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "ContactHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&ContactHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&ContactHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&ContactHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
 }
 
 type documentdatahistoryref struct {
@@ -1825,6 +2032,58 @@ func auditEntitlementPlanFeatureHistory(ctx context.Context, config config) ([][
 			default:
 				if i == 0 {
 					record.Changes = (&EntitlementPlanFeatureHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type entityhistoryref struct {
+	Ref string
+}
+
+func auditEntityHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []entityhistoryref
+	client := NewEntityHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(entityhistory.ByRef()).
+		Select(entityhistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(entityhistory.Ref(currRef.Ref)).
+			Order(entityhistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "EntityHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&EntityHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&EntityHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&EntityHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}

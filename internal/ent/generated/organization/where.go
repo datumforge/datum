@@ -1610,6 +1610,64 @@ func HasEntitlementplanfeaturesWith(preds ...predicate.EntitlementPlanFeature) p
 	})
 }
 
+// HasEntities applies the HasEdge predicate on the "entities" edge.
+func HasEntities() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, EntitiesTable, EntitiesColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.Entity
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntitiesWith applies the HasEdge predicate on the "entities" edge with a given conditions (other predicates).
+func HasEntitiesWith(preds ...predicate.Entity) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newEntitiesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.Entity
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasContacts applies the HasEdge predicate on the "contacts" edge.
+func HasContacts() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ContactsTable, ContactsColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Contact
+		step.Edge.Schema = schemaConfig.Contact
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasContactsWith applies the HasEdge predicate on the "contacts" edge with a given conditions (other predicates).
+func HasContactsWith(preds ...predicate.Contact) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newContactsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Contact
+		step.Edge.Schema = schemaConfig.Contact
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMembers applies the HasEdge predicate on the "members" edge.
 func HasMembers() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

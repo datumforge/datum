@@ -5,8 +5,6 @@ import (
 	"bytes"
 	"context"
 	"log"
-	"net/http"
-	"net/http/httptest"
 	"path/filepath"
 	"testing"
 	"time"
@@ -14,19 +12,16 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/datumforge/fgax"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"go.uber.org/zap/zaptest"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/testutils"
@@ -34,8 +29,6 @@ import (
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
 	"github.com/datumforge/datum/pkg/utils/ulids"
-
-	"github.com/datumforge/datum/internal/graphapi"
 )
 
 var (
@@ -58,18 +51,8 @@ type GraphTestSuite struct {
 // client contains all the clients the test need to interact with
 type client struct {
 	db    *ent.Client
-	datum datumclient.DatumGraphClient
+	datum *datumclient.DatumClient
 	fga   *mock_fga.MockSdkClient
-}
-
-const (
-	rawToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.oGFhqfFFDi9sJMJ1U2dWJZNYEiUQBEtZRVuwKE7Uiak"                                                                                  //nolint:gosec
-	session  = "MTcwNTY0MjU5NnxkR1FweHFEX0RONDVzVDg0LTVuT3hLQmQ5THNicGJuZDk2dm8wbm5RMjZSdGFpY0xtcVBFdE1SR1IxT19IcTZhMzd1SWJBYldQWncwWlVmWGd6a0FzTDFMYlNjWkVJb3BRX1htM05qVjdOYS1hYy11SGo2aWRRcnFZYXRuWWJKXy1HNlF8AXSjkzY_IpNBe7u1T5YfHMcsKCwzdKKW2yeNbnmm_Z0=" // # spellcheck:off
-)
-
-type graphClient struct {
-	srvURL     string
-	httpClient *http.Client
 }
 
 func (suite *GraphTestSuite) SetupSuite() {
@@ -160,7 +143,8 @@ func (suite *GraphTestSuite) SetupTest() {
 
 	// assign values
 	c.db = db
-	c.datum = graphTestClient(t, c.db)
+	c.datum, err = testutils.DatumTestClient(t, c.db)
+	require.NoError(t, err)
 
 	// create test user
 	ctx = echocontext.NewTestContext()
@@ -186,55 +170,6 @@ func (suite *GraphTestSuite) TearDownTest() {
 
 func (suite *GraphTestSuite) TearDownSuite() {
 	testutils.TeardownFixture(suite.tf)
-}
-
-func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumGraphClient {
-	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
-
-	srv := handler.NewDefaultServer(
-		graphapi.NewExecutableSchema(
-			graphapi.Config{Resolvers: graphapi.NewResolver(c).WithLogger(logger)},
-		))
-
-	graphapi.WithTransactions(srv, c)
-
-	httpClient := &httpsling.Client{
-		HTTPClient: &http.Client{Transport: localRoundTripper{handler: srv}},
-	}
-
-	// setup interceptors
-	opts := []datumclient.ClientOption{
-		datumclient.WithCredentials(
-			datumclient.Authorization{
-				BearerToken: rawToken,
-				Session:     session,
-			}),
-		datumclient.WithClient(httpClient),
-	}
-
-	config := datumclient.NewDefaultConfig()
-
-	client, err := datumclient.New(config, opts...)
-	if err != nil {
-		t.Fatalf("failed to create client: %s", err)
-
-		return nil
-	}
-
-	return client
-}
-
-// localRoundTripper is an http.RoundTripper that executes HTTP transactions
-// by using handler directly, instead of going over an HTTP connection.
-type localRoundTripper struct {
-	handler http.Handler
-}
-
-func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	w := httptest.NewRecorder()
-	l.handler.ServeHTTP(w, req)
-
-	return w.Result(), nil
 }
 
 // userContext creates a new user in the database and returns a context with

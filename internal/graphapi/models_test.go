@@ -222,13 +222,13 @@ type EntitlementPlanFeatureCleanup struct {
 
 // MustNew organization builder is used to create, without authz checks, orgs in the database
 func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Organization {
+	// no auth, so allow policy
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
 	if !o.PersonalOrg {
 		// mock writes
 		mock_fga.WriteOnce(t, o.client.fga)
 	}
-
-	// no auth, so allow policy
-	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	if o.Name == "" {
 		o.Name = gofakeit.LetterN(40)
@@ -271,7 +271,6 @@ func (o *OrganizationCleanup) MustDelete(ctx context.Context, t *testing.T) {
 func (u *UserBuilder) MustNew(ctx context.Context, t *testing.T) *ent.User {
 	// mock writes
 	mock_fga.WriteOnce(t, u.client.fga)
-	mock_fga.CheckAny(t, u.client.fga, true)
 
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 

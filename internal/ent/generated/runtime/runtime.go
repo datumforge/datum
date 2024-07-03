@@ -1484,6 +1484,8 @@ func init() {
 	orgmembership.Hooks[2] = orgmembershipMixinHooks2[0]
 
 	orgmembership.Hooks[3] = orgmembershipHooks[0]
+
+	orgmembership.Hooks[4] = orgmembershipHooks[1]
 	orgmembershipMixinInters2 := orgmembershipMixin[2].Interceptors()
 	orgmembershipInters := schema.OrgMembership{}.Interceptors()
 	orgmembership.Interceptors[0] = orgmembershipMixinInters2[0]

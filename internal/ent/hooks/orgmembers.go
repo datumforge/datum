@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"entgo.io/ent"
+	"github.com/99designs/gqlgen/graphql"
 	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -54,6 +55,11 @@ func HookOrgMembers() ent.Hook {
 				return nil, err
 			}
 
+			// check to see if the default org needs to be updated for the user
+			if err := updateOrgMemberDefaultOrgOnCreate(ctx, mutation, orgID); err != nil {
+				return retValue, err
+			}
+
 			if userID, ok := mutation.UserID(); ok {
 				role, _ := mutation.Role()
 
@@ -86,4 +92,61 @@ func HookOrgMembers() ent.Hook {
 			return retValue, err
 		})
 	}, ent.OpCreate)
+}
+
+// HookOrgMembersDelete is a hook that runs during the delete operation of an org membership
+func HookOrgMembersDelete() ent.Hook {
+	return hook.On(func(next ent.Mutator) ent.Mutator {
+		return hook.OrgMembershipFunc(func(ctx context.Context, mutation *generated.OrgMembershipMutation) (generated.Value, error) {
+			// we only want to do this on direct deleteOrgMembership operations
+			// deleteOrganization will be handled by the organization hook
+			rootFieldCtx := graphql.GetRootFieldContext(ctx)
+			if rootFieldCtx == nil || rootFieldCtx.Object != "deleteOrgMembership" {
+				return next.Mutate(ctx, mutation)
+			}
+
+			// get the existing org membership
+			id, ok := mutation.ID()
+			if !ok {
+				return nil, fmt.Errorf("%w: %s", ErrInvalidInput, "id is required")
+			}
+
+			// get the org membership
+			orgMembership, err := mutation.Client().OrgMembership.Get(ctx, id)
+			if err != nil {
+				return nil, err
+			}
+
+			// execute the delete operation
+			retValue, err := next.Mutate(ctx, mutation)
+			if err != nil {
+				return nil, err
+			}
+
+			// check to see if the default org needs to be updated for the user
+			allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			if _, err = checkAndUpdateDefaultOrg(allowCtx, orgMembership.UserID, orgMembership.OrganizationID, mutation.Client()); err != nil {
+				return nil, err
+			}
+
+			return retValue, err
+		})
+	}, ent.OpDeleteOne|ent.OpDelete|ent.OpUpdate|ent.OpUpdateOne) // handle soft deletes as well as hard deletes
+}
+
+// updateOrgMemberDefaultOrgOnCreate updates the user's default org if the user has no default org or
+// the default org is their personal org
+func updateOrgMemberDefaultOrgOnCreate(ctx context.Context, mutation *generated.OrgMembershipMutation, orgID string) error {
+	// get the user id from the mutation, this is a required field
+	userID, ok := mutation.UserID()
+	if !ok {
+		// this should never happen because the mutation should have already failed
+		return fmt.Errorf("%w: %s", ErrInvalidInput, "user id is required")
+	}
+
+	// allow the request, which is for a user other than the authenticated user
+	// to update the default org
+	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+
+	return updateDefaultOrgIfPersonal(allowCtx, userID, orgID, mutation.Client())
 }

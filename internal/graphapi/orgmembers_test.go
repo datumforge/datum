@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"context"
 	"testing"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
@@ -13,6 +14,7 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/enums"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 func (suite *GraphTestSuite) TestQueryOrgMembers() {
@@ -100,7 +102,7 @@ func (suite *GraphTestSuite) TestQueryOrgMembers() {
 	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
+func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
 	t := suite.T()
 
 	// setup user context
@@ -165,7 +167,7 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 		{
 			name:      "invalid user",
 			orgID:     org1.ID,
-			userID:    "not-a-valid-user-id",
+			userID:    ulids.New().String(),
 			role:      enums.RoleMember,
 			checkOrg:  true,
 			checkRole: true,
@@ -173,7 +175,7 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 		},
 		{
 			name:      "invalid org",
-			orgID:     "not-a-valid-org-id",
+			orgID:     ulids.New().String(),
 			userID:    testUser1.ID,
 			role:      enums.RoleMember,
 			checkOrg:  false,
@@ -226,6 +228,9 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 			assert.Equal(t, tc.userID, resp.CreateOrgMembership.OrgMembership.UserID)
 			assert.Equal(t, tc.orgID, resp.CreateOrgMembership.OrgMembership.OrganizationID)
 			assert.Equal(t, tc.role, resp.CreateOrgMembership.OrgMembership.Role)
+
+			// make sure the user default org is set to the new org
+			suite.assertDefaultOrgUpdate(reqCtx, tc.userID, tc.orgID, true)
 		})
 	}
 
@@ -235,7 +240,7 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 	(&UserCleanup{client: suite.client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryUpdateOrgMembers() {
+func (suite *GraphTestSuite) TestMutationUpdateOrgMembers() {
 	t := suite.T()
 
 	// setup user context
@@ -313,7 +318,7 @@ func (suite *GraphTestSuite) TestQueryUpdateOrgMembers() {
 	(&OrgMemberCleanup{client: suite.client, ID: om.ID}).MustDelete(reqCtx, t)
 }
 
-func (suite *GraphTestSuite) TestQueryDeleteOrgMembers() {
+func (suite *GraphTestSuite) TestMutationDeleteOrgMembers() {
 	t := suite.T()
 
 	// setup user context
@@ -334,4 +339,30 @@ func (suite *GraphTestSuite) TestQueryDeleteOrgMembers() {
 	require.NotNil(t, resp)
 	require.NotNil(t, resp.DeleteOrgMembership)
 	assert.Equal(t, om.ID, resp.DeleteOrgMembership.DeletedID)
+
+	// make sure the user default org is not set to the deleted org
+	suite.assertDefaultOrgUpdate(reqCtx, om.UserID, om.OrganizationID, false)
+}
+
+func (suite *GraphTestSuite) assertDefaultOrgUpdate(ctx context.Context, userID, orgID string, isEqual bool) {
+	t := suite.T()
+
+	// when an org membership is deleted, the user default org should be updated
+	// we need to allow the request because this is not for the user making the request
+	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+
+	where := datumclient.UserSettingWhereInput{
+		UserID: &userID,
+	}
+
+	userSettingResp, err := suite.client.datum.GetUserSettings(allowCtx, where)
+	require.NoError(t, err)
+	require.NotNil(t, userSettingResp)
+	require.Len(t, userSettingResp.UserSettings.Edges, 1)
+
+	if isEqual {
+		assert.Equal(t, orgID, userSettingResp.UserSettings.Edges[0].Node.DefaultOrg.ID)
+	} else {
+		assert.NotEqual(t, orgID, userSettingResp.UserSettings.Edges[0].Node.DefaultOrg.ID)
+	}
 }

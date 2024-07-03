@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"time"
 
+	"ariga.io/entcache"
 	"entgo.io/contrib/entgql"
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
@@ -15,6 +17,7 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/gorilla/websocket"
 	"github.com/ravilushqa/otelgqlgen"
+	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/wundergraph/graphql-go-tools/pkg/playground"
 	"go.uber.org/zap"
 
@@ -101,6 +104,9 @@ func (r *Resolver) Handler(withPlayground bool) *Handler {
 	// add transactional db client
 	WithTransactions(srv, r.client)
 
+	// add context level caching
+	WithContextLevelCache(srv)
+
 	// add analytics
 	WithEvents(r.client)
 
@@ -145,6 +151,25 @@ func WithTransactions(h *handler.Server, c *ent.Client) {
 	// setup transactional db client
 	h.AroundOperations(injectClient(c))
 	h.Use(entgql.Transactioner{TxOpener: c})
+}
+
+// WithContextLevelCache adds a context level cache to the handler
+func WithContextLevelCache(h *handler.Server) {
+	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
+		if op := graphql.GetOperationContext(ctx).Operation; op != nil && op.Operation == ast.Query {
+			ctx = entcache.NewContext(ctx)
+		}
+		return next(ctx)
+	})
+}
+
+// WithSkipCache adds a skip cache middleware to the handler
+// This is useful for testing, where you don't want to cache responses
+// so you can see the changes immediately
+func WithSkipCache(h *handler.Server) {
+	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
+		return next(entcache.Skip(ctx))
+	})
 }
 
 func (r *Resolver) WithPool(maxWorkers int, maxCapacity int, options ...pond.Option) {

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -31,6 +32,7 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 		name     string
 		email    string
 		provider enums.AuthProvider
+		image    string
 	}
 
 	tests := []struct {
@@ -46,12 +48,14 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 				name:     "Wanda Maximoff",
 				email:    "wmaximoff@marvel.com",
 				provider: enums.AuthProviderGitHub,
+				image:    "https://example.com/images/photo.jpg",
 			},
 			want: &ent.User{
-				FirstName:    "Wanda",
-				LastName:     "Maximoff",
-				Email:        "wmaximoff@marvel.com",
-				AuthProvider: enums.AuthProviderGitHub,
+				FirstName:       "Wanda",
+				LastName:        "Maximoff",
+				Email:           "wmaximoff@marvel.com",
+				AuthProvider:    enums.AuthProviderGitHub,
+				AvatarRemoteURL: lo.ToPtr("https://example.com/images/photo.jpg"),
 			},
 			writes: true,
 		},
@@ -61,12 +65,14 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 				name:     "Wanda Maximoff",
 				email:    "wmaximoff@marvel.com",
 				provider: enums.AuthProviderGoogle,
+				image:    "https://example.com/images/photo.jpg",
 			},
 			want: &ent.User{
-				FirstName:    "Wanda",
-				LastName:     "Maximoff",
-				Email:        "wmaximoff@marvel.com",
-				AuthProvider: enums.AuthProviderGoogle,
+				FirstName:       "Wanda",
+				LastName:        "Maximoff",
+				Email:           "wmaximoff@marvel.com",
+				AuthProvider:    enums.AuthProviderGoogle,
+				AvatarRemoteURL: lo.ToPtr("https://example.com/images/photo.jpg"),
 			},
 			writes: true,
 		},
@@ -76,12 +82,48 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 				name:     "Wanda Maximoff",
 				email:    "wmaximoff@marvel.com",
 				provider: enums.AuthProviderGoogle,
+				image:    "https://example.com/images/photo.jpg",
 			},
 			want: &ent.User{
-				FirstName:    "Wanda",
-				LastName:     "Maximoff",
-				Email:        "wmaximoff@marvel.com",
-				AuthProvider: enums.AuthProviderGoogle,
+				FirstName:       "Wanda",
+				LastName:        "Maximoff",
+				Email:           "wmaximoff@marvel.com",
+				AuthProvider:    enums.AuthProviderGoogle,
+				AvatarRemoteURL: lo.ToPtr("https://example.com/images/photo.jpg"),
+			},
+			writes: false,
+		},
+		{
+			name: "no image, avatar URL nil ",
+			args: args{
+				name:     "Wand Maxim",
+				email:    "wmaximoff1@marvel.com",
+				provider: enums.AuthProviderGitHub,
+				image:    "",
+			},
+			want: &ent.User{
+				FirstName:       "Wand",
+				LastName:        "Maxim",
+				Email:           "wmaximoff1@marvel.com",
+				AuthProvider:    enums.AuthProviderGitHub,
+				AvatarRemoteURL: nil,
+			},
+			writes: true,
+		},
+		{
+			name: "no image, update last seen",
+			args: args{
+				name:     "Wand Maxim",
+				email:    "wmaximoff1@marvel.com",
+				provider: enums.AuthProviderGitHub,
+				image:    "",
+			},
+			want: &ent.User{
+				FirstName:       "Wand",
+				LastName:        "Maxim",
+				Email:           "wmaximoff1@marvel.com",
+				AuthProvider:    enums.AuthProviderGitHub,
+				AvatarRemoteURL: nil,
 			},
 			writes: false,
 		},
@@ -107,7 +149,7 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 			// set transaction in the context
 			ctx = transaction.NewContext(ctx, tx)
 
-			got, err := suite.h.CheckAndCreateUser(ctx, tt.args.name, tt.args.email, tt.args.provider)
+			got, err := suite.h.CheckAndCreateUser(ctx, tt.args.name, tt.args.email, tt.args.provider, tt.args.image)
 			if tt.wantErr {
 				require.Error(t, err)
 				assert.Nil(t, got)
@@ -125,6 +167,12 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 			assert.Equal(t, tt.want.Email, got.Email)
 			assert.Equal(t, tt.want.AuthProvider, got.AuthProvider)
 			assert.WithinDuration(t, now, *got.LastSeen, time.Second*5)
+
+			if tt.want.AvatarRemoteURL == nil {
+				assert.Empty(t, got.AvatarRemoteURL)
+			} else {
+				assert.Equal(t, *tt.want.AvatarRemoteURL, *got.AvatarRemoteURL)
+			}
 		})
 	}
 }

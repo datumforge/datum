@@ -573,4 +573,5 @@ type OauthTokenRequest struct {
 	ExternalUserID   string `json:"externalUserId"`
 	ExternalUserName string `json:"externalUserName"`
 	ClientToken      string `json:"clientToken"`
+	Image            string `json:"image,omitempty"`
 }

@@ -313,3 +313,24 @@ func NewMissingRequiredFieldError(field string) *MissingRequiredFieldError {
 		RequiredField: field,
 	}
 }
+
+// IsForeignKeyConstraintError reports if the error resulted from a database foreign-key constraint violation.
+// e.g. parent row does not exist.
+func IsForeignKeyConstraintError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	for _, s := range []string{
+		"Error 1451",                      // MySQL (Cannot delete or update a parent row).
+		"Error 1452",                      // MySQL (Cannot add or update a child row).
+		"violates foreign key constraint", // Postgres
+		"FOREIGN KEY constraint failed",   // SQLite
+	} {
+		if strings.Contains(err.Error(), s) {
+			return true
+		}
+	}
+
+	return false
+}

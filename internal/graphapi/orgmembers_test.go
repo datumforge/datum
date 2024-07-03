@@ -171,7 +171,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {
 			role:      enums.RoleMember,
 			checkOrg:  true,
 			checkRole: true,
-			errMsg:    "constraint failed", // TODO: better error messaging: https://github.com/datumforge/datum/issues/415
+			errMsg:    "constraint failed, unable to complete the action",
 		},
 		{
 			name:      "invalid org",

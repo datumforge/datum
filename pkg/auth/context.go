@@ -58,16 +58,6 @@ func GetContextName(key *ContextKey) string {
 	return key.name
 }
 
-// GetContextValue returns the value of the context key
-func GetContextValue(c echo.Context, key *ContextKey) string {
-	value := c.Get(key.name)
-	if value == nil {
-		return ""
-	}
-
-	return value.(string)
-}
-
 // SetAuthenticatedUserContext sets the authenticated user context in the echo context
 func SetAuthenticatedUserContext(c echo.Context, user *AuthenticatedUser) {
 	c.Set(ContextAuthenticatedUser.name, user)

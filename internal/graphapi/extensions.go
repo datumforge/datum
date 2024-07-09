@@ -13,17 +13,28 @@ import (
 )
 
 const (
-	AuthExtensionKey          = "auth"
+	// AuthExtensionKey is the key used to store the auth data in the extensions map
+	AuthExtensionKey = "auth"
+	// ServerLatencyExtensionKey is the key used to store the server latency in the extensions map
 	ServerLatencyExtensionKey = "server_latency"
-	TraceExtensionKey         = "trace_id"
+	// TraceExtensionKey is the key used to store the trace id in the extensions map
+	TraceExtensionKey = "trace_id"
 )
 
+// Auth contains the authentication data to be added to the extensions map
 type Auth struct {
-	AuthenticationType     auth.AuthenticationType `json:"authentication_type"`
-	AuthorizedOrganization string                  `json:"authorized_organization"`
-	AccessToken            string                  `json:"access_token"`
-	RefreshToken           string                  `json:"refresh_token"`
-	SessionID              string                  `json:"session_id"`
+	// AuthenticationType is the type of authentication used, e.g. JWT, API key, etc.
+	AuthenticationType auth.AuthenticationType `json:"authentication_type"`
+	// AuthorizedOrganization is the organization ID of the authenticated user
+	AuthorizedOrganization string `json:"authorized_organization"`
+	// AccessToken is the access token used for authentication, if the user did an action (e.g. created a new organization)
+	// that updated the access token, this will be the new access token
+	AccessToken string `json:"access_token"`
+	// RefreshToken is the refresh token used for authentication, if the user did an action (e.g. created a new organization)
+	// that updated the refresh token, this will be the new refresh token
+	RefreshToken string `json:"refresh_token"`
+	// SessionID is the session token used for authentication
+	SessionID string `json:"session_id"`
 }
 
 // AddAllExtensions adds all the extensions to the server including auth, latency and trace
@@ -36,6 +47,7 @@ func AddAllExtensions(h *handler.Server) {
 	traceExtension(h)
 }
 
+// authExtension adds the auth data to the extensions map in the response
 func authExtension(h *handler.Server) {
 	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 		resp := next(ctx)
@@ -48,6 +60,7 @@ func authExtension(h *handler.Server) {
 	})
 }
 
+// latencyExtension adds the server latency to the extensions map in the response
 func latencyExtension(h *handler.Server) {
 	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 		start := time.Now()
@@ -62,6 +75,7 @@ func latencyExtension(h *handler.Server) {
 	})
 }
 
+// traceExtension adds the trace id to the extensions map in the response
 func traceExtension(h *handler.Server) {
 	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 		resp := next(ctx)

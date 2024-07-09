@@ -82,6 +82,8 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 				if err != nil {
 					return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
 				}
+
+				auth.SetAccessTokenContext(c, accessToken)
 			}
 
 			auth.SetAuthenticatedUserContext(c, au)

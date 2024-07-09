@@ -26,6 +26,9 @@ var ContextAuthenticatedUser = &ContextKey{"authenticated_user"}
 // ContextAccessToken is the context key for the access token
 var ContextAccessToken = &ContextKey{"access_token"}
 
+// ContextAccessToken is the context key for the access token
+var ContextRefreshToken = &ContextKey{"refresh_token"}
+
 // ContextRequestID is the context key for the request ID
 var ContextRequestID = &ContextKey{"request_id"}
 
@@ -53,6 +56,16 @@ type AuthenticatedUser struct {
 // GetContextName returns the name of the context key
 func GetContextName(key *ContextKey) string {
 	return key.name
+}
+
+// GetContextValue returns the value of the context key
+func GetContextValue(c echo.Context, key *ContextKey) string {
+	value := c.Get(key.name)
+	if value == nil {
+		return ""
+	}
+
+	return value.(string)
 }
 
 // SetAuthenticatedUserContext sets the authenticated user context in the echo context
@@ -300,4 +313,48 @@ func addOrganizationIDsToEchoContext(c echo.Context, orgID string) error {
 	}
 
 	return ErrNoAuthUser
+}
+
+// SetRefreshTokenContext sets the refresh token context in the echo context
+func SetRefreshTokenContext(c echo.Context, token string) {
+	c.Set(ContextRefreshToken.name, token)
+}
+
+// SetAccessTokenContext sets the access token context in the echo context
+func SetAccessTokenContext(c echo.Context, token string) {
+	c.Set(ContextAccessToken.name, token)
+}
+
+// GetAccessTokenContext gets the authenticated user context
+func GetAccessTokenContext(c context.Context) (string, error) {
+	ec, err := echocontext.EchoContextFromContext(c)
+	if err != nil {
+		return "", err
+	}
+
+	result := ec.Get(ContextAccessToken.name)
+
+	token, ok := result.(string)
+	if !ok {
+		return "", ErrNoAuthUser
+	}
+
+	return token, nil
+}
+
+// GetRefreshTokenContext gets the authenticated user context
+func GetRefreshTokenContext(c context.Context) (string, error) {
+	ec, err := echocontext.EchoContextFromContext(c)
+	if err != nil {
+		return "", err
+	}
+
+	result := ec.Get(ContextRefreshToken.name)
+
+	token, ok := result.(string)
+	if !ok {
+		return "", ErrNoAuthUser
+	}
+
+	return token, nil
 }

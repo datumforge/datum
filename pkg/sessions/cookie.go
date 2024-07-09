@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	defaultMaxAge = 3600 * 24 * 7 // 1 week
+	defaultMaxAgeSeconds = 60 * 60 // 1 hour (in seconds)
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 var DefaultCookieConfig = &CookieConfig{
 	Path:     "/",
 	Domain:   "",
-	MaxAge:   defaultMaxAge,
+	MaxAge:   defaultMaxAgeSeconds,
 	HTTPOnly: true,
 	Secure:   true,
 	SameSite: http.SameSiteStrictMode,
@@ -28,7 +28,7 @@ var DefaultCookieConfig = &CookieConfig{
 // DebugCookieConfig configures http.Cookie creation for debugging
 var DebugCookieConfig = &CookieConfig{
 	Path:     "/",
-	MaxAge:   defaultMaxAge,
+	MaxAge:   defaultMaxAgeSeconds,
 	HTTPOnly: true,
 	Secure:   false, // allow to work over http
 	SameSite: http.SameSiteLaxMode,
@@ -38,7 +38,7 @@ var DebugCookieConfig = &CookieConfig{
 var DebugOnlyCookieConfig = CookieConfig{
 	Name:     DevCookieName,
 	Path:     "/",
-	MaxAge:   600, //nolint:mnd
+	MaxAge:   defaultMaxAgeSeconds,
 	HTTPOnly: true,
 	Secure:   false, // allow to work over http
 	SameSite: http.SameSiteLaxMode,

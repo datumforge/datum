@@ -72,6 +72,9 @@ func ContextWithUserID(ctx context.Context, userID string) context.Context {
 // SessionToken returns the encoded session token
 func SessionToken(ctx context.Context) (string, error) {
 	sd := getSessionDataFromContext(ctx)
+	if sd == nil {
+		return "", ErrInvalidSession
+	}
 
 	sd.mu.Lock()
 	defer sd.mu.Unlock()
@@ -88,7 +91,7 @@ func (s *Session[P]) addSessionDataToContext(ctx context.Context) context.Contex
 func getSessionDataFromContext(ctx context.Context) *Session[map[string]any] {
 	c, ok := ctx.Value(SessionContextKey).(*Session[map[string]any])
 	if !ok {
-		panic("no session data in context")
+		return nil
 	}
 
 	return c

@@ -10,7 +10,7 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "delete an existing datum entitytype",
+	Short: "delete an existing datum entity type",
 	Run: func(cmd *cobra.Command, args []string) {
 		err := delete(cmd.Context())
 		cobra.CheckErr(err)
@@ -20,14 +20,14 @@ var deleteCmd = &cobra.Command{
 func init() {
 	cmd.AddCommand(deleteCmd)
 
-	deleteCmd.Flags().StringP("id", "i", "", "entitytype id to delete")
+	deleteCmd.Flags().StringP("id", "i", "", "entity type id to delete")
 }
 
 // deleteValidation validates the required fields for the command
 func deleteValidation() (string, error) {
 	id := datum.Config.String("id")
 	if id == "" {
-		return "", datum.NewRequiredFieldMissingError("entitytype id")
+		return "", datum.NewRequiredFieldMissingError("entity type id")
 	}
 
 	return id, nil

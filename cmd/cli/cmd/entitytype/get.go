@@ -10,7 +10,7 @@ import (
 
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "get an existing datum entityType",
+	Short: "get an existing datum entity type",
 	Run: func(cmd *cobra.Command, args []string) {
 		err := get(cmd.Context())
 		cobra.CheckErr(err)
@@ -20,10 +20,10 @@ var getCmd = &cobra.Command{
 func init() {
 	cmd.AddCommand(getCmd)
 
-	getCmd.Flags().StringP("id", "i", "", "entityType id to query")
+	getCmd.Flags().StringP("id", "i", "", "entity type id to query")
 }
 
-// get an existing entityType in the datum platform
+// get an existing entity type in the datum platform
 func get(ctx context.Context) error {
 	// setup datum http client
 	client, err := datum.SetupClientWithAuth(ctx)
@@ -32,7 +32,7 @@ func get(ctx context.Context) error {
 	// filter options
 	id := datum.Config.String("id")
 
-	// if an entityType ID is provided, filter on that entityType, otherwise get all
+	// if an entityType ID is provided, filter on that entity type, otherwise get all
 	if id != "" {
 		o, err := client.GetEntityTypeByID(ctx, id)
 		cobra.CheckErr(err)

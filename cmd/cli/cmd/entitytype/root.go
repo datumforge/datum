@@ -10,10 +10,10 @@ import (
 	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
-// cmd represents the base entityType command when called without any subcommands
+// cmd represents the base entity type command when called without any subcommands
 var cmd = &cobra.Command{
 	Use:   "entity-type",
-	Short: "the subcommands for working with datum entityTypes",
+	Short: "the subcommands for working with datum entity types",
 }
 
 func init() {
@@ -22,12 +22,12 @@ func init() {
 
 // consoleOutput prints the output in the console
 func consoleOutput(e any) error {
-	// check if the output format is JSON and print the entityTypes in JSON format
+	// check if the output format is JSON and print the entity types in JSON format
 	if datum.OutputFormat == datum.JSONOutput {
 		return jsonOutput(e)
 	}
 
-	// check the type of the entityTypes and print them in a table format
+	// check the type of the entity types and print them in a table format
 	switch v := e.(type) {
 	case *datumclient.GetAllEntityTypes:
 		var nodes []*datumclient.GetAllEntityTypes_EntityTypes_Edges_Node

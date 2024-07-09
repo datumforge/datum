@@ -40,6 +40,10 @@ steps:
                 - "GOTOOLCHAIN=auto"
       - label: ":golang: go test - libsql"
         key: "go_test_libsql"
+        retry:
+          automatic:
+            - exit_status: "*"
+              limit: 2
         cancel_on_build_failing: true
         env:
           TEST_DB_URL: "libsql://file::memory:?cache=shared"

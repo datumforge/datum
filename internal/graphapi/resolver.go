@@ -22,7 +22,6 @@ import (
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/events/soiree"
 )
 
@@ -46,9 +45,10 @@ var (
 
 // Resolver provides a graph response resolver
 type Resolver struct {
-	client *ent.Client
-	pool   *soiree.PondPool
-	logger *zap.SugaredLogger
+	client            *ent.Client
+	pool              *soiree.PondPool
+	logger            *zap.SugaredLogger
+	extensionsEnabled bool
 }
 
 // NewResolver returns a resolver configured with the given ent client
@@ -60,6 +60,12 @@ func NewResolver(client *ent.Client) *Resolver {
 
 func (r Resolver) WithLogger(l *zap.SugaredLogger) *Resolver {
 	r.logger = l
+
+	return &r
+}
+
+func (r Resolver) WithExtensions(enabled bool) *Resolver {
+	r.extensionsEnabled = enabled
 
 	return &r
 }
@@ -111,14 +117,10 @@ func (r *Resolver) Handler(withPlayground bool) *Handler {
 	// add analytics
 	WithEvents(r.client)
 
-	// add latency extension
-	WithLatencyExtension(srv)
-
-	// add trace extension
-	WithTraceExtension(srv)
-
-	// add auth extension
-	WithAuthExtension(srv)
+	// add extensions if enabled
+	if r.extensionsEnabled {
+		AddAllExtensions(srv)
+	}
 
 	srv.Use(otelgqlgen.Middleware())
 
@@ -153,60 +155,6 @@ func WithEvents(c *ent.Client) {
 
 			return retVal, nil
 		})
-	})
-}
-
-func WithLatencyExtension(h *handler.Server) {
-	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
-		start := time.Now()
-		resp := next(ctx)
-		latency := time.Since(start).String()
-
-		if resp.Extensions == nil {
-			resp.Extensions = make(map[string]interface{})
-		}
-
-		resp.Extensions["server_latency"] = latency
-
-		return resp
-	})
-}
-
-func WithAuthExtension(h *handler.Server) {
-	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
-		resp := next(ctx)
-
-		if resp.Extensions == nil {
-			resp.Extensions = make(map[string]interface{})
-		}
-
-		resp.Extensions["auth"] = getAuthData(ctx)
-
-		return resp
-	})
-}
-
-type AuthExtension struct {
-	AuthenticationType     auth.AuthenticationType `json:"authentication_type"`
-	AuthorizedOrganization string                  `json:"authorized_organization"`
-	AccessToken            string                  `json:"access_token"`
-	RefreshToken           string                  `json:"refresh_token"`
-	SessionID              string                  `json:"session_id"`
-}
-
-func WithTraceExtension(h *handler.Server) {
-	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
-		resp := next(ctx)
-
-		traceID := getRequestID(ctx)
-
-		if resp.Extensions == nil {
-			resp.Extensions = make(map[string]interface{})
-		}
-
-		resp.Extensions["trace_id"] = traceID
-
-		return resp
 	})
 }
 

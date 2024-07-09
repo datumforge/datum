@@ -216,7 +216,8 @@ func WithGraphRoute(srv *server.Server, c *generated.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Setup Graph API Handlers
 		r := graphapi.NewResolver(c).
-			WithLogger(s.Config.Logger.Named("resolvers"))
+			WithLogger(s.Config.Logger.Named("resolvers")).
+			WithExtensions(s.Config.Settings.Server.EnableGraphExtensions)
 
 		// add pool to the resolver to manage the number of goroutines
 		r.WithPool(

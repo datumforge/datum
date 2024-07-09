@@ -132,6 +132,8 @@ type Server struct {
 	Mime mime.Config `json:"mime" koanf:"mime"`
 	// GraphPool contains settings for the goroutine pool used by the graph resolvers
 	GraphPool PondPool `json:"graphPool" koanf:"graphPool"`
+	// EnableGraphExtensions enables the graph extensions for the graph resolvers
+	EnableGraphExtensions bool `json:"enableGraphExtensions" koanf:"enableGraphExtensions" default:"true"`
 }
 
 // Auth settings including oauth2 providers and datum token configuration

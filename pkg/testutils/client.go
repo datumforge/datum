@@ -45,11 +45,8 @@ func DatumTestClient(t *testing.T, c *generated.Client) (*datumclient.DatumClien
 		Cache: lru.New(100), //nolint:mnd
 	})
 
-	// add the auth extension to the server
-	graphapi.WithAuthExtension(srv)
-
-	// add the trace extension to the server
-	graphapi.WithTraceExtension(srv)
+	// add all extension to the server
+	graphapi.AddAllExtensions(srv)
 
 	graphapi.WithTransactions(srv, c)
 

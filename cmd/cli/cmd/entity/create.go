@@ -89,7 +89,7 @@ func getEntityTypeID(ctx context.Context, name string) (string, error) {
 	cobra.CheckErr(err)
 
 	if len(o.EntityTypes.Edges) == 0 || len(o.EntityTypes.Edges) > 1 {
-		return "", fmt.Errorf("entity type %s not found", name)
+		return "", fmt.Errorf("%w: entity type '%s' not found", datum.ErrNotFound, name)
 	}
 
 	return o.EntityTypes.Edges[0].Node.ID, nil

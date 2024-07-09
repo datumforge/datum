@@ -87,6 +87,7 @@ func jsonOutput(out any) error {
 func tableOutput(out []datumclient.Entity) {
 	// create a table writer
 	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "Name", "DisplayName", "Description", "EntityType")
+
 	for _, i := range out {
 		entityTypeName := ""
 		if i.EntityType != nil {

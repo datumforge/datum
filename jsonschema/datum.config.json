@@ -206,6 +206,10 @@
         "graphPool": {
           "$ref": "#/$defs/config.PondPool",
           "description": "GraphPool contains settings for the goroutine pool used by the graph resolvers"
+        },
+        "enableGraphExtensions": {
+          "type": "boolean",
+          "description": "EnableGraphExtensions enables the graph extensions for the graph resolvers"
         }
       },
       "additionalProperties": false,

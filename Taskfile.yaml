@@ -182,6 +182,7 @@ tasks:
       - pre-commit autoupdate
       - go mod tidy && go get -u ./... &> /dev/null
       - pre-commit run --show-diff-on-failure --color=always --all-files
+      - task: rover:install
 
   precommit-full:
     desc: Lint the project against all files
@@ -221,3 +222,23 @@ tasks:
       - test -d /usr/local/go-{{.GO_VERSION}} || curl -L -o go{{.GO_VERSION}}.darwin-arm64.tar.gz {{.GO_URL}} && sudo tar -C /usr/local -xzf go{{.GO_VERSION}}.darwin-arm64.tar.gz
     status:
       - test -d /usr/local/go-{{.GO_VERSION}}
+
+  rover:
+    aliases:
+      - docker:rover # adding for backwards compatibility
+    desc: launches an interactive browser to navigate the configured graph schema
+    cmds:
+      - 'open "http://localhost:4000"'
+      - rover dev --skip-update-check --skip-update -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
+
+  rover:update:
+    desc: updates rover, if updates are available, and launches an interactive browser to navigate the configured graph schema
+    cmds:
+      - 'open "http://localhost:4000"'
+      - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
+
+  rover:install:
+    desc: installs the rover plugins for supergraph and router
+    cmds:
+      - rover install --plugin supergraph@v2.8.2
+      - rover install --plugin router@v1.50.0

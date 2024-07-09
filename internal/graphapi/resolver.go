@@ -45,9 +45,10 @@ var (
 
 // Resolver provides a graph response resolver
 type Resolver struct {
-	client *ent.Client
-	pool   *soiree.PondPool
-	logger *zap.SugaredLogger
+	client            *ent.Client
+	pool              *soiree.PondPool
+	logger            *zap.SugaredLogger
+	extensionsEnabled bool
 }
 
 // NewResolver returns a resolver configured with the given ent client
@@ -59,6 +60,12 @@ func NewResolver(client *ent.Client) *Resolver {
 
 func (r Resolver) WithLogger(l *zap.SugaredLogger) *Resolver {
 	r.logger = l
+
+	return &r
+}
+
+func (r Resolver) WithExtensions(enabled bool) *Resolver {
+	r.extensionsEnabled = enabled
 
 	return &r
 }
@@ -109,6 +116,11 @@ func (r *Resolver) Handler(withPlayground bool) *Handler {
 
 	// add analytics
 	WithEvents(r.client)
+
+	// add extensions if enabled
+	if r.extensionsEnabled {
+		AddAllExtensions(srv)
+	}
 
 	srv.Use(otelgqlgen.Middleware())
 

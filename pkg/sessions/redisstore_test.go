@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"testing"
+	"time"
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/redis/go-redis/v9"
@@ -12,6 +13,10 @@ import (
 
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/utils/ulids"
+)
+
+var (
+	mr *miniredis.Miniredis
 )
 
 func TestExists(t *testing.T) {
@@ -94,6 +99,42 @@ func TestGetSession(t *testing.T) {
 	}
 }
 
+func TestStoreSessionWithExpiration(t *testing.T) {
+	tests := []struct {
+		name    string
+		userID  string
+		session string
+		ttl     time.Duration
+	}{
+		{
+			name:    "happy path",
+			userID:  "MITB",
+			session: ulids.New().String(),
+			ttl:     1 * time.Second,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			rc := newRedisClient()
+			ps := sessions.NewStore(rc)
+
+			err := ps.StoreSessionWithExpiration(context.Background(), tc.session, tc.userID, tc.ttl)
+			require.NoError(t, err)
+
+			sessionID, err := ps.GetSession(context.Background(), tc.session)
+			assert.NoError(t, err)
+			assert.NotEmpty(t, sessionID)
+
+			// wait for the session to expire
+			mr.FastForward(tc.ttl)
+			sessionID, err = ps.GetSession(context.Background(), tc.session)
+			assert.Error(t, err)
+			assert.Empty(t, sessionID)
+		})
+	}
+}
+
 func TestDeleteSession(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -131,7 +172,9 @@ func TestDeleteSession(t *testing.T) {
 }
 
 func newRedisClient() *redis.Client {
-	mr, err := miniredis.Run()
+	var err error
+
+	mr, err = miniredis.Run()
 	if err != nil {
 		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}

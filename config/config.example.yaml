@@ -147,6 +147,7 @@ server:
         prefixes: null
     debug: false
     dev: false
+    enableGraphExtensions: true
     graphPool:
         maxCapacity: 1000
         maxWorkers: 100

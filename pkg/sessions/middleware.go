@@ -3,6 +3,7 @@ package sessions
 import (
 	"context"
 	"net/http"
+	"time"
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
@@ -109,7 +110,8 @@ func (sc *SessionConfig) SaveAndStoreSession(ctx context.Context, w http.Respons
 		return c, err
 	}
 
-	if err := sc.RedisStore.StoreSession(c, sessionID, userID); err != nil {
+	ttl := time.Duration(sc.CookieConfig.MaxAge * int(time.Second))
+	if err := sc.RedisStore.StoreSessionWithExpiration(c, sessionID, userID, ttl); err != nil {
 		return c, err
 	}
 

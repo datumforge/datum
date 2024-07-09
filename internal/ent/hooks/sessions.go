@@ -49,5 +49,9 @@ func updateUserAuthSession(ctx context.Context, as authmanager.Config, newOrgID 
 	// set the auth cookies
 	auth.SetAuthCookies(ec.Response().Writer, out.AccessToken, out.RefreshToken, *as.GetSessionConfig().CookieConfig)
 
+	// update the context with the new tokens and session
+	auth.SetAccessTokenContext(ec, out.AccessToken)
+	auth.SetRefreshTokenContext(ec, out.RefreshToken)
+
 	return err
 }

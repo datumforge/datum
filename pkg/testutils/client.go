@@ -45,6 +45,9 @@ func DatumTestClient(t *testing.T, c *generated.Client) (*datumclient.DatumClien
 		Cache: lru.New(100), //nolint:mnd
 	})
 
+	// add all extension to the server
+	graphapi.AddAllExtensions(srv)
+
 	graphapi.WithTransactions(srv, c)
 
 	// if you do not want sleeps (the writer prefers naps anyways), skip cache

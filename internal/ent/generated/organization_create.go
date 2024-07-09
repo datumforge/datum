@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
@@ -601,6 +602,21 @@ func (oc *OrganizationCreate) AddEntities(e ...*Entity) *OrganizationCreate {
 		ids[i] = e[i].ID
 	}
 	return oc.AddEntityIDs(ids...)
+}
+
+// AddEntitytypeIDs adds the "entitytypes" edge to the EntityType entity by IDs.
+func (oc *OrganizationCreate) AddEntitytypeIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddEntitytypeIDs(ids...)
+	return oc
+}
+
+// AddEntitytypes adds the "entitytypes" edges to the EntityType entity.
+func (oc *OrganizationCreate) AddEntitytypes(e ...*EntityType) *OrganizationCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oc.AddEntitytypeIDs(ids...)
 }
 
 // AddContactIDs adds the "contacts" edge to the Contact entity by IDs.
@@ -1232,6 +1248,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.Entity
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.EntitytypesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitytypesTable,
+			Columns: []string{organization.EntitytypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.EntityType
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

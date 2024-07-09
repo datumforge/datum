@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
@@ -559,6 +560,21 @@ func (ou *OrganizationUpdate) AddEntities(e ...*Entity) *OrganizationUpdate {
 	return ou.AddEntityIDs(ids...)
 }
 
+// AddEntitytypeIDs adds the "entitytypes" edge to the EntityType entity by IDs.
+func (ou *OrganizationUpdate) AddEntitytypeIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddEntitytypeIDs(ids...)
+	return ou
+}
+
+// AddEntitytypes adds the "entitytypes" edges to the EntityType entity.
+func (ou *OrganizationUpdate) AddEntitytypes(e ...*EntityType) *OrganizationUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ou.AddEntitytypeIDs(ids...)
+}
+
 // AddContactIDs adds the "contacts" edge to the Contact entity by IDs.
 func (ou *OrganizationUpdate) AddContactIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddContactIDs(ids...)
@@ -1039,6 +1055,27 @@ func (ou *OrganizationUpdate) RemoveEntities(e ...*Entity) *OrganizationUpdate {
 		ids[i] = e[i].ID
 	}
 	return ou.RemoveEntityIDs(ids...)
+}
+
+// ClearEntitytypes clears all "entitytypes" edges to the EntityType entity.
+func (ou *OrganizationUpdate) ClearEntitytypes() *OrganizationUpdate {
+	ou.mutation.ClearEntitytypes()
+	return ou
+}
+
+// RemoveEntitytypeIDs removes the "entitytypes" edge to EntityType entities by IDs.
+func (ou *OrganizationUpdate) RemoveEntitytypeIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveEntitytypeIDs(ids...)
+	return ou
+}
+
+// RemoveEntitytypes removes "entitytypes" edges to EntityType entities.
+func (ou *OrganizationUpdate) RemoveEntitytypes(e ...*EntityType) *OrganizationUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ou.RemoveEntitytypeIDs(ids...)
 }
 
 // ClearContacts clears all "contacts" edges to the Contact entity.
@@ -2282,6 +2319,54 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.EntitytypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitytypesTable,
+			Columns: []string{organization.EntitytypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.EntityType
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedEntitytypesIDs(); len(nodes) > 0 && !ou.mutation.EntitytypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitytypesTable,
+			Columns: []string{organization.EntitytypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.EntityType
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.EntitytypesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitytypesTable,
+			Columns: []string{organization.EntitytypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.EntityType
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ou.mutation.ContactsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -2906,6 +2991,21 @@ func (ouo *OrganizationUpdateOne) AddEntities(e ...*Entity) *OrganizationUpdateO
 	return ouo.AddEntityIDs(ids...)
 }
 
+// AddEntitytypeIDs adds the "entitytypes" edge to the EntityType entity by IDs.
+func (ouo *OrganizationUpdateOne) AddEntitytypeIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddEntitytypeIDs(ids...)
+	return ouo
+}
+
+// AddEntitytypes adds the "entitytypes" edges to the EntityType entity.
+func (ouo *OrganizationUpdateOne) AddEntitytypes(e ...*EntityType) *OrganizationUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ouo.AddEntitytypeIDs(ids...)
+}
+
 // AddContactIDs adds the "contacts" edge to the Contact entity by IDs.
 func (ouo *OrganizationUpdateOne) AddContactIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddContactIDs(ids...)
@@ -3386,6 +3486,27 @@ func (ouo *OrganizationUpdateOne) RemoveEntities(e ...*Entity) *OrganizationUpda
 		ids[i] = e[i].ID
 	}
 	return ouo.RemoveEntityIDs(ids...)
+}
+
+// ClearEntitytypes clears all "entitytypes" edges to the EntityType entity.
+func (ouo *OrganizationUpdateOne) ClearEntitytypes() *OrganizationUpdateOne {
+	ouo.mutation.ClearEntitytypes()
+	return ouo
+}
+
+// RemoveEntitytypeIDs removes the "entitytypes" edge to EntityType entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveEntitytypeIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveEntitytypeIDs(ids...)
+	return ouo
+}
+
+// RemoveEntitytypes removes "entitytypes" edges to EntityType entities.
+func (ouo *OrganizationUpdateOne) RemoveEntitytypes(e ...*EntityType) *OrganizationUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ouo.RemoveEntitytypeIDs(ids...)
 }
 
 // ClearContacts clears all "contacts" edges to the Contact entity.
@@ -4654,6 +4775,54 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Entity
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.EntitytypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitytypesTable,
+			Columns: []string{organization.EntitytypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.EntityType
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedEntitytypesIDs(); len(nodes) > 0 && !ouo.mutation.EntitytypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitytypesTable,
+			Columns: []string{organization.EntitytypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.EntityType
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.EntitytypesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitytypesTable,
+			Columns: []string{organization.EntitytypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.EntityType
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

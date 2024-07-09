@@ -1,5 +1,3 @@
-
-
 query GetAllEntityHistories {
   entityHistories {
     edges {
@@ -8,7 +6,7 @@ query GetAllEntityHistories {
         createdBy
         description
         displayName
-        entityType
+        entityTypeID
         historyTime
         id
         name
@@ -31,7 +29,7 @@ query GetEntityHistories($where: EntityHistoryWhereInput) {
         createdBy
         description
         displayName
-        entityType
+        entityTypeID
         historyTime
         id
         name

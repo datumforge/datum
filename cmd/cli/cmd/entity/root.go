@@ -86,10 +86,14 @@ func jsonOutput(out any) error {
 // tableOutput prints the output in a table format
 func tableOutput(out []datumclient.Entity) {
 	// create a table writer
-	// TODO: add additional columns to the table writer
 	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "Name", "DisplayName", "Description", "EntityType")
 	for _, i := range out {
-		writer.AddRow(i.ID, i.Name, i.DisplayName, *i.Description, i.EntityType)
+		entityTypeName := ""
+		if i.EntityType != nil {
+			entityTypeName = i.EntityType.Name
+		}
+
+		writer.AddRow(i.ID, i.Name, i.DisplayName, *i.Description, entityTypeName)
 	}
 
 	writer.Render()

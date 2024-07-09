@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
-	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/enthistory"
 )
 
@@ -208,16 +207,16 @@ func (ehc *EntityHistoryCreate) SetNillableDescription(s *string) *EntityHistory
 	return ehc
 }
 
-// SetEntityType sets the "entity_type" field.
-func (ehc *EntityHistoryCreate) SetEntityType(et enums.EntityType) *EntityHistoryCreate {
-	ehc.mutation.SetEntityType(et)
+// SetEntityTypeID sets the "entity_type_id" field.
+func (ehc *EntityHistoryCreate) SetEntityTypeID(s string) *EntityHistoryCreate {
+	ehc.mutation.SetEntityTypeID(s)
 	return ehc
 }
 
-// SetNillableEntityType sets the "entity_type" field if the given value is not nil.
-func (ehc *EntityHistoryCreate) SetNillableEntityType(et *enums.EntityType) *EntityHistoryCreate {
-	if et != nil {
-		ehc.SetEntityType(*et)
+// SetNillableEntityTypeID sets the "entity_type_id" field if the given value is not nil.
+func (ehc *EntityHistoryCreate) SetNillableEntityTypeID(s *string) *EntityHistoryCreate {
+	if s != nil {
+		ehc.SetEntityTypeID(*s)
 	}
 	return ehc
 }
@@ -295,10 +294,6 @@ func (ehc *EntityHistoryCreate) defaults() {
 		v := entityhistory.DefaultDisplayName
 		ehc.mutation.SetDisplayName(v)
 	}
-	if _, ok := ehc.mutation.EntityType(); !ok {
-		v := entityhistory.DefaultEntityType
-		ehc.mutation.SetEntityType(v)
-	}
 	if _, ok := ehc.mutation.ID(); !ok {
 		v := entityhistory.DefaultID()
 		ehc.mutation.SetID(v)
@@ -326,14 +321,6 @@ func (ehc *EntityHistoryCreate) check() error {
 	}
 	if _, ok := ehc.mutation.DisplayName(); !ok {
 		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "EntityHistory.display_name"`)}
-	}
-	if _, ok := ehc.mutation.EntityType(); !ok {
-		return &ValidationError{Name: "entity_type", err: errors.New(`generated: missing required field "EntityHistory.entity_type"`)}
-	}
-	if v, ok := ehc.mutation.EntityType(); ok {
-		if err := entityhistory.EntityTypeValidator(v); err != nil {
-			return &ValidationError{Name: "entity_type", err: fmt.Errorf(`generated: validator failed for field "EntityHistory.entity_type": %w`, err)}
-		}
 	}
 	return nil
 }
@@ -431,9 +418,9 @@ func (ehc *EntityHistoryCreate) createSpec() (*EntityHistory, *sqlgraph.CreateSp
 		_spec.SetField(entityhistory.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := ehc.mutation.EntityType(); ok {
-		_spec.SetField(entityhistory.FieldEntityType, field.TypeEnum, value)
-		_node.EntityType = value
+	if value, ok := ehc.mutation.EntityTypeID(); ok {
+		_spec.SetField(entityhistory.FieldEntityTypeID, field.TypeString, value)
+		_node.EntityTypeID = value
 	}
 	return _node, _spec
 }

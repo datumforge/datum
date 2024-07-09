@@ -8,7 +8,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/pkg/enums"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -121,6 +120,11 @@ func DisplayName(v string) predicate.Entity {
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldDescription, v))
+}
+
+// EntityTypeID applies equality check predicate on the "entity_type_id" field. It's identical to EntityTypeIDEQ.
+func EntityTypeID(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldEntityTypeID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -853,34 +857,79 @@ func DescriptionContainsFold(v string) predicate.Entity {
 	return predicate.Entity(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// EntityTypeEQ applies the EQ predicate on the "entity_type" field.
-func EntityTypeEQ(v enums.EntityType) predicate.Entity {
-	vc := v
-	return predicate.Entity(sql.FieldEQ(FieldEntityType, vc))
+// EntityTypeIDEQ applies the EQ predicate on the "entity_type_id" field.
+func EntityTypeIDEQ(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldEQ(FieldEntityTypeID, v))
 }
 
-// EntityTypeNEQ applies the NEQ predicate on the "entity_type" field.
-func EntityTypeNEQ(v enums.EntityType) predicate.Entity {
-	vc := v
-	return predicate.Entity(sql.FieldNEQ(FieldEntityType, vc))
+// EntityTypeIDNEQ applies the NEQ predicate on the "entity_type_id" field.
+func EntityTypeIDNEQ(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldNEQ(FieldEntityTypeID, v))
 }
 
-// EntityTypeIn applies the In predicate on the "entity_type" field.
-func EntityTypeIn(vs ...enums.EntityType) predicate.Entity {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Entity(sql.FieldIn(FieldEntityType, v...))
+// EntityTypeIDIn applies the In predicate on the "entity_type_id" field.
+func EntityTypeIDIn(vs ...string) predicate.Entity {
+	return predicate.Entity(sql.FieldIn(FieldEntityTypeID, vs...))
 }
 
-// EntityTypeNotIn applies the NotIn predicate on the "entity_type" field.
-func EntityTypeNotIn(vs ...enums.EntityType) predicate.Entity {
-	v := make([]any, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Entity(sql.FieldNotIn(FieldEntityType, v...))
+// EntityTypeIDNotIn applies the NotIn predicate on the "entity_type_id" field.
+func EntityTypeIDNotIn(vs ...string) predicate.Entity {
+	return predicate.Entity(sql.FieldNotIn(FieldEntityTypeID, vs...))
+}
+
+// EntityTypeIDGT applies the GT predicate on the "entity_type_id" field.
+func EntityTypeIDGT(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldGT(FieldEntityTypeID, v))
+}
+
+// EntityTypeIDGTE applies the GTE predicate on the "entity_type_id" field.
+func EntityTypeIDGTE(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldGTE(FieldEntityTypeID, v))
+}
+
+// EntityTypeIDLT applies the LT predicate on the "entity_type_id" field.
+func EntityTypeIDLT(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldLT(FieldEntityTypeID, v))
+}
+
+// EntityTypeIDLTE applies the LTE predicate on the "entity_type_id" field.
+func EntityTypeIDLTE(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldLTE(FieldEntityTypeID, v))
+}
+
+// EntityTypeIDContains applies the Contains predicate on the "entity_type_id" field.
+func EntityTypeIDContains(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldContains(FieldEntityTypeID, v))
+}
+
+// EntityTypeIDHasPrefix applies the HasPrefix predicate on the "entity_type_id" field.
+func EntityTypeIDHasPrefix(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldHasPrefix(FieldEntityTypeID, v))
+}
+
+// EntityTypeIDHasSuffix applies the HasSuffix predicate on the "entity_type_id" field.
+func EntityTypeIDHasSuffix(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldHasSuffix(FieldEntityTypeID, v))
+}
+
+// EntityTypeIDIsNil applies the IsNil predicate on the "entity_type_id" field.
+func EntityTypeIDIsNil() predicate.Entity {
+	return predicate.Entity(sql.FieldIsNull(FieldEntityTypeID))
+}
+
+// EntityTypeIDNotNil applies the NotNil predicate on the "entity_type_id" field.
+func EntityTypeIDNotNil() predicate.Entity {
+	return predicate.Entity(sql.FieldNotNull(FieldEntityTypeID))
+}
+
+// EntityTypeIDEqualFold applies the EqualFold predicate on the "entity_type_id" field.
+func EntityTypeIDEqualFold(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldEqualFold(FieldEntityTypeID, v))
+}
+
+// EntityTypeIDContainsFold applies the ContainsFold predicate on the "entity_type_id" field.
+func EntityTypeIDContainsFold(v string) predicate.Entity {
+	return predicate.Entity(sql.FieldContainsFold(FieldEntityTypeID, v))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.
@@ -962,6 +1011,35 @@ func HasDocumentsWith(preds ...predicate.DocumentData) predicate.Entity {
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.DocumentData
 		step.Edge.Schema = schemaConfig.EntityDocuments
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasEntityType applies the HasEdge predicate on the "entity_type" edge.
+func HasEntityType() predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, EntityTypeTable, EntityTypeColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.EntityType
+		step.Edge.Schema = schemaConfig.Entity
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntityTypeWith applies the HasEdge predicate on the "entity_type" edge with a given conditions (other predicates).
+func HasEntityTypeWith(preds ...predicate.EntityType) predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := newEntityTypeStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.EntityType
+		step.Edge.Schema = schemaConfig.Entity
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -15,9 +15,9 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/contact"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/pkg/enums"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -193,17 +193,23 @@ func (eu *EntityUpdate) ClearDescription() *EntityUpdate {
 	return eu
 }
 
-// SetEntityType sets the "entity_type" field.
-func (eu *EntityUpdate) SetEntityType(et enums.EntityType) *EntityUpdate {
-	eu.mutation.SetEntityType(et)
+// SetEntityTypeID sets the "entity_type_id" field.
+func (eu *EntityUpdate) SetEntityTypeID(s string) *EntityUpdate {
+	eu.mutation.SetEntityTypeID(s)
 	return eu
 }
 
-// SetNillableEntityType sets the "entity_type" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableEntityType(et *enums.EntityType) *EntityUpdate {
-	if et != nil {
-		eu.SetEntityType(*et)
+// SetNillableEntityTypeID sets the "entity_type_id" field if the given value is not nil.
+func (eu *EntityUpdate) SetNillableEntityTypeID(s *string) *EntityUpdate {
+	if s != nil {
+		eu.SetEntityTypeID(*s)
 	}
+	return eu
+}
+
+// ClearEntityTypeID clears the value of the "entity_type_id" field.
+func (eu *EntityUpdate) ClearEntityTypeID() *EntityUpdate {
+	eu.mutation.ClearEntityTypeID()
 	return eu
 }
 
@@ -240,6 +246,11 @@ func (eu *EntityUpdate) AddDocuments(d ...*DocumentData) *EntityUpdate {
 		ids[i] = d[i].ID
 	}
 	return eu.AddDocumentIDs(ids...)
+}
+
+// SetEntityType sets the "entity_type" edge to the EntityType entity.
+func (eu *EntityUpdate) SetEntityType(e *EntityType) *EntityUpdate {
+	return eu.SetEntityTypeID(e.ID)
 }
 
 // Mutation returns the EntityMutation object of the builder.
@@ -293,6 +304,12 @@ func (eu *EntityUpdate) RemoveDocuments(d ...*DocumentData) *EntityUpdate {
 		ids[i] = d[i].ID
 	}
 	return eu.RemoveDocumentIDs(ids...)
+}
+
+// ClearEntityType clears the "entity_type" edge to the EntityType entity.
+func (eu *EntityUpdate) ClearEntityType() *EntityUpdate {
+	eu.mutation.ClearEntityType()
+	return eu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -352,11 +369,6 @@ func (eu *EntityUpdate) check() error {
 	if v, ok := eu.mutation.DisplayName(); ok {
 		if err := entity.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Entity.display_name": %w`, err)}
-		}
-	}
-	if v, ok := eu.mutation.EntityType(); ok {
-		if err := entity.EntityTypeValidator(v); err != nil {
-			return &ValidationError{Name: "entity_type", err: fmt.Errorf(`generated: validator failed for field "Entity.entity_type": %w`, err)}
 		}
 	}
 	return nil
@@ -426,9 +438,6 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.DescriptionCleared() {
 		_spec.ClearField(entity.FieldDescription, field.TypeString)
-	}
-	if value, ok := eu.mutation.EntityType(); ok {
-		_spec.SetField(entity.FieldEntityType, field.TypeEnum, value)
 	}
 	if eu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -552,6 +561,37 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = eu.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.EntityTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.EntityTypeTable,
+			Columns: []string{entity.EntityTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.Entity
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.EntityTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.EntityTypeTable,
+			Columns: []string{entity.EntityTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.Entity
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -737,17 +777,23 @@ func (euo *EntityUpdateOne) ClearDescription() *EntityUpdateOne {
 	return euo
 }
 
-// SetEntityType sets the "entity_type" field.
-func (euo *EntityUpdateOne) SetEntityType(et enums.EntityType) *EntityUpdateOne {
-	euo.mutation.SetEntityType(et)
+// SetEntityTypeID sets the "entity_type_id" field.
+func (euo *EntityUpdateOne) SetEntityTypeID(s string) *EntityUpdateOne {
+	euo.mutation.SetEntityTypeID(s)
 	return euo
 }
 
-// SetNillableEntityType sets the "entity_type" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableEntityType(et *enums.EntityType) *EntityUpdateOne {
-	if et != nil {
-		euo.SetEntityType(*et)
+// SetNillableEntityTypeID sets the "entity_type_id" field if the given value is not nil.
+func (euo *EntityUpdateOne) SetNillableEntityTypeID(s *string) *EntityUpdateOne {
+	if s != nil {
+		euo.SetEntityTypeID(*s)
 	}
+	return euo
+}
+
+// ClearEntityTypeID clears the value of the "entity_type_id" field.
+func (euo *EntityUpdateOne) ClearEntityTypeID() *EntityUpdateOne {
+	euo.mutation.ClearEntityTypeID()
 	return euo
 }
 
@@ -784,6 +830,11 @@ func (euo *EntityUpdateOne) AddDocuments(d ...*DocumentData) *EntityUpdateOne {
 		ids[i] = d[i].ID
 	}
 	return euo.AddDocumentIDs(ids...)
+}
+
+// SetEntityType sets the "entity_type" edge to the EntityType entity.
+func (euo *EntityUpdateOne) SetEntityType(e *EntityType) *EntityUpdateOne {
+	return euo.SetEntityTypeID(e.ID)
 }
 
 // Mutation returns the EntityMutation object of the builder.
@@ -837,6 +888,12 @@ func (euo *EntityUpdateOne) RemoveDocuments(d ...*DocumentData) *EntityUpdateOne
 		ids[i] = d[i].ID
 	}
 	return euo.RemoveDocumentIDs(ids...)
+}
+
+// ClearEntityType clears the "entity_type" edge to the EntityType entity.
+func (euo *EntityUpdateOne) ClearEntityType() *EntityUpdateOne {
+	euo.mutation.ClearEntityType()
+	return euo
 }
 
 // Where appends a list predicates to the EntityUpdate builder.
@@ -909,11 +966,6 @@ func (euo *EntityUpdateOne) check() error {
 	if v, ok := euo.mutation.DisplayName(); ok {
 		if err := entity.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Entity.display_name": %w`, err)}
-		}
-	}
-	if v, ok := euo.mutation.EntityType(); ok {
-		if err := entity.EntityTypeValidator(v); err != nil {
-			return &ValidationError{Name: "entity_type", err: fmt.Errorf(`generated: validator failed for field "Entity.entity_type": %w`, err)}
 		}
 	}
 	return nil
@@ -1000,9 +1052,6 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	}
 	if euo.mutation.DescriptionCleared() {
 		_spec.ClearField(entity.FieldDescription, field.TypeString)
-	}
-	if value, ok := euo.mutation.EntityType(); ok {
-		_spec.SetField(entity.FieldEntityType, field.TypeEnum, value)
 	}
 	if euo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1126,6 +1175,37 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 			},
 		}
 		edge.Schema = euo.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.EntityTypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.EntityTypeTable,
+			Columns: []string{entity.EntityTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.Entity
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.EntityTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.EntityTypeTable,
+			Columns: []string{entity.EntityTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.Entity
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

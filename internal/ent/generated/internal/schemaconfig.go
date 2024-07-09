@@ -26,6 +26,8 @@ type SchemaConfig struct {
 	EntityContacts                   string // Entity-contacts->Contact table.
 	EntityDocuments                  string // Entity-documents->DocumentData table.
 	EntityHistory                    string // EntityHistory table.
+	EntityType                       string // EntityType table.
+	EntityTypeHistory                string // EntityTypeHistory table.
 	Event                            string // Event table.
 	EventHistory                     string // EventHistory table.
 	Feature                          string // Feature table.

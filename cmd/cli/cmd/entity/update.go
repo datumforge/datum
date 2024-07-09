@@ -7,7 +7,6 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 var updateCmd = &cobra.Command{
@@ -33,7 +32,7 @@ func init() {
 }
 
 // updateValidation validates the required fields for the command
-func updateValidation() (id string, input datumclient.UpdateEntityInput, err error) {
+func updateValidation(ctx context.Context) (id string, input datumclient.UpdateEntityInput, err error) {
 	id = datum.Config.String("id")
 	if id == "" {
 		return id, input, datum.NewRequiredFieldMissingError("entity id")
@@ -47,8 +46,10 @@ func updateValidation() (id string, input datumclient.UpdateEntityInput, err err
 
 	entityType := datum.Config.String("type")
 	if entityType != "" {
-		entityType := enums.EntityType(entityType)
-		input.EntityType = &entityType
+		id, err := getEntityTypeID(ctx, entityType)
+		cobra.CheckErr(err)
+
+		input.EntityTypeID = &id
 	}
 
 	displayName := datum.Config.String("display-name")
@@ -75,7 +76,7 @@ func update(ctx context.Context) error {
 	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
 
-	id, input, err := updateValidation()
+	id, input, err := updateValidation(ctx)
 	cobra.CheckErr(err)
 
 	o, err := client.UpdateEntity(ctx, id, input)

@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/contact"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
@@ -31,6 +32,8 @@ type EntityQuery struct {
 	withOwner          *OrganizationQuery
 	withContacts       *ContactQuery
 	withDocuments      *DocumentDataQuery
+	withEntityType     *EntityTypeQuery
+	withFKs            bool
 	modifiers          []func(*sql.Selector)
 	loadTotal          []func(context.Context, []*Entity) error
 	withNamedContacts  map[string]*ContactQuery
@@ -140,6 +143,31 @@ func (eq *EntityQuery) QueryDocuments() *DocumentDataQuery {
 		schemaConfig := eq.schemaConfig
 		step.To.Schema = schemaConfig.DocumentData
 		step.Edge.Schema = schemaConfig.EntityDocuments
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntityType chains the current query on the "entity_type" edge.
+func (eq *EntityQuery) QueryEntityType() *EntityTypeQuery {
+	query := (&EntityTypeClient{config: eq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, selector),
+			sqlgraph.To(entitytype.Table, entitytype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, entity.EntityTypeTable, entity.EntityTypeColumn),
+		)
+		schemaConfig := eq.schemaConfig
+		step.To.Schema = schemaConfig.EntityType
+		step.Edge.Schema = schemaConfig.Entity
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -333,14 +361,15 @@ func (eq *EntityQuery) Clone() *EntityQuery {
 		return nil
 	}
 	return &EntityQuery{
-		config:        eq.config,
-		ctx:           eq.ctx.Clone(),
-		order:         append([]entity.OrderOption{}, eq.order...),
-		inters:        append([]Interceptor{}, eq.inters...),
-		predicates:    append([]predicate.Entity{}, eq.predicates...),
-		withOwner:     eq.withOwner.Clone(),
-		withContacts:  eq.withContacts.Clone(),
-		withDocuments: eq.withDocuments.Clone(),
+		config:         eq.config,
+		ctx:            eq.ctx.Clone(),
+		order:          append([]entity.OrderOption{}, eq.order...),
+		inters:         append([]Interceptor{}, eq.inters...),
+		predicates:     append([]predicate.Entity{}, eq.predicates...),
+		withOwner:      eq.withOwner.Clone(),
+		withContacts:   eq.withContacts.Clone(),
+		withDocuments:  eq.withDocuments.Clone(),
+		withEntityType: eq.withEntityType.Clone(),
 		// clone intermediate query.
 		sql:  eq.sql.Clone(),
 		path: eq.path,
@@ -377,6 +406,17 @@ func (eq *EntityQuery) WithDocuments(opts ...func(*DocumentDataQuery)) *EntityQu
 		opt(query)
 	}
 	eq.withDocuments = query
+	return eq
+}
+
+// WithEntityType tells the query-builder to eager-load the nodes that are connected to
+// the "entity_type" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EntityQuery) WithEntityType(opts ...func(*EntityTypeQuery)) *EntityQuery {
+	query := (&EntityTypeClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withEntityType = query
 	return eq
 }
 
@@ -463,13 +503,18 @@ func (eq *EntityQuery) prepareQuery(ctx context.Context) error {
 func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entity, error) {
 	var (
 		nodes       = []*Entity{}
+		withFKs     = eq.withFKs
 		_spec       = eq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			eq.withOwner != nil,
 			eq.withContacts != nil,
 			eq.withDocuments != nil,
+			eq.withEntityType != nil,
 		}
 	)
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, entity.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Entity).scanValues(nil, columns)
 	}
@@ -510,6 +555,12 @@ func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 		if err := eq.loadDocuments(ctx, query, nodes,
 			func(n *Entity) { n.Edges.Documents = []*DocumentData{} },
 			func(n *Entity, e *DocumentData) { n.Edges.Documents = append(n.Edges.Documents, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := eq.withEntityType; query != nil {
+		if err := eq.loadEntityType(ctx, query, nodes, nil,
+			func(n *Entity, e *EntityType) { n.Edges.EntityType = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -688,6 +739,35 @@ func (eq *EntityQuery) loadDocuments(ctx context.Context, query *DocumentDataQue
 	}
 	return nil
 }
+func (eq *EntityQuery) loadEntityType(ctx context.Context, query *EntityTypeQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *EntityType)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Entity)
+	for i := range nodes {
+		fk := nodes[i].EntityTypeID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(entitytype.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "entity_type_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (eq *EntityQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := eq.querySpec()
@@ -721,6 +801,9 @@ func (eq *EntityQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if eq.withOwner != nil {
 			_spec.Node.AddColumnOnce(entity.FieldOwnerID)
+		}
+		if eq.withEntityType != nil {
+			_spec.Node.AddColumnOnce(entity.FieldEntityTypeID)
 		}
 	}
 	if ps := eq.predicates; len(ps) > 0 {

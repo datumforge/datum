@@ -27,6 +27,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -3511,6 +3513,598 @@ func (eh *EntityHistory) ToEdge(order *EntityHistoryOrder) *EntityHistoryEdge {
 	return &EntityHistoryEdge{
 		Node:   eh,
 		Cursor: order.Field.toCursor(eh),
+	}
+}
+
+// EntityTypeEdge is the edge representation of EntityType.
+type EntityTypeEdge struct {
+	Node   *EntityType `json:"node"`
+	Cursor Cursor      `json:"cursor"`
+}
+
+// EntityTypeConnection is the connection containing edges to EntityType.
+type EntityTypeConnection struct {
+	Edges      []*EntityTypeEdge `json:"edges"`
+	PageInfo   PageInfo          `json:"pageInfo"`
+	TotalCount int               `json:"totalCount"`
+}
+
+func (c *EntityTypeConnection) build(nodes []*EntityType, pager *entitytypePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *EntityType
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *EntityType {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *EntityType {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*EntityTypeEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &EntityTypeEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// EntityTypePaginateOption enables pagination customization.
+type EntityTypePaginateOption func(*entitytypePager) error
+
+// WithEntityTypeOrder configures pagination ordering.
+func WithEntityTypeOrder(order *EntityTypeOrder) EntityTypePaginateOption {
+	if order == nil {
+		order = DefaultEntityTypeOrder
+	}
+	o := *order
+	return func(pager *entitytypePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntityTypeOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntityTypeFilter configures pagination filter.
+func WithEntityTypeFilter(filter func(*EntityTypeQuery) (*EntityTypeQuery, error)) EntityTypePaginateOption {
+	return func(pager *entitytypePager) error {
+		if filter == nil {
+			return errors.New("EntityTypeQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entitytypePager struct {
+	reverse bool
+	order   *EntityTypeOrder
+	filter  func(*EntityTypeQuery) (*EntityTypeQuery, error)
+}
+
+func newEntityTypePager(opts []EntityTypePaginateOption, reverse bool) (*entitytypePager, error) {
+	pager := &entitytypePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntityTypeOrder
+	}
+	return pager, nil
+}
+
+func (p *entitytypePager) applyFilter(query *EntityTypeQuery) (*EntityTypeQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entitytypePager) toCursor(et *EntityType) Cursor {
+	return p.order.Field.toCursor(et)
+}
+
+func (p *entitytypePager) applyCursors(query *EntityTypeQuery, after, before *Cursor) (*EntityTypeQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultEntityTypeOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *entitytypePager) applyOrder(query *EntityTypeQuery) *EntityTypeQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultEntityTypeOrder.Field {
+		query = query.Order(DefaultEntityTypeOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *entitytypePager) orderExpr(query *EntityTypeQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultEntityTypeOrder.Field {
+			b.Comma().Ident(DefaultEntityTypeOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to EntityType.
+func (et *EntityTypeQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntityTypePaginateOption,
+) (*EntityTypeConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntityTypePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if et, err = pager.applyFilter(et); err != nil {
+		return nil, err
+	}
+	conn := &EntityTypeConnection{Edges: []*EntityTypeEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := et.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if et, err = pager.applyCursors(et, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		et.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := et.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	et = pager.applyOrder(et)
+	nodes, err := et.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// EntityTypeOrderFieldName orders EntityType by name.
+	EntityTypeOrderFieldName = &EntityTypeOrderField{
+		Value: func(et *EntityType) (ent.Value, error) {
+			return et.Name, nil
+		},
+		column: entitytype.FieldName,
+		toTerm: entitytype.ByName,
+		toCursor: func(et *EntityType) Cursor {
+			return Cursor{
+				ID:    et.ID,
+				Value: et.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f EntityTypeOrderField) String() string {
+	var str string
+	switch f.column {
+	case EntityTypeOrderFieldName.column:
+		str = "name"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f EntityTypeOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *EntityTypeOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("EntityTypeOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *EntityTypeOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid EntityTypeOrderField", str)
+	}
+	return nil
+}
+
+// EntityTypeOrderField defines the ordering field of EntityType.
+type EntityTypeOrderField struct {
+	// Value extracts the ordering value from the given EntityType.
+	Value    func(*EntityType) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) entitytype.OrderOption
+	toCursor func(*EntityType) Cursor
+}
+
+// EntityTypeOrder defines the ordering of EntityType.
+type EntityTypeOrder struct {
+	Direction OrderDirection        `json:"direction"`
+	Field     *EntityTypeOrderField `json:"field"`
+}
+
+// DefaultEntityTypeOrder is the default ordering of EntityType.
+var DefaultEntityTypeOrder = &EntityTypeOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &EntityTypeOrderField{
+		Value: func(et *EntityType) (ent.Value, error) {
+			return et.ID, nil
+		},
+		column: entitytype.FieldID,
+		toTerm: entitytype.ByID,
+		toCursor: func(et *EntityType) Cursor {
+			return Cursor{ID: et.ID}
+		},
+	},
+}
+
+// ToEdge converts EntityType into EntityTypeEdge.
+func (et *EntityType) ToEdge(order *EntityTypeOrder) *EntityTypeEdge {
+	if order == nil {
+		order = DefaultEntityTypeOrder
+	}
+	return &EntityTypeEdge{
+		Node:   et,
+		Cursor: order.Field.toCursor(et),
+	}
+}
+
+// EntityTypeHistoryEdge is the edge representation of EntityTypeHistory.
+type EntityTypeHistoryEdge struct {
+	Node   *EntityTypeHistory `json:"node"`
+	Cursor Cursor             `json:"cursor"`
+}
+
+// EntityTypeHistoryConnection is the connection containing edges to EntityTypeHistory.
+type EntityTypeHistoryConnection struct {
+	Edges      []*EntityTypeHistoryEdge `json:"edges"`
+	PageInfo   PageInfo                 `json:"pageInfo"`
+	TotalCount int                      `json:"totalCount"`
+}
+
+func (c *EntityTypeHistoryConnection) build(nodes []*EntityTypeHistory, pager *entitytypehistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *EntityTypeHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *EntityTypeHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *EntityTypeHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*EntityTypeHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &EntityTypeHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// EntityTypeHistoryPaginateOption enables pagination customization.
+type EntityTypeHistoryPaginateOption func(*entitytypehistoryPager) error
+
+// WithEntityTypeHistoryOrder configures pagination ordering.
+func WithEntityTypeHistoryOrder(order *EntityTypeHistoryOrder) EntityTypeHistoryPaginateOption {
+	if order == nil {
+		order = DefaultEntityTypeHistoryOrder
+	}
+	o := *order
+	return func(pager *entitytypehistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntityTypeHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntityTypeHistoryFilter configures pagination filter.
+func WithEntityTypeHistoryFilter(filter func(*EntityTypeHistoryQuery) (*EntityTypeHistoryQuery, error)) EntityTypeHistoryPaginateOption {
+	return func(pager *entitytypehistoryPager) error {
+		if filter == nil {
+			return errors.New("EntityTypeHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entitytypehistoryPager struct {
+	reverse bool
+	order   *EntityTypeHistoryOrder
+	filter  func(*EntityTypeHistoryQuery) (*EntityTypeHistoryQuery, error)
+}
+
+func newEntityTypeHistoryPager(opts []EntityTypeHistoryPaginateOption, reverse bool) (*entitytypehistoryPager, error) {
+	pager := &entitytypehistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntityTypeHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *entitytypehistoryPager) applyFilter(query *EntityTypeHistoryQuery) (*EntityTypeHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entitytypehistoryPager) toCursor(eth *EntityTypeHistory) Cursor {
+	return p.order.Field.toCursor(eth)
+}
+
+func (p *entitytypehistoryPager) applyCursors(query *EntityTypeHistoryQuery, after, before *Cursor) (*EntityTypeHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultEntityTypeHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *entitytypehistoryPager) applyOrder(query *EntityTypeHistoryQuery) *EntityTypeHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultEntityTypeHistoryOrder.Field {
+		query = query.Order(DefaultEntityTypeHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *entitytypehistoryPager) orderExpr(query *EntityTypeHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultEntityTypeHistoryOrder.Field {
+			b.Comma().Ident(DefaultEntityTypeHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to EntityTypeHistory.
+func (eth *EntityTypeHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntityTypeHistoryPaginateOption,
+) (*EntityTypeHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntityTypeHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if eth, err = pager.applyFilter(eth); err != nil {
+		return nil, err
+	}
+	conn := &EntityTypeHistoryConnection{Edges: []*EntityTypeHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := eth.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if eth, err = pager.applyCursors(eth, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		eth.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := eth.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	eth = pager.applyOrder(eth)
+	nodes, err := eth.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// EntityTypeHistoryOrderFieldName orders EntityTypeHistory by name.
+	EntityTypeHistoryOrderFieldName = &EntityTypeHistoryOrderField{
+		Value: func(eth *EntityTypeHistory) (ent.Value, error) {
+			return eth.Name, nil
+		},
+		column: entitytypehistory.FieldName,
+		toTerm: entitytypehistory.ByName,
+		toCursor: func(eth *EntityTypeHistory) Cursor {
+			return Cursor{
+				ID:    eth.ID,
+				Value: eth.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f EntityTypeHistoryOrderField) String() string {
+	var str string
+	switch f.column {
+	case EntityTypeHistoryOrderFieldName.column:
+		str = "name"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f EntityTypeHistoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *EntityTypeHistoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("EntityTypeHistoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *EntityTypeHistoryOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid EntityTypeHistoryOrderField", str)
+	}
+	return nil
+}
+
+// EntityTypeHistoryOrderField defines the ordering field of EntityTypeHistory.
+type EntityTypeHistoryOrderField struct {
+	// Value extracts the ordering value from the given EntityTypeHistory.
+	Value    func(*EntityTypeHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) entitytypehistory.OrderOption
+	toCursor func(*EntityTypeHistory) Cursor
+}
+
+// EntityTypeHistoryOrder defines the ordering of EntityTypeHistory.
+type EntityTypeHistoryOrder struct {
+	Direction OrderDirection               `json:"direction"`
+	Field     *EntityTypeHistoryOrderField `json:"field"`
+}
+
+// DefaultEntityTypeHistoryOrder is the default ordering of EntityTypeHistory.
+var DefaultEntityTypeHistoryOrder = &EntityTypeHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &EntityTypeHistoryOrderField{
+		Value: func(eth *EntityTypeHistory) (ent.Value, error) {
+			return eth.ID, nil
+		},
+		column: entitytypehistory.FieldID,
+		toTerm: entitytypehistory.ByID,
+		toCursor: func(eth *EntityTypeHistory) Cursor {
+			return Cursor{ID: eth.ID}
+		},
+	},
+}
+
+// ToEdge converts EntityTypeHistory into EntityTypeHistoryEdge.
+func (eth *EntityTypeHistory) ToEdge(order *EntityTypeHistoryOrder) *EntityTypeHistoryEdge {
+	if order == nil {
+		order = DefaultEntityTypeHistoryOrder
+	}
+	return &EntityTypeHistoryEdge{
+		Node:   eth,
+		Cursor: order.Field.toCursor(eth),
 	}
 }
 

@@ -26,6 +26,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -139,6 +141,8 @@ func checkColumn(table, column string) error {
 			entitlementplanfeaturehistory.Table: entitlementplanfeaturehistory.ValidColumn,
 			entity.Table:                        entity.ValidColumn,
 			entityhistory.Table:                 entityhistory.ValidColumn,
+			entitytype.Table:                    entitytype.ValidColumn,
+			entitytypehistory.Table:             entitytypehistory.ValidColumn,
 			event.Table:                         event.ValidColumn,
 			eventhistory.Table:                  eventhistory.ValidColumn,
 			feature.Table:                       feature.ValidColumn,

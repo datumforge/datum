@@ -5,7 +5,9 @@ mutation CreateBulkCSVEntity($input: Upload!) {
       createdBy
       description
       displayName
-      entityType
+      entityType{
+        name
+      }
       id
       name
       ownerID
@@ -23,7 +25,9 @@ mutation CreateBulkEntity($input: [CreateEntityInput!]) {
       createdBy
       description
       displayName
-      entityType
+      entityType{
+        name
+      }
       id
       name
       ownerID
@@ -41,7 +45,9 @@ mutation CreateEntity($input: CreateEntityInput!) {
       createdBy
       description
       displayName
-      entityType
+      entityType{
+        name
+      }
       id
       name
       ownerID
@@ -66,7 +72,9 @@ query GetAllEntities {
         createdBy
         description
         displayName
-        entityType
+        entityType{
+          name
+        }
         id
         name
         ownerID
@@ -86,7 +94,9 @@ query GetEntities($where: EntityWhereInput) {
         createdBy
         description
         displayName
-        entityType
+        entityType{
+          name
+        }
         id
         name
         ownerID
@@ -104,7 +114,9 @@ query GetEntityByID($entityId: ID!) {
     createdBy
     description
     displayName
-    entityType
+    entityType{
+      name
+    }
     id
     name
     ownerID
@@ -130,7 +142,9 @@ mutation UpdateEntity($updateEntityId: ID!, $input: UpdateEntityInput!) {
       createdBy
       description
       displayName
-      entityType
+      entityType{
+        name
+      }
       id
       name
       ownerID

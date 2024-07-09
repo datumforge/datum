@@ -22,6 +22,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -496,6 +498,60 @@ func (f TraverseEntityHistory) Traverse(ctx context.Context, q generated.Query) 
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.EntityHistoryQuery", q)
+}
+
+// The EntityTypeFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntityTypeFunc func(context.Context, *generated.EntityTypeQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntityTypeFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntityTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntityTypeQuery", q)
+}
+
+// The TraverseEntityType type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntityType func(context.Context, *generated.EntityTypeQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntityType) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntityType) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntityTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntityTypeQuery", q)
+}
+
+// The EntityTypeHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntityTypeHistoryFunc func(context.Context, *generated.EntityTypeHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntityTypeHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntityTypeHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntityTypeHistoryQuery", q)
+}
+
+// The TraverseEntityTypeHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntityTypeHistory func(context.Context, *generated.EntityTypeHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntityTypeHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntityTypeHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntityTypeHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntityTypeHistoryQuery", q)
 }
 
 // The EventFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -1582,6 +1638,10 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.EntityQuery, predicate.Entity, entity.OrderOption]{typ: generated.TypeEntity, tq: q}, nil
 	case *generated.EntityHistoryQuery:
 		return &query[*generated.EntityHistoryQuery, predicate.EntityHistory, entityhistory.OrderOption]{typ: generated.TypeEntityHistory, tq: q}, nil
+	case *generated.EntityTypeQuery:
+		return &query[*generated.EntityTypeQuery, predicate.EntityType, entitytype.OrderOption]{typ: generated.TypeEntityType, tq: q}, nil
+	case *generated.EntityTypeHistoryQuery:
+		return &query[*generated.EntityTypeHistoryQuery, predicate.EntityTypeHistory, entitytypehistory.OrderOption]{typ: generated.TypeEntityTypeHistory, tq: q}, nil
 	case *generated.EventQuery:
 		return &query[*generated.EventQuery, predicate.Event, event.OrderOption]{typ: generated.TypeEvent, tq: q}, nil
 	case *generated.EventHistoryQuery:

@@ -40,6 +40,10 @@ type Tx struct {
 	Entity *EntityClient
 	// EntityHistory is the client for interacting with the EntityHistory builders.
 	EntityHistory *EntityHistoryClient
+	// EntityType is the client for interacting with the EntityType builders.
+	EntityType *EntityTypeClient
+	// EntityTypeHistory is the client for interacting with the EntityTypeHistory builders.
+	EntityTypeHistory *EntityTypeHistoryClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
 	// EventHistory is the client for interacting with the EventHistory builders.
@@ -263,6 +267,8 @@ func (tx *Tx) init() {
 	tx.EntitlementPlanFeatureHistory = NewEntitlementPlanFeatureHistoryClient(tx.config)
 	tx.Entity = NewEntityClient(tx.config)
 	tx.EntityHistory = NewEntityHistoryClient(tx.config)
+	tx.EntityType = NewEntityTypeClient(tx.config)
+	tx.EntityTypeHistory = NewEntityTypeHistoryClient(tx.config)
 	tx.Event = NewEventClient(tx.config)
 	tx.EventHistory = NewEventHistoryClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)

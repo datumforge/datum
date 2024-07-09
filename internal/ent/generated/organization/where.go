@@ -1639,6 +1639,35 @@ func HasEntitiesWith(preds ...predicate.Entity) predicate.Organization {
 	})
 }
 
+// HasEntitytypes applies the HasEdge predicate on the "entitytypes" edge.
+func HasEntitytypes() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, EntitytypesTable, EntitytypesColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.EntityType
+		step.Edge.Schema = schemaConfig.EntityType
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntitytypesWith applies the HasEdge predicate on the "entitytypes" edge with a given conditions (other predicates).
+func HasEntitytypesWith(preds ...predicate.EntityType) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newEntitytypesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.EntityType
+		step.Edge.Schema = schemaConfig.EntityType
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasContacts applies the HasEdge predicate on the "contacts" edge.
 func HasContacts() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

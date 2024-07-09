@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
 	"github.com/datumforge/datum/internal/ent/generated/filehistory"
@@ -438,8 +439,8 @@ func (eh *EntityHistory) changes(new *EntityHistory) []Change {
 	if !reflect.DeepEqual(eh.Description, new.Description) {
 		changes = append(changes, NewChange(entityhistory.FieldDescription, eh.Description, new.Description))
 	}
-	if !reflect.DeepEqual(eh.EntityType, new.EntityType) {
-		changes = append(changes, NewChange(entityhistory.FieldEntityType, eh.EntityType, new.EntityType))
+	if !reflect.DeepEqual(eh.EntityTypeID, new.EntityTypeID) {
+		changes = append(changes, NewChange(entityhistory.FieldEntityTypeID, eh.EntityTypeID, new.EntityTypeID))
 	}
 	return changes
 }
@@ -464,6 +465,63 @@ func (eh *EntityHistory) Diff(history *EntityHistory) (*HistoryDiff[EntityHistor
 			Old:     history,
 			New:     eh,
 			Changes: history.changes(eh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
+func (eth *EntityTypeHistory) changes(new *EntityTypeHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(eth.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(entitytypehistory.FieldCreatedAt, eth.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(eth.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(entitytypehistory.FieldUpdatedAt, eth.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(eth.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(entitytypehistory.FieldCreatedBy, eth.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(eth.MappingID, new.MappingID) {
+		changes = append(changes, NewChange(entitytypehistory.FieldMappingID, eth.MappingID, new.MappingID))
+	}
+	if !reflect.DeepEqual(eth.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(entitytypehistory.FieldDeletedAt, eth.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(eth.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(entitytypehistory.FieldDeletedBy, eth.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(eth.Tags, new.Tags) {
+		changes = append(changes, NewChange(entitytypehistory.FieldTags, eth.Tags, new.Tags))
+	}
+	if !reflect.DeepEqual(eth.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(entitytypehistory.FieldOwnerID, eth.OwnerID, new.OwnerID))
+	}
+	if !reflect.DeepEqual(eth.Name, new.Name) {
+		changes = append(changes, NewChange(entitytypehistory.FieldName, eth.Name, new.Name))
+	}
+	return changes
+}
+
+func (eth *EntityTypeHistory) Diff(history *EntityTypeHistory) (*HistoryDiff[EntityTypeHistory], error) {
+	if eth.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	ethUnix, historyUnix := eth.HistoryTime.Unix(), history.HistoryTime.Unix()
+	ethOlder := ethUnix < historyUnix || (ethUnix == historyUnix && eth.ID < history.ID)
+	historyOlder := ethUnix > historyUnix || (ethUnix == historyUnix && eth.ID > history.ID)
+
+	if ethOlder {
+		return &HistoryDiff[EntityTypeHistory]{
+			Old:     eth,
+			New:     history,
+			Changes: eth.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[EntityTypeHistory]{
+			Old:     history,
+			New:     eth,
+			Changes: history.changes(eth),
 		}, nil
 	}
 	return nil, IdenticalHistoryError
@@ -1658,6 +1716,12 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	}
 	records = append(records, record...)
 
+	record, err = auditEntityTypeHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
 	record, err = auditEventHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
@@ -2084,6 +2148,58 @@ func auditEntityHistory(ctx context.Context, config config) ([][]string, error) 
 			default:
 				if i == 0 {
 					record.Changes = (&EntityHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type entitytypehistoryref struct {
+	Ref string
+}
+
+func auditEntityTypeHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []entitytypehistoryref
+	client := NewEntityTypeHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(entitytypehistory.ByRef()).
+		Select(entitytypehistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(entitytypehistory.Ref(currRef.Ref)).
+			Order(entitytypehistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "EntityTypeHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&EntityTypeHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&EntityTypeHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&EntityTypeHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}

@@ -76,6 +76,16 @@ type DatumGraphClient interface {
 	UpdateEntity(ctx context.Context, updateEntityID string, input UpdateEntityInput, interceptors ...clientv2.RequestInterceptor) (*UpdateEntity, error)
 	GetAllEntityHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntityHistories, error)
 	GetEntityHistories(ctx context.Context, where *EntityHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntityHistories, error)
+	CreateBulkCSVEntityType(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVEntityType, error)
+	CreateBulkEntityType(ctx context.Context, input []*CreateEntityTypeInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkEntityType, error)
+	CreateEntityType(ctx context.Context, input CreateEntityTypeInput, interceptors ...clientv2.RequestInterceptor) (*CreateEntityType, error)
+	DeleteEntityType(ctx context.Context, deleteEntityTypeID string, interceptors ...clientv2.RequestInterceptor) (*DeleteEntityType, error)
+	GetAllEntityTypes(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntityTypes, error)
+	GetEntityTypeByID(ctx context.Context, entityTypeID string, interceptors ...clientv2.RequestInterceptor) (*GetEntityTypeByID, error)
+	GetEntityTypes(ctx context.Context, where *EntityTypeWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntityTypes, error)
+	UpdateEntityType(ctx context.Context, updateEntityTypeID string, input UpdateEntityTypeInput, interceptors ...clientv2.RequestInterceptor) (*UpdateEntityType, error)
+	GetAllEntityTypeHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntityTypeHistories, error)
+	GetEntityTypeHistories(ctx context.Context, where *EntityTypeHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntityTypeHistories, error)
 	GetEvents(ctx context.Context, where *EventWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEvents, error)
 	GetEventByID(ctx context.Context, eventID string, interceptors ...clientv2.RequestInterceptor) (*GetEventByID, error)
 	GetAllEvents(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEvents, error)
@@ -5091,18 +5101,29 @@ func (t *GetEntitlementPlanHistories_EntitlementPlanHistories) GetEdges() []*Get
 	return t.Edges
 }
 
+type CreateBulkCSVEntity_CreateBulkCSVEntity_Entities_EntityType struct {
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities_EntityType) GetName() string {
+	if t == nil {
+		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities_EntityType{}
+	}
+	return t.Name
+}
+
 type CreateBulkCSVEntity_CreateBulkCSVEntity_Entities struct {
-	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description *string          "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
-	ID          string           "json:\"id\" graphql:\"id\""
-	Name        string           "json:\"name\" graphql:\"name\""
-	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt   *time.Time                                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string                                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string                                                      "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                                       "json:\"displayName\" graphql:\"displayName\""
+	EntityType  *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities_EntityType "json:\"entityType,omitempty\" graphql:\"entityType\""
+	ID          string                                                       "json:\"id\" graphql:\"id\""
+	Name        string                                                       "json:\"name\" graphql:\"name\""
+	OwnerID     *string                                                      "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string                                                     "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time                                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetCreatedAt() *time.Time {
@@ -5129,11 +5150,11 @@ func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetDisplayName() stri
 	}
 	return t.DisplayName
 }
-func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetEntityType() *enums.EntityType {
+func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetEntityType() *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities_EntityType {
 	if t == nil {
 		t = &CreateBulkCSVEntity_CreateBulkCSVEntity_Entities{}
 	}
-	return &t.EntityType
+	return t.EntityType
 }
 func (t *CreateBulkCSVEntity_CreateBulkCSVEntity_Entities) GetID() string {
 	if t == nil {
@@ -5183,18 +5204,29 @@ func (t *CreateBulkCSVEntity_CreateBulkCSVEntity) GetEntities() []*CreateBulkCSV
 	return t.Entities
 }
 
+type CreateBulkEntity_CreateBulkEntity_Entities_EntityType struct {
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *CreateBulkEntity_CreateBulkEntity_Entities_EntityType) GetName() string {
+	if t == nil {
+		t = &CreateBulkEntity_CreateBulkEntity_Entities_EntityType{}
+	}
+	return t.Name
+}
+
 type CreateBulkEntity_CreateBulkEntity_Entities struct {
-	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description *string          "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
-	ID          string           "json:\"id\" graphql:\"id\""
-	Name        string           "json:\"name\" graphql:\"name\""
-	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt   *time.Time                                             "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string                                                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string                                                "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                                 "json:\"displayName\" graphql:\"displayName\""
+	EntityType  *CreateBulkEntity_CreateBulkEntity_Entities_EntityType "json:\"entityType,omitempty\" graphql:\"entityType\""
+	ID          string                                                 "json:\"id\" graphql:\"id\""
+	Name        string                                                 "json:\"name\" graphql:\"name\""
+	OwnerID     *string                                                "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string                                               "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time                                             "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetCreatedAt() *time.Time {
@@ -5221,11 +5253,11 @@ func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetEntityType() *enums.EntityType {
+func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetEntityType() *CreateBulkEntity_CreateBulkEntity_Entities_EntityType {
 	if t == nil {
 		t = &CreateBulkEntity_CreateBulkEntity_Entities{}
 	}
-	return &t.EntityType
+	return t.EntityType
 }
 func (t *CreateBulkEntity_CreateBulkEntity_Entities) GetID() string {
 	if t == nil {
@@ -5275,18 +5307,29 @@ func (t *CreateBulkEntity_CreateBulkEntity) GetEntities() []*CreateBulkEntity_Cr
 	return t.Entities
 }
 
+type CreateEntity_CreateEntity_Entity_EntityType struct {
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *CreateEntity_CreateEntity_Entity_EntityType) GetName() string {
+	if t == nil {
+		t = &CreateEntity_CreateEntity_Entity_EntityType{}
+	}
+	return t.Name
+}
+
 type CreateEntity_CreateEntity_Entity struct {
-	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description *string          "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
-	ID          string           "json:\"id\" graphql:\"id\""
-	Name        string           "json:\"name\" graphql:\"name\""
-	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                       "json:\"displayName\" graphql:\"displayName\""
+	EntityType  *CreateEntity_CreateEntity_Entity_EntityType "json:\"entityType,omitempty\" graphql:\"entityType\""
+	ID          string                                       "json:\"id\" graphql:\"id\""
+	Name        string                                       "json:\"name\" graphql:\"name\""
+	OwnerID     *string                                      "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string                                     "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *CreateEntity_CreateEntity_Entity) GetCreatedAt() *time.Time {
@@ -5313,11 +5356,11 @@ func (t *CreateEntity_CreateEntity_Entity) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *CreateEntity_CreateEntity_Entity) GetEntityType() *enums.EntityType {
+func (t *CreateEntity_CreateEntity_Entity) GetEntityType() *CreateEntity_CreateEntity_Entity_EntityType {
 	if t == nil {
 		t = &CreateEntity_CreateEntity_Entity{}
 	}
-	return &t.EntityType
+	return t.EntityType
 }
 func (t *CreateEntity_CreateEntity_Entity) GetID() string {
 	if t == nil {
@@ -5378,18 +5421,29 @@ func (t *DeleteEntity_DeleteEntity) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type GetAllEntities_Entities_Edges_Node_EntityType struct {
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *GetAllEntities_Entities_Edges_Node_EntityType) GetName() string {
+	if t == nil {
+		t = &GetAllEntities_Entities_Edges_Node_EntityType{}
+	}
+	return t.Name
+}
+
 type GetAllEntities_Entities_Edges_Node struct {
-	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description *string          "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
-	ID          string           "json:\"id\" graphql:\"id\""
-	Name        string           "json:\"name\" graphql:\"name\""
-	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt   *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string                                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string                                        "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                         "json:\"displayName\" graphql:\"displayName\""
+	EntityType  *GetAllEntities_Entities_Edges_Node_EntityType "json:\"entityType,omitempty\" graphql:\"entityType\""
+	ID          string                                         "json:\"id\" graphql:\"id\""
+	Name        string                                         "json:\"name\" graphql:\"name\""
+	OwnerID     *string                                        "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string                                       "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time                                     "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetAllEntities_Entities_Edges_Node) GetCreatedAt() *time.Time {
@@ -5416,11 +5470,11 @@ func (t *GetAllEntities_Entities_Edges_Node) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *GetAllEntities_Entities_Edges_Node) GetEntityType() *enums.EntityType {
+func (t *GetAllEntities_Entities_Edges_Node) GetEntityType() *GetAllEntities_Entities_Edges_Node_EntityType {
 	if t == nil {
 		t = &GetAllEntities_Entities_Edges_Node{}
 	}
-	return &t.EntityType
+	return t.EntityType
 }
 func (t *GetAllEntities_Entities_Edges_Node) GetID() string {
 	if t == nil {
@@ -5481,18 +5535,29 @@ func (t *GetAllEntities_Entities) GetEdges() []*GetAllEntities_Entities_Edges {
 	return t.Edges
 }
 
+type GetEntities_Entities_Edges_Node_EntityType struct {
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *GetEntities_Entities_Edges_Node_EntityType) GetName() string {
+	if t == nil {
+		t = &GetEntities_Entities_Edges_Node_EntityType{}
+	}
+	return t.Name
+}
+
 type GetEntities_Entities_Edges_Node struct {
-	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description *string          "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
-	ID          string           "json:\"id\" graphql:\"id\""
-	Name        string           "json:\"name\" graphql:\"name\""
-	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt   *time.Time                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string                                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string                                     "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                      "json:\"displayName\" graphql:\"displayName\""
+	EntityType  *GetEntities_Entities_Edges_Node_EntityType "json:\"entityType,omitempty\" graphql:\"entityType\""
+	ID          string                                      "json:\"id\" graphql:\"id\""
+	Name        string                                      "json:\"name\" graphql:\"name\""
+	OwnerID     *string                                     "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string                                    "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetEntities_Entities_Edges_Node) GetCreatedAt() *time.Time {
@@ -5519,11 +5584,11 @@ func (t *GetEntities_Entities_Edges_Node) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *GetEntities_Entities_Edges_Node) GetEntityType() *enums.EntityType {
+func (t *GetEntities_Entities_Edges_Node) GetEntityType() *GetEntities_Entities_Edges_Node_EntityType {
 	if t == nil {
 		t = &GetEntities_Entities_Edges_Node{}
 	}
-	return &t.EntityType
+	return t.EntityType
 }
 func (t *GetEntities_Entities_Edges_Node) GetID() string {
 	if t == nil {
@@ -5584,6 +5649,17 @@ func (t *GetEntities_Entities) GetEdges() []*GetEntities_Entities_Edges {
 	return t.Edges
 }
 
+type GetEntityByID_Entity_EntityType struct {
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *GetEntityByID_Entity_EntityType) GetName() string {
+	if t == nil {
+		t = &GetEntityByID_Entity_EntityType{}
+	}
+	return t.Name
+}
+
 type GetEntityByID_Entity_Contacts struct {
 	ID          string  "json:\"id\" graphql:\"id\""
 	FullName    string  "json:\"fullName\" graphql:\"fullName\""
@@ -5642,7 +5718,7 @@ type GetEntityByID_Entity struct {
 	CreatedBy   *string                          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	Description *string                          "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                           "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType                 "json:\"entityType\" graphql:\"entityType\""
+	EntityType  *GetEntityByID_Entity_EntityType "json:\"entityType,omitempty\" graphql:\"entityType\""
 	ID          string                           "json:\"id\" graphql:\"id\""
 	Name        string                           "json:\"name\" graphql:\"name\""
 	OwnerID     *string                          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
@@ -5676,11 +5752,11 @@ func (t *GetEntityByID_Entity) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *GetEntityByID_Entity) GetEntityType() *enums.EntityType {
+func (t *GetEntityByID_Entity) GetEntityType() *GetEntityByID_Entity_EntityType {
 	if t == nil {
 		t = &GetEntityByID_Entity{}
 	}
-	return &t.EntityType
+	return t.EntityType
 }
 func (t *GetEntityByID_Entity) GetID() string {
 	if t == nil {
@@ -5725,18 +5801,29 @@ func (t *GetEntityByID_Entity) GetUpdatedBy() *string {
 	return t.UpdatedBy
 }
 
+type UpdateEntity_UpdateEntity_Entity_EntityType struct {
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *UpdateEntity_UpdateEntity_Entity_EntityType) GetName() string {
+	if t == nil {
+		t = &UpdateEntity_UpdateEntity_Entity_EntityType{}
+	}
+	return t.Name
+}
+
 type UpdateEntity_UpdateEntity_Entity struct {
-	CreatedAt   *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description *string          "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string           "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType "json:\"entityType\" graphql:\"entityType\""
-	ID          string           "json:\"id\" graphql:\"id\""
-	Name        string           "json:\"name\" graphql:\"name\""
-	OwnerID     *string          "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Tags        []string         "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt   *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                       "json:\"displayName\" graphql:\"displayName\""
+	EntityType  *UpdateEntity_UpdateEntity_Entity_EntityType "json:\"entityType,omitempty\" graphql:\"entityType\""
+	ID          string                                       "json:\"id\" graphql:\"id\""
+	Name        string                                       "json:\"name\" graphql:\"name\""
+	OwnerID     *string                                      "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags        []string                                     "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *UpdateEntity_UpdateEntity_Entity) GetCreatedAt() *time.Time {
@@ -5763,11 +5850,11 @@ func (t *UpdateEntity_UpdateEntity_Entity) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *UpdateEntity_UpdateEntity_Entity) GetEntityType() *enums.EntityType {
+func (t *UpdateEntity_UpdateEntity_Entity) GetEntityType() *UpdateEntity_UpdateEntity_Entity_EntityType {
 	if t == nil {
 		t = &UpdateEntity_UpdateEntity_Entity{}
 	}
-	return &t.EntityType
+	return t.EntityType
 }
 func (t *UpdateEntity_UpdateEntity_Entity) GetID() string {
 	if t == nil {
@@ -5818,20 +5905,20 @@ func (t *UpdateEntity_UpdateEntity) GetEntity() *UpdateEntity_UpdateEntity_Entit
 }
 
 type GetAllEntityHistories_EntityHistories_Edges_Node struct {
-	CreatedAt   *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description *string           "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string            "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType  "json:\"entityType\" graphql:\"entityType\""
-	HistoryTime time.Time         "json:\"historyTime\" graphql:\"historyTime\""
-	ID          string            "json:\"id\" graphql:\"id\""
-	Name        string            "json:\"name\" graphql:\"name\""
-	Operation   enthistory.OpType "json:\"operation\" graphql:\"operation\""
-	OwnerID     *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Ref         *string           "json:\"ref,omitempty\" graphql:\"ref\""
-	Tags        []string          "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt   *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt    *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy    *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description  *string           "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName  string            "json:\"displayName\" graphql:\"displayName\""
+	EntityTypeID *string           "json:\"entityTypeID,omitempty\" graphql:\"entityTypeID\""
+	HistoryTime  time.Time         "json:\"historyTime\" graphql:\"historyTime\""
+	ID           string            "json:\"id\" graphql:\"id\""
+	Name         string            "json:\"name\" graphql:\"name\""
+	Operation    enthistory.OpType "json:\"operation\" graphql:\"operation\""
+	OwnerID      *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Ref          *string           "json:\"ref,omitempty\" graphql:\"ref\""
+	Tags         []string          "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt    *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy    *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetCreatedAt() *time.Time {
@@ -5858,11 +5945,11 @@ func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetDisplayName() stri
 	}
 	return t.DisplayName
 }
-func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetEntityType() *enums.EntityType {
+func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetEntityTypeID() *string {
 	if t == nil {
 		t = &GetAllEntityHistories_EntityHistories_Edges_Node{}
 	}
-	return &t.EntityType
+	return t.EntityTypeID
 }
 func (t *GetAllEntityHistories_EntityHistories_Edges_Node) GetHistoryTime() *time.Time {
 	if t == nil {
@@ -5942,20 +6029,20 @@ func (t *GetAllEntityHistories_EntityHistories) GetEdges() []*GetAllEntityHistor
 }
 
 type GetEntityHistories_EntityHistories_Edges_Node struct {
-	CreatedAt   *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy   *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description *string           "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string            "json:\"displayName\" graphql:\"displayName\""
-	EntityType  enums.EntityType  "json:\"entityType\" graphql:\"entityType\""
-	HistoryTime time.Time         "json:\"historyTime\" graphql:\"historyTime\""
-	ID          string            "json:\"id\" graphql:\"id\""
-	Name        string            "json:\"name\" graphql:\"name\""
-	Operation   enthistory.OpType "json:\"operation\" graphql:\"operation\""
-	OwnerID     *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
-	Ref         *string           "json:\"ref,omitempty\" graphql:\"ref\""
-	Tags        []string          "json:\"tags,omitempty\" graphql:\"tags\""
-	UpdatedAt   *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy   *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt    *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy    *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description  *string           "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName  string            "json:\"displayName\" graphql:\"displayName\""
+	EntityTypeID *string           "json:\"entityTypeID,omitempty\" graphql:\"entityTypeID\""
+	HistoryTime  time.Time         "json:\"historyTime\" graphql:\"historyTime\""
+	ID           string            "json:\"id\" graphql:\"id\""
+	Name         string            "json:\"name\" graphql:\"name\""
+	Operation    enthistory.OpType "json:\"operation\" graphql:\"operation\""
+	OwnerID      *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Ref          *string           "json:\"ref,omitempty\" graphql:\"ref\""
+	Tags         []string          "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt    *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy    *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetEntityHistories_EntityHistories_Edges_Node) GetCreatedAt() *time.Time {
@@ -5982,11 +6069,11 @@ func (t *GetEntityHistories_EntityHistories_Edges_Node) GetDisplayName() string 
 	}
 	return t.DisplayName
 }
-func (t *GetEntityHistories_EntityHistories_Edges_Node) GetEntityType() *enums.EntityType {
+func (t *GetEntityHistories_EntityHistories_Edges_Node) GetEntityTypeID() *string {
 	if t == nil {
 		t = &GetEntityHistories_EntityHistories_Edges_Node{}
 	}
-	return &t.EntityType
+	return t.EntityTypeID
 }
 func (t *GetEntityHistories_EntityHistories_Edges_Node) GetHistoryTime() *time.Time {
 	if t == nil {
@@ -6061,6 +6148,731 @@ type GetEntityHistories_EntityHistories struct {
 func (t *GetEntityHistories_EntityHistories) GetEdges() []*GetEntityHistories_EntityHistories_Edges {
 	if t == nil {
 		t = &GetEntityHistories_EntityHistories{}
+	}
+	return t.Edges
+}
+
+type CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes struct {
+	CreatedAt *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	ID        string     "json:\"id\" graphql:\"id\""
+	Name      string     "json:\"name\" graphql:\"name\""
+	OwnerID   *string    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags      []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes) GetID() string {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes{}
+	}
+	return t.ID
+}
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes) GetName() string {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes{}
+	}
+	return t.Name
+}
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes{}
+	}
+	return t.OwnerID
+}
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes) GetTags() []string {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes{}
+	}
+	return t.Tags
+}
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateBulkCSVEntityType_CreateBulkCSVEntityType struct {
+	EntityTypes []*CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes "json:\"entityTypes,omitempty\" graphql:\"entityTypes\""
+}
+
+func (t *CreateBulkCSVEntityType_CreateBulkCSVEntityType) GetEntityTypes() []*CreateBulkCSVEntityType_CreateBulkCSVEntityType_EntityTypes {
+	if t == nil {
+		t = &CreateBulkCSVEntityType_CreateBulkCSVEntityType{}
+	}
+	return t.EntityTypes
+}
+
+type CreateBulkEntityType_CreateBulkEntityType_EntityTypes struct {
+	CreatedAt *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	ID        string     "json:\"id\" graphql:\"id\""
+	Name      string     "json:\"name\" graphql:\"name\""
+	OwnerID   *string    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags      []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateBulkEntityType_CreateBulkEntityType_EntityTypes) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType_EntityTypes{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateBulkEntityType_CreateBulkEntityType_EntityTypes) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType_EntityTypes{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateBulkEntityType_CreateBulkEntityType_EntityTypes) GetID() string {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType_EntityTypes{}
+	}
+	return t.ID
+}
+func (t *CreateBulkEntityType_CreateBulkEntityType_EntityTypes) GetName() string {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType_EntityTypes{}
+	}
+	return t.Name
+}
+func (t *CreateBulkEntityType_CreateBulkEntityType_EntityTypes) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType_EntityTypes{}
+	}
+	return t.OwnerID
+}
+func (t *CreateBulkEntityType_CreateBulkEntityType_EntityTypes) GetTags() []string {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType_EntityTypes{}
+	}
+	return t.Tags
+}
+func (t *CreateBulkEntityType_CreateBulkEntityType_EntityTypes) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType_EntityTypes{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateBulkEntityType_CreateBulkEntityType_EntityTypes) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType_EntityTypes{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateBulkEntityType_CreateBulkEntityType struct {
+	EntityTypes []*CreateBulkEntityType_CreateBulkEntityType_EntityTypes "json:\"entityTypes,omitempty\" graphql:\"entityTypes\""
+}
+
+func (t *CreateBulkEntityType_CreateBulkEntityType) GetEntityTypes() []*CreateBulkEntityType_CreateBulkEntityType_EntityTypes {
+	if t == nil {
+		t = &CreateBulkEntityType_CreateBulkEntityType{}
+	}
+	return t.EntityTypes
+}
+
+type CreateEntityType_CreateEntityType_EntityType struct {
+	CreatedAt *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	ID        string     "json:\"id\" graphql:\"id\""
+	Name      string     "json:\"name\" graphql:\"name\""
+	OwnerID   *string    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags      []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateEntityType_CreateEntityType_EntityType) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType_EntityType{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateEntityType_CreateEntityType_EntityType) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType_EntityType{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateEntityType_CreateEntityType_EntityType) GetID() string {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType_EntityType{}
+	}
+	return t.ID
+}
+func (t *CreateEntityType_CreateEntityType_EntityType) GetName() string {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType_EntityType{}
+	}
+	return t.Name
+}
+func (t *CreateEntityType_CreateEntityType_EntityType) GetOwnerID() *string {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType_EntityType{}
+	}
+	return t.OwnerID
+}
+func (t *CreateEntityType_CreateEntityType_EntityType) GetTags() []string {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType_EntityType{}
+	}
+	return t.Tags
+}
+func (t *CreateEntityType_CreateEntityType_EntityType) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType_EntityType{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateEntityType_CreateEntityType_EntityType) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType_EntityType{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateEntityType_CreateEntityType struct {
+	EntityType CreateEntityType_CreateEntityType_EntityType "json:\"entityType\" graphql:\"entityType\""
+}
+
+func (t *CreateEntityType_CreateEntityType) GetEntityType() *CreateEntityType_CreateEntityType_EntityType {
+	if t == nil {
+		t = &CreateEntityType_CreateEntityType{}
+	}
+	return &t.EntityType
+}
+
+type DeleteEntityType_DeleteEntityType struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteEntityType_DeleteEntityType) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteEntityType_DeleteEntityType{}
+	}
+	return t.DeletedID
+}
+
+type GetAllEntityTypes_EntityTypes_Edges_Node struct {
+	CreatedAt *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	ID        string     "json:\"id\" graphql:\"id\""
+	Name      string     "json:\"name\" graphql:\"name\""
+	OwnerID   *string    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags      []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetAllEntityTypes_EntityTypes_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllEntityTypes_EntityTypes_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllEntityTypes_EntityTypes_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllEntityTypes_EntityTypes_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllEntityTypes_EntityTypes_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetAllEntityTypes_EntityTypes_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetAllEntityTypes_EntityTypes_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllEntityTypes_EntityTypes_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetAllEntityTypes_EntityTypes_Edges struct {
+	Node *GetAllEntityTypes_EntityTypes_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllEntityTypes_EntityTypes_Edges) GetNode() *GetAllEntityTypes_EntityTypes_Edges_Node {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllEntityTypes_EntityTypes struct {
+	Edges []*GetAllEntityTypes_EntityTypes_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllEntityTypes_EntityTypes) GetEdges() []*GetAllEntityTypes_EntityTypes_Edges {
+	if t == nil {
+		t = &GetAllEntityTypes_EntityTypes{}
+	}
+	return t.Edges
+}
+
+type GetEntityTypeByID_EntityType struct {
+	CreatedAt *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	ID        string     "json:\"id\" graphql:\"id\""
+	Name      string     "json:\"name\" graphql:\"name\""
+	OwnerID   *string    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags      []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetEntityTypeByID_EntityType) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityTypeByID_EntityType{}
+	}
+	return t.CreatedAt
+}
+func (t *GetEntityTypeByID_EntityType) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetEntityTypeByID_EntityType{}
+	}
+	return t.CreatedBy
+}
+func (t *GetEntityTypeByID_EntityType) GetID() string {
+	if t == nil {
+		t = &GetEntityTypeByID_EntityType{}
+	}
+	return t.ID
+}
+func (t *GetEntityTypeByID_EntityType) GetName() string {
+	if t == nil {
+		t = &GetEntityTypeByID_EntityType{}
+	}
+	return t.Name
+}
+func (t *GetEntityTypeByID_EntityType) GetOwnerID() *string {
+	if t == nil {
+		t = &GetEntityTypeByID_EntityType{}
+	}
+	return t.OwnerID
+}
+func (t *GetEntityTypeByID_EntityType) GetTags() []string {
+	if t == nil {
+		t = &GetEntityTypeByID_EntityType{}
+	}
+	return t.Tags
+}
+func (t *GetEntityTypeByID_EntityType) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityTypeByID_EntityType{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetEntityTypeByID_EntityType) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetEntityTypeByID_EntityType{}
+	}
+	return t.UpdatedBy
+}
+
+type GetEntityTypes_EntityTypes_Edges_Node struct {
+	CreatedAt *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	ID        string     "json:\"id\" graphql:\"id\""
+	Name      string     "json:\"name\" graphql:\"name\""
+	OwnerID   *string    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags      []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetEntityTypes_EntityTypes_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetEntityTypes_EntityTypes_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetEntityTypes_EntityTypes_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetEntityTypes_EntityTypes_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetEntityTypes_EntityTypes_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetEntityTypes_EntityTypes_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetEntityTypes_EntityTypes_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetEntityTypes_EntityTypes_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetEntityTypes_EntityTypes_Edges struct {
+	Node *GetEntityTypes_EntityTypes_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetEntityTypes_EntityTypes_Edges) GetNode() *GetEntityTypes_EntityTypes_Edges_Node {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes_Edges{}
+	}
+	return t.Node
+}
+
+type GetEntityTypes_EntityTypes struct {
+	Edges []*GetEntityTypes_EntityTypes_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetEntityTypes_EntityTypes) GetEdges() []*GetEntityTypes_EntityTypes_Edges {
+	if t == nil {
+		t = &GetEntityTypes_EntityTypes{}
+	}
+	return t.Edges
+}
+
+type UpdateEntityType_UpdateEntityType_EntityType struct {
+	CreatedAt *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	ID        string     "json:\"id\" graphql:\"id\""
+	Name      string     "json:\"name\" graphql:\"name\""
+	OwnerID   *string    "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Tags      []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *UpdateEntityType_UpdateEntityType_EntityType) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType_EntityType{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateEntityType_UpdateEntityType_EntityType) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType_EntityType{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateEntityType_UpdateEntityType_EntityType) GetID() string {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType_EntityType{}
+	}
+	return t.ID
+}
+func (t *UpdateEntityType_UpdateEntityType_EntityType) GetName() string {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType_EntityType{}
+	}
+	return t.Name
+}
+func (t *UpdateEntityType_UpdateEntityType_EntityType) GetOwnerID() *string {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType_EntityType{}
+	}
+	return t.OwnerID
+}
+func (t *UpdateEntityType_UpdateEntityType_EntityType) GetTags() []string {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType_EntityType{}
+	}
+	return t.Tags
+}
+func (t *UpdateEntityType_UpdateEntityType_EntityType) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType_EntityType{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateEntityType_UpdateEntityType_EntityType) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType_EntityType{}
+	}
+	return t.UpdatedBy
+}
+
+type UpdateEntityType_UpdateEntityType struct {
+	EntityType UpdateEntityType_UpdateEntityType_EntityType "json:\"entityType\" graphql:\"entityType\""
+}
+
+func (t *UpdateEntityType_UpdateEntityType) GetEntityType() *UpdateEntityType_UpdateEntityType_EntityType {
+	if t == nil {
+		t = &UpdateEntityType_UpdateEntityType{}
+	}
+	return &t.EntityType
+}
+
+type GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node struct {
+	CreatedAt   *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	HistoryTime time.Time         "json:\"historyTime\" graphql:\"historyTime\""
+	ID          string            "json:\"id\" graphql:\"id\""
+	Name        string            "json:\"name\" graphql:\"name\""
+	Operation   enthistory.OpType "json:\"operation\" graphql:\"operation\""
+	OwnerID     *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Ref         *string           "json:\"ref,omitempty\" graphql:\"ref\""
+	Tags        []string          "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetHistoryTime() *time.Time {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return &t.HistoryTime
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetOperation() *enthistory.OpType {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return &t.Operation
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetRef() *string {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.Ref
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetAllEntityTypeHistories_EntityTypeHistories_Edges struct {
+	Node *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllEntityTypeHistories_EntityTypeHistories_Edges) GetNode() *GetAllEntityTypeHistories_EntityTypeHistories_Edges_Node {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllEntityTypeHistories_EntityTypeHistories struct {
+	Edges []*GetAllEntityTypeHistories_EntityTypeHistories_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllEntityTypeHistories_EntityTypeHistories) GetEdges() []*GetAllEntityTypeHistories_EntityTypeHistories_Edges {
+	if t == nil {
+		t = &GetAllEntityTypeHistories_EntityTypeHistories{}
+	}
+	return t.Edges
+}
+
+type GetEntityTypeHistories_EntityTypeHistories_Edges_Node struct {
+	CreatedAt   *time.Time        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy   *string           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	HistoryTime time.Time         "json:\"historyTime\" graphql:\"historyTime\""
+	ID          string            "json:\"id\" graphql:\"id\""
+	Name        string            "json:\"name\" graphql:\"name\""
+	Operation   enthistory.OpType "json:\"operation\" graphql:\"operation\""
+	OwnerID     *string           "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+	Ref         *string           "json:\"ref,omitempty\" graphql:\"ref\""
+	Tags        []string          "json:\"tags,omitempty\" graphql:\"tags\""
+	UpdatedAt   *time.Time        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy   *string           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetHistoryTime() *time.Time {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return &t.HistoryTime
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetOperation() *enthistory.OpType {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return &t.Operation
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.OwnerID
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetRef() *string {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.Ref
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetEntityTypeHistories_EntityTypeHistories_Edges struct {
+	Node *GetEntityTypeHistories_EntityTypeHistories_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetEntityTypeHistories_EntityTypeHistories_Edges) GetNode() *GetEntityTypeHistories_EntityTypeHistories_Edges_Node {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories_Edges{}
+	}
+	return t.Node
+}
+
+type GetEntityTypeHistories_EntityTypeHistories struct {
+	Edges []*GetEntityTypeHistories_EntityTypeHistories_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetEntityTypeHistories_EntityTypeHistories) GetEdges() []*GetEntityTypeHistories_EntityTypeHistories_Edges {
+	if t == nil {
+		t = &GetEntityTypeHistories_EntityTypeHistories{}
 	}
 	return t.Edges
 }
@@ -26652,6 +27464,116 @@ func (t *GetEntityHistories) GetEntityHistories() *GetEntityHistories_EntityHist
 	return &t.EntityHistories
 }
 
+type CreateBulkCSVEntityType struct {
+	CreateBulkCSVEntityType CreateBulkCSVEntityType_CreateBulkCSVEntityType "json:\"createBulkCSVEntityType\" graphql:\"createBulkCSVEntityType\""
+}
+
+func (t *CreateBulkCSVEntityType) GetCreateBulkCSVEntityType() *CreateBulkCSVEntityType_CreateBulkCSVEntityType {
+	if t == nil {
+		t = &CreateBulkCSVEntityType{}
+	}
+	return &t.CreateBulkCSVEntityType
+}
+
+type CreateBulkEntityType struct {
+	CreateBulkEntityType CreateBulkEntityType_CreateBulkEntityType "json:\"createBulkEntityType\" graphql:\"createBulkEntityType\""
+}
+
+func (t *CreateBulkEntityType) GetCreateBulkEntityType() *CreateBulkEntityType_CreateBulkEntityType {
+	if t == nil {
+		t = &CreateBulkEntityType{}
+	}
+	return &t.CreateBulkEntityType
+}
+
+type CreateEntityType struct {
+	CreateEntityType CreateEntityType_CreateEntityType "json:\"createEntityType\" graphql:\"createEntityType\""
+}
+
+func (t *CreateEntityType) GetCreateEntityType() *CreateEntityType_CreateEntityType {
+	if t == nil {
+		t = &CreateEntityType{}
+	}
+	return &t.CreateEntityType
+}
+
+type DeleteEntityType struct {
+	DeleteEntityType DeleteEntityType_DeleteEntityType "json:\"deleteEntityType\" graphql:\"deleteEntityType\""
+}
+
+func (t *DeleteEntityType) GetDeleteEntityType() *DeleteEntityType_DeleteEntityType {
+	if t == nil {
+		t = &DeleteEntityType{}
+	}
+	return &t.DeleteEntityType
+}
+
+type GetAllEntityTypes struct {
+	EntityTypes GetAllEntityTypes_EntityTypes "json:\"entityTypes\" graphql:\"entityTypes\""
+}
+
+func (t *GetAllEntityTypes) GetEntityTypes() *GetAllEntityTypes_EntityTypes {
+	if t == nil {
+		t = &GetAllEntityTypes{}
+	}
+	return &t.EntityTypes
+}
+
+type GetEntityTypeByID struct {
+	EntityType GetEntityTypeByID_EntityType "json:\"entityType\" graphql:\"entityType\""
+}
+
+func (t *GetEntityTypeByID) GetEntityType() *GetEntityTypeByID_EntityType {
+	if t == nil {
+		t = &GetEntityTypeByID{}
+	}
+	return &t.EntityType
+}
+
+type GetEntityTypes struct {
+	EntityTypes GetEntityTypes_EntityTypes "json:\"entityTypes\" graphql:\"entityTypes\""
+}
+
+func (t *GetEntityTypes) GetEntityTypes() *GetEntityTypes_EntityTypes {
+	if t == nil {
+		t = &GetEntityTypes{}
+	}
+	return &t.EntityTypes
+}
+
+type UpdateEntityType struct {
+	UpdateEntityType UpdateEntityType_UpdateEntityType "json:\"updateEntityType\" graphql:\"updateEntityType\""
+}
+
+func (t *UpdateEntityType) GetUpdateEntityType() *UpdateEntityType_UpdateEntityType {
+	if t == nil {
+		t = &UpdateEntityType{}
+	}
+	return &t.UpdateEntityType
+}
+
+type GetAllEntityTypeHistories struct {
+	EntityTypeHistories GetAllEntityTypeHistories_EntityTypeHistories "json:\"entityTypeHistories\" graphql:\"entityTypeHistories\""
+}
+
+func (t *GetAllEntityTypeHistories) GetEntityTypeHistories() *GetAllEntityTypeHistories_EntityTypeHistories {
+	if t == nil {
+		t = &GetAllEntityTypeHistories{}
+	}
+	return &t.EntityTypeHistories
+}
+
+type GetEntityTypeHistories struct {
+	EntityTypeHistories GetEntityTypeHistories_EntityTypeHistories "json:\"entityTypeHistories\" graphql:\"entityTypeHistories\""
+}
+
+func (t *GetEntityTypeHistories) GetEntityTypeHistories() *GetEntityTypeHistories_EntityTypeHistories {
+	if t == nil {
+		t = &GetEntityTypeHistories{}
+	}
+	return &t.EntityTypeHistories
+}
+
 type GetEvents struct {
 	Events GetEvents_Events "json:\"events\" graphql:\"events\""
 }
@@ -30306,7 +31228,9 @@ const CreateBulkCSVEntityDocument = `mutation CreateBulkCSVEntity ($input: Uploa
 			createdBy
 			description
 			displayName
-			entityType
+			entityType {
+				name
+			}
 			id
 			name
 			ownerID
@@ -30342,7 +31266,9 @@ const CreateBulkEntityDocument = `mutation CreateBulkEntity ($input: [CreateEnti
 			createdBy
 			description
 			displayName
-			entityType
+			entityType {
+				name
+			}
 			id
 			name
 			ownerID
@@ -30378,7 +31304,9 @@ const CreateEntityDocument = `mutation CreateEntity ($input: CreateEntityInput!)
 			createdBy
 			description
 			displayName
-			entityType
+			entityType {
+				name
+			}
 			id
 			name
 			ownerID
@@ -30439,7 +31367,9 @@ const GetAllEntitiesDocument = `query GetAllEntities {
 				createdBy
 				description
 				displayName
-				entityType
+				entityType {
+					name
+				}
 				id
 				name
 				ownerID
@@ -30475,7 +31405,9 @@ const GetEntitiesDocument = `query GetEntities ($where: EntityWhereInput) {
 				createdBy
 				description
 				displayName
-				entityType
+				entityType {
+					name
+				}
 				id
 				name
 				ownerID
@@ -30511,7 +31443,9 @@ const GetEntityByIDDocument = `query GetEntityByID ($entityId: ID!) {
 		createdBy
 		description
 		displayName
-		entityType
+		entityType {
+			name
+		}
 		id
 		name
 		ownerID
@@ -30555,7 +31489,9 @@ const UpdateEntityDocument = `mutation UpdateEntity ($updateEntityId: ID!, $inpu
 			createdBy
 			description
 			displayName
-			entityType
+			entityType {
+				name
+			}
 			id
 			name
 			ownerID
@@ -30593,7 +31529,7 @@ const GetAllEntityHistoriesDocument = `query GetAllEntityHistories {
 				createdBy
 				description
 				displayName
-				entityType
+				entityTypeID
 				historyTime
 				id
 				name
@@ -30632,7 +31568,7 @@ const GetEntityHistoriesDocument = `query GetEntityHistories ($where: EntityHist
 				createdBy
 				description
 				displayName
-				entityType
+				entityTypeID
 				historyTime
 				id
 				name
@@ -30655,6 +31591,336 @@ func (c *Client) GetEntityHistories(ctx context.Context, where *EntityHistoryWhe
 
 	var res GetEntityHistories
 	if err := c.Client.Post(ctx, "GetEntityHistories", GetEntityHistoriesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateBulkCSVEntityTypeDocument = `mutation CreateBulkCSVEntityType ($input: Upload!) {
+	createBulkCSVEntityType(input: $input) {
+		entityTypes {
+			createdAt
+			createdBy
+			id
+			name
+			ownerID
+			tags
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateBulkCSVEntityType(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVEntityType, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateBulkCSVEntityType
+	if err := c.Client.Post(ctx, "CreateBulkCSVEntityType", CreateBulkCSVEntityTypeDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateBulkEntityTypeDocument = `mutation CreateBulkEntityType ($input: [CreateEntityTypeInput!]) {
+	createBulkEntityType(input: $input) {
+		entityTypes {
+			createdAt
+			createdBy
+			id
+			name
+			ownerID
+			tags
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateBulkEntityType(ctx context.Context, input []*CreateEntityTypeInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkEntityType, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateBulkEntityType
+	if err := c.Client.Post(ctx, "CreateBulkEntityType", CreateBulkEntityTypeDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateEntityTypeDocument = `mutation CreateEntityType ($input: CreateEntityTypeInput!) {
+	createEntityType(input: $input) {
+		entityType {
+			createdAt
+			createdBy
+			id
+			name
+			ownerID
+			tags
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateEntityType(ctx context.Context, input CreateEntityTypeInput, interceptors ...clientv2.RequestInterceptor) (*CreateEntityType, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateEntityType
+	if err := c.Client.Post(ctx, "CreateEntityType", CreateEntityTypeDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteEntityTypeDocument = `mutation DeleteEntityType ($deleteEntityTypeId: ID!) {
+	deleteEntityType(id: $deleteEntityTypeId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteEntityType(ctx context.Context, deleteEntityTypeID string, interceptors ...clientv2.RequestInterceptor) (*DeleteEntityType, error) {
+	vars := map[string]any{
+		"deleteEntityTypeId": deleteEntityTypeID,
+	}
+
+	var res DeleteEntityType
+	if err := c.Client.Post(ctx, "DeleteEntityType", DeleteEntityTypeDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllEntityTypesDocument = `query GetAllEntityTypes {
+	entityTypes {
+		edges {
+			node {
+				createdAt
+				createdBy
+				id
+				name
+				ownerID
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllEntityTypes(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntityTypes, error) {
+	vars := map[string]any{}
+
+	var res GetAllEntityTypes
+	if err := c.Client.Post(ctx, "GetAllEntityTypes", GetAllEntityTypesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetEntityTypeByIDDocument = `query GetEntityTypeByID ($entityTypeId: ID!) {
+	entityType(id: $entityTypeId) {
+		createdAt
+		createdBy
+		id
+		name
+		ownerID
+		tags
+		updatedAt
+		updatedBy
+	}
+}
+`
+
+func (c *Client) GetEntityTypeByID(ctx context.Context, entityTypeID string, interceptors ...clientv2.RequestInterceptor) (*GetEntityTypeByID, error) {
+	vars := map[string]any{
+		"entityTypeId": entityTypeID,
+	}
+
+	var res GetEntityTypeByID
+	if err := c.Client.Post(ctx, "GetEntityTypeByID", GetEntityTypeByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetEntityTypesDocument = `query GetEntityTypes ($where: EntityTypeWhereInput) {
+	entityTypes(where: $where) {
+		edges {
+			node {
+				createdAt
+				createdBy
+				id
+				name
+				ownerID
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetEntityTypes(ctx context.Context, where *EntityTypeWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntityTypes, error) {
+	vars := map[string]any{
+		"where": where,
+	}
+
+	var res GetEntityTypes
+	if err := c.Client.Post(ctx, "GetEntityTypes", GetEntityTypesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateEntityTypeDocument = `mutation UpdateEntityType ($updateEntityTypeId: ID!, $input: UpdateEntityTypeInput!) {
+	updateEntityType(id: $updateEntityTypeId, input: $input) {
+		entityType {
+			createdAt
+			createdBy
+			id
+			name
+			ownerID
+			tags
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) UpdateEntityType(ctx context.Context, updateEntityTypeID string, input UpdateEntityTypeInput, interceptors ...clientv2.RequestInterceptor) (*UpdateEntityType, error) {
+	vars := map[string]any{
+		"updateEntityTypeId": updateEntityTypeID,
+		"input":              input,
+	}
+
+	var res UpdateEntityType
+	if err := c.Client.Post(ctx, "UpdateEntityType", UpdateEntityTypeDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllEntityTypeHistoriesDocument = `query GetAllEntityTypeHistories {
+	entityTypeHistories {
+		edges {
+			node {
+				createdAt
+				createdBy
+				historyTime
+				id
+				name
+				operation
+				ownerID
+				ref
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllEntityTypeHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllEntityTypeHistories, error) {
+	vars := map[string]any{}
+
+	var res GetAllEntityTypeHistories
+	if err := c.Client.Post(ctx, "GetAllEntityTypeHistories", GetAllEntityTypeHistoriesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetEntityTypeHistoriesDocument = `query GetEntityTypeHistories ($where: EntityTypeHistoryWhereInput) {
+	entityTypeHistories(where: $where) {
+		edges {
+			node {
+				createdAt
+				createdBy
+				historyTime
+				id
+				name
+				operation
+				ownerID
+				ref
+				tags
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetEntityTypeHistories(ctx context.Context, where *EntityTypeHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetEntityTypeHistories, error) {
+	vars := map[string]any{
+		"where": where,
+	}
+
+	var res GetEntityTypeHistories
+	if err := c.Client.Post(ctx, "GetEntityTypeHistories", GetEntityTypeHistoriesDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -37363,6 +38629,16 @@ var DocumentOperationNames = map[string]string{
 	UpdateEntityDocument:                          "UpdateEntity",
 	GetAllEntityHistoriesDocument:                 "GetAllEntityHistories",
 	GetEntityHistoriesDocument:                    "GetEntityHistories",
+	CreateBulkCSVEntityTypeDocument:               "CreateBulkCSVEntityType",
+	CreateBulkEntityTypeDocument:                  "CreateBulkEntityType",
+	CreateEntityTypeDocument:                      "CreateEntityType",
+	DeleteEntityTypeDocument:                      "DeleteEntityType",
+	GetAllEntityTypesDocument:                     "GetAllEntityTypes",
+	GetEntityTypeByIDDocument:                     "GetEntityTypeByID",
+	GetEntityTypesDocument:                        "GetEntityTypes",
+	UpdateEntityTypeDocument:                      "UpdateEntityType",
+	GetAllEntityTypeHistoriesDocument:             "GetAllEntityTypeHistories",
+	GetEntityTypeHistoriesDocument:                "GetEntityTypeHistories",
 	GetEventsDocument:                             "GetEvents",
 	GetEventByIDDocument:                          "GetEventByID",
 	GetAllEventsDocument:                          "GetAllEvents",

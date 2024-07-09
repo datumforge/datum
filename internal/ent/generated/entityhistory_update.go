@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/pkg/enums"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -198,17 +197,23 @@ func (ehu *EntityHistoryUpdate) ClearDescription() *EntityHistoryUpdate {
 	return ehu
 }
 
-// SetEntityType sets the "entity_type" field.
-func (ehu *EntityHistoryUpdate) SetEntityType(et enums.EntityType) *EntityHistoryUpdate {
-	ehu.mutation.SetEntityType(et)
+// SetEntityTypeID sets the "entity_type_id" field.
+func (ehu *EntityHistoryUpdate) SetEntityTypeID(s string) *EntityHistoryUpdate {
+	ehu.mutation.SetEntityTypeID(s)
 	return ehu
 }
 
-// SetNillableEntityType sets the "entity_type" field if the given value is not nil.
-func (ehu *EntityHistoryUpdate) SetNillableEntityType(et *enums.EntityType) *EntityHistoryUpdate {
-	if et != nil {
-		ehu.SetEntityType(*et)
+// SetNillableEntityTypeID sets the "entity_type_id" field if the given value is not nil.
+func (ehu *EntityHistoryUpdate) SetNillableEntityTypeID(s *string) *EntityHistoryUpdate {
+	if s != nil {
+		ehu.SetEntityTypeID(*s)
 	}
+	return ehu
+}
+
+// ClearEntityTypeID clears the value of the "entity_type_id" field.
+func (ehu *EntityHistoryUpdate) ClearEntityTypeID() *EntityHistoryUpdate {
+	ehu.mutation.ClearEntityTypeID()
 	return ehu
 }
 
@@ -244,20 +249,7 @@ func (ehu *EntityHistoryUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (ehu *EntityHistoryUpdate) check() error {
-	if v, ok := ehu.mutation.EntityType(); ok {
-		if err := entityhistory.EntityTypeValidator(v); err != nil {
-			return &ValidationError{Name: "entity_type", err: fmt.Errorf(`generated: validator failed for field "EntityHistory.entity_type": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (ehu *EntityHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := ehu.check(); err != nil {
-		return n, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(entityhistory.Table, entityhistory.Columns, sqlgraph.NewFieldSpec(entityhistory.FieldID, field.TypeString))
 	if ps := ehu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -328,8 +320,11 @@ func (ehu *EntityHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if ehu.mutation.DescriptionCleared() {
 		_spec.ClearField(entityhistory.FieldDescription, field.TypeString)
 	}
-	if value, ok := ehu.mutation.EntityType(); ok {
-		_spec.SetField(entityhistory.FieldEntityType, field.TypeEnum, value)
+	if value, ok := ehu.mutation.EntityTypeID(); ok {
+		_spec.SetField(entityhistory.FieldEntityTypeID, field.TypeString, value)
+	}
+	if ehu.mutation.EntityTypeIDCleared() {
+		_spec.ClearField(entityhistory.FieldEntityTypeID, field.TypeString)
 	}
 	_spec.Node.Schema = ehu.schemaConfig.EntityHistory
 	ctx = internal.NewSchemaConfigContext(ctx, ehu.schemaConfig)
@@ -519,17 +514,23 @@ func (ehuo *EntityHistoryUpdateOne) ClearDescription() *EntityHistoryUpdateOne {
 	return ehuo
 }
 
-// SetEntityType sets the "entity_type" field.
-func (ehuo *EntityHistoryUpdateOne) SetEntityType(et enums.EntityType) *EntityHistoryUpdateOne {
-	ehuo.mutation.SetEntityType(et)
+// SetEntityTypeID sets the "entity_type_id" field.
+func (ehuo *EntityHistoryUpdateOne) SetEntityTypeID(s string) *EntityHistoryUpdateOne {
+	ehuo.mutation.SetEntityTypeID(s)
 	return ehuo
 }
 
-// SetNillableEntityType sets the "entity_type" field if the given value is not nil.
-func (ehuo *EntityHistoryUpdateOne) SetNillableEntityType(et *enums.EntityType) *EntityHistoryUpdateOne {
-	if et != nil {
-		ehuo.SetEntityType(*et)
+// SetNillableEntityTypeID sets the "entity_type_id" field if the given value is not nil.
+func (ehuo *EntityHistoryUpdateOne) SetNillableEntityTypeID(s *string) *EntityHistoryUpdateOne {
+	if s != nil {
+		ehuo.SetEntityTypeID(*s)
 	}
+	return ehuo
+}
+
+// ClearEntityTypeID clears the value of the "entity_type_id" field.
+func (ehuo *EntityHistoryUpdateOne) ClearEntityTypeID() *EntityHistoryUpdateOne {
+	ehuo.mutation.ClearEntityTypeID()
 	return ehuo
 }
 
@@ -578,20 +579,7 @@ func (ehuo *EntityHistoryUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (ehuo *EntityHistoryUpdateOne) check() error {
-	if v, ok := ehuo.mutation.EntityType(); ok {
-		if err := entityhistory.EntityTypeValidator(v); err != nil {
-			return &ValidationError{Name: "entity_type", err: fmt.Errorf(`generated: validator failed for field "EntityHistory.entity_type": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (ehuo *EntityHistoryUpdateOne) sqlSave(ctx context.Context) (_node *EntityHistory, err error) {
-	if err := ehuo.check(); err != nil {
-		return _node, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(entityhistory.Table, entityhistory.Columns, sqlgraph.NewFieldSpec(entityhistory.FieldID, field.TypeString))
 	id, ok := ehuo.mutation.ID()
 	if !ok {
@@ -679,8 +667,11 @@ func (ehuo *EntityHistoryUpdateOne) sqlSave(ctx context.Context) (_node *EntityH
 	if ehuo.mutation.DescriptionCleared() {
 		_spec.ClearField(entityhistory.FieldDescription, field.TypeString)
 	}
-	if value, ok := ehuo.mutation.EntityType(); ok {
-		_spec.SetField(entityhistory.FieldEntityType, field.TypeEnum, value)
+	if value, ok := ehuo.mutation.EntityTypeID(); ok {
+		_spec.SetField(entityhistory.FieldEntityTypeID, field.TypeString, value)
+	}
+	if ehuo.mutation.EntityTypeIDCleared() {
+		_spec.ClearField(entityhistory.FieldEntityTypeID, field.TypeString)
 	}
 	_spec.Node.Schema = ehuo.schemaConfig.EntityHistory
 	ctx = internal.NewSchemaConfigContext(ctx, ehuo.schemaConfig)

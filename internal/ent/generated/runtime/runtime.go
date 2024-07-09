@@ -20,6 +20,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -829,6 +831,109 @@ func init() {
 	entityhistoryDescID := entityhistoryFields[7].Descriptor()
 	// entityhistory.DefaultID holds the default value on creation for the id field.
 	entityhistory.DefaultID = entityhistoryDescID.Default.(func() string)
+	entitytypeMixin := schema.EntityType{}.Mixin()
+	entitytype.Policy = privacy.NewPolicies(schema.EntityType{})
+	entitytype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := entitytype.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	entitytypeMixinHooks0 := entitytypeMixin[0].Hooks()
+	entitytypeMixinHooks2 := entitytypeMixin[2].Hooks()
+	entitytypeMixinHooks4 := entitytypeMixin[4].Hooks()
+
+	entitytype.Hooks[1] = entitytypeMixinHooks0[0]
+
+	entitytype.Hooks[2] = entitytypeMixinHooks2[0]
+
+	entitytype.Hooks[3] = entitytypeMixinHooks4[0]
+	entitytypeMixinInters2 := entitytypeMixin[2].Interceptors()
+	entitytypeMixinInters4 := entitytypeMixin[4].Interceptors()
+	entitytype.Interceptors[0] = entitytypeMixinInters2[0]
+	entitytype.Interceptors[1] = entitytypeMixinInters4[0]
+	entitytypeMixinFields0 := entitytypeMixin[0].Fields()
+	_ = entitytypeMixinFields0
+	entitytypeMixinFields1 := entitytypeMixin[1].Fields()
+	_ = entitytypeMixinFields1
+	entitytypeMixinFields3 := entitytypeMixin[3].Fields()
+	_ = entitytypeMixinFields3
+	entitytypeMixinFields4 := entitytypeMixin[4].Fields()
+	_ = entitytypeMixinFields4
+	entitytypeFields := schema.EntityType{}.Fields()
+	_ = entitytypeFields
+	// entitytypeDescCreatedAt is the schema descriptor for created_at field.
+	entitytypeDescCreatedAt := entitytypeMixinFields0[0].Descriptor()
+	// entitytype.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entitytype.DefaultCreatedAt = entitytypeDescCreatedAt.Default.(func() time.Time)
+	// entitytypeDescUpdatedAt is the schema descriptor for updated_at field.
+	entitytypeDescUpdatedAt := entitytypeMixinFields0[1].Descriptor()
+	// entitytype.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entitytype.DefaultUpdatedAt = entitytypeDescUpdatedAt.Default.(func() time.Time)
+	// entitytype.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	entitytype.UpdateDefaultUpdatedAt = entitytypeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// entitytypeDescMappingID is the schema descriptor for mapping_id field.
+	entitytypeDescMappingID := entitytypeMixinFields1[1].Descriptor()
+	// entitytype.DefaultMappingID holds the default value on creation for the mapping_id field.
+	entitytype.DefaultMappingID = entitytypeDescMappingID.Default.(func() string)
+	// entitytypeDescTags is the schema descriptor for tags field.
+	entitytypeDescTags := entitytypeMixinFields3[0].Descriptor()
+	// entitytype.DefaultTags holds the default value on creation for the tags field.
+	entitytype.DefaultTags = entitytypeDescTags.Default.([]string)
+	// entitytypeDescOwnerID is the schema descriptor for owner_id field.
+	entitytypeDescOwnerID := entitytypeMixinFields4[0].Descriptor()
+	// entitytype.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	entitytype.OwnerIDValidator = entitytypeDescOwnerID.Validators[0].(func(string) error)
+	// entitytypeDescName is the schema descriptor for name field.
+	entitytypeDescName := entitytypeFields[0].Descriptor()
+	// entitytype.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	entitytype.NameValidator = func() func(string) error {
+		validators := entitytypeDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// entitytypeDescID is the schema descriptor for id field.
+	entitytypeDescID := entitytypeMixinFields1[0].Descriptor()
+	// entitytype.DefaultID holds the default value on creation for the id field.
+	entitytype.DefaultID = entitytypeDescID.Default.(func() string)
+	entitytypehistoryFields := schema.EntityTypeHistory{}.Fields()
+	_ = entitytypehistoryFields
+	// entitytypehistoryDescHistoryTime is the schema descriptor for history_time field.
+	entitytypehistoryDescHistoryTime := entitytypehistoryFields[0].Descriptor()
+	// entitytypehistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	entitytypehistory.DefaultHistoryTime = entitytypehistoryDescHistoryTime.Default.(func() time.Time)
+	// entitytypehistoryDescCreatedAt is the schema descriptor for created_at field.
+	entitytypehistoryDescCreatedAt := entitytypehistoryFields[3].Descriptor()
+	// entitytypehistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entitytypehistory.DefaultCreatedAt = entitytypehistoryDescCreatedAt.Default.(func() time.Time)
+	// entitytypehistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	entitytypehistoryDescUpdatedAt := entitytypehistoryFields[4].Descriptor()
+	// entitytypehistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entitytypehistory.DefaultUpdatedAt = entitytypehistoryDescUpdatedAt.Default.(func() time.Time)
+	// entitytypehistoryDescMappingID is the schema descriptor for mapping_id field.
+	entitytypehistoryDescMappingID := entitytypehistoryFields[8].Descriptor()
+	// entitytypehistory.DefaultMappingID holds the default value on creation for the mapping_id field.
+	entitytypehistory.DefaultMappingID = entitytypehistoryDescMappingID.Default.(func() string)
+	// entitytypehistoryDescTags is the schema descriptor for tags field.
+	entitytypehistoryDescTags := entitytypehistoryFields[11].Descriptor()
+	// entitytypehistory.DefaultTags holds the default value on creation for the tags field.
+	entitytypehistory.DefaultTags = entitytypehistoryDescTags.Default.([]string)
+	// entitytypehistoryDescID is the schema descriptor for id field.
+	entitytypehistoryDescID := entitytypehistoryFields[7].Descriptor()
+	// entitytypehistory.DefaultID holds the default value on creation for the id field.
+	entitytypehistory.DefaultID = entitytypehistoryDescID.Default.(func() string)
 	eventMixin := schema.Event{}.Mixin()
 	eventMixinHooks0 := eventMixin[0].Hooks()
 	event.Hooks[0] = eventMixinHooks0[0]

@@ -177,6 +177,30 @@ func (f EntityHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (ge
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntityHistoryMutation", m)
 }
 
+// The EntityTypeFunc type is an adapter to allow the use of ordinary
+// function as EntityType mutator.
+type EntityTypeFunc func(context.Context, *generated.EntityTypeMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntityTypeFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EntityTypeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntityTypeMutation", m)
+}
+
+// The EntityTypeHistoryFunc type is an adapter to allow the use of ordinary
+// function as EntityTypeHistory mutator.
+type EntityTypeHistoryFunc func(context.Context, *generated.EntityTypeHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntityTypeHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EntityTypeHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntityTypeHistoryMutation", m)
+}
+
 // The EventFunc type is an adapter to allow the use of ordinary
 // function as Event mutator.
 type EventFunc func(context.Context, *generated.EventMutation) (generated.Value, error)

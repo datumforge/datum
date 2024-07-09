@@ -491,7 +491,8 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 160},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "entity_type", Type: field.TypeEnum, Enums: []string{"ORGANIZATION", "VENDOR"}, Default: "ORGANIZATION"},
+		{Name: "entity_type_id", Type: field.TypeString, Nullable: true},
+		{Name: "entity_type_entities", Type: field.TypeString, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// EntitiesTable holds the schema information for the "entities" table.
@@ -501,8 +502,20 @@ var (
 		PrimaryKey: []*schema.Column{EntitiesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "entities_organizations_entities",
+				Symbol:     "entities_entity_types_entity_type",
+				Columns:    []*schema.Column{EntitiesColumns[12]},
+				RefColumns: []*schema.Column{EntityTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "entities_entity_types_entities",
 				Columns:    []*schema.Column{EntitiesColumns[13]},
+				RefColumns: []*schema.Column{EntityTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "entities_organizations_entities",
+				Columns:    []*schema.Column{EntitiesColumns[14]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -511,7 +524,7 @@ var (
 			{
 				Name:    "entity_name_owner_id",
 				Unique:  true,
-				Columns: []*schema.Column{EntitiesColumns[9], EntitiesColumns[13]},
+				Columns: []*schema.Column{EntitiesColumns[9], EntitiesColumns[14]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
@@ -536,7 +549,7 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 160},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "entity_type", Type: field.TypeEnum, Enums: []string{"ORGANIZATION", "VENDOR"}, Default: "ORGANIZATION"},
+		{Name: "entity_type_id", Type: field.TypeString, Nullable: true},
 	}
 	// EntityHistoryTable holds the schema information for the "entity_history" table.
 	EntityHistoryTable = &schema.Table{
@@ -548,6 +561,74 @@ var (
 				Name:    "entityhistory_history_time",
 				Unique:  false,
 				Columns: []*schema.Column{EntityHistoryColumns[1]},
+			},
+		},
+	}
+	// EntityTypesColumns holds the columns for the "entity_types" table.
+	EntityTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "name", Type: field.TypeString, Size: 64},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// EntityTypesTable holds the schema information for the "entity_types" table.
+	EntityTypesTable = &schema.Table{
+		Name:       "entity_types",
+		Columns:    EntityTypesColumns,
+		PrimaryKey: []*schema.Column{EntityTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entity_types_organizations_entitytypes",
+				Columns:    []*schema.Column{EntityTypesColumns[10]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entitytype_name_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{EntityTypesColumns[9], EntityTypesColumns[10]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
+	// EntityTypeHistoryColumns holds the columns for the "entity_type_history" table.
+	EntityTypeHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString, Size: 64},
+	}
+	// EntityTypeHistoryTable holds the schema information for the "entity_type_history" table.
+	EntityTypeHistoryTable = &schema.Table{
+		Name:       "entity_type_history",
+		Columns:    EntityTypeHistoryColumns,
+		PrimaryKey: []*schema.Column{EntityTypeHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entitytypehistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{EntityTypeHistoryColumns[1]},
 			},
 		},
 	}
@@ -2617,6 +2698,8 @@ var (
 		EntitlementPlanFeatureHistoryTable,
 		EntitiesTable,
 		EntityHistoryTable,
+		EntityTypesTable,
+		EntityTypeHistoryTable,
 		EventsTable,
 		EventHistoryTable,
 		FeaturesTable,
@@ -2712,9 +2795,15 @@ func init() {
 	EntitlementPlanFeatureHistoryTable.Annotation = &entsql.Annotation{
 		Table: "entitlement_plan_feature_history",
 	}
-	EntitiesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	EntitiesTable.ForeignKeys[0].RefTable = EntityTypesTable
+	EntitiesTable.ForeignKeys[1].RefTable = EntityTypesTable
+	EntitiesTable.ForeignKeys[2].RefTable = OrganizationsTable
 	EntityHistoryTable.Annotation = &entsql.Annotation{
 		Table: "entity_history",
+	}
+	EntityTypesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	EntityTypeHistoryTable.Annotation = &entsql.Annotation{
+		Table: "entity_type_history",
 	}
 	EventHistoryTable.Annotation = &entsql.Annotation{
 		Table: "event_history",

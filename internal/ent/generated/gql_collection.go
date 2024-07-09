@@ -23,6 +23,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -1860,6 +1862,21 @@ func (e *EntityQuery) collectField(ctx context.Context, oneNode bool, opCtx *gra
 			e.WithNamedDocuments(alias, func(wq *DocumentDataQuery) {
 				*wq = *query
 			})
+
+		case "entityType":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntityTypeClient{config: e.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, entitytypeImplementors)...); err != nil {
+				return err
+			}
+			e.withEntityType = query
+			if _, ok := fieldSeen[entity.FieldEntityTypeID]; !ok {
+				selectedFields = append(selectedFields, entity.FieldEntityTypeID)
+				fieldSeen[entity.FieldEntityTypeID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[entity.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, entity.FieldCreatedAt)
@@ -1915,10 +1932,10 @@ func (e *EntityQuery) collectField(ctx context.Context, oneNode bool, opCtx *gra
 				selectedFields = append(selectedFields, entity.FieldDescription)
 				fieldSeen[entity.FieldDescription] = struct{}{}
 			}
-		case "entityType":
-			if _, ok := fieldSeen[entity.FieldEntityType]; !ok {
-				selectedFields = append(selectedFields, entity.FieldEntityType)
-				fieldSeen[entity.FieldEntityType] = struct{}{}
+		case "entityTypeID":
+			if _, ok := fieldSeen[entity.FieldEntityTypeID]; !ok {
+				selectedFields = append(selectedFields, entity.FieldEntityTypeID)
+				fieldSeen[entity.FieldEntityTypeID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -2074,10 +2091,10 @@ func (eh *EntityHistoryQuery) collectField(ctx context.Context, oneNode bool, op
 				selectedFields = append(selectedFields, entityhistory.FieldDescription)
 				fieldSeen[entityhistory.FieldDescription] = struct{}{}
 			}
-		case "entityType":
-			if _, ok := fieldSeen[entityhistory.FieldEntityType]; !ok {
-				selectedFields = append(selectedFields, entityhistory.FieldEntityType)
-				fieldSeen[entityhistory.FieldEntityType] = struct{}{}
+		case "entityTypeID":
+			if _, ok := fieldSeen[entityhistory.FieldEntityTypeID]; !ok {
+				selectedFields = append(selectedFields, entityhistory.FieldEntityTypeID)
+				fieldSeen[entityhistory.FieldEntityTypeID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -2138,6 +2155,307 @@ func newEntityHistoryPaginateArgs(rv map[string]any) *entityhistoryPaginateArgs 
 	}
 	if v, ok := rv[whereField].(*EntityHistoryWhereInput); ok {
 		args.opts = append(args.opts, WithEntityHistoryFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (et *EntityTypeQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntityTypeQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return et, nil
+	}
+	if err := et.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return et, nil
+}
+
+func (et *EntityTypeQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(entitytype.Columns))
+		selectedFields = []string{entitytype.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: et.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+				return err
+			}
+			et.withOwner = query
+			if _, ok := fieldSeen[entitytype.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldOwnerID)
+				fieldSeen[entitytype.FieldOwnerID] = struct{}{}
+			}
+
+		case "entities":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntityClient{config: et.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entityImplementors)...); err != nil {
+				return err
+			}
+			et.WithNamedEntities(alias, func(wq *EntityQuery) {
+				*wq = *query
+			})
+		case "createdAt":
+			if _, ok := fieldSeen[entitytype.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldCreatedAt)
+				fieldSeen[entitytype.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[entitytype.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldUpdatedAt)
+				fieldSeen[entitytype.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[entitytype.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldCreatedBy)
+				fieldSeen[entitytype.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[entitytype.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldUpdatedBy)
+				fieldSeen[entitytype.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[entitytype.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldDeletedAt)
+				fieldSeen[entitytype.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[entitytype.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldDeletedBy)
+				fieldSeen[entitytype.FieldDeletedBy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[entitytype.FieldTags]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldTags)
+				fieldSeen[entitytype.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[entitytype.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldOwnerID)
+				fieldSeen[entitytype.FieldOwnerID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[entitytype.FieldName]; !ok {
+				selectedFields = append(selectedFields, entitytype.FieldName)
+				fieldSeen[entitytype.FieldName] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		et.Select(selectedFields...)
+	}
+	return nil
+}
+
+type entitytypePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []EntityTypePaginateOption
+}
+
+func newEntityTypePaginateArgs(rv map[string]any) *entitytypePaginateArgs {
+	args := &entitytypePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &EntityTypeOrder{Field: &EntityTypeOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithEntityTypeOrder(order))
+			}
+		case *EntityTypeOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithEntityTypeOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*EntityTypeWhereInput); ok {
+		args.opts = append(args.opts, WithEntityTypeFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (eth *EntityTypeHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntityTypeHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return eth, nil
+	}
+	if err := eth.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return eth, nil
+}
+
+func (eth *EntityTypeHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(entitytypehistory.Columns))
+		selectedFields = []string{entitytypehistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[entitytypehistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldHistoryTime)
+				fieldSeen[entitytypehistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[entitytypehistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldOperation)
+				fieldSeen[entitytypehistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[entitytypehistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldRef)
+				fieldSeen[entitytypehistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[entitytypehistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldCreatedAt)
+				fieldSeen[entitytypehistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[entitytypehistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldUpdatedAt)
+				fieldSeen[entitytypehistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[entitytypehistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldCreatedBy)
+				fieldSeen[entitytypehistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[entitytypehistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldUpdatedBy)
+				fieldSeen[entitytypehistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[entitytypehistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldDeletedAt)
+				fieldSeen[entitytypehistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[entitytypehistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldDeletedBy)
+				fieldSeen[entitytypehistory.FieldDeletedBy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[entitytypehistory.FieldTags]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldTags)
+				fieldSeen[entitytypehistory.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[entitytypehistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldOwnerID)
+				fieldSeen[entitytypehistory.FieldOwnerID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[entitytypehistory.FieldName]; !ok {
+				selectedFields = append(selectedFields, entitytypehistory.FieldName)
+				fieldSeen[entitytypehistory.FieldName] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		eth.Select(selectedFields...)
+	}
+	return nil
+}
+
+type entitytypehistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []EntityTypeHistoryPaginateOption
+}
+
+func newEntityTypeHistoryPaginateArgs(rv map[string]any) *entitytypehistoryPaginateArgs {
+	args := &entitytypehistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &EntityTypeHistoryOrder{Field: &EntityTypeHistoryOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithEntityTypeHistoryOrder(order))
+			}
+		case *EntityTypeHistoryOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithEntityTypeHistoryOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*EntityTypeHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithEntityTypeHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -6148,6 +6466,19 @@ func (o *OrganizationQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			o.WithNamedEntities(alias, func(wq *EntityQuery) {
+				*wq = *query
+			})
+
+		case "entitytypes":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntityTypeClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitytypeImplementors)...); err != nil {
+				return err
+			}
+			o.WithNamedEntitytypes(alias, func(wq *EntityTypeQuery) {
 				*wq = *query
 			})
 

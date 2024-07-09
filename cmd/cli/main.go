@@ -11,6 +11,7 @@ import (
 	_ "github.com/datumforge/datum/cmd/cli/cmd/entitlementplanfeatures"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/entitlements"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/entity"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/entitytype"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/events"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/features"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/group"

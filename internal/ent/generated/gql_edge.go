@@ -224,6 +224,34 @@ func (e *Entity) Documents(ctx context.Context) (result []*DocumentData, err err
 	return result, err
 }
 
+func (e *Entity) EntityType(ctx context.Context) (*EntityType, error) {
+	result, err := e.Edges.EntityTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryEntityType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (et *EntityType) Owner(ctx context.Context) (*Organization, error) {
+	result, err := et.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = et.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (et *EntityType) Entities(ctx context.Context) (result []*Entity, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = et.NamedEntities(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = et.Edges.EntitiesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = et.QueryEntities().All(ctx)
+	}
+	return result, err
+}
+
 func (e *Event) User(ctx context.Context) (result []*User, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = e.NamedUser(graphql.GetFieldContext(ctx).Field.Alias)
@@ -1049,6 +1077,18 @@ func (o *Organization) Entities(ctx context.Context) (result []*Entity, err erro
 	}
 	if IsNotLoaded(err) {
 		result, err = o.QueryEntities().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Entitytypes(ctx context.Context) (result []*EntityType, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedEntitytypes(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.EntitytypesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryEntitytypes().All(ctx)
 	}
 	return result, err
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -126,6 +127,20 @@ func EntityEdgeCleanup(ctx context.Context, id string) error {
 func EntityHistoryEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entityhistory edge"))
+
+	return nil
+}
+
+func EntityTypeEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitytype edge"))
+
+	return nil
+}
+
+func EntityTypeHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitytypehistory edge"))
 
 	return nil
 }
@@ -389,6 +404,13 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	if exists, err := FromContext(ctx).Entity.Query().Where((entity.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
 		if entityCount, err := FromContext(ctx).Entity.Delete().Where(entity.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting entity", "count", entityCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).EntityType.Query().Where((entitytype.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if entitytypeCount, err := FromContext(ctx).EntityType.Delete().Where(entitytype.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting entitytype", "count", entitytypeCount, "err", err)
 			return err
 		}
 	}

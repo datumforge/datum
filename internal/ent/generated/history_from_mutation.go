@@ -1282,8 +1282,8 @@ func (m *EntityMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetDescription(description)
 	}
 
-	if entityType, exists := m.EntityType(); exists {
-		create = create.SetEntityType(entityType)
+	if entityTypeID, exists := m.EntityTypeID(); exists {
+		create = create.SetEntityTypeID(entityTypeID)
 	}
 
 	_, err := create.Save(ctx)
@@ -1388,10 +1388,10 @@ func (m *EntityMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 			create = create.SetDescription(entity.Description)
 		}
 
-		if entityType, exists := m.EntityType(); exists {
-			create = create.SetEntityType(entityType)
+		if entityTypeID, exists := m.EntityTypeID(); exists {
+			create = create.SetEntityTypeID(entityTypeID)
 		} else {
-			create = create.SetEntityType(entity.EntityType)
+			create = create.SetEntityTypeID(entity.EntityTypeID)
 		}
 
 		if _, err := create.Save(ctx); err != nil {
@@ -1438,7 +1438,203 @@ func (m *EntityMutation) CreateHistoryFromDelete(ctx context.Context) error {
 			SetName(entity.Name).
 			SetDisplayName(entity.DisplayName).
 			SetDescription(entity.Description).
-			SetEntityType(entity.EntityType).
+			SetEntityTypeID(entity.EntityTypeID).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EntityTypeMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.EntityTypeHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *EntityTypeMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		entitytype, err := client.EntityType.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.EntityTypeHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(entitytype.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(entitytype.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(entitytype.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(entitytype.UpdatedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(entitytype.MappingID)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(entitytype.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(entitytype.DeletedBy)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(entitytype.Tags)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(entitytype.OwnerID)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(entitytype.Name)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EntityTypeMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		entitytype, err := client.EntityType.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.EntityTypeHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(entitytype.CreatedAt).
+			SetUpdatedAt(entitytype.UpdatedAt).
+			SetCreatedBy(entitytype.CreatedBy).
+			SetUpdatedBy(entitytype.UpdatedBy).
+			SetMappingID(entitytype.MappingID).
+			SetDeletedAt(entitytype.DeletedAt).
+			SetDeletedBy(entitytype.DeletedBy).
+			SetTags(entitytype.Tags).
+			SetOwnerID(entitytype.OwnerID).
+			SetName(entitytype.Name).
 			Save(ctx)
 		if err != nil {
 			return err

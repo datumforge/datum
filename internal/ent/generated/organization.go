@@ -103,15 +103,17 @@ type OrganizationEdges struct {
 	Entitlementplanfeatures []*EntitlementPlanFeature `json:"entitlementplanfeatures,omitempty"`
 	// Entities holds the value of the entities edge.
 	Entities []*Entity `json:"entities,omitempty"`
+	// Entitytypes holds the value of the entitytypes edge.
+	Entitytypes []*EntityType `json:"entitytypes,omitempty"`
 	// Contacts holds the value of the contacts edge.
 	Contacts []*Contact `json:"contacts,omitempty"`
 	// Members holds the value of the members edge.
 	Members []*OrgMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [25]bool
+	loadedTypes [26]bool
 	// totalCount holds the count of the edges above.
-	totalCount [25]map[string]int
+	totalCount [26]map[string]int
 
 	namedChildren                map[string][]*Organization
 	namedGroups                  map[string][]*Group
@@ -134,6 +136,7 @@ type OrganizationEdges struct {
 	namedEntitlementplans        map[string][]*EntitlementPlan
 	namedEntitlementplanfeatures map[string][]*EntitlementPlanFeature
 	namedEntities                map[string][]*Entity
+	namedEntitytypes             map[string][]*EntityType
 	namedContacts                map[string][]*Contact
 	namedMembers                 map[string][]*OrgMembership
 }
@@ -349,10 +352,19 @@ func (e OrganizationEdges) EntitiesOrErr() ([]*Entity, error) {
 	return nil, &NotLoadedError{edge: "entities"}
 }
 
+// EntitytypesOrErr returns the Entitytypes value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) EntitytypesOrErr() ([]*EntityType, error) {
+	if e.loadedTypes[23] {
+		return e.Entitytypes, nil
+	}
+	return nil, &NotLoadedError{edge: "entitytypes"}
+}
+
 // ContactsOrErr returns the Contacts value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) ContactsOrErr() ([]*Contact, error) {
-	if e.loadedTypes[23] {
+	if e.loadedTypes[24] {
 		return e.Contacts, nil
 	}
 	return nil, &NotLoadedError{edge: "contacts"}
@@ -361,7 +373,7 @@ func (e OrganizationEdges) ContactsOrErr() ([]*Contact, error) {
 // MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) MembersOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[24] {
+	if e.loadedTypes[25] {
 		return e.Members, nil
 	}
 	return nil, &NotLoadedError{edge: "members"}
@@ -620,6 +632,11 @@ func (o *Organization) QueryEntitlementplanfeatures() *EntitlementPlanFeatureQue
 // QueryEntities queries the "entities" edge of the Organization entity.
 func (o *Organization) QueryEntities() *EntityQuery {
 	return NewOrganizationClient(o.config).QueryEntities(o)
+}
+
+// QueryEntitytypes queries the "entitytypes" edge of the Organization entity.
+func (o *Organization) QueryEntitytypes() *EntityTypeQuery {
+	return NewOrganizationClient(o.config).QueryEntitytypes(o)
 }
 
 // QueryContacts queries the "contacts" edge of the Organization entity.
@@ -1206,6 +1223,30 @@ func (o *Organization) appendNamedEntities(name string, edges ...*Entity) {
 		o.Edges.namedEntities[name] = []*Entity{}
 	} else {
 		o.Edges.namedEntities[name] = append(o.Edges.namedEntities[name], edges...)
+	}
+}
+
+// NamedEntitytypes returns the Entitytypes named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedEntitytypes(name string) ([]*EntityType, error) {
+	if o.Edges.namedEntitytypes == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedEntitytypes[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedEntitytypes(name string, edges ...*EntityType) {
+	if o.Edges.namedEntitytypes == nil {
+		o.Edges.namedEntitytypes = make(map[string][]*EntityType)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedEntitytypes[name] = []*EntityType{}
+	} else {
+		o.Edges.namedEntitytypes[name] = append(o.Edges.namedEntitytypes[name], edges...)
 	}
 }
 

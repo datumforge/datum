@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplan"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
@@ -70,6 +71,7 @@ type OrganizationQuery struct {
 	withEntitlementplans             *EntitlementPlanQuery
 	withEntitlementplanfeatures      *EntitlementPlanFeatureQuery
 	withEntities                     *EntityQuery
+	withEntitytypes                  *EntityTypeQuery
 	withContacts                     *ContactQuery
 	withMembers                      *OrgMembershipQuery
 	modifiers                        []func(*sql.Selector)
@@ -95,6 +97,7 @@ type OrganizationQuery struct {
 	withNamedEntitlementplans        map[string]*EntitlementPlanQuery
 	withNamedEntitlementplanfeatures map[string]*EntitlementPlanFeatureQuery
 	withNamedEntities                map[string]*EntityQuery
+	withNamedEntitytypes             map[string]*EntityTypeQuery
 	withNamedContacts                map[string]*ContactQuery
 	withNamedMembers                 map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
@@ -708,6 +711,31 @@ func (oq *OrganizationQuery) QueryEntities() *EntityQuery {
 	return query
 }
 
+// QueryEntitytypes chains the current query on the "entitytypes" edge.
+func (oq *OrganizationQuery) QueryEntitytypes() *EntityTypeQuery {
+	query := (&EntityTypeClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(entitytype.Table, entitytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.EntitytypesTable, organization.EntitytypesColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.EntityType
+		step.Edge.Schema = schemaConfig.EntityType
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryContacts chains the current query on the "contacts" edge.
 func (oq *OrganizationQuery) QueryContacts() *ContactQuery {
 	query := (&ContactClient{config: oq.config}).Query()
@@ -973,6 +1001,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withEntitlementplans:        oq.withEntitlementplans.Clone(),
 		withEntitlementplanfeatures: oq.withEntitlementplanfeatures.Clone(),
 		withEntities:                oq.withEntities.Clone(),
+		withEntitytypes:             oq.withEntitytypes.Clone(),
 		withContacts:                oq.withContacts.Clone(),
 		withMembers:                 oq.withMembers.Clone(),
 		// clone intermediate query.
@@ -1234,6 +1263,17 @@ func (oq *OrganizationQuery) WithEntities(opts ...func(*EntityQuery)) *Organizat
 	return oq
 }
 
+// WithEntitytypes tells the query-builder to eager-load the nodes that are connected to
+// the "entitytypes" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithEntitytypes(opts ...func(*EntityTypeQuery)) *OrganizationQuery {
+	query := (&EntityTypeClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withEntitytypes = query
+	return oq
+}
+
 // WithContacts tells the query-builder to eager-load the nodes that are connected to
 // the "contacts" edge. The optional arguments are used to configure the query builder of the edge.
 func (oq *OrganizationQuery) WithContacts(opts ...func(*ContactQuery)) *OrganizationQuery {
@@ -1340,7 +1380,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [25]bool{
+		loadedTypes = [26]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
@@ -1364,6 +1404,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withEntitlementplans != nil,
 			oq.withEntitlementplanfeatures != nil,
 			oq.withEntities != nil,
+			oq.withEntitytypes != nil,
 			oq.withContacts != nil,
 			oq.withMembers != nil,
 		}
@@ -1558,6 +1599,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withEntitytypes; query != nil {
+		if err := oq.loadEntitytypes(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Entitytypes = []*EntityType{} },
+			func(n *Organization, e *EntityType) { n.Edges.Entitytypes = append(n.Edges.Entitytypes, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := oq.withContacts; query != nil {
 		if err := oq.loadContacts(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Contacts = []*Contact{} },
@@ -1716,6 +1764,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadEntities(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedEntities(name) },
 			func(n *Organization, e *Entity) { n.appendNamedEntities(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedEntitytypes {
+		if err := oq.loadEntitytypes(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedEntitytypes(name) },
+			func(n *Organization, e *EntityType) { n.appendNamedEntitytypes(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2568,11 +2623,42 @@ func (oq *OrganizationQuery) loadEntities(ctx context.Context, query *EntityQuer
 			init(nodes[i])
 		}
 	}
+	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(entity.FieldOwnerID)
 	}
 	query.Where(predicate.Entity(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(organization.EntitiesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadEntitytypes(ctx context.Context, query *EntityTypeQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *EntityType)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(entitytype.FieldOwnerID)
+	}
+	query.Where(predicate.EntityType(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.EntitytypesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -3032,6 +3118,20 @@ func (oq *OrganizationQuery) WithNamedEntities(name string, opts ...func(*Entity
 		oq.withNamedEntities = make(map[string]*EntityQuery)
 	}
 	oq.withNamedEntities[name] = query
+	return oq
+}
+
+// WithNamedEntitytypes tells the query-builder to eager-load the nodes that are connected to the "entitytypes"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedEntitytypes(name string, opts ...func(*EntityTypeQuery)) *OrganizationQuery {
+	query := (&EntityTypeClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedEntitytypes == nil {
+		oq.withNamedEntitytypes = make(map[string]*EntityTypeQuery)
+	}
+	oq.withNamedEntitytypes[name] = query
 	return oq
 }
 

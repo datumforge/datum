@@ -21,6 +21,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -130,6 +132,16 @@ var entityhistoryImplementors = []string{"EntityHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*EntityHistory) IsNode() {}
+
+var entitytypeImplementors = []string{"EntityType", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*EntityType) IsNode() {}
+
+var entitytypehistoryImplementors = []string{"EntityTypeHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*EntityTypeHistory) IsNode() {}
 
 var eventImplementors = []string{"Event", "Node"}
 
@@ -487,6 +499,24 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(entityhistory.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entityhistoryImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case entitytype.Table:
+		query := c.EntityType.Query().
+			Where(entitytype.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entitytypeImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case entitytypehistory.Table:
+		query := c.EntityTypeHistory.Query().
+			Where(entitytypehistory.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entitytypehistoryImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -1093,6 +1123,38 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.EntityHistory.Query().
 			Where(entityhistory.IDIn(ids...))
 		query, err := query.CollectFields(ctx, entityhistoryImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case entitytype.Table:
+		query := c.EntityType.Query().
+			Where(entitytype.IDIn(ids...))
+		query, err := query.CollectFields(ctx, entitytypeImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case entitytypehistory.Table:
+		query := c.EntityTypeHistory.Query().
+			Where(entitytypehistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, entitytypehistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}

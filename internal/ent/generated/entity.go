@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 // Entity is the model entity for the Entity schema.
@@ -44,12 +44,13 @@ type Entity struct {
 	DisplayName string `json:"display_name,omitempty"`
 	// An optional description of the entity
 	Description string `json:"description,omitempty"`
-	// the type of the entity
-	EntityType enums.EntityType `json:"entity_type,omitempty"`
+	// The type of the entity
+	EntityTypeID string `json:"entity_type_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntityQuery when eager-loading is set.
-	Edges        EntityEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                EntityEdges `json:"edges"`
+	entity_type_entities *string
+	selectValues         sql.SelectValues
 }
 
 // EntityEdges holds the relations/edges for other nodes in the graph.
@@ -60,11 +61,13 @@ type EntityEdges struct {
 	Contacts []*Contact `json:"contacts,omitempty"`
 	// Documents holds the value of the documents edge.
 	Documents []*DocumentData `json:"documents,omitempty"`
+	// EntityType holds the value of the entity_type edge.
+	EntityType *EntityType `json:"entity_type,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
 	namedContacts  map[string][]*Contact
 	namedDocuments map[string][]*DocumentData
@@ -99,6 +102,17 @@ func (e EntityEdges) DocumentsOrErr() ([]*DocumentData, error) {
 	return nil, &NotLoadedError{edge: "documents"}
 }
 
+// EntityTypeOrErr returns the EntityType value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntityEdges) EntityTypeOrErr() (*EntityType, error) {
+	if e.EntityType != nil {
+		return e.EntityType, nil
+	} else if e.loadedTypes[3] {
+		return nil, &NotFoundError{label: entitytype.Label}
+	}
+	return nil, &NotLoadedError{edge: "entity_type"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Entity) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -106,10 +120,12 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case entity.FieldTags:
 			values[i] = new([]byte)
-		case entity.FieldID, entity.FieldCreatedBy, entity.FieldUpdatedBy, entity.FieldMappingID, entity.FieldDeletedBy, entity.FieldOwnerID, entity.FieldName, entity.FieldDisplayName, entity.FieldDescription, entity.FieldEntityType:
+		case entity.FieldID, entity.FieldCreatedBy, entity.FieldUpdatedBy, entity.FieldMappingID, entity.FieldDeletedBy, entity.FieldOwnerID, entity.FieldName, entity.FieldDisplayName, entity.FieldDescription, entity.FieldEntityTypeID:
 			values[i] = new(sql.NullString)
 		case entity.FieldCreatedAt, entity.FieldUpdatedAt, entity.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
+		case entity.ForeignKeys[0]: // entity_type_entities
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -205,11 +221,18 @@ func (e *Entity) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.Description = value.String
 			}
-		case entity.FieldEntityType:
+		case entity.FieldEntityTypeID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field entity_type", values[i])
+				return fmt.Errorf("unexpected type %T for field entity_type_id", values[i])
 			} else if value.Valid {
-				e.EntityType = enums.EntityType(value.String)
+				e.EntityTypeID = value.String
+			}
+		case entity.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field entity_type_entities", values[i])
+			} else if value.Valid {
+				e.entity_type_entities = new(string)
+				*e.entity_type_entities = value.String
 			}
 		default:
 			e.selectValues.Set(columns[i], values[i])
@@ -237,6 +260,11 @@ func (e *Entity) QueryContacts() *ContactQuery {
 // QueryDocuments queries the "documents" edge of the Entity entity.
 func (e *Entity) QueryDocuments() *DocumentDataQuery {
 	return NewEntityClient(e.config).QueryDocuments(e)
+}
+
+// QueryEntityType queries the "entity_type" edge of the Entity entity.
+func (e *Entity) QueryEntityType() *EntityTypeQuery {
+	return NewEntityClient(e.config).QueryEntityType(e)
 }
 
 // Update returns a builder for updating this Entity.
@@ -298,8 +326,8 @@ func (e *Entity) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(e.Description)
 	builder.WriteString(", ")
-	builder.WriteString("entity_type=")
-	builder.WriteString(fmt.Sprintf("%v", e.EntityType))
+	builder.WriteString("entity_type_id=")
+	builder.WriteString(e.EntityTypeID)
 	builder.WriteByte(')')
 	return builder.String()
 }

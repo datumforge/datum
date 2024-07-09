@@ -737,14 +737,14 @@ func (c *EntitlementPlanFeatureUpdateOne) SetInput(i UpdateEntitlementPlanFeatur
 
 // CreateEntityInput represents a mutation input for creating entities.
 type CreateEntityInput struct {
-	Tags        []string
-	Name        string
-	DisplayName *string
-	Description *string
-	EntityType  *enums.EntityType
-	OwnerID     *string
-	ContactIDs  []string
-	DocumentIDs []string
+	Tags         []string
+	Name         string
+	DisplayName  *string
+	Description  *string
+	OwnerID      *string
+	ContactIDs   []string
+	DocumentIDs  []string
+	EntityTypeID *string
 }
 
 // Mutate applies the CreateEntityInput on the EntityMutation builder.
@@ -759,9 +759,6 @@ func (i *CreateEntityInput) Mutate(m *EntityMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	if v := i.EntityType; v != nil {
-		m.SetEntityType(*v)
-	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
@@ -770,6 +767,9 @@ func (i *CreateEntityInput) Mutate(m *EntityMutation) {
 	}
 	if v := i.DocumentIDs; len(v) > 0 {
 		m.AddDocumentIDs(v...)
+	}
+	if v := i.EntityTypeID; v != nil {
+		m.SetEntityTypeID(*v)
 	}
 }
 
@@ -788,7 +788,6 @@ type UpdateEntityInput struct {
 	DisplayName       *string
 	ClearDescription  bool
 	Description       *string
-	EntityType        *enums.EntityType
 	ClearOwner        bool
 	OwnerID           *string
 	ClearContacts     bool
@@ -797,6 +796,8 @@ type UpdateEntityInput struct {
 	ClearDocuments    bool
 	AddDocumentIDs    []string
 	RemoveDocumentIDs []string
+	ClearEntityType   bool
+	EntityTypeID      *string
 }
 
 // Mutate applies the UpdateEntityInput on the EntityMutation builder.
@@ -822,9 +823,6 @@ func (i *UpdateEntityInput) Mutate(m *EntityMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	if v := i.EntityType; v != nil {
-		m.SetEntityType(*v)
-	}
 	if i.ClearOwner {
 		m.ClearOwner()
 	}
@@ -849,6 +847,12 @@ func (i *UpdateEntityInput) Mutate(m *EntityMutation) {
 	if v := i.RemoveDocumentIDs; len(v) > 0 {
 		m.RemoveDocumentIDs(v...)
 	}
+	if i.ClearEntityType {
+		m.ClearEntityType()
+	}
+	if v := i.EntityTypeID; v != nil {
+		m.SetEntityTypeID(*v)
+	}
 }
 
 // SetInput applies the change-set in the UpdateEntityInput on the EntityUpdate builder.
@@ -859,6 +863,90 @@ func (c *EntityUpdate) SetInput(i UpdateEntityInput) *EntityUpdate {
 
 // SetInput applies the change-set in the UpdateEntityInput on the EntityUpdateOne builder.
 func (c *EntityUpdateOne) SetInput(i UpdateEntityInput) *EntityUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateEntityTypeInput represents a mutation input for creating entitytypes.
+type CreateEntityTypeInput struct {
+	Tags      []string
+	Name      string
+	OwnerID   *string
+	EntityIDs []string
+}
+
+// Mutate applies the CreateEntityTypeInput on the EntityTypeMutation builder.
+func (i *CreateEntityTypeInput) Mutate(m *EntityTypeMutation) {
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	m.SetName(i.Name)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if v := i.EntityIDs; len(v) > 0 {
+		m.AddEntityIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateEntityTypeInput on the EntityTypeCreate builder.
+func (c *EntityTypeCreate) SetInput(i CreateEntityTypeInput) *EntityTypeCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateEntityTypeInput represents a mutation input for updating entitytypes.
+type UpdateEntityTypeInput struct {
+	ClearTags       bool
+	Tags            []string
+	AppendTags      []string
+	Name            *string
+	ClearOwner      bool
+	OwnerID         *string
+	ClearEntities   bool
+	AddEntityIDs    []string
+	RemoveEntityIDs []string
+}
+
+// Mutate applies the UpdateEntityTypeInput on the EntityTypeMutation builder.
+func (i *UpdateEntityTypeInput) Mutate(m *EntityTypeMutation) {
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearEntities {
+		m.ClearEntities()
+	}
+	if v := i.AddEntityIDs; len(v) > 0 {
+		m.AddEntityIDs(v...)
+	}
+	if v := i.RemoveEntityIDs; len(v) > 0 {
+		m.RemoveEntityIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateEntityTypeInput on the EntityTypeUpdate builder.
+func (c *EntityTypeUpdate) SetInput(i UpdateEntityTypeInput) *EntityTypeUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateEntityTypeInput on the EntityTypeUpdateOne builder.
+func (c *EntityTypeUpdateOne) SetInput(i UpdateEntityTypeInput) *EntityTypeUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -2577,6 +2665,7 @@ type CreateOrganizationInput struct {
 	FileIDs                    []string
 	EntitlementplanIDs         []string
 	EntityIDs                  []string
+	EntitytypeIDs              []string
 	ContactIDs                 []string
 }
 
@@ -2664,6 +2753,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.EntityIDs; len(v) > 0 {
 		m.AddEntityIDs(v...)
 	}
+	if v := i.EntitytypeIDs; len(v) > 0 {
+		m.AddEntitytypeIDs(v...)
+	}
 	if v := i.ContactIDs; len(v) > 0 {
 		m.AddContactIDs(v...)
 	}
@@ -2745,6 +2837,9 @@ type UpdateOrganizationInput struct {
 	ClearEntities                    bool
 	AddEntityIDs                     []string
 	RemoveEntityIDs                  []string
+	ClearEntitytypes                 bool
+	AddEntitytypeIDs                 []string
+	RemoveEntitytypeIDs              []string
 	ClearContacts                    bool
 	AddContactIDs                    []string
 	RemoveContactIDs                 []string
@@ -2955,6 +3050,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveEntityIDs; len(v) > 0 {
 		m.RemoveEntityIDs(v...)
+	}
+	if i.ClearEntitytypes {
+		m.ClearEntitytypes()
+	}
+	if v := i.AddEntitytypeIDs; len(v) > 0 {
+		m.AddEntitytypeIDs(v...)
+	}
+	if v := i.RemoveEntitytypeIDs; len(v) > 0 {
+		m.RemoveEntitytypeIDs(v...)
 	}
 	if i.ClearContacts {
 		m.ClearContacts()

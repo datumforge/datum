@@ -26,6 +26,9 @@ func (c *Client) WithHistory() {
 	for _, hook := range enthistory.HistoryHooks[*EntityMutation]() {
 		c.Entity.Use(hook)
 	}
+	for _, hook := range enthistory.HistoryHooks[*EntityTypeMutation]() {
+		c.EntityType.Use(hook)
+	}
 	for _, hook := range enthistory.HistoryHooks[*EventMutation]() {
 		c.Event.Use(hook)
 	}

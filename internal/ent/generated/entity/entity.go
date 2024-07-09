@@ -3,14 +3,11 @@
 package entity
 
 import (
-	"fmt"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/99designs/gqlgen/graphql"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 const (
@@ -42,14 +39,16 @@ const (
 	FieldDisplayName = "display_name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldEntityType holds the string denoting the entity_type field in the database.
-	FieldEntityType = "entity_type"
+	// FieldEntityTypeID holds the string denoting the entity_type_id field in the database.
+	FieldEntityTypeID = "entity_type_id"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// EdgeContacts holds the string denoting the contacts edge name in mutations.
 	EdgeContacts = "contacts"
 	// EdgeDocuments holds the string denoting the documents edge name in mutations.
 	EdgeDocuments = "documents"
+	// EdgeEntityType holds the string denoting the entity_type edge name in mutations.
+	EdgeEntityType = "entity_type"
 	// Table holds the table name of the entity in the database.
 	Table = "entities"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -69,6 +68,13 @@ const (
 	// DocumentsInverseTable is the table name for the DocumentData entity.
 	// It exists in this package in order to avoid circular dependency with the "documentdata" package.
 	DocumentsInverseTable = "document_data"
+	// EntityTypeTable is the table that holds the entity_type relation/edge.
+	EntityTypeTable = "entities"
+	// EntityTypeInverseTable is the table name for the EntityType entity.
+	// It exists in this package in order to avoid circular dependency with the "entitytype" package.
+	EntityTypeInverseTable = "entity_types"
+	// EntityTypeColumn is the table column denoting the entity_type relation/edge.
+	EntityTypeColumn = "entity_type_id"
 )
 
 // Columns holds all SQL columns for entity fields.
@@ -86,7 +92,13 @@ var Columns = []string{
 	FieldName,
 	FieldDisplayName,
 	FieldDescription,
-	FieldEntityType,
+	FieldEntityTypeID,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "entities"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"entity_type_entities",
 }
 
 var (
@@ -102,6 +114,11 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -138,18 +155,6 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
-
-const DefaultEntityType enums.EntityType = "ORGANIZATION"
-
-// EntityTypeValidator is a validator for the "entity_type" field enum values. It is called by the builders before save.
-func EntityTypeValidator(et enums.EntityType) error {
-	switch et.String() {
-	case "ORGANIZATION", "VENDOR":
-		return nil
-	default:
-		return fmt.Errorf("entity: invalid enum value for entity_type field: %q", et)
-	}
-}
 
 // OrderOption defines the ordering options for the Entity queries.
 type OrderOption func(*sql.Selector)
@@ -214,9 +219,9 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
-// ByEntityType orders the results by the entity_type field.
-func ByEntityType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEntityType, opts...).ToFunc()
+// ByEntityTypeID orders the results by the entity_type_id field.
+func ByEntityTypeID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEntityTypeID, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.
@@ -253,6 +258,13 @@ func ByDocuments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newDocumentsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByEntityTypeField orders the results by entity_type field.
+func ByEntityTypeField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntityTypeStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -274,10 +286,10 @@ func newDocumentsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2M, false, DocumentsTable, DocumentsPrimaryKey...),
 	)
 }
-
-var (
-	// enums.EntityType must implement graphql.Marshaler.
-	_ graphql.Marshaler = (*enums.EntityType)(nil)
-	// enums.EntityType must implement graphql.Unmarshaler.
-	_ graphql.Unmarshaler = (*enums.EntityType)(nil)
-)
+func newEntityTypeStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntityTypeInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, EntityTypeTable, EntityTypeColumn),
+	)
+}

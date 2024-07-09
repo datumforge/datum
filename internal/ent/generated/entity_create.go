@@ -13,8 +13,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/contact"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 // EntityCreate is the builder for creating a Entity entity.
@@ -176,16 +176,16 @@ func (ec *EntityCreate) SetNillableDescription(s *string) *EntityCreate {
 	return ec
 }
 
-// SetEntityType sets the "entity_type" field.
-func (ec *EntityCreate) SetEntityType(et enums.EntityType) *EntityCreate {
-	ec.mutation.SetEntityType(et)
+// SetEntityTypeID sets the "entity_type_id" field.
+func (ec *EntityCreate) SetEntityTypeID(s string) *EntityCreate {
+	ec.mutation.SetEntityTypeID(s)
 	return ec
 }
 
-// SetNillableEntityType sets the "entity_type" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableEntityType(et *enums.EntityType) *EntityCreate {
-	if et != nil {
-		ec.SetEntityType(*et)
+// SetNillableEntityTypeID sets the "entity_type_id" field if the given value is not nil.
+func (ec *EntityCreate) SetNillableEntityTypeID(s *string) *EntityCreate {
+	if s != nil {
+		ec.SetEntityTypeID(*s)
 	}
 	return ec
 }
@@ -237,6 +237,11 @@ func (ec *EntityCreate) AddDocuments(d ...*DocumentData) *EntityCreate {
 		ids[i] = d[i].ID
 	}
 	return ec.AddDocumentIDs(ids...)
+}
+
+// SetEntityType sets the "entity_type" edge to the EntityType entity.
+func (ec *EntityCreate) SetEntityType(e *EntityType) *EntityCreate {
+	return ec.SetEntityTypeID(e.ID)
 }
 
 // Mutation returns the EntityMutation object of the builder.
@@ -305,10 +310,6 @@ func (ec *EntityCreate) defaults() error {
 		v := entity.DefaultDisplayName
 		ec.mutation.SetDisplayName(v)
 	}
-	if _, ok := ec.mutation.EntityType(); !ok {
-		v := entity.DefaultEntityType
-		ec.mutation.SetEntityType(v)
-	}
 	if _, ok := ec.mutation.ID(); !ok {
 		if entity.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized entity.DefaultID (forgotten import generated/runtime?)")
@@ -343,14 +344,6 @@ func (ec *EntityCreate) check() error {
 	if v, ok := ec.mutation.DisplayName(); ok {
 		if err := entity.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Entity.display_name": %w`, err)}
-		}
-	}
-	if _, ok := ec.mutation.EntityType(); !ok {
-		return &ValidationError{Name: "entity_type", err: errors.New(`generated: missing required field "Entity.entity_type"`)}
-	}
-	if v, ok := ec.mutation.EntityType(); ok {
-		if err := entity.EntityTypeValidator(v); err != nil {
-			return &ValidationError{Name: "entity_type", err: fmt.Errorf(`generated: validator failed for field "Entity.entity_type": %w`, err)}
 		}
 	}
 	return nil
@@ -433,10 +426,6 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_spec.SetField(entity.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := ec.mutation.EntityType(); ok {
-		_spec.SetField(entity.FieldEntityType, field.TypeEnum, value)
-		_node.EntityType = value
-	}
 	if nodes := ec.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -487,6 +476,24 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.EntityTypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.EntityTypeTable,
+			Columns: []string{entity.EntityTypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ec.schemaConfig.Entity
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.EntityTypeID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

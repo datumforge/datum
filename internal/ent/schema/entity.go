@@ -18,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/pkg/enums"
 )
 
 // Entity holds the schema definition for the Entity entity
@@ -49,10 +48,9 @@ func (Entity) Fields() []ent.Field {
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),
 			),
-		field.Enum("entity_type").
-			Comment("the type of the entity").
-			GoType(enums.EntityType("")).
-			Default(string(enums.Organization)),
+		field.String("entity_type_id").
+			Comment("The type of the entity").
+			Optional(),
 	}
 }
 
@@ -74,6 +72,9 @@ func (Entity) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("contacts", Contact.Type),
 		edge.To("documents", DocumentData.Type),
+		edge.To("entity_type", EntityType.Type).
+			Field("entity_type_id").
+			Unique(),
 	}
 }
 

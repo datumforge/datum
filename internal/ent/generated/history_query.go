@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
 	"github.com/datumforge/datum/internal/ent/generated/filehistory"
@@ -305,6 +306,52 @@ func (ehq *EntityHistoryQuery) AsOf(ctx context.Context, time time.Time) (*Entit
 	return ehq.
 		Where(entityhistory.HistoryTimeLTE(time)).
 		Order(entityhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (et *EntityType) History() *EntityTypeHistoryQuery {
+	historyClient := NewEntityTypeHistoryClient(et.config)
+	return historyClient.Query().Where(entitytypehistory.Ref(et.ID))
+}
+
+func (eth *EntityTypeHistory) Next(ctx context.Context) (*EntityTypeHistory, error) {
+	client := NewEntityTypeHistoryClient(eth.config)
+	return client.Query().
+		Where(
+			entitytypehistory.Ref(eth.Ref),
+			entitytypehistory.HistoryTimeGT(eth.HistoryTime),
+		).
+		Order(entitytypehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (eth *EntityTypeHistory) Prev(ctx context.Context) (*EntityTypeHistory, error) {
+	client := NewEntityTypeHistoryClient(eth.config)
+	return client.Query().
+		Where(
+			entitytypehistory.Ref(eth.Ref),
+			entitytypehistory.HistoryTimeLT(eth.HistoryTime),
+		).
+		Order(entitytypehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ethq *EntityTypeHistoryQuery) Earliest(ctx context.Context) (*EntityTypeHistory, error) {
+	return ethq.
+		Order(entitytypehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ethq *EntityTypeHistoryQuery) Latest(ctx context.Context) (*EntityTypeHistory, error) {
+	return ethq.
+		Order(entitytypehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ethq *EntityTypeHistoryQuery) AsOf(ctx context.Context, time time.Time) (*EntityTypeHistory, error) {
+	return ethq.
+		Where(entitytypehistory.HistoryTimeLTE(time)).
+		Order(entitytypehistory.ByHistoryTime(sql.OrderDesc())).
 		First(ctx)
 }
 

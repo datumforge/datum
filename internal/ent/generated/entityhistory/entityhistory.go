@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/enthistory"
 )
 
@@ -47,8 +46,8 @@ const (
 	FieldDisplayName = "display_name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldEntityType holds the string denoting the entity_type field in the database.
-	FieldEntityType = "entity_type"
+	// FieldEntityTypeID holds the string denoting the entity_type_id field in the database.
+	FieldEntityTypeID = "entity_type_id"
 	// Table holds the table name of the entityhistory in the database.
 	Table = "entity_history"
 )
@@ -71,7 +70,7 @@ var Columns = []string{
 	FieldName,
 	FieldDisplayName,
 	FieldDescription,
-	FieldEntityType,
+	FieldEntityTypeID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -108,18 +107,6 @@ func OperationValidator(o enthistory.OpType) error {
 		return nil
 	default:
 		return fmt.Errorf("entityhistory: invalid enum value for operation field: %q", o)
-	}
-}
-
-const DefaultEntityType enums.EntityType = "ORGANIZATION"
-
-// EntityTypeValidator is a validator for the "entity_type" field enum values. It is called by the builders before save.
-func EntityTypeValidator(et enums.EntityType) error {
-	switch et.String() {
-	case "ORGANIZATION", "VENDOR":
-		return nil
-	default:
-		return fmt.Errorf("entityhistory: invalid enum value for entity_type field: %q", et)
 	}
 }
 
@@ -201,9 +188,9 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
-// ByEntityType orders the results by the entity_type field.
-func ByEntityType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEntityType, opts...).ToFunc()
+// ByEntityTypeID orders the results by the entity_type_id field.
+func ByEntityTypeID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEntityTypeID, opts...).ToFunc()
 }
 
 var (
@@ -211,11 +198,4 @@ var (
 	_ graphql.Marshaler = (*enthistory.OpType)(nil)
 	// enthistory.OpType must implement graphql.Unmarshaler.
 	_ graphql.Unmarshaler = (*enthistory.OpType)(nil)
-)
-
-var (
-	// enums.EntityType must implement graphql.Marshaler.
-	_ graphql.Marshaler = (*enums.EntityType)(nil)
-	// enums.EntityType must implement graphql.Unmarshaler.
-	_ graphql.Unmarshaler = (*enums.EntityType)(nil)
 )

@@ -179,6 +179,30 @@ type EntityDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+// Return response for createBulkEntityType mutation
+type EntityTypeBulkCreatePayload struct {
+	// Created entityTypes
+	EntityTypes []*generated.EntityType `json:"entityTypes,omitempty"`
+}
+
+// Return response for createEntityType mutation
+type EntityTypeCreatePayload struct {
+	// Created entityType
+	EntityType *generated.EntityType `json:"entityType"`
+}
+
+// Return response for deleteEntityType mutation
+type EntityTypeDeletePayload struct {
+	// Deleted entityType ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateEntityType mutation
+type EntityTypeUpdatePayload struct {
+	// Updated entityType
+	EntityType *generated.EntityType `json:"entityType"`
+}
+
 // Return response for updateEntity mutation
 type EntityUpdatePayload struct {
 	// Updated entity

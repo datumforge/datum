@@ -226,12 +226,26 @@ type EntityBuilder struct {
 	// Fields
 	Name        string
 	DisplayName string
-	Type        string
+	TypeID      string
 	Description string
 	Owner       string
 }
 
 type EntityCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
+type EntityTypeBuilder struct {
+	client *client
+
+	// Fields
+	Name string
+}
+
+type EntityTypeCleanup struct {
 	client *client
 
 	// Fields
@@ -744,6 +758,36 @@ func (e *EntitlementPlanFeatureBuilder) MustNew(ctx context.Context, t *testing.
 	return planFeature
 }
 
+// MustNew entity type builder is used to create, without authz checks, entity types in the database
+func (e *EntityTypeBuilder) MustNew(ctx context.Context, t *testing.T) *ent.EntityType {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if e.Name == "" {
+		e.Name = gofakeit.AppName()
+	}
+
+	entityType := e.client.db.EntityType.Create().
+		SetName(e.Name).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+
+	return entityType
+}
+
+// MustDelete is used to cleanup, without authz checks, entities in the database
+func (e *EntityTypeCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	mock_fga.ClearMocks(e.client.fga)
+
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	e.client.db.EntityType.DeleteOneID(e.ID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+}
+
 // MustNew entity builder is used to create, without authz checks, entities in the database
 func (e *EntityBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Entity {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
@@ -760,14 +804,15 @@ func (e *EntityBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Entity {
 		e.Description = gofakeit.HipsterSentence(5)
 	}
 
-	if e.Type == "" {
-		e.Type = "Organization"
+	if e.TypeID == "" {
+		et := (&EntityTypeBuilder{client: e.client}).MustNew(ctx, t)
+		e.TypeID = et.ID
 	}
 
 	entity := e.client.db.Entity.Create().
 		SetName(e.Name).
 		SetDisplayName(e.DisplayName).
-		SetEntityType(*enums.ToEntityType(e.Type)).
+		SetEntityTypeID(e.TypeID).
 		SetDescription(e.Description).
 		SaveX(ctx)
 

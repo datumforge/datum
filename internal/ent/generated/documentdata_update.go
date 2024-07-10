@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
+	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/template"
@@ -174,6 +175,21 @@ func (ddu *DocumentDataUpdate) SetTemplate(t *Template) *DocumentDataUpdate {
 	return ddu.SetTemplateID(t.ID)
 }
 
+// AddEntityIDs adds the "entity" edge to the Entity entity by IDs.
+func (ddu *DocumentDataUpdate) AddEntityIDs(ids ...string) *DocumentDataUpdate {
+	ddu.mutation.AddEntityIDs(ids...)
+	return ddu
+}
+
+// AddEntity adds the "entity" edges to the Entity entity.
+func (ddu *DocumentDataUpdate) AddEntity(e ...*Entity) *DocumentDataUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ddu.AddEntityIDs(ids...)
+}
+
 // Mutation returns the DocumentDataMutation object of the builder.
 func (ddu *DocumentDataUpdate) Mutation() *DocumentDataMutation {
 	return ddu.mutation
@@ -189,6 +205,27 @@ func (ddu *DocumentDataUpdate) ClearOwner() *DocumentDataUpdate {
 func (ddu *DocumentDataUpdate) ClearTemplate() *DocumentDataUpdate {
 	ddu.mutation.ClearTemplate()
 	return ddu
+}
+
+// ClearEntity clears all "entity" edges to the Entity entity.
+func (ddu *DocumentDataUpdate) ClearEntity() *DocumentDataUpdate {
+	ddu.mutation.ClearEntity()
+	return ddu
+}
+
+// RemoveEntityIDs removes the "entity" edge to Entity entities by IDs.
+func (ddu *DocumentDataUpdate) RemoveEntityIDs(ids ...string) *DocumentDataUpdate {
+	ddu.mutation.RemoveEntityIDs(ids...)
+	return ddu
+}
+
+// RemoveEntity removes "entity" edges to Entity entities.
+func (ddu *DocumentDataUpdate) RemoveEntity(e ...*Entity) *DocumentDataUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ddu.RemoveEntityIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -364,6 +401,54 @@ func (ddu *DocumentDataUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ddu.mutation.EntityCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   documentdata.EntityTable,
+			Columns: documentdata.EntityPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ddu.schemaConfig.EntityDocuments
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ddu.mutation.RemovedEntityIDs(); len(nodes) > 0 && !ddu.mutation.EntityCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   documentdata.EntityTable,
+			Columns: documentdata.EntityPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ddu.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ddu.mutation.EntityIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   documentdata.EntityTable,
+			Columns: documentdata.EntityPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ddu.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = ddu.schemaConfig.DocumentData
 	ctx = internal.NewSchemaConfigContext(ctx, ddu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, ddu.driver, _spec); err != nil {
@@ -526,6 +611,21 @@ func (dduo *DocumentDataUpdateOne) SetTemplate(t *Template) *DocumentDataUpdateO
 	return dduo.SetTemplateID(t.ID)
 }
 
+// AddEntityIDs adds the "entity" edge to the Entity entity by IDs.
+func (dduo *DocumentDataUpdateOne) AddEntityIDs(ids ...string) *DocumentDataUpdateOne {
+	dduo.mutation.AddEntityIDs(ids...)
+	return dduo
+}
+
+// AddEntity adds the "entity" edges to the Entity entity.
+func (dduo *DocumentDataUpdateOne) AddEntity(e ...*Entity) *DocumentDataUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return dduo.AddEntityIDs(ids...)
+}
+
 // Mutation returns the DocumentDataMutation object of the builder.
 func (dduo *DocumentDataUpdateOne) Mutation() *DocumentDataMutation {
 	return dduo.mutation
@@ -541,6 +641,27 @@ func (dduo *DocumentDataUpdateOne) ClearOwner() *DocumentDataUpdateOne {
 func (dduo *DocumentDataUpdateOne) ClearTemplate() *DocumentDataUpdateOne {
 	dduo.mutation.ClearTemplate()
 	return dduo
+}
+
+// ClearEntity clears all "entity" edges to the Entity entity.
+func (dduo *DocumentDataUpdateOne) ClearEntity() *DocumentDataUpdateOne {
+	dduo.mutation.ClearEntity()
+	return dduo
+}
+
+// RemoveEntityIDs removes the "entity" edge to Entity entities by IDs.
+func (dduo *DocumentDataUpdateOne) RemoveEntityIDs(ids ...string) *DocumentDataUpdateOne {
+	dduo.mutation.RemoveEntityIDs(ids...)
+	return dduo
+}
+
+// RemoveEntity removes "entity" edges to Entity entities.
+func (dduo *DocumentDataUpdateOne) RemoveEntity(e ...*Entity) *DocumentDataUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return dduo.RemoveEntityIDs(ids...)
 }
 
 // Where appends a list predicates to the DocumentDataUpdate builder.
@@ -741,6 +862,54 @@ func (dduo *DocumentDataUpdateOne) sqlSave(ctx context.Context) (_node *Document
 			},
 		}
 		edge.Schema = dduo.schemaConfig.DocumentData
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if dduo.mutation.EntityCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   documentdata.EntityTable,
+			Columns: documentdata.EntityPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = dduo.schemaConfig.EntityDocuments
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dduo.mutation.RemovedEntityIDs(); len(nodes) > 0 && !dduo.mutation.EntityCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   documentdata.EntityTable,
+			Columns: documentdata.EntityPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = dduo.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dduo.mutation.EntityIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   documentdata.EntityTable,
+			Columns: documentdata.EntityPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = dduo.schemaConfig.EntityDocuments
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

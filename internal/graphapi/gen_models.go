@@ -35,6 +35,30 @@ type APITokenUpdatePayload struct {
 	APIToken *generated.APIToken `json:"apiToken"`
 }
 
+// Return response for createBulkContact mutation
+type ContactBulkCreatePayload struct {
+	// Created contacts
+	Contacts []*generated.Contact `json:"contacts,omitempty"`
+}
+
+// Return response for createContact mutation
+type ContactCreatePayload struct {
+	// Created contact
+	Contact *generated.Contact `json:"contact"`
+}
+
+// Return response for deleteContact mutation
+type ContactDeletePayload struct {
+	// Deleted contact ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateContact mutation
+type ContactUpdatePayload struct {
+	// Updated contact
+	Contact *generated.Contact `json:"contact"`
+}
+
 // Return response for createBulkDocumentData mutation
 type DocumentDataBulkCreatePayload struct {
 	// Created documentData
@@ -135,6 +159,54 @@ type EntitlementPlanUpdatePayload struct {
 type EntitlementUpdatePayload struct {
 	// Updated entitlement
 	Entitlement *generated.Entitlement `json:"entitlement"`
+}
+
+// Return response for createBulkEntity mutation
+type EntityBulkCreatePayload struct {
+	// Created entities
+	Entities []*generated.Entity `json:"entities,omitempty"`
+}
+
+// Return response for createEntity mutation
+type EntityCreatePayload struct {
+	// Created entity
+	Entity *generated.Entity `json:"entity"`
+}
+
+// Return response for deleteEntity mutation
+type EntityDeletePayload struct {
+	// Deleted entity ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for createBulkEntityType mutation
+type EntityTypeBulkCreatePayload struct {
+	// Created entityTypes
+	EntityTypes []*generated.EntityType `json:"entityTypes,omitempty"`
+}
+
+// Return response for createEntityType mutation
+type EntityTypeCreatePayload struct {
+	// Created entityType
+	EntityType *generated.EntityType `json:"entityType"`
+}
+
+// Return response for deleteEntityType mutation
+type EntityTypeDeletePayload struct {
+	// Deleted entityType ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateEntityType mutation
+type EntityTypeUpdatePayload struct {
+	// Updated entityType
+	EntityType *generated.EntityType `json:"entityType"`
+}
+
+// Return response for updateEntity mutation
+type EntityUpdatePayload struct {
+	// Updated entity
+	Entity *generated.Entity `json:"entity"`
 }
 
 // Return response for createBulkEvent mutation

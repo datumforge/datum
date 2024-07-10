@@ -30,7 +30,7 @@ func TestToVisibility(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run(fmt.Sprintf("Convert %s to Region", tc.input), func(t *testing.T) {
+		t.Run(fmt.Sprintf("Convert %s to Visibility", tc.input), func(t *testing.T) {
 			result := enums.ToGroupVisibility(tc.input)
 			assert.Equal(t, tc.expected, *result)
 		})

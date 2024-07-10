@@ -8,10 +8,13 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/generated/contacthistory"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
 	"github.com/datumforge/datum/internal/ent/generated/filehistory"
@@ -29,6 +32,52 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/webhookhistory"
 )
+
+func (c *Contact) History() *ContactHistoryQuery {
+	historyClient := NewContactHistoryClient(c.config)
+	return historyClient.Query().Where(contacthistory.Ref(c.ID))
+}
+
+func (ch *ContactHistory) Next(ctx context.Context) (*ContactHistory, error) {
+	client := NewContactHistoryClient(ch.config)
+	return client.Query().
+		Where(
+			contacthistory.Ref(ch.Ref),
+			contacthistory.HistoryTimeGT(ch.HistoryTime),
+		).
+		Order(contacthistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ch *ContactHistory) Prev(ctx context.Context) (*ContactHistory, error) {
+	client := NewContactHistoryClient(ch.config)
+	return client.Query().
+		Where(
+			contacthistory.Ref(ch.Ref),
+			contacthistory.HistoryTimeLT(ch.HistoryTime),
+		).
+		Order(contacthistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (chq *ContactHistoryQuery) Earliest(ctx context.Context) (*ContactHistory, error) {
+	return chq.
+		Order(contacthistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (chq *ContactHistoryQuery) Latest(ctx context.Context) (*ContactHistory, error) {
+	return chq.
+		Order(contacthistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (chq *ContactHistoryQuery) AsOf(ctx context.Context, time time.Time) (*ContactHistory, error) {
+	return chq.
+		Where(contacthistory.HistoryTimeLTE(time)).
+		Order(contacthistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
 
 func (dd *DocumentData) History() *DocumentDataHistoryQuery {
 	historyClient := NewDocumentDataHistoryClient(dd.config)
@@ -211,6 +260,98 @@ func (epfhq *EntitlementPlanFeatureHistoryQuery) AsOf(ctx context.Context, time 
 	return epfhq.
 		Where(entitlementplanfeaturehistory.HistoryTimeLTE(time)).
 		Order(entitlementplanfeaturehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (e *Entity) History() *EntityHistoryQuery {
+	historyClient := NewEntityHistoryClient(e.config)
+	return historyClient.Query().Where(entityhistory.Ref(e.ID))
+}
+
+func (eh *EntityHistory) Next(ctx context.Context) (*EntityHistory, error) {
+	client := NewEntityHistoryClient(eh.config)
+	return client.Query().
+		Where(
+			entityhistory.Ref(eh.Ref),
+			entityhistory.HistoryTimeGT(eh.HistoryTime),
+		).
+		Order(entityhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (eh *EntityHistory) Prev(ctx context.Context) (*EntityHistory, error) {
+	client := NewEntityHistoryClient(eh.config)
+	return client.Query().
+		Where(
+			entityhistory.Ref(eh.Ref),
+			entityhistory.HistoryTimeLT(eh.HistoryTime),
+		).
+		Order(entityhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ehq *EntityHistoryQuery) Earliest(ctx context.Context) (*EntityHistory, error) {
+	return ehq.
+		Order(entityhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ehq *EntityHistoryQuery) Latest(ctx context.Context) (*EntityHistory, error) {
+	return ehq.
+		Order(entityhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ehq *EntityHistoryQuery) AsOf(ctx context.Context, time time.Time) (*EntityHistory, error) {
+	return ehq.
+		Where(entityhistory.HistoryTimeLTE(time)).
+		Order(entityhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (et *EntityType) History() *EntityTypeHistoryQuery {
+	historyClient := NewEntityTypeHistoryClient(et.config)
+	return historyClient.Query().Where(entitytypehistory.Ref(et.ID))
+}
+
+func (eth *EntityTypeHistory) Next(ctx context.Context) (*EntityTypeHistory, error) {
+	client := NewEntityTypeHistoryClient(eth.config)
+	return client.Query().
+		Where(
+			entitytypehistory.Ref(eth.Ref),
+			entitytypehistory.HistoryTimeGT(eth.HistoryTime),
+		).
+		Order(entitytypehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (eth *EntityTypeHistory) Prev(ctx context.Context) (*EntityTypeHistory, error) {
+	client := NewEntityTypeHistoryClient(eth.config)
+	return client.Query().
+		Where(
+			entitytypehistory.Ref(eth.Ref),
+			entitytypehistory.HistoryTimeLT(eth.HistoryTime),
+		).
+		Order(entitytypehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ethq *EntityTypeHistoryQuery) Earliest(ctx context.Context) (*EntityTypeHistory, error) {
+	return ethq.
+		Order(entitytypehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ethq *EntityTypeHistoryQuery) Latest(ctx context.Context) (*EntityTypeHistory, error) {
+	return ethq.
+		Order(entitytypehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ethq *EntityTypeHistoryQuery) AsOf(ctx context.Context, time time.Time) (*EntityTypeHistory, error) {
+	return ethq.
+		Where(entitytypehistory.HistoryTimeLTE(time)).
+		Order(entitytypehistory.ByHistoryTime(sql.OrderDesc())).
 		First(ctx)
 }
 

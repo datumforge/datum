@@ -13,13 +13,14 @@ var (
 	UserStatusInactive    UserStatus = "INACTIVE"
 	UserStatusDeactivated UserStatus = "DEACTIVATED"
 	UserStatusSuspended   UserStatus = "SUSPENDED"
+	UserStatusOnboarding  UserStatus = "ONBOARDING"
 	UserStatusInvalid     UserStatus = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the UserStatus enum.
 // Possible default values are "ACTIVE", "INACTIVE", "DEACTIVATED", and "SUSPENDED".
 func (UserStatus) Values() (kinds []string) {
-	for _, s := range []UserStatus{UserStatusActive, UserStatusInactive, UserStatusDeactivated, UserStatusSuspended} {
+	for _, s := range []UserStatus{UserStatusActive, UserStatusInactive, UserStatusDeactivated, UserStatusSuspended, UserStatusOnboarding} {
 		kinds = append(kinds, string(s))
 	}
 
@@ -42,6 +43,8 @@ func ToUserStatus(r string) *UserStatus {
 		return &UserStatusDeactivated
 	case UserStatusSuspended.String():
 		return &UserStatusSuspended
+	case UserStatusOnboarding.String():
+		return &UserStatusOnboarding
 	default:
 		return &UserStatusInvalid
 	}

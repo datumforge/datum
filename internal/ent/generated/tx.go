@@ -14,6 +14,10 @@ type Tx struct {
 	config
 	// APIToken is the client for interacting with the APIToken builders.
 	APIToken *APITokenClient
+	// Contact is the client for interacting with the Contact builders.
+	Contact *ContactClient
+	// ContactHistory is the client for interacting with the ContactHistory builders.
+	ContactHistory *ContactHistoryClient
 	// DocumentData is the client for interacting with the DocumentData builders.
 	DocumentData *DocumentDataClient
 	// DocumentDataHistory is the client for interacting with the DocumentDataHistory builders.
@@ -32,6 +36,14 @@ type Tx struct {
 	EntitlementPlanFeature *EntitlementPlanFeatureClient
 	// EntitlementPlanFeatureHistory is the client for interacting with the EntitlementPlanFeatureHistory builders.
 	EntitlementPlanFeatureHistory *EntitlementPlanFeatureHistoryClient
+	// Entity is the client for interacting with the Entity builders.
+	Entity *EntityClient
+	// EntityHistory is the client for interacting with the EntityHistory builders.
+	EntityHistory *EntityHistoryClient
+	// EntityType is the client for interacting with the EntityType builders.
+	EntityType *EntityTypeClient
+	// EntityTypeHistory is the client for interacting with the EntityTypeHistory builders.
+	EntityTypeHistory *EntityTypeHistoryClient
 	// Event is the client for interacting with the Event builders.
 	Event *EventClient
 	// EventHistory is the client for interacting with the EventHistory builders.
@@ -242,6 +254,8 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.APIToken = NewAPITokenClient(tx.config)
+	tx.Contact = NewContactClient(tx.config)
+	tx.ContactHistory = NewContactHistoryClient(tx.config)
 	tx.DocumentData = NewDocumentDataClient(tx.config)
 	tx.DocumentDataHistory = NewDocumentDataHistoryClient(tx.config)
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
@@ -251,6 +265,10 @@ func (tx *Tx) init() {
 	tx.EntitlementPlanHistory = NewEntitlementPlanHistoryClient(tx.config)
 	tx.EntitlementPlanFeature = NewEntitlementPlanFeatureClient(tx.config)
 	tx.EntitlementPlanFeatureHistory = NewEntitlementPlanFeatureHistoryClient(tx.config)
+	tx.Entity = NewEntityClient(tx.config)
+	tx.EntityHistory = NewEntityHistoryClient(tx.config)
+	tx.EntityType = NewEntityTypeClient(tx.config)
+	tx.EntityTypeHistory = NewEntityTypeHistoryClient(tx.config)
 	tx.Event = NewEventClient(tx.config)
 	tx.EventHistory = NewEventHistoryClient(tx.config)
 	tx.Feature = NewFeatureClient(tx.config)

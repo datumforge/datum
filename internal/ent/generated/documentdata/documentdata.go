@@ -41,6 +41,8 @@ const (
 	EdgeOwner = "owner"
 	// EdgeTemplate holds the string denoting the template edge name in mutations.
 	EdgeTemplate = "template"
+	// EdgeEntity holds the string denoting the entity edge name in mutations.
+	EdgeEntity = "entity"
 	// Table holds the table name of the documentdata in the database.
 	Table = "document_data"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -57,6 +59,11 @@ const (
 	TemplateInverseTable = "templates"
 	// TemplateColumn is the table column denoting the template relation/edge.
 	TemplateColumn = "template_id"
+	// EntityTable is the table that holds the entity relation/edge. The primary key declared below.
+	EntityTable = "entity_documents"
+	// EntityInverseTable is the table name for the Entity entity.
+	// It exists in this package in order to avoid circular dependency with the "entity" package.
+	EntityInverseTable = "entities"
 )
 
 // Columns holds all SQL columns for documentdata fields.
@@ -74,6 +81,12 @@ var Columns = []string{
 	FieldTemplateID,
 	FieldData,
 }
+
+var (
+	// EntityPrimaryKey and EntityColumn2 are the table columns denoting the
+	// primary key for the entity relation (M2M).
+	EntityPrimaryKey = []string{"entity_id", "document_data_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -176,6 +189,20 @@ func ByTemplateField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTemplateStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByEntityCount orders the results by entity count.
+func ByEntityCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEntityStep(), opts...)
+	}
+}
+
+// ByEntity orders the results by entity terms.
+func ByEntity(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntityStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -188,5 +215,12 @@ func newTemplateStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TemplateInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, TemplateTable, TemplateColumn),
+	)
+}
+func newEntityStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntityInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, EntityTable, EntityPrimaryKey...),
 	)
 }

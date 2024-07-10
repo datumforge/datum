@@ -155,6 +155,12 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("entitlementplanfeatures", EntitlementPlanFeature.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("entities", Entity.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("entitytypes", EntityType.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("contacts", Contact.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
 	}
 }
 

@@ -27,6 +27,25 @@ func (r *mutationResolver) bulkCreateAPIToken(ctx context.Context, input []*gene
 	}, nil
 }
 
+// bulkCreateContact uses the CreateBulk function to create multiple Contact entities
+func (r *mutationResolver) bulkCreateContact(ctx context.Context, input []*generated.CreateContactInput) (*ContactBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+	builders := make([]*generated.ContactCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.Contact.Create().SetInput(*data)
+	}
+
+	res, err := c.Contact.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "contact"}, r.logger)
+	}
+
+	// return response
+	return &ContactBulkCreatePayload{
+		Contacts: res,
+	}, nil
+}
+
 // bulkCreateDocumentData uses the CreateBulk function to create multiple DocumentData entities
 func (r *mutationResolver) bulkCreateDocumentData(ctx context.Context, input []*generated.CreateDocumentDataInput) (*DocumentDataBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)
@@ -100,6 +119,44 @@ func (r *mutationResolver) bulkCreateEntitlementPlanFeature(ctx context.Context,
 	// return response
 	return &EntitlementPlanFeatureBulkCreatePayload{
 		EntitlementPlanFeatures: res,
+	}, nil
+}
+
+// bulkCreateEntity uses the CreateBulk function to create multiple Entity entities
+func (r *mutationResolver) bulkCreateEntity(ctx context.Context, input []*generated.CreateEntityInput) (*EntityBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+	builders := make([]*generated.EntityCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.Entity.Create().SetInput(*data)
+	}
+
+	res, err := c.Entity.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "entity"}, r.logger)
+	}
+
+	// return response
+	return &EntityBulkCreatePayload{
+		Entities: res,
+	}, nil
+}
+
+// bulkCreateEntityType uses the CreateBulk function to create multiple EntityType entities
+func (r *mutationResolver) bulkCreateEntityType(ctx context.Context, input []*generated.CreateEntityTypeInput) (*EntityTypeBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+	builders := make([]*generated.EntityTypeCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.EntityType.Create().SetInput(*data)
+	}
+
+	res, err := c.EntityType.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "entitytype"}, r.logger)
+	}
+
+	// return response
+	return &EntityTypeBulkCreatePayload{
+		EntityTypes: res,
 	}, nil
 }
 

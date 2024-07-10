@@ -1,0 +1,45 @@
+query GetAllEntityHistories {
+  entityHistories {
+    edges {
+      node {
+        createdAt
+        createdBy
+        description
+        displayName
+        entityTypeID
+        historyTime
+        id
+        name
+        operation
+        ownerID
+        ref
+        tags
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+
+query GetEntityHistories($where: EntityHistoryWhereInput) {
+  entityHistories(where: $where) {
+    edges {
+      node {
+        createdAt
+        createdBy
+        description
+        displayName
+        entityTypeID
+        historyTime
+        id
+        name
+        operation
+        ownerID
+        ref
+        tags
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}

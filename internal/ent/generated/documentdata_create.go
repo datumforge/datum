@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
+	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 )
@@ -175,6 +176,21 @@ func (ddc *DocumentDataCreate) SetOwner(o *Organization) *DocumentDataCreate {
 // SetTemplate sets the "template" edge to the Template entity.
 func (ddc *DocumentDataCreate) SetTemplate(t *Template) *DocumentDataCreate {
 	return ddc.SetTemplateID(t.ID)
+}
+
+// AddEntityIDs adds the "entity" edge to the Entity entity by IDs.
+func (ddc *DocumentDataCreate) AddEntityIDs(ids ...string) *DocumentDataCreate {
+	ddc.mutation.AddEntityIDs(ids...)
+	return ddc
+}
+
+// AddEntity adds the "entity" edges to the Entity entity.
+func (ddc *DocumentDataCreate) AddEntity(e ...*Entity) *DocumentDataCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ddc.AddEntityIDs(ids...)
 }
 
 // Mutation returns the DocumentDataMutation object of the builder.
@@ -374,6 +390,23 @@ func (ddc *DocumentDataCreate) createSpec() (*DocumentData, *sqlgraph.CreateSpec
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.TemplateID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ddc.mutation.EntityIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   documentdata.EntityTable,
+			Columns: documentdata.EntityPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ddc.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

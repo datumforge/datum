@@ -30,7 +30,7 @@ type OrganizationCleanup struct {
 	client *client
 
 	// Fields
-	OrgID string
+	ID string
 }
 
 type GroupBuilder struct {
@@ -45,7 +45,7 @@ type GroupCleanup struct {
 	client *client
 
 	// Fields
-	GroupID string
+	ID string
 }
 
 type UserBuilder struct {
@@ -62,7 +62,7 @@ type UserCleanup struct {
 	client *client
 
 	// Fields
-	UserID string
+	ID string
 }
 
 type TFASettingBuilder struct {
@@ -220,6 +220,58 @@ type EntitlementPlanFeatureCleanup struct {
 	ID string
 }
 
+type EntityBuilder struct {
+	client *client
+
+	// Fields
+	Name        string
+	DisplayName string
+	TypeID      string
+	Description string
+	Owner       string
+}
+
+type EntityCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
+type EntityTypeBuilder struct {
+	client *client
+
+	// Fields
+	Name string
+}
+
+type EntityTypeCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
+type ContactBuilder struct {
+	client *client
+
+	// Fields
+	Name    string
+	Email   string
+	Address string
+	Phone   string
+	Title   string
+	Company string
+	Status  enums.UserStatus
+}
+
+type ContactCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
 // MustNew organization builder is used to create, without authz checks, orgs in the database
 func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Organization {
 	// no auth, so allow policy
@@ -266,7 +318,7 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Or
 func (o *OrganizationCleanup) MustDelete(ctx context.Context, t *testing.T) {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	o.client.db.Organization.DeleteOneID(o.OrgID).ExecX(ctx)
+	o.client.db.Organization.DeleteOneID(o.ID).ExecX(ctx)
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(o.client.fga)
@@ -318,7 +370,7 @@ func (u *UserBuilder) MustNew(ctx context.Context, t *testing.T) *ent.User {
 func (u *UserCleanup) MustDelete(ctx context.Context, t *testing.T) {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	u.client.db.User.DeleteOneID(u.UserID).ExecX(ctx)
+	u.client.db.User.DeleteOneID(u.ID).ExecX(ctx)
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(u.client.fga)
@@ -413,11 +465,11 @@ func (g *GroupCleanup) MustDelete(ctx context.Context, t *testing.T) {
 
 	// mock writes
 	mock_fga.ReadAny(t, g.client.fga)
-	mock_fga.ListAny(t, g.client.fga, []string{fmt.Sprintf("group:%s", g.GroupID)})
+	mock_fga.ListAny(t, g.client.fga, []string{fmt.Sprintf("group:%s", g.ID)})
 
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	g.client.db.Group.DeleteOneID(g.GroupID).ExecX(ctx)
+	g.client.db.Group.DeleteOneID(g.ID).ExecX(ctx)
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(g.client.fga)
@@ -704,4 +756,136 @@ func (e *EntitlementPlanFeatureBuilder) MustNew(ctx context.Context, t *testing.
 	mock_fga.ClearMocks(e.client.fga)
 
 	return planFeature
+}
+
+// MustNew entity type builder is used to create, without authz checks, entity types in the database
+func (e *EntityTypeBuilder) MustNew(ctx context.Context, t *testing.T) *ent.EntityType {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if e.Name == "" {
+		e.Name = gofakeit.AppName()
+	}
+
+	entityType := e.client.db.EntityType.Create().
+		SetName(e.Name).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+
+	return entityType
+}
+
+// MustDelete is used to cleanup, without authz checks, entities in the database
+func (e *EntityTypeCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	mock_fga.ClearMocks(e.client.fga)
+
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	e.client.db.EntityType.DeleteOneID(e.ID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+}
+
+// MustNew entity builder is used to create, without authz checks, entities in the database
+func (e *EntityBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Entity {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if e.Name == "" {
+		e.Name = gofakeit.AppName()
+	}
+
+	if e.DisplayName == "" {
+		e.DisplayName = e.Name
+	}
+
+	if e.Description == "" {
+		e.Description = gofakeit.HipsterSentence(5)
+	}
+
+	if e.TypeID == "" {
+		et := (&EntityTypeBuilder{client: e.client}).MustNew(ctx, t)
+		e.TypeID = et.ID
+	}
+
+	entity := e.client.db.Entity.Create().
+		SetName(e.Name).
+		SetDisplayName(e.DisplayName).
+		SetEntityTypeID(e.TypeID).
+		SetDescription(e.Description).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+
+	return entity
+}
+
+// MustDelete is used to cleanup, without authz checks, entities in the database
+func (e *EntityCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	mock_fga.ClearMocks(e.client.fga)
+
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	e.client.db.Entity.DeleteOneID(e.ID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+}
+
+// MustNew contact builder is used to create, without authz checks, contacts in the database
+func (e *ContactBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Contact {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if e.Name == "" {
+		e.Name = gofakeit.AppName()
+	}
+
+	if e.Email == "" {
+		e.Email = gofakeit.Email()
+	}
+
+	if e.Phone == "" {
+		e.Phone = gofakeit.Phone()
+	}
+
+	if e.Address == "" {
+		address := gofakeit.Address()
+		e.Address = fmt.Sprintf("%s, %s, %s, %s", address.Street, address.City, address.State, address.Zip)
+	}
+
+	if e.Title == "" {
+		e.Title = gofakeit.JobTitle()
+	}
+
+	if e.Company == "" {
+		e.Company = gofakeit.Company()
+	}
+
+	entity := e.client.db.Contact.Create().
+		SetFullName(e.Name).
+		SetEmail(e.Email).
+		SetPhoneNumber(e.Phone).
+		SetAddress(e.Address).
+		SetTitle(e.Title).
+		SetCompany(e.Company).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
+
+	return entity
+}
+
+// MustDelete is used to cleanup, without authz checks, contacts in the database
+func (e *ContactCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	mock_fga.ClearMocks(e.client.fga)
+
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	e.client.db.Contact.DeleteOneID(e.ID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(e.client.fga)
 }

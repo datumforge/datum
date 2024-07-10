@@ -26,6 +26,28 @@ func (r *queryResolver) APITokens(ctx context.Context, after *entgql.Cursor[stri
 	return withTransactionalMutation(ctx).APIToken.Query().Paginate(ctx, after, first, before, last, generated.WithAPITokenFilter(where.Filter))
 }
 
+// Contacts is the resolver for the contacts field.
+func (r *queryResolver) Contacts(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.ContactWhereInput) (*generated.ContactConnection, error) {
+	return withTransactionalMutation(ctx).Contact.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithContactFilter(where.Filter))
+}
+
+// ContactHistories is the resolver for the contactHistories field.
+func (r *queryResolver) ContactHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.ContactHistoryWhereInput) (*generated.ContactHistoryConnection, error) {
+	return withTransactionalMutation(ctx).ContactHistory.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithContactHistoryFilter(where.Filter))
+}
+
 // DocumentDataSlice is the resolver for the documentDataSlice field.
 func (r *queryResolver) DocumentDataSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataWhereInput) (*generated.DocumentDataConnection, error) {
 	return withTransactionalMutation(ctx).DocumentData.Query().Paginate(ctx, after, first, before, last, generated.WithDocumentDataFilter(where.Filter))
@@ -88,6 +110,54 @@ func (r *queryResolver) EntitlementPlanHistories(ctx context.Context, after *ent
 		before,
 		last,
 		generated.WithEntitlementPlanHistoryFilter(where.Filter))
+}
+
+// Entities is the resolver for the entities field.
+func (r *queryResolver) Entities(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.EntityOrder, where *generated.EntityWhereInput) (*generated.EntityConnection, error) {
+	return withTransactionalMutation(ctx).Entity.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithEntityOrder(orderBy),
+		generated.WithEntityFilter(where.Filter))
+}
+
+// EntityHistories is the resolver for the entityHistories field.
+func (r *queryResolver) EntityHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.EntityHistoryOrder, where *generated.EntityHistoryWhereInput) (*generated.EntityHistoryConnection, error) {
+	return withTransactionalMutation(ctx).EntityHistory.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithEntityHistoryOrder(orderBy),
+		generated.WithEntityHistoryFilter(where.Filter))
+}
+
+// EntityTypes is the resolver for the entityTypes field.
+func (r *queryResolver) EntityTypes(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.EntityTypeOrder, where *generated.EntityTypeWhereInput) (*generated.EntityTypeConnection, error) {
+	return withTransactionalMutation(ctx).EntityType.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithEntityTypeOrder(orderBy),
+		generated.WithEntityTypeFilter(where.Filter))
+}
+
+// EntityTypeHistories is the resolver for the entityTypeHistories field.
+func (r *queryResolver) EntityTypeHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.EntityTypeHistoryOrder, where *generated.EntityTypeHistoryWhereInput) (*generated.EntityTypeHistoryConnection, error) {
+	return withTransactionalMutation(ctx).EntityTypeHistory.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithEntityTypeHistoryOrder(orderBy),
+		generated.WithEntityTypeHistoryFilter(where.Filter))
 }
 
 // Events is the resolver for the events field.

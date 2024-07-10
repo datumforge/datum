@@ -13,6 +13,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
+	"github.com/datumforge/datum/internal/ent/generated/contact"
+	"github.com/datumforge/datum/internal/ent/generated/contacthistory"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
@@ -22,6 +24,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeature"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanfeaturehistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementplanhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entity"
+	"github.com/datumforge/datum/internal/ent/generated/entityhistory"
+	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/entitytypehistory"
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
@@ -122,6 +128,8 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			apitoken.Table:                      apitoken.ValidColumn,
+			contact.Table:                       contact.ValidColumn,
+			contacthistory.Table:                contacthistory.ValidColumn,
 			documentdata.Table:                  documentdata.ValidColumn,
 			documentdatahistory.Table:           documentdatahistory.ValidColumn,
 			emailverificationtoken.Table:        emailverificationtoken.ValidColumn,
@@ -131,6 +139,10 @@ func checkColumn(table, column string) error {
 			entitlementplanhistory.Table:        entitlementplanhistory.ValidColumn,
 			entitlementplanfeature.Table:        entitlementplanfeature.ValidColumn,
 			entitlementplanfeaturehistory.Table: entitlementplanfeaturehistory.ValidColumn,
+			entity.Table:                        entity.ValidColumn,
+			entityhistory.Table:                 entityhistory.ValidColumn,
+			entitytype.Table:                    entitytype.ValidColumn,
+			entitytypehistory.Table:             entitytypehistory.ValidColumn,
 			event.Table:                         event.ValidColumn,
 			eventhistory.Table:                  eventhistory.ValidColumn,
 			feature.Table:                       feature.ValidColumn,

@@ -57,6 +57,8 @@ func (DocumentData) Edges() []ent.Edge {
 			Unique().
 			Required().
 			Field("template_id"),
+		edge.From("entity", Entity.Type).
+			Ref("documents"),
 	}
 }
 

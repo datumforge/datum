@@ -100,7 +100,7 @@ func (suite *GraphTestSuite) TestQueryGroupMembers() {
 	}
 
 	// delete created group
-	(&GroupCleanup{client: suite.client, GroupID: group.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, ID: group.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
@@ -263,7 +263,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroupMembers() {
 	}
 
 	// delete created group and users
-	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, ID: group1.ID}).MustDelete(reqCtx, t)
 	(&OrgMemberCleanup{client: suite.client, ID: orgMember1.ID}).MustDelete(reqCtx, t)
 	(&OrgMemberCleanup{client: suite.client, ID: orgMember2.ID}).MustDelete(reqCtx, t)
 }
@@ -359,8 +359,8 @@ func (suite *GraphTestSuite) TestMutationUpdateGroupMembers() {
 	// delete created objects
 	(&GroupMemberCleanup{client: suite.client, ID: gm.ID}).MustDelete(reqCtx, t)
 	(&OrgMemberCleanup{client: suite.client, ID: orgMember.ID}).MustDelete(reqCtx, t)
-	(&GroupCleanup{client: suite.client, GroupID: gm.GroupID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: suite.client, OrgID: org.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, ID: gm.GroupID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, ID: org.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationDeleteGroupMembers() {

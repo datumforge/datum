@@ -760,6 +760,35 @@ func HasTemplateWith(preds ...predicate.Template) predicate.DocumentData {
 	})
 }
 
+// HasEntity applies the HasEdge predicate on the "entity" edge.
+func HasEntity() predicate.DocumentData {
+	return predicate.DocumentData(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, EntityTable, EntityPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.EntityDocuments
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntityWith applies the HasEdge predicate on the "entity" edge with a given conditions (other predicates).
+func HasEntityWith(preds ...predicate.Entity) predicate.DocumentData {
+	return predicate.DocumentData(func(s *sql.Selector) {
+		step := newEntityStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.EntityDocuments
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.DocumentData) predicate.DocumentData {
 	return predicate.DocumentData(sql.AndPredicates(predicates...))

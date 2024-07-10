@@ -16,6 +16,26 @@ func (at *APIToken) Owner(ctx context.Context) (*Organization, error) {
 	return result, MaskNotFound(err)
 }
 
+func (c *Contact) Owner(ctx context.Context) (*Organization, error) {
+	result, err := c.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = c.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (c *Contact) Entities(ctx context.Context) (result []*Entity, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = c.NamedEntities(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = c.Edges.EntitiesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = c.QueryEntities().All(ctx)
+	}
+	return result, err
+}
+
 func (dd *DocumentData) Owner(ctx context.Context) (*Organization, error) {
 	result, err := dd.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
@@ -28,6 +48,18 @@ func (dd *DocumentData) Template(ctx context.Context) (*Template, error) {
 	result, err := dd.Edges.TemplateOrErr()
 	if IsNotLoaded(err) {
 		result, err = dd.QueryTemplate().Only(ctx)
+	}
+	return result, err
+}
+
+func (dd *DocumentData) Entity(ctx context.Context) (result []*Entity, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = dd.NamedEntity(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = dd.Edges.EntityOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = dd.QueryEntity().All(ctx)
 	}
 	return result, err
 }
@@ -156,6 +188,66 @@ func (epf *EntitlementPlanFeature) Events(ctx context.Context) (result []*Event,
 	}
 	if IsNotLoaded(err) {
 		result, err = epf.QueryEvents().All(ctx)
+	}
+	return result, err
+}
+
+func (e *Entity) Owner(ctx context.Context) (*Organization, error) {
+	result, err := e.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (e *Entity) Contacts(ctx context.Context) (result []*Contact, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = e.NamedContacts(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = e.Edges.ContactsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = e.QueryContacts().All(ctx)
+	}
+	return result, err
+}
+
+func (e *Entity) Documents(ctx context.Context) (result []*DocumentData, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = e.NamedDocuments(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = e.Edges.DocumentsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = e.QueryDocuments().All(ctx)
+	}
+	return result, err
+}
+
+func (e *Entity) EntityType(ctx context.Context) (*EntityType, error) {
+	result, err := e.Edges.EntityTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryEntityType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (et *EntityType) Owner(ctx context.Context) (*Organization, error) {
+	result, err := et.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = et.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (et *EntityType) Entities(ctx context.Context) (result []*Entity, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = et.NamedEntities(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = et.Edges.EntitiesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = et.QueryEntities().All(ctx)
 	}
 	return result, err
 }
@@ -973,6 +1065,42 @@ func (o *Organization) Entitlementplanfeatures(ctx context.Context) (result []*E
 	}
 	if IsNotLoaded(err) {
 		result, err = o.QueryEntitlementplanfeatures().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Entities(ctx context.Context) (result []*Entity, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedEntities(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.EntitiesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryEntities().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Entitytypes(ctx context.Context) (result []*EntityType, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedEntitytypes(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.EntitytypesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryEntitytypes().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Contacts(ctx context.Context) (result []*Contact, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedContacts(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.ContactsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryContacts().All(ctx)
 	}
 	return result, err
 }

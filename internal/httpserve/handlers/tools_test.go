@@ -85,10 +85,6 @@ func (suite *HandlerTestSuite) SetupTest() {
 		t.Fatal("error creating email manager")
 	}
 
-	em.MarketingURLConfig = emails.MarketingURLConfig{
-		DefaultSubscriptionOrg: "MITB",
-	}
-
 	// Start task manager
 	tmConfig := marionette.Config{
 		Logger: zap.NewNop().Sugar(),

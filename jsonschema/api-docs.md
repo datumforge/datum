@@ -511,7 +511,6 @@ MarketingURLConfig for the datum marketing emails
 |----|----|-----------|--------|
 |**marketingBase**|`string`|MarketingBase is the base URL used for marketing links in emails<br/>||
 |**subscriberVerify**|`string`|SubscriberVerify is the path to the subscriber verify endpoint used in verification emails<br/>||
-|**defaultSubscriptionOrg**|`string`|DefaultSubscriptionOrg is the default organization name to subscribe to<br/>||
 
 **Additional Properties:** not allowed  
 <a name="sessions"></a>

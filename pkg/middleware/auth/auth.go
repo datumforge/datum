@@ -208,12 +208,18 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 		orgIDs = append(orgIDs, org.ID)
 	}
 
+	if err := dbClient.PersonalAccessToken.UpdateOneID(pat.ID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
+		fmt.Println("here")
+		return nil, err
+	}
+
 	return &auth.AuthenticatedUser{
 		SubjectID:          pat.OwnerID,
 		SubjectName:        getSubjectName(pat.Edges.Owner),
 		OrganizationIDs:    orgIDs,
 		AuthenticationType: auth.PATAuthentication,
 	}, nil
+
 }
 
 func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token string) (*auth.AuthenticatedUser, error) {
@@ -225,6 +231,11 @@ func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token stri
 
 	if !t.ExpiresAt.IsZero() && t.ExpiresAt.Before(time.Now()) {
 		return nil, rout.ErrExpiredCredentials
+	}
+
+	if err := dbClient.APIToken.UpdateOneID(t.ID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
+		fmt.Println("here1")
+		return nil, err
 	}
 
 	return &auth.AuthenticatedUser{

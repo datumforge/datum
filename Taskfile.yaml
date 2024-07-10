@@ -175,8 +175,8 @@ tasks:
     desc: Setup the project dependencies
     cmds:
       - command -v gcloud &> /dev/null || curl https://sdk.cloud.google.com | bash
-      - npm install jsonschema2mk --global
-      - npm install format-graphql
+      - sudo npm install jsonschema2mk --global
+      - sudo npm install format-graphql
       - go mod download
       - pre-commit install && pre-commit install-hooks
       - pre-commit autoupdate

@@ -336,10 +336,6 @@
         "subscriberVerify": {
           "type": "string",
           "description": "SubscriberVerify is the path to the subscriber verify endpoint used in verification emails"
-        },
-        "defaultSubscriptionOrg": {
-          "type": "string",
-          "description": "DefaultSubscriptionOrg is the default organization name to subscribe to"
         }
       },
       "additionalProperties": false,

@@ -136,7 +136,6 @@ data:
   DATUM_EMAIL_CONSOLEURL_RESET: {{ .Values.datum.email.consoleUrl.reset | default "/password-reset" }}
   DATUM_EMAIL_MARKETINGURL_MARKETINGBASE: {{ .Values.datum.email.marketingUrl.marketingBase | default "https://www.datum.net" }}
   DATUM_EMAIL_MARKETINGURL_SUBSCRIBERVERIFY: {{ .Values.datum.email.marketingUrl.subscriberVerify | default "/verify" }}
-  DATUM_EMAIL_MARKETINGURL_DEFAULTSUBSCRIPTIONORG: {{ .Values.datum.email.marketingUrl.defaultSubscriptionOrg | default "Datum" }}
   DATUM_SESSIONS_SIGNINGKEY: {{ .Values.datum.sessions.signingKey | default "my-signing-secret" }}
   DATUM_SESSIONS_ENCRYPTIONKEY: {{ .Values.datum.sessions.encryptionKey | default "encryptionsecret" }}
   DATUM_SESSIONS_DOMAIN: {{ .Values.datum.sessions.domain }}

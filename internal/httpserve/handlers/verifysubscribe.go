@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -154,21 +155,18 @@ func (h *Handler) verifySubscriberToken(ctx context.Context, entSubscriber *gene
 }
 
 func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID string) error {
-	// get org name if not root level (Datum)
-	orgName := h.EmailManager.DefaultSubscriptionOrg
+	if orgID == "" {
+		return fmt.Errorf("%w, subscriber organization not found", ErrMissingField)
+	}
 
-	if orgID != "" {
-		org, err := h.getOrgByID(ctx, orgID)
-		if err != nil {
-			return err
-		}
-
-		orgName = org.Name
+	org, err := h.getOrgByID(ctx, orgID)
+	if err != nil {
+		return err
 	}
 
 	// send emails via TaskMan as to not create blocking operations in the server
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-		return h.SendSubscriberEmail(user, orgName)
+		return h.SendSubscriberEmail(user, org.Name)
 	}), marionette.WithRetries(3), //nolint:mnd
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send subscriber verification email to user %s", user.Email),
@@ -181,7 +179,7 @@ func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID str
 		Set("email", user.Email).
 		Set("first_name", user.FirstName).
 		Set("last_name", user.LastName).
-		Set("organization_name", orgName)
+		Set("organization_name", org.Name)
 
 	h.AnalyticsClient.Event("email_verification_sent", props)
 

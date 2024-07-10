@@ -45,8 +45,6 @@ type MarketingURLConfig struct {
 	MarketingBase string `json:"marketingBase" koanf:"marketingBase" default:"https://www.datum.net"`
 	// SubscriberVerify is the path to the subscriber verify endpoint used in verification emails
 	SubscriberVerify string `json:"subscriberVerify" koanf:"subscriberVerify" default:"/verify"`
-	// DefaultSubscriptionOrg is the default organization name to subscribe to
-	DefaultSubscriptionOrg string `json:"defaultSubscriptionOrg" koanf:"defaultSubscriptionOrg" default:"Datum"`
 }
 
 // SetSendGridAPIKey to provided key
@@ -160,10 +158,6 @@ func (c MarketingURLConfig) Validate() error {
 
 	if c.SubscriberVerify == "" {
 		return newInvalidEmailConfigError("verify path")
-	}
-
-	if c.DefaultSubscriptionOrg == "" {
-		return newInvalidEmailConfigError("default subscription org")
 	}
 
 	return nil

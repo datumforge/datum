@@ -239,7 +239,7 @@ require (
 	github.com/IBM/sarama v1.43.2
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
-	github.com/alitto/pond v1.9.0
+	github.com/alitto/pond v1.9.1
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.30.1
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.5

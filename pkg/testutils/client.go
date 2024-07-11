@@ -21,8 +21,7 @@ import (
 // localRoundTripper is an http.RoundTripper that executes HTTP transactions
 // by using handler directly, instead of going over an HTTP connection.
 type localRoundTripper struct {
-	handler http.Handler
-	server  *echo.Echo
+	server *echo.Echo
 }
 
 func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -48,7 +47,7 @@ func DatumTestClient(t *testing.T, c *generated.Client, opts ...datumclient.Clie
 	return datumclient.New(config, opts...)
 }
 
-// DatumTestClient creates a new DatumClient for testing
+// DatumTestClientWithAuth creates a new DatumClient for testing that includes the auth middleware
 func DatumTestClientWithAuth(t *testing.T, c *generated.Client, opts ...datumclient.ClientOption) (*datumclient.DatumClient, error) {
 	e := testEchoServer(t, c, true)
 
@@ -64,6 +63,8 @@ func DatumTestClientWithAuth(t *testing.T, c *generated.Client, opts ...datumcli
 	return datumclient.New(config, opts...)
 }
 
+// testEchoServer creates a new echo server for testing the graph api
+// and optionally includes the middleware for authentication testing
 func testEchoServer(t *testing.T, c *generated.Client, includeMiddleware bool) *echo.Echo {
 	srv := testGraphServer(t, c)
 
@@ -86,6 +87,8 @@ func testEchoServer(t *testing.T, c *generated.Client, includeMiddleware bool) *
 	return e
 }
 
+// createAuthConfig creates a new auth config for testing with the provided client
+// and local validator
 func createAuthConfig(c *generated.Client) *auth.AuthOptions {
 	// setup auth middleware
 	opts := []auth.AuthOption{

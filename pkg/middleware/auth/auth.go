@@ -38,8 +38,6 @@ func Authenticate(conf *AuthOptions) echo.MiddlewareFunc {
 				conf.BeforeFunc(c)
 			}
 
-			// conf.Context = c.Request().Context()
-
 			validator, err := conf.Validator()
 			if err != nil {
 				return err

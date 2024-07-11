@@ -11,7 +11,9 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/httpsling"
+	"github.com/datumforge/datum/pkg/middleware/auth"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 )
@@ -20,17 +22,85 @@ import (
 // by using handler directly, instead of going over an HTTP connection.
 type localRoundTripper struct {
 	handler http.Handler
+	server  *echo.Echo
 }
 
 func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	w := httptest.NewRecorder()
-	l.handler.ServeHTTP(w, req)
+	l.server.ServeHTTP(w, req)
 
 	return w.Result(), nil
 }
 
 // DatumTestClient creates a new DatumClient for testing
-func DatumTestClient(t *testing.T, c *generated.Client) (*datumclient.DatumClient, error) {
+func DatumTestClient(t *testing.T, c *generated.Client, opts ...datumclient.ClientOption) (*datumclient.DatumClient, error) {
+	e := testEchoServer(t, c, false)
+
+	// setup interceptors
+	if opts == nil {
+		opts = []datumclient.ClientOption{}
+	}
+
+	opts = append(opts, datumclient.WithTransport(localRoundTripper{server: e}))
+
+	config := datumclient.NewDefaultConfig()
+
+	return datumclient.New(config, opts...)
+}
+
+// DatumTestClient creates a new DatumClient for testing
+func DatumTestClientWithAuth(t *testing.T, c *generated.Client, opts ...datumclient.ClientOption) (*datumclient.DatumClient, error) {
+	e := testEchoServer(t, c, true)
+
+	// setup interceptors
+	if opts == nil {
+		opts = []datumclient.ClientOption{}
+	}
+
+	opts = append(opts, datumclient.WithTransport(localRoundTripper{server: e}))
+
+	config := datumclient.NewDefaultConfig()
+
+	return datumclient.New(config, opts...)
+}
+
+func testEchoServer(t *testing.T, c *generated.Client, includeMiddleware bool) *echo.Echo {
+	srv := testGraphServer(t, c)
+
+	e := echo.New()
+
+	if includeMiddleware {
+		e.Use(auth.Authenticate(createAuthConfig(c)))
+		e.Use(echocontext.EchoContextToContextMiddleware())
+	}
+
+	e.POST("/query", func(c echo.Context) error {
+		req := c.Request()
+		res := c.Response()
+
+		srv.ServeHTTP(res, req)
+
+		return nil
+	})
+
+	return e
+}
+
+func createAuthConfig(c *generated.Client) *auth.AuthOptions {
+	// setup auth middleware
+	opts := []auth.AuthOption{
+		auth.WithDBClient(c),
+	}
+
+	authConfig := auth.NewAuthOptions(opts...)
+
+	authConfig.WithLocalValidator()
+
+	return &authConfig
+}
+
+// testGraphServer creates a new graphql server for testing the graph api
+func testGraphServer(t *testing.T, c *generated.Client) *handler.Server {
 	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
 
 	srv := handler.NewDefaultServer(
@@ -53,16 +123,5 @@ func DatumTestClient(t *testing.T, c *generated.Client) (*datumclient.DatumClien
 	// if you do not want sleeps (the writer prefers naps anyways), skip cache
 	graphapi.WithSkipCache(srv)
 
-	httpClient := &httpsling.Client{
-		HTTPClient: &http.Client{Transport: localRoundTripper{handler: srv}},
-	}
-
-	// setup interceptors
-	opts := []datumclient.ClientOption{
-		datumclient.WithClient(httpClient),
-	}
-
-	config := datumclient.NewDefaultConfig()
-
-	return datumclient.New(config, opts...)
+	return srv
 }

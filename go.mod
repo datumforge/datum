@@ -53,7 +53,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
-	github.com/tursodatabase/libsql-client-go v0.0.0-20240628122535-1c47b26184e8
+	github.com/tursodatabase/libsql-client-go v0.0.0-20240711072234-6d998acd081f
 	github.com/vektah/gqlparser/v2 v2.5.16
 	github.com/wundergraph/graphql-go-tools v1.67.4
 	go.opentelemetry.io/otel v1.28.0

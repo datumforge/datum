@@ -25,7 +25,7 @@ var SessionSkipperFunc = func(c echo.Context) bool {
 }
 
 // Authenticate is a middleware function that is used to authenticate requests - it is not applied to all routes so be cognizant of that
-func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
+func Authenticate(conf *AuthOptions) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// if skipper function returns true, skip this middleware
@@ -96,7 +96,7 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 // Reauthenticate is a middleware helper that can use refresh tokens in the echo context
 // to obtain a new access token. If it is unable to obtain a new valid access token,
 // then an error is returned and processing should stop.
-func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Context) (string, error) {
+func Reauthenticate(conf *AuthOptions, validator tokens.Validator) func(c echo.Context) (string, error) {
 	// If no reauthenticator is available on the configuration, always return an error.
 	if conf.reauth == nil {
 		return func(c echo.Context) (string, error) {
@@ -161,7 +161,7 @@ func createAuthenticatedUserFromClaims(ctx context.Context, dbClient *generated.
 // checkToken checks the bearer authorization token against the database to see if the provided
 // token is an active personal access token or api token.
 // If the token is valid, the authenticated user is returned
-func checkToken(ctx context.Context, conf AuthOptions, token string) (*auth.AuthenticatedUser, error) {
+func checkToken(ctx context.Context, conf *AuthOptions, token string) (*auth.AuthenticatedUser, error) {
 	// allow check to bypass privacy rules
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 

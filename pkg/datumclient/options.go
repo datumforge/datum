@@ -1,6 +1,7 @@
 package datumclient
 
 import (
+	"net/http"
 	"net/url"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
@@ -80,6 +81,14 @@ func WithBaseURL(baseURL *url.URL) ClientOption {
 		// Set the base URL for the HTTPSling client
 		c.Config.HTTPSling.BaseURL = baseURL.String()
 
+		return nil
+	}
+}
+
+// WithTransport sets the transport for the APIv1 client
+func WithTransport(transport http.RoundTripper) ClientOption {
+	return func(c *APIv1) error {
+		c.Config.HTTPSling.Transport = transport
 		return nil
 	}
 }

@@ -81,21 +81,46 @@ func NewAuthOptions(opts ...AuthOption) (conf AuthOptions) {
 // Validator from the supplied options. If the options are invalid or the validator
 // cannot be created an error is returned
 func (conf *AuthOptions) Validator() (tokens.Validator, error) {
-	if conf.validator == nil {
-		cache := jwk.NewCache(conf.Context)
+	if conf.validator != nil {
+		return conf.validator, nil
+	}
 
-		err := cache.Register(conf.KeysURL, jwk.WithMinRefreshInterval(conf.MinRefreshInterval))
-		if err != nil {
-			return nil, ErrUnableToConstructValidator
-		}
+	cache := jwk.NewCache(conf.Context)
 
-		conf.validator, err = tokens.NewCachedJWKSValidator(conf.Context, cache, conf.KeysURL, conf.Audience, conf.Issuer)
-		if err != nil {
-			return nil, err
-		}
+	err := cache.Register(conf.KeysURL, jwk.WithMinRefreshInterval(conf.MinRefreshInterval))
+	if err != nil {
+		return nil, ErrUnableToConstructValidator
+	}
+
+	conf.validator, err = tokens.NewCachedJWKSValidator(conf.Context, cache, conf.KeysURL, conf.Audience, conf.Issuer)
+	if err != nil {
+		return nil, err
 	}
 
 	return conf.validator, nil
+}
+
+// WithLocalValidator returns a new JWKS Validator constructed from the supplied options using
+// the local keys instead of fetching them from the server
+func (conf *AuthOptions) WithLocalValidator() error {
+	if conf.validator != nil {
+		return nil
+	}
+
+	cache := jwk.NewCache(conf.Context)
+
+	if err := cache.Register(conf.KeysURL, jwk.WithMinRefreshInterval(conf.MinRefreshInterval)); err != nil {
+		return ErrUnableToConstructValidator
+	}
+
+	keys, err := conf.DBClient.TokenManager.Keys()
+	if err != nil {
+		return err
+	}
+
+	conf.validator = tokens.NewJWKSValidator(keys, conf.Audience, conf.Issuer)
+
+	return nil
 }
 
 // WithAuthOptions allows the user to update the default auth options with an auth

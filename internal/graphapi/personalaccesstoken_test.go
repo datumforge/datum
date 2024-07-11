@@ -407,3 +407,33 @@ func (suite *GraphTestSuite) TestMutationDeletePersonalAccessToken() {
 		})
 	}
 }
+
+func (suite *GraphTestSuite) TestLastUsedPersonalAccessToken() {
+	t := suite.T()
+
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
+
+	// create new personal access token
+	token := (&PersonalAccessTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	// check that the last used is empty
+	res, err := suite.client.datum.GetPersonalAccessTokenByID(reqCtx, token.ID)
+	require.NoError(t, err)
+	assert.Empty(t, res.PersonalAccessToken.LastUsedAt)
+
+	// TODO: (slevine: update once we have updated the last used at field on the token when used)
+	// // setup graph client using the personal access token
+	// authHeader := datumclient.Authorization{
+	// 	BearerToken: token.Token,
+	// }
+
+	// graphClient, err := testutils.DatumTestClientWithAuth(t, suite.client.db, datumclient.WithCredentials(authHeader))
+	// require.NoError(t, err)
+
+	// get the token to make sure the last used is updated using the token
+	// out, err := graphClient.GetPersonalAccessTokenByID(context.Background(), token.ID)
+	// require.NoError(t, err)
+	// assert.NotEmpty(t, out.PersonalAccessToken.LastUsedAt)
+}

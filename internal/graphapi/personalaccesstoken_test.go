@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/pkg/datumclient"
+
+	"github.com/datumforge/datum/pkg/testutils"
 )
 
 const (
@@ -426,15 +428,15 @@ func (suite *GraphTestSuite) TestLastUsedPersonalAccessToken() {
 
 	// TODO: (slevine: update once we have updated the last used at field on the token when used)
 	// // setup graph client using the personal access token
-	// authHeader := datumclient.Authorization{
-	// 	BearerToken: token.Token,
-	// }
+	authHeader := datumclient.Authorization{
+		BearerToken: token.Token,
+	}
 
-	// graphClient, err := testutils.DatumTestClientWithAuth(t, suite.client.db, datumclient.WithCredentials(authHeader))
-	// require.NoError(t, err)
+	graphClient, err := testutils.DatumTestClientWithAuth(t, suite.client.db, datumclient.WithCredentials(authHeader))
+	require.NoError(t, err)
 
 	// get the token to make sure the last used is updated using the token
-	// out, err := graphClient.GetPersonalAccessTokenByID(context.Background(), token.ID)
-	// require.NoError(t, err)
-	// assert.NotEmpty(t, out.PersonalAccessToken.LastUsedAt)
+	out, err := graphClient.GetPersonalAccessTokenByID(reqCtx, token.ID)
+	require.NoError(t, err)
+	assert.NotEmpty(t, out.PersonalAccessToken.LastUsedAt)
 }

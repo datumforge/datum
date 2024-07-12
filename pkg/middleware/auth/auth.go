@@ -88,9 +88,27 @@ func Authenticate(conf *AuthOptions) echo.MiddlewareFunc {
 
 			auth.SetAuthenticatedUserContext(c, au)
 
+			updateLastUsed(conf.Context, conf.DBClient, au, accessToken)
+
 			return next(c)
 		}
 	}
+}
+
+func updateLastUsed(ctx context.Context, dbClient *generated.Client, au *auth.AuthenticatedUser, tokenID string) error {
+	switch au.AuthenticationType {
+	case auth.PATAuthentication:
+		if err := dbClient.PersonalAccessToken.UpdateOneID(tokenID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
+			return err
+		}
+	case auth.APITokenAuthentication:
+		if err := dbClient.APIToken.UpdateOneID(tokenID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
 }
 
 // Reauthenticate is a middleware helper that can use refresh tokens in the echo context
@@ -208,10 +226,11 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 		orgIDs = append(orgIDs, org.ID)
 	}
 
+	fmt.Println("here1")
 	if err := dbClient.PersonalAccessToken.UpdateOneID(pat.ID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
-		fmt.Println("here")
 		return nil, err
 	}
+	fmt.Println("here2")
 
 	return &auth.AuthenticatedUser{
 		SubjectID:          pat.OwnerID,
@@ -233,10 +252,11 @@ func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token stri
 		return nil, rout.ErrExpiredCredentials
 	}
 
+	fmt.Println("here3")
 	if err := dbClient.APIToken.UpdateOneID(t.ID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
-		fmt.Println("here1")
 		return nil, err
 	}
+	fmt.Println("here4")
 
 	return &auth.AuthenticatedUser{
 		SubjectID:          t.ID,

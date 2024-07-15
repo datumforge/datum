@@ -372,7 +372,10 @@ func (suite *GraphTestSuite) TestMutationDeleteAPIToken() {
 }
 
 func (suite *GraphTestSuite) TestLastUsedAPIToken() {
+
 	t := suite.T()
+
+	defer mock_fga.ClearMocks(suite.client.fga)
 
 	// setup user context
 	reqCtx, err := userContext()
@@ -381,13 +384,15 @@ func (suite *GraphTestSuite) TestLastUsedAPIToken() {
 	// create new API token
 	token := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 
+	mock_fga.CheckAny(t, suite.client.fga, true)
+
 	// check that the last used is empty
 	res, err := suite.client.datum.GetAPITokenByID(reqCtx, token.ID)
 	require.NoError(t, err)
 	assert.Empty(t, res.APIToken.LastUsedAt)
 
 	// TODO: (slevine: update once we have updated the last used at field on the token when used)
-	// // setup graph client using the personal access token
+	// // setup graph client using the API token
 	authHeader := datumclient.Authorization{
 		BearerToken: token.Token,
 	}
@@ -396,7 +401,7 @@ func (suite *GraphTestSuite) TestLastUsedAPIToken() {
 	require.NoError(t, err)
 
 	// get the token to make sure the last used is updated using the token
-	out, err := graphClient.GetPersonalAccessTokenByID(reqCtx, token.ID)
+	out, err := graphClient.GetAPITokenByID(reqCtx, token.ID)
 	require.NoError(t, err)
-	assert.NotEmpty(t, out.PersonalAccessToken.LastUsedAt)
+	assert.NotEmpty(t, out.APIToken.LastUsedAt)
 }

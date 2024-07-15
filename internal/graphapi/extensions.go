@@ -24,17 +24,17 @@ const (
 // Auth contains the authentication data to be added to the extensions map
 type Auth struct {
 	// AuthenticationType is the type of authentication used, e.g. JWT, API key, etc.
-	AuthenticationType auth.AuthenticationType `json:"authentication_type"`
+	AuthenticationType auth.AuthenticationType `json:"authentication_type,omitempty"`
 	// AuthorizedOrganization is the organization ID of the authenticated user
-	AuthorizedOrganization string `json:"authorized_organization"`
+	AuthorizedOrganization string `json:"authorized_organization,omitempty"`
 	// AccessToken is the access token used for authentication, if the user did an action (e.g. created a new organization)
 	// that updated the access token, this will be the new access token
-	AccessToken string `json:"access_token"`
+	AccessToken string `json:"access_token,omitempty"`
 	// RefreshToken is the refresh token used for authentication, if the user did an action (e.g. created a new organization)
 	// that updated the refresh token, this will be the new refresh token
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
 	// SessionID is the session token used for authentication
-	SessionID string `json:"session_id"`
+	SessionID string `json:"session_id,omitempty"`
 }
 
 // AddAllExtensions adds all the extensions to the server including auth, latency and trace

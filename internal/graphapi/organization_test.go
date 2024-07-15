@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"testing"
@@ -18,10 +19,6 @@ import (
 	"github.com/datumforge/datum/pkg/enums"
 )
 
-const (
-	organization = "organization"
-)
-
 func (suite *GraphTestSuite) TestQueryOrganization() {
 	t := suite.T()
 
@@ -36,19 +33,43 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 	require.NoError(t, err)
 
 	testCases := []struct {
-		name     string
-		queryID  string
-		expected *ent.Organization
-		errorMsg string
+		name               string
+		queryID            string
+		client             *datumclient.DatumClient
+		ctx                context.Context
+		expected           *ent.Organization
+		orgMembersExpected int
+		errorMsg           string
 	}{
 		{
-			name:     "happy path, get organization",
-			queryID:  org1.ID,
-			expected: org1,
+			name:               "happy path, get organization",
+			queryID:            org1.ID,
+			client:             suite.client.datum,
+			ctx:                reqCtx,
+			orgMembersExpected: 2,
+			expected:           org1,
+		},
+		{
+			name:               "happy path, get using api token",
+			queryID:            testOrgID,
+			client:             suite.client.datumWithAPIToken,
+			ctx:                context.Background(),
+			orgMembersExpected: 1,
+			expected:           org1,
+		},
+		{
+			name:               "happy path, get using personal access token",
+			queryID:            testOrgID,
+			client:             suite.client.datumWithPAT,
+			ctx:                context.Background(),
+			orgMembersExpected: 1,
+			expected:           org1,
 		},
 		{
 			name:     "invalid-id",
 			queryID:  "tacos-for-dinner",
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			errorMsg: "organization not found",
 		},
 	}
@@ -59,7 +80,7 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 
 			mock_fga.CheckAny(t, suite.client.fga, true)
 
-			resp, err := suite.client.datum.GetOrganizationByID(reqCtx, tc.queryID)
+			resp, err := tc.client.GetOrganizationByID(tc.ctx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -73,16 +94,18 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.Organization)
 			require.NotNil(t, resp.Organization.Members)
-			assert.Len(t, resp.Organization.Members, 2)
+			assert.Len(t, resp.Organization.Members, tc.orgMembersExpected)
 
-			orgMemberFound := false
-			for _, m := range resp.Organization.Members {
-				if m.User.ID == orgMember.UserID {
-					orgMemberFound = true
+			if tc.orgMembersExpected > 1 {
+				orgMemberFound := false
+				for _, m := range resp.Organization.Members {
+					if m.User.ID == orgMember.UserID {
+						orgMemberFound = true
+					}
 				}
-			}
 
-			assert.True(t, orgMemberFound)
+				assert.True(t, orgMemberFound)
+			}
 		})
 	}
 
@@ -109,8 +132,9 @@ func (suite *GraphTestSuite) TestQueryOrganizations() {
 		require.NotNil(t, resp)
 		require.NotNil(t, resp.Organizations.Edges)
 
-		// make sure two organizations are returned, the two created and the personal org
-		assert.Equal(t, 3, len(resp.Organizations.Edges))
+		// make sure two organizations are returned, the two created and
+		// the personal org and test org created at suite setup
+		assert.Equal(t, 4, len(resp.Organizations.Edges))
 
 		org1Found := false
 		org2Found := false
@@ -137,7 +161,12 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	parentOrg := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	mock_fga.CheckAny(t, suite.client.fga, true)
+
+	parentOrg, err := suite.client.datum.GetOrganizationByID(reqCtx, testOrgID)
+	require.NoError(t, err)
+
+	mock_fga.ClearMocks(suite.client.fga)
 
 	// setup deleted org
 	orgToDelete := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
@@ -151,6 +180,8 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 		orgDescription           string
 		parentOrgID              string
 		settings                 *datumclient.CreateOrganizationSettingInput
+		client                   *datumclient.DatumClient
+		ctx                      context.Context
 		expectedDefaultOrgUpdate bool
 		errorMsg                 string
 	}{
@@ -161,6 +192,8 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			orgDescription:           gofakeit.HipsterSentence(10),
 			expectedDefaultOrgUpdate: true, // only the first org created should update the default org
 			parentOrgID:              "",   // root org
+			client:                   suite.client.datum,
+			ctx:                      reqCtx,
 		},
 		{
 			name:           "happy path organization with settings",
@@ -171,12 +204,24 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 				Domains: []string{"meow.datum.net"},
 			},
 			parentOrgID: "", // root org
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 		},
 		{
 			name:           "happy path organization with parent org",
 			orgName:        gofakeit.Name(),
 			orgDescription: gofakeit.HipsterSentence(10),
-			parentOrgID:    parentOrg.ID,
+			parentOrgID:    testOrgID,
+			client:         suite.client.datum,
+			ctx:            reqCtx,
+		},
+		{
+			name:           "happy path organization with parent org using personal access token",
+			orgName:        gofakeit.Name(),
+			orgDescription: gofakeit.HipsterSentence(10),
+			parentOrgID:    testOrgID,
+			client:         suite.client.datumWithPAT,
+			ctx:            context.Background(),
 		},
 		{
 			name:           "organization with parent personal org",
@@ -184,48 +229,64 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			orgDescription: gofakeit.HipsterSentence(10),
 			parentOrgID:    testPersonalOrgID,
 			errorMsg:       "personal organizations are not allowed to have child organizations",
+			client:         suite.client.datum,
+			ctx:            reqCtx,
 		},
 		{
 			name:           "empty organization name",
 			orgName:        "",
 			orgDescription: gofakeit.HipsterSentence(10),
 			errorMsg:       "value is less than the required length",
+			client:         suite.client.datum,
+			ctx:            reqCtx,
 		},
 		{
 			name:           "long organization name",
 			orgName:        gofakeit.LetterN(161),
 			orgDescription: gofakeit.HipsterSentence(10),
 			errorMsg:       "value is greater than the required length",
+			client:         suite.client.datum,
+			ctx:            reqCtx,
 		},
 		{
 			name:           "organization with no description",
 			orgName:        gofakeit.Name(),
 			orgDescription: "",
-			parentOrgID:    parentOrg.ID,
+			parentOrgID:    testOrgID,
+			client:         suite.client.datum,
+			ctx:            reqCtx,
 		},
 		{
 			name:           "duplicate organization name",
-			orgName:        parentOrg.Name,
+			orgName:        parentOrg.Organization.Name,
 			orgDescription: gofakeit.HipsterSentence(10),
 			errorMsg:       "already exists",
+			client:         suite.client.datum,
+			ctx:            reqCtx,
 		},
 		{
 			name:           "duplicate organization name, but other was deleted, should pass",
 			orgName:        orgToDelete.Name,
 			orgDescription: gofakeit.HipsterSentence(10),
 			errorMsg:       "",
+			client:         suite.client.datum,
+			ctx:            reqCtx,
 		},
 		{
 			name:           "duplicate display name, should be allowed",
 			orgName:        gofakeit.LetterN(80),
-			displayName:    parentOrg.DisplayName,
+			displayName:    parentOrg.Organization.DisplayName,
 			orgDescription: gofakeit.HipsterSentence(10),
+			client:         suite.client.datum,
+			ctx:            reqCtx,
 		},
 		{
 			name:           "display name with spaces should pass",
 			orgName:        gofakeit.Name(),
 			displayName:    gofakeit.Sentence(3),
 			orgDescription: gofakeit.HipsterSentence(10),
+			client:         suite.client.datum,
+			ctx:            reqCtx,
 		},
 	}
 
@@ -261,7 +322,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
-			resp, err := suite.client.datum.CreateOrganization(reqCtx, input)
+			resp, err := tc.client.CreateOrganization(tc.ctx, input)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -296,7 +357,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 				assert.Len(t, resp.CreateOrganization.Organization.Setting.Domains, 1)
 
 				// make sure default org is updated if it's the first org created
-				userResp, err := suite.client.datum.GetUserByID(reqCtx, testUser.ID)
+				userResp, err := tc.client.GetUserByID(tc.ctx, testUser.ID)
 				require.NoError(t, err)
 				if tc.expectedDefaultOrgUpdate {
 					assert.Equal(t, resp.CreateOrganization.Organization.ID, userResp.User.Setting.DefaultOrg.ID)
@@ -309,8 +370,6 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			(&OrganizationCleanup{client: suite.client, ID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx, t)
 		})
 	}
-
-	(&OrganizationCleanup{client: suite.client, ID: parentOrg.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
@@ -334,6 +393,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 	testCases := []struct {
 		name        string
 		updateInput datumclient.UpdateOrganizationInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		expectedRes datumclient.UpdateOrganization_UpdateOrganization_Organization
 		errorMsg    string
 	}{
@@ -342,6 +403,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			updateInput: datumclient.UpdateOrganizationInput{
 				Name: &nameUpdate,
 			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate,
@@ -359,6 +422,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 					},
 				},
 			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate,
@@ -377,6 +442,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			updateInput: datumclient.UpdateOrganizationInput{
 				Description: &descriptionUpdate,
 			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate, // this would have been updated on the prior test
@@ -389,6 +456,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			updateInput: datumclient.UpdateOrganizationInput{
 				DisplayName: &displayNameUpdate,
 			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate, // this would have been updated on the prior test
@@ -404,6 +473,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 					Domains: []string{"meow.datum.net", "woof.datum.net"},
 				},
 			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate,        // this would have been updated on the prior test
@@ -416,6 +487,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			updateInput: datumclient.UpdateOrganizationInput{
 				Name: &nameUpdateLong,
 			},
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			errorMsg: "value is greater than the required length",
 		},
 	}
@@ -432,7 +505,7 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			}
 
 			// update org
-			resp, err := suite.client.datum.UpdateOrganization(reqCtx, org.ID, tc.updateInput)
+			resp, err := tc.client.UpdateOrganization(tc.ctx, org.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)

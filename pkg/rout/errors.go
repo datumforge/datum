@@ -14,6 +14,7 @@ import (
 type ErrorCode string
 
 var (
+	ErrBadRequest                = errors.New("bad request")
 	ErrInvalidCredentials        = errors.New("datum credentials are missing or invalid")
 	ErrExpiredCredentials        = errors.New("datum credentials have expired")
 	ErrPasswordMismatch          = errors.New("passwords do not match")

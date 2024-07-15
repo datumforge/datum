@@ -68,6 +68,9 @@ func (EmailVerificationToken) Mixin() []ent.Mixin {
 			Ref:               "email_verification_tokens",
 			SkipOASGeneration: true,
 			SkipInterceptor:   interceptors.SkipAll,
+			SkipTokenType: []token.PrivacyToken{
+				&token.VerifyToken{},
+			},
 		},
 	}
 }

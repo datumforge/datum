@@ -24,15 +24,33 @@ func (suite *GraphTestSuite) TestQueryFeature() {
 	testCases := []struct {
 		name     string
 		queryID  string
+		client   *datumclient.DatumClient
+		ctx      context.Context
 		errorMsg string
 	}{
 		{
 			name:    "happy path",
 			queryID: feature.ID,
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+		},
+		{
+			name:    "happy path using api token",
+			queryID: feature.ID,
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+		},
+		{
+			name:    "happy path using personal access token",
+			queryID: feature.ID,
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 		},
 		{
 			name:     "not found",
 			queryID:  "notfound",
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			errorMsg: "not found",
 		},
 	}
@@ -45,7 +63,7 @@ func (suite *GraphTestSuite) TestQueryFeature() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.GetFeatureByID(reqCtx, tc.queryID)
+			resp, err := tc.client.GetFeatureByID(tc.ctx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -82,16 +100,31 @@ func (suite *GraphTestSuite) TestQueryFeatures() {
 
 	testCases := []struct {
 		name            string
+		client          *datumclient.DatumClient
 		ctx             context.Context
 		expectedResults int
 	}{
 		{
 			name:            "happy path",
+			client:          suite.client.datum,
 			ctx:             reqCtx,
 			expectedResults: 2,
 		},
 		{
+			name:            "happy path, using api token",
+			client:          suite.client.datumWithAPIToken,
+			ctx:             context.Background(),
+			expectedResults: 2,
+		},
+		{
+			name:            "happy path, using pat",
+			client:          suite.client.datumWithPAT,
+			ctx:             context.Background(),
+			expectedResults: 2,
+		},
+		{
 			name:            "another user, no features should be returned",
+			client:          suite.client.datum,
 			ctx:             otherCtx,
 			expectedResults: 0,
 		},
@@ -101,7 +134,7 @@ func (suite *GraphTestSuite) TestQueryFeatures() {
 		t.Run("List "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			resp, err := suite.client.datum.GetAllFeatures(tc.ctx)
+			resp, err := tc.client.GetAllFeatures(tc.ctx)
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 
@@ -120,6 +153,8 @@ func (suite *GraphTestSuite) TestMutationCreateFeature() {
 	testCases := []struct {
 		name        string
 		request     datumclient.CreateFeatureInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		expectedErr string
 	}{
@@ -128,6 +163,28 @@ func (suite *GraphTestSuite) TestMutationCreateFeature() {
 			request: datumclient.CreateFeatureInput{
 				Name: "test-feature",
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			allowed: true,
+		},
+		{
+			name: "happy path, using api token",
+			request: datumclient.CreateFeatureInput{
+				OwnerID: &testOrgID,
+				Name:    "meows",
+			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			allowed: true,
+		},
+		{
+			name: "happy path, using pat",
+			request: datumclient.CreateFeatureInput{
+				OwnerID: &testOrgID,
+				Name:    "woofs",
+			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
@@ -138,6 +195,8 @@ func (suite *GraphTestSuite) TestMutationCreateFeature() {
 				Enabled:     lo.ToPtr(true),
 				Description: lo.ToPtr("Matt is the best feature, hands down!"),
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
@@ -145,6 +204,8 @@ func (suite *GraphTestSuite) TestMutationCreateFeature() {
 			request: datumclient.CreateFeatureInput{
 				Name: "test-feature",
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: create on feature",
 		},
@@ -153,6 +214,8 @@ func (suite *GraphTestSuite) TestMutationCreateFeature() {
 			request: datumclient.CreateFeatureInput{
 				DisplayName: lo.ToPtr("Matt is the Best"),
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: "value is less than the required length",
 		},
@@ -165,7 +228,7 @@ func (suite *GraphTestSuite) TestMutationCreateFeature() {
 			// check for edit permissions on the organization
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.CreateFeature(reqCtx, tc.request)
+			resp, err := tc.client.CreateFeature(tc.ctx, tc.request)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -213,6 +276,8 @@ func (suite *GraphTestSuite) TestMutationUpdateFeature() {
 	testCases := []struct {
 		name        string
 		request     datumclient.UpdateFeatureInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		expectedErr string
 	}{
@@ -221,20 +286,26 @@ func (suite *GraphTestSuite) TestMutationUpdateFeature() {
 			request: datumclient.UpdateFeatureInput{
 				DisplayName: lo.ToPtr("test-feature"),
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
-			name: "enable feature",
+			name: "enable feature using api token",
 			request: datumclient.UpdateFeatureInput{
 				Enabled: lo.ToPtr(true),
 			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
-			name: "update description",
+			name: "update description using pat",
 			request: datumclient.UpdateFeatureInput{
 				Description: lo.ToPtr("To infinity and beyond!"),
 			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
@@ -242,6 +313,8 @@ func (suite *GraphTestSuite) TestMutationUpdateFeature() {
 			request: datumclient.UpdateFeatureInput{
 				Enabled: lo.ToPtr(false),
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: update on feature",
 		},
@@ -254,7 +327,7 @@ func (suite *GraphTestSuite) TestMutationUpdateFeature() {
 			// check for edit permissions on the organization
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.UpdateFeature(reqCtx, feature.ID, tc.request)
+			resp, err := tc.client.UpdateFeature(tc.ctx, feature.ID, tc.request)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -288,38 +361,66 @@ func (suite *GraphTestSuite) TestMutationDeleteFeature() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	feature := (&FeatureBuilder{client: suite.client}).MustNew(reqCtx, t)
+	feature1 := (&FeatureBuilder{client: suite.client}).MustNew(reqCtx, t)
+	feature2 := (&FeatureBuilder{client: suite.client}).MustNew(reqCtx, t)
+	feature3 := (&FeatureBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name        string
 		idToDelete  string
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		checkAccess bool
 		expectedErr string
 	}{
 		{
 			name:        "not allowed to delete",
-			idToDelete:  feature.ID,
+			idToDelete:  feature1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: true,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: delete on feature",
 		},
 		{
 			name:        "happy path, delete feature",
-			idToDelete:  feature.ID,
+			idToDelete:  feature1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: true,
 			allowed:     true,
 		},
 		{
 			name:        "feature already deleted, not found",
-			idToDelete:  feature.ID,
+			idToDelete:  feature1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: false,
 			allowed:     true,
 			expectedErr: "feature not found",
 		},
 		{
+			name:        "happy path, delete feature using api token",
+			idToDelete:  feature2.ID,
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			checkAccess: true,
+			allowed:     true,
+		},
+		{
+			name:        "happy path, delete feature using pat",
+			idToDelete:  feature3.ID,
+			client:      suite.client.datumWithPAT,
+			ctx:         context.Background(),
+			checkAccess: true,
+			allowed:     true,
+		},
+		{
 			name:        "unknown feature, not found",
 			idToDelete:  ulids.New().String(),
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: false,
 			allowed:     true,
 			expectedErr: "feature not found",
@@ -335,7 +436,7 @@ func (suite *GraphTestSuite) TestMutationDeleteFeature() {
 				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
-			resp, err := suite.client.datum.DeleteFeature(reqCtx, feature.ID)
+			resp, err := tc.client.DeleteFeature(tc.ctx, tc.idToDelete)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -346,7 +447,7 @@ func (suite *GraphTestSuite) TestMutationDeleteFeature() {
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
-			assert.Equal(t, feature.ID, resp.DeleteFeature.DeletedID)
+			assert.Equal(t, tc.idToDelete, resp.DeleteFeature.DeletedID)
 		})
 	}
 }

@@ -13,12 +13,14 @@ import (
 
 // CreatePersonalAccessToken is the resolver for the createPersonalAccessToken field.
 func (r *mutationResolver) CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error) {
-	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Create().SetInput(input).Save(ctx)
+	res, err := withTransactionalMutation(ctx).PersonalAccessToken.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "personalaccesstoken"}, r.logger)
 	}
 
-	return &PersonalAccessTokenCreatePayload{PersonalAccessToken: pat}, err
+	return &PersonalAccessTokenCreatePayload{
+		PersonalAccessToken: res,
+	}, nil
 }
 
 // CreateBulkPersonalAccessToken is the resolver for the createBulkPersonalAccessToken field.
@@ -40,17 +42,19 @@ func (r *mutationResolver) CreateBulkCSVPersonalAccessToken(ctx context.Context,
 
 // UpdatePersonalAccessToken is the resolver for the updatePersonalAccessToken field.
 func (r *mutationResolver) UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error) {
-	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "personalaccesstoken"}, r.logger)
 	}
 
-	pat, err = pat.Update().SetInput(input).Save(ctx)
+	res, err = res.Update().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "personalaccesstoken"}, r.logger)
 	}
 
-	return &PersonalAccessTokenUpdatePayload{PersonalAccessToken: pat}, err
+	return &PersonalAccessTokenUpdatePayload{
+		PersonalAccessToken: res,
+	}, nil
 }
 
 // DeletePersonalAccessToken is the resolver for the deletePersonalAccessToken field.
@@ -63,15 +67,17 @@ func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id str
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &PersonalAccessTokenDeletePayload{DeletedID: id}, nil
+	return &PersonalAccessTokenDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
-// PersonalAccessToken is the resolver for the PersonalAccessToken field.
+// PersonalAccessToken is the resolver for the personalAccessToken field.
 func (r *queryResolver) PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error) {
-	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "personalaccesstoken"}, r.logger)
 	}
 
-	return pat, nil
+	return res, nil
 }

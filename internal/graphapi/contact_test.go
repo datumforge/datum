@@ -30,6 +30,8 @@ func (suite *GraphTestSuite) TestQueryContact() {
 		name     string
 		queryID  string
 		allowed  bool
+		client   *datumclient.DatumClient
+		ctx      context.Context
 		expected *ent.Contact
 		errorMsg string
 	}{
@@ -37,12 +39,48 @@ func (suite *GraphTestSuite) TestQueryContact() {
 			name:     "happy path contact",
 			allowed:  true,
 			queryID:  contact.ID,
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			expected: contact,
 		},
 		{
 			name:     "no access",
 			allowed:  false,
 			queryID:  contact.ID,
+			client:   suite.client.datum,
+			ctx:      reqCtx,
+			errorMsg: "not authorized",
+		},
+		{
+			name:     "happy path contact, with api token",
+			allowed:  true,
+			queryID:  contact.ID,
+			client:   suite.client.datumWithAPIToken,
+			ctx:      context.Background(),
+			expected: contact,
+		},
+		{
+			name:     "no access, using api token",
+			allowed:  false,
+			queryID:  contact.ID,
+			client:   suite.client.datumWithAPIToken,
+			ctx:      context.Background(),
+			errorMsg: "not authorized",
+		},
+		{
+			name:     "happy path contact, with pat",
+			allowed:  true,
+			queryID:  contact.ID,
+			client:   suite.client.datumWithPAT,
+			ctx:      context.Background(),
+			expected: contact,
+		},
+		{
+			name:     "no access, using pat",
+			allowed:  false,
+			queryID:  contact.ID,
+			client:   suite.client.datumWithPAT,
+			ctx:      context.Background(),
 			errorMsg: "not authorized",
 		},
 	}
@@ -53,7 +91,7 @@ func (suite *GraphTestSuite) TestQueryContact() {
 
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.GetContactByID(reqCtx, tc.queryID)
+			resp, err := tc.client.GetContactByID(tc.ctx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -89,16 +127,31 @@ func (suite *GraphTestSuite) TestQueryContacts() {
 
 	testCases := []struct {
 		name            string
+		client          *datumclient.DatumClient
 		ctx             context.Context
 		expectedResults int
 	}{
 		{
 			name:            "happy path",
+			client:          suite.client.datum,
 			ctx:             reqCtx,
 			expectedResults: 2,
 		},
 		{
+			name:            "happy path, using api token",
+			client:          suite.client.datumWithAPIToken,
+			ctx:             context.Background(),
+			expectedResults: 2,
+		},
+		{
+			name:            "happy path, using pat",
+			client:          suite.client.datumWithPAT,
+			ctx:             context.Background(),
+			expectedResults: 2,
+		},
+		{
 			name:            "another user, no contacts should be returned",
+			client:          suite.client.datum,
 			ctx:             otherCtx,
 			expectedResults: 0,
 		},
@@ -108,7 +161,7 @@ func (suite *GraphTestSuite) TestQueryContacts() {
 		t.Run("List "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			resp, err := suite.client.datum.GetAllContacts(tc.ctx)
+			resp, err := tc.client.GetAllContacts(tc.ctx)
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 
@@ -127,6 +180,8 @@ func (suite *GraphTestSuite) TestMutationCreateContact() {
 	testCases := []struct {
 		name        string
 		request     datumclient.CreateContactInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		expectedErr string
 	}{
@@ -135,6 +190,27 @@ func (suite *GraphTestSuite) TestMutationCreateContact() {
 			request: datumclient.CreateContactInput{
 				FullName: "Aemond Targaryen",
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			allowed: true,
+		},
+		{
+			name: "happy path, using api token",
+			request: datumclient.CreateContactInput{
+				FullName: "Rhaenys Targaryen",
+			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			allowed: true,
+		},
+		{
+			name: "happy path, using pat",
+			request: datumclient.CreateContactInput{
+				FullName: "Aegon Targaryen",
+				OwnerID:  &testOrgID,
+			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
@@ -147,6 +223,8 @@ func (suite *GraphTestSuite) TestMutationCreateContact() {
 				Company:     lo.ToPtr("Targaryen Dynasty"),
 				Status:      &enums.UserStatusOnboarding,
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
@@ -154,6 +232,8 @@ func (suite *GraphTestSuite) TestMutationCreateContact() {
 			request: datumclient.CreateContactInput{
 				FullName: "Halaena Targaryen",
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: create on contact",
 		},
@@ -162,6 +242,8 @@ func (suite *GraphTestSuite) TestMutationCreateContact() {
 			request: datumclient.CreateContactInput{
 				Email: lo.ToPtr("atargarygen@dragon.com"),
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: "value is less than the required length",
 		},
@@ -174,7 +256,7 @@ func (suite *GraphTestSuite) TestMutationCreateContact() {
 			// check for edit permissions on the organization
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.CreateContact(reqCtx, tc.request)
+			resp, err := tc.client.CreateContact(tc.ctx, tc.request)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -241,6 +323,8 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 	testCases := []struct {
 		name        string
 		request     datumclient.UpdateContactInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		expectedErr string
 	}{
@@ -249,20 +333,26 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 			request: datumclient.UpdateContactInput{
 				FullName: lo.ToPtr("Alicent Hightower"),
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
-			name: "update phone number",
+			name: "update phone number, using api token",
 			request: datumclient.UpdateContactInput{
 				PhoneNumber: lo.ToPtr(gofakeit.Phone()),
 			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
-			name: "update status",
+			name: "update status, using personal access token",
 			request: datumclient.UpdateContactInput{
 				Status: &enums.UserStatusInactive,
 			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
@@ -270,6 +360,8 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 			request: datumclient.UpdateContactInput{
 				Email: lo.ToPtr("a.hightower@dragon.net"),
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
@@ -277,6 +369,8 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 			request: datumclient.UpdateContactInput{
 				PhoneNumber: lo.ToPtr("not a phone number"),
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: rout.InvalidField("phone_number").Error(),
 		},
@@ -285,6 +379,8 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 			request: datumclient.UpdateContactInput{
 				Email: lo.ToPtr("a.hightower"),
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: "validator failed for field",
 		},
@@ -293,6 +389,8 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 			request: datumclient.UpdateContactInput{
 				Title: lo.ToPtr("Queen of the Seven Kingdoms"),
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
@@ -300,6 +398,8 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 			request: datumclient.UpdateContactInput{
 				Company: lo.ToPtr("House Targaryen"),
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
@@ -307,6 +407,8 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 			request: datumclient.UpdateContactInput{
 				Company: lo.ToPtr("House Hightower"),
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: update on contact",
 		},
@@ -319,7 +421,7 @@ func (suite *GraphTestSuite) TestMutationUpdateContact() {
 			// check for edit permissions on the organization
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.UpdateContact(reqCtx, contact.ID, tc.request)
+			resp, err := tc.client.UpdateContact(tc.ctx, contact.ID, tc.request)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -365,38 +467,66 @@ func (suite *GraphTestSuite) TestMutationDeleteContact() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	contact := (&ContactBuilder{client: suite.client}).MustNew(reqCtx, t)
+	contact1 := (&ContactBuilder{client: suite.client}).MustNew(reqCtx, t)
+	contact2 := (&ContactBuilder{client: suite.client}).MustNew(reqCtx, t)
+	contact3 := (&ContactBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name        string
 		idToDelete  string
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		checkAccess bool
 		expectedErr string
 	}{
 		{
 			name:        "not allowed to delete",
-			idToDelete:  contact.ID,
+			idToDelete:  contact1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: true,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: delete on contact",
 		},
 		{
 			name:        "happy path, delete contact",
-			idToDelete:  contact.ID,
+			idToDelete:  contact1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: true,
 			allowed:     true,
 		},
 		{
 			name:        "contact already deleted, not found",
-			idToDelete:  contact.ID,
+			idToDelete:  contact1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: false,
 			allowed:     true,
 			expectedErr: "contact not found",
 		},
 		{
+			name:        "happy path, delete contact using api token",
+			idToDelete:  contact2.ID,
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			checkAccess: true,
+			allowed:     true,
+		},
+		{
+			name:        "happy path, delete contact using pat",
+			idToDelete:  contact3.ID,
+			client:      suite.client.datumWithPAT,
+			ctx:         context.Background(),
+			checkAccess: true,
+			allowed:     true,
+		},
+		{
 			name:        "unknown contact, not found",
 			idToDelete:  ulids.New().String(),
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: false,
 			allowed:     true,
 			expectedErr: "contact not found",
@@ -412,7 +542,7 @@ func (suite *GraphTestSuite) TestMutationDeleteContact() {
 				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
-			resp, err := suite.client.datum.DeleteContact(reqCtx, contact.ID)
+			resp, err := suite.client.datum.DeleteContact(reqCtx, tc.idToDelete)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -423,7 +553,7 @@ func (suite *GraphTestSuite) TestMutationDeleteContact() {
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
-			assert.Equal(t, contact.ID, resp.DeleteContact.DeletedID)
+			assert.Equal(t, tc.idToDelete, resp.DeleteContact.DeletedID)
 		})
 	}
 }

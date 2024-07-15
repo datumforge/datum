@@ -19,7 +19,7 @@ func (suite *GraphTestSuite) TestQueryApiToken() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	apiToken := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+	apiToken := (&APITokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name     string
@@ -59,7 +59,7 @@ func (suite *GraphTestSuite) TestQueryApiToken() {
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.APIToken)
 			assert.Equal(t, redacted, resp.APIToken.Token)
-			assert.Equal(t, testPersonalOrgID, resp.APIToken.Owner.ID)
+			assert.Equal(t, testOrgID, resp.APIToken.Owner.ID)
 		})
 	}
 }
@@ -71,8 +71,8 @@ func (suite *GraphTestSuite) TestQueryAPITokens() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	(&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
-	(&APITokenTokenBuilder{client: suite.client, Scopes: []string{"read", "write"}}).MustNew(reqCtx, t)
+	(&APITokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+	(&APITokenBuilder{client: suite.client, Scopes: []string{"read", "write"}}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name     string
@@ -99,7 +99,10 @@ func (suite *GraphTestSuite) TestQueryAPITokens() {
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
-			assert.Len(t, resp.APITokens.Edges, 2)
+
+			// this is three because we create two tokens in the test
+			// and there is one created in the suite setup
+			assert.Len(t, resp.APITokens.Edges, 3)
 		})
 	}
 }
@@ -193,7 +196,7 @@ func (suite *GraphTestSuite) TestMutationCreateAPIToken() {
 			}
 
 			// ensure the owner is the org set in the request
-			assert.Equal(t, testPersonalOrgID, resp.CreateAPIToken.APIToken.Owner.ID)
+			assert.Equal(t, testOrgID, resp.CreateAPIToken.APIToken.Owner.ID)
 
 			// token should not be redacted on create
 			assert.NotEqual(t, redacted, resp.CreateAPIToken.APIToken.Token)
@@ -211,7 +214,7 @@ func (suite *GraphTestSuite) TestMutationUpdateAPIToken() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	token := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+	token := (&APITokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	tokenDescription := gofakeit.Sentence(5)
 	tokenName := gofakeit.Word()
@@ -292,7 +295,7 @@ func (suite *GraphTestSuite) TestMutationUpdateAPIToken() {
 				assert.Len(t, resp.UpdateAPIToken.APIToken.Scopes, 1)
 			}
 
-			assert.Equal(t, testPersonalOrgID, resp.UpdateAPIToken.APIToken.Owner.ID)
+			assert.Equal(t, testOrgID, resp.UpdateAPIToken.APIToken.Owner.ID)
 
 			// token should be redacted on update
 			assert.Equal(t, redacted, resp.UpdateAPIToken.APIToken.Token)
@@ -317,12 +320,12 @@ func (suite *GraphTestSuite) TestMutationDeleteAPIToken() {
 	reqCtx, err = auth.NewTestContextWithOrgID(user.ID, orgID)
 	require.NoError(t, err)
 
-	token := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+	token := (&APITokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	reqCtx2, err := auth.NewTestContextWithOrgID(user2.ID, orgID2)
 	require.NoError(t, err)
 
-	token2 := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx2, t)
+	token2 := (&APITokenBuilder{client: suite.client}).MustNew(reqCtx2, t)
 
 	testCases := []struct {
 		name     string

@@ -120,13 +120,14 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 			}
 
 			// store token in db
+			allowCtx := privacy.DecisionContext(ec, privacy.Allow)
 			et := suite.db.EmailVerificationToken.Create().
 				SetOwner(u).
 				SetToken(user.EmailVerificationToken.String).
 				SetEmail(user.Email).
 				SetSecret(user.EmailVerificationSecret).
 				SetTTL(ttl).
-				SaveX(ctx)
+				SaveX(allowCtx)
 
 			target := "/verify"
 			if tc.tokenSet {

@@ -113,6 +113,7 @@ func (suite *GraphTestSuite) TestQueryPersonalAccessTokens() {
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
+
 			assert.Len(t, resp.PersonalAccessTokens.Edges, 2)
 		})
 	}
@@ -252,9 +253,9 @@ func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
 		MustNew(regCtx2, t)
 
 	token := (&PersonalAccessTokenBuilder{
-		client:         suite.client,
-		OwnerID:        testUser.ID,
-		OrganizationID: testPersonalOrgID}).
+		client:          suite.client,
+		OwnerID:         testUser.ID,
+		OrganizationIDs: []string{testPersonalOrgID}}).
 		MustNew(reqCtx, t)
 
 	tokenDescription := gofakeit.Sentence(5)

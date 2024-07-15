@@ -12823,12 +12823,6 @@ type UserSettingCreatePayload struct {
 	UserSetting *UserSetting `json:"userSetting"`
 }
 
-// Return response for deleteUserSetting mutation
-type UserSettingDeletePayload struct {
-	// Deleted userSetting ID
-	DeletedID string `json:"deletedID"`
-}
-
 // An edge in a connection.
 type UserSettingEdge struct {
 	// The item at the end of the edge.

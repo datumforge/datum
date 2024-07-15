@@ -9,10 +9,18 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateEntitlementPlanFeature is the resolver for the createEntitlementPlanFeature field.
 func (r *mutationResolver) CreateEntitlementPlanFeature(ctx context.Context, input generated.CreateEntitlementPlanFeatureInput) (*EntitlementPlanFeatureCreatePayload, error) {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
 	res, err := withTransactionalMutation(ctx).EntitlementPlanFeature.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "entitlementplanfeature"}, r.logger)
@@ -45,6 +53,12 @@ func (r *mutationResolver) UpdateEntitlementPlanFeature(ctx context.Context, id 
 	res, err := withTransactionalMutation(ctx).EntitlementPlanFeature.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "entitlementplanfeature"}, r.logger)
+	}
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
 	}
 
 	res, err = res.Update().SetInput(input).Save(ctx)

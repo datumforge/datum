@@ -9,16 +9,26 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
-// CreateFeature is the resolver for the createFeature field
+// CreateFeature is the resolver for the createFeature field.
 func (r *mutationResolver) CreateFeature(ctx context.Context, input generated.CreateFeatureInput) (*FeatureCreatePayload, error) {
-	t, err := withTransactionalMutation(ctx).Feature.Create().SetInput(input).Save(ctx)
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
+	res, err := withTransactionalMutation(ctx).Feature.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "feature"}, r.logger)
 	}
 
-	return &FeatureCreatePayload{Feature: t}, nil
+	return &FeatureCreatePayload{
+		Feature: res,
+	}, nil
 }
 
 // CreateBulkFeature is the resolver for the createBulkFeature field.
@@ -38,22 +48,30 @@ func (r *mutationResolver) CreateBulkCSVFeature(ctx context.Context, input graph
 	return r.bulkCreateFeature(ctx, data)
 }
 
-// UpdateFeature is the resolver for the updateFeature field
+// UpdateFeature is the resolver for the updateFeature field.
 func (r *mutationResolver) UpdateFeature(ctx context.Context, id string, input generated.UpdateFeatureInput) (*FeatureUpdatePayload, error) {
-	feature, err := withTransactionalMutation(ctx).Feature.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Feature.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "feature"}, r.logger)
+	}
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
+	}
+
+	res, err = res.Update().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "feature"}, r.logger)
 	}
 
-	feature, err = feature.Update().SetInput(input).Save(ctx)
-	if err != nil {
-		return nil, parseRequestError(err, action{action: ActionUpdate, object: "feature"}, r.logger)
-	}
-
-	return &FeatureUpdatePayload{Feature: feature}, nil
+	return &FeatureUpdatePayload{
+		Feature: res,
+	}, nil
 }
 
-// DeleteFeature is the resolver for the deleteFeature field
+// DeleteFeature is the resolver for the deleteFeature field.
 func (r *mutationResolver) DeleteFeature(ctx context.Context, id string) (*FeatureDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Feature.DeleteOneID(id).Exec(ctx); err != nil {
 		return nil, parseRequestError(err, action{action: ActionDelete, object: "feature"}, r.logger)
@@ -63,15 +81,17 @@ func (r *mutationResolver) DeleteFeature(ctx context.Context, id string) (*Featu
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &FeatureDeletePayload{DeletedID: id}, nil
+	return &FeatureDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
-// Feature is the resolver for the feature field
+// Feature is the resolver for the feature field.
 func (r *queryResolver) Feature(ctx context.Context, id string) (*generated.Feature, error) {
-	feature, err := withTransactionalMutation(ctx).Feature.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Feature.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "feature"}, r.logger)
 	}
 
-	return feature, nil
+	return res, nil
 }

@@ -3,6 +3,7 @@ package schema
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
@@ -13,8 +14,12 @@ import (
 	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
 
+	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/interceptors"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
@@ -35,6 +40,8 @@ type UserOwnedMixin struct {
 	// SkipInterceptor skips the interceptor for that schema for all queries, or specific types,
 	// this is useful for tokens, etc
 	SkipInterceptor interceptors.SkipMode
+	// SkipTokenType skips the traverser or hook if the token type is found in the context
+	SkipTokenType []token.PrivacyToken
 }
 
 // Fields of the UserOwnedMixin
@@ -88,6 +95,55 @@ func (userOwned UserOwnedMixin) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("owner_id").
 			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
+	}
+}
+
+// Hooks of the UserOwnedMixin
+func (userOwned UserOwnedMixin) Hooks() []ent.Hook {
+	return []ent.Hook{
+		func(next ent.Mutator) ent.Mutator {
+			return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+				// skip hook if strictly set to allow
+				if _, allow := privacy.DecisionFromContext(ctx); allow {
+					return next.Mutate(ctx, m)
+				}
+
+				// skip the hook if the context has the token type
+				// this is useful for tokens, where the user is not yet (e.g. email verification tokens)
+				for _, tokenType := range userOwned.SkipTokenType {
+					if rule.ContextHasPrivacyTokenOfType(ctx, tokenType) {
+						return next.Mutate(ctx, m)
+					}
+				}
+
+				userID, err := auth.GetUserIDFromContext(ctx)
+				if err != nil {
+					return nil, fmt.Errorf("failed to get user id from context: %w", err)
+				}
+
+				// set owner on create mutation
+				if m.Op() == ent.OpCreate {
+					// set owner on mutation
+					if err := m.SetField(ownerFieldName, userID); err != nil {
+						return nil, err
+					}
+				} else {
+					// filter by owner on update and delete mutations
+					mx, ok := m.(interface {
+						SetOp(ent.Op)
+						Client() *generated.Client
+						WhereP(...func(*sql.Selector))
+					})
+					if !ok {
+						return nil, ErrUnexpectedMutationType
+					}
+
+					userOwned.P(mx, userID)
+				}
+
+				return next.Mutate(ctx, m)
+			})
+		},
 	}
 }
 

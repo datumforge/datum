@@ -14,13 +14,9 @@ import (
 
 // CreateTFASetting is the resolver for the createTFASetting field.
 func (r *mutationResolver) CreateTFASetting(ctx context.Context, input generated.CreateTFASettingInput) (*TFASettingCreatePayload, error) {
-	// setup view context
-	userID, err := auth.GetUserIDFromContext(ctx)
-	if err != nil {
+	if err := checkAllowedAuthType(ctx); err != nil {
 		return nil, err
 	}
-
-	input.OwnerID = &userID
 
 	settings, err := withTransactionalMutation(ctx).TFASetting.Create().SetInput(input).Save(ctx)
 	if err != nil {
@@ -32,6 +28,11 @@ func (r *mutationResolver) CreateTFASetting(ctx context.Context, input generated
 
 // UpdateTFASetting is the resolver for the updateTFASetting field.
 func (r *mutationResolver) UpdateTFASetting(ctx context.Context, input generated.UpdateTFASettingInput) (*TFASettingUpdatePayload, error) {
+	if err := checkAllowedAuthType(ctx); err != nil {
+		return nil, err
+	}
+
+	// get the userID from the context
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return nil, err
@@ -52,25 +53,28 @@ func (r *mutationResolver) UpdateTFASetting(ctx context.Context, input generated
 
 // TfaSetting is the resolver for the tfaSettings field.
 func (r *queryResolver) TfaSetting(ctx context.Context, id *string) (*generated.TFASetting, error) {
+	if err := checkAllowedAuthType(ctx); err != nil {
+		return nil, err
+	}
+
+	// get the userID from the context
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var (
-		settings *generated.TFASetting
-	)
-
 	if id != nil && *id != "" {
-		settings, err = withTransactionalMutation(ctx).TFASetting.Get(ctx, *id)
+		settings, err := withTransactionalMutation(ctx).TFASetting.Get(ctx, *id)
 		if err != nil {
 			return nil, parseRequestError(err, action{action: ActionGet, object: "tfasetting"}, r.logger)
 		}
-	} else {
-		settings, err = withTransactionalMutation(ctx).TFASetting.Query().Where(tfasetting.OwnerID(userID)).Only(ctx)
-		if err != nil {
-			return nil, parseRequestError(err, action{action: ActionGet, object: "tfasetting"}, r.logger)
-		}
+
+		return settings, nil
+	}
+
+	settings, err := withTransactionalMutation(ctx).TFASetting.Query().Where(tfasetting.OwnerID(userID)).Only(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionGet, object: "tfasetting"}, r.logger)
 	}
 
 	return settings, nil

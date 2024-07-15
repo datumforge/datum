@@ -51,15 +51,6 @@ extend type Mutation{
         """
         input: UpdateUserSettingInput!
     ): UserSettingUpdatePayload!
-    """
-    Delete an existing userSetting
-    """
-    deleteUserSetting(
-        """
-        ID of the userSetting
-        """
-        id: ID!
-    ): UserSettingDeletePayload!
 }
 
 """
@@ -80,16 +71,6 @@ type UserSettingUpdatePayload {
     Updated userSetting
     """
     userSetting: UserSetting!
-}
-
-"""
-Return response for deleteUserSetting mutation
-"""
-type UserSettingDeletePayload {
-    """
-    Deleted userSetting ID
-    """
-    deletedID: ID!
 }
 
 """

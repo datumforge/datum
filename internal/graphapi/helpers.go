@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/events/soiree"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/rout"
 	sliceutil "github.com/datumforge/datum/pkg/utils/slice"
 )
 
@@ -101,6 +102,21 @@ func setOrganizationInAuthContext(ctx context.Context, inputOrgID *string) error
 	}
 
 	auth.SetAuthenticatedUserContext(ec, au)
+
+	return nil
+}
+
+// checkAllowedAuthType checks how the user is authenticated and returns an error
+// if the user is authenticated with an API token for a user owned setting
+func checkAllowedAuthType(ctx context.Context) error {
+	ac, err := auth.GetAuthenticatedUserContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	if ac.AuthenticationType == auth.APITokenAuthentication {
+		return fmt.Errorf("%w: unable to use API token to update user settings", rout.ErrBadRequest)
+	}
 
 	return nil
 }

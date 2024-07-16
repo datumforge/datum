@@ -353,13 +353,16 @@ func init() {
 	}
 	emailverificationtokenMixinHooks0 := emailverificationtokenMixin[0].Hooks()
 	emailverificationtokenMixinHooks2 := emailverificationtokenMixin[2].Hooks()
+	emailverificationtokenMixinHooks3 := emailverificationtokenMixin[3].Hooks()
 	emailverificationtokenHooks := schema.EmailVerificationToken{}.Hooks()
 
 	emailverificationtoken.Hooks[1] = emailverificationtokenMixinHooks0[0]
 
 	emailverificationtoken.Hooks[2] = emailverificationtokenMixinHooks2[0]
 
-	emailverificationtoken.Hooks[3] = emailverificationtokenHooks[0]
+	emailverificationtoken.Hooks[3] = emailverificationtokenMixinHooks3[0]
+
+	emailverificationtoken.Hooks[4] = emailverificationtokenHooks[0]
 	emailverificationtokenMixinInters2 := emailverificationtokenMixin[2].Interceptors()
 	emailverificationtokenMixinInters3 := emailverificationtokenMixin[3].Interceptors()
 	emailverificationtoken.Interceptors[0] = emailverificationtokenMixinInters2[0]
@@ -2115,13 +2118,16 @@ func init() {
 	}
 	passwordresettokenMixinHooks0 := passwordresettokenMixin[0].Hooks()
 	passwordresettokenMixinHooks2 := passwordresettokenMixin[2].Hooks()
+	passwordresettokenMixinHooks3 := passwordresettokenMixin[3].Hooks()
 	passwordresettokenHooks := schema.PasswordResetToken{}.Hooks()
 
 	passwordresettoken.Hooks[1] = passwordresettokenMixinHooks0[0]
 
 	passwordresettoken.Hooks[2] = passwordresettokenMixinHooks2[0]
 
-	passwordresettoken.Hooks[3] = passwordresettokenHooks[0]
+	passwordresettoken.Hooks[3] = passwordresettokenMixinHooks3[0]
+
+	passwordresettoken.Hooks[4] = passwordresettokenHooks[0]
 	passwordresettokenMixinInters2 := passwordresettokenMixin[2].Interceptors()
 	passwordresettokenMixinInters3 := passwordresettokenMixin[3].Interceptors()
 	passwordresettoken.Interceptors[0] = passwordresettokenMixinInters2[0]
@@ -2188,15 +2194,18 @@ func init() {
 	}
 	personalaccesstokenMixinHooks0 := personalaccesstokenMixin[0].Hooks()
 	personalaccesstokenMixinHooks1 := personalaccesstokenMixin[1].Hooks()
+	personalaccesstokenMixinHooks4 := personalaccesstokenMixin[4].Hooks()
 	personalaccesstokenHooks := schema.PersonalAccessToken{}.Hooks()
 
 	personalaccesstoken.Hooks[1] = personalaccesstokenMixinHooks0[0]
 
 	personalaccesstoken.Hooks[2] = personalaccesstokenMixinHooks1[0]
 
-	personalaccesstoken.Hooks[3] = personalaccesstokenHooks[0]
+	personalaccesstoken.Hooks[3] = personalaccesstokenMixinHooks4[0]
 
-	personalaccesstoken.Hooks[4] = personalaccesstokenHooks[1]
+	personalaccesstoken.Hooks[4] = personalaccesstokenHooks[0]
+
+	personalaccesstoken.Hooks[5] = personalaccesstokenHooks[1]
 	personalaccesstokenMixinInters1 := personalaccesstokenMixin[1].Interceptors()
 	personalaccesstokenMixinInters4 := personalaccesstokenMixin[4].Interceptors()
 	personalaccesstokenInters := schema.PersonalAccessToken{}.Interceptors()
@@ -2334,10 +2343,12 @@ func init() {
 	tfasettingMixin := schema.TFASetting{}.Mixin()
 	tfasettingMixinHooks0 := tfasettingMixin[0].Hooks()
 	tfasettingMixinHooks2 := tfasettingMixin[2].Hooks()
+	tfasettingMixinHooks4 := tfasettingMixin[4].Hooks()
 	tfasettingHooks := schema.TFASetting{}.Hooks()
 	tfasetting.Hooks[0] = tfasettingMixinHooks0[0]
 	tfasetting.Hooks[1] = tfasettingMixinHooks2[0]
-	tfasetting.Hooks[2] = tfasettingHooks[0]
+	tfasetting.Hooks[2] = tfasettingMixinHooks4[0]
+	tfasetting.Hooks[3] = tfasettingHooks[0]
 	tfasettingMixinInters2 := tfasettingMixin[2].Interceptors()
 	tfasetting.Interceptors[0] = tfasettingMixinInters2[0]
 	tfasettingMixinFields0 := tfasettingMixin[0].Fields()
@@ -2730,7 +2741,9 @@ func init() {
 	usersettinghistory.DefaultID = usersettinghistoryDescID.Default.(func() string)
 	webauthnMixin := schema.Webauthn{}.Mixin()
 	webauthnMixinHooks0 := webauthnMixin[0].Hooks()
+	webauthnMixinHooks3 := webauthnMixin[3].Hooks()
 	webauthn.Hooks[0] = webauthnMixinHooks0[0]
+	webauthn.Hooks[1] = webauthnMixinHooks3[0]
 	webauthnMixinInters3 := webauthnMixin[3].Interceptors()
 	webauthn.Interceptors[0] = webauthnMixinInters3[0]
 	webauthnMixinFields0 := webauthnMixin[0].Fields()

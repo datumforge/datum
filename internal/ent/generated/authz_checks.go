@@ -92,8 +92,25 @@ func (m *APITokenMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().APIToken.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -240,8 +257,25 @@ func (m *ContactMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Contact.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -388,8 +422,25 @@ func (m *DocumentDataMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().DocumentData.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -536,8 +587,25 @@ func (m *EntitlementMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Entitlement.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -684,8 +752,25 @@ func (m *EntitlementPlanMutation) CheckAccessForEdit(ctx context.Context) error 
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().EntitlementPlan.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -832,8 +917,25 @@ func (m *EntitlementPlanFeatureMutation) CheckAccessForEdit(ctx context.Context)
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().EntitlementPlanFeature.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -980,8 +1082,25 @@ func (m *EntityMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Entity.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -1128,8 +1247,25 @@ func (m *EntityTypeMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().EntityType.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -1276,8 +1412,25 @@ func (m *FeatureMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Feature.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -1936,8 +2089,25 @@ func (m *IntegrationMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Integration.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -2084,8 +2254,25 @@ func (m *InviteMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Invite.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -2232,8 +2419,25 @@ func (m *OauthProviderMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().OauthProvider.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -2892,8 +3096,25 @@ func (m *SubscriberMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Subscriber.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID
@@ -3040,8 +3261,25 @@ func (m *TemplateMutation) CheckAccessForEdit(ctx context.Context) error {
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-	if oErr != nil {
-		return oErr
+
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
+
+		if id != "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Template.Get(reqCtx, id)
+			if err != nil {
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
+			}
+
+			orgID = ob.OwnerID
+		}
 	}
 
 	ac.ObjectID = orgID

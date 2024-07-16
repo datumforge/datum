@@ -26,6 +26,8 @@ func (suite *GraphTestSuite) TestQueryEntity() {
 	testCases := []struct {
 		name     string
 		queryID  string
+		client   *datumclient.DatumClient
+		ctx      context.Context
 		allowed  bool
 		expected *ent.Entity
 		errorMsg string
@@ -34,12 +36,32 @@ func (suite *GraphTestSuite) TestQueryEntity() {
 			name:     "happy path entity",
 			allowed:  true,
 			queryID:  entity.ID,
+			client:   suite.client.datum,
+			ctx:      reqCtx,
+			expected: entity,
+		},
+		{
+			name:     "happy path entity, using api token",
+			allowed:  true,
+			queryID:  entity.ID,
+			client:   suite.client.datumWithAPIToken,
+			ctx:      context.Background(),
+			expected: entity,
+		},
+		{
+			name:     "happy path entity, using personal access token",
+			allowed:  true,
+			queryID:  entity.ID,
+			client:   suite.client.datumWithPAT,
+			ctx:      context.Background(),
 			expected: entity,
 		},
 		{
 			name:     "no access",
 			allowed:  false,
 			queryID:  entity.ID,
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			errorMsg: "not authorized",
 		},
 	}
@@ -50,7 +72,7 @@ func (suite *GraphTestSuite) TestQueryEntity() {
 
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.GetEntityByID(reqCtx, tc.queryID)
+			resp, err := tc.client.GetEntityByID(tc.ctx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -86,16 +108,31 @@ func (suite *GraphTestSuite) TestQueryEntities() {
 
 	testCases := []struct {
 		name            string
+		client          *datumclient.DatumClient
 		ctx             context.Context
 		expectedResults int
 	}{
 		{
 			name:            "happy path",
+			client:          suite.client.datum,
 			ctx:             reqCtx,
 			expectedResults: 2,
 		},
 		{
+			name:            "happy path, using api token",
+			client:          suite.client.datumWithAPIToken,
+			ctx:             context.Background(),
+			expectedResults: 2,
+		},
+		{
+			name:            "happy path, using pat",
+			client:          suite.client.datumWithPAT,
+			ctx:             context.Background(),
+			expectedResults: 2,
+		},
+		{
 			name:            "another user, no entities should be returned",
+			client:          suite.client.datum,
 			ctx:             otherCtx,
 			expectedResults: 0,
 		},
@@ -105,7 +142,7 @@ func (suite *GraphTestSuite) TestQueryEntities() {
 		t.Run("List "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			resp, err := suite.client.datum.GetAllEntities(tc.ctx)
+			resp, err := tc.client.GetAllEntities(tc.ctx)
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 
@@ -124,6 +161,8 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 	testCases := []struct {
 		name        string
 		request     datumclient.CreateEntityInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		expectedErr string
 	}{
@@ -132,6 +171,8 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 			request: datumclient.CreateEntityInput{
 				Name: "fraser fir",
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
@@ -141,6 +182,27 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 				DisplayName: lo.ToPtr("fraser fir"),
 				Description: lo.ToPtr("the pine trees of appalachia"),
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			allowed: true,
+		},
+		{
+			name: "happy path, using api token",
+			request: datumclient.CreateEntityInput{
+				Name: "douglas fir",
+			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			allowed: true,
+		},
+		{
+			name: "happy path, using pat",
+			request: datumclient.CreateEntityInput{
+				Name:    "blue spruce",
+				OwnerID: &testOrgID,
+			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
@@ -148,6 +210,8 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 			request: datumclient.CreateEntityInput{
 				Name: "test-entity",
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: create on entity",
 		},
@@ -156,8 +220,20 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 			request: datumclient.CreateEntityInput{
 				DisplayName: lo.ToPtr("fraser firs"),
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: "value is less than the required length",
+		},
+		{
+			name: "name already exists",
+			request: datumclient.CreateEntityInput{
+				Name: "blue spruce",
+			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
+			allowed:     true,
+			expectedErr: "entity already exists",
 		},
 	}
 
@@ -168,7 +244,7 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 			// check for edit permissions on the organization
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.CreateEntity(reqCtx, tc.request)
+			resp, err := tc.client.CreateEntity(tc.ctx, tc.request)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -210,6 +286,8 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 	testCases := []struct {
 		name        string
 		request     datumclient.UpdateEntityInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		expectedErr string
 	}{
@@ -218,13 +296,26 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 			request: datumclient.UpdateEntityInput{
 				DisplayName: lo.ToPtr("blue spruce"),
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
-			name: "update description",
+			name: "update description using api token",
 			request: datumclient.UpdateEntityInput{
 				Description: lo.ToPtr("the pine tree with blue-green colored needles"),
 			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			allowed: true,
+		},
+		{
+			name: "update description again using personal access token",
+			request: datumclient.UpdateEntityInput{
+				Description: lo.ToPtr("a pine tree with blue-green colored needles"),
+			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
@@ -232,6 +323,8 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 			request: datumclient.UpdateEntityInput{
 				Description: lo.ToPtr("pine trees of the west"),
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: update on entity",
 		},
@@ -244,7 +337,7 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 			// check for edit permissions on the organization
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.UpdateEntity(reqCtx, entity.ID, tc.request)
+			resp, err := tc.client.UpdateEntity(tc.ctx, entity.ID, tc.request)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -274,38 +367,66 @@ func (suite *GraphTestSuite) TestMutationDeleteEntity() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	entity := (&EntityBuilder{client: suite.client}).MustNew(reqCtx, t)
+	entity1 := (&EntityBuilder{client: suite.client}).MustNew(reqCtx, t)
+	entity2 := (&EntityBuilder{client: suite.client}).MustNew(reqCtx, t)
+	entity3 := (&EntityBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name        string
 		idToDelete  string
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		checkAccess bool
 		expectedErr string
 	}{
 		{
 			name:        "not allowed to delete",
-			idToDelete:  entity.ID,
+			idToDelete:  entity1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: true,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: delete on entity",
 		},
 		{
 			name:        "happy path, delete entity",
-			idToDelete:  entity.ID,
+			idToDelete:  entity1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: true,
 			allowed:     true,
 		},
 		{
 			name:        "entity already deleted, not found",
-			idToDelete:  entity.ID,
+			idToDelete:  entity1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: false,
 			allowed:     true,
 			expectedErr: "entity not found",
 		},
 		{
+			name:        "happy path, delete entity using api token",
+			idToDelete:  entity2.ID,
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			checkAccess: true,
+			allowed:     true,
+		},
+		{
+			name:        "happy path, delete entity using personal access token",
+			idToDelete:  entity3.ID,
+			client:      suite.client.datumWithPAT,
+			ctx:         context.Background(),
+			checkAccess: true,
+			allowed:     true,
+		},
+		{
 			name:        "unknown entity, not found",
 			idToDelete:  ulids.New().String(),
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: false,
 			allowed:     true,
 			expectedErr: "entity not found",
@@ -321,7 +442,7 @@ func (suite *GraphTestSuite) TestMutationDeleteEntity() {
 				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
-			resp, err := suite.client.datum.DeleteEntity(reqCtx, entity.ID)
+			resp, err := tc.client.DeleteEntity(tc.ctx, tc.idToDelete)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -332,7 +453,7 @@ func (suite *GraphTestSuite) TestMutationDeleteEntity() {
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
-			assert.Equal(t, entity.ID, resp.DeleteEntity.DeletedID)
+			assert.Equal(t, tc.idToDelete, resp.DeleteEntity.DeletedID)
 		})
 	}
 }

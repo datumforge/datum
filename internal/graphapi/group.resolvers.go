@@ -9,16 +9,26 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateGroup is the resolver for the createGroup field.
 func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.CreateGroupInput) (*GroupCreatePayload, error) {
-	group, err := withTransactionalMutation(ctx).Group.Create().SetInput(input).Save(ctx)
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
+	res, err := withTransactionalMutation(ctx).Group.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "group"}, r.logger)
 	}
 
-	return &GroupCreatePayload{Group: group}, nil
+	return &GroupCreatePayload{
+		Group: res,
+	}, nil
 }
 
 // CreateBulkGroup is the resolver for the createBulkGroup field.
@@ -40,17 +50,25 @@ func (r *mutationResolver) CreateBulkCSVGroup(ctx context.Context, input graphql
 
 // UpdateGroup is the resolver for the updateGroup field.
 func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input generated.UpdateGroupInput) (*GroupUpdatePayload, error) {
-	group, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "group"}, r.logger)
+	}
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
+	}
+
+	res, err = res.Update().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "group"}, r.logger)
 	}
 
-	group, err = group.Update().SetInput(input).Save(ctx)
-	if err != nil {
-		return nil, parseRequestError(err, action{action: ActionUpdate, object: "group"}, r.logger)
-	}
-
-	return &GroupUpdatePayload{Group: group}, nil
+	return &GroupUpdatePayload{
+		Group: res,
+	}, nil
 }
 
 // DeleteGroup is the resolver for the deleteGroup field.
@@ -63,15 +81,17 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDe
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &GroupDeletePayload{DeletedID: id}, nil
+	return &GroupDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // Group is the resolver for the group field.
 func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group, error) {
-	group, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "group"}, r.logger)
 	}
 
-	return group, nil
+	return res, nil
 }

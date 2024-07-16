@@ -6,43 +6,29 @@ package graphapi
 
 import (
 	"context"
-	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateDocumentData is the resolver for the createDocumentData field.
 func (r *mutationResolver) CreateDocumentData(ctx context.Context, input generated.CreateDocumentDataInput) (*DocumentDataCreatePayload, error) {
-	data, err := withTransactionalMutation(ctx).DocumentData.Create().SetInput(input).Save(ctx)
-	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
 
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionCreate, "document data")
-		}
-
-		r.logger.Errorw("failed to create document data", "error", err)
-
-		return nil, err
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
 	}
 
-	return &DocumentDataCreatePayload{DocumentData: data}, nil
+	res, err := withTransactionalMutation(ctx).DocumentData.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "documentdata"}, r.logger)
+	}
+
+	return &DocumentDataCreatePayload{
+		DocumentData: res,
+	}, nil
 }
 
 // CreateBulkDocumentData is the resolver for the createBulkDocumentData field.
@@ -64,79 +50,48 @@ func (r *mutationResolver) CreateBulkCSVDocumentData(ctx context.Context, input 
 
 // UpdateDocumentData is the resolver for the updateDocumentData field.
 func (r *mutationResolver) UpdateDocumentData(ctx context.Context, id string, input generated.UpdateDocumentDataInput) (*DocumentDataUpdatePayload, error) {
-	data, err := withTransactionalMutation(ctx).DocumentData.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).DocumentData.Get(ctx, id)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "documentdata"}, r.logger)
+	}
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
 
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to get document data on update", "error", err)
-
-			return nil, newPermissionDeniedError(ActionGet, "document data")
-		}
-
-		r.logger.Errorw("failed to get document data", "error", err)
-		return nil, ErrInternalServerError
+		return nil, ErrPermissionDenied
 	}
 
-	data, err = data.Update().SetInput(input).Save(ctx)
+	res, err = res.Update().SetInput(input).Save(ctx)
 	if err != nil {
-		if generated.IsValidationError(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update document data", "error", err)
-
-			return nil, newPermissionDeniedError(ActionUpdate, "document data")
-		}
-
-		r.logger.Errorw("failed to update document data", "error", err)
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "documentdata"}, r.logger)
 	}
 
-	return &DocumentDataUpdatePayload{DocumentData: data}, nil
+	return &DocumentDataUpdatePayload{
+		DocumentData: res,
+	}, nil
 }
 
 // DeleteDocumentData is the resolver for the deleteDocumentData field.
 func (r *mutationResolver) DeleteDocumentData(ctx context.Context, id string) (*DocumentDataDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).DocumentData.DeleteOneID(id).Exec(ctx); err != nil {
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionDelete, "document data")
-		}
-
-		r.logger.Errorw("failed to delete document data", "error", err)
-		return nil, err
+		return nil, parseRequestError(err, action{action: ActionDelete, object: "documentdata"}, r.logger)
 	}
 
 	if err := generated.DocumentDataEdgeCleanup(ctx, id); err != nil {
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &DocumentDataDeletePayload{DeletedID: id}, nil
+	return &DocumentDataDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // DocumentData is the resolver for the documentData field.
 func (r *queryResolver) DocumentData(ctx context.Context, id string) (*generated.DocumentData, error) {
-	data, err := withTransactionalMutation(ctx).DocumentData.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).DocumentData.Get(ctx, id)
 	if err != nil {
-		r.logger.Errorw("failed to get document data", "error", err)
-
-		if generated.IsNotFound(err) {
-			return nil, err
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, newPermissionDeniedError(ActionGet, "document data")
-		}
-
-		return nil, ErrInternalServerError
+		return nil, parseRequestError(err, action{action: ActionGet, object: "documentdata"}, r.logger)
 	}
 
-	return data, nil
+	return res, nil
 }

@@ -1,13 +1,13 @@
 package graphapi_test
 
 import (
+	"context"
 	"testing"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/enums"
@@ -17,40 +17,54 @@ func (suite *GraphTestSuite) TestQueryUserSetting() {
 	t := suite.T()
 
 	// setup user context
-	ctx, err := userContext()
+	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	user1 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
-	user1Setting, err := user1.Setting(ctx)
-	require.NoError(t, err)
-
-	user2 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
-	user2Setting, err := user2.Setting(ctx)
+	user2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+	user2Setting, err := user2.Setting(reqCtx)
 	require.NoError(t, err)
 
 	// setup valid user context
-	reqCtx, err := userContextWithID(user1.ID)
+	user1SettingResp, err := suite.client.datum.GetUserSettings(reqCtx, datumclient.UserSettingWhereInput{})
 	require.NoError(t, err)
+	require.Len(t, user1SettingResp.UserSettings.Edges, 1)
+
+	user1Setting := user1SettingResp.UserSettings.Edges[0].Node
 
 	testCases := []struct {
 		name     string
 		queryID  string
-		expected *ent.UserSetting
+		client   *datumclient.DatumClient
+		ctx      context.Context
+		expected *datumclient.GetUserSettings_UserSettings_Edges_Node
 		errorMsg string
 	}{
 		{
 			name:     "happy path user",
 			queryID:  user1Setting.ID,
+			client:   suite.client.datum,
+			ctx:      reqCtx,
+			expected: user1Setting,
+		},
+		{
+			name:     "happy path user, using personal access token",
+			queryID:  user1Setting.ID,
+			client:   suite.client.datumWithPAT,
+			ctx:      context.Background(),
 			expected: user1Setting,
 		},
 		{
 			name:     "valid user, but not auth",
 			queryID:  user2Setting.ID,
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			errorMsg: "not found",
 		},
 		{
 			name:     "invalid-id",
 			queryID:  "tacos-for-dinner",
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			errorMsg: "not found",
 		},
 	}
@@ -59,7 +73,7 @@ func (suite *GraphTestSuite) TestQueryUserSetting() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			resp, err := suite.client.datum.GetUserSettingByID(reqCtx, tc.queryID)
+			resp, err := tc.client.GetUserSettingByID(tc.ctx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -76,7 +90,6 @@ func (suite *GraphTestSuite) TestQueryUserSetting() {
 		})
 	}
 
-	(&UserCleanup{client: suite.client, ID: user1.ID}).MustDelete(reqCtx, t)
 	(&UserCleanup{client: suite.client, ID: user2.ID}).MustDelete(reqCtx, t)
 }
 
@@ -139,6 +152,8 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 	testCases := []struct {
 		name        string
 		updateInput datumclient.UpdateUserSettingInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		expectedRes datumclient.UpdateUserSetting_UpdateUserSetting_UserSetting
 		allowed     bool
 		checkOrg    bool
@@ -150,6 +165,8 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 				DefaultOrgID: &org.ID,
 				Tags:         []string{"mitb", "datum"},
 			},
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			allowed:  true,
 			checkOrg: true,
 			expectedRes: datumclient.UpdateUserSetting_UpdateUserSetting_UserSetting{
@@ -165,6 +182,8 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 			updateInput: datumclient.UpdateUserSettingInput{
 				DefaultOrgID: &org2.ID,
 			},
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			allowed:  false,
 			checkOrg: true,
 			errorMsg: "Organization with the specified ID was not found",
@@ -174,14 +193,18 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 			updateInput: datumclient.UpdateUserSettingInput{
 				Status: &enums.UserStatusInvalid,
 			},
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			checkOrg: false,
 			errorMsg: "INVALID is not a valid UserSettingUserStatus",
 		},
 		{
-			name: "update status to suspended",
+			name: "update status to suspended using personal access token",
 			updateInput: datumclient.UpdateUserSettingInput{
 				Status: &enums.UserStatusSuspended,
 			},
+			client:   suite.client.datumWithPAT,
+			ctx:      context.Background(),
 			checkOrg: false,
 			expectedRes: datumclient.UpdateUserSetting_UpdateUserSetting_UserSetting{
 				Status: enums.UserStatusSuspended,
@@ -200,7 +223,7 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 			}
 
 			// update user
-			resp, err := suite.client.datum.UpdateUserSetting(reqCtx, testUser.Edges.Setting.ID, tc.updateInput)
+			resp, err := tc.client.UpdateUserSetting(tc.ctx, testUser.Edges.Setting.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)

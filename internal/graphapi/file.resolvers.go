@@ -11,14 +11,16 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
-// CreateFile is the resolver for the createFile field
+// CreateFile is the resolver for the createFile field.
 func (r *mutationResolver) CreateFile(ctx context.Context, input generated.CreateFileInput) (*FileCreatePayload, error) {
-	t, err := withTransactionalMutation(ctx).File.Create().SetInput(input).Save(ctx)
+	res, err := withTransactionalMutation(ctx).File.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "file"}, r.logger)
 	}
 
-	return &FileCreatePayload{File: t}, nil
+	return &FileCreatePayload{
+		File: res,
+	}, nil
 }
 
 // CreateBulkFile is the resolver for the createBulkFile field.
@@ -38,22 +40,24 @@ func (r *mutationResolver) CreateBulkCSVFile(ctx context.Context, input graphql.
 	return r.bulkCreateFile(ctx, data)
 }
 
-// UpdateFile is the resolver for the updateFile field
+// UpdateFile is the resolver for the updateFile field.
 func (r *mutationResolver) UpdateFile(ctx context.Context, id string, input generated.UpdateFileInput) (*FileUpdatePayload, error) {
-	file, err := withTransactionalMutation(ctx).File.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).File.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "file"}, r.logger)
 	}
 
-	file, err = file.Update().SetInput(input).Save(ctx)
+	res, err = res.Update().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "file"}, r.logger)
 	}
 
-	return &FileUpdatePayload{File: file}, nil
+	return &FileUpdatePayload{
+		File: res,
+	}, nil
 }
 
-// DeleteFile is the resolver for the deleteFile field
+// DeleteFile is the resolver for the deleteFile field.
 func (r *mutationResolver) DeleteFile(ctx context.Context, id string) (*FileDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).File.DeleteOneID(id).Exec(ctx); err != nil {
 		return nil, parseRequestError(err, action{action: ActionDelete, object: "file"}, r.logger)
@@ -63,15 +67,17 @@ func (r *mutationResolver) DeleteFile(ctx context.Context, id string) (*FileDele
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &FileDeletePayload{DeletedID: id}, nil
+	return &FileDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
-// File is the resolver for the file field
+// File is the resolver for the file field.
 func (r *queryResolver) File(ctx context.Context, id string) (*generated.File, error) {
-	file, err := withTransactionalMutation(ctx).File.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).File.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "file"}, r.logger)
 	}
 
-	return file, nil
+	return res, nil
 }

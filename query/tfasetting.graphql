@@ -4,6 +4,9 @@ mutation CreateTFASetting($input: CreateTFASettingInput!) {
       recoveryCodes
       totpAllowed
       verified
+      owner {
+        id
+      }
     }
   }
 }
@@ -15,6 +18,9 @@ query GetAllTFASettings {
         recoveryCodes
         totpAllowed
         verified
+        owner {
+          id
+        }
       }
     }
   }
@@ -25,6 +31,9 @@ query GetTFASetting {
     recoveryCodes
     totpAllowed
     verified
+    owner {
+      id
+    }
   }
 }
 

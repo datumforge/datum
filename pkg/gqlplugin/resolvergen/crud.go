@@ -8,8 +8,10 @@ import (
 	"strings"
 
 	"github.com/99designs/gqlgen/codegen"
+	gqltemplates "github.com/99designs/gqlgen/codegen/templates"
+
 	"github.com/stoewer/go-strcase"
-	"github.com/vektah/gqlparser/v2/ast"
+	gqlast "github.com/vektah/gqlparser/v2/ast"
 )
 
 //go:embed templates/**.gotpl
@@ -27,6 +29,8 @@ func renderTemplate(templateName string, field *codegen.Field) string {
 		"toLower":       strings.ToLower,
 		"toLowerCamel":  strcase.LowerCamelCase,
 		"hasArgument":   hasArgument,
+		"hasOwnerField": hasOwnerField,
+		"reserveImport": gqltemplates.CurrentImports.Reserve,
 	}).ParseFS(templates, "templates/"+templateName)
 	if err != nil {
 		panic(err)
@@ -93,10 +97,23 @@ func getEntityName(name string) string {
 }
 
 // hasArgument checks if the argument is present in the list of arguments
-func hasArgument(arg string, args ast.ArgumentDefinitionList) bool {
+func hasArgument(arg string, args gqlast.ArgumentDefinitionList) bool {
 	for _, a := range args {
 		if a.Name == arg {
 			return true
+		}
+	}
+
+	return false
+}
+
+// hasOwnerField checks if the field has an owner field in the input arguments
+func hasOwnerField(field *codegen.Field) bool {
+	for _, arg := range field.Args {
+		if arg.TypeReference.Definition.Kind == gqlast.InputObject {
+			if arg.TypeReference.Definition.Fields.ForName("ownerID") != nil {
+				return true
+			}
 		}
 	}
 

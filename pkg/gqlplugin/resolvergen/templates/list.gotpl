@@ -6,7 +6,6 @@
 {{ $hasOrderBy := hasArgument "orderBy" .Field.FieldDefinition.Arguments }}
 {{ $hasWhere := hasArgument "where" .Field.FieldDefinition.Arguments }}
 
-
 return withTransactionalMutation(ctx).{{ $entity }}.Query().Paginate(
 	ctx,
 	{{- if $hasAfter }}

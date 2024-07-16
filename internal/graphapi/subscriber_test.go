@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 	mock_fga "github.com/datumforge/fgax/mockery"
@@ -20,18 +19,12 @@ func (suite *GraphTestSuite) TestQuerySubscriber() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// Org to subscribe users to
-	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	// setup valid user context with org
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
-	require.NoError(t, err)
-
 	subscriber := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	// setup valid user context with org2
-	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org2.ID)
+	// setup valid user context with another org
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org.ID)
 	require.NoError(t, err)
 
 	sub := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx2, t)
@@ -39,29 +32,65 @@ func (suite *GraphTestSuite) TestQuerySubscriber() {
 	testCases := []struct {
 		name        string
 		email       string
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		shouldCheck bool
-		expected    *ent.Subscriber
 		wantErr     bool
 	}{
 		{
 			name:        "happy path",
 			email:       subscriber.Email,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			shouldCheck: true,
-			expected:    subscriber,
+			wantErr:     false,
+		},
+		{
+			name:        "happy path, using api token",
+			email:       subscriber.Email,
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			shouldCheck: true,
+			wantErr:     false,
+		},
+		{
+			name:        "happy path, using personal access token",
+			email:       subscriber.Email,
+			client:      suite.client.datumWithPAT,
+			ctx:         context.Background(),
+			shouldCheck: true,
 			wantErr:     false,
 		},
 		{
 			name:        "invalid email",
 			email:       "beep@boop.com",
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			shouldCheck: false,
-			expected:    nil,
 			wantErr:     true,
 		},
 		{
 			name:        "subscriber for another org",
 			email:       sub.Email,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			shouldCheck: false,
-			expected:    nil,
+			wantErr:     true,
+		},
+		{
+			name:        "subscriber for another org using api token",
+			email:       sub.Email,
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			shouldCheck: false,
+			wantErr:     true,
+		},
+		{
+			name:        "subscriber for another org using personal access token",
+			email:       sub.Email,
+			client:      suite.client.datumWithPAT,
+			ctx:         context.Background(),
+			shouldCheck: false,
 			wantErr:     true,
 		},
 	}
@@ -74,7 +103,7 @@ func (suite *GraphTestSuite) TestQuerySubscriber() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.GetSubscriberByEmail(reqCtx, tc.email)
+			resp, err := tc.client.GetSubscriberByEmail(tc.ctx, tc.email)
 
 			if tc.wantErr {
 				require.Error(t, err)
@@ -97,38 +126,49 @@ func (suite *GraphTestSuite) TestQuerySubscribers() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// Org to subscribe users to
+	_ = (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
+	_ = (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	// setup valid user context with another org
+
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	// setup valid user context with org
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
-	require.NoError(t, err)
-
-	_ = (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
-	_ = (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	// setup valid user context with org2
-	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org2.ID)
+	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org.ID)
 	require.NoError(t, err)
 
 	_ = (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx2, t)
 
 	testCases := []struct {
 		name        string
-		context     context.Context
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		numExpected int
 		check       bool
 	}{
 		{
 			name:        "happy path, multiple subscribers",
-			context:     reqCtx,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
+			check:       false,
+			numExpected: 2,
+		},
+		{
+			name:        "happy path, multiple subscribers using api token",
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			check:       false,
+			numExpected: 2,
+		},
+		{
+			name:        "happy path, multiple subscribers using personal access token",
+			client:      suite.client.datumWithPAT,
+			ctx:         context.Background(),
 			check:       false,
 			numExpected: 2,
 		},
 		{
 			name:        "happy path, one subscriber",
-			context:     reqCtx2,
+			client:      suite.client.datum,
+			ctx:         reqCtx2,
 			check:       true,
 			numExpected: 1,
 		},
@@ -143,7 +183,7 @@ func (suite *GraphTestSuite) TestQuerySubscribers() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.GetAllSubscribers(tc.context)
+			resp, err := tc.client.GetAllSubscribers(tc.ctx)
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
@@ -156,21 +196,43 @@ func (suite *GraphTestSuite) TestMutationCreateSubscriber() {
 	t := suite.T()
 
 	// setup user context
-	ctx, err := userContext()
+	reqCtx, err := userContext()
 	require.NoError(t, err)
 
 	testCases := []struct {
 		name    string
 		email   string
+		ownerID string
+		client  *datumclient.DatumClient
+		ctx     context.Context
 		wantErr bool
 	}{
 		{
 			name:    "happy path, new subscriber",
 			email:   "c.stark@example.com",
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			wantErr: false,
+		},
+		{
+			name:    "happy path, new subscriber using api token",
+			email:   "e.stark@example.com",
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			wantErr: false,
+		},
+		{
+			name:    "happy path, new subscriber using personal access token",
+			email:   "a.stark@example.com",
+			ownerID: testOrgID,
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 			wantErr: false,
 		},
 		{
 			name:    "missing email",
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			wantErr: true,
 		},
 	}
@@ -185,7 +247,11 @@ func (suite *GraphTestSuite) TestMutationCreateSubscriber() {
 				Email: tc.email,
 			}
 
-			resp, err := suite.client.datum.CreateSubscriber(ctx, input)
+			if tc.ownerID != "" {
+				input.OwnerID = &tc.ownerID
+			}
+
+			resp, err := tc.client.CreateSubscriber(tc.ctx, input)
 
 			if tc.wantErr {
 				require.Error(t, err)
@@ -211,18 +277,12 @@ func (suite *GraphTestSuite) TestUpdateSubscriber() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// Org to subscribe users to
-	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	// setup valid user context with org
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
-	require.NoError(t, err)
-
 	subscriber := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	// setup valid user context with org2
-	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org2.ID)
+	// setup valid user context with another org
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org.ID)
 	require.NoError(t, err)
 
 	sub := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx2, t)
@@ -231,8 +291,9 @@ func (suite *GraphTestSuite) TestUpdateSubscriber() {
 		name        string
 		email       string
 		updateInput datumclient.UpdateSubscriberInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		shouldCheck bool
-		expected    *ent.Subscriber
 		wantErr     bool
 	}{
 		{
@@ -241,8 +302,29 @@ func (suite *GraphTestSuite) TestUpdateSubscriber() {
 			updateInput: datumclient.UpdateSubscriberInput{
 				PhoneNumber: lo.ToPtr("+1-555-867-5309"),
 			},
-			expected: subscriber,
-			wantErr:  false,
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			wantErr: false,
+		},
+		{
+			name:  "happy path, using api token",
+			email: subscriber.Email,
+			updateInput: datumclient.UpdateSubscriberInput{
+				PhoneNumber: lo.ToPtr("+1-555-867-5310"),
+			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			wantErr: false,
+		},
+		{
+			name:  "happy path, using personal access token",
+			email: subscriber.Email,
+			updateInput: datumclient.UpdateSubscriberInput{
+				PhoneNumber: lo.ToPtr("+1-555-867-5311"),
+			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
+			wantErr: false,
 		},
 		{
 			name:  "invalid email",
@@ -250,8 +332,9 @@ func (suite *GraphTestSuite) TestUpdateSubscriber() {
 			updateInput: datumclient.UpdateSubscriberInput{
 				PhoneNumber: lo.ToPtr("+1-555-867-5309"),
 			},
-			expected: nil,
-			wantErr:  true,
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			wantErr: true,
 		},
 		{
 			name:  "subscriber for another org",
@@ -259,8 +342,9 @@ func (suite *GraphTestSuite) TestUpdateSubscriber() {
 			updateInput: datumclient.UpdateSubscriberInput{
 				PhoneNumber: lo.ToPtr("+1-555-867-5309"),
 			},
-			expected: nil,
-			wantErr:  true,
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			wantErr: true,
 		},
 	}
 
@@ -272,7 +356,7 @@ func (suite *GraphTestSuite) TestUpdateSubscriber() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.UpdateSubscriber(reqCtx, tc.email, tc.updateInput)
+			resp, err := tc.client.UpdateSubscriber(tc.ctx, tc.email, tc.updateInput)
 
 			if tc.wantErr {
 				require.Error(t, err)
@@ -284,7 +368,10 @@ func (suite *GraphTestSuite) TestUpdateSubscriber() {
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 			require.Equal(t, tc.email, resp.UpdateSubscriber.Subscriber.Email)
-			require.Equal(t, tc.updateInput.PhoneNumber, resp.UpdateSubscriber.Subscriber.PhoneNumber)
+
+			if tc.updateInput.PhoneNumber != nil {
+				require.Equal(t, tc.updateInput.PhoneNumber, resp.UpdateSubscriber.Subscriber.PhoneNumber)
+			}
 		})
 	}
 }
@@ -296,46 +383,61 @@ func (suite *GraphTestSuite) TestDeleteSubscriber() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// Org to subscribe users to
+	subscriber1 := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
+	subscriber2 := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
+	subscriber3 := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	// setup valid user context with another org
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	// setup valid user context with org
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
-	require.NoError(t, err)
-
-	subscriber := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	// setup valid user context with org2
-	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org2.ID)
+	reqCtx2, err := auth.NewTestContextWithOrgID(testUser.ID, org.ID)
 	require.NoError(t, err)
 
 	sub := (&SubscriberBuilder{client: suite.client}).MustNew(reqCtx2, t)
 
 	testCases := []struct {
-		name        string
-		email       string
-		shouldCheck bool
-		expected    *ent.Subscriber
-		wantErr     bool
+		name           string
+		email          string
+		organizationID string
+		client         *datumclient.DatumClient
+		ctx            context.Context
+		wantErr        bool
 	}{
 		{
-			name:     "happy path",
-			email:    subscriber.Email,
-			expected: subscriber,
-			wantErr:  false,
+			name:    "happy path",
+			email:   subscriber1.Email,
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			wantErr: false,
 		},
 		{
-			name:     "invalid email",
-			email:    "beep@boop.com",
-			expected: nil,
-			wantErr:  true,
+			name:    "happy path, using api token",
+			email:   subscriber2.Email,
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			wantErr: false,
 		},
 		{
-			name:     "subscriber for another org",
-			email:    sub.Email,
-			expected: nil,
-			wantErr:  true,
+			name:           "happy path, using personal access token",
+			email:          subscriber3.Email,
+			organizationID: testOrgID,
+			client:         suite.client.datumWithPAT,
+			ctx:            context.Background(),
+			wantErr:        false,
+		},
+		{
+			name:    "invalid email",
+			email:   "beep@boop.com",
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			wantErr: true,
+		},
+		{
+			name:    "subscriber for another org",
+			email:   sub.Email,
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			wantErr: true,
 		},
 	}
 
@@ -345,7 +447,7 @@ func (suite *GraphTestSuite) TestDeleteSubscriber() {
 
 			mock_fga.CheckAny(t, suite.client.fga, true)
 
-			resp, err := suite.client.datum.DeleteSubscriber(reqCtx, tc.email)
+			resp, err := tc.client.DeleteSubscriber(tc.ctx, tc.email, &tc.organizationID)
 
 			if tc.wantErr {
 				require.Error(t, err)

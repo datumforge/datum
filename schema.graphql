@@ -11714,15 +11714,6 @@ type Mutation {
 		input: UpdateUserSettingInput!
 	): UserSettingUpdatePayload!
 	"""
-	Delete an existing userSetting
-	"""
-	deleteUserSetting(
-		"""
-		ID of the userSetting
-		"""
-		id: ID!
-	): UserSettingDeletePayload!
-	"""
 	Create a new webhook
 	"""
 	createWebhook(
@@ -19795,15 +19786,6 @@ type UserSettingCreatePayload {
 	Created userSetting
 	"""
 	userSetting: UserSetting!
-}
-"""
-Return response for deleteUserSetting mutation
-"""
-type UserSettingDeletePayload {
-	"""
-	Deleted userSetting ID
-	"""
-	deletedID: ID!
 }
 """
 An edge in a connection.

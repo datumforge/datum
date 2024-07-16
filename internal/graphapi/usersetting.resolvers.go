@@ -55,21 +55,6 @@ func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, inp
 	return &UserSettingUpdatePayload{UserSetting: userSetting}, nil
 }
 
-// DeleteUserSetting is the resolver for the deleteUserSetting field.
-func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*UserSettingDeletePayload, error) {
-	if err := withTransactionalMutation(ctx).UserSetting.DeleteOneID(id).Exec(ctx); err != nil {
-		return nil, parseRequestError(err, action{action: ActionDelete, object: "usersetting"}, r.logger)
-	}
-
-	if err := generated.UserSettingEdgeCleanup(ctx, id); err != nil {
-		return nil, newCascadeDeleteError(err)
-	}
-
-	return &UserSettingDeletePayload{
-		DeletedID: id,
-	}, nil
-}
-
 // UserSetting is the resolver for the UserSetting field.
 func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.UserSetting, error) {
 	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)

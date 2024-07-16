@@ -11,9 +11,6 @@ var (
 	// ErrNoUserInfo is returned when no user info is found on the request context
 	ErrNoUserInfo = errors.New("no user info found on the request context")
 
-	// ErrNoAuthUser is returned when no authenticated user is found on the request context
-	ErrNoAuthUser = errors.New("could not identify authenticated user in request")
-
 	// ErrUnverifiedUser is returned when the user is not verified
 	ErrUnverifiedUser = errors.New("user is not verified")
 

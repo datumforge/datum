@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"context"
 	"testing"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
@@ -9,38 +10,43 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 func (suite *GraphTestSuite) TestQueryTFASetting() {
 	t := suite.T()
 
 	// setup user context
-	ctx, err := userContext()
+	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	user1 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
+	(&TFASettingBuilder{client: suite.client}).MustNew(reqCtx, t, testUser.ID)
+
+	user2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+	user2Ctx, err := userContextWithID(user2.ID)
 	require.NoError(t, err)
-
-	// setup valid user context
-	reqCtx, err := userContextWithID(user1.ID)
-	require.NoError(t, err)
-
-	(&TFASettingBuilder{client: suite.client}).MustNew(reqCtx, t, user1.ID)
-
-	user2 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
 	testCases := []struct {
 		name     string
 		userID   string
+		client   *datumclient.DatumClient
+		ctx      context.Context
 		errorMsg string
 	}{
 		{
 			name:   "happy path user",
-			userID: user1.ID,
+			client: suite.client.datum,
+			ctx:    reqCtx,
+		},
+		{
+			name:   "happy path, using personal access token",
+			client: suite.client.datumWithPAT,
+			ctx:    context.Background(),
 		},
 		{
 			name:     "valid user, but not auth",
-			userID:   user2.ID,
+			client:   suite.client.datum,
+			ctx:      user2Ctx,
 			errorMsg: "tfa_setting not found",
 		},
 	}
@@ -49,10 +55,7 @@ func (suite *GraphTestSuite) TestQueryTFASetting() {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			reqCtx, err := userContextWithID(tc.userID)
-			require.NoError(t, err)
-
-			resp, err := suite.client.datum.GetTFASetting(reqCtx)
+			resp, err := tc.client.GetTFASetting(tc.ctx)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -67,7 +70,6 @@ func (suite *GraphTestSuite) TestQueryTFASetting() {
 		})
 	}
 
-	(&UserCleanup{client: suite.client, ID: user1.ID}).MustDelete(reqCtx, t)
 	(&UserCleanup{client: suite.client, ID: user2.ID}).MustDelete(reqCtx, t)
 }
 
@@ -87,21 +89,56 @@ func (suite *GraphTestSuite) TestMutationCreateTFASetting() {
 
 	testCases := []struct {
 		name   string
+		userID string
 		input  datumclient.CreateTFASettingInput
+		client *datumclient.DatumClient
+		ctx    context.Context
 		errMsg string
 	}{
 		{
-			name: "happy path",
+			name:   "happy path",
+			userID: user.ID,
 			input: datumclient.CreateTFASettingInput{
 				TotpAllowed: lo.ToPtr(true),
 			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
+		},
+		{
+			name:   "happy path, using personal access token",
+			userID: testUser.ID,
+			input: datumclient.CreateTFASettingInput{
+				TotpAllowed: lo.ToPtr(true),
+			},
+			client: suite.client.datumWithPAT,
+			ctx:    context.Background(),
+		},
+		{
+			name:   "unable to create using api token",
+			userID: testUser.ID,
+			input: datumclient.CreateTFASettingInput{
+				TotpAllowed: lo.ToPtr(true),
+			},
+			client: suite.client.datumWithAPIToken,
+			ctx:    context.Background(),
+			errMsg: rout.ErrBadRequest.Error(),
+		},
+		{
+			name:   "already exists",
+			userID: user.ID,
+			input: datumclient.CreateTFASettingInput{
+				TotpAllowed: lo.ToPtr(true),
+			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
+			errMsg: "tfasetting already exists",
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run("Create "+tc.name, func(t *testing.T) {
-			// update user
-			resp, err := suite.client.datum.CreateTFASetting(reqCtx, tc.input)
+			// create tfa setting for user
+			resp, err := tc.client.CreateTFASetting(tc.ctx, tc.input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -118,6 +155,7 @@ func (suite *GraphTestSuite) TestMutationCreateTFASetting() {
 			// Make sure provided values match
 			assert.Equal(t, tc.input.TotpAllowed, resp.CreateTFASetting.TfaSetting.TotpAllowed)
 			assert.Empty(t, resp.CreateTFASetting.TfaSetting.RecoveryCodes)
+			assert.Equal(t, tc.userID, resp.CreateTFASetting.TfaSetting.Owner.ID)
 
 			// make sure user setting was not updated
 			userSetting, err := user.Setting(ctx)
@@ -132,23 +170,18 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 	t := suite.T()
 
 	// setup user context
-	ctx, err := userContext()
+	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	user := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
-	require.NoError(t, err)
-
-	// setup valid user context
-	reqCtx, err := userContextWithID(user.ID)
-	require.NoError(t, err)
-
-	(&TFASettingBuilder{client: suite.client}).MustNew(reqCtx, t, user.ID)
+	(&TFASettingBuilder{client: suite.client}).MustNew(reqCtx, t, testUser.ID)
 
 	recoveryCodes := []string{}
 
 	testCases := []struct {
 		name   string
 		input  datumclient.UpdateTFASettingInput
+		client *datumclient.DatumClient
+		ctx    context.Context
 		errMsg string
 	}{
 		{
@@ -156,18 +189,33 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 			input: datumclient.UpdateTFASettingInput{
 				Verified: lo.ToPtr(true),
 			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
 		},
 		{
-			name: "regen codes",
+			name: "regen codes using personal access token",
 			input: datumclient.UpdateTFASettingInput{
 				RegenBackupCodes: lo.ToPtr(true),
 			},
+			client: suite.client.datumWithPAT,
+			ctx:    context.Background(),
+		},
+		{
+			name: "regen codes using api token not allowed",
+			input: datumclient.UpdateTFASettingInput{
+				RegenBackupCodes: lo.ToPtr(true),
+			},
+			client: suite.client.datumWithAPIToken,
+			ctx:    context.Background(),
+			errMsg: rout.ErrBadRequest.Error(),
 		},
 		{
 			name: "regen codes - false",
 			input: datumclient.UpdateTFASettingInput{
 				RegenBackupCodes: lo.ToPtr(false),
 			},
+			client: suite.client.datum,
+			ctx:    reqCtx,
 		},
 	}
 
@@ -175,8 +223,8 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			// update user
-			resp, err := suite.client.datum.UpdateTFASetting(reqCtx, tc.input)
+			// update tfa settings
+			resp, err := tc.client.UpdateTFASetting(tc.ctx, tc.input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -203,7 +251,7 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 			}
 
 			// make sure user setting was not updated
-			userSettings, err := suite.client.datum.GetAllUserSettings(reqCtx)
+			userSettings, err := tc.client.GetAllUserSettings(tc.ctx)
 			require.NoError(t, err)
 			require.Len(t, userSettings.UserSettings.Edges, 1)
 

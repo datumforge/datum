@@ -121,16 +121,16 @@ type PersonalAccessTokenBuilder struct {
 	client *client
 
 	// Fields
-	Name           string
-	Token          string
-	Abilities      []string
-	Description    string
-	ExpiresAt      time.Time
-	OwnerID        string
-	OrganizationID string
+	Name            string
+	Token           string
+	Abilities       []string
+	Description     string
+	ExpiresAt       time.Time
+	OwnerID         string
+	OrganizationIDs []string
 }
 
-type APITokenTokenBuilder struct {
+type APITokenBuilder struct {
 	client *client
 
 	// Fields
@@ -558,9 +558,9 @@ func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T
 		pat.OwnerID = owner.ID
 	}
 
-	if pat.OrganizationID == "" {
+	if pat.OrganizationIDs == nil {
 		org := (&OrganizationBuilder{client: pat.client}).MustNew(ctx, t)
-		pat.OrganizationID = org.ID
+		pat.OrganizationIDs = []string{org.ID}
 	}
 
 	token := pat.client.db.PersonalAccessToken.Create().
@@ -568,7 +568,7 @@ func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T
 		SetOwnerID(pat.OwnerID).
 		SetDescription(pat.Description).
 		SetExpiresAt(pat.ExpiresAt).
-		AddOrganizationIDs(pat.OrganizationID).
+		AddOrganizationIDs(pat.OrganizationIDs...).
 		SaveX(ctx)
 
 	// clear mocks before going to tests
@@ -578,7 +578,7 @@ func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T
 }
 
 // MustNew api tokens builder is used to create, without authz checks, api tokens in the database
-func (at *APITokenTokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.APIToken {
+func (at *APITokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.APIToken {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	// mock writes
@@ -594,11 +594,16 @@ func (at *APITokenTokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.
 		at.Description = gofakeit.HipsterSentence(5)
 	}
 
-	token := at.client.db.APIToken.Create().
+	request := at.client.db.APIToken.Create().
 		SetName(at.Name).
 		SetDescription(at.Description).
-		SetScopes(at.Scopes).
-		SaveX(ctx)
+		SetScopes(at.Scopes)
+
+	if at.OwnerID != "" {
+		request.SetOwnerID(at.OwnerID)
+	}
+
+	token := request.SaveX(ctx)
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(at.client.fga)

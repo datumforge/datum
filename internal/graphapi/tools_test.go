@@ -34,6 +34,7 @@ import (
 var (
 	testUser          *ent.User
 	testPersonalOrgID string
+	testOrgID         string
 )
 
 // TestGraphTestSuite runs all the tests in the GraphTestSuite
@@ -50,9 +51,11 @@ type GraphTestSuite struct {
 
 // client contains all the clients the test need to interact with
 type client struct {
-	db    *ent.Client
-	datum *datumclient.DatumClient
-	fga   *mock_fga.MockSdkClient
+	db                *ent.Client
+	datum             *datumclient.DatumClient
+	datumWithPAT      *datumclient.DatumClient
+	datumWithAPIToken *datumclient.DatumClient
+	fga               *mock_fga.MockSdkClient
 }
 
 func (suite *GraphTestSuite) SetupSuite() {
@@ -154,6 +157,34 @@ func (suite *GraphTestSuite) SetupTest() {
 
 	testPersonalOrgID = testPersonalOrg.ID
 
+	userCtx, err := auth.NewTestContextWithOrgID(testUser.ID, testPersonalOrgID)
+	require.NoError(t, err)
+
+	// setup a non-personal org
+	testOrg := (&OrganizationBuilder{client: c}).MustNew(userCtx, t)
+	testOrgID = testOrg.ID
+
+	userCtx, err = userContext()
+	require.NoError(t, err)
+
+	// setup client with a personal access token
+	pat := (&PersonalAccessTokenBuilder{client: c, OwnerID: testUser.ID, OrganizationIDs: []string{testOrgID, testPersonalOrgID}}).MustNew(userCtx, t)
+	authHeaderPAT := datumclient.Authorization{
+		BearerToken: pat.Token,
+	}
+
+	c.datumWithPAT, err = testutils.DatumTestClientWithAuth(t, c.db, datumclient.WithCredentials(authHeaderPAT))
+	require.NoError(t, err)
+
+	// setup client with an API token
+	apiToken := (&APITokenBuilder{client: c}).MustNew(userCtx, t)
+
+	authHeaderAPIToken := datumclient.Authorization{
+		BearerToken: apiToken.Token,
+	}
+	c.datumWithAPIToken, err = testutils.DatumTestClientWithAuth(t, c.db, datumclient.WithCredentials(authHeaderAPIToken))
+	require.NoError(t, err)
+
 	suite.client = c
 }
 
@@ -175,7 +206,7 @@ func (suite *GraphTestSuite) TearDownSuite() {
 // userContext creates a new user in the database and returns a context with
 // the user claims attached
 func userContext() (context.Context, error) {
-	return auth.NewTestContextWithOrgID(testUser.ID, testPersonalOrgID)
+	return auth.NewTestContextWithOrgID(testUser.ID, testOrgID)
 }
 
 // userContextWithID creates a new user context with the provided user ID

@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -29,18 +30,40 @@ func (suite *GraphTestSuite) TestQueryGroup() {
 	testCases := []struct {
 		name     string
 		queryID  string
+		client   *datumclient.DatumClient
+		ctx      context.Context
 		allowed  bool
 		expected *ent.Group
 		errorMsg string
 	}{
 		{
 			name:     "happy path group",
+			client:   suite.client.datum,
+			ctx:      reqCtx,
+			allowed:  true,
+			queryID:  group1.ID,
+			expected: group1,
+		},
+		{
+			name:     "happy path group, using api token",
+			client:   suite.client.datumWithAPIToken,
+			ctx:      context.Background(),
+			allowed:  true,
+			queryID:  group1.ID,
+			expected: group1,
+		},
+		{
+			name:     "happy path group, using personal access token",
+			client:   suite.client.datumWithPAT,
+			ctx:      context.Background(),
 			allowed:  true,
 			queryID:  group1.ID,
 			expected: group1,
 		},
 		{
 			name:     "no access",
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			allowed:  false,
 			queryID:  group1.ID,
 			errorMsg: "not authorized",
@@ -246,13 +269,9 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	owner1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-	owner2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	otherOwner := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	listObjects := []string{fmt.Sprintf("organization:%s", owner1.ID)}
-
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, owner1.ID)
-	require.NoError(t, err)
+	listObjects := []string{fmt.Sprintf("organization:%s", testOrgID), fmt.Sprintf("organization:%s", testPersonalOrgID)}
 
 	testCases := []struct {
 		name        string
@@ -261,7 +280,10 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 		displayName string
 		owner       string
 		settings    *datumclient.CreateGroupSettingInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
+		list        bool
 		check       bool
 		errorMsg    string
 	}{
@@ -270,8 +292,35 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			groupName:   gofakeit.Name(),
 			displayName: gofakeit.LetterN(50),
 			description: gofakeit.HipsterSentence(10),
-			owner:       owner1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
+			list:        true,
+			check:       true,
+		},
+		{
+			name:        "happy path group using api token",
+			groupName:   gofakeit.Name(),
+			displayName: gofakeit.LetterN(50),
+			description: gofakeit.HipsterSentence(10),
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			allowed:     true,
+			// TODO (sfunk): look at the authz logic, this one looks slightly different from other objects
+			// but should be the same
+			list:  false, // no list objects because the api token can only be associated with a single org
+			check: true,
+		},
+		{
+			name:        "happy path group using personal access token",
+			groupName:   gofakeit.Name(),
+			displayName: gofakeit.LetterN(50),
+			owner:       testOrgID,
+			description: gofakeit.HipsterSentence(10),
+			client:      suite.client.datumWithPAT,
+			ctx:         context.Background(),
+			allowed:     true,
+			list:        true,
 			check:       true,
 		},
 		{
@@ -279,11 +328,13 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			groupName:   gofakeit.Name(),
 			displayName: gofakeit.LetterN(50),
 			description: gofakeit.HipsterSentence(10),
-			owner:       owner1.ID,
 			settings: &datumclient.CreateGroupSettingInput{
 				JoinPolicy: &enums.JoinPolicyInviteOnly,
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
+			list:    true,
 			check:   true,
 		},
 		{
@@ -291,23 +342,30 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			groupName:   gofakeit.Name(),
 			displayName: gofakeit.LetterN(50),
 			description: gofakeit.HipsterSentence(10),
-			owner:       owner2.ID,
+			owner:       otherOwner.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			check:       true,
+			list:        true,
 			errorMsg:    "not authorized",
 		},
 		{
 			name:      "happy path group, minimum fields",
 			groupName: gofakeit.Name(),
-			owner:     owner1.ID,
+			client:    suite.client.datum,
+			ctx:       reqCtx,
 			allowed:   true,
+			list:      true,
 			check:     true,
 		},
 		{
 			name:     "missing name",
-			owner:    owner1.ID,
 			errorMsg: "validator failed",
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			allowed:  true,
+			list:     true,
 			check:    true,
 		},
 	}
@@ -322,7 +380,10 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 				Name:        tc.groupName,
 				Description: &tc.description,
 				DisplayName: &tc.displayName,
-				OwnerID:     &tc.owner,
+			}
+
+			if tc.owner != "" {
+				input.OwnerID = &tc.owner
 			}
 
 			if tc.displayName != "" {
@@ -340,10 +401,13 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
 				mock_fga.WriteAny(t, suite.client.fga)
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
+
+				if tc.list {
+					mock_fga.ListAny(t, suite.client.fga, listObjects)
+				}
 			}
 
-			resp, err := suite.client.datum.CreateGroup(reqCtx, input)
+			resp, err := tc.client.CreateGroup(tc.ctx, input)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -360,7 +424,6 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			// Make sure provided values match
 			assert.Equal(t, tc.groupName, resp.CreateGroup.Group.Name)
 			assert.Equal(t, tc.description, *resp.CreateGroup.Group.Description)
-			assert.Equal(t, tc.owner, resp.CreateGroup.Group.Owner.ID)
 
 			if tc.displayName != "" {
 				assert.Equal(t, tc.displayName, resp.CreateGroup.Group.DisplayName)
@@ -372,13 +435,8 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			if tc.settings != nil {
 				assert.Equal(t, resp.CreateGroup.Group.Setting.JoinPolicy, enums.JoinPolicyInviteOnly)
 			}
-
-			// cleanup group
-			(&GroupCleanup{client: suite.client, ID: resp.CreateGroup.Group.ID}).MustDelete(reqCtx, t)
 		})
 	}
-
-	(&OrganizationCleanup{client: suite.client, ID: owner1.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationUpdateGroup() {
@@ -391,15 +449,11 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 	nameUpdate := gofakeit.Name()
 	displayNameUpdate := gofakeit.LetterN(40)
 	descriptionUpdate := gofakeit.HipsterSentence(10)
+	gravatarURLUpdate := gofakeit.URL()
 
-	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	group := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
-	require.NoError(t, err)
-
-	group := (&GroupBuilder{client: suite.client, Owner: org.ID}).MustNew(reqCtx, t)
-
-	om := (&OrgMemberBuilder{client: suite.client, OrgID: org.ID}).MustNew(reqCtx, t)
+	om := (&OrgMemberBuilder{client: suite.client, OrgID: testOrgID}).MustNew(reqCtx, t)
 
 	// setup auth for the tests
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
@@ -409,6 +463,8 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 		allowed     bool
 		updateInput datumclient.UpdateGroupInput
 		expectedRes datumclient.UpdateGroup_UpdateGroup_Group
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		list        bool
 		errorMsg    string
 	}{
@@ -420,7 +476,9 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 				DisplayName: &displayNameUpdate,
 				Description: &descriptionUpdate,
 			},
-			list: true,
+			client: suite.client.datum,
+			ctx:    reqCtx,
+			list:   true,
 			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
 				ID:          group.ID,
 				Name:        nameUpdate,
@@ -429,7 +487,7 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 			},
 		},
 		{
-			name:    "add user as admin",
+			name:    "add user as admin using api token",
 			allowed: true,
 			updateInput: datumclient.UpdateGroupInput{
 				AddGroupMembers: []*datumclient.CreateGroupMembershipInput{
@@ -439,7 +497,9 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 					},
 				},
 			},
-			list: true,
+			client: suite.client.datumWithAPIToken,
+			ctx:    context.Background(),
+			list:   true,
 			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
 				ID:          group.ID,
 				Name:        nameUpdate,
@@ -456,6 +516,23 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 			},
 		},
 		{
+			name:    "update gravatar, happy path using personal access token",
+			allowed: true,
+			updateInput: datumclient.UpdateGroupInput{
+				LogoURL: &gravatarURLUpdate,
+			},
+			client: suite.client.datumWithPAT,
+			ctx:    context.Background(),
+			list:   true,
+			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
+				ID:          group.ID,
+				Name:        nameUpdate,
+				DisplayName: displayNameUpdate,
+				Description: &descriptionUpdate,
+				LogoURL:     &gravatarURLUpdate,
+			},
+		},
+		{
 			name:    "update settings, happy path",
 			allowed: true,
 			updateInput: datumclient.UpdateGroupInput{
@@ -463,7 +540,9 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 					JoinPolicy: &enums.JoinPolicyOpen,
 				},
 			},
-			list: true,
+			client: suite.client.datum,
+			ctx:    reqCtx,
+			list:   true,
 			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
 				ID:          group.ID,
 				Name:        nameUpdate,
@@ -482,6 +561,8 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 				DisplayName: &displayNameUpdate,
 				Description: &descriptionUpdate,
 			},
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			list:     false,
 			errorMsg: "not authorized",
 		},
@@ -502,7 +583,7 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 			}
 
 			// update group
-			resp, err := suite.client.datum.UpdateGroup(reqCtx, group.ID, tc.updateInput)
+			resp, err := tc.client.UpdateGroup(tc.ctx, group.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -521,6 +602,10 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 			assert.Equal(t, tc.expectedRes.Name, updatedGroup.Name)
 			assert.Equal(t, tc.expectedRes.DisplayName, updatedGroup.DisplayName)
 			assert.Equal(t, tc.expectedRes.Description, updatedGroup.Description)
+
+			if tc.updateInput.GravatarLogoURL != nil {
+				assert.Equal(t, *tc.expectedRes.LogoURL, *updatedGroup.LogoURL)
+			}
 
 			if tc.updateInput.AddGroupMembers != nil {
 				// Adding a member to an group will make it 2 users, there is an admin
@@ -546,25 +631,51 @@ func (suite *GraphTestSuite) TestMutationDeleteGroup() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	group := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
+	group1 := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
+	group2 := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
+	group3 := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
+	listObjects := []string{
+		fmt.Sprintf("group:%s", group1.ID),
+		fmt.Sprintf("group:%s", group2.ID),
+		fmt.Sprintf("group:%s", group3.ID),
+	}
 
 	testCases := []struct {
 		name     string
 		groupID  string
+		client   *datumclient.DatumClient
+		ctx      context.Context
 		allowed  bool
 		errorMsg string
 	}{
 		{
 			name:    "delete group, happy path",
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
-			groupID: group.ID,
+			groupID: group1.ID,
+		},
+		{
+			name:    "delete group, happy path using api token",
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			allowed: true,
+			groupID: group2.ID,
+		},
+		{
+			name:    "delete group, happy path using personal access token",
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
+			allowed: true,
+			groupID: group3.ID,
 		},
 		{
 			name:     "delete group, no access",
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			allowed:  false,
-			groupID:  group.ID,
+			groupID:  group1.ID,
 			errorMsg: "not authorized",
 		},
 	}
@@ -583,7 +694,7 @@ func (suite *GraphTestSuite) TestMutationDeleteGroup() {
 			}
 
 			// delete group
-			resp, err := suite.client.datum.DeleteGroup(reqCtx, tc.groupID)
+			resp, err := tc.client.DeleteGroup(tc.ctx, tc.groupID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)

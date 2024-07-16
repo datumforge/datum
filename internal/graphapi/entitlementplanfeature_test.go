@@ -23,15 +23,33 @@ func (suite *GraphTestSuite) TestQueryEntitlementPlanFeature() {
 	testCases := []struct {
 		name     string
 		queryID  string
+		client   *datumclient.DatumClient
+		ctx      context.Context
 		errorMsg string
 	}{
 		{
 			name:    "happy path",
 			queryID: planFeature.ID,
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+		},
+		{
+			name:    "happy path, with api token",
+			queryID: planFeature.ID,
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+		},
+		{
+			name:    "happy path, with pat",
+			queryID: planFeature.ID,
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 		},
 		{
 			name:     "not found",
 			queryID:  "notfound",
+			client:   suite.client.datum,
+			ctx:      reqCtx,
 			errorMsg: "not found",
 		},
 	}
@@ -44,7 +62,7 @@ func (suite *GraphTestSuite) TestQueryEntitlementPlanFeature() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.GetEntitlementPlanFeatureByID(reqCtx, tc.queryID)
+			resp, err := tc.client.GetEntitlementPlanFeatureByID(tc.ctx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -83,16 +101,31 @@ func (suite *GraphTestSuite) TestQueryEntitlementPlanFeatures() {
 
 	testCases := []struct {
 		name            string
+		client          *datumclient.DatumClient
 		ctx             context.Context
 		expectedResults int
 	}{
 		{
 			name:            "happy path",
+			client:          suite.client.datum,
 			ctx:             reqCtx,
 			expectedResults: 2,
 		},
 		{
+			name:            "happy path, using api token",
+			client:          suite.client.datumWithAPIToken,
+			ctx:             context.Background(),
+			expectedResults: 2,
+		},
+		{
+			name:            "happy path, using pat",
+			client:          suite.client.datumWithPAT,
+			ctx:             context.Background(),
+			expectedResults: 2,
+		},
+		{
 			name:            "another user, no planFeatures should be returned",
+			client:          suite.client.datum,
 			ctx:             otherCtx,
 			expectedResults: 0,
 		},
@@ -102,7 +135,7 @@ func (suite *GraphTestSuite) TestQueryEntitlementPlanFeatures() {
 		t.Run("List "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			resp, err := suite.client.datum.GetAllEntitlementPlanFeatures(tc.ctx)
+			resp, err := tc.client.GetAllEntitlementPlanFeatures(tc.ctx)
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 
@@ -127,6 +160,8 @@ func (suite *GraphTestSuite) TestMutationCreateEntitlementPlanFeature() {
 	testCases := []struct {
 		name        string
 		request     datumclient.CreateEntitlementPlanFeatureInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		expectedErr string
 	}{
@@ -136,10 +171,12 @@ func (suite *GraphTestSuite) TestMutationCreateEntitlementPlanFeature() {
 				PlanID:    plan.ID,
 				FeatureID: feature1.ID,
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
-			name: "happy path, all input",
+			name: "happy path, all input using api token",
 			request: datumclient.CreateEntitlementPlanFeatureInput{
 				PlanID:    plan.ID,
 				FeatureID: feature2.ID,
@@ -148,6 +185,23 @@ func (suite *GraphTestSuite) TestMutationCreateEntitlementPlanFeature() {
 					"limit":      "30",
 				},
 			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			allowed: true,
+		},
+		{
+			name: "happy path, all input using personal access token",
+			request: datumclient.CreateEntitlementPlanFeatureInput{
+				OwnerID:   &testPersonalOrgID,
+				PlanID:    plan.ID,
+				FeatureID: feature3.ID,
+				Metadata: map[string]interface{}{
+					"limit_type": "days",
+					"limit":      "30",
+				},
+			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
 			allowed: true,
 		},
 		{
@@ -160,6 +214,8 @@ func (suite *GraphTestSuite) TestMutationCreateEntitlementPlanFeature() {
 					"limit":      "30",
 				},
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: "entitlementplanfeature already exists",
 		},
@@ -169,6 +225,8 @@ func (suite *GraphTestSuite) TestMutationCreateEntitlementPlanFeature() {
 				PlanID:    plan.ID,
 				FeatureID: feature3.ID,
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: create on entitlementplanfeature",
 		},
@@ -177,6 +235,8 @@ func (suite *GraphTestSuite) TestMutationCreateEntitlementPlanFeature() {
 			request: datumclient.CreateEntitlementPlanFeatureInput{
 				PlanID: plan.ID,
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: "value is less than the required length",
 		},
@@ -185,6 +245,8 @@ func (suite *GraphTestSuite) TestMutationCreateEntitlementPlanFeature() {
 			request: datumclient.CreateEntitlementPlanFeatureInput{
 				FeatureID: feature1.ID,
 			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: "value is less than the required length",
 		},
@@ -197,7 +259,7 @@ func (suite *GraphTestSuite) TestMutationCreateEntitlementPlanFeature() {
 			// check for edit permissions on the organization
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.CreateEntitlementPlanFeature(reqCtx, tc.request)
+			resp, err := tc.client.CreateEntitlementPlanFeature(tc.ctx, tc.request)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -231,6 +293,8 @@ func (suite *GraphTestSuite) TestMutationUpdateEntitlementPlanFeature() {
 	testCases := []struct {
 		name        string
 		request     datumclient.UpdateEntitlementPlanFeatureInput
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		expectedErr string
 	}{
@@ -242,9 +306,34 @@ func (suite *GraphTestSuite) TestMutationUpdateEntitlementPlanFeature() {
 					"limit":      "15",
 				},
 			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
-
+		{
+			name: "happy path, update metadata using api token",
+			request: datumclient.UpdateEntitlementPlanFeatureInput{
+				Metadata: map[string]interface{}{
+					"limit_type": "days",
+					"limit":      "16",
+				},
+			},
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			allowed: true,
+		},
+		{
+			name: "happy path, update metadata using personal access token",
+			request: datumclient.UpdateEntitlementPlanFeatureInput{
+				Metadata: map[string]interface{}{
+					"limit_type": "days",
+					"limit":      "77",
+				},
+			},
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
+			allowed: true,
+		},
 		{
 			name: "not allowed to update",
 			request: datumclient.UpdateEntitlementPlanFeatureInput{
@@ -252,6 +341,8 @@ func (suite *GraphTestSuite) TestMutationUpdateEntitlementPlanFeature() {
 					"limit_type": "days",
 					"limit":      "65",
 				}},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: update on entitlementplanfeature",
 		},
@@ -264,7 +355,7 @@ func (suite *GraphTestSuite) TestMutationUpdateEntitlementPlanFeature() {
 			// check for edit permissions on the organization
 			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := suite.client.datum.UpdateEntitlementPlanFeature(reqCtx, planFeature.ID, tc.request)
+			resp, err := tc.client.UpdateEntitlementPlanFeature(tc.ctx, planFeature.ID, tc.request)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -287,38 +378,66 @@ func (suite *GraphTestSuite) TestMutationDeleteEntitlementPlanFeature() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	planFeature := (&EntitlementPlanFeatureBuilder{client: suite.client}).MustNew(reqCtx, t)
+	planFeature1 := (&EntitlementPlanFeatureBuilder{client: suite.client}).MustNew(reqCtx, t)
+	planFeature2 := (&EntitlementPlanFeatureBuilder{client: suite.client}).MustNew(reqCtx, t)
+	planFeature3 := (&EntitlementPlanFeatureBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name        string
 		idToDelete  string
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		allowed     bool
 		checkAccess bool
 		expectedErr string
 	}{
 		{
 			name:        "not allowed to delete",
-			idToDelete:  planFeature.ID,
+			idToDelete:  planFeature1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: true,
 			allowed:     false,
 			expectedErr: "you are not authorized to perform this action: delete on entitlementplanfeature",
 		},
 		{
 			name:        "happy path, delete plan feature",
-			idToDelete:  planFeature.ID,
+			idToDelete:  planFeature1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: true,
 			allowed:     true,
 		},
 		{
 			name:        "plan feature already deleted, not found",
-			idToDelete:  planFeature.ID,
+			idToDelete:  planFeature1.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: false,
 			allowed:     true,
 			expectedErr: "entitlement_plan_feature not found",
 		},
 		{
+			name:        "happy path, delete plan feature using api token",
+			idToDelete:  planFeature2.ID,
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			checkAccess: true,
+			allowed:     true,
+		},
+		{
+			name:        "happy path, delete plan feature using personal access token",
+			idToDelete:  planFeature3.ID,
+			client:      suite.client.datumWithPAT,
+			ctx:         context.Background(),
+			checkAccess: true,
+			allowed:     true,
+		},
+		{
 			name:        "unknown plan feature, not found",
 			idToDelete:  ulids.New().String(),
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			checkAccess: false,
 			allowed:     true,
 			expectedErr: "entitlement_plan_feature not found",
@@ -334,7 +453,7 @@ func (suite *GraphTestSuite) TestMutationDeleteEntitlementPlanFeature() {
 				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
-			resp, err := suite.client.datum.DeleteEntitlementPlanFeature(reqCtx, planFeature.ID)
+			resp, err := tc.client.DeleteEntitlementPlanFeature(tc.ctx, tc.idToDelete)
 			if tc.expectedErr != "" {
 				require.Error(t, err)
 				assert.ErrorContains(t, err, tc.expectedErr)
@@ -345,7 +464,7 @@ func (suite *GraphTestSuite) TestMutationDeleteEntitlementPlanFeature() {
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
-			assert.Equal(t, planFeature.ID, resp.DeleteEntitlementPlanFeature.DeletedID)
+			assert.Equal(t, tc.idToDelete, resp.DeleteEntitlementPlanFeature.DeletedID)
 		})
 	}
 }

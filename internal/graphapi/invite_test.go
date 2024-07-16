@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -8,7 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/enums"
@@ -21,34 +21,38 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// Org to invite users to
-	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	// setup valid user context with org
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
-	require.NoError(t, err)
-
 	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name        string
 		queryID     string
+		client      *datumclient.DatumClient
+		ctx         context.Context
 		shouldCheck bool
-		expected    *ent.Invite
 		wantErr     bool
 	}{
 		{
 			name:        "happy path",
 			queryID:     invite.ID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			shouldCheck: true,
-			expected:    invite,
+			wantErr:     false,
+		},
+		{
+			name:        "happy path with api token",
+			queryID:     invite.ID,
+			client:      suite.client.datumWithAPIToken,
+			ctx:         context.Background(),
+			shouldCheck: true,
 			wantErr:     false,
 		},
 		{
 			name:        "invalid id",
 			queryID:     "allthefooandbar",
+			client:      suite.client.datum,
+			ctx:         reqCtx,
 			shouldCheck: false,
-			expected:    nil,
 			wantErr:     true,
 		},
 	}
@@ -61,7 +65,7 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
-			resp, err := suite.client.datum.GetInviteByID(reqCtx, tc.queryID)
+			resp, err := tc.client.GetInviteByID(tc.ctx, tc.queryID)
 
 			if tc.wantErr {
 				require.Error(t, err)
@@ -81,19 +85,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 	t := suite.T()
 
 	// setup user context
-	ctx, err := userContext()
-	require.NoError(t, err)
-
-	orgAdmin := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
-
-	userCtx, err := auth.NewTestContextWithValidUser(orgAdmin.ID)
-	require.NoError(t, err)
-
-	// Org to invite users to
-	org := (&OrganizationBuilder{client: suite.client}).MustNew(userCtx, t)
-
-	// setup valid user context with org
-	reqCtx, err := auth.NewTestContextWithOrgID(orgAdmin.ID, org.ID)
+	reqCtx, err := userContext()
 	require.NoError(t, err)
 
 	// Existing user to invite to org
@@ -101,13 +93,15 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 
 	// Existing user already a member of org
 	existingUser2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
-	_ = (&OrgMemberBuilder{client: suite.client, OrgID: org.ID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
+	_ = (&OrgMemberBuilder{client: suite.client, OrgID: testOrgID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name             string
 		recipient        string
 		orgID            string
 		role             enums.Role
+		client           *datumclient.DatumClient
+		ctx              context.Context
 		accessAllowed    bool
 		expectedStatus   enums.InviteStatus
 		expectedAttempts int64
@@ -116,28 +110,34 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 		{
 			name:             "happy path, new user as member",
 			recipient:        "meow@datum.net",
-			orgID:            org.ID,
+			orgID:            testOrgID,
 			role:             enums.RoleMember,
+			client:           suite.client.datum,
+			ctx:              reqCtx,
 			accessAllowed:    true,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
 			wantErr:          false,
 		},
 		{
-			name:             "re-invite new user as member",
+			name:             "re-invite new user as member using api token",
 			recipient:        "meow@datum.net",
-			orgID:            org.ID,
+			orgID:            testOrgID,
 			role:             enums.RoleMember,
+			client:           suite.client.datumWithAPIToken,
+			ctx:              context.Background(),
 			accessAllowed:    true,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 1,
 			wantErr:          false,
 		},
 		{
-			name:             "happy path, new user as admin",
+			name:             "happy path, new user as admin using pat",
 			recipient:        "woof@datum.net",
-			orgID:            org.ID,
+			orgID:            testOrgID,
 			role:             enums.RoleAdmin,
+			client:           suite.client.datumWithPAT,
+			ctx:              context.Background(),
 			accessAllowed:    true,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
@@ -148,24 +148,30 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 		// 	name:         "new user as owner should fail",
 		// 	existingUser: false,
 		// 	recipient:    "woof@datum.net",
-		// 	orgID:        org.ID,
+		// 	orgID:        testOrgID,
 		// 	role:         enums.RoleOwner,
+		//  client:      suite.client.datum,
+		//  ctx:         reqCtx,
 		//  accessAllowed: true,
 		// 	wantErr:      true,
 		// },
 		{
 			name:          "user not allowed to add to org",
 			recipient:     "oink@datum.net",
-			orgID:         org.ID,
+			orgID:         testOrgID,
 			role:          enums.RoleAdmin,
+			client:        suite.client.datum,
+			ctx:           reqCtx,
 			accessAllowed: false,
 			wantErr:       true,
 		},
 		{
 			name:             "happy path, existing user as member",
 			recipient:        existingUser.Email,
-			orgID:            org.ID,
+			orgID:            testOrgID,
 			role:             enums.RoleMember,
+			client:           suite.client.datum,
+			ctx:              reqCtx,
 			accessAllowed:    true,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
@@ -174,8 +180,10 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 		{
 			name:             "user already a member, will still send an invite",
 			recipient:        existingUser2.Email,
-			orgID:            org.ID,
+			orgID:            testOrgID,
 			role:             enums.RoleMember,
+			client:           suite.client.datum,
+			ctx:              reqCtx,
 			accessAllowed:    true,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
@@ -186,6 +194,8 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			recipient:     existingUser.Email,
 			orgID:         "boommeowboom",
 			role:          enums.RoleMember,
+			client:        suite.client.datum,
+			ctx:           reqCtx,
 			accessAllowed: false,
 			wantErr:       true,
 		},
@@ -204,7 +214,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 				Role:      &role,
 			}
 
-			resp, err := suite.client.datum.CreateInvite(reqCtx, input)
+			resp, err := tc.client.CreateInvite(tc.ctx, input)
 
 			if tc.wantErr {
 				require.Error(t, err)
@@ -219,7 +229,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			// Assert matching fields
 			assert.Equal(t, tc.orgID, resp.CreateInvite.Invite.Owner.ID)
 			assert.Equal(t, tc.role, resp.CreateInvite.Invite.Role)
-			assert.Equal(t, orgAdmin.ID, *resp.CreateInvite.Invite.RequestorID)
+			assert.Equal(t, testUser.ID, *resp.CreateInvite.Invite.RequestorID)
 			assert.Equal(t, tc.expectedStatus, resp.CreateInvite.Invite.Status)
 			assert.Equal(t, tc.expectedAttempts, resp.CreateInvite.Invite.SendAttempts)
 			assert.WithinDuration(t, time.Now().UTC().AddDate(0, 0, 14), *resp.CreateInvite.Invite.Expires, time.Minute)
@@ -234,38 +244,52 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// Org to invite users to
-	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	invite1 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
+	invite2 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
+	invite3 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	// setup valid user context with org
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
-	require.NoError(t, err)
-
-	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
-
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, invite.OwnerID)
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, invite1.OwnerID)
 	require.NoError(t, err)
 
 	testCases := []struct {
-		name     string
-		queryID  string
-		allowed  bool
-		expected *ent.Invite
-		wantErr  bool
+		name    string
+		queryID string
+		client  *datumclient.DatumClient
+		ctx     context.Context
+		allowed bool
+		wantErr bool
 	}{
 		{
-			name:     "happy path",
-			queryID:  invite.ID,
-			allowed:  true,
-			expected: invite,
-			wantErr:  false,
+			name:    "happy path",
+			queryID: invite1.ID,
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			allowed: true,
+			wantErr: false,
 		},
 		{
-			name:     "invalid id",
-			queryID:  "allthefooandbar",
-			allowed:  true,
-			expected: nil,
-			wantErr:  true,
+			name:    "happy path, using api token",
+			queryID: invite2.ID,
+			client:  suite.client.datumWithAPIToken,
+			ctx:     context.Background(),
+			allowed: true,
+			wantErr: false,
+		},
+		{
+			name:    "happy path, using personal access token",
+			queryID: invite3.ID,
+			client:  suite.client.datumWithPAT,
+			ctx:     context.Background(),
+			allowed: true,
+			wantErr: false,
+		},
+		{
+			name:    "invalid id",
+			queryID: "allthefooandbar",
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			allowed: true,
+			wantErr: true,
 		},
 	}
 
@@ -275,7 +299,7 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 
 			mock_fga.CheckAny(t, suite.client.fga, true)
 
-			resp, err := suite.client.datum.DeleteInvite(reqCtx, tc.queryID)
+			resp, err := tc.client.DeleteInvite(tc.ctx, tc.queryID)
 
 			if tc.wantErr {
 				require.Error(t, err)

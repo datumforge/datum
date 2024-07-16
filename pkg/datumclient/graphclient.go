@@ -208,7 +208,7 @@ type DatumGraphClient interface {
 	CreateBulkCSVSubscriber(ctx context.Context, input graphql.Upload, interceptors ...clientv2.RequestInterceptor) (*CreateBulkCSVSubscriber, error)
 	CreateBulkSubscriber(ctx context.Context, input []*CreateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*CreateBulkSubscriber, error)
 	CreateSubscriber(ctx context.Context, input CreateSubscriberInput, interceptors ...clientv2.RequestInterceptor) (*CreateSubscriber, error)
-	DeleteSubscriber(ctx context.Context, deleteSubscriberEmail string, interceptors ...clientv2.RequestInterceptor) (*DeleteSubscriber, error)
+	DeleteSubscriber(ctx context.Context, deleteSubscriberEmail string, subscriberOrganization *string, interceptors ...clientv2.RequestInterceptor) (*DeleteSubscriber, error)
 	GetAllSubscribers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllSubscribers, error)
 	GetSubscriberByEmail(ctx context.Context, email string, interceptors ...clientv2.RequestInterceptor) (*GetSubscriberByEmail, error)
 	GetSubscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetSubscribers, error)
@@ -23251,10 +23251,22 @@ func (t *GetTemplateHistories_TemplateHistories) GetEdges() []*GetTemplateHistor
 	return t.Edges
 }
 
+type CreateTFASetting_CreateTFASetting_TfaSetting_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateTFASetting_CreateTFASetting_TfaSetting_Owner) GetID() string {
+	if t == nil {
+		t = &CreateTFASetting_CreateTFASetting_TfaSetting_Owner{}
+	}
+	return t.ID
+}
+
 type CreateTFASetting_CreateTFASetting_TfaSetting struct {
-	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
-	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
-	Verified      bool     "json:\"verified\" graphql:\"verified\""
+	RecoveryCodes []string                                            "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	TotpAllowed   *bool                                               "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	Verified      bool                                                "json:\"verified\" graphql:\"verified\""
+	Owner         *CreateTFASetting_CreateTFASetting_TfaSetting_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetRecoveryCodes() []string {
@@ -23275,6 +23287,12 @@ func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetVerified() bool {
 	}
 	return t.Verified
 }
+func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetOwner() *CreateTFASetting_CreateTFASetting_TfaSetting_Owner {
+	if t == nil {
+		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
+	}
+	return t.Owner
+}
 
 type CreateTFASetting_CreateTFASetting struct {
 	TfaSetting CreateTFASetting_CreateTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
@@ -23287,10 +23305,22 @@ func (t *CreateTFASetting_CreateTFASetting) GetTfaSetting() *CreateTFASetting_Cr
 	return &t.TfaSetting
 }
 
+type GetAllTFASettings_TfaSettings_Edges_Node_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetAllTFASettings_TfaSettings_Edges_Node_Owner) GetID() string {
+	if t == nil {
+		t = &GetAllTFASettings_TfaSettings_Edges_Node_Owner{}
+	}
+	return t.ID
+}
+
 type GetAllTFASettings_TfaSettings_Edges_Node struct {
-	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
-	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
-	Verified      bool     "json:\"verified\" graphql:\"verified\""
+	RecoveryCodes []string                                        "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	TotpAllowed   *bool                                           "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	Verified      bool                                            "json:\"verified\" graphql:\"verified\""
+	Owner         *GetAllTFASettings_TfaSettings_Edges_Node_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *GetAllTFASettings_TfaSettings_Edges_Node) GetRecoveryCodes() []string {
@@ -23310,6 +23340,12 @@ func (t *GetAllTFASettings_TfaSettings_Edges_Node) GetVerified() bool {
 		t = &GetAllTFASettings_TfaSettings_Edges_Node{}
 	}
 	return t.Verified
+}
+func (t *GetAllTFASettings_TfaSettings_Edges_Node) GetOwner() *GetAllTFASettings_TfaSettings_Edges_Node_Owner {
+	if t == nil {
+		t = &GetAllTFASettings_TfaSettings_Edges_Node{}
+	}
+	return t.Owner
 }
 
 type GetAllTFASettings_TfaSettings_Edges struct {
@@ -23334,10 +23370,22 @@ func (t *GetAllTFASettings_TfaSettings) GetEdges() []*GetAllTFASettings_TfaSetti
 	return t.Edges
 }
 
+type GetTFASetting_TfaSetting_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetTFASetting_TfaSetting_Owner) GetID() string {
+	if t == nil {
+		t = &GetTFASetting_TfaSetting_Owner{}
+	}
+	return t.ID
+}
+
 type GetTFASetting_TfaSetting struct {
-	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
-	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
-	Verified      bool     "json:\"verified\" graphql:\"verified\""
+	RecoveryCodes []string                        "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	TotpAllowed   *bool                           "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	Verified      bool                            "json:\"verified\" graphql:\"verified\""
+	Owner         *GetTFASetting_TfaSetting_Owner "json:\"owner,omitempty\" graphql:\"owner\""
 }
 
 func (t *GetTFASetting_TfaSetting) GetRecoveryCodes() []string {
@@ -23357,6 +23405,12 @@ func (t *GetTFASetting_TfaSetting) GetVerified() bool {
 		t = &GetTFASetting_TfaSetting{}
 	}
 	return t.Verified
+}
+func (t *GetTFASetting_TfaSetting) GetOwner() *GetTFASetting_TfaSetting_Owner {
+	if t == nil {
+		t = &GetTFASetting_TfaSetting{}
+	}
+	return t.Owner
 }
 
 type UpdateTFASetting_UpdateTFASetting_TfaSetting struct {
@@ -37003,16 +37057,17 @@ func (c *Client) CreateSubscriber(ctx context.Context, input CreateSubscriberInp
 	return &res, nil
 }
 
-const DeleteSubscriberDocument = `mutation DeleteSubscriber ($deleteSubscriberEmail: String!) {
-	deleteSubscriber(email: $deleteSubscriberEmail) {
+const DeleteSubscriberDocument = `mutation DeleteSubscriber ($deleteSubscriberEmail: String!, $subscriberOrganization: ID) {
+	deleteSubscriber(email: $deleteSubscriberEmail, ownerID: $subscriberOrganization) {
 		email
 	}
 }
 `
 
-func (c *Client) DeleteSubscriber(ctx context.Context, deleteSubscriberEmail string, interceptors ...clientv2.RequestInterceptor) (*DeleteSubscriber, error) {
+func (c *Client) DeleteSubscriber(ctx context.Context, deleteSubscriberEmail string, subscriberOrganization *string, interceptors ...clientv2.RequestInterceptor) (*DeleteSubscriber, error) {
 	vars := map[string]any{
-		"deleteSubscriberEmail": deleteSubscriberEmail,
+		"deleteSubscriberEmail":  deleteSubscriberEmail,
+		"subscriberOrganization": subscriberOrganization,
 	}
 
 	var res DeleteSubscriber
@@ -37450,6 +37505,9 @@ const CreateTFASettingDocument = `mutation CreateTFASetting ($input: CreateTFASe
 			recoveryCodes
 			totpAllowed
 			verified
+			owner {
+				id
+			}
 		}
 	}
 }
@@ -37479,6 +37537,9 @@ const GetAllTFASettingsDocument = `query GetAllTFASettings {
 				recoveryCodes
 				totpAllowed
 				verified
+				owner {
+					id
+				}
 			}
 		}
 	}
@@ -37505,6 +37566,9 @@ const GetTFASettingDocument = `query GetTFASetting {
 		recoveryCodes
 		totpAllowed
 		verified
+		owner {
+			id
+		}
 	}
 }
 `

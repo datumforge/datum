@@ -35,8 +35,11 @@ mutation CreateSubscriber($input: CreateSubscriberInput!) {
   }
 }
 
-mutation DeleteSubscriber($deleteSubscriberEmail: String!) {
-  deleteSubscriber(email: $deleteSubscriberEmail) {
+mutation DeleteSubscriber($deleteSubscriberEmail: String!, $subscriberOrganization: ID) {
+  deleteSubscriber(
+    email: $deleteSubscriberEmail
+    ownerID: $subscriberOrganization
+  ) {
     email
   }
 }

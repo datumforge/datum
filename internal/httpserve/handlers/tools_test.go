@@ -16,6 +16,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 
+	"github.com/datumforge/datum/internal/ent/entconfig"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/authmanager"
@@ -118,6 +119,12 @@ func (suite *HandlerTestSuite) SetupTest() {
 		ent.TokenManager(tm),
 		ent.SessionConfig(&sessionConfig),
 		ent.Analytics(&analytics.EventManager{Enabled: false}),
+		ent.EntConfig(&entconfig.Config{
+			Flags: entconfig.Flags{
+				UseListUserService:   false,
+				UseListObjectService: false,
+			},
+		}),
 	}
 
 	// create database connection

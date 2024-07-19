@@ -342,6 +342,32 @@
       "type": "object",
       "description": "MarketingURLConfig for the datum marketing emails"
     },
+    "entconfig.Config": {
+      "properties": {
+        "flags": {
+          "$ref": "#/$defs/entconfig.Flags",
+          "description": "flags for the server"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Config holds the configuration for the ent server"
+    },
+    "entconfig.Flags": {
+      "properties": {
+        "useListUserService": {
+          "type": "boolean",
+          "description": "use list services endpoint for object access"
+        },
+        "useListObjectServices": {
+          "type": "boolean",
+          "description": "use list object services endpoint for object access"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Flags contains the flags for the server to allow use to test different code paths"
+    },
     "entx.Config": {
       "properties": {
         "debug": {
@@ -1053,6 +1079,9 @@
     "server": {
       "$ref": "#/$defs/config.Server",
       "description": "Server contains the echo server settings"
+    },
+    "entConfig": {
+      "$ref": "#/$defs/entconfig.Config"
     },
     "auth": {
       "$ref": "#/$defs/config.Auth",

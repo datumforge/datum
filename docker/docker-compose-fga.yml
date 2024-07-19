@@ -2,7 +2,7 @@ include:
   - docker-compose-pg.yml
 services:
   migrate:
-    image: openfga/openfga:latest
+    image: openfga/openfga:v1.5.6
     container_name: migrate
     command: migrate
     depends_on:
@@ -17,7 +17,7 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-    image: openfga/openfga:latest
+    image: openfga/openfga:v1.5.6
     container_name: openfga
     environment:
       - OPENFGA_DATASTORE_ENGINE=postgres
@@ -25,6 +25,7 @@ services:
       - OPENFGA_LOG_FORMAT=json
       - OPENFGA_DATASTORE_MAX_OPEN_CONNS=100 #see postgres container
       - OPENFGA_PLAYGROUND_ENABLED=true
+      - OPENFGA_LIST_USERS_MAX_RESULTS=10000
     command:
       - run
       - --check-query-cache-enabled

@@ -6,7 +6,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 
 	"entgo.io/contrib/entgql"
@@ -22,6 +21,7 @@ import (
 	"github.com/datumforge/entx/genhooks"
 	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
+	"github.com/datumforge/datum/internal/ent/entconfig"
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -84,6 +84,10 @@ func main() {
 		},
 	},
 		entc.Dependency(
+			entc.DependencyName("EntConfig"),
+			entc.DependencyType(&entconfig.Config{}),
+		),
+		entc.Dependency(
 			entc.DependencyName("Secrets"),
 			entc.DependencyType(&secrets.Keeper{}),
 		),
@@ -102,9 +106,6 @@ func main() {
 		entc.Dependency(
 			entc.DependencyName("Logger"),
 			entc.DependencyType(zap.SugaredLogger{}),
-		),
-		entc.Dependency(
-			entc.DependencyType(&http.Client{}),
 		),
 		entc.Dependency(
 			entc.DependencyName("Emails"),

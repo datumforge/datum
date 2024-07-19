@@ -14,6 +14,7 @@ import (
 	"github.com/knadh/koanf/v2"
 	"github.com/mcuadros/go-defaults"
 
+	"github.com/datumforge/datum/internal/ent/entconfig"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/analytics/posthog"
 	"github.com/datumforge/datum/pkg/cache"
@@ -46,6 +47,8 @@ type Config struct {
 
 	// Server contains the echo server settings
 	Server Server `json:"server" koanf:"server"`
+
+	EntConfig entconfig.Config `json:"entConfig" koanf:"entConfig"`
 
 	// Auth contains the authentication token settings and provider(s)
 	Auth Auth `json:"auth" koanf:"auth"`

@@ -10,7 +10,7 @@ import (
 	"github.com/datumforge/datum/pkg/enums"
 )
 
-func Test_getTupleKey(t *testing.T) {
+func TestGetTupleKeyFromRole(t *testing.T) {
 	testCases := []struct {
 		name        string
 		subID       string
@@ -54,7 +54,14 @@ func Test_getTupleKey(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			res, err := getTupleKeyFromRole(tc.subID, tc.subType, tc.objID, tc.objType, tc.role)
+			req := fgax.TupleRequest{
+				SubjectID:   tc.subID,
+				SubjectType: tc.subType,
+				ObjectID:    tc.objID,
+				ObjectType:  tc.objType,
+			}
+
+			res, err := getTupleKeyFromRole(req, tc.role)
 
 			if tc.expectedErr != nil {
 				assert.Error(t, err)
@@ -69,64 +76,7 @@ func Test_getTupleKey(t *testing.T) {
 	}
 }
 
-func Test_getUserTupleKey(t *testing.T) {
-	testCases := []struct {
-		name        string
-		subID       string
-		subType     string
-		objID       string
-		objType     string
-		role        enums.Role
-		expectedRes fgax.TupleKey
-		expectedErr error
-	}{
-		{
-			name:    "happy path",
-			subID:   "01HM7RYYECMKN3FJWSAZVVQE4A",
-			objID:   "01HM7RVM7G2AVBQBTJA2TWCHHG",
-			objType: "group",
-			role:    fgax.ParentRelation,
-			expectedRes: fgax.TupleKey{
-				Subject: fgax.Entity{
-					Kind:       "user",
-					Identifier: "01HM7RYYECMKN3FJWSAZVVQE4A",
-				},
-				Relation: "parent",
-				Object: fgax.Entity{
-					Kind:       "group",
-					Identifier: "01HM7RVM7G2AVBQBTJA2TWCHHG",
-				},
-			},
-		},
-		{
-			name:        "invalid role",
-			subID:       "01HM7RYYECMKN3FJWSAZVVQE4A",
-			objID:       "01HM7RVM7G2AVBQBTJA2TWCHHG",
-			objType:     "group",
-			role:        "baller",
-			expectedRes: fgax.TupleKey{},
-			expectedErr: ErrUnsupportedFGARole,
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
-			res, err := getUserTupleKey(tc.subID, tc.objID, tc.objType, tc.role)
-
-			if tc.expectedErr != nil {
-				assert.Error(t, err)
-				assert.ErrorIs(t, err, tc.expectedErr)
-
-				return
-			}
-
-			require.NoError(t, err)
-			assert.Equal(t, tc.expectedRes, res)
-		})
-	}
-}
-
-func Test_roleToRelation(t *testing.T) {
+func TestRoleToRelation(t *testing.T) {
 	testCases := []struct {
 		name        string
 		roleInput   enums.Role

@@ -314,7 +314,15 @@ func personalOrgNoChildren(ctx context.Context, mutation *generated.Organization
 
 // createParentOrgTuple creates a parent org tuple if the newly created org has a parent
 func createParentOrgTuple(ctx context.Context, m *generated.OrganizationMutation, parentOrgID, childOrgID string) error {
-	tuple := fgax.GetTupleKey(parentOrgID, "organization", childOrgID, "organization", fgax.ParentRelation)
+	req := fgax.TupleRequest{
+		SubjectID:   parentOrgID,
+		SubjectType: "organization",
+		ObjectID:    childOrgID,
+		ObjectType:  "organization",
+		Relation:    fgax.ParentRelation,
+	}
+
+	tuple := fgax.GetTupleKey(req)
 
 	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{
 		tuple,
@@ -387,7 +395,15 @@ func createServiceTuple(ctx context.Context, oID string, m *generated.Organizati
 	role := fgax.CanEdit
 
 	// get tuple key
-	tuple := fgax.GetTupleKey(subjectID, "service", oID, "organization", role)
+	req := fgax.TupleRequest{
+		SubjectID:   subjectID,
+		SubjectType: "service",
+		ObjectID:    oID,
+		ObjectType:  "organization",
+		Relation:    role,
+	}
+
+	tuple := fgax.GetTupleKey(req)
 
 	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
 		m.Logger.Errorw("failed to create relationship tuple", "error", err)

@@ -12,12 +12,11 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/migrate"
 	"github.com/datumforge/fgax/entfga"
 
-	"net/http"
-
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/entconfig"
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/contact"
 	"github.com/datumforge/datum/internal/ent/generated/contacthistory"
@@ -304,12 +303,12 @@ type (
 		hooks *hooks
 		// interceptors to execute on queries.
 		inters        *inters
+		EntConfig     *entconfig.Config
 		Secrets       *secrets.Keeper
 		Authz         fgax.Client
 		TokenManager  *tokens.TokenManager
 		SessionConfig *sessions.SessionConfig
 		Logger        zap.SugaredLogger
-		HTTPClient    *http.Client
 		Emails        *emails.EmailManager
 		Marionette    *marionette.TaskManager
 		Analytics     *analytics.EventManager
@@ -360,6 +359,13 @@ func Driver(driver dialect.Driver) Option {
 	}
 }
 
+// EntConfig configures the EntConfig.
+func EntConfig(v *entconfig.Config) Option {
+	return func(c *config) {
+		c.EntConfig = v
+	}
+}
+
 // Secrets configures the Secrets.
 func Secrets(v *secrets.Keeper) Option {
 	return func(c *config) {
@@ -392,13 +398,6 @@ func SessionConfig(v *sessions.SessionConfig) Option {
 func Logger(v zap.SugaredLogger) Option {
 	return func(c *config) {
 		c.Logger = v
-	}
-}
-
-// HTTPClient configures the HTTPClient.
-func HTTPClient(v *http.Client) Option {
-	return func(c *config) {
-		c.HTTPClient = v
 	}
 }
 

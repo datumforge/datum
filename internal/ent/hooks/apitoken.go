@@ -113,14 +113,15 @@ func createScopeTuples(scopes []string, orgID, tokenID string) (tuples []fgax.Tu
 			relation = "can_delete"
 		}
 
-		var apiKeyTuple fgax.TupleKey
-
-		apiKeyTuple, err = getTupleKey(tokenID, "service", orgID, "organization", relation)
-		if err != nil {
-			return
+		req := fgax.TupleRequest{
+			SubjectID:   tokenID,
+			SubjectType: "service",
+			ObjectID:    orgID,
+			ObjectType:  "organization",
+			Relation:    relation,
 		}
 
-		tuples = append(tuples, apiKeyTuple)
+		tuples = append(tuples, fgax.GetTupleKey(req))
 	}
 
 	return

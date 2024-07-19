@@ -72,7 +72,13 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 	}
 
 	// See all groups user has view access
-	groupList, err := q.Authz.ListObjectsRequest(ctx, userID, auth.GetAuthzSubjectType(ctx), "group", fgax.CanView)
+	req := fgax.ListRequest{
+		SubjectID:   userID,
+		SubjectType: auth.GetAuthzSubjectType(ctx),
+		ObjectType:  "group",
+	}
+
+	groupList, err := q.Authz.ListObjectsRequest(ctx, req)
 	if err != nil {
 		return nil, err
 	}

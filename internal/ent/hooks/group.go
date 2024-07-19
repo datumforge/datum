@@ -95,7 +95,14 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 	if exists && orgexists {
 		m.Logger.Debugw("creating parent relationship tuples", "relation", fgax.ParentRelation, "org", org, "object", object)
 
-		orgTuple, err := getTupleKeyFromRole(org, "organization", objID, objType, fgax.ParentRelation)
+		req := fgax.TupleRequest{
+			SubjectID:   org,
+			SubjectType: "organization",
+			ObjectID:    objID,
+			ObjectType:  objType,
+		}
+
+		orgTuple, err := getTupleKeyFromRole(req, fgax.ParentRelation)
 		if err != nil {
 			return err
 		}

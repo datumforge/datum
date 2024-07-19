@@ -74,7 +74,13 @@ func allowDefaultOrgUpdate(ctx context.Context, mutation *generated.UserSettingM
 		return false
 	}
 
-	allow, err := mutation.Authz.CheckOrgAccess(ctx, owner.ID, auth.UserSubjectType, orgID, fgax.CanView)
+	req := fgax.AccessCheck{
+		SubjectID:   owner.ID,
+		SubjectType: auth.UserSubjectType,
+		ObjectID:    orgID,
+	}
+
+	allow, err := mutation.Authz.CheckOrgReadAccess(ctx, req)
 	if err != nil {
 		return false
 	}

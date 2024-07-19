@@ -66,7 +66,7 @@ func (q *APITokenQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -123,7 +123,7 @@ func (m *APITokenMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -163,7 +163,7 @@ func (m *APITokenMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -231,7 +231,7 @@ func (q *ContactQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -288,7 +288,7 @@ func (m *ContactMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -328,7 +328,7 @@ func (m *ContactMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -396,7 +396,7 @@ func (q *DocumentDataQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -453,7 +453,7 @@ func (m *DocumentDataMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -493,7 +493,7 @@ func (m *DocumentDataMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -561,7 +561,7 @@ func (q *EntitlementQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -618,7 +618,7 @@ func (m *EntitlementMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -658,7 +658,7 @@ func (m *EntitlementMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -726,7 +726,7 @@ func (q *EntitlementPlanQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -783,7 +783,7 @@ func (m *EntitlementPlanMutation) CheckAccessForEdit(ctx context.Context) error 
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -823,7 +823,7 @@ func (m *EntitlementPlanMutation) CheckAccessForDelete(ctx context.Context) erro
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -891,7 +891,7 @@ func (q *EntitlementPlanFeatureQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -948,7 +948,7 @@ func (m *EntitlementPlanFeatureMutation) CheckAccessForEdit(ctx context.Context)
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -988,7 +988,7 @@ func (m *EntitlementPlanFeatureMutation) CheckAccessForDelete(ctx context.Contex
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1056,7 +1056,7 @@ func (q *EntityQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -1113,7 +1113,7 @@ func (m *EntityMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1153,7 +1153,7 @@ func (m *EntityMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1221,7 +1221,7 @@ func (q *EntityTypeQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -1278,7 +1278,7 @@ func (m *EntityTypeMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1318,7 +1318,7 @@ func (m *EntityTypeMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1386,7 +1386,7 @@ func (q *FeatureQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -1443,7 +1443,7 @@ func (m *FeatureMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1483,7 +1483,7 @@ func (m *FeatureMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1551,7 +1551,7 @@ func (q *GroupQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -1607,7 +1607,7 @@ func (m *GroupMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1647,7 +1647,7 @@ func (m *GroupMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1715,7 +1715,7 @@ func (q *GroupMembershipQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -1781,7 +1781,7 @@ func (m *GroupMembershipMutation) CheckAccessForEdit(ctx context.Context) error 
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1821,7 +1821,7 @@ func (m *GroupMembershipMutation) CheckAccessForDelete(ctx context.Context) erro
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1889,7 +1889,7 @@ func (q *GroupSettingQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -1955,7 +1955,7 @@ func (m *GroupSettingMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -1995,7 +1995,7 @@ func (m *GroupSettingMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2063,7 +2063,7 @@ func (q *IntegrationQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -2120,7 +2120,7 @@ func (m *IntegrationMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2160,7 +2160,7 @@ func (m *IntegrationMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2228,7 +2228,7 @@ func (q *InviteQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -2285,7 +2285,7 @@ func (m *InviteMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2325,7 +2325,7 @@ func (m *InviteMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2393,7 +2393,7 @@ func (q *OauthProviderQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -2450,7 +2450,7 @@ func (m *OauthProviderMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2490,7 +2490,7 @@ func (m *OauthProviderMutation) CheckAccessForDelete(ctx context.Context) error 
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2558,7 +2558,7 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -2624,7 +2624,7 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2664,7 +2664,7 @@ func (m *OrgMembershipMutation) CheckAccessForDelete(ctx context.Context) error 
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2732,7 +2732,7 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -2788,7 +2788,7 @@ func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2828,7 +2828,7 @@ func (m *OrganizationMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -2896,7 +2896,7 @@ func (q *OrganizationSettingQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -2962,7 +2962,7 @@ func (m *OrganizationSettingMutation) CheckAccessForEdit(ctx context.Context) er
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -3002,7 +3002,7 @@ func (m *OrganizationSettingMutation) CheckAccessForDelete(ctx context.Context) 
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -3070,7 +3070,7 @@ func (q *SubscriberQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -3127,7 +3127,7 @@ func (m *SubscriberMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -3167,7 +3167,7 @@ func (m *SubscriberMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -3235,7 +3235,7 @@ func (q *TemplateQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -3292,7 +3292,7 @@ func (m *TemplateMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -3332,7 +3332,7 @@ func (m *TemplateMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -3400,7 +3400,7 @@ func (q *WebhookQuery) CheckAccess(ctx context.Context) error {
 		}
 
 		var err error
-		ac.UserID, err = auth.GetUserIDFromContext(ctx)
+		ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -3466,7 +3466,7 @@ func (m *WebhookMutation) CheckAccessForEdit(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -3506,7 +3506,7 @@ func (m *WebhookMutation) CheckAccessForDelete(ctx context.Context) error {
 	m.Logger.Debugw("checking mutation access")
 
 	var err error
-	ac.UserID, err = auth.GetUserIDFromContext(ctx)
+	ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		return err
 	}

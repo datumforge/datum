@@ -10,4 +10,7 @@ var (
 
 	// ErrUnableToRetrieveUserID is returned when the user cannot be retrieved from the context
 	ErrUnableToRetrieveUserID = errors.New("unable to retrieve user from context")
+
+	// ErrRetrievingObjects is returned when an error occurs while retrieving objects
+	ErrRetrievingObjects = errors.New("error retrieving objects")
 )

@@ -7,6 +7,8 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 
+	"github.com/datumforge/fgax"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -17,8 +19,8 @@ import (
 	sliceutil "github.com/datumforge/datum/pkg/utils/slice"
 )
 
-// InterceptorUser returns an ent interceptor for user that filters users based on the context of the query
-func InterceptorUser() ent.Interceptor {
+// TraverseUser returns an ent interceptor for user that filters users based on the context of the query
+func TraverseUser() ent.Interceptor {
 	return intercept.TraverseUser(func(ctx context.Context, q *generated.UserQuery) error {
 		// bypass filter if the request is allowed, this happens when a user is
 		// being created, via invite or other method by another authenticated user
@@ -37,31 +39,14 @@ func InterceptorUser() ent.Interceptor {
 		// if we are looking at a user in the context of an organization or group
 		// filter for just those users
 		case "org":
-			orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
-			if err == nil {
-				// get child orgs in addition to the orgs the user is a direct member of
-				childOrgs, err := getAllRelatedChildOrgs(ctx, orgIDs)
-				if err != nil {
-					return err
-				}
-
-				// get the parent orgs of the orgs the user is a member of to ensure all
-				// users in the org tree are returned
-				allOrgsIDs, err := getAllParentOrgIDs(ctx, orgIDs)
-				if err != nil {
-					return err
-				}
-
-				allOrgsIDs = append(allOrgsIDs, childOrgs...)
-
-				q.Where(user.HasOrgMembershipsWith(
-					orgmembership.HasOrganizationWith(
-						organization.IDIn(allOrgsIDs...),
-					),
-				))
-
-				return nil
+			if q.EntConfig.Flags.UseListUserService {
+				q.Logger.Debug("using FGA to filter users")
+				return filterUsingFGA(ctx, q)
 			}
+
+			q.Logger.Debug("using the db to filter users")
+
+			return filterUsingDB(ctx, q)
 		case "user":
 			// if we are looking at self
 			userID, err := auth.GetUserIDFromContext(ctx)
@@ -112,4 +97,63 @@ func filterType(ctx context.Context) string {
 	default:
 		return "user"
 	}
+}
+
+// filterUsingFGA filters the user query using the FGA service to get the users with access to the org
+func filterUsingFGA(ctx context.Context, q *generated.UserQuery) error {
+	orgID, err := auth.GetOrganizationIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	req := fgax.ListRequest{
+		ObjectID:   orgID,
+		ObjectType: "organization",
+	}
+
+	listUserResp, err := q.Authz.ListUserRequest(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	userIDs := []string{}
+
+	for _, user := range listUserResp.Users {
+		userIDs = append(userIDs, user.Object.Id)
+	}
+
+	q.Where(user.IDIn(userIDs...))
+
+	return nil
+}
+
+// filterUsingDB filters the user query using the database to get the the users that are members of the org
+func filterUsingDB(ctx context.Context, q *generated.UserQuery) error {
+	orgIDs, err := auth.GetOrganizationIDsFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	// get child orgs in addition to the orgs the user is a direct member of
+	childOrgs, err := getAllRelatedChildOrgs(ctx, orgIDs)
+	if err != nil {
+		return err
+	}
+
+	// get the parent orgs of the orgs the user is a member of to ensure all
+	// users in the org tree are returned
+	allOrgsIDs, err := getAllParentOrgIDs(ctx, orgIDs)
+	if err != nil {
+		return err
+	}
+
+	allOrgsIDs = append(allOrgsIDs, childOrgs...)
+
+	q.Where(user.HasOrgMembershipsWith(
+		orgmembership.HasOrganizationWith(
+			organization.IDIn(allOrgsIDs...),
+		),
+	))
+
+	return nil
 }

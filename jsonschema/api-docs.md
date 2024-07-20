@@ -9,6 +9,7 @@ Config contains the configuration for the datum server
 |----|----|-----------|--------|
 |**refreshInterval**|`integer`|RefreshInterval determines how often to reload the config<br/>||
 |[**server**](#server)|`object`|Server settings for the echo server<br/>|yes|
+|[**entConfig**](#entconfig)|`object`|Config holds the configuration for the ent server<br/>||
 |[**auth**](#auth)|`object`|Auth settings including oauth2 providers and datum token configuration<br/>|yes|
 |[**authz**](#authz)|`object`||yes|
 |[**db**](#db)|`object`||yes|
@@ -199,6 +200,33 @@ PondPool contains the settings for the goroutine pool
 |----|----|-----------|--------|
 |**maxWorkers**|`integer`|MaxWorkers is the maximum number of workers in the pool<br/>||
 |**maxCapacity**|`integer`|MaxCapacity is the maximum number of tasks that can be queued<br/>||
+
+**Additional Properties:** not allowed  
+<a name="entconfig"></a>
+## entConfig: object
+
+Config holds the configuration for the ent server
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|[**flags**](#entconfigflags)|`object`|Flags contains the flags for the server to allow use to test different code paths<br/>||
+
+**Additional Properties:** not allowed  
+<a name="entconfigflags"></a>
+### entConfig\.flags: object
+
+Flags contains the flags for the server to allow use to test different code paths
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**useListUserService**|`boolean`|use list services endpoint for object access<br/>||
+|**useListObjectServices**|`boolean`|use list object services endpoint for object access<br/>||
 
 **Additional Properties:** not allowed  
 <a name="auth"></a>

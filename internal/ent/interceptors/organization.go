@@ -5,6 +5,8 @@ import (
 
 	"entgo.io/ent"
 
+	"github.com/datumforge/fgax"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -41,25 +43,57 @@ func InterceptorOrganization() ent.Interceptor {
 			return nil
 		}
 
-		orgIDs, err := getAllActorOrgIDs(ctx)
+		if q.EntConfig.Flags.UseListObjectService {
+			return filterAllActorOrgIDsFromFGA(ctx, q)
+		}
+
+		return filterAllActorOrgIDsFromDB(ctx, q)
+	})
+}
+
+// filterAllActorOrgIDsFromFGA returns all the organization IDs that the user is a member of, either directly or indirectly via a parent organization
+// using the FGA ListObjects service
+func filterAllActorOrgIDsFromFGA(ctx context.Context, q *generated.OrganizationQuery) error {
+	userID, err := auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	req := fgax.ListRequest{
+		SubjectID:  userID,
+		ObjectType: "organization",
+	}
+
+	listObjectsResp, err := q.Authz.ListObjectsRequest(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	orgIDs := make([]string, 0, len(listObjectsResp.Objects))
+
+	for _, obj := range listObjectsResp.Objects {
+		entity, err := fgax.ParseEntity(obj)
 		if err != nil {
 			return err
 		}
 
-		q.Where(organization.IDIn(orgIDs...))
+		orgIDs = append(orgIDs, entity.Identifier)
+	}
 
-		return nil
-	})
+	q.Where(organization.IDIn(orgIDs...))
+
+	return nil
 }
 
-// getAllActorOrgIDs returns all the organization IDs that the user is a member of, either directly or indirectly via a parent organization
-func getAllActorOrgIDs(ctx context.Context) ([]string, error) {
+// filterAllActorOrgIDsFromDB returns all the organization IDs that the user is a member of, either directly or indirectly via a parent organization
+// by querying the database directly and recursively getting all the child organizations
+func filterAllActorOrgIDsFromDB(ctx context.Context, q *generated.OrganizationQuery) error {
 	// allow the request, otherwise we would be in an infinite loop, as this function is called by the interceptor
 	allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
 
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	directOrgIDs, err := generated.FromContext(allowCtx).Organization.
@@ -68,10 +102,17 @@ func getAllActorOrgIDs(ctx context.Context) ([]string, error) {
 		Select(organization.FieldID).
 		Strings(allowCtx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return getAllRelatedChildOrgs(allowCtx, directOrgIDs)
+	orgIDs, err := getAllRelatedChildOrgs(allowCtx, directOrgIDs)
+	if err != nil {
+		return err
+	}
+
+	q.Where(organization.IDIn(orgIDs...))
+
+	return nil
 }
 
 // getAllRelatedChildOrgs returns all the combined directly related orgs in addition to any child organizations of the parent organizations

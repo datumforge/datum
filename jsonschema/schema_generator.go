@@ -34,6 +34,7 @@ const (
 var includedPackages = []string{
 	"./config",
 	"./pkg/cache",
+	"./internal/ent",
 	"./internal/entdb",
 	"./internal/httpserve/handlers",
 	"./pkg/otelx",

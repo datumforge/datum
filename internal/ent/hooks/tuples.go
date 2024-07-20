@@ -9,36 +9,15 @@ import (
 )
 
 // getTupleKeyFromRole creates a Tuple key with the provided subject, object, and role
-func getTupleKeyFromRole(subjectID, subjectType, objectID, objectType string, role enums.Role) (fgax.TupleKey, error) {
+func getTupleKeyFromRole(req fgax.TupleRequest, role enums.Role) (fgax.TupleKey, error) {
 	fgaRelation, err := roleToRelation(role)
 	if err != nil {
 		return fgax.NewTupleKey(), err
 	}
 
-	return getTupleKey(subjectID, subjectType, objectID, objectType, fgaRelation)
-}
+	req.Relation = fgaRelation
 
-func getTupleKey(subjectID, subjectType, objectID, objectType, relation string) (fgax.TupleKey, error) {
-	sub := fgax.Entity{
-		Kind:       fgax.Kind(subjectType),
-		Identifier: subjectID,
-	}
-
-	object := fgax.Entity{
-		Kind:       fgax.Kind(objectType),
-		Identifier: objectID,
-	}
-
-	return fgax.TupleKey{
-		Subject:  sub,
-		Object:   object,
-		Relation: fgax.Relation(relation),
-	}, nil
-}
-
-// getTupleKey creates a user Tuple key with the provided user ID, object, and role
-func getUserTupleKey(userID, objectID, objectType string, role enums.Role) (fgax.TupleKey, error) {
-	return getTupleKeyFromRole(userID, "user", objectID, objectType, role)
+	return fgax.GetTupleKey(req), nil
 }
 
 func roleToRelation(r enums.Role) (string, error) {

@@ -55,7 +55,13 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// ensure user is already a member of the destination organization
-	if allow, err := h.DBClient.Authz.CheckOrgAccess(reqCtx, userID, auth.UserSubjectType, in.TargetOrganizationID, fgax.CanView); err != nil || !allow {
+	req := fgax.AccessCheck{
+		SubjectID:   userID,
+		SubjectType: auth.UserSubjectType,
+		ObjectID:    in.TargetOrganizationID,
+	}
+
+	if allow, err := h.DBClient.Authz.CheckOrgReadAccess(reqCtx, req); err != nil || !allow {
 		h.Logger.Errorw("user not authorized to access organization", "error", err)
 
 		return h.Unauthorized(ctx, err)

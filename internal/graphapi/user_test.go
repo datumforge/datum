@@ -28,7 +28,7 @@ func (suite *GraphTestSuite) TestQueryUser() {
 	user2 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
 	// setup valid user context
-	reqCtx, err := userContextWithID(user1.ID)
+	reqCtx, err := auth.NewTestContextWithOrgID(user1.ID, user1.Edges.Setting.Edges.DefaultOrg.ID)
 	require.NoError(t, err)
 
 	testCases := []struct {
@@ -57,6 +57,11 @@ func (suite *GraphTestSuite) TestQueryUser() {
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
+
+			if tc.errorMsg == "" {
+				// mock check calls
+				mock_fga.CheckAny(t, suite.client.fga, true)
+			}
 
 			resp, err := suite.client.datum.GetUserByID(reqCtx, tc.queryID)
 
@@ -474,7 +479,7 @@ func (suite *GraphTestSuite) TestMutationUpdateUser() {
 	user := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
 	// setup valid user context
-	reqCtx, err := userContextWithID(user.ID)
+	reqCtx, err := auth.NewTestContextWithOrgID(user.ID, user.Edges.Setting.Edges.DefaultOrg.ID)
 	require.NoError(t, err)
 
 	weakPassword := "notsecure"
@@ -556,6 +561,10 @@ func (suite *GraphTestSuite) TestMutationUpdateUser() {
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
+
+			if tc.errorMsg == "" {
+				mock_fga.CheckAny(t, suite.client.fga, true)
+			}
 
 			// update user
 			resp, err := suite.client.datum.UpdateUser(reqCtx, user.ID, tc.updateInput)

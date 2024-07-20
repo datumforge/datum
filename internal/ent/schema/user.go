@@ -232,6 +232,6 @@ func (User) Hooks() []ent.Hook {
 // Interceptors of the User.
 func (d User) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
-		interceptors.InterceptorUser(),
+		interceptors.TraverseUser(),
 	}
 }

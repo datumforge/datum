@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/pkg/auth"
@@ -24,43 +23,64 @@ func (suite *GraphTestSuite) TestQueryOrgMembers() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	org1Member := (&OrgMemberBuilder{client: suite.client, OrgID: testOrgID}).MustNew(reqCtx, t)
 
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org1.ID)
+	childOrg := (&OrganizationBuilder{client: suite.client, ParentOrgID: testOrgID}).MustNew(reqCtx, t)
+
+	childReqCtx, err := auth.NewTestContextWithOrgID(testUser.ID, childOrg.ID)
 	require.NoError(t, err)
 
-	// allow access to organization
-	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
-
-	orgMember, err := org1.Members(checkCtx)
-	require.NoError(t, err)
-	require.Len(t, orgMember, 1)
+	(&OrgMemberBuilder{client: suite.client, OrgID: childOrg.ID}).MustNew(childReqCtx, t)
+	(&OrgMemberBuilder{client: suite.client, OrgID: childOrg.ID, UserID: org1Member.UserID}).MustNew(childReqCtx, t)
 
 	testCases := []struct {
-		name      string
-		queryID   string
-		allowed   bool
-		expected  *ent.OrgMembership
-		expectErr bool
+		name        string
+		queryID     string
+		client      *datumclient.DatumClient
+		ctx         context.Context
+		allowed     bool
+		expectedLen int
+		expectErr   bool
 	}{
 		{
-			name:     "happy path, get org member by org id",
-			queryID:  org1.ID,
-			allowed:  true,
-			expected: orgMember[0],
+			name:        "happy path, get org members by org id",
+			queryID:     testOrgID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
+			allowed:     true,
+			expectedLen: 2,
 		},
 		{
-			name:      "no access",
-			queryID:   org1.ID,
-			allowed:   false,
-			expected:  nil,
-			expectErr: true,
+			name:        "happy path, get org with parent members based on context",
+			client:      suite.client.datum,
+			ctx:         childReqCtx,
+			allowed:     true,
+			expectedLen: 3, // 2 from child org, 1 from parent org because we dedupe
 		},
 		{
-			name:     "invalid-id",
-			queryID:  "tacos-for-dinner",
-			allowed:  true,
-			expected: nil,
+			name:        "happy path, get org with parent members using org ID, only direct members will be returned",
+			queryID:     childOrg.ID,
+			client:      suite.client.datum,
+			ctx:         childReqCtx,
+			allowed:     true,
+			expectedLen: 2, // only child org members will be returned
+		},
+		{
+			name:        "no access",
+			queryID:     testOrgID,
+			client:      suite.client.datum,
+			ctx:         reqCtx,
+			allowed:     false,
+			expectedLen: 2,
+			expectErr:   true,
+		},
+		{
+			name:        "invalid-id",
+			queryID:     "tacos-for-dinner",
+			client:      suite.client.datum,
+			ctx:         reqCtx,
+			allowed:     true,
+			expectedLen: 0,
 		},
 	}
 
@@ -69,13 +89,16 @@ func (suite *GraphTestSuite) TestQueryOrgMembers() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			orgID := tc.queryID
-			whereInput := datumclient.OrgMembershipWhereInput{
-				OrganizationID: &orgID,
+			whereInput := datumclient.OrgMembershipWhereInput{}
+
+			if orgID != "" {
+				whereInput.OrganizationID = &orgID
+
+				// if thee user is providing an org id, we check if they have access to the org
+				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
-			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
-
-			resp, err := suite.client.datum.GetOrgMembersByOrgID(reqCtx, &whereInput)
+			resp, err := tc.client.GetOrgMembersByOrgID(tc.ctx, &whereInput)
 
 			if tc.expectErr {
 				require.Error(t, err)
@@ -85,7 +108,7 @@ func (suite *GraphTestSuite) TestQueryOrgMembers() {
 
 			require.NoError(t, err)
 
-			if tc.expected == nil {
+			if tc.expectedLen == 0 {
 				assert.Empty(t, resp.OrgMemberships.Edges)
 
 				return
@@ -93,13 +116,12 @@ func (suite *GraphTestSuite) TestQueryOrgMembers() {
 
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.OrgMemberships)
-			assert.Equal(t, tc.expected.UserID, resp.OrgMemberships.Edges[0].Node.UserID)
-			assert.Equal(t, tc.expected.Role, resp.OrgMemberships.Edges[0].Node.Role)
+			assert.Len(t, resp.OrgMemberships.Edges, tc.expectedLen)
 		})
 	}
 
 	// delete created org
-	(&OrganizationCleanup{client: suite.client, ID: org1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, ID: childOrg.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestMutationCreateOrgMembers() {

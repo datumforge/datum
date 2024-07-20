@@ -121,6 +121,7 @@ func serve(ctx context.Context) error {
 		ent.TOTP(so.Config.Handler.OTPManager),
 		ent.TokenManager(so.Config.Handler.TokenManager),
 		ent.SessionConfig(so.Config.Handler.SessionConfig),
+		ent.EntConfig(&so.Config.Settings.EntConfig),
 	)
 
 	// Setup DB connection

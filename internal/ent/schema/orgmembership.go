@@ -99,7 +99,8 @@ func (OrgMembership) Hooks() []ent.Hook {
 // Interceptors of the OrgMembership
 func (OrgMembership) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
-		interceptors.InterceptorOrgMembers(),
+		interceptors.InterceptorOrgMember(),
+		interceptors.TraverseOrgMembers(),
 	}
 }
 

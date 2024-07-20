@@ -26,12 +26,21 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 			return err
 		}
 
+		ac := fgax.AccessCheck{
+			SubjectID:   userID,
+			SubjectType: auth.GetAuthzSubjectType(ctx),
+			Relation:    relation,
+		}
+
 		// No permissions checks on creation of org except if this is not a root org
 		if m.Op().Is(ent.OpCreate) {
 			parentOrgID, ok := m.ParentID()
 
 			if ok {
-				access, err := m.Authz.CheckOrgAccess(ctx, userID, auth.GetAuthzSubjectType(ctx), parentOrgID, relation)
+				// check the parent organization
+				ac.ObjectID = parentOrgID
+
+				access, err := m.Authz.CheckOrgAccess(ctx, ac)
 				if err != nil {
 					return privacy.Skipf("unable to check access, %s", err.Error())
 				}
@@ -58,7 +67,10 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 
 		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID)
 
-		access, err := m.Authz.CheckOrgAccess(ctx, userID, auth.GetAuthzSubjectType(ctx), oID, relation)
+		// check access to the organization
+		ac.ObjectID = oID
+
+		access, err := m.Authz.CheckOrgAccess(ctx, ac)
 		if err != nil {
 			return privacy.Skipf("unable to check access, %s", err.Error())
 		}

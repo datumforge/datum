@@ -17,6 +17,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
+	"github.com/datumforge/datum/internal/ent/entconfig"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/pkg/analytics"
@@ -138,6 +139,12 @@ func (suite *GraphTestSuite) SetupTest() {
 		}),
 		ent.TokenManager(tm),
 		ent.SessionConfig(&sessionConfig),
+		ent.EntConfig(&entconfig.Config{
+			Flags: entconfig.Flags{
+				UseListUserService:   false,
+				UseListObjectService: false,
+			},
+		}),
 	}
 
 	// create database connection

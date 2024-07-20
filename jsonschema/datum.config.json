@@ -1081,7 +1081,8 @@
       "description": "Server contains the echo server settings"
     },
     "entConfig": {
-      "$ref": "#/$defs/entconfig.Config"
+      "$ref": "#/$defs/entconfig.Config",
+      "description": "EntConfig contains the ent configuration used by the ent middleware"
     },
     "auth": {
       "$ref": "#/$defs/config.Auth",

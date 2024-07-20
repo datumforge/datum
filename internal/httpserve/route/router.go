@@ -16,7 +16,7 @@ var (
 	mw     = []echo.MiddlewareFunc{middleware.Recover()}
 	authMW = []echo.MiddlewareFunc{}
 
-	restrictedRateLimit   = &ratelimit.Config{RateLimit: 10000, BurstLimit: 10, ExpiresIn: 15 * time.Minute} //nolint:mnd
+	restrictedRateLimit   = &ratelimit.Config{RateLimit: 10, BurstLimit: 10, ExpiresIn: 15 * time.Minute} //nolint:mnd
 	restrictedEndpointsMW = []echo.MiddlewareFunc{}
 )
 

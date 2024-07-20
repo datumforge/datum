@@ -48,6 +48,7 @@ type Config struct {
 	// Server contains the echo server settings
 	Server Server `json:"server" koanf:"server"`
 
+	// EntConfig contains the ent configuration used by the ent middleware
 	EntConfig entconfig.Config `json:"entConfig" koanf:"entConfig"`
 
 	// Auth contains the authentication token settings and provider(s)

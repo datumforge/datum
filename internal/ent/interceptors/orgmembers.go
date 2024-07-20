@@ -67,6 +67,7 @@ func InterceptorOrgMember() ent.Interceptor {
 	})
 }
 
+// dedupeOrgMembers removes duplicate org members from the list
 func dedupeOrgMembers(ctx context.Context, members []*generated.OrgMembership) ([]*generated.OrgMembership, error) {
 	authorizedOrg, err := getQueriedOrg(ctx)
 	if err != nil {
@@ -91,6 +92,7 @@ func dedupeOrgMembers(ctx context.Context, members []*generated.OrgMembership) (
 	return deduped, nil
 }
 
+// getQueriedOrg gets the organization id from the context or the graphql context
 func getQueriedOrg(ctx context.Context) (string, error) {
 	orgID, err := auth.GetOrganizationIDFromContext(ctx)
 	if err == nil {

@@ -1,7 +1,6 @@
 package handlers_test
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -16,11 +15,12 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/httpsling"
-	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/models"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/utils/emails"
@@ -101,6 +101,7 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 			// setup mock authz writes
 			if tc.expectedErrMessage == "" {
 				mock_fga.WriteAny(t, suite.fga)
+				mock_fga.CheckAny(t, suite.fga, true)
 			}
 
 			registerJSON := models.RegisterRequest{
@@ -143,29 +144,31 @@ func (suite *HandlerTestSuite) TestRegisterHandler() {
 				assert.NotEmpty(t, out.ID)
 
 				// setup context to get the data back
-				ec, err := auth.NewTestEchoContextWithValidUser(out.ID)
+				ctx, err := auth.NewTestContextWithValidUser(out.ID)
 				require.NoError(t, err)
 
-				ctx := ec.Request().Context()
-
-				// get the user and make sure things were created as expected
-				user, err := suite.db.User.Get(ctx, out.ID)
-				require.NoError(t, err)
-
-				// setup echo context
-				ctx = context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-				// Bypass auth check because user is not authenticated before verified
+				// we haven't set the user's default org yet in the context
+				// so allow the request to go through
 				ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-				// make sure user is an owner of their personal org
-				orgMemberships, err := user.OrgMemberships(ctx)
+				// get the user and make sure things were created as expected
+				u, err := suite.db.UserSetting.Query().Where(usersetting.UserID(out.ID)).WithDefaultOrg().Only(ctx)
 				require.NoError(t, err)
-				require.Len(t, orgMemberships, 1)
-				assert.Equal(t, orgMemberships[0].Role, enums.RoleOwner)
 
-				// delete user
-				suite.db.User.DeleteOneID(out.ID).ExecX(ctx)
+				assert.NotEmpty(t, u.Edges.DefaultOrg)
+				require.NotEmpty(t, u.Edges.DefaultOrg.ID)
+
+				// setup echo context
+				ctx, err = auth.NewTestContextWithOrgID(out.ID, u.Edges.DefaultOrg.ID)
+				require.NoError(t, err)
+
+				// make sure user is an owner of their personal org
+				orgMemberships, err := suite.datum.GetOrgMembersByOrgID(ctx, &datumclient.OrgMembershipWhereInput{
+					OrganizationID: &u.Edges.DefaultOrg.ID,
+				})
+				require.NoError(t, err)
+				require.Len(t, orgMemberships.OrgMemberships.Edges, 1)
+				assert.Equal(t, orgMemberships.OrgMemberships.Edges[0].Node.Role, enums.RoleOwner)
 			} else {
 				assert.Contains(t, out.Error, tc.expectedErrMessage)
 			}

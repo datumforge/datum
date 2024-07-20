@@ -79,7 +79,6 @@ func (suite *GraphTestSuite) TestQueryOrganization() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			mock_fga.CheckAny(t, suite.client.fga, true)
-
 			resp, err := tc.client.GetOrganizationByID(tc.ctx, tc.queryID)
 
 			if tc.errorMsg != "" {
@@ -125,6 +124,8 @@ func (suite *GraphTestSuite) TestQueryOrganizations() {
 
 	t.Run("Get Organizations", func(t *testing.T) {
 		defer mock_fga.ClearMocks(suite.client.fga)
+
+		mock_fga.CheckAny(t, suite.client.fga, true)
 
 		resp, err := suite.client.datum.GetAllOrganizations(reqCtx)
 

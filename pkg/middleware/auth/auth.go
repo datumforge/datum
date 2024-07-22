@@ -64,6 +64,7 @@ func Authenticate(conf *AuthOptions) echo.MiddlewareFunc {
 			authType := auth.JWTAuthentication
 
 			var au *auth.AuthenticatedUser
+
 			var id string
 
 			claims, err := validator.Verify(accessToken)
@@ -89,7 +90,9 @@ func Authenticate(conf *AuthOptions) echo.MiddlewareFunc {
 
 			auth.SetAuthenticatedUserContext(c, au)
 
-			updateLastUsed(conf.Context, conf.DBClient, au, id)
+			if err := updateLastUsed(c.Request().Context(), conf.DBClient, au, id); err != nil {
+				return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
+			}
 
 			return next(c)
 		}
@@ -106,7 +109,6 @@ func updateLastUsed(ctx context.Context, dbClient *generated.Client, au *auth.Au
 		if err := dbClient.APIToken.UpdateOneID(tokenID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
 			return err
 		}
-
 	}
 
 	return nil
@@ -222,6 +224,7 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 		// an access token must have at least one organization to be used
 		return nil, "", rout.ErrInvalidCredentials
 	}
+
 	for _, org := range orgs {
 		orgIDs = append(orgIDs, org.ID)
 	}
@@ -232,7 +235,6 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 		OrganizationIDs:    orgIDs,
 		AuthenticationType: auth.PATAuthentication,
 	}, pat.ID, nil
-
 }
 
 func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token string) (*auth.AuthenticatedUser, string, error) {

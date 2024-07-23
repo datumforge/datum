@@ -633,8 +633,8 @@ github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
 github.com/trisacrypto/directory v1.8.0 h1:CLFfUtKvU8AIY9ENuV1/u2ihmmLIFMG1yRXUovwnF6g=
 github.com/trisacrypto/directory v1.8.0/go.mod h1:9CHH3TPmYorARczqv4Nj4EFtElpirDMMNCngRi+Tzmo=
-github.com/tursodatabase/libsql-client-go v0.0.0-20240718143357-9bc6b51d800d h1:osppUr2Bsar2qv9FNrqrCY4zIxpyQtIAV8wFqfo3uDw=
-github.com/tursodatabase/libsql-client-go v0.0.0-20240718143357-9bc6b51d800d/go.mod h1:3Y9LlWC05q63NdmViO+2qV22LUjpfYLZWEYfE7ndpmU=
+github.com/tursodatabase/libsql-client-go v0.0.0-20240723183952-b944339d7e70 h1:G0aOKAhfrB73zLWzSBMHtYH97YTg4A+sXrTMx3UxAOI=
+github.com/tursodatabase/libsql-client-go v0.0.0-20240723183952-b944339d7e70/go.mod h1:3Y9LlWC05q63NdmViO+2qV22LUjpfYLZWEYfE7ndpmU=
 github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.2.12 h1:9LC83zGrHhuUA9l16C9AHXAqEV/2wBQ4nkvumAE65EE=

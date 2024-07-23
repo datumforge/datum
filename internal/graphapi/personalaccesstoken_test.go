@@ -426,8 +426,7 @@ func (suite *GraphTestSuite) TestLastUsedPersonalAccessToken() {
 	require.NoError(t, err)
 	assert.Empty(t, res.PersonalAccessToken.LastUsedAt)
 
-	// TODO: (slevine: update once we have updated the last used at field on the token when used)
-	// // setup graph client using the personal access token
+	// setup graph client using the personal access token
 	authHeader := datumclient.Authorization{
 		BearerToken: token.Token,
 	}

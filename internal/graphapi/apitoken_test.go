@@ -390,8 +390,7 @@ func (suite *GraphTestSuite) TestLastUsedAPIToken() {
 	require.NoError(t, err)
 	assert.Empty(t, res.APIToken.LastUsedAt)
 
-	// TODO: (slevine: update once we have updated the last used at field on the token when used)
-	// // setup graph client using the API token
+	// setup graph client using the API token
 	authHeader := datumclient.Authorization{
 		BearerToken: token.Token,
 	}

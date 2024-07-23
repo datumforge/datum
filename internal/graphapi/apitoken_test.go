@@ -372,7 +372,6 @@ func (suite *GraphTestSuite) TestMutationDeleteAPIToken() {
 }
 
 func (suite *GraphTestSuite) TestLastUsedAPIToken() {
-
 	t := suite.T()
 
 	defer mock_fga.ClearMocks(suite.client.fga)

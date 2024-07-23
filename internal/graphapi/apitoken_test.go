@@ -381,7 +381,7 @@ func (suite *GraphTestSuite) TestLastUsedAPIToken() {
 	require.NoError(t, err)
 
 	// create new API token
-	token := (&APITokenTokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+	token := (&APITokenBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	mock_fga.CheckAny(t, suite.client.fga, true)
 

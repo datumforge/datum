@@ -275,7 +275,7 @@ func (wu *WebauthnUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (wu *WebauthnUpdate) check() error {
-	if _, ok := wu.mutation.OwnerID(); wu.mutation.OwnerCleared() && !ok {
+	if wu.mutation.OwnerCleared() && len(wu.mutation.OwnerIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "Webauthn.owner"`)
 	}
 	return nil
@@ -672,7 +672,7 @@ func (wuo *WebauthnUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (wuo *WebauthnUpdateOne) check() error {
-	if _, ok := wuo.mutation.OwnerID(); wuo.mutation.OwnerCleared() && !ok {
+	if wuo.mutation.OwnerCleared() && len(wuo.mutation.OwnerIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "Webauthn.owner"`)
 	}
 	return nil

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (ddhq *DocumentDataHistoryQuery) Order(o ...documentdatahistory.OrderOption
 // First returns the first DocumentDataHistory entity from the query.
 // Returns a *NotFoundError when no DocumentDataHistory was found.
 func (ddhq *DocumentDataHistoryQuery) First(ctx context.Context) (*DocumentDataHistory, error) {
-	nodes, err := ddhq.Limit(1).All(setContextOp(ctx, ddhq.ctx, "First"))
+	nodes, err := ddhq.Limit(1).All(setContextOp(ctx, ddhq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (ddhq *DocumentDataHistoryQuery) FirstX(ctx context.Context) *DocumentDataH
 // Returns a *NotFoundError when no DocumentDataHistory ID was found.
 func (ddhq *DocumentDataHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ddhq.Limit(1).IDs(setContextOp(ctx, ddhq.ctx, "FirstID")); err != nil {
+	if ids, err = ddhq.Limit(1).IDs(setContextOp(ctx, ddhq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (ddhq *DocumentDataHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one DocumentDataHistory entity is found.
 // Returns a *NotFoundError when no DocumentDataHistory entities are found.
 func (ddhq *DocumentDataHistoryQuery) Only(ctx context.Context) (*DocumentDataHistory, error) {
-	nodes, err := ddhq.Limit(2).All(setContextOp(ctx, ddhq.ctx, "Only"))
+	nodes, err := ddhq.Limit(2).All(setContextOp(ctx, ddhq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (ddhq *DocumentDataHistoryQuery) OnlyX(ctx context.Context) *DocumentDataHi
 // Returns a *NotFoundError when no entities are found.
 func (ddhq *DocumentDataHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ddhq.Limit(2).IDs(setContextOp(ctx, ddhq.ctx, "OnlyID")); err != nil {
+	if ids, err = ddhq.Limit(2).IDs(setContextOp(ctx, ddhq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (ddhq *DocumentDataHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of DocumentDataHistories.
 func (ddhq *DocumentDataHistoryQuery) All(ctx context.Context) ([]*DocumentDataHistory, error) {
-	ctx = setContextOp(ctx, ddhq.ctx, "All")
+	ctx = setContextOp(ctx, ddhq.ctx, ent.OpQueryAll)
 	if err := ddhq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (ddhq *DocumentDataHistoryQuery) IDs(ctx context.Context) (ids []string, er
 	if ddhq.ctx.Unique == nil && ddhq.path != nil {
 		ddhq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ddhq.ctx, "IDs")
+	ctx = setContextOp(ctx, ddhq.ctx, ent.OpQueryIDs)
 	if err = ddhq.Select(documentdatahistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (ddhq *DocumentDataHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ddhq *DocumentDataHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ddhq.ctx, "Count")
+	ctx = setContextOp(ctx, ddhq.ctx, ent.OpQueryCount)
 	if err := ddhq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (ddhq *DocumentDataHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ddhq *DocumentDataHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ddhq.ctx, "Exist")
+	ctx = setContextOp(ctx, ddhq.ctx, ent.OpQueryExist)
 	switch _, err := ddhq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (ddhgb *DocumentDataHistoryGroupBy) Aggregate(fns ...AggregateFunc) *Docume
 
 // Scan applies the selector query and scans the result into the given value.
 func (ddhgb *DocumentDataHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ddhgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ddhgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ddhgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (ddhs *DocumentDataHistorySelect) Aggregate(fns ...AggregateFunc) *Document
 
 // Scan applies the selector query and scans the result into the given value.
 func (ddhs *DocumentDataHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ddhs.ctx, "Select")
+	ctx = setContextOp(ctx, ddhs.ctx, ent.OpQuerySelect)
 	if err := ddhs.prepareQuery(ctx); err != nil {
 		return err
 	}

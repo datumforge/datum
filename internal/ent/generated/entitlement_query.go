@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -174,7 +175,7 @@ func (eq *EntitlementQuery) QueryEvents() *EventQuery {
 // First returns the first Entitlement entity from the query.
 // Returns a *NotFoundError when no Entitlement was found.
 func (eq *EntitlementQuery) First(ctx context.Context) (*Entitlement, error) {
-	nodes, err := eq.Limit(1).All(setContextOp(ctx, eq.ctx, "First"))
+	nodes, err := eq.Limit(1).All(setContextOp(ctx, eq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +198,7 @@ func (eq *EntitlementQuery) FirstX(ctx context.Context) *Entitlement {
 // Returns a *NotFoundError when no Entitlement ID was found.
 func (eq *EntitlementQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = eq.Limit(1).IDs(setContextOp(ctx, eq.ctx, "FirstID")); err != nil {
+	if ids, err = eq.Limit(1).IDs(setContextOp(ctx, eq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -220,7 +221,7 @@ func (eq *EntitlementQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one Entitlement entity is found.
 // Returns a *NotFoundError when no Entitlement entities are found.
 func (eq *EntitlementQuery) Only(ctx context.Context) (*Entitlement, error) {
-	nodes, err := eq.Limit(2).All(setContextOp(ctx, eq.ctx, "Only"))
+	nodes, err := eq.Limit(2).All(setContextOp(ctx, eq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +249,7 @@ func (eq *EntitlementQuery) OnlyX(ctx context.Context) *Entitlement {
 // Returns a *NotFoundError when no entities are found.
 func (eq *EntitlementQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = eq.Limit(2).IDs(setContextOp(ctx, eq.ctx, "OnlyID")); err != nil {
+	if ids, err = eq.Limit(2).IDs(setContextOp(ctx, eq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -273,7 +274,7 @@ func (eq *EntitlementQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of Entitlements.
 func (eq *EntitlementQuery) All(ctx context.Context) ([]*Entitlement, error) {
-	ctx = setContextOp(ctx, eq.ctx, "All")
+	ctx = setContextOp(ctx, eq.ctx, ent.OpQueryAll)
 	if err := eq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -295,7 +296,7 @@ func (eq *EntitlementQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if eq.ctx.Unique == nil && eq.path != nil {
 		eq.Unique(true)
 	}
-	ctx = setContextOp(ctx, eq.ctx, "IDs")
+	ctx = setContextOp(ctx, eq.ctx, ent.OpQueryIDs)
 	if err = eq.Select(entitlement.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -313,7 +314,7 @@ func (eq *EntitlementQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (eq *EntitlementQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, eq.ctx, "Count")
+	ctx = setContextOp(ctx, eq.ctx, ent.OpQueryCount)
 	if err := eq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -331,7 +332,7 @@ func (eq *EntitlementQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (eq *EntitlementQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, eq.ctx, "Exist")
+	ctx = setContextOp(ctx, eq.ctx, ent.OpQueryExist)
 	switch _, err := eq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -847,7 +848,7 @@ func (egb *EntitlementGroupBy) Aggregate(fns ...AggregateFunc) *EntitlementGroup
 
 // Scan applies the selector query and scans the result into the given value.
 func (egb *EntitlementGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, egb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, egb.build.ctx, ent.OpQueryGroupBy)
 	if err := egb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -895,7 +896,7 @@ func (es *EntitlementSelect) Aggregate(fns ...AggregateFunc) *EntitlementSelect 
 
 // Scan applies the selector query and scans the result into the given value.
 func (es *EntitlementSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, es.ctx, "Select")
+	ctx = setContextOp(ctx, es.ctx, ent.OpQuerySelect)
 	if err := es.prepareQuery(ctx); err != nil {
 		return err
 	}

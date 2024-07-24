@@ -256,10 +256,10 @@ func (epfu *EntitlementPlanFeatureUpdate) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "EntitlementPlanFeature.owner_id": %w`, err)}
 		}
 	}
-	if _, ok := epfu.mutation.PlanID(); epfu.mutation.PlanCleared() && !ok {
+	if epfu.mutation.PlanCleared() && len(epfu.mutation.PlanIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "EntitlementPlanFeature.plan"`)
 	}
-	if _, ok := epfu.mutation.FeatureID(); epfu.mutation.FeatureCleared() && !ok {
+	if epfu.mutation.FeatureCleared() && len(epfu.mutation.FeatureIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "EntitlementPlanFeature.feature"`)
 	}
 	return nil
@@ -661,10 +661,10 @@ func (epfuo *EntitlementPlanFeatureUpdateOne) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "EntitlementPlanFeature.owner_id": %w`, err)}
 		}
 	}
-	if _, ok := epfuo.mutation.PlanID(); epfuo.mutation.PlanCleared() && !ok {
+	if epfuo.mutation.PlanCleared() && len(epfuo.mutation.PlanIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "EntitlementPlanFeature.plan"`)
 	}
-	if _, ok := epfuo.mutation.FeatureID(); epfuo.mutation.FeatureCleared() && !ok {
+	if epfuo.mutation.FeatureCleared() && len(epfuo.mutation.FeatureIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "EntitlementPlanFeature.feature"`)
 	}
 	return nil

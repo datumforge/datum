@@ -508,7 +508,7 @@ func (gu *GroupUpdate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
 		}
 	}
-	if _, ok := gu.mutation.SettingID(); gu.mutation.SettingCleared() && !ok {
+	if gu.mutation.SettingCleared() && len(gu.mutation.SettingIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)
 	}
 	return nil
@@ -1419,7 +1419,7 @@ func (guo *GroupUpdateOne) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
 		}
 	}
-	if _, ok := guo.mutation.SettingID(); guo.mutation.SettingCleared() && !ok {
+	if guo.mutation.SettingCleared() && len(guo.mutation.SettingIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)
 	}
 	return nil

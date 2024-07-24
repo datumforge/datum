@@ -414,7 +414,7 @@ func (gc *GroupCreate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
 		}
 	}
-	if _, ok := gc.mutation.SettingID(); !ok {
+	if len(gc.mutation.SettingIDs()) == 0 {
 		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "Group.setting"`)}
 	}
 	return nil

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (ushq *UserSettingHistoryQuery) Order(o ...usersettinghistory.OrderOption) 
 // First returns the first UserSettingHistory entity from the query.
 // Returns a *NotFoundError when no UserSettingHistory was found.
 func (ushq *UserSettingHistoryQuery) First(ctx context.Context) (*UserSettingHistory, error) {
-	nodes, err := ushq.Limit(1).All(setContextOp(ctx, ushq.ctx, "First"))
+	nodes, err := ushq.Limit(1).All(setContextOp(ctx, ushq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (ushq *UserSettingHistoryQuery) FirstX(ctx context.Context) *UserSettingHis
 // Returns a *NotFoundError when no UserSettingHistory ID was found.
 func (ushq *UserSettingHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ushq.Limit(1).IDs(setContextOp(ctx, ushq.ctx, "FirstID")); err != nil {
+	if ids, err = ushq.Limit(1).IDs(setContextOp(ctx, ushq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (ushq *UserSettingHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one UserSettingHistory entity is found.
 // Returns a *NotFoundError when no UserSettingHistory entities are found.
 func (ushq *UserSettingHistoryQuery) Only(ctx context.Context) (*UserSettingHistory, error) {
-	nodes, err := ushq.Limit(2).All(setContextOp(ctx, ushq.ctx, "Only"))
+	nodes, err := ushq.Limit(2).All(setContextOp(ctx, ushq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (ushq *UserSettingHistoryQuery) OnlyX(ctx context.Context) *UserSettingHist
 // Returns a *NotFoundError when no entities are found.
 func (ushq *UserSettingHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ushq.Limit(2).IDs(setContextOp(ctx, ushq.ctx, "OnlyID")); err != nil {
+	if ids, err = ushq.Limit(2).IDs(setContextOp(ctx, ushq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (ushq *UserSettingHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of UserSettingHistories.
 func (ushq *UserSettingHistoryQuery) All(ctx context.Context) ([]*UserSettingHistory, error) {
-	ctx = setContextOp(ctx, ushq.ctx, "All")
+	ctx = setContextOp(ctx, ushq.ctx, ent.OpQueryAll)
 	if err := ushq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (ushq *UserSettingHistoryQuery) IDs(ctx context.Context) (ids []string, err
 	if ushq.ctx.Unique == nil && ushq.path != nil {
 		ushq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ushq.ctx, "IDs")
+	ctx = setContextOp(ctx, ushq.ctx, ent.OpQueryIDs)
 	if err = ushq.Select(usersettinghistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (ushq *UserSettingHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ushq *UserSettingHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ushq.ctx, "Count")
+	ctx = setContextOp(ctx, ushq.ctx, ent.OpQueryCount)
 	if err := ushq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (ushq *UserSettingHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ushq *UserSettingHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ushq.ctx, "Exist")
+	ctx = setContextOp(ctx, ushq.ctx, ent.OpQueryExist)
 	switch _, err := ushq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (ushgb *UserSettingHistoryGroupBy) Aggregate(fns ...AggregateFunc) *UserSet
 
 // Scan applies the selector query and scans the result into the given value.
 func (ushgb *UserSettingHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ushgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ushgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ushgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (ushs *UserSettingHistorySelect) Aggregate(fns ...AggregateFunc) *UserSetti
 
 // Scan applies the selector query and scans the result into the given value.
 func (ushs *UserSettingHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ushs.ctx, "Select")
+	ctx = setContextOp(ctx, ushs.ctx, ent.OpQuerySelect)
 	if err := ushs.prepareQuery(ctx); err != nil {
 		return err
 	}

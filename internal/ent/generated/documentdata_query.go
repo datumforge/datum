@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -148,7 +149,7 @@ func (ddq *DocumentDataQuery) QueryEntity() *EntityQuery {
 // First returns the first DocumentData entity from the query.
 // Returns a *NotFoundError when no DocumentData was found.
 func (ddq *DocumentDataQuery) First(ctx context.Context) (*DocumentData, error) {
-	nodes, err := ddq.Limit(1).All(setContextOp(ctx, ddq.ctx, "First"))
+	nodes, err := ddq.Limit(1).All(setContextOp(ctx, ddq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +172,7 @@ func (ddq *DocumentDataQuery) FirstX(ctx context.Context) *DocumentData {
 // Returns a *NotFoundError when no DocumentData ID was found.
 func (ddq *DocumentDataQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ddq.Limit(1).IDs(setContextOp(ctx, ddq.ctx, "FirstID")); err != nil {
+	if ids, err = ddq.Limit(1).IDs(setContextOp(ctx, ddq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -194,7 +195,7 @@ func (ddq *DocumentDataQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one DocumentData entity is found.
 // Returns a *NotFoundError when no DocumentData entities are found.
 func (ddq *DocumentDataQuery) Only(ctx context.Context) (*DocumentData, error) {
-	nodes, err := ddq.Limit(2).All(setContextOp(ctx, ddq.ctx, "Only"))
+	nodes, err := ddq.Limit(2).All(setContextOp(ctx, ddq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +223,7 @@ func (ddq *DocumentDataQuery) OnlyX(ctx context.Context) *DocumentData {
 // Returns a *NotFoundError when no entities are found.
 func (ddq *DocumentDataQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ddq.Limit(2).IDs(setContextOp(ctx, ddq.ctx, "OnlyID")); err != nil {
+	if ids, err = ddq.Limit(2).IDs(setContextOp(ctx, ddq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -247,7 +248,7 @@ func (ddq *DocumentDataQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of DocumentDataSlice.
 func (ddq *DocumentDataQuery) All(ctx context.Context) ([]*DocumentData, error) {
-	ctx = setContextOp(ctx, ddq.ctx, "All")
+	ctx = setContextOp(ctx, ddq.ctx, ent.OpQueryAll)
 	if err := ddq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -269,7 +270,7 @@ func (ddq *DocumentDataQuery) IDs(ctx context.Context) (ids []string, err error)
 	if ddq.ctx.Unique == nil && ddq.path != nil {
 		ddq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ddq.ctx, "IDs")
+	ctx = setContextOp(ctx, ddq.ctx, ent.OpQueryIDs)
 	if err = ddq.Select(documentdata.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -287,7 +288,7 @@ func (ddq *DocumentDataQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ddq *DocumentDataQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ddq.ctx, "Count")
+	ctx = setContextOp(ctx, ddq.ctx, ent.OpQueryCount)
 	if err := ddq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -305,7 +306,7 @@ func (ddq *DocumentDataQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ddq *DocumentDataQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ddq.ctx, "Exist")
+	ctx = setContextOp(ctx, ddq.ctx, ent.OpQueryExist)
 	switch _, err := ddq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -770,7 +771,7 @@ func (ddgb *DocumentDataGroupBy) Aggregate(fns ...AggregateFunc) *DocumentDataGr
 
 // Scan applies the selector query and scans the result into the given value.
 func (ddgb *DocumentDataGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ddgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ddgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ddgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -818,7 +819,7 @@ func (dds *DocumentDataSelect) Aggregate(fns ...AggregateFunc) *DocumentDataSele
 
 // Scan applies the selector query and scans the result into the given value.
 func (dds *DocumentDataSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, dds.ctx, "Select")
+	ctx = setContextOp(ctx, dds.ctx, ent.OpQuerySelect)
 	if err := dds.prepareQuery(ctx); err != nil {
 		return err
 	}

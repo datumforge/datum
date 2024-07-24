@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (hhq *HushHistoryQuery) Order(o ...hushhistory.OrderOption) *HushHistoryQue
 // First returns the first HushHistory entity from the query.
 // Returns a *NotFoundError when no HushHistory was found.
 func (hhq *HushHistoryQuery) First(ctx context.Context) (*HushHistory, error) {
-	nodes, err := hhq.Limit(1).All(setContextOp(ctx, hhq.ctx, "First"))
+	nodes, err := hhq.Limit(1).All(setContextOp(ctx, hhq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (hhq *HushHistoryQuery) FirstX(ctx context.Context) *HushHistory {
 // Returns a *NotFoundError when no HushHistory ID was found.
 func (hhq *HushHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = hhq.Limit(1).IDs(setContextOp(ctx, hhq.ctx, "FirstID")); err != nil {
+	if ids, err = hhq.Limit(1).IDs(setContextOp(ctx, hhq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (hhq *HushHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one HushHistory entity is found.
 // Returns a *NotFoundError when no HushHistory entities are found.
 func (hhq *HushHistoryQuery) Only(ctx context.Context) (*HushHistory, error) {
-	nodes, err := hhq.Limit(2).All(setContextOp(ctx, hhq.ctx, "Only"))
+	nodes, err := hhq.Limit(2).All(setContextOp(ctx, hhq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (hhq *HushHistoryQuery) OnlyX(ctx context.Context) *HushHistory {
 // Returns a *NotFoundError when no entities are found.
 func (hhq *HushHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = hhq.Limit(2).IDs(setContextOp(ctx, hhq.ctx, "OnlyID")); err != nil {
+	if ids, err = hhq.Limit(2).IDs(setContextOp(ctx, hhq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (hhq *HushHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of HushHistories.
 func (hhq *HushHistoryQuery) All(ctx context.Context) ([]*HushHistory, error) {
-	ctx = setContextOp(ctx, hhq.ctx, "All")
+	ctx = setContextOp(ctx, hhq.ctx, ent.OpQueryAll)
 	if err := hhq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (hhq *HushHistoryQuery) IDs(ctx context.Context) (ids []string, err error) 
 	if hhq.ctx.Unique == nil && hhq.path != nil {
 		hhq.Unique(true)
 	}
-	ctx = setContextOp(ctx, hhq.ctx, "IDs")
+	ctx = setContextOp(ctx, hhq.ctx, ent.OpQueryIDs)
 	if err = hhq.Select(hushhistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (hhq *HushHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (hhq *HushHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, hhq.ctx, "Count")
+	ctx = setContextOp(ctx, hhq.ctx, ent.OpQueryCount)
 	if err := hhq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (hhq *HushHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (hhq *HushHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, hhq.ctx, "Exist")
+	ctx = setContextOp(ctx, hhq.ctx, ent.OpQueryExist)
 	switch _, err := hhq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (hhgb *HushHistoryGroupBy) Aggregate(fns ...AggregateFunc) *HushHistoryGrou
 
 // Scan applies the selector query and scans the result into the given value.
 func (hhgb *HushHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, hhgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, hhgb.build.ctx, ent.OpQueryGroupBy)
 	if err := hhgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (hhs *HushHistorySelect) Aggregate(fns ...AggregateFunc) *HushHistorySelect
 
 // Scan applies the selector query and scans the result into the given value.
 func (hhs *HushHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, hhs.ctx, "Select")
+	ctx = setContextOp(ctx, hhs.ctx, ent.OpQuerySelect)
 	if err := hhs.prepareQuery(ctx); err != nil {
 		return err
 	}

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -92,7 +93,7 @@ func (evtq *EmailVerificationTokenQuery) QueryOwner() *UserQuery {
 // First returns the first EmailVerificationToken entity from the query.
 // Returns a *NotFoundError when no EmailVerificationToken was found.
 func (evtq *EmailVerificationTokenQuery) First(ctx context.Context) (*EmailVerificationToken, error) {
-	nodes, err := evtq.Limit(1).All(setContextOp(ctx, evtq.ctx, "First"))
+	nodes, err := evtq.Limit(1).All(setContextOp(ctx, evtq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +116,7 @@ func (evtq *EmailVerificationTokenQuery) FirstX(ctx context.Context) *EmailVerif
 // Returns a *NotFoundError when no EmailVerificationToken ID was found.
 func (evtq *EmailVerificationTokenQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = evtq.Limit(1).IDs(setContextOp(ctx, evtq.ctx, "FirstID")); err != nil {
+	if ids, err = evtq.Limit(1).IDs(setContextOp(ctx, evtq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -138,7 +139,7 @@ func (evtq *EmailVerificationTokenQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one EmailVerificationToken entity is found.
 // Returns a *NotFoundError when no EmailVerificationToken entities are found.
 func (evtq *EmailVerificationTokenQuery) Only(ctx context.Context) (*EmailVerificationToken, error) {
-	nodes, err := evtq.Limit(2).All(setContextOp(ctx, evtq.ctx, "Only"))
+	nodes, err := evtq.Limit(2).All(setContextOp(ctx, evtq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +167,7 @@ func (evtq *EmailVerificationTokenQuery) OnlyX(ctx context.Context) *EmailVerifi
 // Returns a *NotFoundError when no entities are found.
 func (evtq *EmailVerificationTokenQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = evtq.Limit(2).IDs(setContextOp(ctx, evtq.ctx, "OnlyID")); err != nil {
+	if ids, err = evtq.Limit(2).IDs(setContextOp(ctx, evtq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -191,7 +192,7 @@ func (evtq *EmailVerificationTokenQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of EmailVerificationTokens.
 func (evtq *EmailVerificationTokenQuery) All(ctx context.Context) ([]*EmailVerificationToken, error) {
-	ctx = setContextOp(ctx, evtq.ctx, "All")
+	ctx = setContextOp(ctx, evtq.ctx, ent.OpQueryAll)
 	if err := evtq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -213,7 +214,7 @@ func (evtq *EmailVerificationTokenQuery) IDs(ctx context.Context) (ids []string,
 	if evtq.ctx.Unique == nil && evtq.path != nil {
 		evtq.Unique(true)
 	}
-	ctx = setContextOp(ctx, evtq.ctx, "IDs")
+	ctx = setContextOp(ctx, evtq.ctx, ent.OpQueryIDs)
 	if err = evtq.Select(emailverificationtoken.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -231,7 +232,7 @@ func (evtq *EmailVerificationTokenQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (evtq *EmailVerificationTokenQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, evtq.ctx, "Count")
+	ctx = setContextOp(ctx, evtq.ctx, ent.OpQueryCount)
 	if err := evtq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -249,7 +250,7 @@ func (evtq *EmailVerificationTokenQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (evtq *EmailVerificationTokenQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, evtq.ctx, "Exist")
+	ctx = setContextOp(ctx, evtq.ctx, ent.OpQueryExist)
 	switch _, err := evtq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -560,7 +561,7 @@ func (evtgb *EmailVerificationTokenGroupBy) Aggregate(fns ...AggregateFunc) *Ema
 
 // Scan applies the selector query and scans the result into the given value.
 func (evtgb *EmailVerificationTokenGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, evtgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, evtgb.build.ctx, ent.OpQueryGroupBy)
 	if err := evtgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -608,7 +609,7 @@ func (evts *EmailVerificationTokenSelect) Aggregate(fns ...AggregateFunc) *Email
 
 // Scan applies the selector query and scans the result into the given value.
 func (evts *EmailVerificationTokenSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, evts.ctx, "Select")
+	ctx = setContextOp(ctx, evts.ctx, ent.OpQuerySelect)
 	if err := evts.prepareQuery(ctx); err != nil {
 		return err
 	}

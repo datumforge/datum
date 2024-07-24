@@ -278,10 +278,10 @@ func (gmc *GroupMembershipCreate) check() error {
 	if _, ok := gmc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`generated: missing required field "GroupMembership.user_id"`)}
 	}
-	if _, ok := gmc.mutation.GroupID(); !ok {
+	if len(gmc.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`generated: missing required edge "GroupMembership.group"`)}
 	}
-	if _, ok := gmc.mutation.UserID(); !ok {
+	if len(gmc.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`generated: missing required edge "GroupMembership.user"`)}
 	}
 	return nil

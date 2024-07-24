@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (thq *TemplateHistoryQuery) Order(o ...templatehistory.OrderOption) *Templa
 // First returns the first TemplateHistory entity from the query.
 // Returns a *NotFoundError when no TemplateHistory was found.
 func (thq *TemplateHistoryQuery) First(ctx context.Context) (*TemplateHistory, error) {
-	nodes, err := thq.Limit(1).All(setContextOp(ctx, thq.ctx, "First"))
+	nodes, err := thq.Limit(1).All(setContextOp(ctx, thq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (thq *TemplateHistoryQuery) FirstX(ctx context.Context) *TemplateHistory {
 // Returns a *NotFoundError when no TemplateHistory ID was found.
 func (thq *TemplateHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = thq.Limit(1).IDs(setContextOp(ctx, thq.ctx, "FirstID")); err != nil {
+	if ids, err = thq.Limit(1).IDs(setContextOp(ctx, thq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (thq *TemplateHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one TemplateHistory entity is found.
 // Returns a *NotFoundError when no TemplateHistory entities are found.
 func (thq *TemplateHistoryQuery) Only(ctx context.Context) (*TemplateHistory, error) {
-	nodes, err := thq.Limit(2).All(setContextOp(ctx, thq.ctx, "Only"))
+	nodes, err := thq.Limit(2).All(setContextOp(ctx, thq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (thq *TemplateHistoryQuery) OnlyX(ctx context.Context) *TemplateHistory {
 // Returns a *NotFoundError when no entities are found.
 func (thq *TemplateHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = thq.Limit(2).IDs(setContextOp(ctx, thq.ctx, "OnlyID")); err != nil {
+	if ids, err = thq.Limit(2).IDs(setContextOp(ctx, thq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (thq *TemplateHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of TemplateHistories.
 func (thq *TemplateHistoryQuery) All(ctx context.Context) ([]*TemplateHistory, error) {
-	ctx = setContextOp(ctx, thq.ctx, "All")
+	ctx = setContextOp(ctx, thq.ctx, ent.OpQueryAll)
 	if err := thq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (thq *TemplateHistoryQuery) IDs(ctx context.Context) (ids []string, err err
 	if thq.ctx.Unique == nil && thq.path != nil {
 		thq.Unique(true)
 	}
-	ctx = setContextOp(ctx, thq.ctx, "IDs")
+	ctx = setContextOp(ctx, thq.ctx, ent.OpQueryIDs)
 	if err = thq.Select(templatehistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (thq *TemplateHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (thq *TemplateHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, thq.ctx, "Count")
+	ctx = setContextOp(ctx, thq.ctx, ent.OpQueryCount)
 	if err := thq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (thq *TemplateHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (thq *TemplateHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, thq.ctx, "Exist")
+	ctx = setContextOp(ctx, thq.ctx, ent.OpQueryExist)
 	switch _, err := thq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (thgb *TemplateHistoryGroupBy) Aggregate(fns ...AggregateFunc) *TemplateHis
 
 // Scan applies the selector query and scans the result into the given value.
 func (thgb *TemplateHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, thgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, thgb.build.ctx, ent.OpQueryGroupBy)
 	if err := thgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (ths *TemplateHistorySelect) Aggregate(fns ...AggregateFunc) *TemplateHisto
 
 // Scan applies the selector query and scans the result into the given value.
 func (ths *TemplateHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ths.ctx, "Select")
+	ctx = setContextOp(ctx, ths.ctx, ent.OpQuerySelect)
 	if err := ths.prepareQuery(ctx); err != nil {
 		return err
 	}

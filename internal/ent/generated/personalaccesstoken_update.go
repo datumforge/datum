@@ -361,7 +361,7 @@ func (patu *PersonalAccessTokenUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "PersonalAccessToken.name": %w`, err)}
 		}
 	}
-	if _, ok := patu.mutation.OwnerID(); patu.mutation.OwnerCleared() && !ok {
+	if patu.mutation.OwnerCleared() && len(patu.mutation.OwnerIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "PersonalAccessToken.owner"`)
 	}
 	return nil
@@ -938,7 +938,7 @@ func (patuo *PersonalAccessTokenUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "PersonalAccessToken.name": %w`, err)}
 		}
 	}
-	if _, ok := patuo.mutation.OwnerID(); patuo.mutation.OwnerCleared() && !ok {
+	if patuo.mutation.OwnerCleared() && len(patuo.mutation.OwnerIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "PersonalAccessToken.owner"`)
 	}
 	return nil

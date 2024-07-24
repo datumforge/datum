@@ -271,7 +271,7 @@ func (evtc *EmailVerificationTokenCreate) check() error {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "EmailVerificationToken.secret": %w`, err)}
 		}
 	}
-	if _, ok := evtc.mutation.OwnerID(); !ok {
+	if len(evtc.mutation.OwnerIDs()) == 0 {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "EmailVerificationToken.owner"`)}
 	}
 	return nil

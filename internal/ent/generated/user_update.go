@@ -856,7 +856,7 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "User.role": %w`, err)}
 		}
 	}
-	if _, ok := uu.mutation.SettingID(); uu.mutation.SettingCleared() && !ok {
+	if uu.mutation.SettingCleared() && len(uu.mutation.SettingIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "User.setting"`)
 	}
 	return nil
@@ -2426,7 +2426,7 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "User.role": %w`, err)}
 		}
 	}
-	if _, ok := uuo.mutation.SettingID(); uuo.mutation.SettingCleared() && !ok {
+	if uuo.mutation.SettingCleared() && len(uuo.mutation.SettingIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "User.setting"`)
 	}
 	return nil

@@ -613,7 +613,7 @@ func (uc *UserCreate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "User.role": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.SettingID(); !ok {
+	if len(uc.mutation.SettingIDs()) == 0 {
 		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "User.setting"`)}
 	}
 	return nil

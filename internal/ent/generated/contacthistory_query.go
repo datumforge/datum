@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (chq *ContactHistoryQuery) Order(o ...contacthistory.OrderOption) *ContactH
 // First returns the first ContactHistory entity from the query.
 // Returns a *NotFoundError when no ContactHistory was found.
 func (chq *ContactHistoryQuery) First(ctx context.Context) (*ContactHistory, error) {
-	nodes, err := chq.Limit(1).All(setContextOp(ctx, chq.ctx, "First"))
+	nodes, err := chq.Limit(1).All(setContextOp(ctx, chq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (chq *ContactHistoryQuery) FirstX(ctx context.Context) *ContactHistory {
 // Returns a *NotFoundError when no ContactHistory ID was found.
 func (chq *ContactHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = chq.Limit(1).IDs(setContextOp(ctx, chq.ctx, "FirstID")); err != nil {
+	if ids, err = chq.Limit(1).IDs(setContextOp(ctx, chq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (chq *ContactHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one ContactHistory entity is found.
 // Returns a *NotFoundError when no ContactHistory entities are found.
 func (chq *ContactHistoryQuery) Only(ctx context.Context) (*ContactHistory, error) {
-	nodes, err := chq.Limit(2).All(setContextOp(ctx, chq.ctx, "Only"))
+	nodes, err := chq.Limit(2).All(setContextOp(ctx, chq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (chq *ContactHistoryQuery) OnlyX(ctx context.Context) *ContactHistory {
 // Returns a *NotFoundError when no entities are found.
 func (chq *ContactHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = chq.Limit(2).IDs(setContextOp(ctx, chq.ctx, "OnlyID")); err != nil {
+	if ids, err = chq.Limit(2).IDs(setContextOp(ctx, chq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (chq *ContactHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of ContactHistories.
 func (chq *ContactHistoryQuery) All(ctx context.Context) ([]*ContactHistory, error) {
-	ctx = setContextOp(ctx, chq.ctx, "All")
+	ctx = setContextOp(ctx, chq.ctx, ent.OpQueryAll)
 	if err := chq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (chq *ContactHistoryQuery) IDs(ctx context.Context) (ids []string, err erro
 	if chq.ctx.Unique == nil && chq.path != nil {
 		chq.Unique(true)
 	}
-	ctx = setContextOp(ctx, chq.ctx, "IDs")
+	ctx = setContextOp(ctx, chq.ctx, ent.OpQueryIDs)
 	if err = chq.Select(contacthistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (chq *ContactHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (chq *ContactHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, chq.ctx, "Count")
+	ctx = setContextOp(ctx, chq.ctx, ent.OpQueryCount)
 	if err := chq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (chq *ContactHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (chq *ContactHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, chq.ctx, "Exist")
+	ctx = setContextOp(ctx, chq.ctx, ent.OpQueryExist)
 	switch _, err := chq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (chgb *ContactHistoryGroupBy) Aggregate(fns ...AggregateFunc) *ContactHisto
 
 // Scan applies the selector query and scans the result into the given value.
 func (chgb *ContactHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, chgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, chgb.build.ctx, ent.OpQueryGroupBy)
 	if err := chgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (chs *ContactHistorySelect) Aggregate(fns ...AggregateFunc) *ContactHistory
 
 // Scan applies the selector query and scans the result into the given value.
 func (chs *ContactHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, chs.ctx, "Select")
+	ctx = setContextOp(ctx, chs.ctx, ent.OpQuerySelect)
 	if err := chs.prepareQuery(ctx); err != nil {
 		return err
 	}

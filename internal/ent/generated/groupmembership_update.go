@@ -208,10 +208,10 @@ func (gmu *GroupMembershipUpdate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "GroupMembership.role": %w`, err)}
 		}
 	}
-	if _, ok := gmu.mutation.GroupID(); gmu.mutation.GroupCleared() && !ok {
+	if gmu.mutation.GroupCleared() && len(gmu.mutation.GroupIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "GroupMembership.group"`)
 	}
-	if _, ok := gmu.mutation.UserID(); gmu.mutation.UserCleared() && !ok {
+	if gmu.mutation.UserCleared() && len(gmu.mutation.UserIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "GroupMembership.user"`)
 	}
 	return nil
@@ -521,10 +521,10 @@ func (gmuo *GroupMembershipUpdateOne) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "GroupMembership.role": %w`, err)}
 		}
 	}
-	if _, ok := gmuo.mutation.GroupID(); gmuo.mutation.GroupCleared() && !ok {
+	if gmuo.mutation.GroupCleared() && len(gmuo.mutation.GroupIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "GroupMembership.group"`)
 	}
-	if _, ok := gmuo.mutation.UserID(); gmuo.mutation.UserCleared() && !ok {
+	if gmuo.mutation.UserCleared() && len(gmuo.mutation.UserIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "GroupMembership.user"`)
 	}
 	return nil

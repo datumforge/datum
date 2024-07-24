@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (omhq *OrgMembershipHistoryQuery) Order(o ...orgmembershiphistory.OrderOpti
 // First returns the first OrgMembershipHistory entity from the query.
 // Returns a *NotFoundError when no OrgMembershipHistory was found.
 func (omhq *OrgMembershipHistoryQuery) First(ctx context.Context) (*OrgMembershipHistory, error) {
-	nodes, err := omhq.Limit(1).All(setContextOp(ctx, omhq.ctx, "First"))
+	nodes, err := omhq.Limit(1).All(setContextOp(ctx, omhq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (omhq *OrgMembershipHistoryQuery) FirstX(ctx context.Context) *OrgMembershi
 // Returns a *NotFoundError when no OrgMembershipHistory ID was found.
 func (omhq *OrgMembershipHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = omhq.Limit(1).IDs(setContextOp(ctx, omhq.ctx, "FirstID")); err != nil {
+	if ids, err = omhq.Limit(1).IDs(setContextOp(ctx, omhq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (omhq *OrgMembershipHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one OrgMembershipHistory entity is found.
 // Returns a *NotFoundError when no OrgMembershipHistory entities are found.
 func (omhq *OrgMembershipHistoryQuery) Only(ctx context.Context) (*OrgMembershipHistory, error) {
-	nodes, err := omhq.Limit(2).All(setContextOp(ctx, omhq.ctx, "Only"))
+	nodes, err := omhq.Limit(2).All(setContextOp(ctx, omhq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (omhq *OrgMembershipHistoryQuery) OnlyX(ctx context.Context) *OrgMembership
 // Returns a *NotFoundError when no entities are found.
 func (omhq *OrgMembershipHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = omhq.Limit(2).IDs(setContextOp(ctx, omhq.ctx, "OnlyID")); err != nil {
+	if ids, err = omhq.Limit(2).IDs(setContextOp(ctx, omhq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (omhq *OrgMembershipHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of OrgMembershipHistories.
 func (omhq *OrgMembershipHistoryQuery) All(ctx context.Context) ([]*OrgMembershipHistory, error) {
-	ctx = setContextOp(ctx, omhq.ctx, "All")
+	ctx = setContextOp(ctx, omhq.ctx, ent.OpQueryAll)
 	if err := omhq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (omhq *OrgMembershipHistoryQuery) IDs(ctx context.Context) (ids []string, e
 	if omhq.ctx.Unique == nil && omhq.path != nil {
 		omhq.Unique(true)
 	}
-	ctx = setContextOp(ctx, omhq.ctx, "IDs")
+	ctx = setContextOp(ctx, omhq.ctx, ent.OpQueryIDs)
 	if err = omhq.Select(orgmembershiphistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (omhq *OrgMembershipHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (omhq *OrgMembershipHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, omhq.ctx, "Count")
+	ctx = setContextOp(ctx, omhq.ctx, ent.OpQueryCount)
 	if err := omhq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (omhq *OrgMembershipHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (omhq *OrgMembershipHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, omhq.ctx, "Exist")
+	ctx = setContextOp(ctx, omhq.ctx, ent.OpQueryExist)
 	switch _, err := omhq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (omhgb *OrgMembershipHistoryGroupBy) Aggregate(fns ...AggregateFunc) *OrgMe
 
 // Scan applies the selector query and scans the result into the given value.
 func (omhgb *OrgMembershipHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, omhgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, omhgb.build.ctx, ent.OpQueryGroupBy)
 	if err := omhgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (omhs *OrgMembershipHistorySelect) Aggregate(fns ...AggregateFunc) *OrgMemb
 
 // Scan applies the selector query and scans the result into the given value.
 func (omhs *OrgMembershipHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, omhs.ctx, "Select")
+	ctx = setContextOp(ctx, omhs.ctx, ent.OpQuerySelect)
 	if err := omhs.prepareQuery(ctx); err != nil {
 		return err
 	}

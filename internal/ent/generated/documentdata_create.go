@@ -281,7 +281,7 @@ func (ddc *DocumentDataCreate) check() error {
 	if _, ok := ddc.mutation.Data(); !ok {
 		return &ValidationError{Name: "data", err: errors.New(`generated: missing required field "DocumentData.data"`)}
 	}
-	if _, ok := ddc.mutation.TemplateID(); !ok {
+	if len(ddc.mutation.TemplateIDs()) == 0 {
 		return &ValidationError{Name: "template", err: errors.New(`generated: missing required edge "DocumentData.template"`)}
 	}
 	return nil

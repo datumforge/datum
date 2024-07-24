@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -148,7 +149,7 @@ func (wq *WebhookQuery) QueryIntegrations() *IntegrationQuery {
 // First returns the first Webhook entity from the query.
 // Returns a *NotFoundError when no Webhook was found.
 func (wq *WebhookQuery) First(ctx context.Context) (*Webhook, error) {
-	nodes, err := wq.Limit(1).All(setContextOp(ctx, wq.ctx, "First"))
+	nodes, err := wq.Limit(1).All(setContextOp(ctx, wq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +172,7 @@ func (wq *WebhookQuery) FirstX(ctx context.Context) *Webhook {
 // Returns a *NotFoundError when no Webhook ID was found.
 func (wq *WebhookQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = wq.Limit(1).IDs(setContextOp(ctx, wq.ctx, "FirstID")); err != nil {
+	if ids, err = wq.Limit(1).IDs(setContextOp(ctx, wq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -194,7 +195,7 @@ func (wq *WebhookQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one Webhook entity is found.
 // Returns a *NotFoundError when no Webhook entities are found.
 func (wq *WebhookQuery) Only(ctx context.Context) (*Webhook, error) {
-	nodes, err := wq.Limit(2).All(setContextOp(ctx, wq.ctx, "Only"))
+	nodes, err := wq.Limit(2).All(setContextOp(ctx, wq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +223,7 @@ func (wq *WebhookQuery) OnlyX(ctx context.Context) *Webhook {
 // Returns a *NotFoundError when no entities are found.
 func (wq *WebhookQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = wq.Limit(2).IDs(setContextOp(ctx, wq.ctx, "OnlyID")); err != nil {
+	if ids, err = wq.Limit(2).IDs(setContextOp(ctx, wq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -247,7 +248,7 @@ func (wq *WebhookQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of Webhooks.
 func (wq *WebhookQuery) All(ctx context.Context) ([]*Webhook, error) {
-	ctx = setContextOp(ctx, wq.ctx, "All")
+	ctx = setContextOp(ctx, wq.ctx, ent.OpQueryAll)
 	if err := wq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -269,7 +270,7 @@ func (wq *WebhookQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if wq.ctx.Unique == nil && wq.path != nil {
 		wq.Unique(true)
 	}
-	ctx = setContextOp(ctx, wq.ctx, "IDs")
+	ctx = setContextOp(ctx, wq.ctx, ent.OpQueryIDs)
 	if err = wq.Select(webhook.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -287,7 +288,7 @@ func (wq *WebhookQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (wq *WebhookQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, wq.ctx, "Count")
+	ctx = setContextOp(ctx, wq.ctx, ent.OpQueryCount)
 	if err := wq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -305,7 +306,7 @@ func (wq *WebhookQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (wq *WebhookQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, wq.ctx, "Exist")
+	ctx = setContextOp(ctx, wq.ctx, ent.OpQueryExist)
 	switch _, err := wq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -816,7 +817,7 @@ func (wgb *WebhookGroupBy) Aggregate(fns ...AggregateFunc) *WebhookGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (wgb *WebhookGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, wgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, wgb.build.ctx, ent.OpQueryGroupBy)
 	if err := wgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -864,7 +865,7 @@ func (ws *WebhookSelect) Aggregate(fns ...AggregateFunc) *WebhookSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ws *WebhookSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ws.ctx, "Select")
+	ctx = setContextOp(ctx, ws.ctx, ent.OpQuerySelect)
 	if err := ws.prepareQuery(ctx); err != nil {
 		return err
 	}

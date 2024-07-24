@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -121,7 +122,7 @@ func (oattq *OhAuthTooTokenQuery) QueryEvents() *EventQuery {
 // First returns the first OhAuthTooToken entity from the query.
 // Returns a *NotFoundError when no OhAuthTooToken was found.
 func (oattq *OhAuthTooTokenQuery) First(ctx context.Context) (*OhAuthTooToken, error) {
-	nodes, err := oattq.Limit(1).All(setContextOp(ctx, oattq.ctx, "First"))
+	nodes, err := oattq.Limit(1).All(setContextOp(ctx, oattq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +145,7 @@ func (oattq *OhAuthTooTokenQuery) FirstX(ctx context.Context) *OhAuthTooToken {
 // Returns a *NotFoundError when no OhAuthTooToken ID was found.
 func (oattq *OhAuthTooTokenQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = oattq.Limit(1).IDs(setContextOp(ctx, oattq.ctx, "FirstID")); err != nil {
+	if ids, err = oattq.Limit(1).IDs(setContextOp(ctx, oattq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -167,7 +168,7 @@ func (oattq *OhAuthTooTokenQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one OhAuthTooToken entity is found.
 // Returns a *NotFoundError when no OhAuthTooToken entities are found.
 func (oattq *OhAuthTooTokenQuery) Only(ctx context.Context) (*OhAuthTooToken, error) {
-	nodes, err := oattq.Limit(2).All(setContextOp(ctx, oattq.ctx, "Only"))
+	nodes, err := oattq.Limit(2).All(setContextOp(ctx, oattq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +196,7 @@ func (oattq *OhAuthTooTokenQuery) OnlyX(ctx context.Context) *OhAuthTooToken {
 // Returns a *NotFoundError when no entities are found.
 func (oattq *OhAuthTooTokenQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = oattq.Limit(2).IDs(setContextOp(ctx, oattq.ctx, "OnlyID")); err != nil {
+	if ids, err = oattq.Limit(2).IDs(setContextOp(ctx, oattq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -220,7 +221,7 @@ func (oattq *OhAuthTooTokenQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of OhAuthTooTokens.
 func (oattq *OhAuthTooTokenQuery) All(ctx context.Context) ([]*OhAuthTooToken, error) {
-	ctx = setContextOp(ctx, oattq.ctx, "All")
+	ctx = setContextOp(ctx, oattq.ctx, ent.OpQueryAll)
 	if err := oattq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -242,7 +243,7 @@ func (oattq *OhAuthTooTokenQuery) IDs(ctx context.Context) (ids []string, err er
 	if oattq.ctx.Unique == nil && oattq.path != nil {
 		oattq.Unique(true)
 	}
-	ctx = setContextOp(ctx, oattq.ctx, "IDs")
+	ctx = setContextOp(ctx, oattq.ctx, ent.OpQueryIDs)
 	if err = oattq.Select(ohauthtootoken.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -260,7 +261,7 @@ func (oattq *OhAuthTooTokenQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (oattq *OhAuthTooTokenQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, oattq.ctx, "Count")
+	ctx = setContextOp(ctx, oattq.ctx, ent.OpQueryCount)
 	if err := oattq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -278,7 +279,7 @@ func (oattq *OhAuthTooTokenQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (oattq *OhAuthTooTokenQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, oattq.ctx, "Exist")
+	ctx = setContextOp(ctx, oattq.ctx, ent.OpQueryExist)
 	switch _, err := oattq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -738,7 +739,7 @@ func (oattgb *OhAuthTooTokenGroupBy) Aggregate(fns ...AggregateFunc) *OhAuthTooT
 
 // Scan applies the selector query and scans the result into the given value.
 func (oattgb *OhAuthTooTokenGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, oattgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, oattgb.build.ctx, ent.OpQueryGroupBy)
 	if err := oattgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -786,7 +787,7 @@ func (oatts *OhAuthTooTokenSelect) Aggregate(fns ...AggregateFunc) *OhAuthTooTok
 
 // Scan applies the selector query and scans the result into the given value.
 func (oatts *OhAuthTooTokenSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, oatts.ctx, "Select")
+	ctx = setContextOp(ctx, oatts.ctx, ent.OpQuerySelect)
 	if err := oatts.prepareQuery(ctx); err != nil {
 		return err
 	}

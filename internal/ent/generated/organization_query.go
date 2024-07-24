@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -789,7 +790,7 @@ func (oq *OrganizationQuery) QueryMembers() *OrgMembershipQuery {
 // First returns the first Organization entity from the query.
 // Returns a *NotFoundError when no Organization was found.
 func (oq *OrganizationQuery) First(ctx context.Context) (*Organization, error) {
-	nodes, err := oq.Limit(1).All(setContextOp(ctx, oq.ctx, "First"))
+	nodes, err := oq.Limit(1).All(setContextOp(ctx, oq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -812,7 +813,7 @@ func (oq *OrganizationQuery) FirstX(ctx context.Context) *Organization {
 // Returns a *NotFoundError when no Organization ID was found.
 func (oq *OrganizationQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = oq.Limit(1).IDs(setContextOp(ctx, oq.ctx, "FirstID")); err != nil {
+	if ids, err = oq.Limit(1).IDs(setContextOp(ctx, oq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -835,7 +836,7 @@ func (oq *OrganizationQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one Organization entity is found.
 // Returns a *NotFoundError when no Organization entities are found.
 func (oq *OrganizationQuery) Only(ctx context.Context) (*Organization, error) {
-	nodes, err := oq.Limit(2).All(setContextOp(ctx, oq.ctx, "Only"))
+	nodes, err := oq.Limit(2).All(setContextOp(ctx, oq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -863,7 +864,7 @@ func (oq *OrganizationQuery) OnlyX(ctx context.Context) *Organization {
 // Returns a *NotFoundError when no entities are found.
 func (oq *OrganizationQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = oq.Limit(2).IDs(setContextOp(ctx, oq.ctx, "OnlyID")); err != nil {
+	if ids, err = oq.Limit(2).IDs(setContextOp(ctx, oq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -888,7 +889,7 @@ func (oq *OrganizationQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of Organizations.
 func (oq *OrganizationQuery) All(ctx context.Context) ([]*Organization, error) {
-	ctx = setContextOp(ctx, oq.ctx, "All")
+	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryAll)
 	if err := oq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -910,7 +911,7 @@ func (oq *OrganizationQuery) IDs(ctx context.Context) (ids []string, err error) 
 	if oq.ctx.Unique == nil && oq.path != nil {
 		oq.Unique(true)
 	}
-	ctx = setContextOp(ctx, oq.ctx, "IDs")
+	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryIDs)
 	if err = oq.Select(organization.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -928,7 +929,7 @@ func (oq *OrganizationQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (oq *OrganizationQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, oq.ctx, "Count")
+	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryCount)
 	if err := oq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -946,7 +947,7 @@ func (oq *OrganizationQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (oq *OrganizationQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, oq.ctx, "Exist")
+	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryExist)
 	switch _, err := oq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -3177,7 +3178,7 @@ func (ogb *OrganizationGroupBy) Aggregate(fns ...AggregateFunc) *OrganizationGro
 
 // Scan applies the selector query and scans the result into the given value.
 func (ogb *OrganizationGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ogb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ogb.build.ctx, ent.OpQueryGroupBy)
 	if err := ogb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -3225,7 +3226,7 @@ func (os *OrganizationSelect) Aggregate(fns ...AggregateFunc) *OrganizationSelec
 
 // Scan applies the selector query and scans the result into the given value.
 func (os *OrganizationSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, os.ctx, "Select")
+	ctx = setContextOp(ctx, os.ctx, ent.OpQuerySelect)
 	if err := os.prepareQuery(ctx); err != nil {
 		return err
 	}

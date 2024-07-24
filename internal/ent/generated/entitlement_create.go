@@ -379,10 +379,10 @@ func (ec *EntitlementCreate) check() error {
 	if _, ok := ec.mutation.Cancelled(); !ok {
 		return &ValidationError{Name: "cancelled", err: errors.New(`generated: missing required field "Entitlement.cancelled"`)}
 	}
-	if _, ok := ec.mutation.PlanID(); !ok {
+	if len(ec.mutation.PlanIDs()) == 0 {
 		return &ValidationError{Name: "plan", err: errors.New(`generated: missing required edge "Entitlement.plan"`)}
 	}
-	if _, ok := ec.mutation.OrganizationID(); !ok {
+	if len(ec.mutation.OrganizationIDs()) == 0 {
 		return &ValidationError{Name: "organization", err: errors.New(`generated: missing required edge "Entitlement.organization"`)}
 	}
 	return nil

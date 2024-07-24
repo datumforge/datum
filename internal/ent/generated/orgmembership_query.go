@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -148,7 +149,7 @@ func (omq *OrgMembershipQuery) QueryEvents() *EventQuery {
 // First returns the first OrgMembership entity from the query.
 // Returns a *NotFoundError when no OrgMembership was found.
 func (omq *OrgMembershipQuery) First(ctx context.Context) (*OrgMembership, error) {
-	nodes, err := omq.Limit(1).All(setContextOp(ctx, omq.ctx, "First"))
+	nodes, err := omq.Limit(1).All(setContextOp(ctx, omq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +172,7 @@ func (omq *OrgMembershipQuery) FirstX(ctx context.Context) *OrgMembership {
 // Returns a *NotFoundError when no OrgMembership ID was found.
 func (omq *OrgMembershipQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = omq.Limit(1).IDs(setContextOp(ctx, omq.ctx, "FirstID")); err != nil {
+	if ids, err = omq.Limit(1).IDs(setContextOp(ctx, omq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -194,7 +195,7 @@ func (omq *OrgMembershipQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one OrgMembership entity is found.
 // Returns a *NotFoundError when no OrgMembership entities are found.
 func (omq *OrgMembershipQuery) Only(ctx context.Context) (*OrgMembership, error) {
-	nodes, err := omq.Limit(2).All(setContextOp(ctx, omq.ctx, "Only"))
+	nodes, err := omq.Limit(2).All(setContextOp(ctx, omq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +223,7 @@ func (omq *OrgMembershipQuery) OnlyX(ctx context.Context) *OrgMembership {
 // Returns a *NotFoundError when no entities are found.
 func (omq *OrgMembershipQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = omq.Limit(2).IDs(setContextOp(ctx, omq.ctx, "OnlyID")); err != nil {
+	if ids, err = omq.Limit(2).IDs(setContextOp(ctx, omq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -247,7 +248,7 @@ func (omq *OrgMembershipQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of OrgMemberships.
 func (omq *OrgMembershipQuery) All(ctx context.Context) ([]*OrgMembership, error) {
-	ctx = setContextOp(ctx, omq.ctx, "All")
+	ctx = setContextOp(ctx, omq.ctx, ent.OpQueryAll)
 	if err := omq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -269,7 +270,7 @@ func (omq *OrgMembershipQuery) IDs(ctx context.Context) (ids []string, err error
 	if omq.ctx.Unique == nil && omq.path != nil {
 		omq.Unique(true)
 	}
-	ctx = setContextOp(ctx, omq.ctx, "IDs")
+	ctx = setContextOp(ctx, omq.ctx, ent.OpQueryIDs)
 	if err = omq.Select(orgmembership.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -287,7 +288,7 @@ func (omq *OrgMembershipQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (omq *OrgMembershipQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, omq.ctx, "Count")
+	ctx = setContextOp(ctx, omq.ctx, ent.OpQueryCount)
 	if err := omq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -305,7 +306,7 @@ func (omq *OrgMembershipQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (omq *OrgMembershipQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, omq.ctx, "Exist")
+	ctx = setContextOp(ctx, omq.ctx, ent.OpQueryExist)
 	switch _, err := omq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -770,7 +771,7 @@ func (omgb *OrgMembershipGroupBy) Aggregate(fns ...AggregateFunc) *OrgMembership
 
 // Scan applies the selector query and scans the result into the given value.
 func (omgb *OrgMembershipGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, omgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, omgb.build.ctx, ent.OpQueryGroupBy)
 	if err := omgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -818,7 +819,7 @@ func (oms *OrgMembershipSelect) Aggregate(fns ...AggregateFunc) *OrgMembershipSe
 
 // Scan applies the selector query and scans the result into the given value.
 func (oms *OrgMembershipSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, oms.ctx, "Select")
+	ctx = setContextOp(ctx, oms.ctx, ent.OpQuerySelect)
 	if err := oms.prepareQuery(ctx); err != nil {
 		return err
 	}

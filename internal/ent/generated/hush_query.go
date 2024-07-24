@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -149,7 +150,7 @@ func (hq *HushQuery) QueryEvents() *EventQuery {
 // First returns the first Hush entity from the query.
 // Returns a *NotFoundError when no Hush was found.
 func (hq *HushQuery) First(ctx context.Context) (*Hush, error) {
-	nodes, err := hq.Limit(1).All(setContextOp(ctx, hq.ctx, "First"))
+	nodes, err := hq.Limit(1).All(setContextOp(ctx, hq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +173,7 @@ func (hq *HushQuery) FirstX(ctx context.Context) *Hush {
 // Returns a *NotFoundError when no Hush ID was found.
 func (hq *HushQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = hq.Limit(1).IDs(setContextOp(ctx, hq.ctx, "FirstID")); err != nil {
+	if ids, err = hq.Limit(1).IDs(setContextOp(ctx, hq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -195,7 +196,7 @@ func (hq *HushQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one Hush entity is found.
 // Returns a *NotFoundError when no Hush entities are found.
 func (hq *HushQuery) Only(ctx context.Context) (*Hush, error) {
-	nodes, err := hq.Limit(2).All(setContextOp(ctx, hq.ctx, "Only"))
+	nodes, err := hq.Limit(2).All(setContextOp(ctx, hq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +224,7 @@ func (hq *HushQuery) OnlyX(ctx context.Context) *Hush {
 // Returns a *NotFoundError when no entities are found.
 func (hq *HushQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = hq.Limit(2).IDs(setContextOp(ctx, hq.ctx, "OnlyID")); err != nil {
+	if ids, err = hq.Limit(2).IDs(setContextOp(ctx, hq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -248,7 +249,7 @@ func (hq *HushQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of Hushes.
 func (hq *HushQuery) All(ctx context.Context) ([]*Hush, error) {
-	ctx = setContextOp(ctx, hq.ctx, "All")
+	ctx = setContextOp(ctx, hq.ctx, ent.OpQueryAll)
 	if err := hq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -270,7 +271,7 @@ func (hq *HushQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if hq.ctx.Unique == nil && hq.path != nil {
 		hq.Unique(true)
 	}
-	ctx = setContextOp(ctx, hq.ctx, "IDs")
+	ctx = setContextOp(ctx, hq.ctx, ent.OpQueryIDs)
 	if err = hq.Select(hush.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -288,7 +289,7 @@ func (hq *HushQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (hq *HushQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, hq.ctx, "Count")
+	ctx = setContextOp(ctx, hq.ctx, ent.OpQueryCount)
 	if err := hq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -306,7 +307,7 @@ func (hq *HushQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (hq *HushQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, hq.ctx, "Exist")
+	ctx = setContextOp(ctx, hq.ctx, ent.OpQueryExist)
 	switch _, err := hq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -869,7 +870,7 @@ func (hgb *HushGroupBy) Aggregate(fns ...AggregateFunc) *HushGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (hgb *HushGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, hgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, hgb.build.ctx, ent.OpQueryGroupBy)
 	if err := hgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -917,7 +918,7 @@ func (hs *HushSelect) Aggregate(fns ...AggregateFunc) *HushSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (hs *HushSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, hs.ctx, "Select")
+	ctx = setContextOp(ctx, hs.ctx, ent.OpQuerySelect)
 	if err := hs.prepareQuery(ctx); err != nil {
 		return err
 	}

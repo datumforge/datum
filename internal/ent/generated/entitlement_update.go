@@ -332,10 +332,10 @@ func (eu *EntitlementUpdate) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.owner_id": %w`, err)}
 		}
 	}
-	if _, ok := eu.mutation.PlanID(); eu.mutation.PlanCleared() && !ok {
+	if eu.mutation.PlanCleared() && len(eu.mutation.PlanIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "Entitlement.plan"`)
 	}
-	if _, ok := eu.mutation.OrganizationID(); eu.mutation.OrganizationCleared() && !ok {
+	if eu.mutation.OrganizationCleared() && len(eu.mutation.OrganizationIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "Entitlement.organization"`)
 	}
 	return nil
@@ -831,10 +831,10 @@ func (euo *EntitlementUpdateOne) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entitlement.owner_id": %w`, err)}
 		}
 	}
-	if _, ok := euo.mutation.PlanID(); euo.mutation.PlanCleared() && !ok {
+	if euo.mutation.PlanCleared() && len(euo.mutation.PlanIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "Entitlement.plan"`)
 	}
-	if _, ok := euo.mutation.OrganizationID(); euo.mutation.OrganizationCleared() && !ok {
+	if euo.mutation.OrganizationCleared() && len(euo.mutation.OrganizationIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "Entitlement.organization"`)
 	}
 	return nil

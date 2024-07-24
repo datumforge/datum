@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (fhq *FileHistoryQuery) Order(o ...filehistory.OrderOption) *FileHistoryQue
 // First returns the first FileHistory entity from the query.
 // Returns a *NotFoundError when no FileHistory was found.
 func (fhq *FileHistoryQuery) First(ctx context.Context) (*FileHistory, error) {
-	nodes, err := fhq.Limit(1).All(setContextOp(ctx, fhq.ctx, "First"))
+	nodes, err := fhq.Limit(1).All(setContextOp(ctx, fhq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (fhq *FileHistoryQuery) FirstX(ctx context.Context) *FileHistory {
 // Returns a *NotFoundError when no FileHistory ID was found.
 func (fhq *FileHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = fhq.Limit(1).IDs(setContextOp(ctx, fhq.ctx, "FirstID")); err != nil {
+	if ids, err = fhq.Limit(1).IDs(setContextOp(ctx, fhq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (fhq *FileHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one FileHistory entity is found.
 // Returns a *NotFoundError when no FileHistory entities are found.
 func (fhq *FileHistoryQuery) Only(ctx context.Context) (*FileHistory, error) {
-	nodes, err := fhq.Limit(2).All(setContextOp(ctx, fhq.ctx, "Only"))
+	nodes, err := fhq.Limit(2).All(setContextOp(ctx, fhq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (fhq *FileHistoryQuery) OnlyX(ctx context.Context) *FileHistory {
 // Returns a *NotFoundError when no entities are found.
 func (fhq *FileHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = fhq.Limit(2).IDs(setContextOp(ctx, fhq.ctx, "OnlyID")); err != nil {
+	if ids, err = fhq.Limit(2).IDs(setContextOp(ctx, fhq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (fhq *FileHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of FileHistories.
 func (fhq *FileHistoryQuery) All(ctx context.Context) ([]*FileHistory, error) {
-	ctx = setContextOp(ctx, fhq.ctx, "All")
+	ctx = setContextOp(ctx, fhq.ctx, ent.OpQueryAll)
 	if err := fhq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (fhq *FileHistoryQuery) IDs(ctx context.Context) (ids []string, err error) 
 	if fhq.ctx.Unique == nil && fhq.path != nil {
 		fhq.Unique(true)
 	}
-	ctx = setContextOp(ctx, fhq.ctx, "IDs")
+	ctx = setContextOp(ctx, fhq.ctx, ent.OpQueryIDs)
 	if err = fhq.Select(filehistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (fhq *FileHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (fhq *FileHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, fhq.ctx, "Count")
+	ctx = setContextOp(ctx, fhq.ctx, ent.OpQueryCount)
 	if err := fhq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (fhq *FileHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (fhq *FileHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, fhq.ctx, "Exist")
+	ctx = setContextOp(ctx, fhq.ctx, ent.OpQueryExist)
 	switch _, err := fhq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (fhgb *FileHistoryGroupBy) Aggregate(fns ...AggregateFunc) *FileHistoryGrou
 
 // Scan applies the selector query and scans the result into the given value.
 func (fhgb *FileHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, fhgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, fhgb.build.ctx, ent.OpQueryGroupBy)
 	if err := fhgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (fhs *FileHistorySelect) Aggregate(fns ...AggregateFunc) *FileHistorySelect
 
 // Scan applies the selector query and scans the result into the given value.
 func (fhs *FileHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, fhs.ctx, "Select")
+	ctx = setContextOp(ctx, fhs.ctx, ent.OpQuerySelect)
 	if err := fhs.prepareQuery(ctx); err != nil {
 		return err
 	}

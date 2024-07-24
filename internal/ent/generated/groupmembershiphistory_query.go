@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (gmhq *GroupMembershipHistoryQuery) Order(o ...groupmembershiphistory.Order
 // First returns the first GroupMembershipHistory entity from the query.
 // Returns a *NotFoundError when no GroupMembershipHistory was found.
 func (gmhq *GroupMembershipHistoryQuery) First(ctx context.Context) (*GroupMembershipHistory, error) {
-	nodes, err := gmhq.Limit(1).All(setContextOp(ctx, gmhq.ctx, "First"))
+	nodes, err := gmhq.Limit(1).All(setContextOp(ctx, gmhq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (gmhq *GroupMembershipHistoryQuery) FirstX(ctx context.Context) *GroupMembe
 // Returns a *NotFoundError when no GroupMembershipHistory ID was found.
 func (gmhq *GroupMembershipHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = gmhq.Limit(1).IDs(setContextOp(ctx, gmhq.ctx, "FirstID")); err != nil {
+	if ids, err = gmhq.Limit(1).IDs(setContextOp(ctx, gmhq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (gmhq *GroupMembershipHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one GroupMembershipHistory entity is found.
 // Returns a *NotFoundError when no GroupMembershipHistory entities are found.
 func (gmhq *GroupMembershipHistoryQuery) Only(ctx context.Context) (*GroupMembershipHistory, error) {
-	nodes, err := gmhq.Limit(2).All(setContextOp(ctx, gmhq.ctx, "Only"))
+	nodes, err := gmhq.Limit(2).All(setContextOp(ctx, gmhq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (gmhq *GroupMembershipHistoryQuery) OnlyX(ctx context.Context) *GroupMember
 // Returns a *NotFoundError when no entities are found.
 func (gmhq *GroupMembershipHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = gmhq.Limit(2).IDs(setContextOp(ctx, gmhq.ctx, "OnlyID")); err != nil {
+	if ids, err = gmhq.Limit(2).IDs(setContextOp(ctx, gmhq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (gmhq *GroupMembershipHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of GroupMembershipHistories.
 func (gmhq *GroupMembershipHistoryQuery) All(ctx context.Context) ([]*GroupMembershipHistory, error) {
-	ctx = setContextOp(ctx, gmhq.ctx, "All")
+	ctx = setContextOp(ctx, gmhq.ctx, ent.OpQueryAll)
 	if err := gmhq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (gmhq *GroupMembershipHistoryQuery) IDs(ctx context.Context) (ids []string,
 	if gmhq.ctx.Unique == nil && gmhq.path != nil {
 		gmhq.Unique(true)
 	}
-	ctx = setContextOp(ctx, gmhq.ctx, "IDs")
+	ctx = setContextOp(ctx, gmhq.ctx, ent.OpQueryIDs)
 	if err = gmhq.Select(groupmembershiphistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (gmhq *GroupMembershipHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (gmhq *GroupMembershipHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, gmhq.ctx, "Count")
+	ctx = setContextOp(ctx, gmhq.ctx, ent.OpQueryCount)
 	if err := gmhq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (gmhq *GroupMembershipHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (gmhq *GroupMembershipHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, gmhq.ctx, "Exist")
+	ctx = setContextOp(ctx, gmhq.ctx, ent.OpQueryExist)
 	switch _, err := gmhq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (gmhgb *GroupMembershipHistoryGroupBy) Aggregate(fns ...AggregateFunc) *Gro
 
 // Scan applies the selector query and scans the result into the given value.
 func (gmhgb *GroupMembershipHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, gmhgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, gmhgb.build.ctx, ent.OpQueryGroupBy)
 	if err := gmhgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (gmhs *GroupMembershipHistorySelect) Aggregate(fns ...AggregateFunc) *Group
 
 // Scan applies the selector query and scans the result into the given value.
 func (gmhs *GroupMembershipHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, gmhs.ctx, "Select")
+	ctx = setContextOp(ctx, gmhs.ctx, ent.OpQuerySelect)
 	if err := gmhs.prepareQuery(ctx); err != nil {
 		return err
 	}

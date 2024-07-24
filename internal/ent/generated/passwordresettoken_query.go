@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -92,7 +93,7 @@ func (prtq *PasswordResetTokenQuery) QueryOwner() *UserQuery {
 // First returns the first PasswordResetToken entity from the query.
 // Returns a *NotFoundError when no PasswordResetToken was found.
 func (prtq *PasswordResetTokenQuery) First(ctx context.Context) (*PasswordResetToken, error) {
-	nodes, err := prtq.Limit(1).All(setContextOp(ctx, prtq.ctx, "First"))
+	nodes, err := prtq.Limit(1).All(setContextOp(ctx, prtq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +116,7 @@ func (prtq *PasswordResetTokenQuery) FirstX(ctx context.Context) *PasswordResetT
 // Returns a *NotFoundError when no PasswordResetToken ID was found.
 func (prtq *PasswordResetTokenQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = prtq.Limit(1).IDs(setContextOp(ctx, prtq.ctx, "FirstID")); err != nil {
+	if ids, err = prtq.Limit(1).IDs(setContextOp(ctx, prtq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -138,7 +139,7 @@ func (prtq *PasswordResetTokenQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one PasswordResetToken entity is found.
 // Returns a *NotFoundError when no PasswordResetToken entities are found.
 func (prtq *PasswordResetTokenQuery) Only(ctx context.Context) (*PasswordResetToken, error) {
-	nodes, err := prtq.Limit(2).All(setContextOp(ctx, prtq.ctx, "Only"))
+	nodes, err := prtq.Limit(2).All(setContextOp(ctx, prtq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +167,7 @@ func (prtq *PasswordResetTokenQuery) OnlyX(ctx context.Context) *PasswordResetTo
 // Returns a *NotFoundError when no entities are found.
 func (prtq *PasswordResetTokenQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = prtq.Limit(2).IDs(setContextOp(ctx, prtq.ctx, "OnlyID")); err != nil {
+	if ids, err = prtq.Limit(2).IDs(setContextOp(ctx, prtq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -191,7 +192,7 @@ func (prtq *PasswordResetTokenQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of PasswordResetTokens.
 func (prtq *PasswordResetTokenQuery) All(ctx context.Context) ([]*PasswordResetToken, error) {
-	ctx = setContextOp(ctx, prtq.ctx, "All")
+	ctx = setContextOp(ctx, prtq.ctx, ent.OpQueryAll)
 	if err := prtq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -213,7 +214,7 @@ func (prtq *PasswordResetTokenQuery) IDs(ctx context.Context) (ids []string, err
 	if prtq.ctx.Unique == nil && prtq.path != nil {
 		prtq.Unique(true)
 	}
-	ctx = setContextOp(ctx, prtq.ctx, "IDs")
+	ctx = setContextOp(ctx, prtq.ctx, ent.OpQueryIDs)
 	if err = prtq.Select(passwordresettoken.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -231,7 +232,7 @@ func (prtq *PasswordResetTokenQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (prtq *PasswordResetTokenQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, prtq.ctx, "Count")
+	ctx = setContextOp(ctx, prtq.ctx, ent.OpQueryCount)
 	if err := prtq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -249,7 +250,7 @@ func (prtq *PasswordResetTokenQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (prtq *PasswordResetTokenQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, prtq.ctx, "Exist")
+	ctx = setContextOp(ctx, prtq.ctx, ent.OpQueryExist)
 	switch _, err := prtq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -560,7 +561,7 @@ func (prtgb *PasswordResetTokenGroupBy) Aggregate(fns ...AggregateFunc) *Passwor
 
 // Scan applies the selector query and scans the result into the given value.
 func (prtgb *PasswordResetTokenGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, prtgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, prtgb.build.ctx, ent.OpQueryGroupBy)
 	if err := prtgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -608,7 +609,7 @@ func (prts *PasswordResetTokenSelect) Aggregate(fns ...AggregateFunc) *PasswordR
 
 // Scan applies the selector query and scans the result into the given value.
 func (prts *PasswordResetTokenSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, prts.ctx, "Select")
+	ctx = setContextOp(ctx, prts.ctx, ent.OpQuerySelect)
 	if err := prts.prepareQuery(ctx); err != nil {
 		return err
 	}

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (ethq *EntityTypeHistoryQuery) Order(o ...entitytypehistory.OrderOption) *E
 // First returns the first EntityTypeHistory entity from the query.
 // Returns a *NotFoundError when no EntityTypeHistory was found.
 func (ethq *EntityTypeHistoryQuery) First(ctx context.Context) (*EntityTypeHistory, error) {
-	nodes, err := ethq.Limit(1).All(setContextOp(ctx, ethq.ctx, "First"))
+	nodes, err := ethq.Limit(1).All(setContextOp(ctx, ethq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (ethq *EntityTypeHistoryQuery) FirstX(ctx context.Context) *EntityTypeHisto
 // Returns a *NotFoundError when no EntityTypeHistory ID was found.
 func (ethq *EntityTypeHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ethq.Limit(1).IDs(setContextOp(ctx, ethq.ctx, "FirstID")); err != nil {
+	if ids, err = ethq.Limit(1).IDs(setContextOp(ctx, ethq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (ethq *EntityTypeHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one EntityTypeHistory entity is found.
 // Returns a *NotFoundError when no EntityTypeHistory entities are found.
 func (ethq *EntityTypeHistoryQuery) Only(ctx context.Context) (*EntityTypeHistory, error) {
-	nodes, err := ethq.Limit(2).All(setContextOp(ctx, ethq.ctx, "Only"))
+	nodes, err := ethq.Limit(2).All(setContextOp(ctx, ethq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (ethq *EntityTypeHistoryQuery) OnlyX(ctx context.Context) *EntityTypeHistor
 // Returns a *NotFoundError when no entities are found.
 func (ethq *EntityTypeHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ethq.Limit(2).IDs(setContextOp(ctx, ethq.ctx, "OnlyID")); err != nil {
+	if ids, err = ethq.Limit(2).IDs(setContextOp(ctx, ethq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (ethq *EntityTypeHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of EntityTypeHistories.
 func (ethq *EntityTypeHistoryQuery) All(ctx context.Context) ([]*EntityTypeHistory, error) {
-	ctx = setContextOp(ctx, ethq.ctx, "All")
+	ctx = setContextOp(ctx, ethq.ctx, ent.OpQueryAll)
 	if err := ethq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (ethq *EntityTypeHistoryQuery) IDs(ctx context.Context) (ids []string, err 
 	if ethq.ctx.Unique == nil && ethq.path != nil {
 		ethq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ethq.ctx, "IDs")
+	ctx = setContextOp(ctx, ethq.ctx, ent.OpQueryIDs)
 	if err = ethq.Select(entitytypehistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (ethq *EntityTypeHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ethq *EntityTypeHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ethq.ctx, "Count")
+	ctx = setContextOp(ctx, ethq.ctx, ent.OpQueryCount)
 	if err := ethq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (ethq *EntityTypeHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ethq *EntityTypeHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ethq.ctx, "Exist")
+	ctx = setContextOp(ctx, ethq.ctx, ent.OpQueryExist)
 	switch _, err := ethq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (ethgb *EntityTypeHistoryGroupBy) Aggregate(fns ...AggregateFunc) *EntityTy
 
 // Scan applies the selector query and scans the result into the given value.
 func (ethgb *EntityTypeHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ethgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ethgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ethgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (eths *EntityTypeHistorySelect) Aggregate(fns ...AggregateFunc) *EntityType
 
 // Scan applies the selector query and scans the result into the given value.
 func (eths *EntityTypeHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, eths.ctx, "Select")
+	ctx = setContextOp(ctx, eths.ctx, ent.OpQuerySelect)
 	if err := eths.prepareQuery(ctx); err != nil {
 		return err
 	}

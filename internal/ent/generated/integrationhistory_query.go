@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (ihq *IntegrationHistoryQuery) Order(o ...integrationhistory.OrderOption) *
 // First returns the first IntegrationHistory entity from the query.
 // Returns a *NotFoundError when no IntegrationHistory was found.
 func (ihq *IntegrationHistoryQuery) First(ctx context.Context) (*IntegrationHistory, error) {
-	nodes, err := ihq.Limit(1).All(setContextOp(ctx, ihq.ctx, "First"))
+	nodes, err := ihq.Limit(1).All(setContextOp(ctx, ihq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (ihq *IntegrationHistoryQuery) FirstX(ctx context.Context) *IntegrationHist
 // Returns a *NotFoundError when no IntegrationHistory ID was found.
 func (ihq *IntegrationHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ihq.Limit(1).IDs(setContextOp(ctx, ihq.ctx, "FirstID")); err != nil {
+	if ids, err = ihq.Limit(1).IDs(setContextOp(ctx, ihq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (ihq *IntegrationHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one IntegrationHistory entity is found.
 // Returns a *NotFoundError when no IntegrationHistory entities are found.
 func (ihq *IntegrationHistoryQuery) Only(ctx context.Context) (*IntegrationHistory, error) {
-	nodes, err := ihq.Limit(2).All(setContextOp(ctx, ihq.ctx, "Only"))
+	nodes, err := ihq.Limit(2).All(setContextOp(ctx, ihq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (ihq *IntegrationHistoryQuery) OnlyX(ctx context.Context) *IntegrationHisto
 // Returns a *NotFoundError when no entities are found.
 func (ihq *IntegrationHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ihq.Limit(2).IDs(setContextOp(ctx, ihq.ctx, "OnlyID")); err != nil {
+	if ids, err = ihq.Limit(2).IDs(setContextOp(ctx, ihq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (ihq *IntegrationHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of IntegrationHistories.
 func (ihq *IntegrationHistoryQuery) All(ctx context.Context) ([]*IntegrationHistory, error) {
-	ctx = setContextOp(ctx, ihq.ctx, "All")
+	ctx = setContextOp(ctx, ihq.ctx, ent.OpQueryAll)
 	if err := ihq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (ihq *IntegrationHistoryQuery) IDs(ctx context.Context) (ids []string, err 
 	if ihq.ctx.Unique == nil && ihq.path != nil {
 		ihq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ihq.ctx, "IDs")
+	ctx = setContextOp(ctx, ihq.ctx, ent.OpQueryIDs)
 	if err = ihq.Select(integrationhistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (ihq *IntegrationHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ihq *IntegrationHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ihq.ctx, "Count")
+	ctx = setContextOp(ctx, ihq.ctx, ent.OpQueryCount)
 	if err := ihq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (ihq *IntegrationHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ihq *IntegrationHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ihq.ctx, "Exist")
+	ctx = setContextOp(ctx, ihq.ctx, ent.OpQueryExist)
 	switch _, err := ihq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (ihgb *IntegrationHistoryGroupBy) Aggregate(fns ...AggregateFunc) *Integrat
 
 // Scan applies the selector query and scans the result into the given value.
 func (ihgb *IntegrationHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ihgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ihgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ihgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (ihs *IntegrationHistorySelect) Aggregate(fns ...AggregateFunc) *Integratio
 
 // Scan applies the selector query and scans the result into the given value.
 func (ihs *IntegrationHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ihs.ctx, "Select")
+	ctx = setContextOp(ctx, ihs.ctx, ent.OpQuerySelect)
 	if err := ihs.prepareQuery(ctx); err != nil {
 		return err
 	}

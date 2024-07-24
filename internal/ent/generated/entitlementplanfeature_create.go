@@ -302,10 +302,10 @@ func (epfc *EntitlementPlanFeatureCreate) check() error {
 			return &ValidationError{Name: "feature_id", err: fmt.Errorf(`generated: validator failed for field "EntitlementPlanFeature.feature_id": %w`, err)}
 		}
 	}
-	if _, ok := epfc.mutation.PlanID(); !ok {
+	if len(epfc.mutation.PlanIDs()) == 0 {
 		return &ValidationError{Name: "plan", err: errors.New(`generated: missing required edge "EntitlementPlanFeature.plan"`)}
 	}
-	if _, ok := epfc.mutation.FeatureID(); !ok {
+	if len(epfc.mutation.FeatureIDs()) == 0 {
 		return &ValidationError{Name: "feature", err: errors.New(`generated: missing required edge "EntitlementPlanFeature.feature"`)}
 	}
 	return nil

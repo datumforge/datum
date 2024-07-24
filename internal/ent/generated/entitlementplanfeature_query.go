@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -175,7 +176,7 @@ func (epfq *EntitlementPlanFeatureQuery) QueryEvents() *EventQuery {
 // First returns the first EntitlementPlanFeature entity from the query.
 // Returns a *NotFoundError when no EntitlementPlanFeature was found.
 func (epfq *EntitlementPlanFeatureQuery) First(ctx context.Context) (*EntitlementPlanFeature, error) {
-	nodes, err := epfq.Limit(1).All(setContextOp(ctx, epfq.ctx, "First"))
+	nodes, err := epfq.Limit(1).All(setContextOp(ctx, epfq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +199,7 @@ func (epfq *EntitlementPlanFeatureQuery) FirstX(ctx context.Context) *Entitlemen
 // Returns a *NotFoundError when no EntitlementPlanFeature ID was found.
 func (epfq *EntitlementPlanFeatureQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = epfq.Limit(1).IDs(setContextOp(ctx, epfq.ctx, "FirstID")); err != nil {
+	if ids, err = epfq.Limit(1).IDs(setContextOp(ctx, epfq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -221,7 +222,7 @@ func (epfq *EntitlementPlanFeatureQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one EntitlementPlanFeature entity is found.
 // Returns a *NotFoundError when no EntitlementPlanFeature entities are found.
 func (epfq *EntitlementPlanFeatureQuery) Only(ctx context.Context) (*EntitlementPlanFeature, error) {
-	nodes, err := epfq.Limit(2).All(setContextOp(ctx, epfq.ctx, "Only"))
+	nodes, err := epfq.Limit(2).All(setContextOp(ctx, epfq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +250,7 @@ func (epfq *EntitlementPlanFeatureQuery) OnlyX(ctx context.Context) *Entitlement
 // Returns a *NotFoundError when no entities are found.
 func (epfq *EntitlementPlanFeatureQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = epfq.Limit(2).IDs(setContextOp(ctx, epfq.ctx, "OnlyID")); err != nil {
+	if ids, err = epfq.Limit(2).IDs(setContextOp(ctx, epfq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -274,7 +275,7 @@ func (epfq *EntitlementPlanFeatureQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of EntitlementPlanFeatures.
 func (epfq *EntitlementPlanFeatureQuery) All(ctx context.Context) ([]*EntitlementPlanFeature, error) {
-	ctx = setContextOp(ctx, epfq.ctx, "All")
+	ctx = setContextOp(ctx, epfq.ctx, ent.OpQueryAll)
 	if err := epfq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -296,7 +297,7 @@ func (epfq *EntitlementPlanFeatureQuery) IDs(ctx context.Context) (ids []string,
 	if epfq.ctx.Unique == nil && epfq.path != nil {
 		epfq.Unique(true)
 	}
-	ctx = setContextOp(ctx, epfq.ctx, "IDs")
+	ctx = setContextOp(ctx, epfq.ctx, ent.OpQueryIDs)
 	if err = epfq.Select(entitlementplanfeature.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -314,7 +315,7 @@ func (epfq *EntitlementPlanFeatureQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (epfq *EntitlementPlanFeatureQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, epfq.ctx, "Count")
+	ctx = setContextOp(ctx, epfq.ctx, ent.OpQueryCount)
 	if err := epfq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -332,7 +333,7 @@ func (epfq *EntitlementPlanFeatureQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (epfq *EntitlementPlanFeatureQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, epfq.ctx, "Exist")
+	ctx = setContextOp(ctx, epfq.ctx, ent.OpQueryExist)
 	switch _, err := epfq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -848,7 +849,7 @@ func (epfgb *EntitlementPlanFeatureGroupBy) Aggregate(fns ...AggregateFunc) *Ent
 
 // Scan applies the selector query and scans the result into the given value.
 func (epfgb *EntitlementPlanFeatureGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, epfgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, epfgb.build.ctx, ent.OpQueryGroupBy)
 	if err := epfgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -896,7 +897,7 @@ func (epfs *EntitlementPlanFeatureSelect) Aggregate(fns ...AggregateFunc) *Entit
 
 // Scan applies the selector query and scans the result into the given value.
 func (epfs *EntitlementPlanFeatureSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, epfs.ctx, "Select")
+	ctx = setContextOp(ctx, epfs.ctx, ent.OpQuerySelect)
 	if err := epfs.prepareQuery(ctx); err != nil {
 		return err
 	}

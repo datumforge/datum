@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -121,7 +122,7 @@ func (etq *EntityTypeQuery) QueryEntities() *EntityQuery {
 // First returns the first EntityType entity from the query.
 // Returns a *NotFoundError when no EntityType was found.
 func (etq *EntityTypeQuery) First(ctx context.Context) (*EntityType, error) {
-	nodes, err := etq.Limit(1).All(setContextOp(ctx, etq.ctx, "First"))
+	nodes, err := etq.Limit(1).All(setContextOp(ctx, etq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +145,7 @@ func (etq *EntityTypeQuery) FirstX(ctx context.Context) *EntityType {
 // Returns a *NotFoundError when no EntityType ID was found.
 func (etq *EntityTypeQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = etq.Limit(1).IDs(setContextOp(ctx, etq.ctx, "FirstID")); err != nil {
+	if ids, err = etq.Limit(1).IDs(setContextOp(ctx, etq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -167,7 +168,7 @@ func (etq *EntityTypeQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one EntityType entity is found.
 // Returns a *NotFoundError when no EntityType entities are found.
 func (etq *EntityTypeQuery) Only(ctx context.Context) (*EntityType, error) {
-	nodes, err := etq.Limit(2).All(setContextOp(ctx, etq.ctx, "Only"))
+	nodes, err := etq.Limit(2).All(setContextOp(ctx, etq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +196,7 @@ func (etq *EntityTypeQuery) OnlyX(ctx context.Context) *EntityType {
 // Returns a *NotFoundError when no entities are found.
 func (etq *EntityTypeQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = etq.Limit(2).IDs(setContextOp(ctx, etq.ctx, "OnlyID")); err != nil {
+	if ids, err = etq.Limit(2).IDs(setContextOp(ctx, etq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -220,7 +221,7 @@ func (etq *EntityTypeQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of EntityTypes.
 func (etq *EntityTypeQuery) All(ctx context.Context) ([]*EntityType, error) {
-	ctx = setContextOp(ctx, etq.ctx, "All")
+	ctx = setContextOp(ctx, etq.ctx, ent.OpQueryAll)
 	if err := etq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -242,7 +243,7 @@ func (etq *EntityTypeQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if etq.ctx.Unique == nil && etq.path != nil {
 		etq.Unique(true)
 	}
-	ctx = setContextOp(ctx, etq.ctx, "IDs")
+	ctx = setContextOp(ctx, etq.ctx, ent.OpQueryIDs)
 	if err = etq.Select(entitytype.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -260,7 +261,7 @@ func (etq *EntityTypeQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (etq *EntityTypeQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, etq.ctx, "Count")
+	ctx = setContextOp(ctx, etq.ctx, ent.OpQueryCount)
 	if err := etq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -278,7 +279,7 @@ func (etq *EntityTypeQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (etq *EntityTypeQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, etq.ctx, "Exist")
+	ctx = setContextOp(ctx, etq.ctx, ent.OpQueryExist)
 	switch _, err := etq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -661,7 +662,7 @@ func (etgb *EntityTypeGroupBy) Aggregate(fns ...AggregateFunc) *EntityTypeGroupB
 
 // Scan applies the selector query and scans the result into the given value.
 func (etgb *EntityTypeGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, etgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, etgb.build.ctx, ent.OpQueryGroupBy)
 	if err := etgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -709,7 +710,7 @@ func (ets *EntityTypeSelect) Aggregate(fns ...AggregateFunc) *EntityTypeSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ets *EntityTypeSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ets.ctx, "Select")
+	ctx = setContextOp(ctx, ets.ctx, ent.OpQuerySelect)
 	if err := ets.prepareQuery(ctx); err != nil {
 		return err
 	}

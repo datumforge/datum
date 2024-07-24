@@ -339,7 +339,7 @@ func (wc *WebauthnCreate) check() error {
 	if _, ok := wc.mutation.UserVerified(); !ok {
 		return &ValidationError{Name: "user_verified", err: errors.New(`generated: missing required field "Webauthn.user_verified"`)}
 	}
-	if _, ok := wc.mutation.OwnerID(); !ok {
+	if len(wc.mutation.OwnerIDs()) == 0 {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Webauthn.owner"`)}
 	}
 	return nil

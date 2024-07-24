@@ -240,7 +240,7 @@ func (evtu *EmailVerificationTokenUpdate) check() error {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "EmailVerificationToken.secret": %w`, err)}
 		}
 	}
-	if _, ok := evtu.mutation.OwnerID(); evtu.mutation.OwnerCleared() && !ok {
+	if evtu.mutation.OwnerCleared() && len(evtu.mutation.OwnerIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "EmailVerificationToken.owner"`)
 	}
 	return nil
@@ -575,7 +575,7 @@ func (evtuo *EmailVerificationTokenUpdateOne) check() error {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "EmailVerificationToken.secret": %w`, err)}
 		}
 	}
-	if _, ok := evtuo.mutation.OwnerID(); evtuo.mutation.OwnerCleared() && !ok {
+	if evtuo.mutation.OwnerCleared() && len(evtuo.mutation.OwnerIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "EmailVerificationToken.owner"`)
 	}
 	return nil

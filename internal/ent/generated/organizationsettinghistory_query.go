@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (oshq *OrganizationSettingHistoryQuery) Order(o ...organizationsettinghisto
 // First returns the first OrganizationSettingHistory entity from the query.
 // Returns a *NotFoundError when no OrganizationSettingHistory was found.
 func (oshq *OrganizationSettingHistoryQuery) First(ctx context.Context) (*OrganizationSettingHistory, error) {
-	nodes, err := oshq.Limit(1).All(setContextOp(ctx, oshq.ctx, "First"))
+	nodes, err := oshq.Limit(1).All(setContextOp(ctx, oshq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (oshq *OrganizationSettingHistoryQuery) FirstX(ctx context.Context) *Organi
 // Returns a *NotFoundError when no OrganizationSettingHistory ID was found.
 func (oshq *OrganizationSettingHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = oshq.Limit(1).IDs(setContextOp(ctx, oshq.ctx, "FirstID")); err != nil {
+	if ids, err = oshq.Limit(1).IDs(setContextOp(ctx, oshq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (oshq *OrganizationSettingHistoryQuery) FirstIDX(ctx context.Context) strin
 // Returns a *NotSingularError when more than one OrganizationSettingHistory entity is found.
 // Returns a *NotFoundError when no OrganizationSettingHistory entities are found.
 func (oshq *OrganizationSettingHistoryQuery) Only(ctx context.Context) (*OrganizationSettingHistory, error) {
-	nodes, err := oshq.Limit(2).All(setContextOp(ctx, oshq.ctx, "Only"))
+	nodes, err := oshq.Limit(2).All(setContextOp(ctx, oshq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (oshq *OrganizationSettingHistoryQuery) OnlyX(ctx context.Context) *Organiz
 // Returns a *NotFoundError when no entities are found.
 func (oshq *OrganizationSettingHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = oshq.Limit(2).IDs(setContextOp(ctx, oshq.ctx, "OnlyID")); err != nil {
+	if ids, err = oshq.Limit(2).IDs(setContextOp(ctx, oshq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (oshq *OrganizationSettingHistoryQuery) OnlyIDX(ctx context.Context) string
 
 // All executes the query and returns a list of OrganizationSettingHistories.
 func (oshq *OrganizationSettingHistoryQuery) All(ctx context.Context) ([]*OrganizationSettingHistory, error) {
-	ctx = setContextOp(ctx, oshq.ctx, "All")
+	ctx = setContextOp(ctx, oshq.ctx, ent.OpQueryAll)
 	if err := oshq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (oshq *OrganizationSettingHistoryQuery) IDs(ctx context.Context) (ids []str
 	if oshq.ctx.Unique == nil && oshq.path != nil {
 		oshq.Unique(true)
 	}
-	ctx = setContextOp(ctx, oshq.ctx, "IDs")
+	ctx = setContextOp(ctx, oshq.ctx, ent.OpQueryIDs)
 	if err = oshq.Select(organizationsettinghistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (oshq *OrganizationSettingHistoryQuery) IDsX(ctx context.Context) []string 
 
 // Count returns the count of the given query.
 func (oshq *OrganizationSettingHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, oshq.ctx, "Count")
+	ctx = setContextOp(ctx, oshq.ctx, ent.OpQueryCount)
 	if err := oshq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (oshq *OrganizationSettingHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (oshq *OrganizationSettingHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, oshq.ctx, "Exist")
+	ctx = setContextOp(ctx, oshq.ctx, ent.OpQueryExist)
 	switch _, err := oshq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (oshgb *OrganizationSettingHistoryGroupBy) Aggregate(fns ...AggregateFunc) 
 
 // Scan applies the selector query and scans the result into the given value.
 func (oshgb *OrganizationSettingHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, oshgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, oshgb.build.ctx, ent.OpQueryGroupBy)
 	if err := oshgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (oshs *OrganizationSettingHistorySelect) Aggregate(fns ...AggregateFunc) *O
 
 // Scan applies the selector query and scans the result into the given value.
 func (oshs *OrganizationSettingHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, oshs.ctx, "Select")
+	ctx = setContextOp(ctx, oshs.ctx, ent.OpQuerySelect)
 	if err := oshs.prepareQuery(ctx); err != nil {
 		return err
 	}

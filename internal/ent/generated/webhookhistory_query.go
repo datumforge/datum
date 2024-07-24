@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (whq *WebhookHistoryQuery) Order(o ...webhookhistory.OrderOption) *WebhookH
 // First returns the first WebhookHistory entity from the query.
 // Returns a *NotFoundError when no WebhookHistory was found.
 func (whq *WebhookHistoryQuery) First(ctx context.Context) (*WebhookHistory, error) {
-	nodes, err := whq.Limit(1).All(setContextOp(ctx, whq.ctx, "First"))
+	nodes, err := whq.Limit(1).All(setContextOp(ctx, whq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (whq *WebhookHistoryQuery) FirstX(ctx context.Context) *WebhookHistory {
 // Returns a *NotFoundError when no WebhookHistory ID was found.
 func (whq *WebhookHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = whq.Limit(1).IDs(setContextOp(ctx, whq.ctx, "FirstID")); err != nil {
+	if ids, err = whq.Limit(1).IDs(setContextOp(ctx, whq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (whq *WebhookHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one WebhookHistory entity is found.
 // Returns a *NotFoundError when no WebhookHistory entities are found.
 func (whq *WebhookHistoryQuery) Only(ctx context.Context) (*WebhookHistory, error) {
-	nodes, err := whq.Limit(2).All(setContextOp(ctx, whq.ctx, "Only"))
+	nodes, err := whq.Limit(2).All(setContextOp(ctx, whq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (whq *WebhookHistoryQuery) OnlyX(ctx context.Context) *WebhookHistory {
 // Returns a *NotFoundError when no entities are found.
 func (whq *WebhookHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = whq.Limit(2).IDs(setContextOp(ctx, whq.ctx, "OnlyID")); err != nil {
+	if ids, err = whq.Limit(2).IDs(setContextOp(ctx, whq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (whq *WebhookHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of WebhookHistories.
 func (whq *WebhookHistoryQuery) All(ctx context.Context) ([]*WebhookHistory, error) {
-	ctx = setContextOp(ctx, whq.ctx, "All")
+	ctx = setContextOp(ctx, whq.ctx, ent.OpQueryAll)
 	if err := whq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (whq *WebhookHistoryQuery) IDs(ctx context.Context) (ids []string, err erro
 	if whq.ctx.Unique == nil && whq.path != nil {
 		whq.Unique(true)
 	}
-	ctx = setContextOp(ctx, whq.ctx, "IDs")
+	ctx = setContextOp(ctx, whq.ctx, ent.OpQueryIDs)
 	if err = whq.Select(webhookhistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (whq *WebhookHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (whq *WebhookHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, whq.ctx, "Count")
+	ctx = setContextOp(ctx, whq.ctx, ent.OpQueryCount)
 	if err := whq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (whq *WebhookHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (whq *WebhookHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, whq.ctx, "Exist")
+	ctx = setContextOp(ctx, whq.ctx, ent.OpQueryExist)
 	switch _, err := whq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (whgb *WebhookHistoryGroupBy) Aggregate(fns ...AggregateFunc) *WebhookHisto
 
 // Scan applies the selector query and scans the result into the given value.
 func (whgb *WebhookHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, whgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, whgb.build.ctx, ent.OpQueryGroupBy)
 	if err := whgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (whs *WebhookHistorySelect) Aggregate(fns ...AggregateFunc) *WebhookHistory
 
 // Scan applies the selector query and scans the result into the given value.
 func (whs *WebhookHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, whs.ctx, "Select")
+	ctx = setContextOp(ctx, whs.ctx, ent.OpQuerySelect)
 	if err := whs.prepareQuery(ctx); err != nil {
 		return err
 	}

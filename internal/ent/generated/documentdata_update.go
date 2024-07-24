@@ -277,7 +277,7 @@ func (ddu *DocumentDataUpdate) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "DocumentData.owner_id": %w`, err)}
 		}
 	}
-	if _, ok := ddu.mutation.TemplateID(); ddu.mutation.TemplateCleared() && !ok {
+	if ddu.mutation.TemplateCleared() && len(ddu.mutation.TemplateIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "DocumentData.template"`)
 	}
 	return nil
@@ -726,7 +726,7 @@ func (dduo *DocumentDataUpdateOne) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "DocumentData.owner_id": %w`, err)}
 		}
 	}
-	if _, ok := dduo.mutation.TemplateID(); dduo.mutation.TemplateCleared() && !ok {
+	if dduo.mutation.TemplateCleared() && len(dduo.mutation.TemplateIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "DocumentData.template"`)
 	}
 	return nil

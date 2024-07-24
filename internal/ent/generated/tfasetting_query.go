@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -91,7 +92,7 @@ func (tsq *TFASettingQuery) QueryOwner() *UserQuery {
 // First returns the first TFASetting entity from the query.
 // Returns a *NotFoundError when no TFASetting was found.
 func (tsq *TFASettingQuery) First(ctx context.Context) (*TFASetting, error) {
-	nodes, err := tsq.Limit(1).All(setContextOp(ctx, tsq.ctx, "First"))
+	nodes, err := tsq.Limit(1).All(setContextOp(ctx, tsq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +115,7 @@ func (tsq *TFASettingQuery) FirstX(ctx context.Context) *TFASetting {
 // Returns a *NotFoundError when no TFASetting ID was found.
 func (tsq *TFASettingQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = tsq.Limit(1).IDs(setContextOp(ctx, tsq.ctx, "FirstID")); err != nil {
+	if ids, err = tsq.Limit(1).IDs(setContextOp(ctx, tsq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -137,7 +138,7 @@ func (tsq *TFASettingQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one TFASetting entity is found.
 // Returns a *NotFoundError when no TFASetting entities are found.
 func (tsq *TFASettingQuery) Only(ctx context.Context) (*TFASetting, error) {
-	nodes, err := tsq.Limit(2).All(setContextOp(ctx, tsq.ctx, "Only"))
+	nodes, err := tsq.Limit(2).All(setContextOp(ctx, tsq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +166,7 @@ func (tsq *TFASettingQuery) OnlyX(ctx context.Context) *TFASetting {
 // Returns a *NotFoundError when no entities are found.
 func (tsq *TFASettingQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = tsq.Limit(2).IDs(setContextOp(ctx, tsq.ctx, "OnlyID")); err != nil {
+	if ids, err = tsq.Limit(2).IDs(setContextOp(ctx, tsq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -190,7 +191,7 @@ func (tsq *TFASettingQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of TFASettings.
 func (tsq *TFASettingQuery) All(ctx context.Context) ([]*TFASetting, error) {
-	ctx = setContextOp(ctx, tsq.ctx, "All")
+	ctx = setContextOp(ctx, tsq.ctx, ent.OpQueryAll)
 	if err := tsq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -212,7 +213,7 @@ func (tsq *TFASettingQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if tsq.ctx.Unique == nil && tsq.path != nil {
 		tsq.Unique(true)
 	}
-	ctx = setContextOp(ctx, tsq.ctx, "IDs")
+	ctx = setContextOp(ctx, tsq.ctx, ent.OpQueryIDs)
 	if err = tsq.Select(tfasetting.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -230,7 +231,7 @@ func (tsq *TFASettingQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (tsq *TFASettingQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, tsq.ctx, "Count")
+	ctx = setContextOp(ctx, tsq.ctx, ent.OpQueryCount)
 	if err := tsq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -248,7 +249,7 @@ func (tsq *TFASettingQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (tsq *TFASettingQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, tsq.ctx, "Exist")
+	ctx = setContextOp(ctx, tsq.ctx, ent.OpQueryExist)
 	switch _, err := tsq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -553,7 +554,7 @@ func (tsgb *TFASettingGroupBy) Aggregate(fns ...AggregateFunc) *TFASettingGroupB
 
 // Scan applies the selector query and scans the result into the given value.
 func (tsgb *TFASettingGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, tsgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, tsgb.build.ctx, ent.OpQueryGroupBy)
 	if err := tsgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -601,7 +602,7 @@ func (tss *TFASettingSelect) Aggregate(fns ...AggregateFunc) *TFASettingSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (tss *TFASettingSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, tss.ctx, "Select")
+	ctx = setContextOp(ctx, tss.ctx, ent.OpQuerySelect)
 	if err := tss.prepareQuery(ctx); err != nil {
 		return err
 	}

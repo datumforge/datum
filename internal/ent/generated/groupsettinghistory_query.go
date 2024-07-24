@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (gshq *GroupSettingHistoryQuery) Order(o ...groupsettinghistory.OrderOption
 // First returns the first GroupSettingHistory entity from the query.
 // Returns a *NotFoundError when no GroupSettingHistory was found.
 func (gshq *GroupSettingHistoryQuery) First(ctx context.Context) (*GroupSettingHistory, error) {
-	nodes, err := gshq.Limit(1).All(setContextOp(ctx, gshq.ctx, "First"))
+	nodes, err := gshq.Limit(1).All(setContextOp(ctx, gshq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (gshq *GroupSettingHistoryQuery) FirstX(ctx context.Context) *GroupSettingH
 // Returns a *NotFoundError when no GroupSettingHistory ID was found.
 func (gshq *GroupSettingHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = gshq.Limit(1).IDs(setContextOp(ctx, gshq.ctx, "FirstID")); err != nil {
+	if ids, err = gshq.Limit(1).IDs(setContextOp(ctx, gshq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (gshq *GroupSettingHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one GroupSettingHistory entity is found.
 // Returns a *NotFoundError when no GroupSettingHistory entities are found.
 func (gshq *GroupSettingHistoryQuery) Only(ctx context.Context) (*GroupSettingHistory, error) {
-	nodes, err := gshq.Limit(2).All(setContextOp(ctx, gshq.ctx, "Only"))
+	nodes, err := gshq.Limit(2).All(setContextOp(ctx, gshq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (gshq *GroupSettingHistoryQuery) OnlyX(ctx context.Context) *GroupSettingHi
 // Returns a *NotFoundError when no entities are found.
 func (gshq *GroupSettingHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = gshq.Limit(2).IDs(setContextOp(ctx, gshq.ctx, "OnlyID")); err != nil {
+	if ids, err = gshq.Limit(2).IDs(setContextOp(ctx, gshq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (gshq *GroupSettingHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of GroupSettingHistories.
 func (gshq *GroupSettingHistoryQuery) All(ctx context.Context) ([]*GroupSettingHistory, error) {
-	ctx = setContextOp(ctx, gshq.ctx, "All")
+	ctx = setContextOp(ctx, gshq.ctx, ent.OpQueryAll)
 	if err := gshq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (gshq *GroupSettingHistoryQuery) IDs(ctx context.Context) (ids []string, er
 	if gshq.ctx.Unique == nil && gshq.path != nil {
 		gshq.Unique(true)
 	}
-	ctx = setContextOp(ctx, gshq.ctx, "IDs")
+	ctx = setContextOp(ctx, gshq.ctx, ent.OpQueryIDs)
 	if err = gshq.Select(groupsettinghistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (gshq *GroupSettingHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (gshq *GroupSettingHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, gshq.ctx, "Count")
+	ctx = setContextOp(ctx, gshq.ctx, ent.OpQueryCount)
 	if err := gshq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (gshq *GroupSettingHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (gshq *GroupSettingHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, gshq.ctx, "Exist")
+	ctx = setContextOp(ctx, gshq.ctx, ent.OpQueryExist)
 	switch _, err := gshq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (gshgb *GroupSettingHistoryGroupBy) Aggregate(fns ...AggregateFunc) *GroupS
 
 // Scan applies the selector query and scans the result into the given value.
 func (gshgb *GroupSettingHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, gshgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, gshgb.build.ctx, ent.OpQueryGroupBy)
 	if err := gshgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (gshs *GroupSettingHistorySelect) Aggregate(fns ...AggregateFunc) *GroupSet
 
 // Scan applies the selector query and scans the result into the given value.
 func (gshs *GroupSettingHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, gshs.ctx, "Select")
+	ctx = setContextOp(ctx, gshs.ctx, ent.OpQuerySelect)
 	if err := gshs.prepareQuery(ctx); err != nil {
 		return err
 	}

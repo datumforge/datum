@@ -240,7 +240,7 @@ func (prtu *PasswordResetTokenUpdate) check() error {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "PasswordResetToken.secret": %w`, err)}
 		}
 	}
-	if _, ok := prtu.mutation.OwnerID(); prtu.mutation.OwnerCleared() && !ok {
+	if prtu.mutation.OwnerCleared() && len(prtu.mutation.OwnerIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "PasswordResetToken.owner"`)
 	}
 	return nil
@@ -575,7 +575,7 @@ func (prtuo *PasswordResetTokenUpdateOne) check() error {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "PasswordResetToken.secret": %w`, err)}
 		}
 	}
-	if _, ok := prtuo.mutation.OwnerID(); prtuo.mutation.OwnerCleared() && !ok {
+	if prtuo.mutation.OwnerCleared() && len(prtuo.mutation.OwnerIDs()) > 0 {
 		return errors.New(`generated: clearing a required unique edge "PasswordResetToken.owner"`)
 	}
 	return nil

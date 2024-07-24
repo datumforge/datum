@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (ophq *OauthProviderHistoryQuery) Order(o ...oauthproviderhistory.OrderOpti
 // First returns the first OauthProviderHistory entity from the query.
 // Returns a *NotFoundError when no OauthProviderHistory was found.
 func (ophq *OauthProviderHistoryQuery) First(ctx context.Context) (*OauthProviderHistory, error) {
-	nodes, err := ophq.Limit(1).All(setContextOp(ctx, ophq.ctx, "First"))
+	nodes, err := ophq.Limit(1).All(setContextOp(ctx, ophq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (ophq *OauthProviderHistoryQuery) FirstX(ctx context.Context) *OauthProvide
 // Returns a *NotFoundError when no OauthProviderHistory ID was found.
 func (ophq *OauthProviderHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ophq.Limit(1).IDs(setContextOp(ctx, ophq.ctx, "FirstID")); err != nil {
+	if ids, err = ophq.Limit(1).IDs(setContextOp(ctx, ophq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (ophq *OauthProviderHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one OauthProviderHistory entity is found.
 // Returns a *NotFoundError when no OauthProviderHistory entities are found.
 func (ophq *OauthProviderHistoryQuery) Only(ctx context.Context) (*OauthProviderHistory, error) {
-	nodes, err := ophq.Limit(2).All(setContextOp(ctx, ophq.ctx, "Only"))
+	nodes, err := ophq.Limit(2).All(setContextOp(ctx, ophq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (ophq *OauthProviderHistoryQuery) OnlyX(ctx context.Context) *OauthProvider
 // Returns a *NotFoundError when no entities are found.
 func (ophq *OauthProviderHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ophq.Limit(2).IDs(setContextOp(ctx, ophq.ctx, "OnlyID")); err != nil {
+	if ids, err = ophq.Limit(2).IDs(setContextOp(ctx, ophq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (ophq *OauthProviderHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of OauthProviderHistories.
 func (ophq *OauthProviderHistoryQuery) All(ctx context.Context) ([]*OauthProviderHistory, error) {
-	ctx = setContextOp(ctx, ophq.ctx, "All")
+	ctx = setContextOp(ctx, ophq.ctx, ent.OpQueryAll)
 	if err := ophq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (ophq *OauthProviderHistoryQuery) IDs(ctx context.Context) (ids []string, e
 	if ophq.ctx.Unique == nil && ophq.path != nil {
 		ophq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ophq.ctx, "IDs")
+	ctx = setContextOp(ctx, ophq.ctx, ent.OpQueryIDs)
 	if err = ophq.Select(oauthproviderhistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (ophq *OauthProviderHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ophq *OauthProviderHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ophq.ctx, "Count")
+	ctx = setContextOp(ctx, ophq.ctx, ent.OpQueryCount)
 	if err := ophq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (ophq *OauthProviderHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ophq *OauthProviderHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ophq.ctx, "Exist")
+	ctx = setContextOp(ctx, ophq.ctx, ent.OpQueryExist)
 	switch _, err := ophq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (ophgb *OauthProviderHistoryGroupBy) Aggregate(fns ...AggregateFunc) *Oauth
 
 // Scan applies the selector query and scans the result into the given value.
 func (ophgb *OauthProviderHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ophgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ophgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ophgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (ophs *OauthProviderHistorySelect) Aggregate(fns ...AggregateFunc) *OauthPr
 
 // Scan applies the selector query and scans the result into the given value.
 func (ophs *OauthProviderHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ophs.ctx, "Select")
+	ctx = setContextOp(ctx, ophs.ctx, ent.OpQuerySelect)
 	if err := ophs.prepareQuery(ctx); err != nil {
 		return err
 	}

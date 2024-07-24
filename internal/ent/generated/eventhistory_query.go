@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (ehq *EventHistoryQuery) Order(o ...eventhistory.OrderOption) *EventHistory
 // First returns the first EventHistory entity from the query.
 // Returns a *NotFoundError when no EventHistory was found.
 func (ehq *EventHistoryQuery) First(ctx context.Context) (*EventHistory, error) {
-	nodes, err := ehq.Limit(1).All(setContextOp(ctx, ehq.ctx, "First"))
+	nodes, err := ehq.Limit(1).All(setContextOp(ctx, ehq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (ehq *EventHistoryQuery) FirstX(ctx context.Context) *EventHistory {
 // Returns a *NotFoundError when no EventHistory ID was found.
 func (ehq *EventHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ehq.Limit(1).IDs(setContextOp(ctx, ehq.ctx, "FirstID")); err != nil {
+	if ids, err = ehq.Limit(1).IDs(setContextOp(ctx, ehq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (ehq *EventHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one EventHistory entity is found.
 // Returns a *NotFoundError when no EventHistory entities are found.
 func (ehq *EventHistoryQuery) Only(ctx context.Context) (*EventHistory, error) {
-	nodes, err := ehq.Limit(2).All(setContextOp(ctx, ehq.ctx, "Only"))
+	nodes, err := ehq.Limit(2).All(setContextOp(ctx, ehq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (ehq *EventHistoryQuery) OnlyX(ctx context.Context) *EventHistory {
 // Returns a *NotFoundError when no entities are found.
 func (ehq *EventHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ehq.Limit(2).IDs(setContextOp(ctx, ehq.ctx, "OnlyID")); err != nil {
+	if ids, err = ehq.Limit(2).IDs(setContextOp(ctx, ehq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (ehq *EventHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of EventHistories.
 func (ehq *EventHistoryQuery) All(ctx context.Context) ([]*EventHistory, error) {
-	ctx = setContextOp(ctx, ehq.ctx, "All")
+	ctx = setContextOp(ctx, ehq.ctx, ent.OpQueryAll)
 	if err := ehq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (ehq *EventHistoryQuery) IDs(ctx context.Context) (ids []string, err error)
 	if ehq.ctx.Unique == nil && ehq.path != nil {
 		ehq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ehq.ctx, "IDs")
+	ctx = setContextOp(ctx, ehq.ctx, ent.OpQueryIDs)
 	if err = ehq.Select(eventhistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (ehq *EventHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ehq *EventHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ehq.ctx, "Count")
+	ctx = setContextOp(ctx, ehq.ctx, ent.OpQueryCount)
 	if err := ehq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (ehq *EventHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ehq *EventHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ehq.ctx, "Exist")
+	ctx = setContextOp(ctx, ehq.ctx, ent.OpQueryExist)
 	switch _, err := ehq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (ehgb *EventHistoryGroupBy) Aggregate(fns ...AggregateFunc) *EventHistoryGr
 
 // Scan applies the selector query and scans the result into the given value.
 func (ehgb *EventHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ehgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ehgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ehgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (ehs *EventHistorySelect) Aggregate(fns ...AggregateFunc) *EventHistorySele
 
 // Scan applies the selector query and scans the result into the given value.
 func (ehs *EventHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ehs.ctx, "Select")
+	ctx = setContextOp(ctx, ehs.ctx, ent.OpQuerySelect)
 	if err := ehs.prepareQuery(ctx); err != nil {
 		return err
 	}

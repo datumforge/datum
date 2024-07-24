@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -121,7 +122,7 @@ func (iq *InviteQuery) QueryEvents() *EventQuery {
 // First returns the first Invite entity from the query.
 // Returns a *NotFoundError when no Invite was found.
 func (iq *InviteQuery) First(ctx context.Context) (*Invite, error) {
-	nodes, err := iq.Limit(1).All(setContextOp(ctx, iq.ctx, "First"))
+	nodes, err := iq.Limit(1).All(setContextOp(ctx, iq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +145,7 @@ func (iq *InviteQuery) FirstX(ctx context.Context) *Invite {
 // Returns a *NotFoundError when no Invite ID was found.
 func (iq *InviteQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = iq.Limit(1).IDs(setContextOp(ctx, iq.ctx, "FirstID")); err != nil {
+	if ids, err = iq.Limit(1).IDs(setContextOp(ctx, iq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -167,7 +168,7 @@ func (iq *InviteQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one Invite entity is found.
 // Returns a *NotFoundError when no Invite entities are found.
 func (iq *InviteQuery) Only(ctx context.Context) (*Invite, error) {
-	nodes, err := iq.Limit(2).All(setContextOp(ctx, iq.ctx, "Only"))
+	nodes, err := iq.Limit(2).All(setContextOp(ctx, iq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +196,7 @@ func (iq *InviteQuery) OnlyX(ctx context.Context) *Invite {
 // Returns a *NotFoundError when no entities are found.
 func (iq *InviteQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = iq.Limit(2).IDs(setContextOp(ctx, iq.ctx, "OnlyID")); err != nil {
+	if ids, err = iq.Limit(2).IDs(setContextOp(ctx, iq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -220,7 +221,7 @@ func (iq *InviteQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of Invites.
 func (iq *InviteQuery) All(ctx context.Context) ([]*Invite, error) {
-	ctx = setContextOp(ctx, iq.ctx, "All")
+	ctx = setContextOp(ctx, iq.ctx, ent.OpQueryAll)
 	if err := iq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -242,7 +243,7 @@ func (iq *InviteQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if iq.ctx.Unique == nil && iq.path != nil {
 		iq.Unique(true)
 	}
-	ctx = setContextOp(ctx, iq.ctx, "IDs")
+	ctx = setContextOp(ctx, iq.ctx, ent.OpQueryIDs)
 	if err = iq.Select(invite.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -260,7 +261,7 @@ func (iq *InviteQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (iq *InviteQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, iq.ctx, "Count")
+	ctx = setContextOp(ctx, iq.ctx, ent.OpQueryCount)
 	if err := iq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -278,7 +279,7 @@ func (iq *InviteQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (iq *InviteQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, iq.ctx, "Exist")
+	ctx = setContextOp(ctx, iq.ctx, ent.OpQueryExist)
 	switch _, err := iq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -692,7 +693,7 @@ func (igb *InviteGroupBy) Aggregate(fns ...AggregateFunc) *InviteGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (igb *InviteGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, igb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, igb.build.ctx, ent.OpQueryGroupBy)
 	if err := igb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -740,7 +741,7 @@ func (is *InviteSelect) Aggregate(fns ...AggregateFunc) *InviteSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (is *InviteSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, is.ctx, "Select")
+	ctx = setContextOp(ctx, is.ctx, ent.OpQuerySelect)
 	if err := is.prepareQuery(ctx); err != nil {
 		return err
 	}

@@ -271,7 +271,7 @@ func (prtc *PasswordResetTokenCreate) check() error {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "PasswordResetToken.secret": %w`, err)}
 		}
 	}
-	if _, ok := prtc.mutation.OwnerID(); !ok {
+	if len(prtc.mutation.OwnerIDs()) == 0 {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "PasswordResetToken.owner"`)}
 	}
 	return nil

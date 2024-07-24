@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -64,7 +65,7 @@ func (uhq *UserHistoryQuery) Order(o ...userhistory.OrderOption) *UserHistoryQue
 // First returns the first UserHistory entity from the query.
 // Returns a *NotFoundError when no UserHistory was found.
 func (uhq *UserHistoryQuery) First(ctx context.Context) (*UserHistory, error) {
-	nodes, err := uhq.Limit(1).All(setContextOp(ctx, uhq.ctx, "First"))
+	nodes, err := uhq.Limit(1).All(setContextOp(ctx, uhq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (uhq *UserHistoryQuery) FirstX(ctx context.Context) *UserHistory {
 // Returns a *NotFoundError when no UserHistory ID was found.
 func (uhq *UserHistoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = uhq.Limit(1).IDs(setContextOp(ctx, uhq.ctx, "FirstID")); err != nil {
+	if ids, err = uhq.Limit(1).IDs(setContextOp(ctx, uhq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -110,7 +111,7 @@ func (uhq *UserHistoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one UserHistory entity is found.
 // Returns a *NotFoundError when no UserHistory entities are found.
 func (uhq *UserHistoryQuery) Only(ctx context.Context) (*UserHistory, error) {
-	nodes, err := uhq.Limit(2).All(setContextOp(ctx, uhq.ctx, "Only"))
+	nodes, err := uhq.Limit(2).All(setContextOp(ctx, uhq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +139,7 @@ func (uhq *UserHistoryQuery) OnlyX(ctx context.Context) *UserHistory {
 // Returns a *NotFoundError when no entities are found.
 func (uhq *UserHistoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = uhq.Limit(2).IDs(setContextOp(ctx, uhq.ctx, "OnlyID")); err != nil {
+	if ids, err = uhq.Limit(2).IDs(setContextOp(ctx, uhq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -163,7 +164,7 @@ func (uhq *UserHistoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of UserHistories.
 func (uhq *UserHistoryQuery) All(ctx context.Context) ([]*UserHistory, error) {
-	ctx = setContextOp(ctx, uhq.ctx, "All")
+	ctx = setContextOp(ctx, uhq.ctx, ent.OpQueryAll)
 	if err := uhq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (uhq *UserHistoryQuery) IDs(ctx context.Context) (ids []string, err error) 
 	if uhq.ctx.Unique == nil && uhq.path != nil {
 		uhq.Unique(true)
 	}
-	ctx = setContextOp(ctx, uhq.ctx, "IDs")
+	ctx = setContextOp(ctx, uhq.ctx, ent.OpQueryIDs)
 	if err = uhq.Select(userhistory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -203,7 +204,7 @@ func (uhq *UserHistoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (uhq *UserHistoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, uhq.ctx, "Count")
+	ctx = setContextOp(ctx, uhq.ctx, ent.OpQueryCount)
 	if err := uhq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -221,7 +222,7 @@ func (uhq *UserHistoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (uhq *UserHistoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, uhq.ctx, "Exist")
+	ctx = setContextOp(ctx, uhq.ctx, ent.OpQueryExist)
 	switch _, err := uhq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -471,7 +472,7 @@ func (uhgb *UserHistoryGroupBy) Aggregate(fns ...AggregateFunc) *UserHistoryGrou
 
 // Scan applies the selector query and scans the result into the given value.
 func (uhgb *UserHistoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, uhgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, uhgb.build.ctx, ent.OpQueryGroupBy)
 	if err := uhgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +520,7 @@ func (uhs *UserHistorySelect) Aggregate(fns ...AggregateFunc) *UserHistorySelect
 
 // Scan applies the selector query and scans the result into the given value.
 func (uhs *UserHistorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, uhs.ctx, "Select")
+	ctx = setContextOp(ctx, uhs.ctx, ent.OpQuerySelect)
 	if err := uhs.prepareQuery(ctx); err != nil {
 		return err
 	}

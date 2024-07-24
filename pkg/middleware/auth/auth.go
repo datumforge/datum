@@ -104,11 +104,15 @@ func Authenticate(conf *AuthOptions) echo.MiddlewareFunc {
 func updateLastUsed(ctx context.Context, dbClient *generated.Client, au *auth.AuthenticatedUser, tokenID string) error {
 	switch au.AuthenticationType {
 	case auth.PATAuthentication:
-		if err := dbClient.PersonalAccessToken.UpdateOneID(tokenID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
+		// allow the request, we know the user has access to the token, no need to check
+		allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+		if err := dbClient.PersonalAccessToken.UpdateOneID(tokenID).SetLastUsedAt(time.Now()).Exec(allowCtx); err != nil {
 			return err
 		}
 	case auth.APITokenAuthentication:
-		if err := dbClient.APIToken.UpdateOneID(tokenID).SetLastUsedAt(time.Now()).Exec(ctx); err != nil {
+		// allow the request, we know the user has access to the token, no need to check
+		allowCtx := privacy.DecisionContext(ctx, privacy.Allow)
+		if err := dbClient.APIToken.UpdateOneID(tokenID).SetLastUsedAt(time.Now()).Exec(allowCtx); err != nil {
 			return err
 		}
 	}

@@ -71,8 +71,8 @@ func testEchoServer(t *testing.T, c *generated.Client, includeMiddleware bool) *
 	e := echo.New()
 
 	if includeMiddleware {
-		e.Use(auth.Authenticate(createAuthConfig(c)))
 		e.Use(echocontext.EchoContextToContextMiddleware())
+		e.Use(auth.Authenticate(createAuthConfig(c)))
 	}
 
 	e.POST("/query", func(c echo.Context) error {

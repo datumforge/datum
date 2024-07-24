@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -399,7 +400,7 @@ func (suite *GraphTestSuite) TestLastUsedAPIToken() {
 	require.NoError(t, err)
 
 	// get the token to make sure the last used is updated using the token
-	out, err := graphClient.GetAPITokenByID(reqCtx, token.ID)
+	out, err := graphClient.GetAPITokenByID(context.Background(), token.ID)
 	require.NoError(t, err)
 	assert.NotEmpty(t, out.APIToken.LastUsedAt)
 }

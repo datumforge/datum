@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -435,7 +436,7 @@ func (suite *GraphTestSuite) TestLastUsedPersonalAccessToken() {
 	require.NoError(t, err)
 
 	// get the token to make sure the last used is updated using the token
-	out, err := graphClient.GetPersonalAccessTokenByID(reqCtx, token.ID)
+	out, err := graphClient.GetPersonalAccessTokenByID(context.Background(), token.ID)
 	require.NoError(t, err)
 	assert.NotEmpty(t, out.PersonalAccessToken.LastUsedAt)
 }

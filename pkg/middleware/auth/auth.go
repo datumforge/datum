@@ -101,6 +101,7 @@ func Authenticate(conf *AuthOptions) echo.MiddlewareFunc {
 	}
 }
 
+// updateLastUsed updates the last used time for the token depending on the authentication type
 func updateLastUsed(ctx context.Context, dbClient *generated.Client, au *auth.AuthenticatedUser, tokenID string) error {
 	switch au.AuthenticationType {
 	case auth.PATAuthentication:

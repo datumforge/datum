@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/datumforge/datum/pkg/testutils"
 )
 
 func (suite *GraphTestSuite) TestQueryApiToken() {
@@ -367,4 +370,37 @@ func (suite *GraphTestSuite) TestMutationDeleteAPIToken() {
 			require.Equal(t, tc.tokenID, resp.DeleteAPIToken.DeletedID)
 		})
 	}
+}
+
+func (suite *GraphTestSuite) TestLastUsedAPIToken() {
+	t := suite.T()
+
+	defer mock_fga.ClearMocks(suite.client.fga)
+
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
+
+	// create new API token
+	token := (&APITokenBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	mock_fga.CheckAny(t, suite.client.fga, true)
+
+	// check that the last used is empty
+	res, err := suite.client.datum.GetAPITokenByID(reqCtx, token.ID)
+	require.NoError(t, err)
+	assert.Empty(t, res.APIToken.LastUsedAt)
+
+	// setup graph client using the API token
+	authHeader := datumclient.Authorization{
+		BearerToken: token.Token,
+	}
+
+	graphClient, err := testutils.DatumTestClientWithAuth(t, suite.client.db, datumclient.WithCredentials(authHeader))
+	require.NoError(t, err)
+
+	// get the token to make sure the last used is updated using the token
+	out, err := graphClient.GetAPITokenByID(context.Background(), token.ID)
+	require.NoError(t, err)
+	assert.NotEmpty(t, out.APIToken.LastUsedAt)
 }

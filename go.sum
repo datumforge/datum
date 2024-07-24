@@ -1,5 +1,5 @@
-ariga.io/atlas v0.23.0 h1:PMjXE1TlEeq/8fwQb6BtZavNyismyYwcDfr+J/RZUU4=
-ariga.io/atlas v0.23.0/go.mod h1:p+GCPB9BoGlOD04YMYUWXNpcuooJ4eJpRbPUd9/BOic=
+ariga.io/atlas v0.25.1-0.20240717145915-af51d3945208 h1:ixs1c/fAXGS3mTdalyKQrtvfkFjgChih/unX66YTzYk=
+ariga.io/atlas v0.25.1-0.20240717145915-af51d3945208/go.mod h1:KPLc7Zj+nzoXfWshrcY1RwlOh94dsATQEy4UPrF2RkM=
 ariga.io/entcache v0.1.0 h1:nfJXzjB5CEvAK6SmjupHREMJrKLakeqU5tG3s4TO6JA=
 ariga.io/entcache v0.1.0/go.mod h1:3Z1Sql5bcqPA1YV/jvMlZyh9T+ntSFOclaASAm1TiKQ=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
@@ -19,10 +19,10 @@ cloud.google.com/go/longrunning v0.5.9 h1:haH9pAuXdPAMqHvzX0zlWQigXT7B0+CL4/2nXX
 cloud.google.com/go/longrunning v0.5.9/go.mod h1:HD+0l9/OOW0za6UWdKJtXoFAX/BGg/3Wj8p10NeWF7c=
 cloud.google.com/go/storage v1.43.0 h1:CcxnSohZwizt4LCzQHWvBf1/kvtHUn7gk9QERXPyXFs=
 cloud.google.com/go/storage v1.43.0/go.mod h1:ajvxEa7WmZS1PxvKRq4bq0tFT3vMd502JwstCcYv0Q0=
-entgo.io/contrib v0.5.0 h1:M4IqodImfUm327RDwNAITLNz3PsxVeC3rD4DPeVA8Gs=
-entgo.io/contrib v0.5.0/go.mod h1:q8dXQCmzqpSlVdT2bWDydjgznGcy3y4zmsYmVFC9V/U=
-entgo.io/ent v0.13.1 h1:uD8QwN1h6SNphdCCzmkMN3feSUzNnVvV/WIkHKMbzOE=
-entgo.io/ent v0.13.1/go.mod h1:qCEmo+biw3ccBn9OyL4ZK5dfpwg++l1Gxwac5B1206A=
+entgo.io/contrib v0.6.0 h1:xfo4TbJE7sJZWx7BV7YrpSz7IPFvS8MzL3fnfzZjKvQ=
+entgo.io/contrib v0.6.0/go.mod h1:3qWIseJ/9Wx2Hu5zVh15FDzv7d/UvKNcYKdViywWCQg=
+entgo.io/ent v0.13.2-0.20240717044502-34158f2c129b h1:kC+uzL8UFWwtXQ+yY0wUdvVUgPlJPGU3Fx1uttM8PJA=
+entgo.io/ent v0.13.2-0.20240717044502-34158f2c129b/go.mod h1:qCEmo+biw3ccBn9OyL4ZK5dfpwg++l1Gxwac5B1206A=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4/go.mod h1:hN7oaIRCjzsZ2dE+yG5k+rsdt3qcwykqK6HVGcKwsw4=
 github.com/99designs/gqlgen v0.17.49 h1:b3hNGexHd33fBSAd4NDT/c3NCcQzcAVkknhN9ym36YQ=

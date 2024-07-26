@@ -160,8 +160,8 @@ github.com/datumforge/enthistory v0.0.9 h1:jA1zvzoqTXfBtPhuWrZhqoeCUB6gGMpBXSA1M
 github.com/datumforge/enthistory v0.0.9/go.mod h1:QVPj2xf/7bSWf8iXsyHKR5j8r+CKYGSbHYeS6lwg28U=
 github.com/datumforge/entx v0.3.1 h1:dR91+zl5TKnT42qKt9jgLZOI7cdmo1J19yDFxR8kDGo=
 github.com/datumforge/entx v0.3.1/go.mod h1:IwllghPmZhlmLy7fCHF/Noeqa3vcrV3oAXxbQOYuT/4=
-github.com/datumforge/fgax v0.4.0 h1:oNKX0piVauxM2+L8wyK23lXixsNIk/hkVbXbv9VrJu0=
-github.com/datumforge/fgax v0.4.0/go.mod h1:RisjhBCffhsB6VAJ1wPGSKmiyR2X9sG99dzy3ViDScA=
+github.com/datumforge/fgax v0.5.0 h1:Osxv/V/xEm26weJLhUCf42c53aCCH4bIHsMFx+GMTYQ=
+github.com/datumforge/fgax v0.5.0/go.mod h1:4QPU5TZ1CEjN7Grbbob6kWq7VEwKAECJF/FSlRUlOt4=
 github.com/datumforge/geodetic v0.0.3 h1:nyUJhUh3+jeezlUoPvUEUQFQI8n5vlb1FuKOhTI3tow=
 github.com/datumforge/geodetic v0.0.3/go.mod h1:LgA3ei9aTK5VBrj/UMWkJGKwpsgg8NYEhzMAXxm9oe4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

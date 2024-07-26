@@ -16,7 +16,7 @@ require (
 	github.com/bytedance/sonic v1.11.9
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20240521143548-d561656e6328
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
-	github.com/datumforge/enthistory v0.0.9
+	github.com/datumforge/enthistory v0.1.0
 	github.com/datumforge/fgax v0.4.0
 	github.com/datumforge/geodetic v0.0.3
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
@@ -266,7 +266,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.20.1 // indirect
+	github.com/hashicorp/hcl/v2 v2.21.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/invopop/jsonschema v0.12.0
 	github.com/johnfercher/maroto v1.0.0

@@ -73,7 +73,10 @@ We also leverage many secondary technologies in use, including (but not limited 
 
 1. [taskfile](https://taskfile.dev/usage/) - So much better than Make zomg
 1. [redis](https://redis.io/) - in-memory datastore used for sessions, caching
-1. [sqlite](https://www.sqlite.org/) - currently planned database system but also offer additional support for PostgreSQL
+1. databases:
+    * [postgres](https://www.postgresql.org/)
+    * [libsql](https://turso.tech/libsql)
+    * [sqlite](https://www.sqlite.org/)
 1. [golangci-lint](https://github.com/golangci/golangci-lint) - an annoyingly opinionated linter
 1. [buildkite](https://buildkite.com/datum) - our CI system of choice (with github actions providing some intermediary support)
 1. [sonar](https://sonarcloud.io/summary/overall?id=datumforge_datum) - used for code scanning, vulnerability scanning

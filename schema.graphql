@@ -1562,7 +1562,7 @@ input CreateOrganizationInput {
 	"""
 	the name of the organization
 	"""
-	name: String!
+	name: String
 	"""
 	The organization's displayed 'friendly' name
 	"""
@@ -13309,11 +13309,11 @@ type Organization implements Node {
 	"""
 	the name of the organization
 	"""
-	name: String!
+	name: String
 	"""
 	The organization's displayed 'friendly' name
 	"""
-	displayName: String!
+	displayName: String
 	"""
 	An optional description of the organization
 	"""
@@ -13462,11 +13462,11 @@ type OrganizationHistory implements Node {
 	"""
 	the name of the organization
 	"""
-	name: String!
+	name: String
 	"""
 	The organization's displayed 'friendly' name
 	"""
-	displayName: String!
+	displayName: String
 	"""
 	An optional description of the organization
 	"""
@@ -13706,6 +13706,8 @@ input OrganizationHistoryWhereInput {
 	displayNameContains: String
 	displayNameHasPrefix: String
 	displayNameHasSuffix: String
+	displayNameIsNil: Boolean
+	displayNameNotNil: Boolean
 	displayNameEqualFold: String
 	displayNameContainsFold: String
 	"""
@@ -14631,6 +14633,8 @@ input OrganizationWhereInput {
 	displayNameContains: String
 	displayNameHasPrefix: String
 	displayNameHasSuffix: String
+	displayNameIsNil: Boolean
+	displayNameNotNil: Boolean
 	displayNameEqualFold: String
 	displayNameContainsFold: String
 	"""
@@ -18665,10 +18669,12 @@ input UpdateOrganizationInput {
 	the name of the organization
 	"""
 	name: String
+	clearName: Boolean
 	"""
 	The organization's displayed 'friendly' name
 	"""
 	displayName: String
+	clearDisplayName: Boolean
 	"""
 	An optional description of the organization
 	"""

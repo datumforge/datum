@@ -28547,6 +28547,8 @@ type OrganizationWhereInput struct {
 	DisplayNameContains     *string  `json:"displayNameContains,omitempty"`
 	DisplayNameHasPrefix    *string  `json:"displayNameHasPrefix,omitempty"`
 	DisplayNameHasSuffix    *string  `json:"displayNameHasSuffix,omitempty"`
+	DisplayNameIsNil        bool     `json:"displayNameIsNil,omitempty"`
+	DisplayNameNotNil       bool     `json:"displayNameNotNil,omitempty"`
 	DisplayNameEqualFold    *string  `json:"displayNameEqualFold,omitempty"`
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
 
@@ -29053,6 +29055,12 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	}
 	if i.DisplayNameHasSuffix != nil {
 		predicates = append(predicates, organization.DisplayNameHasSuffix(*i.DisplayNameHasSuffix))
+	}
+	if i.DisplayNameIsNil {
+		predicates = append(predicates, organization.DisplayNameIsNil())
+	}
+	if i.DisplayNameNotNil {
+		predicates = append(predicates, organization.DisplayNameNotNil())
 	}
 	if i.DisplayNameEqualFold != nil {
 		predicates = append(predicates, organization.DisplayNameEqualFold(*i.DisplayNameEqualFold))
@@ -29792,6 +29800,8 @@ type OrganizationHistoryWhereInput struct {
 	DisplayNameContains     *string  `json:"displayNameContains,omitempty"`
 	DisplayNameHasPrefix    *string  `json:"displayNameHasPrefix,omitempty"`
 	DisplayNameHasSuffix    *string  `json:"displayNameHasSuffix,omitempty"`
+	DisplayNameIsNil        bool     `json:"displayNameIsNil,omitempty"`
+	DisplayNameNotNil       bool     `json:"displayNameNotNil,omitempty"`
 	DisplayNameEqualFold    *string  `json:"displayNameEqualFold,omitempty"`
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
 
@@ -30275,6 +30285,12 @@ func (i *OrganizationHistoryWhereInput) P() (predicate.OrganizationHistory, erro
 	}
 	if i.DisplayNameHasSuffix != nil {
 		predicates = append(predicates, organizationhistory.DisplayNameHasSuffix(*i.DisplayNameHasSuffix))
+	}
+	if i.DisplayNameIsNil {
+		predicates = append(predicates, organizationhistory.DisplayNameIsNil())
+	}
+	if i.DisplayNameNotNil {
+		predicates = append(predicates, organizationhistory.DisplayNameNotNil())
 	}
 	if i.DisplayNameEqualFold != nil {
 		predicates = append(predicates, organizationhistory.DisplayNameEqualFold(*i.DisplayNameEqualFold))

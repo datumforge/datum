@@ -153,6 +153,14 @@ func (oc *OrganizationCreate) SetName(s string) *OrganizationCreate {
 	return oc
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableName(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetName(*s)
+	}
+	return oc
+}
+
 // SetDisplayName sets the "display_name" field.
 func (oc *OrganizationCreate) SetDisplayName(s string) *OrganizationCreate {
 	oc.mutation.SetDisplayName(s)
@@ -711,10 +719,6 @@ func (oc *OrganizationCreate) defaults() error {
 		v := organization.DefaultTags
 		oc.mutation.SetTags(v)
 	}
-	if _, ok := oc.mutation.DisplayName(); !ok {
-		v := organization.DefaultDisplayName
-		oc.mutation.SetDisplayName(v)
-	}
 	if _, ok := oc.mutation.PersonalOrg(); !ok {
 		v := organization.DefaultPersonalOrg
 		oc.mutation.SetPersonalOrg(v)
@@ -738,16 +742,10 @@ func (oc *OrganizationCreate) check() error {
 	if _, ok := oc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "Organization.mapping_id"`)}
 	}
-	if _, ok := oc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Organization.name"`)}
-	}
 	if v, ok := oc.mutation.Name(); ok {
 		if err := organization.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Organization.name": %w`, err)}
 		}
-	}
-	if _, ok := oc.mutation.DisplayName(); !ok {
-		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "Organization.display_name"`)}
 	}
 	if v, ok := oc.mutation.DisplayName(); ok {
 		if err := organization.DisplayNameValidator(v); err != nil {

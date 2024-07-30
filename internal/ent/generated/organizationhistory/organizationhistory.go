@@ -100,8 +100,6 @@ var (
 	DefaultMappingID func() string
 	// DefaultTags holds the default value on creation for the "tags" field.
 	DefaultTags []string
-	// DefaultDisplayName holds the default value on creation for the "display_name" field.
-	DefaultDisplayName string
 	// DefaultPersonalOrg holds the default value on creation for the "personal_org" field.
 	DefaultPersonalOrg bool
 	// DefaultDedicatedDb holds the default value on creation for the "dedicated_db" field.

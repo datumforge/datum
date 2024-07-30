@@ -33,8 +33,11 @@ func init() {
 
 // createValidation validates the required fields for the command
 func createValidation() (input datumclient.CreateOrganizationInput, err error) {
-	input.Name = datum.Config.String("name")
-	if input.Name == "" {
+	name := datum.Config.String("name")
+	if name != "" {
+		input.Name = &name
+	}
+	if input.Name == nil {
 		return input, datum.NewRequiredFieldMissingError("organization name")
 	}
 

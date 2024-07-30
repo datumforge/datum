@@ -143,6 +143,12 @@ func (ohu *OrganizationHistoryUpdate) SetNillableName(s *string) *OrganizationHi
 	return ohu
 }
 
+// ClearName clears the value of the "name" field.
+func (ohu *OrganizationHistoryUpdate) ClearName() *OrganizationHistoryUpdate {
+	ohu.mutation.ClearName()
+	return ohu
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ohu *OrganizationHistoryUpdate) SetDisplayName(s string) *OrganizationHistoryUpdate {
 	ohu.mutation.SetDisplayName(s)
@@ -154,6 +160,12 @@ func (ohu *OrganizationHistoryUpdate) SetNillableDisplayName(s *string) *Organiz
 	if s != nil {
 		ohu.SetDisplayName(*s)
 	}
+	return ohu
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (ohu *OrganizationHistoryUpdate) ClearDisplayName() *OrganizationHistoryUpdate {
+	ohu.mutation.ClearDisplayName()
 	return ohu
 }
 
@@ -299,8 +311,14 @@ func (ohu *OrganizationHistoryUpdate) sqlSave(ctx context.Context) (n int, err e
 	if value, ok := ohu.mutation.Name(); ok {
 		_spec.SetField(organizationhistory.FieldName, field.TypeString, value)
 	}
+	if ohu.mutation.NameCleared() {
+		_spec.ClearField(organizationhistory.FieldName, field.TypeString)
+	}
 	if value, ok := ohu.mutation.DisplayName(); ok {
 		_spec.SetField(organizationhistory.FieldDisplayName, field.TypeString, value)
+	}
+	if ohu.mutation.DisplayNameCleared() {
+		_spec.ClearField(organizationhistory.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := ohu.mutation.Description(); ok {
 		_spec.SetField(organizationhistory.FieldDescription, field.TypeString, value)
@@ -457,6 +475,12 @@ func (ohuo *OrganizationHistoryUpdateOne) SetNillableName(s *string) *Organizati
 	return ohuo
 }
 
+// ClearName clears the value of the "name" field.
+func (ohuo *OrganizationHistoryUpdateOne) ClearName() *OrganizationHistoryUpdateOne {
+	ohuo.mutation.ClearName()
+	return ohuo
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ohuo *OrganizationHistoryUpdateOne) SetDisplayName(s string) *OrganizationHistoryUpdateOne {
 	ohuo.mutation.SetDisplayName(s)
@@ -468,6 +492,12 @@ func (ohuo *OrganizationHistoryUpdateOne) SetNillableDisplayName(s *string) *Org
 	if s != nil {
 		ohuo.SetDisplayName(*s)
 	}
+	return ohuo
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (ohuo *OrganizationHistoryUpdateOne) ClearDisplayName() *OrganizationHistoryUpdateOne {
+	ohuo.mutation.ClearDisplayName()
 	return ohuo
 }
 
@@ -643,8 +673,14 @@ func (ohuo *OrganizationHistoryUpdateOne) sqlSave(ctx context.Context) (_node *O
 	if value, ok := ohuo.mutation.Name(); ok {
 		_spec.SetField(organizationhistory.FieldName, field.TypeString, value)
 	}
+	if ohuo.mutation.NameCleared() {
+		_spec.ClearField(organizationhistory.FieldName, field.TypeString)
+	}
 	if value, ok := ohuo.mutation.DisplayName(); ok {
 		_spec.SetField(organizationhistory.FieldDisplayName, field.TypeString, value)
+	}
+	if ohuo.mutation.DisplayNameCleared() {
+		_spec.ClearField(organizationhistory.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := ohuo.mutation.Description(); ok {
 		_spec.SetField(organizationhistory.FieldDescription, field.TypeString, value)

@@ -336,8 +336,6 @@ var (
 	DefaultTags []string
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
-	// DefaultDisplayName holds the default value on creation for the "display_name" field.
-	DefaultDisplayName string
 	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	DisplayNameValidator func(string) error
 	// DefaultPersonalOrg holds the default value on creation for the "personal_org" field.

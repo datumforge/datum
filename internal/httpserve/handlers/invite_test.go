@@ -47,8 +47,9 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 	reqCtx, err := userContextWithID(requestor.ID)
 	require.NoError(t, err)
 
+	name := "avengers"
 	input := datumclient.CreateOrganizationInput{
-		Name: "avengers",
+		Name: &name,
 	}
 
 	org, err := suite.datum.CreateOrganization(reqCtx, input)

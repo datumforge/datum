@@ -158,6 +158,12 @@ func (ou *OrganizationUpdate) SetNillableName(s *string) *OrganizationUpdate {
 	return ou
 }
 
+// ClearName clears the value of the "name" field.
+func (ou *OrganizationUpdate) ClearName() *OrganizationUpdate {
+	ou.mutation.ClearName()
+	return ou
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ou *OrganizationUpdate) SetDisplayName(s string) *OrganizationUpdate {
 	ou.mutation.SetDisplayName(s)
@@ -169,6 +175,12 @@ func (ou *OrganizationUpdate) SetNillableDisplayName(s *string) *OrganizationUpd
 	if s != nil {
 		ou.SetDisplayName(*s)
 	}
+	return ou
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (ou *OrganizationUpdate) ClearDisplayName() *OrganizationUpdate {
+	ou.mutation.ClearDisplayName()
 	return ou
 }
 
@@ -1238,8 +1250,14 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ou.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
 	}
+	if ou.mutation.NameCleared() {
+		_spec.ClearField(organization.FieldName, field.TypeString)
+	}
 	if value, ok := ou.mutation.DisplayName(); ok {
 		_spec.SetField(organization.FieldDisplayName, field.TypeString, value)
+	}
+	if ou.mutation.DisplayNameCleared() {
+		_spec.ClearField(organization.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := ou.mutation.Description(); ok {
 		_spec.SetField(organization.FieldDescription, field.TypeString, value)
@@ -2589,6 +2607,12 @@ func (ouo *OrganizationUpdateOne) SetNillableName(s *string) *OrganizationUpdate
 	return ouo
 }
 
+// ClearName clears the value of the "name" field.
+func (ouo *OrganizationUpdateOne) ClearName() *OrganizationUpdateOne {
+	ouo.mutation.ClearName()
+	return ouo
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ouo *OrganizationUpdateOne) SetDisplayName(s string) *OrganizationUpdateOne {
 	ouo.mutation.SetDisplayName(s)
@@ -2600,6 +2624,12 @@ func (ouo *OrganizationUpdateOne) SetNillableDisplayName(s *string) *Organizatio
 	if s != nil {
 		ouo.SetDisplayName(*s)
 	}
+	return ouo
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (ouo *OrganizationUpdateOne) ClearDisplayName() *OrganizationUpdateOne {
+	ouo.mutation.ClearDisplayName()
 	return ouo
 }
 
@@ -3699,8 +3729,14 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	if value, ok := ouo.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
 	}
+	if ouo.mutation.NameCleared() {
+		_spec.ClearField(organization.FieldName, field.TypeString)
+	}
 	if value, ok := ouo.mutation.DisplayName(); ok {
 		_spec.SetField(organization.FieldDisplayName, field.TypeString, value)
+	}
+	if ouo.mutation.DisplayNameCleared() {
+		_spec.ClearField(organization.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := ouo.mutation.Description(); ok {
 		_spec.SetField(organization.FieldDescription, field.TypeString, value)

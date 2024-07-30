@@ -642,6 +642,16 @@ func NameHasSuffix(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldHasSuffix(FieldName, v))
 }
 
+// NameIsNil applies the IsNil predicate on the "name" field.
+func NameIsNil() predicate.Organization {
+	return predicate.Organization(sql.FieldIsNull(FieldName))
+}
+
+// NameNotNil applies the NotNil predicate on the "name" field.
+func NameNotNil() predicate.Organization {
+	return predicate.Organization(sql.FieldNotNull(FieldName))
+}
+
 // NameEqualFold applies the EqualFold predicate on the "name" field.
 func NameEqualFold(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEqualFold(FieldName, v))
@@ -705,6 +715,16 @@ func DisplayNameHasPrefix(v string) predicate.Organization {
 // DisplayNameHasSuffix applies the HasSuffix predicate on the "display_name" field.
 func DisplayNameHasSuffix(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldHasSuffix(FieldDisplayName, v))
+}
+
+// DisplayNameIsNil applies the IsNil predicate on the "display_name" field.
+func DisplayNameIsNil() predicate.Organization {
+	return predicate.Organization(sql.FieldIsNull(FieldDisplayName))
+}
+
+// DisplayNameNotNil applies the NotNil predicate on the "display_name" field.
+func DisplayNameNotNil() predicate.Organization {
+	return predicate.Organization(sql.FieldNotNull(FieldDisplayName))
 }
 
 // DisplayNameEqualFold applies the EqualFold predicate on the "display_name" field.

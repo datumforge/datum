@@ -165,6 +165,14 @@ func (ohc *OrganizationHistoryCreate) SetName(s string) *OrganizationHistoryCrea
 	return ohc
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (ohc *OrganizationHistoryCreate) SetNillableName(s *string) *OrganizationHistoryCreate {
+	if s != nil {
+		ohc.SetName(*s)
+	}
+	return ohc
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ohc *OrganizationHistoryCreate) SetDisplayName(s string) *OrganizationHistoryCreate {
 	ohc.mutation.SetDisplayName(s)
@@ -318,10 +326,6 @@ func (ohc *OrganizationHistoryCreate) defaults() {
 		v := organizationhistory.DefaultTags
 		ohc.mutation.SetTags(v)
 	}
-	if _, ok := ohc.mutation.DisplayName(); !ok {
-		v := organizationhistory.DefaultDisplayName
-		ohc.mutation.SetDisplayName(v)
-	}
 	if _, ok := ohc.mutation.PersonalOrg(); !ok {
 		v := organizationhistory.DefaultPersonalOrg
 		ohc.mutation.SetPersonalOrg(v)
@@ -351,12 +355,6 @@ func (ohc *OrganizationHistoryCreate) check() error {
 	}
 	if _, ok := ohc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "OrganizationHistory.mapping_id"`)}
-	}
-	if _, ok := ohc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "OrganizationHistory.name"`)}
-	}
-	if _, ok := ohc.mutation.DisplayName(); !ok {
-		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "OrganizationHistory.display_name"`)}
 	}
 	if _, ok := ohc.mutation.DedicatedDb(); !ok {
 		return &ValidationError{Name: "dedicated_db", err: errors.New(`generated: missing required field "OrganizationHistory.dedicated_db"`)}

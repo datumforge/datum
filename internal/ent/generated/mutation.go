@@ -54330,9 +54330,22 @@ func (m *OrganizationMutation) OldName(ctx context.Context) (v string, err error
 	return oldValue.Name, nil
 }
 
+// ClearName clears the value of the "name" field.
+func (m *OrganizationMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[organization.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *OrganizationMutation) NameCleared() bool {
+	_, ok := m.clearedFields[organization.FieldName]
+	return ok
+}
+
 // ResetName resets all changes to the "name" field.
 func (m *OrganizationMutation) ResetName() {
 	m.name = nil
+	delete(m.clearedFields, organization.FieldName)
 }
 
 // SetDisplayName sets the "display_name" field.
@@ -54366,9 +54379,22 @@ func (m *OrganizationMutation) OldDisplayName(ctx context.Context) (v string, er
 	return oldValue.DisplayName, nil
 }
 
+// ClearDisplayName clears the value of the "display_name" field.
+func (m *OrganizationMutation) ClearDisplayName() {
+	m.display_name = nil
+	m.clearedFields[organization.FieldDisplayName] = struct{}{}
+}
+
+// DisplayNameCleared returns if the "display_name" field was cleared in this mutation.
+func (m *OrganizationMutation) DisplayNameCleared() bool {
+	_, ok := m.clearedFields[organization.FieldDisplayName]
+	return ok
+}
+
 // ResetDisplayName resets all changes to the "display_name" field.
 func (m *OrganizationMutation) ResetDisplayName() {
 	m.display_name = nil
+	delete(m.clearedFields, organization.FieldDisplayName)
 }
 
 // SetDescription sets the "description" field.
@@ -56300,6 +56326,12 @@ func (m *OrganizationMutation) ClearedFields() []string {
 	if m.FieldCleared(organization.FieldDeletedBy) {
 		fields = append(fields, organization.FieldDeletedBy)
 	}
+	if m.FieldCleared(organization.FieldName) {
+		fields = append(fields, organization.FieldName)
+	}
+	if m.FieldCleared(organization.FieldDisplayName) {
+		fields = append(fields, organization.FieldDisplayName)
+	}
 	if m.FieldCleared(organization.FieldDescription) {
 		fields = append(fields, organization.FieldDescription)
 	}
@@ -56346,6 +56378,12 @@ func (m *OrganizationMutation) ClearField(name string) error {
 		return nil
 	case organization.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case organization.FieldName:
+		m.ClearName()
+		return nil
+	case organization.FieldDisplayName:
+		m.ClearDisplayName()
 		return nil
 	case organization.FieldDescription:
 		m.ClearDescription()
@@ -57816,9 +57854,22 @@ func (m *OrganizationHistoryMutation) OldName(ctx context.Context) (v string, er
 	return oldValue.Name, nil
 }
 
+// ClearName clears the value of the "name" field.
+func (m *OrganizationHistoryMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[organizationhistory.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *OrganizationHistoryMutation) NameCleared() bool {
+	_, ok := m.clearedFields[organizationhistory.FieldName]
+	return ok
+}
+
 // ResetName resets all changes to the "name" field.
 func (m *OrganizationHistoryMutation) ResetName() {
 	m.name = nil
+	delete(m.clearedFields, organizationhistory.FieldName)
 }
 
 // SetDisplayName sets the "display_name" field.
@@ -57852,9 +57903,22 @@ func (m *OrganizationHistoryMutation) OldDisplayName(ctx context.Context) (v str
 	return oldValue.DisplayName, nil
 }
 
+// ClearDisplayName clears the value of the "display_name" field.
+func (m *OrganizationHistoryMutation) ClearDisplayName() {
+	m.display_name = nil
+	m.clearedFields[organizationhistory.FieldDisplayName] = struct{}{}
+}
+
+// DisplayNameCleared returns if the "display_name" field was cleared in this mutation.
+func (m *OrganizationHistoryMutation) DisplayNameCleared() bool {
+	_, ok := m.clearedFields[organizationhistory.FieldDisplayName]
+	return ok
+}
+
 // ResetDisplayName resets all changes to the "display_name" field.
 func (m *OrganizationHistoryMutation) ResetDisplayName() {
 	m.display_name = nil
+	delete(m.clearedFields, organizationhistory.FieldDisplayName)
 }
 
 // SetDescription sets the "description" field.
@@ -58456,6 +58520,12 @@ func (m *OrganizationHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(organizationhistory.FieldDeletedBy) {
 		fields = append(fields, organizationhistory.FieldDeletedBy)
 	}
+	if m.FieldCleared(organizationhistory.FieldName) {
+		fields = append(fields, organizationhistory.FieldName)
+	}
+	if m.FieldCleared(organizationhistory.FieldDisplayName) {
+		fields = append(fields, organizationhistory.FieldDisplayName)
+	}
 	if m.FieldCleared(organizationhistory.FieldDescription) {
 		fields = append(fields, organizationhistory.FieldDescription)
 	}
@@ -58505,6 +58575,12 @@ func (m *OrganizationHistoryMutation) ClearField(name string) error {
 		return nil
 	case organizationhistory.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case organizationhistory.FieldName:
+		m.ClearName()
+		return nil
+	case organizationhistory.FieldDisplayName:
+		m.ClearDisplayName()
 		return nil
 	case organizationhistory.FieldDescription:
 		m.ClearDescription()

@@ -2638,7 +2638,7 @@ func (c *OrgMembershipUpdateOne) SetInput(i UpdateOrgMembershipInput) *OrgMember
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
 	Tags                       []string
-	Name                       string
+	Name                       *string
 	DisplayName                *string
 	Description                *string
 	PersonalOrg                *bool
@@ -2674,7 +2674,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
-	m.SetName(i.Name)
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
 	}
@@ -2772,7 +2774,9 @@ type UpdateOrganizationInput struct {
 	ClearTags                        bool
 	Tags                             []string
 	AppendTags                       []string
+	ClearName                        bool
 	Name                             *string
+	ClearDisplayName                 bool
 	DisplayName                      *string
 	ClearDescription                 bool
 	Description                      *string
@@ -2856,8 +2860,14 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
+	if i.ClearName {
+		m.ClearName()
+	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
+	}
+	if i.ClearDisplayName {
+		m.ClearDisplayName()
 	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)

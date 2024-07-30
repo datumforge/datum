@@ -1185,7 +1185,7 @@ type CreateOrganizationInput struct {
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
 	// the name of the organization
-	Name string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the organization
@@ -9260,9 +9260,9 @@ type Organization struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// the name of the organization
-	Name string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// The organization's displayed 'friendly' name
-	DisplayName string `json:"displayName"`
+	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
@@ -9351,9 +9351,9 @@ type OrganizationHistory struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// the name of the organization
-	Name string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// The organization's displayed 'friendly' name
-	DisplayName string `json:"displayName"`
+	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
@@ -9532,6 +9532,8 @@ type OrganizationHistoryWhereInput struct {
 	DisplayNameContains     *string  `json:"displayNameContains,omitempty"`
 	DisplayNameHasPrefix    *string  `json:"displayNameHasPrefix,omitempty"`
 	DisplayNameHasSuffix    *string  `json:"displayNameHasSuffix,omitempty"`
+	DisplayNameIsNil        *bool    `json:"displayNameIsNil,omitempty"`
+	DisplayNameNotNil       *bool    `json:"displayNameNotNil,omitempty"`
 	DisplayNameEqualFold    *string  `json:"displayNameEqualFold,omitempty"`
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
 	// parent_organization_id field predicates
@@ -10266,6 +10268,8 @@ type OrganizationWhereInput struct {
 	DisplayNameContains     *string  `json:"displayNameContains,omitempty"`
 	DisplayNameHasPrefix    *string  `json:"displayNameHasPrefix,omitempty"`
 	DisplayNameHasSuffix    *string  `json:"displayNameHasSuffix,omitempty"`
+	DisplayNameIsNil        *bool    `json:"displayNameIsNil,omitempty"`
+	DisplayNameNotNil       *bool    `json:"displayNameNotNil,omitempty"`
 	DisplayNameEqualFold    *string  `json:"displayNameEqualFold,omitempty"`
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
 	// parent_organization_id field predicates
@@ -12013,9 +12017,11 @@ type UpdateOrganizationInput struct {
 	AppendTags []string `json:"appendTags,omitempty"`
 	ClearTags  *bool    `json:"clearTags,omitempty"`
 	// the name of the organization
-	Name *string `json:"name,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	ClearName *bool   `json:"clearName,omitempty"`
 	// The organization's displayed 'friendly' name
-	DisplayName *string `json:"displayName,omitempty"`
+	DisplayName      *string `json:"displayName,omitempty"`
+	ClearDisplayName *bool   `json:"clearDisplayName,omitempty"`
 	// An optional description of the organization
 	Description      *string `json:"description,omitempty"`
 	ClearDescription *bool   `json:"clearDescription,omitempty"`

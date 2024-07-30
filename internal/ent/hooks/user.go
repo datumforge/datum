@@ -158,7 +158,7 @@ func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput
 	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(user.FirstName), caser.String(user.LastName))
 
 	return generated.CreateOrganizationInput{
-		Name:        name,
+		Name:        &name,
 		DisplayName: &displayName,
 		Description: &desc,
 		PersonalOrg: &personalOrg,

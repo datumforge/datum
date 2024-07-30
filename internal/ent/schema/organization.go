@@ -40,6 +40,7 @@ func (Organization) Fields() []ent.Field {
 		field.String("name").
 			Comment("the name of the organization").
 			MaxLen(orgNameMaxLen).
+			Optional().
 			NotEmpty().
 			Annotations(
 				entgql.OrderField("name"),
@@ -48,7 +49,8 @@ func (Organization) Fields() []ent.Field {
 		field.String("display_name").
 			Comment("The organization's displayed 'friendly' name").
 			MaxLen(nameMaxLen).
-			Default("").
+			Optional().
+			NotEmpty().
 			Annotations(
 				entgql.OrderField("display_name"),
 			),

@@ -145,14 +145,14 @@ func HookOrganizationDelete() ent.Hook {
 
 // setDefaultsOnMutations sets default values on mutations that are not provided
 func setDefaultsOnMutations(mutation *generated.OrganizationMutation) {
-	if name, ok := mutation.Name(); ok {
+	if displayName, ok := mutation.DisplayName(); ok && displayName != "" {
 		if displayName, ok := mutation.DisplayName(); ok {
 			if displayName == "" {
-				mutation.SetDisplayName(name)
+				mutation.SetDisplayName(displayName)
 			}
 		}
 
-		url := gravatar.New(name, nil)
+		url := gravatar.New(displayName, nil)
 		mutation.SetAvatarRemoteURL(url)
 	}
 }

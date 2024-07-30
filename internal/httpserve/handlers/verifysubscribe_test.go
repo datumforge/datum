@@ -51,8 +51,9 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 
 	ctx = privacy.DecisionContext(reqCtx, privacy.Allow)
 
+	name := "mitb"
 	input := datumclient.CreateOrganizationInput{
-		Name: "mitb",
+		Name: &name,
 	}
 
 	org, err := suite.datum.CreateOrganization(ctx, input)

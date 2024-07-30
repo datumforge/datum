@@ -259,7 +259,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 		},
 		{
 			name:           "duplicate organization name",
-			orgName:        parentOrg.Organization.Name,
+			orgName:        *parentOrg.Organization.Name,
 			orgDescription: gofakeit.HipsterSentence(10),
 			errorMsg:       "already exists",
 			client:         suite.client.datum,
@@ -276,7 +276,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 		{
 			name:           "duplicate display name, should be allowed",
 			orgName:        gofakeit.LetterN(80),
-			displayName:    parentOrg.Organization.DisplayName,
+			displayName:    *parentOrg.Organization.DisplayName,
 			orgDescription: gofakeit.HipsterSentence(10),
 			client:         suite.client.datum,
 			ctx:            reqCtx,
@@ -297,7 +297,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 
 			tc := tc
 			input := datumclient.CreateOrganizationInput{
-				Name:        tc.orgName,
+				Name:        &tc.orgName,
 				Description: &tc.orgDescription,
 			}
 
@@ -338,7 +338,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			require.NotNil(t, resp.CreateOrganization.Organization)
 
 			// Make sure provided values match
-			assert.Equal(t, tc.orgName, resp.CreateOrganization.Organization.Name)
+			assert.Equal(t, &tc.orgName, resp.CreateOrganization.Organization.Name)
 			assert.Equal(t, tc.orgDescription, *resp.CreateOrganization.Organization.Description)
 
 			if tc.parentOrgID == "" {
@@ -352,7 +352,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			assert.NotNil(t, resp.CreateOrganization.Organization.Setting.ID)
 
 			// Ensure display name is not empty
-			assert.NotEmpty(t, resp.CreateOrganization.Organization.DisplayName)
+			assert.NotEmpty(t, *resp.CreateOrganization.Organization.DisplayName)
 
 			if tc.settings != nil {
 				assert.Len(t, resp.CreateOrganization.Organization.Setting.Domains, 1)
@@ -408,8 +408,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
-				Name:        nameUpdate,
-				DisplayName: org.DisplayName,
+				Name:        &nameUpdate,
+				DisplayName: &org.DisplayName,
 				Description: &org.Description,
 			},
 		},
@@ -427,8 +427,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
-				Name:        nameUpdate,
-				DisplayName: org.DisplayName,
+				Name:        &nameUpdate,
+				DisplayName: &org.DisplayName,
 				Description: &org.Description,
 				Members: []*datumclient.UpdateOrganization_UpdateOrganization_Organization_Members{
 					{
@@ -447,8 +447,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
-				Name:        nameUpdate, // this would have been updated on the prior test
-				DisplayName: org.DisplayName,
+				Name:        &nameUpdate, // this would have been updated on the prior test
+				DisplayName: &org.DisplayName,
 				Description: &descriptionUpdate,
 			},
 		},
@@ -461,8 +461,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
-				Name:        nameUpdate, // this would have been updated on the prior test
-				DisplayName: displayNameUpdate,
+				Name:        &nameUpdate, // this would have been updated on the prior test
+				DisplayName: &displayNameUpdate,
 				Description: &descriptionUpdate,
 			},
 		},
@@ -478,8 +478,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 			ctx:    reqCtx,
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
-				Name:        nameUpdate,        // this would have been updated on the prior test
-				DisplayName: displayNameUpdate, // this would have been updated on the prior test
+				Name:        &nameUpdate,        // this would have been updated on the prior test
+				DisplayName: &displayNameUpdate, // this would have been updated on the prior test
 				Description: &descriptionUpdate,
 			},
 		},
@@ -749,8 +749,11 @@ func (suite *GraphTestSuite) TestMutationCreateOrganizationTransaction() {
 	require.NoError(t, err)
 
 	t.Run("Create should not write if FGA transaction fails", func(t *testing.T) {
+
+		name := gofakeit.Name()
+
 		input := datumclient.CreateOrganizationInput{
-			Name: gofakeit.Name(),
+			Name: &name,
 		}
 
 		fgaErr := errors.New("unable to create relationship") //nolint:err113

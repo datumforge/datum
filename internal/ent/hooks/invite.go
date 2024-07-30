@@ -185,7 +185,7 @@ func HookInviteAccepted() ent.Hook {
 
 			// send an email to recipient notifying them they've been added to a datum organization
 			if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-				return sendOrgAccepted(ctx, m, invite)
+				return sendOrgAccepted(m, invite)
 			}), marionette.WithErrorf("could not send invitation email to user %s", recipient),
 			); err != nil {
 				m.Logger.Errorw("unable to queue email for sending")
@@ -296,7 +296,7 @@ func createInviteToSend(ctx context.Context, m *generated.InviteMutation) error 
 	}
 
 	if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-		return sendOrgInvitationEmail(ctx, m, invite)
+		return sendOrgInvitationEmail(m, invite)
 	}), marionette.WithErrorf("could not send invitation email to user %s", email),
 	); err != nil {
 		m.Logger.Errorw("unable to queue email for sending")
@@ -308,7 +308,7 @@ func createInviteToSend(ctx context.Context, m *generated.InviteMutation) error 
 }
 
 // sendOrgInvitationEmail composes the email metadata and sends via email manager
-func sendOrgInvitationEmail(ctx context.Context, m *generated.InviteMutation, i *emails.Invite) (err error) {
+func sendOrgInvitationEmail(m *generated.InviteMutation, i *emails.Invite) (err error) {
 	data := emails.InviteData{
 		InviterName: i.Requestor,
 		OrgName:     i.OrgName,
@@ -333,7 +333,7 @@ func sendOrgInvitationEmail(ctx context.Context, m *generated.InviteMutation, i 
 }
 
 // sendOrgAccepted composes the email metadata to notify the user they've been joined to the org
-func sendOrgAccepted(ctx context.Context, m *generated.InviteMutation, i *emails.Invite) (err error) {
+func sendOrgAccepted(m *generated.InviteMutation, i *emails.Invite) (err error) {
 	data := emails.InviteData{
 		InviterName: i.Requestor,
 		OrgName:     i.OrgName,

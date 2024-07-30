@@ -1947,10 +1947,22 @@ func init() {
 	}()
 	// organizationDescDisplayName is the schema descriptor for display_name field.
 	organizationDescDisplayName := organizationFields[1].Descriptor()
-	// organization.DefaultDisplayName holds the default value on creation for the display_name field.
-	organization.DefaultDisplayName = organizationDescDisplayName.Default.(string)
 	// organization.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
-	organization.DisplayNameValidator = organizationDescDisplayName.Validators[0].(func(string) error)
+	organization.DisplayNameValidator = func() func(string) error {
+		validators := organizationDescDisplayName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(display_name string) error {
+			for _, fn := range fns {
+				if err := fn(display_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// organizationDescPersonalOrg is the schema descriptor for personal_org field.
 	organizationDescPersonalOrg := organizationFields[4].Descriptor()
 	// organization.DefaultPersonalOrg holds the default value on creation for the personal_org field.
@@ -2003,10 +2015,6 @@ func init() {
 	organizationhistoryDescTags := organizationhistoryFields[9].Descriptor()
 	// organizationhistory.DefaultTags holds the default value on creation for the tags field.
 	organizationhistory.DefaultTags = organizationhistoryDescTags.Default.([]string)
-	// organizationhistoryDescDisplayName is the schema descriptor for display_name field.
-	organizationhistoryDescDisplayName := organizationhistoryFields[13].Descriptor()
-	// organizationhistory.DefaultDisplayName holds the default value on creation for the display_name field.
-	organizationhistory.DefaultDisplayName = organizationhistoryDescDisplayName.Default.(string)
 	// organizationhistoryDescPersonalOrg is the schema descriptor for personal_org field.
 	organizationhistoryDescPersonalOrg := organizationhistoryFields[16].Descriptor()
 	// organizationhistory.DefaultPersonalOrg holds the default value on creation for the personal_org field.

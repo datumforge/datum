@@ -5,7 +5,7 @@ go 1.22.5
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.6.0
-	entgo.io/ent v0.13.2-0.20240722112325-be9aafdc4965
+	entgo.io/ent v0.14.0
 	github.com/99designs/gqlgen v0.17.49
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
@@ -13,7 +13,7 @@ require (
 	github.com/alicebob/miniredis/v2 v2.33.0
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.27
 	github.com/brianvoe/gofakeit/v7 v7.0.4
-	github.com/bytedance/sonic v1.11.9
+	github.com/bytedance/sonic v1.12.0
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20240521143548-d561656e6328
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/datumforge/enthistory v0.0.9
@@ -32,7 +32,7 @@ require (
 	github.com/invopop/yaml v0.3.1
 	github.com/knadh/koanf/parsers/yaml v0.1.0
 	github.com/knadh/koanf/providers/env v0.1.0
-	github.com/knadh/koanf/providers/file v1.0.0
+	github.com/knadh/koanf/providers/file v1.1.0
 	github.com/knadh/koanf/providers/posflag v0.1.0
 	github.com/knadh/koanf/v2 v2.1.1
 	github.com/lib/pq v1.10.9
@@ -91,7 +91,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
-	github.com/bytedance/sonic/loader v0.1.1 // indirect
+	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
@@ -254,7 +254,7 @@ require (
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/flopp/go-findfont v0.1.0
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/getkin/kin-openapi v0.126.0
+	github.com/getkin/kin-openapi v0.127.0
 	github.com/getsentry/sentry-go v0.28.1
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/yaml v0.4.6 // indirect

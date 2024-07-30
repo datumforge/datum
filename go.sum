@@ -21,8 +21,8 @@ cloud.google.com/go/storage v1.43.0 h1:CcxnSohZwizt4LCzQHWvBf1/kvtHUn7gk9QERXPyX
 cloud.google.com/go/storage v1.43.0/go.mod h1:ajvxEa7WmZS1PxvKRq4bq0tFT3vMd502JwstCcYv0Q0=
 entgo.io/contrib v0.6.0 h1:xfo4TbJE7sJZWx7BV7YrpSz7IPFvS8MzL3fnfzZjKvQ=
 entgo.io/contrib v0.6.0/go.mod h1:3qWIseJ/9Wx2Hu5zVh15FDzv7d/UvKNcYKdViywWCQg=
-entgo.io/ent v0.13.2-0.20240722112325-be9aafdc4965 h1:fAC3BkdJ4ZJVIr6YfvxUG226yIuVK9sGTxFS6Cb9yfQ=
-entgo.io/ent v0.13.2-0.20240722112325-be9aafdc4965/go.mod h1:qCEmo+biw3ccBn9OyL4ZK5dfpwg++l1Gxwac5B1206A=
+entgo.io/ent v0.14.0 h1:EO3Z9aZ5bXJatJeGqu/EVdnNr6K4mRq3rWe5owt0MC4=
+entgo.io/ent v0.14.0/go.mod h1:qCEmo+biw3ccBn9OyL4ZK5dfpwg++l1Gxwac5B1206A=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4/go.mod h1:hN7oaIRCjzsZ2dE+yG5k+rsdt3qcwykqK6HVGcKwsw4=
 github.com/99designs/gqlgen v0.17.49 h1:b3hNGexHd33fBSAd4NDT/c3NCcQzcAVkknhN9ym36YQ=

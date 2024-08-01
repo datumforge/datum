@@ -2,12 +2,6 @@ module github.com/datumforge/datum
 
 go 1.22.5
 
-// replace github.com/datumforge/enthistory => ../enthistory
-
-// // replace github.com/datumforge/fgax => ../fgax
-
-// // replace github.com/datumforge/fgax/entfga => ../fgax/entfga
-
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.6.0
@@ -22,7 +16,7 @@ require (
 	github.com/bytedance/sonic v1.12.0
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20240521143548-d561656e6328
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
-	github.com/datumforge/enthistory v0.1.1-0.20240727160018-6e86e1a09203
+	github.com/datumforge/enthistory v0.1.1
 	github.com/datumforge/fgax v0.5.1
 	github.com/datumforge/geodetic v0.0.3
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0

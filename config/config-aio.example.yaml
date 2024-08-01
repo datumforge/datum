@@ -22,7 +22,8 @@ auth:
       debug: false
       enabled: true
       relyingPartyId: "api.datum.net"
-      requestOrigin: "https://console.datum.net"
+      requestOrigins:
+        - "https://console.datum.net"
 
 # authz settings
 authz:

@@ -76,7 +76,7 @@ data:
   DATUM_AUTH_PROVIDERS_WEBAUTHN_ENABLED: {{ .Values.datum.auth.providers.webauthn.enabled | default true }}
   DATUM_AUTH_PROVIDERS_WEBAUTHN_DISPLAYNAME: {{ .Values.datum.auth.providers.webauthn.displayName | default "Datum" }}
   DATUM_AUTH_PROVIDERS_WEBAUTHN_RELYINGPARTYID: {{ .Values.datum.auth.providers.webauthn.relyingPartyId | default "localhost" }}
-  DATUM_AUTH_PROVIDERS_WEBAUTHN_REQUESTORIGIN: {{ .Values.datum.auth.providers.webauthn.requestOrigin | default "http://localhost:3001" }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_REQUESTORIGINS: {{ .Values.datum.auth.providers.webauthn.requestOrigins | default "http://localhost:3001" }}
   DATUM_AUTH_PROVIDERS_WEBAUTHN_MAXDEVICES: {{ .Values.datum.auth.providers.webauthn.maxDevices | default 10 }}
   DATUM_AUTH_PROVIDERS_WEBAUTHN_ENFORCETIMEOUT: {{ .Values.datum.auth.providers.webauthn.enforceTimeout | default true }}
   DATUM_AUTH_PROVIDERS_WEBAUTHN_TIMEOUT: {{ .Values.datum.auth.providers.webauthn.timeout | default "60s" }}

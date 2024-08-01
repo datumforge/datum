@@ -33,15 +33,21 @@ import (
 const (
 	graphSchemaDir = "./schema/"
 	graphQueryDir  = "./query/"
+	schemaPath     = "./internal/ent/schema"
 )
 
 func main() {
+	if err := os.Mkdir("schema", 0755); err != nil && !os.IsExist(err) {
+		log.Fatalf("creating schema directory: %v", err)
+	}
+
+	// generate the history schemas
+	historyExt, entfgaExt := preRun()
+
 	xExt, err := entx.NewExtension(entx.WithJSONScalar())
 	if err != nil {
 		log.Fatalf("creating entx extension: %v", err)
 	}
-
-	_ = os.Mkdir("schema", 0755)
 
 	gqlExt, err := entgql.NewExtension(
 		entgql.WithSchemaGenerator(),
@@ -54,19 +60,7 @@ func main() {
 		log.Fatalf("creating entgql extension: %v", err)
 	}
 
-	historyExt := enthistory.NewHistoryExtension(
-		enthistory.WithAuditing(),
-		enthistory.WithImmutableFields(),
-		enthistory.WithHistoryTimeIndex(),
-		enthistory.WithNillableFields(),
-		enthistory.WithGQLQuery(),
-		enthistory.WithSchemaPath("./internal/ent/schema"),
-	)
-	if err != nil {
-		log.Fatalf("creating enthistory extension: %v", err)
-	}
-
-	if err := entc.Generate("./internal/ent/schema", &gen.Config{
+	if err := entc.Generate(schemaPath, &gen.Config{
 		Target:    "./internal/ent/generated",
 		Templates: entgql.AllTemplates,
 		Hooks: []gen.Hook{
@@ -130,11 +124,53 @@ func main() {
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
 			gqlExt,
-			entfga.NewFGAExtension(
-				entfga.WithSoftDeletes(),
-			),
 			historyExt,
+			entfgaExt,
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}
+}
+
+// preRun runs before the ent codegen to generate the history schemas and authz checks
+// and returns the history and fga extensions to be used in the ent codegen
+func preRun() (*enthistory.HistoryExtension, *entfga.AuthzExtension) {
+	// generate the history schemas
+	historyExt := enthistory.New(
+		enthistory.WithAuditing(),
+		enthistory.WithImmutableFields(),
+		enthistory.WithHistoryTimeIndex(),
+		enthistory.WithNillableFields(),
+		enthistory.WithGQLQuery(),
+		enthistory.WithAuthzPolicy(),
+		enthistory.WithSchemaPath(schemaPath),
+		enthistory.WithFirstRun(true),
+		enthistory.WithAllowedRelation("audit_log_viewer"),
+		enthistory.WithUpdatedByFromSchema(enthistory.ValueTypeString, false),
+	)
+
+	if err := historyExt.GenerateSchemas(); err != nil {
+		log.Fatalf("generating history schema: %v", err)
+	}
+
+	// initialize the entfga extension
+	entfgaExt := entfga.New(
+		entfga.WithSoftDeletes(),
+		entfga.WithSchemaPath(schemaPath),
+	)
+
+	// generate authz checks, this needs to happen before we regenerate the schema
+	// because the authz checks are generated based on the schema
+	if err := entfgaExt.GenerateAuthzChecks(); err != nil {
+		log.Fatalf("generating authz checks: %v", err)
+	}
+
+	// run again with policy
+	historyExt.SetFirstRun(false)
+
+	// generate the updated history schemas with authz checks
+	if err := historyExt.GenerateSchemas(); err != nil {
+		log.Fatalf("generating history schema: %v", err)
+	}
+
+	return historyExt, entfgaExt
 }

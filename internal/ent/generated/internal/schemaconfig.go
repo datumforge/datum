@@ -18,10 +18,10 @@ type SchemaConfig struct {
 	EntitlementHistory               string // EntitlementHistory table.
 	EntitlementPlan                  string // EntitlementPlan table.
 	EntitlementPlanEvents            string // EntitlementPlan-events->Event table.
-	EntitlementPlanHistory           string // EntitlementPlanHistory table.
 	EntitlementPlanFeature           string // EntitlementPlanFeature table.
 	EntitlementPlanFeatureEvents     string // EntitlementPlanFeature-events->Event table.
 	EntitlementPlanFeatureHistory    string // EntitlementPlanFeatureHistory table.
+	EntitlementPlanHistory           string // EntitlementPlanHistory table.
 	Entity                           string // Entity table.
 	EntityContacts                   string // Entity-contacts->Contact table.
 	EntityDocuments                  string // Entity-documents->DocumentData table.

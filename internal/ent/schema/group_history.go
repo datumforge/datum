@@ -2,6 +2,9 @@
 package schema
 
 import (
+	"context"
+	"time"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -9,11 +12,12 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/enthistory"
-
 	"github.com/datumforge/entx"
-
-	"time"
+	"github.com/datumforge/fgax/entfga"
 )
 
 // GroupHistory holds the schema definition for the GroupHistory entity.
@@ -34,6 +38,11 @@ func (GroupHistory) Annotations() []schema.Annotation {
 		},
 		entgql.QueryField(),
 		entgql.RelayConnection(),
+		entfga.Annotations{
+			ObjectType:   "group",
+			IDField:      "Ref",
+			IncludeHooks: false,
+		},
 	}
 }
 
@@ -57,19 +66,54 @@ func (GroupHistory) Fields() []ent.Field {
 	mixins := Group{}.Mixin()
 	for _, mixin := range mixins {
 		for _, field := range mixin.Fields() {
+			// make sure the mixed in fields do not have unique constraints
+			field.Descriptor().Unique = false
+
+			// make sure the mixed in fields do not have validators
+			field.Descriptor().Validators = nil
+
+			// append the mixed in field to the history fields
 			historyFields = append(historyFields, field)
 		}
 	}
 
 	original := Group{}
 	for _, field := range original.Fields() {
+		// make sure the fields do not have unique constraints
+		field.Descriptor().Unique = false
+
+		// make sure the mixed in fields do not have validators
+		field.Descriptor().Validators = nil
+
+		// append the field to the history fields
 		historyFields = append(historyFields, field)
 	}
 
 	return historyFields
 }
+
+// Indexes of the GroupHistory
 func (GroupHistory) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("history_time"),
+	}
+}
+
+// Interceptors of the GroupHistory
+func (GroupHistory) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.HistoryAccess("audit_log_viewer", true, false),
+	}
+}
+
+// Policy of the GroupHistory
+func (GroupHistory) Policy() ent.Policy {
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			privacy.GroupHistoryQueryRuleFunc(func(ctx context.Context, q *generated.GroupHistoryQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

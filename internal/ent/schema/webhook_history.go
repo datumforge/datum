@@ -2,6 +2,9 @@
 package schema
 
 import (
+	"context"
+	"time"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -9,11 +12,12 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/enthistory"
-
 	"github.com/datumforge/entx"
-
-	"time"
+	"github.com/datumforge/fgax/entfga"
 )
 
 // WebhookHistory holds the schema definition for the WebhookHistory entity.
@@ -34,6 +38,11 @@ func (WebhookHistory) Annotations() []schema.Annotation {
 		},
 		entgql.QueryField(),
 		entgql.RelayConnection(),
+		entfga.Annotations{
+			ObjectType:   "organization",
+			IDField:      "OwnerID",
+			IncludeHooks: false,
+		},
 	}
 }
 
@@ -57,19 +66,54 @@ func (WebhookHistory) Fields() []ent.Field {
 	mixins := Webhook{}.Mixin()
 	for _, mixin := range mixins {
 		for _, field := range mixin.Fields() {
+			// make sure the mixed in fields do not have unique constraints
+			field.Descriptor().Unique = false
+
+			// make sure the mixed in fields do not have validators
+			field.Descriptor().Validators = nil
+
+			// append the mixed in field to the history fields
 			historyFields = append(historyFields, field)
 		}
 	}
 
 	original := Webhook{}
 	for _, field := range original.Fields() {
+		// make sure the fields do not have unique constraints
+		field.Descriptor().Unique = false
+
+		// make sure the mixed in fields do not have validators
+		field.Descriptor().Validators = nil
+
+		// append the field to the history fields
 		historyFields = append(historyFields, field)
 	}
 
 	return historyFields
 }
+
+// Indexes of the WebhookHistory
 func (WebhookHistory) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("history_time"),
+	}
+}
+
+// Interceptors of the WebhookHistory
+func (WebhookHistory) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.HistoryAccess("audit_log_viewer", true, false),
+	}
+}
+
+// Policy of the WebhookHistory
+func (WebhookHistory) Policy() ent.Policy {
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			privacy.WebhookHistoryQueryRuleFunc(func(ctx context.Context, q *generated.WebhookHistoryQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

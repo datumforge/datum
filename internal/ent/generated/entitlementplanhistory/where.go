@@ -175,26 +175,6 @@ func HistoryTimeLTE(v time.Time) predicate.EntitlementPlanHistory {
 	return predicate.EntitlementPlanHistory(sql.FieldLTE(FieldHistoryTime, v))
 }
 
-// OperationEQ applies the EQ predicate on the "operation" field.
-func OperationEQ(v enthistory.OpType) predicate.EntitlementPlanHistory {
-	return predicate.EntitlementPlanHistory(sql.FieldEQ(FieldOperation, v))
-}
-
-// OperationNEQ applies the NEQ predicate on the "operation" field.
-func OperationNEQ(v enthistory.OpType) predicate.EntitlementPlanHistory {
-	return predicate.EntitlementPlanHistory(sql.FieldNEQ(FieldOperation, v))
-}
-
-// OperationIn applies the In predicate on the "operation" field.
-func OperationIn(vs ...enthistory.OpType) predicate.EntitlementPlanHistory {
-	return predicate.EntitlementPlanHistory(sql.FieldIn(FieldOperation, vs...))
-}
-
-// OperationNotIn applies the NotIn predicate on the "operation" field.
-func OperationNotIn(vs ...enthistory.OpType) predicate.EntitlementPlanHistory {
-	return predicate.EntitlementPlanHistory(sql.FieldNotIn(FieldOperation, vs...))
-}
-
 // RefEQ applies the EQ predicate on the "ref" field.
 func RefEQ(v string) predicate.EntitlementPlanHistory {
 	return predicate.EntitlementPlanHistory(sql.FieldEQ(FieldRef, v))
@@ -268,6 +248,26 @@ func RefEqualFold(v string) predicate.EntitlementPlanHistory {
 // RefContainsFold applies the ContainsFold predicate on the "ref" field.
 func RefContainsFold(v string) predicate.EntitlementPlanHistory {
 	return predicate.EntitlementPlanHistory(sql.FieldContainsFold(FieldRef, v))
+}
+
+// OperationEQ applies the EQ predicate on the "operation" field.
+func OperationEQ(v enthistory.OpType) predicate.EntitlementPlanHistory {
+	return predicate.EntitlementPlanHistory(sql.FieldEQ(FieldOperation, v))
+}
+
+// OperationNEQ applies the NEQ predicate on the "operation" field.
+func OperationNEQ(v enthistory.OpType) predicate.EntitlementPlanHistory {
+	return predicate.EntitlementPlanHistory(sql.FieldNEQ(FieldOperation, v))
+}
+
+// OperationIn applies the In predicate on the "operation" field.
+func OperationIn(vs ...enthistory.OpType) predicate.EntitlementPlanHistory {
+	return predicate.EntitlementPlanHistory(sql.FieldIn(FieldOperation, vs...))
+}
+
+// OperationNotIn applies the NotIn predicate on the "operation" field.
+func OperationNotIn(vs ...enthistory.OpType) predicate.EntitlementPlanHistory {
+	return predicate.EntitlementPlanHistory(sql.FieldNotIn(FieldOperation, vs...))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

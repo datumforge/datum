@@ -48,7 +48,9 @@ type OrgOwnerMixin struct {
 
 // Fields of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Fields() []ent.Field {
-	ownerIDField := field.String(ownerFieldName)
+	ownerIDField := field.
+		String(ownerFieldName).
+		Comment("The organization id that owns the object")
 
 	if !orgOwned.Required {
 		ownerIDField.Optional()

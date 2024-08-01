@@ -37,14 +37,6 @@ func (epfhu *EntitlementPlanFeatureHistoryUpdate) SetUpdatedAt(t time.Time) *Ent
 	return epfhu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (epfhu *EntitlementPlanFeatureHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *EntitlementPlanFeatureHistoryUpdate {
-	if t != nil {
-		epfhu.SetUpdatedAt(*t)
-	}
-	return epfhu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (epfhu *EntitlementPlanFeatureHistoryUpdate) ClearUpdatedAt() *EntitlementPlanFeatureHistoryUpdate {
 	epfhu.mutation.ClearUpdatedAt()
@@ -168,6 +160,9 @@ func (epfhu *EntitlementPlanFeatureHistoryUpdate) Mutation() *EntitlementPlanFea
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (epfhu *EntitlementPlanFeatureHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := epfhu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, epfhu.sqlSave, epfhu.mutation, epfhu.hooks)
 }
 
@@ -191,6 +186,18 @@ func (epfhu *EntitlementPlanFeatureHistoryUpdate) ExecX(ctx context.Context) {
 	if err := epfhu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (epfhu *EntitlementPlanFeatureHistoryUpdate) defaults() error {
+	if _, ok := epfhu.mutation.UpdatedAt(); !ok && !epfhu.mutation.UpdatedAtCleared() {
+		if entitlementplanfeaturehistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanfeaturehistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := entitlementplanfeaturehistory.UpdateDefaultUpdatedAt()
+		epfhu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (epfhu *EntitlementPlanFeatureHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -283,14 +290,6 @@ type EntitlementPlanFeatureHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (epfhuo *EntitlementPlanFeatureHistoryUpdateOne) SetUpdatedAt(t time.Time) *EntitlementPlanFeatureHistoryUpdateOne {
 	epfhuo.mutation.SetUpdatedAt(t)
-	return epfhuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (epfhuo *EntitlementPlanFeatureHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *EntitlementPlanFeatureHistoryUpdateOne {
-	if t != nil {
-		epfhuo.SetUpdatedAt(*t)
-	}
 	return epfhuo
 }
 
@@ -430,6 +429,9 @@ func (epfhuo *EntitlementPlanFeatureHistoryUpdateOne) Select(field string, field
 
 // Save executes the query and returns the updated EntitlementPlanFeatureHistory entity.
 func (epfhuo *EntitlementPlanFeatureHistoryUpdateOne) Save(ctx context.Context) (*EntitlementPlanFeatureHistory, error) {
+	if err := epfhuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, epfhuo.sqlSave, epfhuo.mutation, epfhuo.hooks)
 }
 
@@ -453,6 +455,18 @@ func (epfhuo *EntitlementPlanFeatureHistoryUpdateOne) ExecX(ctx context.Context)
 	if err := epfhuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (epfhuo *EntitlementPlanFeatureHistoryUpdateOne) defaults() error {
+	if _, ok := epfhuo.mutation.UpdatedAt(); !ok && !epfhuo.mutation.UpdatedAtCleared() {
+		if entitlementplanfeaturehistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanfeaturehistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := entitlementplanfeaturehistory.UpdateDefaultUpdatedAt()
+		epfhuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (epfhuo *EntitlementPlanFeatureHistoryUpdateOne) sqlSave(ctx context.Context) (_node *EntitlementPlanFeatureHistory, err error) {

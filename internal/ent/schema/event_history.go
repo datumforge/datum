@@ -2,6 +2,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -10,10 +12,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/enthistory"
-
 	"github.com/datumforge/entx"
-
-	"time"
 )
 
 // EventHistory holds the schema definition for the EventHistory entity.
@@ -57,17 +56,33 @@ func (EventHistory) Fields() []ent.Field {
 	mixins := Event{}.Mixin()
 	for _, mixin := range mixins {
 		for _, field := range mixin.Fields() {
+			// make sure the mixed in fields do not have unique constraints
+			field.Descriptor().Unique = false
+
+			// make sure the mixed in fields do not have validators
+			field.Descriptor().Validators = nil
+
+			// append the mixed in field to the history fields
 			historyFields = append(historyFields, field)
 		}
 	}
 
 	original := Event{}
 	for _, field := range original.Fields() {
+		// make sure the fields do not have unique constraints
+		field.Descriptor().Unique = false
+
+		// make sure the mixed in fields do not have validators
+		field.Descriptor().Validators = nil
+
+		// append the field to the history fields
 		historyFields = append(historyFields, field)
 	}
 
 	return historyFields
 }
+
+// Indexes of the EventHistory
 func (EventHistory) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("history_time"),

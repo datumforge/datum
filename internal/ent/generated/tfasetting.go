@@ -35,7 +35,7 @@ type TFASetting struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// OwnerID holds the value of the "owner_id" field.
+	// The user id that owns the object
 	OwnerID string `json:"owner_id,omitempty"`
 	// TFA secret for the user
 	TfaSecret *string `json:"tfa_secret,omitempty"`

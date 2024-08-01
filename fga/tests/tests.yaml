@@ -17,6 +17,10 @@ tuples:
   - user: user:ulid-of-member
     relation: member
     object: organization:datum
+  # setup audit log viewer
+  - user: user:ulid-of-audit-log-viewer
+    relation: audit_log_viewer
+    object: organization:datum
   # setup service user
   - user: service:ulid-of-service-editor
     relation: can_edit
@@ -40,6 +44,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
+          audit_log_viewer: true
       - user: user:ulid-of-member
         object: organization:datum # parent org
         assertions:
@@ -49,6 +54,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: true
+          audit_log_viewer: false
       - user: service:ulid-of-service-editor
         object: organization:datum # parent org
         assertions:
@@ -58,6 +64,7 @@ tests:
           can_delete: false
           can_edit: true
           can_view: true
+          audit_log_viewer: false
       - user: service:ulid-of-service-viewer
         object: organization:datum # parent org
         assertions:
@@ -67,6 +74,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: true
+          audit_log_viewer: false
       - user: user:ulid-of-admin
         object: organization:datum # parent org
         assertions:
@@ -76,6 +84,17 @@ tests:
           can_delete: false
           can_edit: true
           can_view: true
+          audit_log_viewer: false
+      - user: user:ulid-of-audit-log-viewer
+        object: organization:datum # parent org
+        assertions:
+          member: false
+          admin: false
+          owner: false
+          can_delete: false
+          can_edit: false
+          can_view: false
+          audit_log_viewer: true
       - user: user:ulid-of-owner
         object: organization:catum #child org
         assertions:
@@ -85,6 +104,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
+          audit_log_viewer: true
       - user: user:ulid-of-member
         object: organization:catum # child org
         assertions:
@@ -94,6 +114,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: true
+          audit_log_viewer: false
       - user: user:ulid-of-admin
         object: organization:catum # child org
         assertions:
@@ -103,6 +124,7 @@ tests:
           can_delete: false
           can_edit: true
           can_view: true
+          audit_log_viewer: false
     list_objects:
       - user: user:ulid-of-owner
         type: organization
@@ -163,6 +185,10 @@ tests:
       - user: user:ulid-of-cat-lover-member
         relation: member
         object: group:cat-lovers
+      # add audit log viewer
+      - user: user:ulid-of-audit-log-viewer
+        relation: audit_log_viewer
+        object: group:cat-lovers
       # add group admin
       - user: user:ulid-of-member
         relation: member
@@ -180,6 +206,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
+          audit_log_viewer: true
       - user: user:ulid-of-cat-lover-member
         object: group:cat-lovers
         assertions:
@@ -188,6 +215,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: false
+          audit_log_viewer: false
       - user: user:ulid-of-member
         object: group:cat-lovers
         assertions:
@@ -196,6 +224,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: true
+          audit_log_viewer: false
       - user: service:ulid-of-service-editor
         object: group:cat-lovers
         assertions:
@@ -204,6 +233,7 @@ tests:
           can_delete: false
           can_edit: true
           can_view: true
+          audit_log_viewer: false
     list_objects:
       - user: user:ulid-of-owner
         type: group

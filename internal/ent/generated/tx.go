@@ -30,12 +30,12 @@ type Tx struct {
 	EntitlementHistory *EntitlementHistoryClient
 	// EntitlementPlan is the client for interacting with the EntitlementPlan builders.
 	EntitlementPlan *EntitlementPlanClient
-	// EntitlementPlanHistory is the client for interacting with the EntitlementPlanHistory builders.
-	EntitlementPlanHistory *EntitlementPlanHistoryClient
 	// EntitlementPlanFeature is the client for interacting with the EntitlementPlanFeature builders.
 	EntitlementPlanFeature *EntitlementPlanFeatureClient
 	// EntitlementPlanFeatureHistory is the client for interacting with the EntitlementPlanFeatureHistory builders.
 	EntitlementPlanFeatureHistory *EntitlementPlanFeatureHistoryClient
+	// EntitlementPlanHistory is the client for interacting with the EntitlementPlanHistory builders.
+	EntitlementPlanHistory *EntitlementPlanHistoryClient
 	// Entity is the client for interacting with the Entity builders.
 	Entity *EntityClient
 	// EntityHistory is the client for interacting with the EntityHistory builders.
@@ -262,9 +262,9 @@ func (tx *Tx) init() {
 	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.EntitlementHistory = NewEntitlementHistoryClient(tx.config)
 	tx.EntitlementPlan = NewEntitlementPlanClient(tx.config)
-	tx.EntitlementPlanHistory = NewEntitlementPlanHistoryClient(tx.config)
 	tx.EntitlementPlanFeature = NewEntitlementPlanFeatureClient(tx.config)
 	tx.EntitlementPlanFeatureHistory = NewEntitlementPlanFeatureHistoryClient(tx.config)
+	tx.EntitlementPlanHistory = NewEntitlementPlanHistoryClient(tx.config)
 	tx.Entity = NewEntityClient(tx.config)
 	tx.EntityHistory = NewEntityHistoryClient(tx.config)
 	tx.EntityType = NewEntityTypeClient(tx.config)

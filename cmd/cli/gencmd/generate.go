@@ -1,6 +1,7 @@
 package gencmd
 
 import (
+	"bytes"
 	"embed"
 	"fmt"
 	"html/template"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gertd/go-pluralize"
 	"github.com/stoewer/go-strcase"
+	"golang.org/x/tools/imports"
 
 	sliceutil "github.com/datumforge/datum/pkg/utils/slice"
 )
@@ -29,6 +31,8 @@ type cmd struct {
 	Name string
 	// ListOnly is a flag to indicate if the command is list only
 	ListOnly bool
+	// HistoryCmd is a flag to indicate if the command is for history
+	HistoryCmd bool
 }
 
 var (
@@ -36,7 +40,7 @@ var (
 )
 
 // Generate generates the cli command files for the given command name
-func Generate(cmdName string, cmdDirName string, readOnly bool) error {
+func Generate(cmdName string, cmdDirName string, readOnly bool, force bool) error {
 	// trim any leading/trailing spaces
 	cmdName = strings.Trim(cmdName, " ")
 
@@ -59,7 +63,7 @@ func Generate(cmdName string, cmdDirName string, readOnly bool) error {
 			continue
 		}
 
-		if err := generateCmdFile(cmdName, cmdDirName, t.Name(), readOnly); err != nil {
+		if err := generateCmdFile(cmdName, cmdDirName, t.Name(), readOnly, force); err != nil {
 			return err
 		}
 	}
@@ -88,7 +92,7 @@ func createCmd(name string) (*template.Template, error) {
 }
 
 // generateCmdFile generates the cmd file for the given command name and template name
-func generateCmdFile(cmdName, cmdDirName, templateName string, readOnly bool) error {
+func generateCmdFile(cmdName, cmdDirName, templateName string, readOnly bool, force bool) error {
 	// create the template
 	tmpl, err := createCmd(templateName)
 	if err != nil {
@@ -99,8 +103,33 @@ func generateCmdFile(cmdName, cmdDirName, templateName string, readOnly bool) er
 	filePath := getFileName(cmdDirName, cmdName, templateName)
 
 	// check if schema already exists, skip generation so we don't overwrite manual changes
-	if _, err := os.Stat(filePath); err == nil {
+	if _, err := os.Stat(filePath); err == nil && !force {
 		return nil
+	}
+
+	isHistory := false
+	if strings.Contains(cmdName, "History") {
+		isHistory = true
+	}
+
+	// setup the data required for the template
+	c := cmd{
+		Name:       cmdName,
+		ListOnly:   readOnly, // if read only, set the list only flag
+		HistoryCmd: isHistory,
+	}
+
+	fmt.Println("----> executing template:", templateName)
+
+	// execute the template
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, c); err != nil {
+		return err
+	}
+
+	out, err := imports.Process(filePath, buf.Bytes(), nil)
+	if err != nil {
+		return err
 	}
 
 	// create the file
@@ -109,16 +138,7 @@ func generateCmdFile(cmdName, cmdDirName, templateName string, readOnly bool) er
 		return err
 	}
 
-	// setup the data required for the template
-	c := cmd{
-		Name:     cmdName,
-		ListOnly: readOnly, // if read only, set the list only flag
-	}
-
-	fmt.Println("----> executing template:", templateName)
-
-	// execute the template
-	if err := tmpl.Execute(file, c); err != nil {
+	if _, err := file.Write(out); err != nil {
 		return err
 	}
 

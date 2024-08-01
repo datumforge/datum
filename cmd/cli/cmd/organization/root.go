@@ -12,8 +12,9 @@ import (
 
 // cmd represents the base org command when called without any subcommands
 var cmd = &cobra.Command{
-	Use:   "org",
-	Short: "the subcommands for working with the datum organization",
+	Use:     "organization",
+	Aliases: []string{"org"},
+	Short:   "the subcommands for working with the datum organization",
 }
 
 func init() {

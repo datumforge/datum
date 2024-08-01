@@ -35,7 +35,7 @@ type PersonalAccessToken struct {
 	MappingID string `json:"mapping_id,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// OwnerID holds the value of the "owner_id" field.
+	// The user id that owns the object
 	OwnerID string `json:"owner_id,omitempty"`
 	// the name associated with the token
 	Name string `json:"name,omitempty"`

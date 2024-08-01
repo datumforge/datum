@@ -37,14 +37,6 @@ func (gmhu *GroupMembershipHistoryUpdate) SetUpdatedAt(t time.Time) *GroupMember
 	return gmhu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (gmhu *GroupMembershipHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *GroupMembershipHistoryUpdate {
-	if t != nil {
-		gmhu.SetUpdatedAt(*t)
-	}
-	return gmhu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (gmhu *GroupMembershipHistoryUpdate) ClearUpdatedAt() *GroupMembershipHistoryUpdate {
 	gmhu.mutation.ClearUpdatedAt()
@@ -132,6 +124,9 @@ func (gmhu *GroupMembershipHistoryUpdate) Mutation() *GroupMembershipHistoryMuta
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (gmhu *GroupMembershipHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := gmhu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, gmhu.sqlSave, gmhu.mutation, gmhu.hooks)
 }
 
@@ -155,6 +150,18 @@ func (gmhu *GroupMembershipHistoryUpdate) ExecX(ctx context.Context) {
 	if err := gmhu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (gmhu *GroupMembershipHistoryUpdate) defaults() error {
+	if _, ok := gmhu.mutation.UpdatedAt(); !ok && !gmhu.mutation.UpdatedAtCleared() {
+		if groupmembershiphistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized groupmembershiphistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := groupmembershiphistory.UpdateDefaultUpdatedAt()
+		gmhu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -240,14 +247,6 @@ type GroupMembershipHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (gmhuo *GroupMembershipHistoryUpdateOne) SetUpdatedAt(t time.Time) *GroupMembershipHistoryUpdateOne {
 	gmhuo.mutation.SetUpdatedAt(t)
-	return gmhuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (gmhuo *GroupMembershipHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *GroupMembershipHistoryUpdateOne {
-	if t != nil {
-		gmhuo.SetUpdatedAt(*t)
-	}
 	return gmhuo
 }
 
@@ -351,6 +350,9 @@ func (gmhuo *GroupMembershipHistoryUpdateOne) Select(field string, fields ...str
 
 // Save executes the query and returns the updated GroupMembershipHistory entity.
 func (gmhuo *GroupMembershipHistoryUpdateOne) Save(ctx context.Context) (*GroupMembershipHistory, error) {
+	if err := gmhuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, gmhuo.sqlSave, gmhuo.mutation, gmhuo.hooks)
 }
 
@@ -374,6 +376,18 @@ func (gmhuo *GroupMembershipHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := gmhuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (gmhuo *GroupMembershipHistoryUpdateOne) defaults() error {
+	if _, ok := gmhuo.mutation.UpdatedAt(); !ok && !gmhuo.mutation.UpdatedAtCleared() {
+		if groupmembershiphistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized groupmembershiphistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := groupmembershiphistory.UpdateDefaultUpdatedAt()
+		gmhuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

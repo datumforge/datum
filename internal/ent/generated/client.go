@@ -109,12 +109,12 @@ type Client struct {
 	EntitlementHistory *EntitlementHistoryClient
 	// EntitlementPlan is the client for interacting with the EntitlementPlan builders.
 	EntitlementPlan *EntitlementPlanClient
-	// EntitlementPlanHistory is the client for interacting with the EntitlementPlanHistory builders.
-	EntitlementPlanHistory *EntitlementPlanHistoryClient
 	// EntitlementPlanFeature is the client for interacting with the EntitlementPlanFeature builders.
 	EntitlementPlanFeature *EntitlementPlanFeatureClient
 	// EntitlementPlanFeatureHistory is the client for interacting with the EntitlementPlanFeatureHistory builders.
 	EntitlementPlanFeatureHistory *EntitlementPlanFeatureHistoryClient
+	// EntitlementPlanHistory is the client for interacting with the EntitlementPlanHistory builders.
+	EntitlementPlanHistory *EntitlementPlanHistoryClient
 	// Entity is the client for interacting with the Entity builders.
 	Entity *EntityClient
 	// EntityHistory is the client for interacting with the EntityHistory builders.
@@ -226,9 +226,9 @@ func (c *Client) init() {
 	c.Entitlement = NewEntitlementClient(c.config)
 	c.EntitlementHistory = NewEntitlementHistoryClient(c.config)
 	c.EntitlementPlan = NewEntitlementPlanClient(c.config)
-	c.EntitlementPlanHistory = NewEntitlementPlanHistoryClient(c.config)
 	c.EntitlementPlanFeature = NewEntitlementPlanFeatureClient(c.config)
 	c.EntitlementPlanFeatureHistory = NewEntitlementPlanFeatureHistoryClient(c.config)
+	c.EntitlementPlanHistory = NewEntitlementPlanHistoryClient(c.config)
 	c.Entity = NewEntityClient(c.config)
 	c.EntityHistory = NewEntityHistoryClient(c.config)
 	c.EntityType = NewEntityTypeClient(c.config)
@@ -479,9 +479,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Entitlement:                   NewEntitlementClient(cfg),
 		EntitlementHistory:            NewEntitlementHistoryClient(cfg),
 		EntitlementPlan:               NewEntitlementPlanClient(cfg),
-		EntitlementPlanHistory:        NewEntitlementPlanHistoryClient(cfg),
 		EntitlementPlanFeature:        NewEntitlementPlanFeatureClient(cfg),
 		EntitlementPlanFeatureHistory: NewEntitlementPlanFeatureHistoryClient(cfg),
+		EntitlementPlanHistory:        NewEntitlementPlanHistoryClient(cfg),
 		Entity:                        NewEntityClient(cfg),
 		EntityHistory:                 NewEntityHistoryClient(cfg),
 		EntityType:                    NewEntityTypeClient(cfg),
@@ -553,9 +553,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Entitlement:                   NewEntitlementClient(cfg),
 		EntitlementHistory:            NewEntitlementHistoryClient(cfg),
 		EntitlementPlan:               NewEntitlementPlanClient(cfg),
-		EntitlementPlanHistory:        NewEntitlementPlanHistoryClient(cfg),
 		EntitlementPlanFeature:        NewEntitlementPlanFeatureClient(cfg),
 		EntitlementPlanFeatureHistory: NewEntitlementPlanFeatureHistoryClient(cfg),
+		EntitlementPlanHistory:        NewEntitlementPlanHistoryClient(cfg),
 		Entity:                        NewEntityClient(cfg),
 		EntityHistory:                 NewEntityHistoryClient(cfg),
 		EntityType:                    NewEntityTypeClient(cfg),
@@ -630,8 +630,8 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.APIToken, c.Contact, c.ContactHistory, c.DocumentData, c.DocumentDataHistory,
 		c.EmailVerificationToken, c.Entitlement, c.EntitlementHistory,
-		c.EntitlementPlan, c.EntitlementPlanHistory, c.EntitlementPlanFeature,
-		c.EntitlementPlanFeatureHistory, c.Entity, c.EntityHistory, c.EntityType,
+		c.EntitlementPlan, c.EntitlementPlanFeature, c.EntitlementPlanFeatureHistory,
+		c.EntitlementPlanHistory, c.Entity, c.EntityHistory, c.EntityType,
 		c.EntityTypeHistory, c.Event, c.EventHistory, c.Feature, c.FeatureHistory,
 		c.File, c.FileHistory, c.Group, c.GroupHistory, c.GroupMembership,
 		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Hush,
@@ -653,8 +653,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.APIToken, c.Contact, c.ContactHistory, c.DocumentData, c.DocumentDataHistory,
 		c.EmailVerificationToken, c.Entitlement, c.EntitlementHistory,
-		c.EntitlementPlan, c.EntitlementPlanHistory, c.EntitlementPlanFeature,
-		c.EntitlementPlanFeatureHistory, c.Entity, c.EntityHistory, c.EntityType,
+		c.EntitlementPlan, c.EntitlementPlanFeature, c.EntitlementPlanFeatureHistory,
+		c.EntitlementPlanHistory, c.Entity, c.EntityHistory, c.EntityType,
 		c.EntityTypeHistory, c.Event, c.EventHistory, c.Feature, c.FeatureHistory,
 		c.File, c.FileHistory, c.Group, c.GroupHistory, c.GroupMembership,
 		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Hush,
@@ -691,12 +691,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.EntitlementHistory.mutate(ctx, m)
 	case *EntitlementPlanMutation:
 		return c.EntitlementPlan.mutate(ctx, m)
-	case *EntitlementPlanHistoryMutation:
-		return c.EntitlementPlanHistory.mutate(ctx, m)
 	case *EntitlementPlanFeatureMutation:
 		return c.EntitlementPlanFeature.mutate(ctx, m)
 	case *EntitlementPlanFeatureHistoryMutation:
 		return c.EntitlementPlanFeatureHistory.mutate(ctx, m)
+	case *EntitlementPlanHistoryMutation:
+		return c.EntitlementPlanHistory.mutate(ctx, m)
 	case *EntityMutation:
 		return c.Entity.mutate(ctx, m)
 	case *EntityHistoryMutation:
@@ -1225,12 +1225,14 @@ func (c *ContactHistoryClient) GetX(ctx context.Context, id string) *ContactHist
 
 // Hooks returns the client hooks.
 func (c *ContactHistoryClient) Hooks() []Hook {
-	return c.hooks.ContactHistory
+	hooks := c.hooks.ContactHistory
+	return append(hooks[:len(hooks):len(hooks)], contacthistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *ContactHistoryClient) Interceptors() []Interceptor {
-	return c.inters.ContactHistory
+	inters := c.inters.ContactHistory
+	return append(inters[:len(inters):len(inters)], contacthistory.Interceptors[:]...)
 }
 
 func (c *ContactHistoryClient) mutate(ctx context.Context, m *ContactHistoryMutation) (Value, error) {
@@ -1550,12 +1552,14 @@ func (c *DocumentDataHistoryClient) GetX(ctx context.Context, id string) *Docume
 
 // Hooks returns the client hooks.
 func (c *DocumentDataHistoryClient) Hooks() []Hook {
-	return c.hooks.DocumentDataHistory
+	hooks := c.hooks.DocumentDataHistory
+	return append(hooks[:len(hooks):len(hooks)], documentdatahistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *DocumentDataHistoryClient) Interceptors() []Interceptor {
-	return c.inters.DocumentDataHistory
+	inters := c.inters.DocumentDataHistory
+	return append(inters[:len(inters):len(inters)], documentdatahistory.Interceptors[:]...)
 }
 
 func (c *DocumentDataHistoryClient) mutate(ctx context.Context, m *DocumentDataHistoryMutation) (Value, error) {
@@ -2048,12 +2052,14 @@ func (c *EntitlementHistoryClient) GetX(ctx context.Context, id string) *Entitle
 
 // Hooks returns the client hooks.
 func (c *EntitlementHistoryClient) Hooks() []Hook {
-	return c.hooks.EntitlementHistory
+	hooks := c.hooks.EntitlementHistory
+	return append(hooks[:len(hooks):len(hooks)], entitlementhistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *EntitlementHistoryClient) Interceptors() []Interceptor {
-	return c.inters.EntitlementHistory
+	inters := c.inters.EntitlementHistory
+	return append(inters[:len(inters):len(inters)], entitlementhistory.Interceptors[:]...)
 }
 
 func (c *EntitlementHistoryClient) mutate(ctx context.Context, m *EntitlementHistoryMutation) (Value, error) {
@@ -2298,139 +2304,6 @@ func (c *EntitlementPlanClient) mutate(ctx context.Context, m *EntitlementPlanMu
 		return (&EntitlementPlanDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown EntitlementPlan mutation op: %q", m.Op())
-	}
-}
-
-// EntitlementPlanHistoryClient is a client for the EntitlementPlanHistory schema.
-type EntitlementPlanHistoryClient struct {
-	config
-}
-
-// NewEntitlementPlanHistoryClient returns a client for the EntitlementPlanHistory from the given config.
-func NewEntitlementPlanHistoryClient(c config) *EntitlementPlanHistoryClient {
-	return &EntitlementPlanHistoryClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `entitlementplanhistory.Hooks(f(g(h())))`.
-func (c *EntitlementPlanHistoryClient) Use(hooks ...Hook) {
-	c.hooks.EntitlementPlanHistory = append(c.hooks.EntitlementPlanHistory, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `entitlementplanhistory.Intercept(f(g(h())))`.
-func (c *EntitlementPlanHistoryClient) Intercept(interceptors ...Interceptor) {
-	c.inters.EntitlementPlanHistory = append(c.inters.EntitlementPlanHistory, interceptors...)
-}
-
-// Create returns a builder for creating a EntitlementPlanHistory entity.
-func (c *EntitlementPlanHistoryClient) Create() *EntitlementPlanHistoryCreate {
-	mutation := newEntitlementPlanHistoryMutation(c.config, OpCreate)
-	return &EntitlementPlanHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of EntitlementPlanHistory entities.
-func (c *EntitlementPlanHistoryClient) CreateBulk(builders ...*EntitlementPlanHistoryCreate) *EntitlementPlanHistoryCreateBulk {
-	return &EntitlementPlanHistoryCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *EntitlementPlanHistoryClient) MapCreateBulk(slice any, setFunc func(*EntitlementPlanHistoryCreate, int)) *EntitlementPlanHistoryCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &EntitlementPlanHistoryCreateBulk{err: fmt.Errorf("calling to EntitlementPlanHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*EntitlementPlanHistoryCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &EntitlementPlanHistoryCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for EntitlementPlanHistory.
-func (c *EntitlementPlanHistoryClient) Update() *EntitlementPlanHistoryUpdate {
-	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdate)
-	return &EntitlementPlanHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *EntitlementPlanHistoryClient) UpdateOne(eph *EntitlementPlanHistory) *EntitlementPlanHistoryUpdateOne {
-	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdateOne, withEntitlementPlanHistory(eph))
-	return &EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *EntitlementPlanHistoryClient) UpdateOneID(id string) *EntitlementPlanHistoryUpdateOne {
-	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdateOne, withEntitlementPlanHistoryID(id))
-	return &EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for EntitlementPlanHistory.
-func (c *EntitlementPlanHistoryClient) Delete() *EntitlementPlanHistoryDelete {
-	mutation := newEntitlementPlanHistoryMutation(c.config, OpDelete)
-	return &EntitlementPlanHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *EntitlementPlanHistoryClient) DeleteOne(eph *EntitlementPlanHistory) *EntitlementPlanHistoryDeleteOne {
-	return c.DeleteOneID(eph.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *EntitlementPlanHistoryClient) DeleteOneID(id string) *EntitlementPlanHistoryDeleteOne {
-	builder := c.Delete().Where(entitlementplanhistory.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &EntitlementPlanHistoryDeleteOne{builder}
-}
-
-// Query returns a query builder for EntitlementPlanHistory.
-func (c *EntitlementPlanHistoryClient) Query() *EntitlementPlanHistoryQuery {
-	return &EntitlementPlanHistoryQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeEntitlementPlanHistory},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a EntitlementPlanHistory entity by its id.
-func (c *EntitlementPlanHistoryClient) Get(ctx context.Context, id string) (*EntitlementPlanHistory, error) {
-	return c.Query().Where(entitlementplanhistory.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *EntitlementPlanHistoryClient) GetX(ctx context.Context, id string) *EntitlementPlanHistory {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *EntitlementPlanHistoryClient) Hooks() []Hook {
-	return c.hooks.EntitlementPlanHistory
-}
-
-// Interceptors returns the client interceptors.
-func (c *EntitlementPlanHistoryClient) Interceptors() []Interceptor {
-	return c.inters.EntitlementPlanHistory
-}
-
-func (c *EntitlementPlanHistoryClient) mutate(ctx context.Context, m *EntitlementPlanHistoryMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&EntitlementPlanHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&EntitlementPlanHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&EntitlementPlanHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("generated: unknown EntitlementPlanHistory mutation op: %q", m.Op())
 	}
 }
 
@@ -2755,12 +2628,14 @@ func (c *EntitlementPlanFeatureHistoryClient) GetX(ctx context.Context, id strin
 
 // Hooks returns the client hooks.
 func (c *EntitlementPlanFeatureHistoryClient) Hooks() []Hook {
-	return c.hooks.EntitlementPlanFeatureHistory
+	hooks := c.hooks.EntitlementPlanFeatureHistory
+	return append(hooks[:len(hooks):len(hooks)], entitlementplanfeaturehistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *EntitlementPlanFeatureHistoryClient) Interceptors() []Interceptor {
-	return c.inters.EntitlementPlanFeatureHistory
+	inters := c.inters.EntitlementPlanFeatureHistory
+	return append(inters[:len(inters):len(inters)], entitlementplanfeaturehistory.Interceptors[:]...)
 }
 
 func (c *EntitlementPlanFeatureHistoryClient) mutate(ctx context.Context, m *EntitlementPlanFeatureHistoryMutation) (Value, error) {
@@ -2775,6 +2650,141 @@ func (c *EntitlementPlanFeatureHistoryClient) mutate(ctx context.Context, m *Ent
 		return (&EntitlementPlanFeatureHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown EntitlementPlanFeatureHistory mutation op: %q", m.Op())
+	}
+}
+
+// EntitlementPlanHistoryClient is a client for the EntitlementPlanHistory schema.
+type EntitlementPlanHistoryClient struct {
+	config
+}
+
+// NewEntitlementPlanHistoryClient returns a client for the EntitlementPlanHistory from the given config.
+func NewEntitlementPlanHistoryClient(c config) *EntitlementPlanHistoryClient {
+	return &EntitlementPlanHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `entitlementplanhistory.Hooks(f(g(h())))`.
+func (c *EntitlementPlanHistoryClient) Use(hooks ...Hook) {
+	c.hooks.EntitlementPlanHistory = append(c.hooks.EntitlementPlanHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `entitlementplanhistory.Intercept(f(g(h())))`.
+func (c *EntitlementPlanHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EntitlementPlanHistory = append(c.inters.EntitlementPlanHistory, interceptors...)
+}
+
+// Create returns a builder for creating a EntitlementPlanHistory entity.
+func (c *EntitlementPlanHistoryClient) Create() *EntitlementPlanHistoryCreate {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpCreate)
+	return &EntitlementPlanHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EntitlementPlanHistory entities.
+func (c *EntitlementPlanHistoryClient) CreateBulk(builders ...*EntitlementPlanHistoryCreate) *EntitlementPlanHistoryCreateBulk {
+	return &EntitlementPlanHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EntitlementPlanHistoryClient) MapCreateBulk(slice any, setFunc func(*EntitlementPlanHistoryCreate, int)) *EntitlementPlanHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EntitlementPlanHistoryCreateBulk{err: fmt.Errorf("calling to EntitlementPlanHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EntitlementPlanHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EntitlementPlanHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EntitlementPlanHistory.
+func (c *EntitlementPlanHistoryClient) Update() *EntitlementPlanHistoryUpdate {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdate)
+	return &EntitlementPlanHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EntitlementPlanHistoryClient) UpdateOne(eph *EntitlementPlanHistory) *EntitlementPlanHistoryUpdateOne {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdateOne, withEntitlementPlanHistory(eph))
+	return &EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EntitlementPlanHistoryClient) UpdateOneID(id string) *EntitlementPlanHistoryUpdateOne {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpUpdateOne, withEntitlementPlanHistoryID(id))
+	return &EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EntitlementPlanHistory.
+func (c *EntitlementPlanHistoryClient) Delete() *EntitlementPlanHistoryDelete {
+	mutation := newEntitlementPlanHistoryMutation(c.config, OpDelete)
+	return &EntitlementPlanHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EntitlementPlanHistoryClient) DeleteOne(eph *EntitlementPlanHistory) *EntitlementPlanHistoryDeleteOne {
+	return c.DeleteOneID(eph.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EntitlementPlanHistoryClient) DeleteOneID(id string) *EntitlementPlanHistoryDeleteOne {
+	builder := c.Delete().Where(entitlementplanhistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EntitlementPlanHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for EntitlementPlanHistory.
+func (c *EntitlementPlanHistoryClient) Query() *EntitlementPlanHistoryQuery {
+	return &EntitlementPlanHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEntitlementPlanHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EntitlementPlanHistory entity by its id.
+func (c *EntitlementPlanHistoryClient) Get(ctx context.Context, id string) (*EntitlementPlanHistory, error) {
+	return c.Query().Where(entitlementplanhistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EntitlementPlanHistoryClient) GetX(ctx context.Context, id string) *EntitlementPlanHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EntitlementPlanHistoryClient) Hooks() []Hook {
+	hooks := c.hooks.EntitlementPlanHistory
+	return append(hooks[:len(hooks):len(hooks)], entitlementplanhistory.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *EntitlementPlanHistoryClient) Interceptors() []Interceptor {
+	inters := c.inters.EntitlementPlanHistory
+	return append(inters[:len(inters):len(inters)], entitlementplanhistory.Interceptors[:]...)
+}
+
+func (c *EntitlementPlanHistoryClient) mutate(ctx context.Context, m *EntitlementPlanHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EntitlementPlanHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EntitlementPlanHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EntitlementPlanHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EntitlementPlanHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown EntitlementPlanHistory mutation op: %q", m.Op())
 	}
 }
 
@@ -3099,12 +3109,14 @@ func (c *EntityHistoryClient) GetX(ctx context.Context, id string) *EntityHistor
 
 // Hooks returns the client hooks.
 func (c *EntityHistoryClient) Hooks() []Hook {
-	return c.hooks.EntityHistory
+	hooks := c.hooks.EntityHistory
+	return append(hooks[:len(hooks):len(hooks)], entityhistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *EntityHistoryClient) Interceptors() []Interceptor {
-	return c.inters.EntityHistory
+	inters := c.inters.EntityHistory
+	return append(inters[:len(inters):len(inters)], entityhistory.Interceptors[:]...)
 }
 
 func (c *EntityHistoryClient) mutate(ctx context.Context, m *EntityHistoryMutation) (Value, error) {
@@ -3405,12 +3417,14 @@ func (c *EntityTypeHistoryClient) GetX(ctx context.Context, id string) *EntityTy
 
 // Hooks returns the client hooks.
 func (c *EntityTypeHistoryClient) Hooks() []Hook {
-	return c.hooks.EntityTypeHistory
+	hooks := c.hooks.EntityTypeHistory
+	return append(hooks[:len(hooks):len(hooks)], entitytypehistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *EntityTypeHistoryClient) Interceptors() []Interceptor {
-	return c.inters.EntityTypeHistory
+	inters := c.inters.EntityTypeHistory
+	return append(inters[:len(inters):len(inters)], entitytypehistory.Interceptors[:]...)
 }
 
 func (c *EntityTypeHistoryClient) mutate(ctx context.Context, m *EntityTypeHistoryMutation) (Value, error) {
@@ -4320,12 +4334,14 @@ func (c *FeatureHistoryClient) GetX(ctx context.Context, id string) *FeatureHist
 
 // Hooks returns the client hooks.
 func (c *FeatureHistoryClient) Hooks() []Hook {
-	return c.hooks.FeatureHistory
+	hooks := c.hooks.FeatureHistory
+	return append(hooks[:len(hooks):len(hooks)], featurehistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *FeatureHistoryClient) Interceptors() []Interceptor {
-	return c.inters.FeatureHistory
+	inters := c.inters.FeatureHistory
+	return append(inters[:len(inters):len(inters)], featurehistory.Interceptors[:]...)
 }
 
 func (c *FeatureHistoryClient) mutate(ctx context.Context, m *FeatureHistoryMutation) (Value, error) {
@@ -5046,12 +5062,14 @@ func (c *GroupHistoryClient) GetX(ctx context.Context, id string) *GroupHistory 
 
 // Hooks returns the client hooks.
 func (c *GroupHistoryClient) Hooks() []Hook {
-	return c.hooks.GroupHistory
+	hooks := c.hooks.GroupHistory
+	return append(hooks[:len(hooks):len(hooks)], grouphistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *GroupHistoryClient) Interceptors() []Interceptor {
-	return c.inters.GroupHistory
+	inters := c.inters.GroupHistory
+	return append(inters[:len(inters):len(inters)], grouphistory.Interceptors[:]...)
 }
 
 func (c *GroupHistoryClient) mutate(ctx context.Context, m *GroupHistoryMutation) (Value, error) {
@@ -5371,12 +5389,14 @@ func (c *GroupMembershipHistoryClient) GetX(ctx context.Context, id string) *Gro
 
 // Hooks returns the client hooks.
 func (c *GroupMembershipHistoryClient) Hooks() []Hook {
-	return c.hooks.GroupMembershipHistory
+	hooks := c.hooks.GroupMembershipHistory
+	return append(hooks[:len(hooks):len(hooks)], groupmembershiphistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *GroupMembershipHistoryClient) Interceptors() []Interceptor {
-	return c.inters.GroupMembershipHistory
+	inters := c.inters.GroupMembershipHistory
+	return append(inters[:len(inters):len(inters)], groupmembershiphistory.Interceptors[:]...)
 }
 
 func (c *GroupMembershipHistoryClient) mutate(ctx context.Context, m *GroupMembershipHistoryMutation) (Value, error) {
@@ -5658,12 +5678,14 @@ func (c *GroupSettingHistoryClient) GetX(ctx context.Context, id string) *GroupS
 
 // Hooks returns the client hooks.
 func (c *GroupSettingHistoryClient) Hooks() []Hook {
-	return c.hooks.GroupSettingHistory
+	hooks := c.hooks.GroupSettingHistory
+	return append(hooks[:len(hooks):len(hooks)], groupsettinghistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *GroupSettingHistoryClient) Interceptors() []Interceptor {
-	return c.inters.GroupSettingHistory
+	inters := c.inters.GroupSettingHistory
+	return append(inters[:len(inters):len(inters)], groupsettinghistory.Interceptors[:]...)
 }
 
 func (c *GroupSettingHistoryClient) mutate(ctx context.Context, m *GroupSettingHistoryMutation) (Value, error) {
@@ -6346,12 +6368,14 @@ func (c *IntegrationHistoryClient) GetX(ctx context.Context, id string) *Integra
 
 // Hooks returns the client hooks.
 func (c *IntegrationHistoryClient) Hooks() []Hook {
-	return c.hooks.IntegrationHistory
+	hooks := c.hooks.IntegrationHistory
+	return append(hooks[:len(hooks):len(hooks)], integrationhistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *IntegrationHistoryClient) Interceptors() []Interceptor {
-	return c.inters.IntegrationHistory
+	inters := c.inters.IntegrationHistory
+	return append(inters[:len(inters):len(inters)], integrationhistory.Interceptors[:]...)
 }
 
 func (c *IntegrationHistoryClient) mutate(ctx context.Context, m *IntegrationHistoryMutation) (Value, error) {
@@ -6806,12 +6830,14 @@ func (c *OauthProviderHistoryClient) GetX(ctx context.Context, id string) *Oauth
 
 // Hooks returns the client hooks.
 func (c *OauthProviderHistoryClient) Hooks() []Hook {
-	return c.hooks.OauthProviderHistory
+	hooks := c.hooks.OauthProviderHistory
+	return append(hooks[:len(hooks):len(hooks)], oauthproviderhistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *OauthProviderHistoryClient) Interceptors() []Interceptor {
-	return c.inters.OauthProviderHistory
+	inters := c.inters.OauthProviderHistory
+	return append(inters[:len(inters):len(inters)], oauthproviderhistory.Interceptors[:]...)
 }
 
 func (c *OauthProviderHistoryClient) mutate(ctx context.Context, m *OauthProviderHistoryMutation) (Value, error) {
@@ -7302,12 +7328,14 @@ func (c *OrgMembershipHistoryClient) GetX(ctx context.Context, id string) *OrgMe
 
 // Hooks returns the client hooks.
 func (c *OrgMembershipHistoryClient) Hooks() []Hook {
-	return c.hooks.OrgMembershipHistory
+	hooks := c.hooks.OrgMembershipHistory
+	return append(hooks[:len(hooks):len(hooks)], orgmembershiphistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *OrgMembershipHistoryClient) Interceptors() []Interceptor {
-	return c.inters.OrgMembershipHistory
+	inters := c.inters.OrgMembershipHistory
+	return append(inters[:len(inters):len(inters)], orgmembershiphistory.Interceptors[:]...)
 }
 
 func (c *OrgMembershipHistoryClient) mutate(ctx context.Context, m *OrgMembershipHistoryMutation) (Value, error) {
@@ -8064,12 +8092,14 @@ func (c *OrganizationHistoryClient) GetX(ctx context.Context, id string) *Organi
 
 // Hooks returns the client hooks.
 func (c *OrganizationHistoryClient) Hooks() []Hook {
-	return c.hooks.OrganizationHistory
+	hooks := c.hooks.OrganizationHistory
+	return append(hooks[:len(hooks):len(hooks)], organizationhistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *OrganizationHistoryClient) Interceptors() []Interceptor {
-	return c.inters.OrganizationHistory
+	inters := c.inters.OrganizationHistory
+	return append(inters[:len(inters):len(inters)], organizationhistory.Interceptors[:]...)
 }
 
 func (c *OrganizationHistoryClient) mutate(ctx context.Context, m *OrganizationHistoryMutation) (Value, error) {
@@ -8351,12 +8381,14 @@ func (c *OrganizationSettingHistoryClient) GetX(ctx context.Context, id string) 
 
 // Hooks returns the client hooks.
 func (c *OrganizationSettingHistoryClient) Hooks() []Hook {
-	return c.hooks.OrganizationSettingHistory
+	hooks := c.hooks.OrganizationSettingHistory
+	return append(hooks[:len(hooks):len(hooks)], organizationsettinghistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *OrganizationSettingHistoryClient) Interceptors() []Interceptor {
-	return c.inters.OrganizationSettingHistory
+	inters := c.inters.OrganizationSettingHistory
+	return append(inters[:len(inters):len(inters)], organizationsettinghistory.Interceptors[:]...)
 }
 
 func (c *OrganizationSettingHistoryClient) mutate(ctx context.Context, m *OrganizationSettingHistoryMutation) (Value, error) {
@@ -9330,12 +9362,14 @@ func (c *TemplateHistoryClient) GetX(ctx context.Context, id string) *TemplateHi
 
 // Hooks returns the client hooks.
 func (c *TemplateHistoryClient) Hooks() []Hook {
-	return c.hooks.TemplateHistory
+	hooks := c.hooks.TemplateHistory
+	return append(hooks[:len(hooks):len(hooks)], templatehistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *TemplateHistoryClient) Interceptors() []Interceptor {
-	return c.inters.TemplateHistory
+	inters := c.inters.TemplateHistory
+	return append(inters[:len(inters):len(inters)], templatehistory.Interceptors[:]...)
 }
 
 func (c *TemplateHistoryClient) mutate(ctx context.Context, m *TemplateHistoryMutation) (Value, error) {
@@ -9831,7 +9865,8 @@ func (c *UserHistoryClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *UserHistoryClient) Interceptors() []Interceptor {
-	return c.inters.UserHistory
+	inters := c.inters.UserHistory
+	return append(inters[:len(inters):len(inters)], userhistory.Interceptors[:]...)
 }
 
 func (c *UserHistoryClient) mutate(ctx context.Context, m *UserHistoryMutation) (Value, error) {
@@ -10137,7 +10172,8 @@ func (c *UserSettingHistoryClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *UserSettingHistoryClient) Interceptors() []Interceptor {
-	return c.inters.UserSettingHistory
+	inters := c.inters.UserSettingHistory
+	return append(inters[:len(inters):len(inters)], usersettinghistory.Interceptors[:]...)
 }
 
 func (c *UserSettingHistoryClient) mutate(ctx context.Context, m *UserSettingHistoryMutation) (Value, error) {
@@ -10611,12 +10647,14 @@ func (c *WebhookHistoryClient) GetX(ctx context.Context, id string) *WebhookHist
 
 // Hooks returns the client hooks.
 func (c *WebhookHistoryClient) Hooks() []Hook {
-	return c.hooks.WebhookHistory
+	hooks := c.hooks.WebhookHistory
+	return append(hooks[:len(hooks):len(hooks)], webhookhistory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
 func (c *WebhookHistoryClient) Interceptors() []Interceptor {
-	return c.inters.WebhookHistory
+	inters := c.inters.WebhookHistory
+	return append(inters[:len(inters):len(inters)], webhookhistory.Interceptors[:]...)
 }
 
 func (c *WebhookHistoryClient) mutate(ctx context.Context, m *WebhookHistoryMutation) (Value, error) {
@@ -10639,7 +10677,7 @@ type (
 	hooks struct {
 		APIToken, Contact, ContactHistory, DocumentData, DocumentDataHistory,
 		EmailVerificationToken, Entitlement, EntitlementHistory, EntitlementPlan,
-		EntitlementPlanHistory, EntitlementPlanFeature, EntitlementPlanFeatureHistory,
+		EntitlementPlanFeature, EntitlementPlanFeatureHistory, EntitlementPlanHistory,
 		Entity, EntityHistory, EntityType, EntityTypeHistory, Event, EventHistory,
 		Feature, FeatureHistory, File, FileHistory, Group, GroupHistory,
 		GroupMembership, GroupMembershipHistory, GroupSetting, GroupSettingHistory,
@@ -10653,7 +10691,7 @@ type (
 	inters struct {
 		APIToken, Contact, ContactHistory, DocumentData, DocumentDataHistory,
 		EmailVerificationToken, Entitlement, EntitlementHistory, EntitlementPlan,
-		EntitlementPlanHistory, EntitlementPlanFeature, EntitlementPlanFeatureHistory,
+		EntitlementPlanFeature, EntitlementPlanFeatureHistory, EntitlementPlanHistory,
 		Entity, EntityHistory, EntityType, EntityTypeHistory, Event, EventHistory,
 		Feature, FeatureHistory, File, FileHistory, Group, GroupHistory,
 		GroupMembership, GroupMembershipHistory, GroupSetting, GroupSettingHistory,

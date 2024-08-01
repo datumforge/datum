@@ -37,14 +37,6 @@ func (fhu *FeatureHistoryUpdate) SetUpdatedAt(t time.Time) *FeatureHistoryUpdate
 	return fhu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (fhu *FeatureHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *FeatureHistoryUpdate {
-	if t != nil {
-		fhu.SetUpdatedAt(*t)
-	}
-	return fhu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (fhu *FeatureHistoryUpdate) ClearUpdatedAt() *FeatureHistoryUpdate {
 	fhu.mutation.ClearUpdatedAt()
@@ -222,6 +214,9 @@ func (fhu *FeatureHistoryUpdate) Mutation() *FeatureHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (fhu *FeatureHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := fhu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, fhu.sqlSave, fhu.mutation, fhu.hooks)
 }
 
@@ -245,6 +240,18 @@ func (fhu *FeatureHistoryUpdate) ExecX(ctx context.Context) {
 	if err := fhu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fhu *FeatureHistoryUpdate) defaults() error {
+	if _, ok := fhu.mutation.UpdatedAt(); !ok && !fhu.mutation.UpdatedAtCleared() {
+		if featurehistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized featurehistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := featurehistory.UpdateDefaultUpdatedAt()
+		fhu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (fhu *FeatureHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -352,14 +359,6 @@ type FeatureHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (fhuo *FeatureHistoryUpdateOne) SetUpdatedAt(t time.Time) *FeatureHistoryUpdateOne {
 	fhuo.mutation.SetUpdatedAt(t)
-	return fhuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (fhuo *FeatureHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *FeatureHistoryUpdateOne {
-	if t != nil {
-		fhuo.SetUpdatedAt(*t)
-	}
 	return fhuo
 }
 
@@ -553,6 +552,9 @@ func (fhuo *FeatureHistoryUpdateOne) Select(field string, fields ...string) *Fea
 
 // Save executes the query and returns the updated FeatureHistory entity.
 func (fhuo *FeatureHistoryUpdateOne) Save(ctx context.Context) (*FeatureHistory, error) {
+	if err := fhuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, fhuo.sqlSave, fhuo.mutation, fhuo.hooks)
 }
 
@@ -576,6 +578,18 @@ func (fhuo *FeatureHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := fhuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fhuo *FeatureHistoryUpdateOne) defaults() error {
+	if _, ok := fhuo.mutation.UpdatedAt(); !ok && !fhuo.mutation.UpdatedAtCleared() {
+		if featurehistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized featurehistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := featurehistory.UpdateDefaultUpdatedAt()
+		fhuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (fhuo *FeatureHistoryUpdateOne) sqlSave(ctx context.Context) (_node *FeatureHistory, err error) {

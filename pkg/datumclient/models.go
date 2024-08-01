@@ -26,8 +26,9 @@ type APIToken struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name associated with the token
 	Name  string `json:"name"`
 	Token string `json:"token"`
@@ -239,6 +240,44 @@ type APITokenWhereInput struct {
 	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
+type AuditLog struct {
+	Table     *string    `json:"table,omitempty"`
+	Time      *time.Time `json:"time,omitempty"`
+	ID        string     `json:"id"`
+	Operation *string    `json:"operation,omitempty"`
+	Changes   []string   `json:"changes,omitempty"`
+	UpdatedBy *string    `json:"updatedBy,omitempty"`
+}
+
+func (AuditLog) IsNode() {}
+
+// A connection to a list of items.
+type AuditLogConnection struct {
+	// A list of edges.
+	Edges []*AuditLogEdge `json:"edges,omitempty"`
+	// Information to aid in pagination.
+	PageInfo *PageInfo `json:"pageInfo"`
+	// Identifies the total count of items in the connection.
+	TotalCount int64 `json:"totalCount"`
+}
+
+// An edge in a connection.
+type AuditLogEdge struct {
+	// The item at the end of the edge.
+	Node *AuditLog `json:"node,omitempty"`
+	// A cursor for use in pagination.
+	Cursor string `json:"cursor"`
+}
+
+type AuditLogWhereInput struct {
+	RefID     *string    `json:"refID,omitempty"`
+	UpdatedBy *string    `json:"updatedBy,omitempty"`
+	Operation *string    `json:"operation,omitempty"`
+	Table     *string    `json:"table,omitempty"`
+	Before    *time.Time `json:"before,omitempty"`
+	After     *time.Time `json:"after,omitempty"`
+}
+
 type Contact struct {
 	ID        string     `json:"id"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -248,8 +287,9 @@ type Contact struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the full name of the contact
 	FullName string `json:"fullName"`
 	// the title of the contact
@@ -318,8 +358,9 @@ type ContactHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the full name of the contact
 	FullName string `json:"fullName"`
 	// the title of the contact
@@ -1399,7 +1440,8 @@ type DocumentData struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the template id of the document
 	TemplateID string `json:"templateID"`
 	// the json data of the document
@@ -1460,7 +1502,8 @@ type DocumentDataHistory struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the template id of the document
 	TemplateID string `json:"templateID"`
 	// the json data of the document
@@ -1808,7 +1851,8 @@ type Entitlement struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the plan to which the entitlement belongs
 	PlanID string `json:"planID"`
 	// the organization to which the entitlement belongs
@@ -1880,7 +1924,8 @@ type EntitlementHistory struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the plan to which the entitlement belongs
 	PlanID string `json:"planID"`
 	// the organization to which the entitlement belongs
@@ -2149,8 +2194,9 @@ type EntitlementPlan struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the displayed 'friendly' name of the plan
 	DisplayName *string `json:"displayName,omitempty"`
 	// the unique name of the plan
@@ -2215,8 +2261,9 @@ type EntitlementPlanFeature struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// metadata for the entitlement plan feature such as usage limits
 	Metadata  map[string]interface{} `json:"metadata,omitempty"`
 	PlanID    string                 `json:"planID"`
@@ -2277,8 +2324,9 @@ type EntitlementPlanFeatureHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// metadata for the entitlement plan feature such as usage limits
 	Metadata  map[string]interface{} `json:"metadata,omitempty"`
 	PlanID    string                 `json:"planID"`
@@ -2597,8 +2645,9 @@ type EntitlementPlanHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the displayed 'friendly' name of the plan
 	DisplayName *string `json:"displayName,omitempty"`
 	// the unique name of the plan
@@ -3254,8 +3303,9 @@ type Entity struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the entity
 	Name string `json:"name"`
 	// The entity's displayed 'friendly' name
@@ -3320,8 +3370,9 @@ type EntityHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the entity
 	Name string `json:"name"`
 	// The entity's displayed 'friendly' name
@@ -3567,8 +3618,9 @@ type EntityType struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the entity
 	Name     string        `json:"name"`
 	Owner    *Organization `json:"owner,omitempty"`
@@ -3625,8 +3677,9 @@ type EntityTypeHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the entity
 	Name string `json:"name"`
 }
@@ -4583,8 +4636,9 @@ type Feature struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the unique name of the feature
 	Name string `json:"name"`
 	// the displayed 'friendly' name of the feature
@@ -4651,8 +4705,9 @@ type FeatureHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the unique name of the feature
 	Name string `json:"name"`
 	// the displayed 'friendly' name of the feature
@@ -5622,8 +5677,9 @@ type Group struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the group - must be unique within the organization
 	Name string `json:"name"`
 	// the groups description
@@ -5693,8 +5749,9 @@ type GroupHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the group - must be unique within the organization
 	Name string `json:"name"`
 	// the groups description
@@ -7341,7 +7398,8 @@ type Integration struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the integration - must be unique within the organization
 	Name string `json:"name"`
 	// a description of the integration
@@ -7407,7 +7465,8 @@ type IntegrationHistory struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the integration - must be unique within the organization
 	Name string `json:"name"`
 	// a description of the integration
@@ -7802,7 +7861,8 @@ type Invite struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
 	Expires *time.Time `json:"expires,omitempty"`
 	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
@@ -8057,7 +8117,8 @@ type OauthProvider struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the oauth provider's name
 	Name string `json:"name"`
 	// the client id for the oauth provider
@@ -8130,7 +8191,8 @@ type OauthProviderHistory struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the oauth provider's name
 	Name string `json:"name"`
 	// the client id for the oauth provider
@@ -10623,7 +10685,8 @@ type Subscriber struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// email address of the subscriber
 	Email string `json:"email"`
 	// phone number of the subscriber
@@ -11041,8 +11104,9 @@ type Template struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the template
 	Name string `json:"name"`
 	// the type of the template, either a provided template or an implementation (document)
@@ -11107,8 +11171,9 @@ type TemplateHistory struct {
 	DeletedAt   *time.Time        `json:"deletedAt,omitempty"`
 	DeletedBy   *string           `json:"deletedBy,omitempty"`
 	// tags associated with the object
-	Tags    []string `json:"tags,omitempty"`
-	OwnerID *string  `json:"ownerID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the template
 	Name string `json:"name"`
 	// the type of the template, either a provided template or an implementation (document)
@@ -13526,7 +13591,8 @@ type Webhook struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the webhook
 	Name string `json:"name"`
 	// a description of the webhook
@@ -13597,7 +13663,8 @@ type WebhookHistory struct {
 	Tags      []string   `json:"tags,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	// The organization id that owns the object
+	OwnerID *string `json:"ownerID,omitempty"`
 	// the name of the webhook
 	Name string `json:"name"`
 	// a description of the webhook

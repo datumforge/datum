@@ -36,12 +36,6 @@ func (gmhc *GroupMembershipHistoryCreate) SetNillableHistoryTime(t *time.Time) *
 	return gmhc
 }
 
-// SetOperation sets the "operation" field.
-func (gmhc *GroupMembershipHistoryCreate) SetOperation(et enthistory.OpType) *GroupMembershipHistoryCreate {
-	gmhc.mutation.SetOperation(et)
-	return gmhc
-}
-
 // SetRef sets the "ref" field.
 func (gmhc *GroupMembershipHistoryCreate) SetRef(s string) *GroupMembershipHistoryCreate {
 	gmhc.mutation.SetRef(s)
@@ -53,6 +47,12 @@ func (gmhc *GroupMembershipHistoryCreate) SetNillableRef(s *string) *GroupMember
 	if s != nil {
 		gmhc.SetRef(*s)
 	}
+	return gmhc
+}
+
+// SetOperation sets the "operation" field.
+func (gmhc *GroupMembershipHistoryCreate) SetOperation(et enthistory.OpType) *GroupMembershipHistoryCreate {
+	gmhc.mutation.SetOperation(et)
 	return gmhc
 }
 
@@ -201,7 +201,9 @@ func (gmhc *GroupMembershipHistoryCreate) Mutation() *GroupMembershipHistoryMuta
 
 // Save creates the GroupMembershipHistory in the database.
 func (gmhc *GroupMembershipHistoryCreate) Save(ctx context.Context) (*GroupMembershipHistory, error) {
-	gmhc.defaults()
+	if err := gmhc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, gmhc.sqlSave, gmhc.mutation, gmhc.hooks)
 }
 
@@ -228,20 +230,32 @@ func (gmhc *GroupMembershipHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (gmhc *GroupMembershipHistoryCreate) defaults() {
+func (gmhc *GroupMembershipHistoryCreate) defaults() error {
 	if _, ok := gmhc.mutation.HistoryTime(); !ok {
+		if groupmembershiphistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized groupmembershiphistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := groupmembershiphistory.DefaultHistoryTime()
 		gmhc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := gmhc.mutation.CreatedAt(); !ok {
+		if groupmembershiphistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized groupmembershiphistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := groupmembershiphistory.DefaultCreatedAt()
 		gmhc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := gmhc.mutation.UpdatedAt(); !ok {
+		if groupmembershiphistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized groupmembershiphistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := groupmembershiphistory.DefaultUpdatedAt()
 		gmhc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := gmhc.mutation.MappingID(); !ok {
+		if groupmembershiphistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized groupmembershiphistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := groupmembershiphistory.DefaultMappingID()
 		gmhc.mutation.SetMappingID(v)
 	}
@@ -250,9 +264,13 @@ func (gmhc *GroupMembershipHistoryCreate) defaults() {
 		gmhc.mutation.SetRole(v)
 	}
 	if _, ok := gmhc.mutation.ID(); !ok {
+		if groupmembershiphistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized groupmembershiphistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := groupmembershiphistory.DefaultID()
 		gmhc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -325,13 +343,13 @@ func (gmhc *GroupMembershipHistoryCreate) createSpec() (*GroupMembershipHistory,
 		_spec.SetField(groupmembershiphistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := gmhc.mutation.Operation(); ok {
-		_spec.SetField(groupmembershiphistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := gmhc.mutation.Ref(); ok {
 		_spec.SetField(groupmembershiphistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := gmhc.mutation.Operation(); ok {
+		_spec.SetField(groupmembershiphistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := gmhc.mutation.CreatedAt(); ok {
 		_spec.SetField(groupmembershiphistory.FieldCreatedAt, field.TypeTime, value)

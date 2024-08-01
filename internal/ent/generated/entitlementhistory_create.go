@@ -35,12 +35,6 @@ func (ehc *EntitlementHistoryCreate) SetNillableHistoryTime(t *time.Time) *Entit
 	return ehc
 }
 
-// SetOperation sets the "operation" field.
-func (ehc *EntitlementHistoryCreate) SetOperation(et enthistory.OpType) *EntitlementHistoryCreate {
-	ehc.mutation.SetOperation(et)
-	return ehc
-}
-
 // SetRef sets the "ref" field.
 func (ehc *EntitlementHistoryCreate) SetRef(s string) *EntitlementHistoryCreate {
 	ehc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (ehc *EntitlementHistoryCreate) SetNillableRef(s *string) *EntitlementHisto
 	if s != nil {
 		ehc.SetRef(*s)
 	}
+	return ehc
+}
+
+// SetOperation sets the "operation" field.
+func (ehc *EntitlementHistoryCreate) SetOperation(et enthistory.OpType) *EntitlementHistoryCreate {
+	ehc.mutation.SetOperation(et)
 	return ehc
 }
 
@@ -276,7 +276,9 @@ func (ehc *EntitlementHistoryCreate) Mutation() *EntitlementHistoryMutation {
 
 // Save creates the EntitlementHistory in the database.
 func (ehc *EntitlementHistoryCreate) Save(ctx context.Context) (*EntitlementHistory, error) {
-	ehc.defaults()
+	if err := ehc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ehc.sqlSave, ehc.mutation, ehc.hooks)
 }
 
@@ -303,20 +305,32 @@ func (ehc *EntitlementHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ehc *EntitlementHistoryCreate) defaults() {
+func (ehc *EntitlementHistoryCreate) defaults() error {
 	if _, ok := ehc.mutation.HistoryTime(); !ok {
+		if entitlementhistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized entitlementhistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := entitlementhistory.DefaultHistoryTime()
 		ehc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := ehc.mutation.CreatedAt(); !ok {
+		if entitlementhistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlementhistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := entitlementhistory.DefaultCreatedAt()
 		ehc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ehc.mutation.UpdatedAt(); !ok {
+		if entitlementhistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlementhistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := entitlementhistory.DefaultUpdatedAt()
 		ehc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ehc.mutation.MappingID(); !ok {
+		if entitlementhistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized entitlementhistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := entitlementhistory.DefaultMappingID()
 		ehc.mutation.SetMappingID(v)
 	}
@@ -333,9 +347,13 @@ func (ehc *EntitlementHistoryCreate) defaults() {
 		ehc.mutation.SetCancelled(v)
 	}
 	if _, ok := ehc.mutation.ID(); !ok {
+		if entitlementhistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized entitlementhistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := entitlementhistory.DefaultID()
 		ehc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -406,13 +424,13 @@ func (ehc *EntitlementHistoryCreate) createSpec() (*EntitlementHistory, *sqlgrap
 		_spec.SetField(entitlementhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := ehc.mutation.Operation(); ok {
-		_spec.SetField(entitlementhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := ehc.mutation.Ref(); ok {
 		_spec.SetField(entitlementhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := ehc.mutation.Operation(); ok {
+		_spec.SetField(entitlementhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := ehc.mutation.CreatedAt(); ok {
 		_spec.SetField(entitlementhistory.FieldCreatedAt, field.TypeTime, value)

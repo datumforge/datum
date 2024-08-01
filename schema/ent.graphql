@@ -12,6 +12,9 @@ type APIToken implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the name associated with the token
@@ -252,6 +255,9 @@ type Contact implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the full name of the contact
@@ -329,6 +335,9 @@ type ContactHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the full name of the contact
@@ -1824,6 +1833,9 @@ type DocumentData implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the template id of the document
@@ -1882,6 +1894,9 @@ type DocumentDataHistory implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the template id of the document
@@ -2291,6 +2306,9 @@ type Entitlement implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the plan to which the entitlement belongs
@@ -2370,6 +2388,9 @@ type EntitlementHistory implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the plan to which the entitlement belongs
@@ -2710,6 +2731,9 @@ type EntitlementPlan implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the displayed 'friendly' name of the plan
@@ -2779,6 +2803,9 @@ type EntitlementPlanFeature implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   metadata for the entitlement plan feature such as usage limits
@@ -2836,6 +2863,9 @@ type EntitlementPlanFeatureHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   metadata for the entitlement plan feature such as usage limits
@@ -3213,6 +3243,9 @@ type EntitlementPlanHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the displayed 'friendly' name of the plan
@@ -3992,6 +4025,9 @@ type Entity implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the name of the entity
@@ -4059,6 +4095,9 @@ type EntityHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the name of the entity
@@ -4386,6 +4425,9 @@ type EntityType implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the name of the entity
@@ -4439,6 +4481,9 @@ type EntityTypeHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the name of the entity
@@ -5585,6 +5630,9 @@ type Feature implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the unique name of the feature
@@ -5656,6 +5704,9 @@ type FeatureHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the unique name of the feature
@@ -6785,6 +6836,9 @@ type Group implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the name of the group - must be unique within the organization
@@ -6859,6 +6913,9 @@ type GroupHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the name of the group - must be unique within the organization
@@ -8883,6 +8940,9 @@ type Integration implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the name of the integration - must be unique within the organization
@@ -8950,6 +9010,9 @@ type IntegrationHistory implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the name of the integration - must be unique within the organization
@@ -9442,6 +9505,9 @@ type Invite implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the expiration date of the invitation token which defaults to 14 days in the future from creation
@@ -9759,6 +9825,9 @@ type OauthProvider implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the oauth provider's name
@@ -9843,6 +9912,9 @@ type OauthProviderHistory implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the oauth provider's name
@@ -14324,6 +14396,9 @@ type Subscriber implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   email address of the subscriber
@@ -14792,6 +14867,9 @@ type Template implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the name of the template
@@ -14868,6 +14946,9 @@ type TemplateHistory implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the name of the template
@@ -17993,6 +18074,9 @@ type Webhook implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: ID
   """
   the name of the webhook
@@ -18071,6 +18155,9 @@ type WebhookHistory implements Node {
   tags: [String!]
   deletedAt: Time
   deletedBy: String
+  """
+  The organization id that owns the object
+  """
   ownerID: String
   """
   the name of the webhook

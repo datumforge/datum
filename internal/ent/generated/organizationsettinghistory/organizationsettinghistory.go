@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/pkg/enums"
@@ -19,10 +20,10 @@ const (
 	FieldID = "id"
 	// FieldHistoryTime holds the string denoting the history_time field in the database.
 	FieldHistoryTime = "history_time"
-	// FieldOperation holds the string denoting the operation field in the database.
-	FieldOperation = "operation"
 	// FieldRef holds the string denoting the ref field in the database.
 	FieldRef = "ref"
+	// FieldOperation holds the string denoting the operation field in the database.
+	FieldOperation = "operation"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -63,8 +64,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldHistoryTime,
-	FieldOperation,
 	FieldRef,
+	FieldOperation,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldCreatedBy,
@@ -93,13 +94,23 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
+	Hooks        [1]ent.Hook
+	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultHistoryTime holds the default value on creation for the "history_time" field.
 	DefaultHistoryTime func() time.Time
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultMappingID holds the default value on creation for the "mapping_id" field.
 	DefaultMappingID func() string
 	// DefaultTags holds the default value on creation for the "tags" field.
@@ -143,14 +154,14 @@ func ByHistoryTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldHistoryTime, opts...).ToFunc()
 }
 
-// ByOperation orders the results by the operation field.
-func ByOperation(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOperation, opts...).ToFunc()
-}
-
 // ByRef orders the results by the ref field.
 func ByRef(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRef, opts...).ToFunc()
+}
+
+// ByOperation orders the results by the operation field.
+func ByOperation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOperation, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

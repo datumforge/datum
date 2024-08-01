@@ -35,12 +35,6 @@ func (epfhc *EntitlementPlanFeatureHistoryCreate) SetNillableHistoryTime(t *time
 	return epfhc
 }
 
-// SetOperation sets the "operation" field.
-func (epfhc *EntitlementPlanFeatureHistoryCreate) SetOperation(et enthistory.OpType) *EntitlementPlanFeatureHistoryCreate {
-	epfhc.mutation.SetOperation(et)
-	return epfhc
-}
-
 // SetRef sets the "ref" field.
 func (epfhc *EntitlementPlanFeatureHistoryCreate) SetRef(s string) *EntitlementPlanFeatureHistoryCreate {
 	epfhc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (epfhc *EntitlementPlanFeatureHistoryCreate) SetNillableRef(s *string) *Ent
 	if s != nil {
 		epfhc.SetRef(*s)
 	}
+	return epfhc
+}
+
+// SetOperation sets the "operation" field.
+func (epfhc *EntitlementPlanFeatureHistoryCreate) SetOperation(et enthistory.OpType) *EntitlementPlanFeatureHistoryCreate {
+	epfhc.mutation.SetOperation(et)
 	return epfhc
 }
 
@@ -212,7 +212,9 @@ func (epfhc *EntitlementPlanFeatureHistoryCreate) Mutation() *EntitlementPlanFea
 
 // Save creates the EntitlementPlanFeatureHistory in the database.
 func (epfhc *EntitlementPlanFeatureHistoryCreate) Save(ctx context.Context) (*EntitlementPlanFeatureHistory, error) {
-	epfhc.defaults()
+	if err := epfhc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, epfhc.sqlSave, epfhc.mutation, epfhc.hooks)
 }
 
@@ -239,20 +241,32 @@ func (epfhc *EntitlementPlanFeatureHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (epfhc *EntitlementPlanFeatureHistoryCreate) defaults() {
+func (epfhc *EntitlementPlanFeatureHistoryCreate) defaults() error {
 	if _, ok := epfhc.mutation.HistoryTime(); !ok {
+		if entitlementplanfeaturehistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanfeaturehistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanfeaturehistory.DefaultHistoryTime()
 		epfhc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := epfhc.mutation.CreatedAt(); !ok {
+		if entitlementplanfeaturehistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanfeaturehistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanfeaturehistory.DefaultCreatedAt()
 		epfhc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := epfhc.mutation.UpdatedAt(); !ok {
+		if entitlementplanfeaturehistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanfeaturehistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanfeaturehistory.DefaultUpdatedAt()
 		epfhc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := epfhc.mutation.MappingID(); !ok {
+		if entitlementplanfeaturehistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanfeaturehistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanfeaturehistory.DefaultMappingID()
 		epfhc.mutation.SetMappingID(v)
 	}
@@ -261,9 +275,13 @@ func (epfhc *EntitlementPlanFeatureHistoryCreate) defaults() {
 		epfhc.mutation.SetTags(v)
 	}
 	if _, ok := epfhc.mutation.ID(); !ok {
+		if entitlementplanfeaturehistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanfeaturehistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanfeaturehistory.DefaultID()
 		epfhc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -328,13 +346,13 @@ func (epfhc *EntitlementPlanFeatureHistoryCreate) createSpec() (*EntitlementPlan
 		_spec.SetField(entitlementplanfeaturehistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := epfhc.mutation.Operation(); ok {
-		_spec.SetField(entitlementplanfeaturehistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := epfhc.mutation.Ref(); ok {
 		_spec.SetField(entitlementplanfeaturehistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := epfhc.mutation.Operation(); ok {
+		_spec.SetField(entitlementplanfeaturehistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := epfhc.mutation.CreatedAt(); ok {
 		_spec.SetField(entitlementplanfeaturehistory.FieldCreatedAt, field.TypeTime, value)

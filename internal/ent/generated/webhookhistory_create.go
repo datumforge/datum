@@ -35,12 +35,6 @@ func (whc *WebhookHistoryCreate) SetNillableHistoryTime(t *time.Time) *WebhookHi
 	return whc
 }
 
-// SetOperation sets the "operation" field.
-func (whc *WebhookHistoryCreate) SetOperation(et enthistory.OpType) *WebhookHistoryCreate {
-	whc.mutation.SetOperation(et)
-	return whc
-}
-
 // SetRef sets the "ref" field.
 func (whc *WebhookHistoryCreate) SetRef(s string) *WebhookHistoryCreate {
 	whc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (whc *WebhookHistoryCreate) SetNillableRef(s *string) *WebhookHistoryCreate
 	if s != nil {
 		whc.SetRef(*s)
 	}
+	return whc
+}
+
+// SetOperation sets the "operation" field.
+func (whc *WebhookHistoryCreate) SetOperation(et enthistory.OpType) *WebhookHistoryCreate {
+	whc.mutation.SetOperation(et)
 	return whc
 }
 
@@ -310,7 +310,9 @@ func (whc *WebhookHistoryCreate) Mutation() *WebhookHistoryMutation {
 
 // Save creates the WebhookHistory in the database.
 func (whc *WebhookHistoryCreate) Save(ctx context.Context) (*WebhookHistory, error) {
-	whc.defaults()
+	if err := whc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, whc.sqlSave, whc.mutation, whc.hooks)
 }
 
@@ -337,20 +339,32 @@ func (whc *WebhookHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (whc *WebhookHistoryCreate) defaults() {
+func (whc *WebhookHistoryCreate) defaults() error {
 	if _, ok := whc.mutation.HistoryTime(); !ok {
+		if webhookhistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized webhookhistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := webhookhistory.DefaultHistoryTime()
 		whc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := whc.mutation.CreatedAt(); !ok {
+		if webhookhistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized webhookhistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := webhookhistory.DefaultCreatedAt()
 		whc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := whc.mutation.UpdatedAt(); !ok {
+		if webhookhistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized webhookhistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := webhookhistory.DefaultUpdatedAt()
 		whc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := whc.mutation.MappingID(); !ok {
+		if webhookhistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized webhookhistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := webhookhistory.DefaultMappingID()
 		whc.mutation.SetMappingID(v)
 	}
@@ -367,9 +381,13 @@ func (whc *WebhookHistoryCreate) defaults() {
 		whc.mutation.SetFailures(v)
 	}
 	if _, ok := whc.mutation.ID(); !ok {
+		if webhookhistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized webhookhistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := webhookhistory.DefaultID()
 		whc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -437,13 +455,13 @@ func (whc *WebhookHistoryCreate) createSpec() (*WebhookHistory, *sqlgraph.Create
 		_spec.SetField(webhookhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := whc.mutation.Operation(); ok {
-		_spec.SetField(webhookhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := whc.mutation.Ref(); ok {
 		_spec.SetField(webhookhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := whc.mutation.Operation(); ok {
+		_spec.SetField(webhookhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := whc.mutation.CreatedAt(); ok {
 		_spec.SetField(webhookhistory.FieldCreatedAt, field.TypeTime, value)

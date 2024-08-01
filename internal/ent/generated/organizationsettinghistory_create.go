@@ -36,12 +36,6 @@ func (oshc *OrganizationSettingHistoryCreate) SetNillableHistoryTime(t *time.Tim
 	return oshc
 }
 
-// SetOperation sets the "operation" field.
-func (oshc *OrganizationSettingHistoryCreate) SetOperation(et enthistory.OpType) *OrganizationSettingHistoryCreate {
-	oshc.mutation.SetOperation(et)
-	return oshc
-}
-
 // SetRef sets the "ref" field.
 func (oshc *OrganizationSettingHistoryCreate) SetRef(s string) *OrganizationSettingHistoryCreate {
 	oshc.mutation.SetRef(s)
@@ -53,6 +47,12 @@ func (oshc *OrganizationSettingHistoryCreate) SetNillableRef(s *string) *Organiz
 	if s != nil {
 		oshc.SetRef(*s)
 	}
+	return oshc
+}
+
+// SetOperation sets the "operation" field.
+func (oshc *OrganizationSettingHistoryCreate) SetOperation(et enthistory.OpType) *OrganizationSettingHistoryCreate {
+	oshc.mutation.SetOperation(et)
 	return oshc
 }
 
@@ -285,7 +285,9 @@ func (oshc *OrganizationSettingHistoryCreate) Mutation() *OrganizationSettingHis
 
 // Save creates the OrganizationSettingHistory in the database.
 func (oshc *OrganizationSettingHistoryCreate) Save(ctx context.Context) (*OrganizationSettingHistory, error) {
-	oshc.defaults()
+	if err := oshc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, oshc.sqlSave, oshc.mutation, oshc.hooks)
 }
 
@@ -312,20 +314,32 @@ func (oshc *OrganizationSettingHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (oshc *OrganizationSettingHistoryCreate) defaults() {
+func (oshc *OrganizationSettingHistoryCreate) defaults() error {
 	if _, ok := oshc.mutation.HistoryTime(); !ok {
+		if organizationsettinghistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized organizationsettinghistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := organizationsettinghistory.DefaultHistoryTime()
 		oshc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := oshc.mutation.CreatedAt(); !ok {
+		if organizationsettinghistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organizationsettinghistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := organizationsettinghistory.DefaultCreatedAt()
 		oshc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := oshc.mutation.UpdatedAt(); !ok {
+		if organizationsettinghistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organizationsettinghistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := organizationsettinghistory.DefaultUpdatedAt()
 		oshc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := oshc.mutation.MappingID(); !ok {
+		if organizationsettinghistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized organizationsettinghistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := organizationsettinghistory.DefaultMappingID()
 		oshc.mutation.SetMappingID(v)
 	}
@@ -338,9 +352,13 @@ func (oshc *OrganizationSettingHistoryCreate) defaults() {
 		oshc.mutation.SetGeoLocation(v)
 	}
 	if _, ok := oshc.mutation.ID(); !ok {
+		if organizationsettinghistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized organizationsettinghistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := organizationsettinghistory.DefaultID()
 		oshc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -404,13 +422,13 @@ func (oshc *OrganizationSettingHistoryCreate) createSpec() (*OrganizationSetting
 		_spec.SetField(organizationsettinghistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := oshc.mutation.Operation(); ok {
-		_spec.SetField(organizationsettinghistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := oshc.mutation.Ref(); ok {
 		_spec.SetField(organizationsettinghistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := oshc.mutation.Operation(); ok {
+		_spec.SetField(organizationsettinghistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := oshc.mutation.CreatedAt(); ok {
 		_spec.SetField(organizationsettinghistory.FieldCreatedAt, field.TypeTime, value)

@@ -35,12 +35,6 @@ func (ghc *GroupHistoryCreate) SetNillableHistoryTime(t *time.Time) *GroupHistor
 	return ghc
 }
 
-// SetOperation sets the "operation" field.
-func (ghc *GroupHistoryCreate) SetOperation(et enthistory.OpType) *GroupHistoryCreate {
-	ghc.mutation.SetOperation(et)
-	return ghc
-}
-
 // SetRef sets the "ref" field.
 func (ghc *GroupHistoryCreate) SetRef(s string) *GroupHistoryCreate {
 	ghc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (ghc *GroupHistoryCreate) SetNillableRef(s *string) *GroupHistoryCreate {
 	if s != nil {
 		ghc.SetRef(*s)
 	}
+	return ghc
+}
+
+// SetOperation sets the "operation" field.
+func (ghc *GroupHistoryCreate) SetOperation(et enthistory.OpType) *GroupHistoryCreate {
+	ghc.mutation.SetOperation(et)
 	return ghc
 }
 
@@ -256,7 +256,9 @@ func (ghc *GroupHistoryCreate) Mutation() *GroupHistoryMutation {
 
 // Save creates the GroupHistory in the database.
 func (ghc *GroupHistoryCreate) Save(ctx context.Context) (*GroupHistory, error) {
-	ghc.defaults()
+	if err := ghc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ghc.sqlSave, ghc.mutation, ghc.hooks)
 }
 
@@ -283,20 +285,32 @@ func (ghc *GroupHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ghc *GroupHistoryCreate) defaults() {
+func (ghc *GroupHistoryCreate) defaults() error {
 	if _, ok := ghc.mutation.HistoryTime(); !ok {
+		if grouphistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized grouphistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := grouphistory.DefaultHistoryTime()
 		ghc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := ghc.mutation.CreatedAt(); !ok {
+		if grouphistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized grouphistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := grouphistory.DefaultCreatedAt()
 		ghc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ghc.mutation.UpdatedAt(); !ok {
+		if grouphistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized grouphistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := grouphistory.DefaultUpdatedAt()
 		ghc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ghc.mutation.MappingID(); !ok {
+		if grouphistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized grouphistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := grouphistory.DefaultMappingID()
 		ghc.mutation.SetMappingID(v)
 	}
@@ -309,9 +323,13 @@ func (ghc *GroupHistoryCreate) defaults() {
 		ghc.mutation.SetDisplayName(v)
 	}
 	if _, ok := ghc.mutation.ID(); !ok {
+		if grouphistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized grouphistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := grouphistory.DefaultID()
 		ghc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -376,13 +394,13 @@ func (ghc *GroupHistoryCreate) createSpec() (*GroupHistory, *sqlgraph.CreateSpec
 		_spec.SetField(grouphistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := ghc.mutation.Operation(); ok {
-		_spec.SetField(grouphistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := ghc.mutation.Ref(); ok {
 		_spec.SetField(grouphistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := ghc.mutation.Operation(); ok {
+		_spec.SetField(grouphistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := ghc.mutation.CreatedAt(); ok {
 		_spec.SetField(grouphistory.FieldCreatedAt, field.TypeTime, value)

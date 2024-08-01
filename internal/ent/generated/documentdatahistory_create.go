@@ -36,12 +36,6 @@ func (ddhc *DocumentDataHistoryCreate) SetNillableHistoryTime(t *time.Time) *Doc
 	return ddhc
 }
 
-// SetOperation sets the "operation" field.
-func (ddhc *DocumentDataHistoryCreate) SetOperation(et enthistory.OpType) *DocumentDataHistoryCreate {
-	ddhc.mutation.SetOperation(et)
-	return ddhc
-}
-
 // SetRef sets the "ref" field.
 func (ddhc *DocumentDataHistoryCreate) SetRef(s string) *DocumentDataHistoryCreate {
 	ddhc.mutation.SetRef(s)
@@ -53,6 +47,12 @@ func (ddhc *DocumentDataHistoryCreate) SetNillableRef(s *string) *DocumentDataHi
 	if s != nil {
 		ddhc.SetRef(*s)
 	}
+	return ddhc
+}
+
+// SetOperation sets the "operation" field.
+func (ddhc *DocumentDataHistoryCreate) SetOperation(et enthistory.OpType) *DocumentDataHistoryCreate {
+	ddhc.mutation.SetOperation(et)
 	return ddhc
 }
 
@@ -207,7 +207,9 @@ func (ddhc *DocumentDataHistoryCreate) Mutation() *DocumentDataHistoryMutation {
 
 // Save creates the DocumentDataHistory in the database.
 func (ddhc *DocumentDataHistoryCreate) Save(ctx context.Context) (*DocumentDataHistory, error) {
-	ddhc.defaults()
+	if err := ddhc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ddhc.sqlSave, ddhc.mutation, ddhc.hooks)
 }
 
@@ -234,20 +236,32 @@ func (ddhc *DocumentDataHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ddhc *DocumentDataHistoryCreate) defaults() {
+func (ddhc *DocumentDataHistoryCreate) defaults() error {
 	if _, ok := ddhc.mutation.HistoryTime(); !ok {
+		if documentdatahistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized documentdatahistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := documentdatahistory.DefaultHistoryTime()
 		ddhc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := ddhc.mutation.CreatedAt(); !ok {
+		if documentdatahistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized documentdatahistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := documentdatahistory.DefaultCreatedAt()
 		ddhc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ddhc.mutation.UpdatedAt(); !ok {
+		if documentdatahistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized documentdatahistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := documentdatahistory.DefaultUpdatedAt()
 		ddhc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ddhc.mutation.MappingID(); !ok {
+		if documentdatahistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized documentdatahistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := documentdatahistory.DefaultMappingID()
 		ddhc.mutation.SetMappingID(v)
 	}
@@ -256,9 +270,13 @@ func (ddhc *DocumentDataHistoryCreate) defaults() {
 		ddhc.mutation.SetTags(v)
 	}
 	if _, ok := ddhc.mutation.ID(); !ok {
+		if documentdatahistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized documentdatahistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := documentdatahistory.DefaultID()
 		ddhc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -323,13 +341,13 @@ func (ddhc *DocumentDataHistoryCreate) createSpec() (*DocumentDataHistory, *sqlg
 		_spec.SetField(documentdatahistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := ddhc.mutation.Operation(); ok {
-		_spec.SetField(documentdatahistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := ddhc.mutation.Ref(); ok {
 		_spec.SetField(documentdatahistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := ddhc.mutation.Operation(); ok {
+		_spec.SetField(documentdatahistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := ddhc.mutation.CreatedAt(); ok {
 		_spec.SetField(documentdatahistory.FieldCreatedAt, field.TypeTime, value)

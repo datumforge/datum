@@ -37,14 +37,6 @@ func (whu *WebhookHistoryUpdate) SetUpdatedAt(t time.Time) *WebhookHistoryUpdate
 	return whu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (whu *WebhookHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *WebhookHistoryUpdate {
-	if t != nil {
-		whu.SetUpdatedAt(*t)
-	}
-	return whu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (whu *WebhookHistoryUpdate) ClearUpdatedAt() *WebhookHistoryUpdate {
 	whu.mutation.ClearUpdatedAt()
@@ -337,6 +329,9 @@ func (whu *WebhookHistoryUpdate) Mutation() *WebhookHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (whu *WebhookHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := whu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, whu.sqlSave, whu.mutation, whu.hooks)
 }
 
@@ -360,6 +355,18 @@ func (whu *WebhookHistoryUpdate) ExecX(ctx context.Context) {
 	if err := whu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (whu *WebhookHistoryUpdate) defaults() error {
+	if _, ok := whu.mutation.UpdatedAt(); !ok && !whu.mutation.UpdatedAtCleared() {
+		if webhookhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized webhookhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := webhookhistory.UpdateDefaultUpdatedAt()
+		whu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (whu *WebhookHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -500,14 +507,6 @@ type WebhookHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (whuo *WebhookHistoryUpdateOne) SetUpdatedAt(t time.Time) *WebhookHistoryUpdateOne {
 	whuo.mutation.SetUpdatedAt(t)
-	return whuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (whuo *WebhookHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *WebhookHistoryUpdateOne {
-	if t != nil {
-		whuo.SetUpdatedAt(*t)
-	}
 	return whuo
 }
 
@@ -816,6 +815,9 @@ func (whuo *WebhookHistoryUpdateOne) Select(field string, fields ...string) *Web
 
 // Save executes the query and returns the updated WebhookHistory entity.
 func (whuo *WebhookHistoryUpdateOne) Save(ctx context.Context) (*WebhookHistory, error) {
+	if err := whuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, whuo.sqlSave, whuo.mutation, whuo.hooks)
 }
 
@@ -839,6 +841,18 @@ func (whuo *WebhookHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := whuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (whuo *WebhookHistoryUpdateOne) defaults() error {
+	if _, ok := whuo.mutation.UpdatedAt(); !ok && !whuo.mutation.UpdatedAtCleared() {
+		if webhookhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized webhookhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := webhookhistory.UpdateDefaultUpdatedAt()
+		whuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (whuo *WebhookHistoryUpdateOne) sqlSave(ctx context.Context) (_node *WebhookHistory, err error) {

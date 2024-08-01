@@ -21,10 +21,10 @@ type WebhookHistory struct {
 	ID string `json:"id,omitempty"`
 	// HistoryTime holds the value of the "history_time" field.
 	HistoryTime time.Time `json:"history_time,omitempty"`
-	// Operation holds the value of the "operation" field.
-	Operation enthistory.OpType `json:"operation,omitempty"`
 	// Ref holds the value of the "ref" field.
 	Ref string `json:"ref,omitempty"`
+	// Operation holds the value of the "operation" field.
+	Operation enthistory.OpType `json:"operation,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -41,7 +41,7 @@ type WebhookHistory struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
-	// OwnerID holds the value of the "owner_id" field.
+	// The organization id that owns the object
 	OwnerID string `json:"owner_id,omitempty"`
 	// the name of the webhook
 	Name string `json:"name,omitempty"`
@@ -110,17 +110,17 @@ func (wh *WebhookHistory) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				wh.HistoryTime = value.Time
 			}
-		case webhookhistory.FieldOperation:
-			if value, ok := values[i].(*enthistory.OpType); !ok {
-				return fmt.Errorf("unexpected type %T for field operation", values[i])
-			} else if value != nil {
-				wh.Operation = *value
-			}
 		case webhookhistory.FieldRef:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ref", values[i])
 			} else if value.Valid {
 				wh.Ref = value.String
+			}
+		case webhookhistory.FieldOperation:
+			if value, ok := values[i].(*enthistory.OpType); !ok {
+				return fmt.Errorf("unexpected type %T for field operation", values[i])
+			} else if value != nil {
+				wh.Operation = *value
 			}
 		case webhookhistory.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -277,11 +277,11 @@ func (wh *WebhookHistory) String() string {
 	builder.WriteString("history_time=")
 	builder.WriteString(wh.HistoryTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("operation=")
-	builder.WriteString(fmt.Sprintf("%v", wh.Operation))
-	builder.WriteString(", ")
 	builder.WriteString("ref=")
 	builder.WriteString(wh.Ref)
+	builder.WriteString(", ")
+	builder.WriteString("operation=")
+	builder.WriteString(fmt.Sprintf("%v", wh.Operation))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(wh.CreatedAt.Format(time.ANSIC))

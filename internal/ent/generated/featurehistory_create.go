@@ -35,12 +35,6 @@ func (fhc *FeatureHistoryCreate) SetNillableHistoryTime(t *time.Time) *FeatureHi
 	return fhc
 }
 
-// SetOperation sets the "operation" field.
-func (fhc *FeatureHistoryCreate) SetOperation(et enthistory.OpType) *FeatureHistoryCreate {
-	fhc.mutation.SetOperation(et)
-	return fhc
-}
-
 // SetRef sets the "ref" field.
 func (fhc *FeatureHistoryCreate) SetRef(s string) *FeatureHistoryCreate {
 	fhc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (fhc *FeatureHistoryCreate) SetNillableRef(s *string) *FeatureHistoryCreate
 	if s != nil {
 		fhc.SetRef(*s)
 	}
+	return fhc
+}
+
+// SetOperation sets the "operation" field.
+func (fhc *FeatureHistoryCreate) SetOperation(et enthistory.OpType) *FeatureHistoryCreate {
+	fhc.mutation.SetOperation(et)
 	return fhc
 }
 
@@ -248,7 +248,9 @@ func (fhc *FeatureHistoryCreate) Mutation() *FeatureHistoryMutation {
 
 // Save creates the FeatureHistory in the database.
 func (fhc *FeatureHistoryCreate) Save(ctx context.Context) (*FeatureHistory, error) {
-	fhc.defaults()
+	if err := fhc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, fhc.sqlSave, fhc.mutation, fhc.hooks)
 }
 
@@ -275,20 +277,32 @@ func (fhc *FeatureHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (fhc *FeatureHistoryCreate) defaults() {
+func (fhc *FeatureHistoryCreate) defaults() error {
 	if _, ok := fhc.mutation.HistoryTime(); !ok {
+		if featurehistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized featurehistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := featurehistory.DefaultHistoryTime()
 		fhc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := fhc.mutation.CreatedAt(); !ok {
+		if featurehistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized featurehistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := featurehistory.DefaultCreatedAt()
 		fhc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := fhc.mutation.UpdatedAt(); !ok {
+		if featurehistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized featurehistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := featurehistory.DefaultUpdatedAt()
 		fhc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := fhc.mutation.MappingID(); !ok {
+		if featurehistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized featurehistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := featurehistory.DefaultMappingID()
 		fhc.mutation.SetMappingID(v)
 	}
@@ -301,9 +315,13 @@ func (fhc *FeatureHistoryCreate) defaults() {
 		fhc.mutation.SetEnabled(v)
 	}
 	if _, ok := fhc.mutation.ID(); !ok {
+		if featurehistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized featurehistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := featurehistory.DefaultID()
 		fhc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -368,13 +386,13 @@ func (fhc *FeatureHistoryCreate) createSpec() (*FeatureHistory, *sqlgraph.Create
 		_spec.SetField(featurehistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := fhc.mutation.Operation(); ok {
-		_spec.SetField(featurehistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := fhc.mutation.Ref(); ok {
 		_spec.SetField(featurehistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := fhc.mutation.Operation(); ok {
+		_spec.SetField(featurehistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := fhc.mutation.CreatedAt(); ok {
 		_spec.SetField(featurehistory.FieldCreatedAt, field.TypeTime, value)

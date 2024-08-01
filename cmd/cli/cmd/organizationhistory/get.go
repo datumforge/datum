@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
+	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var getCmd = &cobra.Command{
@@ -19,8 +20,7 @@ var getCmd = &cobra.Command{
 
 func init() {
 	cmd.AddCommand(getCmd)
-
-	getCmd.Flags().StringP("id", "i", "", "organizationHistory id to query")
+	getCmd.Flags().StringP("id", "i", "", "id to query")
 }
 
 // get an existing organizationHistory in the datum platform
@@ -29,6 +29,17 @@ func get(ctx context.Context) error {
 	client, err := datum.SetupClientWithAuth(ctx)
 	cobra.CheckErr(err)
 	defer datum.StoreSessionCookies(client)
+
+	// filter options
+	id := datum.Config.String("id")
+	if id != "" {
+		o, err := client.GetOrganizationHistories(ctx, &datumclient.OrganizationHistoryWhereInput{
+			Ref: &id,
+		})
+		cobra.CheckErr(err)
+
+		return consoleOutput(o)
+	}
 
 	// get all will be filtered for the authorized organization(s)
 	o, err := client.GetAllOrganizationHistories(ctx)

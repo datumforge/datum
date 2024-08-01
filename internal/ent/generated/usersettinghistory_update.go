@@ -38,14 +38,6 @@ func (ushu *UserSettingHistoryUpdate) SetUpdatedAt(t time.Time) *UserSettingHist
 	return ushu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ushu *UserSettingHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *UserSettingHistoryUpdate {
-	if t != nil {
-		ushu.SetUpdatedAt(*t)
-	}
-	return ushu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ushu *UserSettingHistoryUpdate) ClearUpdatedAt() *UserSettingHistoryUpdate {
 	ushu.mutation.ClearUpdatedAt()
@@ -299,6 +291,7 @@ func (ushu *UserSettingHistoryUpdate) Mutation() *UserSettingHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ushu *UserSettingHistoryUpdate) Save(ctx context.Context) (int, error) {
+	ushu.defaults()
 	return withHooks(ctx, ushu.sqlSave, ushu.mutation, ushu.hooks)
 }
 
@@ -321,6 +314,14 @@ func (ushu *UserSettingHistoryUpdate) Exec(ctx context.Context) error {
 func (ushu *UserSettingHistoryUpdate) ExecX(ctx context.Context) {
 	if err := ushu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ushu *UserSettingHistoryUpdate) defaults() {
+	if _, ok := ushu.mutation.UpdatedAt(); !ok && !ushu.mutation.UpdatedAtCleared() {
+		v := usersettinghistory.UpdateDefaultUpdatedAt()
+		ushu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -460,14 +461,6 @@ type UserSettingHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ushuo *UserSettingHistoryUpdateOne) SetUpdatedAt(t time.Time) *UserSettingHistoryUpdateOne {
 	ushuo.mutation.SetUpdatedAt(t)
-	return ushuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ushuo *UserSettingHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *UserSettingHistoryUpdateOne {
-	if t != nil {
-		ushuo.SetUpdatedAt(*t)
-	}
 	return ushuo
 }
 
@@ -737,6 +730,7 @@ func (ushuo *UserSettingHistoryUpdateOne) Select(field string, fields ...string)
 
 // Save executes the query and returns the updated UserSettingHistory entity.
 func (ushuo *UserSettingHistoryUpdateOne) Save(ctx context.Context) (*UserSettingHistory, error) {
+	ushuo.defaults()
 	return withHooks(ctx, ushuo.sqlSave, ushuo.mutation, ushuo.hooks)
 }
 
@@ -759,6 +753,14 @@ func (ushuo *UserSettingHistoryUpdateOne) Exec(ctx context.Context) error {
 func (ushuo *UserSettingHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ushuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ushuo *UserSettingHistoryUpdateOne) defaults() {
+	if _, ok := ushuo.mutation.UpdatedAt(); !ok && !ushuo.mutation.UpdatedAtCleared() {
+		v := usersettinghistory.UpdateDefaultUpdatedAt()
+		ushuo.mutation.SetUpdatedAt(v)
 	}
 }
 

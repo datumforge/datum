@@ -21,10 +21,10 @@ type EntitlementHistory struct {
 	ID string `json:"id,omitempty"`
 	// HistoryTime holds the value of the "history_time" field.
 	HistoryTime time.Time `json:"history_time,omitempty"`
-	// Operation holds the value of the "operation" field.
-	Operation enthistory.OpType `json:"operation,omitempty"`
 	// Ref holds the value of the "ref" field.
 	Ref string `json:"ref,omitempty"`
+	// Operation holds the value of the "operation" field.
+	Operation enthistory.OpType `json:"operation,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -41,7 +41,7 @@ type EntitlementHistory struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
-	// OwnerID holds the value of the "owner_id" field.
+	// The organization id that owns the object
 	OwnerID string `json:"owner_id,omitempty"`
 	// the plan to which the entitlement belongs
 	PlanID string `json:"plan_id,omitempty"`
@@ -102,17 +102,17 @@ func (eh *EntitlementHistory) assignValues(columns []string, values []any) error
 			} else if value.Valid {
 				eh.HistoryTime = value.Time
 			}
-		case entitlementhistory.FieldOperation:
-			if value, ok := values[i].(*enthistory.OpType); !ok {
-				return fmt.Errorf("unexpected type %T for field operation", values[i])
-			} else if value != nil {
-				eh.Operation = *value
-			}
 		case entitlementhistory.FieldRef:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ref", values[i])
 			} else if value.Valid {
 				eh.Ref = value.String
+			}
+		case entitlementhistory.FieldOperation:
+			if value, ok := values[i].(*enthistory.OpType); !ok {
+				return fmt.Errorf("unexpected type %T for field operation", values[i])
+			} else if value != nil {
+				eh.Operation = *value
 			}
 		case entitlementhistory.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -252,11 +252,11 @@ func (eh *EntitlementHistory) String() string {
 	builder.WriteString("history_time=")
 	builder.WriteString(eh.HistoryTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("operation=")
-	builder.WriteString(fmt.Sprintf("%v", eh.Operation))
-	builder.WriteString(", ")
 	builder.WriteString("ref=")
 	builder.WriteString(eh.Ref)
+	builder.WriteString(", ")
+	builder.WriteString("operation=")
+	builder.WriteString(fmt.Sprintf("%v", eh.Operation))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(eh.CreatedAt.Format(time.ANSIC))

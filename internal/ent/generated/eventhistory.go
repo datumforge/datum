@@ -21,10 +21,10 @@ type EventHistory struct {
 	ID string `json:"id,omitempty"`
 	// HistoryTime holds the value of the "history_time" field.
 	HistoryTime time.Time `json:"history_time,omitempty"`
-	// Operation holds the value of the "operation" field.
-	Operation enthistory.OpType `json:"operation,omitempty"`
 	// Ref holds the value of the "ref" field.
 	Ref string `json:"ref,omitempty"`
+	// Operation holds the value of the "operation" field.
+	Operation enthistory.OpType `json:"operation,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -88,17 +88,17 @@ func (eh *EventHistory) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				eh.HistoryTime = value.Time
 			}
-		case eventhistory.FieldOperation:
-			if value, ok := values[i].(*enthistory.OpType); !ok {
-				return fmt.Errorf("unexpected type %T for field operation", values[i])
-			} else if value != nil {
-				eh.Operation = *value
-			}
 		case eventhistory.FieldRef:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ref", values[i])
 			} else if value.Valid {
 				eh.Ref = value.String
+			}
+		case eventhistory.FieldOperation:
+			if value, ok := values[i].(*enthistory.OpType); !ok {
+				return fmt.Errorf("unexpected type %T for field operation", values[i])
+			} else if value != nil {
+				eh.Operation = *value
 			}
 		case eventhistory.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -203,11 +203,11 @@ func (eh *EventHistory) String() string {
 	builder.WriteString("history_time=")
 	builder.WriteString(eh.HistoryTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("operation=")
-	builder.WriteString(fmt.Sprintf("%v", eh.Operation))
-	builder.WriteString(", ")
 	builder.WriteString("ref=")
 	builder.WriteString(eh.Ref)
+	builder.WriteString(", ")
+	builder.WriteString("operation=")
+	builder.WriteString(fmt.Sprintf("%v", eh.Operation))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(eh.CreatedAt.Format(time.ANSIC))

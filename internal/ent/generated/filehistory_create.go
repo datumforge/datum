@@ -35,12 +35,6 @@ func (fhc *FileHistoryCreate) SetNillableHistoryTime(t *time.Time) *FileHistoryC
 	return fhc
 }
 
-// SetOperation sets the "operation" field.
-func (fhc *FileHistoryCreate) SetOperation(et enthistory.OpType) *FileHistoryCreate {
-	fhc.mutation.SetOperation(et)
-	return fhc
-}
-
 // SetRef sets the "ref" field.
 func (fhc *FileHistoryCreate) SetRef(s string) *FileHistoryCreate {
 	fhc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (fhc *FileHistoryCreate) SetNillableRef(s *string) *FileHistoryCreate {
 	if s != nil {
 		fhc.SetRef(*s)
 	}
+	return fhc
+}
+
+// SetOperation sets the "operation" field.
+func (fhc *FileHistoryCreate) SetOperation(et enthistory.OpType) *FileHistoryCreate {
+	fhc.mutation.SetOperation(et)
 	return fhc
 }
 
@@ -368,13 +368,13 @@ func (fhc *FileHistoryCreate) createSpec() (*FileHistory, *sqlgraph.CreateSpec) 
 		_spec.SetField(filehistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := fhc.mutation.Operation(); ok {
-		_spec.SetField(filehistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := fhc.mutation.Ref(); ok {
 		_spec.SetField(filehistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := fhc.mutation.Operation(); ok {
+		_spec.SetField(filehistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := fhc.mutation.CreatedAt(); ok {
 		_spec.SetField(filehistory.FieldCreatedAt, field.TypeTime, value)

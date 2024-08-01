@@ -35,12 +35,6 @@ func (hhc *HushHistoryCreate) SetNillableHistoryTime(t *time.Time) *HushHistoryC
 	return hhc
 }
 
-// SetOperation sets the "operation" field.
-func (hhc *HushHistoryCreate) SetOperation(et enthistory.OpType) *HushHistoryCreate {
-	hhc.mutation.SetOperation(et)
-	return hhc
-}
-
 // SetRef sets the "ref" field.
 func (hhc *HushHistoryCreate) SetRef(s string) *HushHistoryCreate {
 	hhc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (hhc *HushHistoryCreate) SetNillableRef(s *string) *HushHistoryCreate {
 	if s != nil {
 		hhc.SetRef(*s)
 	}
+	return hhc
+}
+
+// SetOperation sets the "operation" field.
+func (hhc *HushHistoryCreate) SetOperation(et enthistory.OpType) *HushHistoryCreate {
+	hhc.mutation.SetOperation(et)
 	return hhc
 }
 
@@ -345,13 +345,13 @@ func (hhc *HushHistoryCreate) createSpec() (*HushHistory, *sqlgraph.CreateSpec) 
 		_spec.SetField(hushhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := hhc.mutation.Operation(); ok {
-		_spec.SetField(hushhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := hhc.mutation.Ref(); ok {
 		_spec.SetField(hushhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := hhc.mutation.Operation(); ok {
+		_spec.SetField(hushhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := hhc.mutation.CreatedAt(); ok {
 		_spec.SetField(hushhistory.FieldCreatedAt, field.TypeTime, value)

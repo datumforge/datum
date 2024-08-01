@@ -21,10 +21,10 @@ type GroupMembershipHistory struct {
 	ID string `json:"id,omitempty"`
 	// HistoryTime holds the value of the "history_time" field.
 	HistoryTime time.Time `json:"history_time,omitempty"`
-	// Operation holds the value of the "operation" field.
-	Operation enthistory.OpType `json:"operation,omitempty"`
 	// Ref holds the value of the "ref" field.
 	Ref string `json:"ref,omitempty"`
+	// Operation holds the value of the "operation" field.
+	Operation enthistory.OpType `json:"operation,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -86,17 +86,17 @@ func (gmh *GroupMembershipHistory) assignValues(columns []string, values []any) 
 			} else if value.Valid {
 				gmh.HistoryTime = value.Time
 			}
-		case groupmembershiphistory.FieldOperation:
-			if value, ok := values[i].(*enthistory.OpType); !ok {
-				return fmt.Errorf("unexpected type %T for field operation", values[i])
-			} else if value != nil {
-				gmh.Operation = *value
-			}
 		case groupmembershiphistory.FieldRef:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ref", values[i])
 			} else if value.Valid {
 				gmh.Ref = value.String
+			}
+		case groupmembershiphistory.FieldOperation:
+			if value, ok := values[i].(*enthistory.OpType); !ok {
+				return fmt.Errorf("unexpected type %T for field operation", values[i])
+			} else if value != nil {
+				gmh.Operation = *value
 			}
 		case groupmembershiphistory.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -197,11 +197,11 @@ func (gmh *GroupMembershipHistory) String() string {
 	builder.WriteString("history_time=")
 	builder.WriteString(gmh.HistoryTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("operation=")
-	builder.WriteString(fmt.Sprintf("%v", gmh.Operation))
-	builder.WriteString(", ")
 	builder.WriteString("ref=")
 	builder.WriteString(gmh.Ref)
+	builder.WriteString(", ")
+	builder.WriteString("operation=")
+	builder.WriteString(fmt.Sprintf("%v", gmh.Operation))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(gmh.CreatedAt.Format(time.ANSIC))

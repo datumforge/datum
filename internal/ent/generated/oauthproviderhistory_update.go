@@ -38,14 +38,6 @@ func (ophu *OauthProviderHistoryUpdate) SetUpdatedAt(t time.Time) *OauthProvider
 	return ophu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ophu *OauthProviderHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *OauthProviderHistoryUpdate {
-	if t != nil {
-		ophu.SetUpdatedAt(*t)
-	}
-	return ophu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ophu *OauthProviderHistoryUpdate) ClearUpdatedAt() *OauthProviderHistoryUpdate {
 	ophu.mutation.ClearUpdatedAt()
@@ -290,6 +282,9 @@ func (ophu *OauthProviderHistoryUpdate) Mutation() *OauthProviderHistoryMutation
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ophu *OauthProviderHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := ophu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ophu.sqlSave, ophu.mutation, ophu.hooks)
 }
 
@@ -313,6 +308,18 @@ func (ophu *OauthProviderHistoryUpdate) ExecX(ctx context.Context) {
 	if err := ophu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ophu *OauthProviderHistoryUpdate) defaults() error {
+	if _, ok := ophu.mutation.UpdatedAt(); !ok && !ophu.mutation.UpdatedAtCleared() {
+		if oauthproviderhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized oauthproviderhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := oauthproviderhistory.UpdateDefaultUpdatedAt()
+		ophu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ophu *OauthProviderHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -429,14 +436,6 @@ type OauthProviderHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ophuo *OauthProviderHistoryUpdateOne) SetUpdatedAt(t time.Time) *OauthProviderHistoryUpdateOne {
 	ophuo.mutation.SetUpdatedAt(t)
-	return ophuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ophuo *OauthProviderHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *OauthProviderHistoryUpdateOne {
-	if t != nil {
-		ophuo.SetUpdatedAt(*t)
-	}
 	return ophuo
 }
 
@@ -697,6 +696,9 @@ func (ophuo *OauthProviderHistoryUpdateOne) Select(field string, fields ...strin
 
 // Save executes the query and returns the updated OauthProviderHistory entity.
 func (ophuo *OauthProviderHistoryUpdateOne) Save(ctx context.Context) (*OauthProviderHistory, error) {
+	if err := ophuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ophuo.sqlSave, ophuo.mutation, ophuo.hooks)
 }
 
@@ -720,6 +722,18 @@ func (ophuo *OauthProviderHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ophuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ophuo *OauthProviderHistoryUpdateOne) defaults() error {
+	if _, ok := ophuo.mutation.UpdatedAt(); !ok && !ophuo.mutation.UpdatedAtCleared() {
+		if oauthproviderhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized oauthproviderhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := oauthproviderhistory.UpdateDefaultUpdatedAt()
+		ophuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ophuo *OauthProviderHistoryUpdateOne) sqlSave(ctx context.Context) (_node *OauthProviderHistory, err error) {

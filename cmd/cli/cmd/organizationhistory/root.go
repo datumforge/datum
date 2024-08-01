@@ -12,8 +12,9 @@ import (
 
 // cmd represents the base organizationHistory command when called without any subcommands
 var cmd = &cobra.Command{
-	Use:   "organization-history",
-	Short: "the subcommands for working with datum organizationHistories",
+	Use:     "organization-history",
+	Aliases: []string{"org-history"},
+	Short:   "the subcommands for working with datum organizationHistories",
 }
 
 func init() {

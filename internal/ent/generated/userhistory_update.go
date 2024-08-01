@@ -38,14 +38,6 @@ func (uhu *UserHistoryUpdate) SetUpdatedAt(t time.Time) *UserHistoryUpdate {
 	return uhu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uhu *UserHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *UserHistoryUpdate {
-	if t != nil {
-		uhu.SetUpdatedAt(*t)
-	}
-	return uhu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (uhu *UserHistoryUpdate) ClearUpdatedAt() *UserHistoryUpdate {
 	uhu.mutation.ClearUpdatedAt()
@@ -244,14 +236,6 @@ func (uhu *UserHistoryUpdate) SetAvatarUpdatedAt(t time.Time) *UserHistoryUpdate
 	return uhu
 }
 
-// SetNillableAvatarUpdatedAt sets the "avatar_updated_at" field if the given value is not nil.
-func (uhu *UserHistoryUpdate) SetNillableAvatarUpdatedAt(t *time.Time) *UserHistoryUpdate {
-	if t != nil {
-		uhu.SetAvatarUpdatedAt(*t)
-	}
-	return uhu
-}
-
 // ClearAvatarUpdatedAt clears the value of the "avatar_updated_at" field.
 func (uhu *UserHistoryUpdate) ClearAvatarUpdatedAt() *UserHistoryUpdate {
 	uhu.mutation.ClearAvatarUpdatedAt()
@@ -261,14 +245,6 @@ func (uhu *UserHistoryUpdate) ClearAvatarUpdatedAt() *UserHistoryUpdate {
 // SetLastSeen sets the "last_seen" field.
 func (uhu *UserHistoryUpdate) SetLastSeen(t time.Time) *UserHistoryUpdate {
 	uhu.mutation.SetLastSeen(t)
-	return uhu
-}
-
-// SetNillableLastSeen sets the "last_seen" field if the given value is not nil.
-func (uhu *UserHistoryUpdate) SetNillableLastSeen(t *time.Time) *UserHistoryUpdate {
-	if t != nil {
-		uhu.SetLastSeen(*t)
-	}
 	return uhu
 }
 
@@ -359,6 +335,7 @@ func (uhu *UserHistoryUpdate) Mutation() *UserHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uhu *UserHistoryUpdate) Save(ctx context.Context) (int, error) {
+	uhu.defaults()
 	return withHooks(ctx, uhu.sqlSave, uhu.mutation, uhu.hooks)
 }
 
@@ -381,6 +358,22 @@ func (uhu *UserHistoryUpdate) Exec(ctx context.Context) error {
 func (uhu *UserHistoryUpdate) ExecX(ctx context.Context) {
 	if err := uhu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uhu *UserHistoryUpdate) defaults() {
+	if _, ok := uhu.mutation.UpdatedAt(); !ok && !uhu.mutation.UpdatedAtCleared() {
+		v := userhistory.UpdateDefaultUpdatedAt()
+		uhu.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := uhu.mutation.AvatarUpdatedAt(); !ok && !uhu.mutation.AvatarUpdatedAtCleared() {
+		v := userhistory.UpdateDefaultAvatarUpdatedAt()
+		uhu.mutation.SetAvatarUpdatedAt(v)
+	}
+	if _, ok := uhu.mutation.LastSeen(); !ok && !uhu.mutation.LastSeenCleared() {
+		v := userhistory.UpdateDefaultLastSeen()
+		uhu.mutation.SetLastSeen(v)
 	}
 }
 
@@ -543,14 +536,6 @@ type UserHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (uhuo *UserHistoryUpdateOne) SetUpdatedAt(t time.Time) *UserHistoryUpdateOne {
 	uhuo.mutation.SetUpdatedAt(t)
-	return uhuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uhuo *UserHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *UserHistoryUpdateOne {
-	if t != nil {
-		uhuo.SetUpdatedAt(*t)
-	}
 	return uhuo
 }
 
@@ -752,14 +737,6 @@ func (uhuo *UserHistoryUpdateOne) SetAvatarUpdatedAt(t time.Time) *UserHistoryUp
 	return uhuo
 }
 
-// SetNillableAvatarUpdatedAt sets the "avatar_updated_at" field if the given value is not nil.
-func (uhuo *UserHistoryUpdateOne) SetNillableAvatarUpdatedAt(t *time.Time) *UserHistoryUpdateOne {
-	if t != nil {
-		uhuo.SetAvatarUpdatedAt(*t)
-	}
-	return uhuo
-}
-
 // ClearAvatarUpdatedAt clears the value of the "avatar_updated_at" field.
 func (uhuo *UserHistoryUpdateOne) ClearAvatarUpdatedAt() *UserHistoryUpdateOne {
 	uhuo.mutation.ClearAvatarUpdatedAt()
@@ -769,14 +746,6 @@ func (uhuo *UserHistoryUpdateOne) ClearAvatarUpdatedAt() *UserHistoryUpdateOne {
 // SetLastSeen sets the "last_seen" field.
 func (uhuo *UserHistoryUpdateOne) SetLastSeen(t time.Time) *UserHistoryUpdateOne {
 	uhuo.mutation.SetLastSeen(t)
-	return uhuo
-}
-
-// SetNillableLastSeen sets the "last_seen" field if the given value is not nil.
-func (uhuo *UserHistoryUpdateOne) SetNillableLastSeen(t *time.Time) *UserHistoryUpdateOne {
-	if t != nil {
-		uhuo.SetLastSeen(*t)
-	}
 	return uhuo
 }
 
@@ -880,6 +849,7 @@ func (uhuo *UserHistoryUpdateOne) Select(field string, fields ...string) *UserHi
 
 // Save executes the query and returns the updated UserHistory entity.
 func (uhuo *UserHistoryUpdateOne) Save(ctx context.Context) (*UserHistory, error) {
+	uhuo.defaults()
 	return withHooks(ctx, uhuo.sqlSave, uhuo.mutation, uhuo.hooks)
 }
 
@@ -902,6 +872,22 @@ func (uhuo *UserHistoryUpdateOne) Exec(ctx context.Context) error {
 func (uhuo *UserHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := uhuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uhuo *UserHistoryUpdateOne) defaults() {
+	if _, ok := uhuo.mutation.UpdatedAt(); !ok && !uhuo.mutation.UpdatedAtCleared() {
+		v := userhistory.UpdateDefaultUpdatedAt()
+		uhuo.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := uhuo.mutation.AvatarUpdatedAt(); !ok && !uhuo.mutation.AvatarUpdatedAtCleared() {
+		v := userhistory.UpdateDefaultAvatarUpdatedAt()
+		uhuo.mutation.SetAvatarUpdatedAt(v)
+	}
+	if _, ok := uhuo.mutation.LastSeen(); !ok && !uhuo.mutation.LastSeenCleared() {
+		v := userhistory.UpdateDefaultLastSeen()
+		uhuo.mutation.SetLastSeen(v)
 	}
 }
 

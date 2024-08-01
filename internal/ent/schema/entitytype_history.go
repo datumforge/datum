@@ -2,6 +2,9 @@
 package schema
 
 import (
+	"context"
+	"time"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -9,11 +12,12 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/enthistory"
-
 	"github.com/datumforge/entx"
-
-	"time"
+	"github.com/datumforge/fgax/entfga"
 )
 
 // EntityTypeHistory holds the schema definition for the EntityTypeHistory entity.
@@ -34,6 +38,11 @@ func (EntityTypeHistory) Annotations() []schema.Annotation {
 		},
 		entgql.QueryField(),
 		entgql.RelayConnection(),
+		entfga.Annotations{
+			ObjectType:   "organization",
+			IDField:      "OwnerID",
+			IncludeHooks: false,
+		},
 	}
 }
 
@@ -57,19 +66,54 @@ func (EntityTypeHistory) Fields() []ent.Field {
 	mixins := EntityType{}.Mixin()
 	for _, mixin := range mixins {
 		for _, field := range mixin.Fields() {
+			// make sure the mixed in fields do not have unique constraints
+			field.Descriptor().Unique = false
+
+			// make sure the mixed in fields do not have validators
+			field.Descriptor().Validators = nil
+
+			// append the mixed in field to the history fields
 			historyFields = append(historyFields, field)
 		}
 	}
 
 	original := EntityType{}
 	for _, field := range original.Fields() {
+		// make sure the fields do not have unique constraints
+		field.Descriptor().Unique = false
+
+		// make sure the mixed in fields do not have validators
+		field.Descriptor().Validators = nil
+
+		// append the field to the history fields
 		historyFields = append(historyFields, field)
 	}
 
 	return historyFields
 }
+
+// Indexes of the EntityTypeHistory
 func (EntityTypeHistory) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("history_time"),
+	}
+}
+
+// Interceptors of the EntityTypeHistory
+func (EntityTypeHistory) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.HistoryAccess("audit_log_viewer", true, false),
+	}
+}
+
+// Policy of the EntityTypeHistory
+func (EntityTypeHistory) Policy() ent.Policy {
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			privacy.EntityTypeHistoryQueryRuleFunc(func(ctx context.Context, q *generated.EntityTypeHistoryQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

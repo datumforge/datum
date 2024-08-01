@@ -37,14 +37,6 @@ func (fhu *FileHistoryUpdate) SetUpdatedAt(t time.Time) *FileHistoryUpdate {
 	return fhu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (fhu *FileHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *FileHistoryUpdate {
-	if t != nil {
-		fhu.SetUpdatedAt(*t)
-	}
-	return fhu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (fhu *FileHistoryUpdate) ClearUpdatedAt() *FileHistoryUpdate {
 	fhu.mutation.ClearUpdatedAt()
@@ -259,6 +251,7 @@ func (fhu *FileHistoryUpdate) Mutation() *FileHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (fhu *FileHistoryUpdate) Save(ctx context.Context) (int, error) {
+	fhu.defaults()
 	return withHooks(ctx, fhu.sqlSave, fhu.mutation, fhu.hooks)
 }
 
@@ -281,6 +274,14 @@ func (fhu *FileHistoryUpdate) Exec(ctx context.Context) error {
 func (fhu *FileHistoryUpdate) ExecX(ctx context.Context) {
 	if err := fhu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fhu *FileHistoryUpdate) defaults() {
+	if _, ok := fhu.mutation.UpdatedAt(); !ok && !fhu.mutation.UpdatedAtCleared() {
+		v := filehistory.UpdateDefaultUpdatedAt()
+		fhu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -395,14 +396,6 @@ type FileHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (fhuo *FileHistoryUpdateOne) SetUpdatedAt(t time.Time) *FileHistoryUpdateOne {
 	fhuo.mutation.SetUpdatedAt(t)
-	return fhuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (fhuo *FileHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *FileHistoryUpdateOne {
-	if t != nil {
-		fhuo.SetUpdatedAt(*t)
-	}
 	return fhuo
 }
 
@@ -633,6 +626,7 @@ func (fhuo *FileHistoryUpdateOne) Select(field string, fields ...string) *FileHi
 
 // Save executes the query and returns the updated FileHistory entity.
 func (fhuo *FileHistoryUpdateOne) Save(ctx context.Context) (*FileHistory, error) {
+	fhuo.defaults()
 	return withHooks(ctx, fhuo.sqlSave, fhuo.mutation, fhuo.hooks)
 }
 
@@ -655,6 +649,14 @@ func (fhuo *FileHistoryUpdateOne) Exec(ctx context.Context) error {
 func (fhuo *FileHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := fhuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fhuo *FileHistoryUpdateOne) defaults() {
+	if _, ok := fhuo.mutation.UpdatedAt(); !ok && !fhuo.mutation.UpdatedAtCleared() {
+		v := filehistory.UpdateDefaultUpdatedAt()
+		fhuo.mutation.SetUpdatedAt(v)
 	}
 }
 

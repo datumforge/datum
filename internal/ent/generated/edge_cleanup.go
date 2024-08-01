@@ -96,13 +96,6 @@ func EntitlementPlanEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
-func EntitlementPlanHistoryEdgeCleanup(ctx context.Context, id string) error {
-	// If a user has access to delete the object, they have access to delete all edges
-	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplanhistory edge"))
-
-	return nil
-}
-
 func EntitlementPlanFeatureEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplanfeature edge"))
@@ -113,6 +106,13 @@ func EntitlementPlanFeatureEdgeCleanup(ctx context.Context, id string) error {
 func EntitlementPlanFeatureHistoryEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplanfeaturehistory edge"))
+
+	return nil
+}
+
+func EntitlementPlanHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementplanhistory edge"))
 
 	return nil
 }

@@ -108,11 +108,6 @@ var entitlementplanImplementors = []string{"EntitlementPlan", "Node"}
 // IsNode implements the Node interface check for GQLGen.
 func (*EntitlementPlan) IsNode() {}
 
-var entitlementplanhistoryImplementors = []string{"EntitlementPlanHistory", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*EntitlementPlanHistory) IsNode() {}
-
 var entitlementplanfeatureImplementors = []string{"EntitlementPlanFeature", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
@@ -122,6 +117,11 @@ var entitlementplanfeaturehistoryImplementors = []string{"EntitlementPlanFeature
 
 // IsNode implements the Node interface check for GQLGen.
 func (*EntitlementPlanFeatureHistory) IsNode() {}
+
+var entitlementplanhistoryImplementors = []string{"EntitlementPlanHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*EntitlementPlanHistory) IsNode() {}
 
 var entityImplementors = []string{"Entity", "Node"}
 
@@ -458,15 +458,6 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			}
 		}
 		return query.Only(ctx)
-	case entitlementplanhistory.Table:
-		query := c.EntitlementPlanHistory.Query().
-			Where(entitlementplanhistory.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entitlementplanhistoryImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
 	case entitlementplanfeature.Table:
 		query := c.EntitlementPlanFeature.Query().
 			Where(entitlementplanfeature.ID(id))
@@ -481,6 +472,15 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(entitlementplanfeaturehistory.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entitlementplanfeaturehistoryImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case entitlementplanhistory.Table:
+		query := c.EntitlementPlanHistory.Query().
+			Where(entitlementplanhistory.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entitlementplanhistoryImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -1055,22 +1055,6 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
-	case entitlementplanhistory.Table:
-		query := c.EntitlementPlanHistory.Query().
-			Where(entitlementplanhistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, entitlementplanhistoryImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
 	case entitlementplanfeature.Table:
 		query := c.EntitlementPlanFeature.Query().
 			Where(entitlementplanfeature.IDIn(ids...))
@@ -1091,6 +1075,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.EntitlementPlanFeatureHistory.Query().
 			Where(entitlementplanfeaturehistory.IDIn(ids...))
 		query, err := query.CollectFields(ctx, entitlementplanfeaturehistoryImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case entitlementplanhistory.Table:
+		query := c.EntitlementPlanHistory.Query().
+			Where(entitlementplanhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, entitlementplanhistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}

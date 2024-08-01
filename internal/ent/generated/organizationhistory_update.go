@@ -37,14 +37,6 @@ func (ohu *OrganizationHistoryUpdate) SetUpdatedAt(t time.Time) *OrganizationHis
 	return ohu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ohu *OrganizationHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *OrganizationHistoryUpdate {
-	if t != nil {
-		ohu.SetUpdatedAt(*t)
-	}
-	return ohu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ohu *OrganizationHistoryUpdate) ClearUpdatedAt() *OrganizationHistoryUpdate {
 	ohu.mutation.ClearUpdatedAt()
@@ -218,6 +210,9 @@ func (ohu *OrganizationHistoryUpdate) Mutation() *OrganizationHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ohu *OrganizationHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := ohu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ohu.sqlSave, ohu.mutation, ohu.hooks)
 }
 
@@ -241,6 +236,18 @@ func (ohu *OrganizationHistoryUpdate) ExecX(ctx context.Context) {
 	if err := ohu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ohu *OrganizationHistoryUpdate) defaults() error {
+	if _, ok := ohu.mutation.UpdatedAt(); !ok && !ohu.mutation.UpdatedAtCleared() {
+		if organizationhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organizationhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := organizationhistory.UpdateDefaultUpdatedAt()
+		ohu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ohu *OrganizationHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -348,14 +355,6 @@ type OrganizationHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ohuo *OrganizationHistoryUpdateOne) SetUpdatedAt(t time.Time) *OrganizationHistoryUpdateOne {
 	ohuo.mutation.SetUpdatedAt(t)
-	return ohuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ohuo *OrganizationHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *OrganizationHistoryUpdateOne {
-	if t != nil {
-		ohuo.SetUpdatedAt(*t)
-	}
 	return ohuo
 }
 
@@ -545,6 +544,9 @@ func (ohuo *OrganizationHistoryUpdateOne) Select(field string, fields ...string)
 
 // Save executes the query and returns the updated OrganizationHistory entity.
 func (ohuo *OrganizationHistoryUpdateOne) Save(ctx context.Context) (*OrganizationHistory, error) {
+	if err := ohuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ohuo.sqlSave, ohuo.mutation, ohuo.hooks)
 }
 
@@ -568,6 +570,18 @@ func (ohuo *OrganizationHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ohuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ohuo *OrganizationHistoryUpdateOne) defaults() error {
+	if _, ok := ohuo.mutation.UpdatedAt(); !ok && !ohuo.mutation.UpdatedAtCleared() {
+		if organizationhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organizationhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := organizationhistory.UpdateDefaultUpdatedAt()
+		ohuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ohuo *OrganizationHistoryUpdateOne) sqlSave(ctx context.Context) (_node *OrganizationHistory, err error) {

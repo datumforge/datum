@@ -37,14 +37,6 @@ func (ihu *IntegrationHistoryUpdate) SetUpdatedAt(t time.Time) *IntegrationHisto
 	return ihu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ihu *IntegrationHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *IntegrationHistoryUpdate {
-	if t != nil {
-		ihu.SetUpdatedAt(*t)
-	}
-	return ihu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ihu *IntegrationHistoryUpdate) ClearUpdatedAt() *IntegrationHistoryUpdate {
 	ihu.mutation.ClearUpdatedAt()
@@ -210,6 +202,9 @@ func (ihu *IntegrationHistoryUpdate) Mutation() *IntegrationHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ihu *IntegrationHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := ihu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ihu.sqlSave, ihu.mutation, ihu.hooks)
 }
 
@@ -233,6 +228,18 @@ func (ihu *IntegrationHistoryUpdate) ExecX(ctx context.Context) {
 	if err := ihu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ihu *IntegrationHistoryUpdate) defaults() error {
+	if _, ok := ihu.mutation.UpdatedAt(); !ok && !ihu.mutation.UpdatedAtCleared() {
+		if integrationhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized integrationhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := integrationhistory.UpdateDefaultUpdatedAt()
+		ihu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ihu *IntegrationHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -334,14 +341,6 @@ type IntegrationHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ihuo *IntegrationHistoryUpdateOne) SetUpdatedAt(t time.Time) *IntegrationHistoryUpdateOne {
 	ihuo.mutation.SetUpdatedAt(t)
-	return ihuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ihuo *IntegrationHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *IntegrationHistoryUpdateOne {
-	if t != nil {
-		ihuo.SetUpdatedAt(*t)
-	}
 	return ihuo
 }
 
@@ -523,6 +522,9 @@ func (ihuo *IntegrationHistoryUpdateOne) Select(field string, fields ...string) 
 
 // Save executes the query and returns the updated IntegrationHistory entity.
 func (ihuo *IntegrationHistoryUpdateOne) Save(ctx context.Context) (*IntegrationHistory, error) {
+	if err := ihuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ihuo.sqlSave, ihuo.mutation, ihuo.hooks)
 }
 
@@ -546,6 +548,18 @@ func (ihuo *IntegrationHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ihuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ihuo *IntegrationHistoryUpdateOne) defaults() error {
+	if _, ok := ihuo.mutation.UpdatedAt(); !ok && !ihuo.mutation.UpdatedAtCleared() {
+		if integrationhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized integrationhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := integrationhistory.UpdateDefaultUpdatedAt()
+		ihuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ihuo *IntegrationHistoryUpdateOne) sqlSave(ctx context.Context) (_node *IntegrationHistory, err error) {

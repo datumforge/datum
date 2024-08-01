@@ -365,33 +365,6 @@ func (f TraverseEntitlementPlan) Traverse(ctx context.Context, q generated.Query
 	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanQuery", q)
 }
 
-// The EntitlementPlanHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
-type EntitlementPlanHistoryFunc func(context.Context, *generated.EntitlementPlanHistoryQuery) (generated.Value, error)
-
-// Query calls f(ctx, q).
-func (f EntitlementPlanHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.EntitlementPlanHistoryQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanHistoryQuery", q)
-}
-
-// The TraverseEntitlementPlanHistory type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseEntitlementPlanHistory func(context.Context, *generated.EntitlementPlanHistoryQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseEntitlementPlanHistory) Intercept(next generated.Querier) generated.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseEntitlementPlanHistory) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.EntitlementPlanHistoryQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanHistoryQuery", q)
-}
-
 // The EntitlementPlanFeatureFunc type is an adapter to allow the use of ordinary function as a Querier.
 type EntitlementPlanFeatureFunc func(context.Context, *generated.EntitlementPlanFeatureQuery) (generated.Value, error)
 
@@ -444,6 +417,33 @@ func (f TraverseEntitlementPlanFeatureHistory) Traverse(ctx context.Context, q g
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanFeatureHistoryQuery", q)
+}
+
+// The EntitlementPlanHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntitlementPlanHistoryFunc func(context.Context, *generated.EntitlementPlanHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntitlementPlanHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntitlementPlanHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanHistoryQuery", q)
+}
+
+// The TraverseEntitlementPlanHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntitlementPlanHistory func(context.Context, *generated.EntitlementPlanHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntitlementPlanHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntitlementPlanHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementPlanHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementPlanHistoryQuery", q)
 }
 
 // The EntityFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -1628,12 +1628,12 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.EntitlementHistoryQuery, predicate.EntitlementHistory, entitlementhistory.OrderOption]{typ: generated.TypeEntitlementHistory, tq: q}, nil
 	case *generated.EntitlementPlanQuery:
 		return &query[*generated.EntitlementPlanQuery, predicate.EntitlementPlan, entitlementplan.OrderOption]{typ: generated.TypeEntitlementPlan, tq: q}, nil
-	case *generated.EntitlementPlanHistoryQuery:
-		return &query[*generated.EntitlementPlanHistoryQuery, predicate.EntitlementPlanHistory, entitlementplanhistory.OrderOption]{typ: generated.TypeEntitlementPlanHistory, tq: q}, nil
 	case *generated.EntitlementPlanFeatureQuery:
 		return &query[*generated.EntitlementPlanFeatureQuery, predicate.EntitlementPlanFeature, entitlementplanfeature.OrderOption]{typ: generated.TypeEntitlementPlanFeature, tq: q}, nil
 	case *generated.EntitlementPlanFeatureHistoryQuery:
 		return &query[*generated.EntitlementPlanFeatureHistoryQuery, predicate.EntitlementPlanFeatureHistory, entitlementplanfeaturehistory.OrderOption]{typ: generated.TypeEntitlementPlanFeatureHistory, tq: q}, nil
+	case *generated.EntitlementPlanHistoryQuery:
+		return &query[*generated.EntitlementPlanHistoryQuery, predicate.EntitlementPlanHistory, entitlementplanhistory.OrderOption]{typ: generated.TypeEntitlementPlanHistory, tq: q}, nil
 	case *generated.EntityQuery:
 		return &query[*generated.EntityQuery, predicate.Entity, entity.OrderOption]{typ: generated.TypeEntity, tq: q}, nil
 	case *generated.EntityHistoryQuery:

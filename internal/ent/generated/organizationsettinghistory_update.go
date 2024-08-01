@@ -38,14 +38,6 @@ func (oshu *OrganizationSettingHistoryUpdate) SetUpdatedAt(t time.Time) *Organiz
 	return oshu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (oshu *OrganizationSettingHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *OrganizationSettingHistoryUpdate {
-	if t != nil {
-		oshu.SetUpdatedAt(*t)
-	}
-	return oshu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (oshu *OrganizationSettingHistoryUpdate) ClearUpdatedAt() *OrganizationSettingHistoryUpdate {
 	oshu.mutation.ClearUpdatedAt()
@@ -295,6 +287,9 @@ func (oshu *OrganizationSettingHistoryUpdate) Mutation() *OrganizationSettingHis
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (oshu *OrganizationSettingHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := oshu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, oshu.sqlSave, oshu.mutation, oshu.hooks)
 }
 
@@ -318,6 +313,18 @@ func (oshu *OrganizationSettingHistoryUpdate) ExecX(ctx context.Context) {
 	if err := oshu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (oshu *OrganizationSettingHistoryUpdate) defaults() error {
+	if _, ok := oshu.mutation.UpdatedAt(); !ok && !oshu.mutation.UpdatedAtCleared() {
+		if organizationsettinghistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organizationsettinghistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := organizationsettinghistory.UpdateDefaultUpdatedAt()
+		oshu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -464,14 +471,6 @@ type OrganizationSettingHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (oshuo *OrganizationSettingHistoryUpdateOne) SetUpdatedAt(t time.Time) *OrganizationSettingHistoryUpdateOne {
 	oshuo.mutation.SetUpdatedAt(t)
-	return oshuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (oshuo *OrganizationSettingHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *OrganizationSettingHistoryUpdateOne {
-	if t != nil {
-		oshuo.SetUpdatedAt(*t)
-	}
 	return oshuo
 }
 
@@ -737,6 +736,9 @@ func (oshuo *OrganizationSettingHistoryUpdateOne) Select(field string, fields ..
 
 // Save executes the query and returns the updated OrganizationSettingHistory entity.
 func (oshuo *OrganizationSettingHistoryUpdateOne) Save(ctx context.Context) (*OrganizationSettingHistory, error) {
+	if err := oshuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, oshuo.sqlSave, oshuo.mutation, oshuo.hooks)
 }
 
@@ -760,6 +762,18 @@ func (oshuo *OrganizationSettingHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := oshuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (oshuo *OrganizationSettingHistoryUpdateOne) defaults() error {
+	if _, ok := oshuo.mutation.UpdatedAt(); !ok && !oshuo.mutation.UpdatedAtCleared() {
+		if organizationsettinghistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organizationsettinghistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := organizationsettinghistory.UpdateDefaultUpdatedAt()
+		oshuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

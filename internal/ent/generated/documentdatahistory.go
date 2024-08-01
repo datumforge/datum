@@ -22,10 +22,10 @@ type DocumentDataHistory struct {
 	ID string `json:"id,omitempty"`
 	// HistoryTime holds the value of the "history_time" field.
 	HistoryTime time.Time `json:"history_time,omitempty"`
-	// Operation holds the value of the "operation" field.
-	Operation enthistory.OpType `json:"operation,omitempty"`
 	// Ref holds the value of the "ref" field.
 	Ref string `json:"ref,omitempty"`
+	// Operation holds the value of the "operation" field.
+	Operation enthistory.OpType `json:"operation,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -42,7 +42,7 @@ type DocumentDataHistory struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
-	// OwnerID holds the value of the "owner_id" field.
+	// The organization id that owns the object
 	OwnerID string `json:"owner_id,omitempty"`
 	// the template id of the document
 	TemplateID string `json:"template_id,omitempty"`
@@ -91,17 +91,17 @@ func (ddh *DocumentDataHistory) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				ddh.HistoryTime = value.Time
 			}
-		case documentdatahistory.FieldOperation:
-			if value, ok := values[i].(*enthistory.OpType); !ok {
-				return fmt.Errorf("unexpected type %T for field operation", values[i])
-			} else if value != nil {
-				ddh.Operation = *value
-			}
 		case documentdatahistory.FieldRef:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ref", values[i])
 			} else if value.Valid {
 				ddh.Ref = value.String
+			}
+		case documentdatahistory.FieldOperation:
+			if value, ok := values[i].(*enthistory.OpType); !ok {
+				return fmt.Errorf("unexpected type %T for field operation", values[i])
+			} else if value != nil {
+				ddh.Operation = *value
 			}
 		case documentdatahistory.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -212,11 +212,11 @@ func (ddh *DocumentDataHistory) String() string {
 	builder.WriteString("history_time=")
 	builder.WriteString(ddh.HistoryTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("operation=")
-	builder.WriteString(fmt.Sprintf("%v", ddh.Operation))
-	builder.WriteString(", ")
 	builder.WriteString("ref=")
 	builder.WriteString(ddh.Ref)
+	builder.WriteString(", ")
+	builder.WriteString("operation=")
+	builder.WriteString(fmt.Sprintf("%v", ddh.Operation))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(ddh.CreatedAt.Format(time.ANSIC))

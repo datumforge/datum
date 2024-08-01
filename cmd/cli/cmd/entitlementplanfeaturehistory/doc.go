@@ -1,0 +1,2 @@
+// Package datumentitlementplanfeaturehistory is our cobra cli for entitlementPlanFeatureHistory endpoints
+package datumentitlementplanfeaturehistory

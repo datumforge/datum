@@ -35,12 +35,6 @@ func (ohc *OrganizationHistoryCreate) SetNillableHistoryTime(t *time.Time) *Orga
 	return ohc
 }
 
-// SetOperation sets the "operation" field.
-func (ohc *OrganizationHistoryCreate) SetOperation(et enthistory.OpType) *OrganizationHistoryCreate {
-	ohc.mutation.SetOperation(et)
-	return ohc
-}
-
 // SetRef sets the "ref" field.
 func (ohc *OrganizationHistoryCreate) SetRef(s string) *OrganizationHistoryCreate {
 	ohc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (ohc *OrganizationHistoryCreate) SetNillableRef(s *string) *OrganizationHis
 	if s != nil {
 		ohc.SetRef(*s)
 	}
+	return ohc
+}
+
+// SetOperation sets the "operation" field.
+func (ohc *OrganizationHistoryCreate) SetOperation(et enthistory.OpType) *OrganizationHistoryCreate {
+	ohc.mutation.SetOperation(et)
 	return ohc
 }
 
@@ -270,7 +270,9 @@ func (ohc *OrganizationHistoryCreate) Mutation() *OrganizationHistoryMutation {
 
 // Save creates the OrganizationHistory in the database.
 func (ohc *OrganizationHistoryCreate) Save(ctx context.Context) (*OrganizationHistory, error) {
-	ohc.defaults()
+	if err := ohc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ohc.sqlSave, ohc.mutation, ohc.hooks)
 }
 
@@ -297,20 +299,32 @@ func (ohc *OrganizationHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ohc *OrganizationHistoryCreate) defaults() {
+func (ohc *OrganizationHistoryCreate) defaults() error {
 	if _, ok := ohc.mutation.HistoryTime(); !ok {
+		if organizationhistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized organizationhistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := organizationhistory.DefaultHistoryTime()
 		ohc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := ohc.mutation.CreatedAt(); !ok {
+		if organizationhistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organizationhistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := organizationhistory.DefaultCreatedAt()
 		ohc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ohc.mutation.UpdatedAt(); !ok {
+		if organizationhistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organizationhistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := organizationhistory.DefaultUpdatedAt()
 		ohc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ohc.mutation.MappingID(); !ok {
+		if organizationhistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized organizationhistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := organizationhistory.DefaultMappingID()
 		ohc.mutation.SetMappingID(v)
 	}
@@ -331,9 +345,13 @@ func (ohc *OrganizationHistoryCreate) defaults() {
 		ohc.mutation.SetDedicatedDb(v)
 	}
 	if _, ok := ohc.mutation.ID(); !ok {
+		if organizationhistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized organizationhistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := organizationhistory.DefaultID()
 		ohc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -401,13 +419,13 @@ func (ohc *OrganizationHistoryCreate) createSpec() (*OrganizationHistory, *sqlgr
 		_spec.SetField(organizationhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := ohc.mutation.Operation(); ok {
-		_spec.SetField(organizationhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := ohc.mutation.Ref(); ok {
 		_spec.SetField(organizationhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := ohc.mutation.Operation(); ok {
+		_spec.SetField(organizationhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := ohc.mutation.CreatedAt(); ok {
 		_spec.SetField(organizationhistory.FieldCreatedAt, field.TypeTime, value)

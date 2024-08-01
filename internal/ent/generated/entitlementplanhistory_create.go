@@ -35,12 +35,6 @@ func (ephc *EntitlementPlanHistoryCreate) SetNillableHistoryTime(t *time.Time) *
 	return ephc
 }
 
-// SetOperation sets the "operation" field.
-func (ephc *EntitlementPlanHistoryCreate) SetOperation(et enthistory.OpType) *EntitlementPlanHistoryCreate {
-	ephc.mutation.SetOperation(et)
-	return ephc
-}
-
 // SetRef sets the "ref" field.
 func (ephc *EntitlementPlanHistoryCreate) SetRef(s string) *EntitlementPlanHistoryCreate {
 	ephc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (ephc *EntitlementPlanHistoryCreate) SetNillableRef(s *string) *Entitlement
 	if s != nil {
 		ephc.SetRef(*s)
 	}
+	return ephc
+}
+
+// SetOperation sets the "operation" field.
+func (ephc *EntitlementPlanHistoryCreate) SetOperation(et enthistory.OpType) *EntitlementPlanHistoryCreate {
+	ephc.mutation.SetOperation(et)
 	return ephc
 }
 
@@ -240,7 +240,9 @@ func (ephc *EntitlementPlanHistoryCreate) Mutation() *EntitlementPlanHistoryMuta
 
 // Save creates the EntitlementPlanHistory in the database.
 func (ephc *EntitlementPlanHistoryCreate) Save(ctx context.Context) (*EntitlementPlanHistory, error) {
-	ephc.defaults()
+	if err := ephc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ephc.sqlSave, ephc.mutation, ephc.hooks)
 }
 
@@ -267,20 +269,32 @@ func (ephc *EntitlementPlanHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ephc *EntitlementPlanHistoryCreate) defaults() {
+func (ephc *EntitlementPlanHistoryCreate) defaults() error {
 	if _, ok := ephc.mutation.HistoryTime(); !ok {
+		if entitlementplanhistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanhistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanhistory.DefaultHistoryTime()
 		ephc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := ephc.mutation.CreatedAt(); !ok {
+		if entitlementplanhistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanhistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanhistory.DefaultCreatedAt()
 		ephc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ephc.mutation.UpdatedAt(); !ok {
+		if entitlementplanhistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanhistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanhistory.DefaultUpdatedAt()
 		ephc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ephc.mutation.MappingID(); !ok {
+		if entitlementplanhistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanhistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanhistory.DefaultMappingID()
 		ephc.mutation.SetMappingID(v)
 	}
@@ -289,9 +303,13 @@ func (ephc *EntitlementPlanHistoryCreate) defaults() {
 		ephc.mutation.SetTags(v)
 	}
 	if _, ok := ephc.mutation.ID(); !ok {
+		if entitlementplanhistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized entitlementplanhistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := entitlementplanhistory.DefaultID()
 		ephc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -356,13 +374,13 @@ func (ephc *EntitlementPlanHistoryCreate) createSpec() (*EntitlementPlanHistory,
 		_spec.SetField(entitlementplanhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := ephc.mutation.Operation(); ok {
-		_spec.SetField(entitlementplanhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := ephc.mutation.Ref(); ok {
 		_spec.SetField(entitlementplanhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := ephc.mutation.Operation(); ok {
+		_spec.SetField(entitlementplanhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := ephc.mutation.CreatedAt(); ok {
 		_spec.SetField(entitlementplanhistory.FieldCreatedAt, field.TypeTime, value)

@@ -46,9 +46,11 @@ type UserOwnedMixin struct {
 
 // Fields of the UserOwnedMixin
 func (userOwned UserOwnedMixin) Fields() []ent.Field {
-	ownerIDField := field.String("owner_id").Annotations(
-		entgql.Skip(),
-	)
+	ownerIDField := field.String("owner_id").
+		Annotations(
+			entgql.Skip(),
+		).
+		Comment("The user id that owns the object")
 
 	if userOwned.Optional {
 		ownerIDField.Optional()

@@ -117,18 +117,6 @@ func (f EntitlementPlanFunc) Mutate(ctx context.Context, m generated.Mutation) (
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementPlanMutation", m)
 }
 
-// The EntitlementPlanHistoryFunc type is an adapter to allow the use of ordinary
-// function as EntitlementPlanHistory mutator.
-type EntitlementPlanHistoryFunc func(context.Context, *generated.EntitlementPlanHistoryMutation) (generated.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f EntitlementPlanHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.EntitlementPlanHistoryMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementPlanHistoryMutation", m)
-}
-
 // The EntitlementPlanFeatureFunc type is an adapter to allow the use of ordinary
 // function as EntitlementPlanFeature mutator.
 type EntitlementPlanFeatureFunc func(context.Context, *generated.EntitlementPlanFeatureMutation) (generated.Value, error)
@@ -151,6 +139,18 @@ func (f EntitlementPlanFeatureHistoryFunc) Mutate(ctx context.Context, m generat
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementPlanFeatureHistoryMutation", m)
+}
+
+// The EntitlementPlanHistoryFunc type is an adapter to allow the use of ordinary
+// function as EntitlementPlanHistory mutator.
+type EntitlementPlanHistoryFunc func(context.Context, *generated.EntitlementPlanHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntitlementPlanHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EntitlementPlanHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementPlanHistoryMutation", m)
 }
 
 // The EntityFunc type is an adapter to allow the use of ordinary

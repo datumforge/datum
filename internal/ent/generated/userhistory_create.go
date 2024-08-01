@@ -36,12 +36,6 @@ func (uhc *UserHistoryCreate) SetNillableHistoryTime(t *time.Time) *UserHistoryC
 	return uhc
 }
 
-// SetOperation sets the "operation" field.
-func (uhc *UserHistoryCreate) SetOperation(et enthistory.OpType) *UserHistoryCreate {
-	uhc.mutation.SetOperation(et)
-	return uhc
-}
-
 // SetRef sets the "ref" field.
 func (uhc *UserHistoryCreate) SetRef(s string) *UserHistoryCreate {
 	uhc.mutation.SetRef(s)
@@ -53,6 +47,12 @@ func (uhc *UserHistoryCreate) SetNillableRef(s *string) *UserHistoryCreate {
 	if s != nil {
 		uhc.SetRef(*s)
 	}
+	return uhc
+}
+
+// SetOperation sets the "operation" field.
+func (uhc *UserHistoryCreate) SetOperation(et enthistory.OpType) *UserHistoryCreate {
+	uhc.mutation.SetOperation(et)
 	return uhc
 }
 
@@ -470,13 +470,13 @@ func (uhc *UserHistoryCreate) createSpec() (*UserHistory, *sqlgraph.CreateSpec) 
 		_spec.SetField(userhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := uhc.mutation.Operation(); ok {
-		_spec.SetField(userhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := uhc.mutation.Ref(); ok {
 		_spec.SetField(userhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := uhc.mutation.Operation(); ok {
+		_spec.SetField(userhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := uhc.mutation.CreatedAt(); ok {
 		_spec.SetField(userhistory.FieldCreatedAt, field.TypeTime, value)

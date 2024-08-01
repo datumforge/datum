@@ -35,12 +35,6 @@ func (ihc *IntegrationHistoryCreate) SetNillableHistoryTime(t *time.Time) *Integ
 	return ihc
 }
 
-// SetOperation sets the "operation" field.
-func (ihc *IntegrationHistoryCreate) SetOperation(et enthistory.OpType) *IntegrationHistoryCreate {
-	ihc.mutation.SetOperation(et)
-	return ihc
-}
-
 // SetRef sets the "ref" field.
 func (ihc *IntegrationHistoryCreate) SetRef(s string) *IntegrationHistoryCreate {
 	ihc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (ihc *IntegrationHistoryCreate) SetNillableRef(s *string) *IntegrationHisto
 	if s != nil {
 		ihc.SetRef(*s)
 	}
+	return ihc
+}
+
+// SetOperation sets the "operation" field.
+func (ihc *IntegrationHistoryCreate) SetOperation(et enthistory.OpType) *IntegrationHistoryCreate {
+	ihc.mutation.SetOperation(et)
 	return ihc
 }
 
@@ -228,7 +228,9 @@ func (ihc *IntegrationHistoryCreate) Mutation() *IntegrationHistoryMutation {
 
 // Save creates the IntegrationHistory in the database.
 func (ihc *IntegrationHistoryCreate) Save(ctx context.Context) (*IntegrationHistory, error) {
-	ihc.defaults()
+	if err := ihc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ihc.sqlSave, ihc.mutation, ihc.hooks)
 }
 
@@ -255,20 +257,32 @@ func (ihc *IntegrationHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ihc *IntegrationHistoryCreate) defaults() {
+func (ihc *IntegrationHistoryCreate) defaults() error {
 	if _, ok := ihc.mutation.HistoryTime(); !ok {
+		if integrationhistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized integrationhistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := integrationhistory.DefaultHistoryTime()
 		ihc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := ihc.mutation.CreatedAt(); !ok {
+		if integrationhistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized integrationhistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := integrationhistory.DefaultCreatedAt()
 		ihc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ihc.mutation.UpdatedAt(); !ok {
+		if integrationhistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized integrationhistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := integrationhistory.DefaultUpdatedAt()
 		ihc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ihc.mutation.MappingID(); !ok {
+		if integrationhistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized integrationhistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := integrationhistory.DefaultMappingID()
 		ihc.mutation.SetMappingID(v)
 	}
@@ -277,9 +291,13 @@ func (ihc *IntegrationHistoryCreate) defaults() {
 		ihc.mutation.SetTags(v)
 	}
 	if _, ok := ihc.mutation.ID(); !ok {
+		if integrationhistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized integrationhistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := integrationhistory.DefaultID()
 		ihc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -341,13 +359,13 @@ func (ihc *IntegrationHistoryCreate) createSpec() (*IntegrationHistory, *sqlgrap
 		_spec.SetField(integrationhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := ihc.mutation.Operation(); ok {
-		_spec.SetField(integrationhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := ihc.mutation.Ref(); ok {
 		_spec.SetField(integrationhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := ihc.mutation.Operation(); ok {
+		_spec.SetField(integrationhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := ihc.mutation.CreatedAt(); ok {
 		_spec.SetField(integrationhistory.FieldCreatedAt, field.TypeTime, value)

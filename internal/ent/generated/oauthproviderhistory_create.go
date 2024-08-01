@@ -36,12 +36,6 @@ func (ophc *OauthProviderHistoryCreate) SetNillableHistoryTime(t *time.Time) *Oa
 	return ophc
 }
 
-// SetOperation sets the "operation" field.
-func (ophc *OauthProviderHistoryCreate) SetOperation(et enthistory.OpType) *OauthProviderHistoryCreate {
-	ophc.mutation.SetOperation(et)
-	return ophc
-}
-
 // SetRef sets the "ref" field.
 func (ophc *OauthProviderHistoryCreate) SetRef(s string) *OauthProviderHistoryCreate {
 	ophc.mutation.SetRef(s)
@@ -53,6 +47,12 @@ func (ophc *OauthProviderHistoryCreate) SetNillableRef(s *string) *OauthProvider
 	if s != nil {
 		ophc.SetRef(*s)
 	}
+	return ophc
+}
+
+// SetOperation sets the "operation" field.
+func (ophc *OauthProviderHistoryCreate) SetOperation(et enthistory.OpType) *OauthProviderHistoryCreate {
+	ophc.mutation.SetOperation(et)
 	return ophc
 }
 
@@ -249,7 +249,9 @@ func (ophc *OauthProviderHistoryCreate) Mutation() *OauthProviderHistoryMutation
 
 // Save creates the OauthProviderHistory in the database.
 func (ophc *OauthProviderHistoryCreate) Save(ctx context.Context) (*OauthProviderHistory, error) {
-	ophc.defaults()
+	if err := ophc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ophc.sqlSave, ophc.mutation, ophc.hooks)
 }
 
@@ -276,20 +278,32 @@ func (ophc *OauthProviderHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ophc *OauthProviderHistoryCreate) defaults() {
+func (ophc *OauthProviderHistoryCreate) defaults() error {
 	if _, ok := ophc.mutation.HistoryTime(); !ok {
+		if oauthproviderhistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized oauthproviderhistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := oauthproviderhistory.DefaultHistoryTime()
 		ophc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := ophc.mutation.CreatedAt(); !ok {
+		if oauthproviderhistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized oauthproviderhistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := oauthproviderhistory.DefaultCreatedAt()
 		ophc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ophc.mutation.UpdatedAt(); !ok {
+		if oauthproviderhistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized oauthproviderhistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := oauthproviderhistory.DefaultUpdatedAt()
 		ophc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ophc.mutation.MappingID(); !ok {
+		if oauthproviderhistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized oauthproviderhistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := oauthproviderhistory.DefaultMappingID()
 		ophc.mutation.SetMappingID(v)
 	}
@@ -298,9 +312,13 @@ func (ophc *OauthProviderHistoryCreate) defaults() {
 		ophc.mutation.SetTags(v)
 	}
 	if _, ok := ophc.mutation.ID(); !ok {
+		if oauthproviderhistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized oauthproviderhistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := oauthproviderhistory.DefaultID()
 		ophc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -386,13 +404,13 @@ func (ophc *OauthProviderHistoryCreate) createSpec() (*OauthProviderHistory, *sq
 		_spec.SetField(oauthproviderhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := ophc.mutation.Operation(); ok {
-		_spec.SetField(oauthproviderhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := ophc.mutation.Ref(); ok {
 		_spec.SetField(oauthproviderhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := ophc.mutation.Operation(); ok {
+		_spec.SetField(oauthproviderhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := ophc.mutation.CreatedAt(); ok {
 		_spec.SetField(oauthproviderhistory.FieldCreatedAt, field.TypeTime, value)

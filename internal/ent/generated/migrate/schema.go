@@ -87,8 +87,8 @@ var (
 	ContactHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -158,8 +158,8 @@ var (
 	DocumentDataHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -285,8 +285,8 @@ var (
 	EntitlementHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -359,40 +359,6 @@ var (
 			},
 		},
 	}
-	// EntitlementPlanHistoryColumns holds the columns for the "entitlement_plan_history" table.
-	EntitlementPlanHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
-		{Name: "ref", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "mapping_id", Type: field.TypeString},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-		{Name: "display_name", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
-		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "version", Type: field.TypeString},
-		{Name: "metadata", Type: field.TypeJSON, Nullable: true},
-	}
-	// EntitlementPlanHistoryTable holds the schema information for the "entitlement_plan_history" table.
-	EntitlementPlanHistoryTable = &schema.Table{
-		Name:       "entitlement_plan_history",
-		Columns:    EntitlementPlanHistoryColumns,
-		PrimaryKey: []*schema.Column{EntitlementPlanHistoryColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "entitlementplanhistory_history_time",
-				Unique:  false,
-				Columns: []*schema.Column{EntitlementPlanHistoryColumns[1]},
-			},
-		},
-	}
 	// EntitlementPlanFeaturesColumns holds the columns for the "entitlement_plan_features" table.
 	EntitlementPlanFeaturesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -449,8 +415,8 @@ var (
 	EntitlementPlanFeatureHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -474,6 +440,40 @@ var (
 				Name:    "entitlementplanfeaturehistory_history_time",
 				Unique:  false,
 				Columns: []*schema.Column{EntitlementPlanFeatureHistoryColumns[1]},
+			},
+		},
+	}
+	// EntitlementPlanHistoryColumns holds the columns for the "entitlement_plan_history" table.
+	EntitlementPlanHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "display_name", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "version", Type: field.TypeString},
+		{Name: "metadata", Type: field.TypeJSON, Nullable: true},
+	}
+	// EntitlementPlanHistoryTable holds the schema information for the "entitlement_plan_history" table.
+	EntitlementPlanHistoryTable = &schema.Table{
+		Name:       "entitlement_plan_history",
+		Columns:    EntitlementPlanHistoryColumns,
+		PrimaryKey: []*schema.Column{EntitlementPlanHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entitlementplanhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{EntitlementPlanHistoryColumns[1]},
 			},
 		},
 	}
@@ -535,8 +535,8 @@ var (
 	EntityHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -606,8 +606,8 @@ var (
 	EntityTypeHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -656,8 +656,8 @@ var (
 	EventHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -728,8 +728,8 @@ var (
 	FeatureHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -796,8 +796,8 @@ var (
 	FileHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -873,8 +873,8 @@ var (
 	GroupHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -951,8 +951,8 @@ var (
 	GroupMembershipHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1012,8 +1012,8 @@ var (
 	GroupSettingHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1067,8 +1067,8 @@ var (
 	HushHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1136,8 +1136,8 @@ var (
 	IntegrationHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1248,8 +1248,8 @@ var (
 	OauthProviderHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1354,8 +1354,8 @@ var (
 	OrgMembershipHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1427,8 +1427,8 @@ var (
 	OrganizationHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1496,8 +1496,8 @@ var (
 	OrganizationSettingHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1742,8 +1742,8 @@ var (
 	TemplateHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1821,8 +1821,8 @@ var (
 	UserHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -1903,8 +1903,8 @@ var (
 	UserSettingHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -2022,8 +2022,8 @@ var (
 	WebhookHistoryColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "history_time", Type: field.TypeTime},
-		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
@@ -2693,9 +2693,9 @@ var (
 		EntitlementsTable,
 		EntitlementHistoryTable,
 		EntitlementPlansTable,
-		EntitlementPlanHistoryTable,
 		EntitlementPlanFeaturesTable,
 		EntitlementPlanFeatureHistoryTable,
+		EntitlementPlanHistoryTable,
 		EntitiesTable,
 		EntityHistoryTable,
 		EntityTypesTable,
@@ -2786,14 +2786,14 @@ func init() {
 		Table: "entitlement_history",
 	}
 	EntitlementPlansTable.ForeignKeys[0].RefTable = OrganizationsTable
-	EntitlementPlanHistoryTable.Annotation = &entsql.Annotation{
-		Table: "entitlement_plan_history",
-	}
 	EntitlementPlanFeaturesTable.ForeignKeys[0].RefTable = EntitlementPlansTable
 	EntitlementPlanFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
 	EntitlementPlanFeaturesTable.ForeignKeys[2].RefTable = OrganizationsTable
 	EntitlementPlanFeatureHistoryTable.Annotation = &entsql.Annotation{
 		Table: "entitlement_plan_feature_history",
+	}
+	EntitlementPlanHistoryTable.Annotation = &entsql.Annotation{
+		Table: "entitlement_plan_history",
 	}
 	EntitiesTable.ForeignKeys[0].RefTable = EntityTypesTable
 	EntitiesTable.ForeignKeys[1].RefTable = EntityTypesTable

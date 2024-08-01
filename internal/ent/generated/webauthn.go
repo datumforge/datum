@@ -31,7 +31,7 @@ type Webauthn struct {
 	MappingID string `json:"mapping_id,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// OwnerID holds the value of the "owner_id" field.
+	// The user id that owns the object
 	OwnerID string `json:"owner_id,omitempty"`
 	// A probabilistically-unique byte sequence identifying a public key credential source and its authentication assertions
 	CredentialID []byte `json:"credential_id,omitempty"`

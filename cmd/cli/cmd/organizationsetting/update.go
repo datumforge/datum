@@ -38,29 +38,29 @@ func updateValidation() (id string, input datumclient.UpdateOrganizationSettingI
 		return id, input, datum.NewRequiredFieldMissingError("setting id")
 	}
 
-	billingContact := datum.Config.String("billingcontact")
+	billingContact := datum.Config.String("billing-contact")
 	if billingContact != "" {
 		input.BillingContact = &billingContact
 	}
 
-	billingEmail := datum.Config.String("billingemail")
+	billingEmail := datum.Config.String("billing-email")
 	if billingEmail != "" {
-		input.BillingContact = &billingEmail
+		input.BillingEmail = &billingEmail
 	}
 
-	billingPhone := datum.Config.String("billingphone")
+	billingPhone := datum.Config.String("billing-phone")
 	if billingPhone != "" {
-		input.BillingContact = &billingPhone
+		input.BillingPhone = &billingPhone
 	}
 
-	billingAddress := datum.Config.String("billingaddress")
+	billingAddress := datum.Config.String("billing-address")
 	if billingAddress != "" {
-		input.BillingContact = &billingAddress
+		input.BillingAddress = &billingAddress
 	}
 
-	taxIdentifier := datum.Config.String("taxidentifier")
+	taxIdentifier := datum.Config.String("tax-identifier")
 	if taxIdentifier != "" {
-		input.BillingContact = &taxIdentifier
+		input.TaxIdentifier = &taxIdentifier
 	}
 
 	tags := datum.Config.Strings("tags")

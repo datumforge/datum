@@ -37,14 +37,6 @@ func (ehu *EntityHistoryUpdate) SetUpdatedAt(t time.Time) *EntityHistoryUpdate {
 	return ehu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ehu *EntityHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *EntityHistoryUpdate {
-	if t != nil {
-		ehu.SetUpdatedAt(*t)
-	}
-	return ehu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ehu *EntityHistoryUpdate) ClearUpdatedAt() *EntityHistoryUpdate {
 	ehu.mutation.ClearUpdatedAt()
@@ -224,6 +216,9 @@ func (ehu *EntityHistoryUpdate) Mutation() *EntityHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ehu *EntityHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := ehu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ehu.sqlSave, ehu.mutation, ehu.hooks)
 }
 
@@ -247,6 +242,18 @@ func (ehu *EntityHistoryUpdate) ExecX(ctx context.Context) {
 	if err := ehu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ehu *EntityHistoryUpdate) defaults() error {
+	if _, ok := ehu.mutation.UpdatedAt(); !ok && !ehu.mutation.UpdatedAtCleared() {
+		if entityhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entityhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := entityhistory.UpdateDefaultUpdatedAt()
+		ehu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ehu *EntityHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -351,14 +358,6 @@ type EntityHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ehuo *EntityHistoryUpdateOne) SetUpdatedAt(t time.Time) *EntityHistoryUpdateOne {
 	ehuo.mutation.SetUpdatedAt(t)
-	return ehuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ehuo *EntityHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *EntityHistoryUpdateOne {
-	if t != nil {
-		ehuo.SetUpdatedAt(*t)
-	}
 	return ehuo
 }
 
@@ -554,6 +553,9 @@ func (ehuo *EntityHistoryUpdateOne) Select(field string, fields ...string) *Enti
 
 // Save executes the query and returns the updated EntityHistory entity.
 func (ehuo *EntityHistoryUpdateOne) Save(ctx context.Context) (*EntityHistory, error) {
+	if err := ehuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ehuo.sqlSave, ehuo.mutation, ehuo.hooks)
 }
 
@@ -577,6 +579,18 @@ func (ehuo *EntityHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ehuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ehuo *EntityHistoryUpdateOne) defaults() error {
+	if _, ok := ehuo.mutation.UpdatedAt(); !ok && !ehuo.mutation.UpdatedAtCleared() {
+		if entityhistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entityhistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := entityhistory.UpdateDefaultUpdatedAt()
+		ehuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ehuo *EntityHistoryUpdateOne) sqlSave(ctx context.Context) (_node *EntityHistory, err error) {

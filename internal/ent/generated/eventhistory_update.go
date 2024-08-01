@@ -37,14 +37,6 @@ func (ehu *EventHistoryUpdate) SetUpdatedAt(t time.Time) *EventHistoryUpdate {
 	return ehu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ehu *EventHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *EventHistoryUpdate {
-	if t != nil {
-		ehu.SetUpdatedAt(*t)
-	}
-	return ehu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ehu *EventHistoryUpdate) ClearUpdatedAt() *EventHistoryUpdate {
 	ehu.mutation.ClearUpdatedAt()
@@ -162,6 +154,7 @@ func (ehu *EventHistoryUpdate) Mutation() *EventHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ehu *EventHistoryUpdate) Save(ctx context.Context) (int, error) {
+	ehu.defaults()
 	return withHooks(ctx, ehu.sqlSave, ehu.mutation, ehu.hooks)
 }
 
@@ -184,6 +177,14 @@ func (ehu *EventHistoryUpdate) Exec(ctx context.Context) error {
 func (ehu *EventHistoryUpdate) ExecX(ctx context.Context) {
 	if err := ehu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ehu *EventHistoryUpdate) defaults() {
+	if _, ok := ehu.mutation.UpdatedAt(); !ok && !ehu.mutation.UpdatedAtCleared() {
+		v := eventhistory.UpdateDefaultUpdatedAt()
+		ehu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -274,14 +275,6 @@ type EventHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ehuo *EventHistoryUpdateOne) SetUpdatedAt(t time.Time) *EventHistoryUpdateOne {
 	ehuo.mutation.SetUpdatedAt(t)
-	return ehuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ehuo *EventHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *EventHistoryUpdateOne {
-	if t != nil {
-		ehuo.SetUpdatedAt(*t)
-	}
 	return ehuo
 }
 
@@ -415,6 +408,7 @@ func (ehuo *EventHistoryUpdateOne) Select(field string, fields ...string) *Event
 
 // Save executes the query and returns the updated EventHistory entity.
 func (ehuo *EventHistoryUpdateOne) Save(ctx context.Context) (*EventHistory, error) {
+	ehuo.defaults()
 	return withHooks(ctx, ehuo.sqlSave, ehuo.mutation, ehuo.hooks)
 }
 
@@ -437,6 +431,14 @@ func (ehuo *EventHistoryUpdateOne) Exec(ctx context.Context) error {
 func (ehuo *EventHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ehuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ehuo *EventHistoryUpdateOne) defaults() {
+	if _, ok := ehuo.mutation.UpdatedAt(); !ok && !ehuo.mutation.UpdatedAtCleared() {
+		v := eventhistory.UpdateDefaultUpdatedAt()
+		ehuo.mutation.SetUpdatedAt(v)
 	}
 }
 

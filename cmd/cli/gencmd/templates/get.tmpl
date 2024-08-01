@@ -20,7 +20,11 @@ var getCmd = &cobra.Command{
 func init() {
 	cmd.AddCommand(getCmd)
 
+	{{- if not .HistoryCmd }}
 	getCmd.Flags().StringP("id", "i", "", "{{ .Name | ToLowerCamel }} id to query")
+	{{ else }}
+	getCmd.Flags().StringP("id", "i", "", "id to query")
+	{{- end }}
 }
 
 // get an existing {{ .Name | ToLowerCamel }} in the datum platform
@@ -42,6 +46,20 @@ func get(ctx context.Context) error {
 		return consoleOutput(o)
 	}
 
+	{{- end }}
+
+	{{- if .HistoryCmd }}
+
+	// filter options
+	id := datum.Config.String("id")
+	if id != "" {
+		o, err := client.Get{{ .Name | ToUpperCamel | ToPlural }}(ctx, &datumclient.{{ .Name | ToUpperCamel }}WhereInput{
+			Ref: &id,
+		})
+		cobra.CheckErr(err)
+
+		return consoleOutput(o)
+	}
 	{{- end }}
 
 	// get all will be filtered for the authorized organization(s)

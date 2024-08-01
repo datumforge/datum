@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/datumforge/datum/internal/ent/generated/contacthistory"
@@ -1676,7 +1677,7 @@ func (c Change) String(op enthistory.OpType) string {
 
 func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	records := [][]string{
-		{"Table", "Ref Id", "History Time", "Operation", "Changes"},
+		{"Table", "Ref Id", "History Time", "Operation", "Changes", "Updated By"},
 	}
 	var record [][]string
 	var err error
@@ -1698,13 +1699,13 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	}
 	records = append(records, record...)
 
-	record, err = auditEntitlementPlanHistory(ctx, c.config)
+	record, err = auditEntitlementPlanFeatureHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
 	}
 	records = append(records, record...)
 
-	record, err = auditEntitlementPlanFeatureHistory(ctx, c.config)
+	record, err = auditEntitlementPlanHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
 	}
@@ -1821,16 +1822,234 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	return records, nil
 }
 
+func (c *Client) AuditWithFilter(ctx context.Context, tableName string) ([][]string, error) {
+	records := [][]string{
+		{"Table", "Ref Id", "History Time", "Operation", "Changes", "Updated By"},
+	}
+	var record [][]string
+	var err error
+
+	if tableName == "" || tableName == strings.TrimSuffix("ContactHistory", "History") {
+		record, err = auditContactHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("DocumentDataHistory", "History") {
+		record, err = auditDocumentDataHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("EntitlementHistory", "History") {
+		record, err = auditEntitlementHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("EntitlementPlanFeatureHistory", "History") {
+		record, err = auditEntitlementPlanFeatureHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("EntitlementPlanHistory", "History") {
+		record, err = auditEntitlementPlanHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("EntityHistory", "History") {
+		record, err = auditEntityHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("EntityTypeHistory", "History") {
+		record, err = auditEntityTypeHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("EventHistory", "History") {
+		record, err = auditEventHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("FeatureHistory", "History") {
+		record, err = auditFeatureHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("FileHistory", "History") {
+		record, err = auditFileHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("GroupHistory", "History") {
+		record, err = auditGroupHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("GroupMembershipHistory", "History") {
+		record, err = auditGroupMembershipHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("GroupSettingHistory", "History") {
+		record, err = auditGroupSettingHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("HushHistory", "History") {
+		record, err = auditHushHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("IntegrationHistory", "History") {
+		record, err = auditIntegrationHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("OauthProviderHistory", "History") {
+		record, err = auditOauthProviderHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("OrgMembershipHistory", "History") {
+		record, err = auditOrgMembershipHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("OrganizationHistory", "History") {
+		record, err = auditOrganizationHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("OrganizationSettingHistory", "History") {
+		record, err = auditOrganizationSettingHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("TemplateHistory", "History") {
+		record, err = auditTemplateHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("UserHistory", "History") {
+		record, err = auditUserHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("UserSettingHistory", "History") {
+		record, err = auditUserSettingHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("WebhookHistory", "History") {
+		record, err = auditWebhookHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	return records, nil
+}
+
 type record struct {
 	Table       string
 	RefId       any
 	HistoryTime time.Time
 	Operation   enthistory.OpType
 	Changes     []Change
+	UpdatedBy   string
 }
 
 func (r *record) toRow() []string {
-	row := make([]string, 5)
+	row := make([]string, 6)
 
 	row[0] = r.Table
 	row[1] = fmt.Sprintf("%v", r.RefId)
@@ -1842,6 +2061,9 @@ func (r *record) toRow() []string {
 			continue
 		}
 		row[4] = fmt.Sprintf("%s\n%s", row[4], change.String(r.Operation))
+	}
+	if r.UpdatedBy != "" {
+		row[5] = fmt.Sprintf("%v", r.UpdatedBy)
 	}
 	return row
 }
@@ -1879,6 +2101,7 @@ func auditContactHistory(ctx context.Context, config config) ([][]string, error)
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -1931,6 +2154,7 @@ func auditDocumentDataHistory(ctx context.Context, config config) ([][]string, e
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -1983,6 +2207,7 @@ func auditEntitlementHistory(ctx context.Context, config config) ([][]string, er
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -1992,58 +2217,6 @@ func auditEntitlementHistory(ctx context.Context, config config) ([][]string, er
 			default:
 				if i == 0 {
 					record.Changes = (&EntitlementHistory{}).changes(curr)
-				} else {
-					record.Changes = histories[i-1].changes(curr)
-				}
-			}
-			records = append(records, record.toRow())
-		}
-	}
-	return records, nil
-}
-
-type entitlementplanhistoryref struct {
-	Ref string
-}
-
-func auditEntitlementPlanHistory(ctx context.Context, config config) ([][]string, error) {
-	var records = [][]string{}
-	var refs []entitlementplanhistoryref
-	client := NewEntitlementPlanHistoryClient(config)
-	err := client.Query().
-		Unique(true).
-		Order(entitlementplanhistory.ByRef()).
-		Select(entitlementplanhistory.FieldRef).
-		Scan(ctx, &refs)
-
-	if err != nil {
-		return nil, err
-	}
-	for _, currRef := range refs {
-		histories, err := client.Query().
-			Where(entitlementplanhistory.Ref(currRef.Ref)).
-			Order(entitlementplanhistory.ByHistoryTime()).
-			All(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		for i := 0; i < len(histories); i++ {
-			curr := histories[i]
-			record := record{
-				Table:       "EntitlementPlanHistory",
-				RefId:       curr.Ref,
-				HistoryTime: curr.HistoryTime,
-				Operation:   curr.Operation,
-			}
-			switch curr.Operation {
-			case enthistory.OpTypeInsert:
-				record.Changes = (&EntitlementPlanHistory{}).changes(curr)
-			case enthistory.OpTypeDelete:
-				record.Changes = curr.changes(&EntitlementPlanHistory{})
-			default:
-				if i == 0 {
-					record.Changes = (&EntitlementPlanHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}
@@ -2087,6 +2260,7 @@ func auditEntitlementPlanFeatureHistory(ctx context.Context, config config) ([][
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2096,6 +2270,59 @@ func auditEntitlementPlanFeatureHistory(ctx context.Context, config config) ([][
 			default:
 				if i == 0 {
 					record.Changes = (&EntitlementPlanFeatureHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type entitlementplanhistoryref struct {
+	Ref string
+}
+
+func auditEntitlementPlanHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []entitlementplanhistoryref
+	client := NewEntitlementPlanHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(entitlementplanhistory.ByRef()).
+		Select(entitlementplanhistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(entitlementplanhistory.Ref(currRef.Ref)).
+			Order(entitlementplanhistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "EntitlementPlanHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&EntitlementPlanHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&EntitlementPlanHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&EntitlementPlanHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}
@@ -2139,6 +2366,7 @@ func auditEntityHistory(ctx context.Context, config config) ([][]string, error) 
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2191,6 +2419,7 @@ func auditEntityTypeHistory(ctx context.Context, config config) ([][]string, err
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2243,6 +2472,7 @@ func auditEventHistory(ctx context.Context, config config) ([][]string, error) {
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2295,6 +2525,7 @@ func auditFeatureHistory(ctx context.Context, config config) ([][]string, error)
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2347,6 +2578,7 @@ func auditFileHistory(ctx context.Context, config config) ([][]string, error) {
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2399,6 +2631,7 @@ func auditGroupHistory(ctx context.Context, config config) ([][]string, error) {
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2451,6 +2684,7 @@ func auditGroupMembershipHistory(ctx context.Context, config config) ([][]string
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2503,6 +2737,7 @@ func auditGroupSettingHistory(ctx context.Context, config config) ([][]string, e
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2555,6 +2790,7 @@ func auditHushHistory(ctx context.Context, config config) ([][]string, error) {
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2607,6 +2843,7 @@ func auditIntegrationHistory(ctx context.Context, config config) ([][]string, er
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2659,6 +2896,7 @@ func auditOauthProviderHistory(ctx context.Context, config config) ([][]string, 
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2711,6 +2949,7 @@ func auditOrgMembershipHistory(ctx context.Context, config config) ([][]string, 
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2763,6 +3002,7 @@ func auditOrganizationHistory(ctx context.Context, config config) ([][]string, e
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2815,6 +3055,7 @@ func auditOrganizationSettingHistory(ctx context.Context, config config) ([][]st
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2867,6 +3108,7 @@ func auditTemplateHistory(ctx context.Context, config config) ([][]string, error
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2919,6 +3161,7 @@ func auditUserHistory(ctx context.Context, config config) ([][]string, error) {
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -2971,6 +3214,7 @@ func auditUserSettingHistory(ctx context.Context, config config) ([][]string, er
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:
@@ -3023,6 +3267,7 @@ func auditWebhookHistory(ctx context.Context, config config) ([][]string, error)
 				RefId:       curr.Ref,
 				HistoryTime: curr.HistoryTime,
 				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
 			}
 			switch curr.Operation {
 			case enthistory.OpTypeInsert:

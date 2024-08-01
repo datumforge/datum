@@ -39,14 +39,6 @@ func (thu *TemplateHistoryUpdate) SetUpdatedAt(t time.Time) *TemplateHistoryUpda
 	return thu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (thu *TemplateHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *TemplateHistoryUpdate {
-	if t != nil {
-		thu.SetUpdatedAt(*t)
-	}
-	return thu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (thu *TemplateHistoryUpdate) ClearUpdatedAt() *TemplateHistoryUpdate {
 	thu.mutation.ClearUpdatedAt()
@@ -224,6 +216,9 @@ func (thu *TemplateHistoryUpdate) Mutation() *TemplateHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (thu *TemplateHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := thu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, thu.sqlSave, thu.mutation, thu.hooks)
 }
 
@@ -247,6 +242,18 @@ func (thu *TemplateHistoryUpdate) ExecX(ctx context.Context) {
 	if err := thu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (thu *TemplateHistoryUpdate) defaults() error {
+	if _, ok := thu.mutation.UpdatedAt(); !ok && !thu.mutation.UpdatedAtCleared() {
+		if templatehistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized templatehistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := templatehistory.UpdateDefaultUpdatedAt()
+		thu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -367,14 +374,6 @@ type TemplateHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (thuo *TemplateHistoryUpdateOne) SetUpdatedAt(t time.Time) *TemplateHistoryUpdateOne {
 	thuo.mutation.SetUpdatedAt(t)
-	return thuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (thuo *TemplateHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *TemplateHistoryUpdateOne {
-	if t != nil {
-		thuo.SetUpdatedAt(*t)
-	}
 	return thuo
 }
 
@@ -568,6 +567,9 @@ func (thuo *TemplateHistoryUpdateOne) Select(field string, fields ...string) *Te
 
 // Save executes the query and returns the updated TemplateHistory entity.
 func (thuo *TemplateHistoryUpdateOne) Save(ctx context.Context) (*TemplateHistory, error) {
+	if err := thuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, thuo.sqlSave, thuo.mutation, thuo.hooks)
 }
 
@@ -591,6 +593,18 @@ func (thuo *TemplateHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := thuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (thuo *TemplateHistoryUpdateOne) defaults() error {
+	if _, ok := thuo.mutation.UpdatedAt(); !ok && !thuo.mutation.UpdatedAtCleared() {
+		if templatehistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized templatehistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := templatehistory.UpdateDefaultUpdatedAt()
+		thuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

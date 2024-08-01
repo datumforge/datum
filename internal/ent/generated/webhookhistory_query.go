@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -330,6 +331,12 @@ func (whq *WebhookHistoryQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		whq.sql = prev
+	}
+	if webhookhistory.Policy == nil {
+		return errors.New("generated: uninitialized webhookhistory.Policy (forgotten import generated/runtime?)")
+	}
+	if err := webhookhistory.Policy.EvalQuery(ctx, whq); err != nil {
+		return err
 	}
 	return nil
 }

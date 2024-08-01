@@ -32,7 +32,7 @@ type PasswordResetToken struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
-	// OwnerID holds the value of the "owner_id" field.
+	// The user id that owns the object
 	OwnerID string `json:"owner_id,omitempty"`
 	// the reset token sent to the user via email which should only be provided to the /forgot-password endpoint + handler
 	Token string `json:"token,omitempty"`

@@ -3,6 +3,8 @@
 package graphapi
 
 import (
+	"time"
+
 	"entgo.io/contrib/entgql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
@@ -33,6 +35,44 @@ type APITokenDeletePayload struct {
 type APITokenUpdatePayload struct {
 	// Updated apiToken
 	APIToken *generated.APIToken `json:"apiToken"`
+}
+
+type AuditLog struct {
+	Table     *string    `json:"table,omitempty"`
+	Time      *time.Time `json:"time,omitempty"`
+	ID        string     `json:"id"`
+	Operation *string    `json:"operation,omitempty"`
+	Changes   []string   `json:"changes,omitempty"`
+	UpdatedBy *string    `json:"updatedBy,omitempty"`
+}
+
+func (AuditLog) IsNode() {}
+
+// A connection to a list of items.
+type AuditLogConnection struct {
+	// A list of edges.
+	Edges []*AuditLogEdge `json:"edges,omitempty"`
+	// Information to aid in pagination.
+	PageInfo *entgql.PageInfo[string] `json:"pageInfo"`
+	// Identifies the total count of items in the connection.
+	TotalCount int `json:"totalCount"`
+}
+
+// An edge in a connection.
+type AuditLogEdge struct {
+	// The item at the end of the edge.
+	Node *AuditLog `json:"node,omitempty"`
+	// A cursor for use in pagination.
+	Cursor entgql.Cursor[string] `json:"cursor"`
+}
+
+type AuditLogWhereInput struct {
+	RefID     *string    `json:"refID,omitempty"`
+	UpdatedBy *string    `json:"updatedBy,omitempty"`
+	Operation *string    `json:"operation,omitempty"`
+	Table     *string    `json:"table,omitempty"`
+	Before    *time.Time `json:"before,omitempty"`
+	After     *time.Time `json:"after,omitempty"`
 }
 
 // Return response for createBulkContact mutation

@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -330,6 +331,12 @@ func (fhq *FeatureHistoryQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		fhq.sql = prev
+	}
+	if featurehistory.Policy == nil {
+		return errors.New("generated: uninitialized featurehistory.Policy (forgotten import generated/runtime?)")
+	}
+	if err := featurehistory.Policy.EvalQuery(ctx, fhq); err != nil {
+		return err
 	}
 	return nil
 }

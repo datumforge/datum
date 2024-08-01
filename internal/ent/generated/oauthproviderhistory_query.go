@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -330,6 +331,12 @@ func (ophq *OauthProviderHistoryQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		ophq.sql = prev
+	}
+	if oauthproviderhistory.Policy == nil {
+		return errors.New("generated: uninitialized oauthproviderhistory.Policy (forgotten import generated/runtime?)")
+	}
+	if err := oauthproviderhistory.Policy.EvalQuery(ctx, ophq); err != nil {
+		return err
 	}
 	return nil
 }

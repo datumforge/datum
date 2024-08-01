@@ -38,14 +38,6 @@ func (ddhu *DocumentDataHistoryUpdate) SetUpdatedAt(t time.Time) *DocumentDataHi
 	return ddhu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ddhu *DocumentDataHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *DocumentDataHistoryUpdate {
-	if t != nil {
-		ddhu.SetUpdatedAt(*t)
-	}
-	return ddhu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ddhu *DocumentDataHistoryUpdate) ClearUpdatedAt() *DocumentDataHistoryUpdate {
 	ddhu.mutation.ClearUpdatedAt()
@@ -177,6 +169,9 @@ func (ddhu *DocumentDataHistoryUpdate) Mutation() *DocumentDataHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ddhu *DocumentDataHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := ddhu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ddhu.sqlSave, ddhu.mutation, ddhu.hooks)
 }
 
@@ -200,6 +195,18 @@ func (ddhu *DocumentDataHistoryUpdate) ExecX(ctx context.Context) {
 	if err := ddhu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ddhu *DocumentDataHistoryUpdate) defaults() error {
+	if _, ok := ddhu.mutation.UpdatedAt(); !ok && !ddhu.mutation.UpdatedAtCleared() {
+		if documentdatahistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized documentdatahistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := documentdatahistory.UpdateDefaultUpdatedAt()
+		ddhu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ddhu *DocumentDataHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -292,14 +299,6 @@ type DocumentDataHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ddhuo *DocumentDataHistoryUpdateOne) SetUpdatedAt(t time.Time) *DocumentDataHistoryUpdateOne {
 	ddhuo.mutation.SetUpdatedAt(t)
-	return ddhuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ddhuo *DocumentDataHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *DocumentDataHistoryUpdateOne {
-	if t != nil {
-		ddhuo.SetUpdatedAt(*t)
-	}
 	return ddhuo
 }
 
@@ -447,6 +446,9 @@ func (ddhuo *DocumentDataHistoryUpdateOne) Select(field string, fields ...string
 
 // Save executes the query and returns the updated DocumentDataHistory entity.
 func (ddhuo *DocumentDataHistoryUpdateOne) Save(ctx context.Context) (*DocumentDataHistory, error) {
+	if err := ddhuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ddhuo.sqlSave, ddhuo.mutation, ddhuo.hooks)
 }
 
@@ -470,6 +472,18 @@ func (ddhuo *DocumentDataHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ddhuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ddhuo *DocumentDataHistoryUpdateOne) defaults() error {
+	if _, ok := ddhuo.mutation.UpdatedAt(); !ok && !ddhuo.mutation.UpdatedAtCleared() {
+		if documentdatahistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized documentdatahistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := documentdatahistory.UpdateDefaultUpdatedAt()
+		ddhuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ddhuo *DocumentDataHistoryUpdateOne) sqlSave(ctx context.Context) (_node *DocumentDataHistory, err error) {

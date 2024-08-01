@@ -36,14 +36,6 @@ func (hhu *HushHistoryUpdate) SetUpdatedAt(t time.Time) *HushHistoryUpdate {
 	return hhu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (hhu *HushHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *HushHistoryUpdate {
-	if t != nil {
-		hhu.SetUpdatedAt(*t)
-	}
-	return hhu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (hhu *HushHistoryUpdate) ClearUpdatedAt() *HushHistoryUpdate {
 	hhu.mutation.ClearUpdatedAt()
@@ -171,6 +163,7 @@ func (hhu *HushHistoryUpdate) Mutation() *HushHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (hhu *HushHistoryUpdate) Save(ctx context.Context) (int, error) {
+	hhu.defaults()
 	return withHooks(ctx, hhu.sqlSave, hhu.mutation, hhu.hooks)
 }
 
@@ -193,6 +186,14 @@ func (hhu *HushHistoryUpdate) Exec(ctx context.Context) error {
 func (hhu *HushHistoryUpdate) ExecX(ctx context.Context) {
 	if err := hhu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (hhu *HushHistoryUpdate) defaults() {
+	if _, ok := hhu.mutation.UpdatedAt(); !ok && !hhu.mutation.UpdatedAtCleared() {
+		v := hushhistory.UpdateDefaultUpdatedAt()
+		hhu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -284,14 +285,6 @@ type HushHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (hhuo *HushHistoryUpdateOne) SetUpdatedAt(t time.Time) *HushHistoryUpdateOne {
 	hhuo.mutation.SetUpdatedAt(t)
-	return hhuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (hhuo *HushHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *HushHistoryUpdateOne {
-	if t != nil {
-		hhuo.SetUpdatedAt(*t)
-	}
 	return hhuo
 }
 
@@ -435,6 +428,7 @@ func (hhuo *HushHistoryUpdateOne) Select(field string, fields ...string) *HushHi
 
 // Save executes the query and returns the updated HushHistory entity.
 func (hhuo *HushHistoryUpdateOne) Save(ctx context.Context) (*HushHistory, error) {
+	hhuo.defaults()
 	return withHooks(ctx, hhuo.sqlSave, hhuo.mutation, hhuo.hooks)
 }
 
@@ -457,6 +451,14 @@ func (hhuo *HushHistoryUpdateOne) Exec(ctx context.Context) error {
 func (hhuo *HushHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := hhuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (hhuo *HushHistoryUpdateOne) defaults() {
+	if _, ok := hhuo.mutation.UpdatedAt(); !ok && !hhuo.mutation.UpdatedAtCleared() {
+		v := hushhistory.UpdateDefaultUpdatedAt()
+		hhuo.mutation.SetUpdatedAt(v)
 	}
 }
 

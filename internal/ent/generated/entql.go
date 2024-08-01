@@ -138,8 +138,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "ContactHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			contacthistory.FieldHistoryTime: {Type: field.TypeTime, Column: contacthistory.FieldHistoryTime},
-			contacthistory.FieldOperation:   {Type: field.TypeEnum, Column: contacthistory.FieldOperation},
 			contacthistory.FieldRef:         {Type: field.TypeString, Column: contacthistory.FieldRef},
+			contacthistory.FieldOperation:   {Type: field.TypeEnum, Column: contacthistory.FieldOperation},
 			contacthistory.FieldCreatedAt:   {Type: field.TypeTime, Column: contacthistory.FieldCreatedAt},
 			contacthistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: contacthistory.FieldUpdatedAt},
 			contacthistory.FieldCreatedBy:   {Type: field.TypeString, Column: contacthistory.FieldCreatedBy},
@@ -194,8 +194,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "DocumentDataHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			documentdatahistory.FieldHistoryTime: {Type: field.TypeTime, Column: documentdatahistory.FieldHistoryTime},
-			documentdatahistory.FieldOperation:   {Type: field.TypeEnum, Column: documentdatahistory.FieldOperation},
 			documentdatahistory.FieldRef:         {Type: field.TypeString, Column: documentdatahistory.FieldRef},
+			documentdatahistory.FieldOperation:   {Type: field.TypeEnum, Column: documentdatahistory.FieldOperation},
 			documentdatahistory.FieldCreatedAt:   {Type: field.TypeTime, Column: documentdatahistory.FieldCreatedAt},
 			documentdatahistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: documentdatahistory.FieldUpdatedAt},
 			documentdatahistory.FieldCreatedBy:   {Type: field.TypeString, Column: documentdatahistory.FieldCreatedBy},
@@ -275,8 +275,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "EntitlementHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			entitlementhistory.FieldHistoryTime:            {Type: field.TypeTime, Column: entitlementhistory.FieldHistoryTime},
-			entitlementhistory.FieldOperation:              {Type: field.TypeEnum, Column: entitlementhistory.FieldOperation},
 			entitlementhistory.FieldRef:                    {Type: field.TypeString, Column: entitlementhistory.FieldRef},
+			entitlementhistory.FieldOperation:              {Type: field.TypeEnum, Column: entitlementhistory.FieldOperation},
 			entitlementhistory.FieldCreatedAt:              {Type: field.TypeTime, Column: entitlementhistory.FieldCreatedAt},
 			entitlementhistory.FieldUpdatedAt:              {Type: field.TypeTime, Column: entitlementhistory.FieldUpdatedAt},
 			entitlementhistory.FieldCreatedBy:              {Type: field.TypeString, Column: entitlementhistory.FieldCreatedBy},
@@ -324,36 +324,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   entitlementplanhistory.Table,
-			Columns: entitlementplanhistory.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
-				Column: entitlementplanhistory.FieldID,
-			},
-		},
-		Type: "EntitlementPlanHistory",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			entitlementplanhistory.FieldHistoryTime: {Type: field.TypeTime, Column: entitlementplanhistory.FieldHistoryTime},
-			entitlementplanhistory.FieldOperation:   {Type: field.TypeEnum, Column: entitlementplanhistory.FieldOperation},
-			entitlementplanhistory.FieldRef:         {Type: field.TypeString, Column: entitlementplanhistory.FieldRef},
-			entitlementplanhistory.FieldCreatedAt:   {Type: field.TypeTime, Column: entitlementplanhistory.FieldCreatedAt},
-			entitlementplanhistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: entitlementplanhistory.FieldUpdatedAt},
-			entitlementplanhistory.FieldCreatedBy:   {Type: field.TypeString, Column: entitlementplanhistory.FieldCreatedBy},
-			entitlementplanhistory.FieldUpdatedBy:   {Type: field.TypeString, Column: entitlementplanhistory.FieldUpdatedBy},
-			entitlementplanhistory.FieldMappingID:   {Type: field.TypeString, Column: entitlementplanhistory.FieldMappingID},
-			entitlementplanhistory.FieldDeletedAt:   {Type: field.TypeTime, Column: entitlementplanhistory.FieldDeletedAt},
-			entitlementplanhistory.FieldDeletedBy:   {Type: field.TypeString, Column: entitlementplanhistory.FieldDeletedBy},
-			entitlementplanhistory.FieldTags:        {Type: field.TypeJSON, Column: entitlementplanhistory.FieldTags},
-			entitlementplanhistory.FieldOwnerID:     {Type: field.TypeString, Column: entitlementplanhistory.FieldOwnerID},
-			entitlementplanhistory.FieldDisplayName: {Type: field.TypeString, Column: entitlementplanhistory.FieldDisplayName},
-			entitlementplanhistory.FieldName:        {Type: field.TypeString, Column: entitlementplanhistory.FieldName},
-			entitlementplanhistory.FieldDescription: {Type: field.TypeString, Column: entitlementplanhistory.FieldDescription},
-			entitlementplanhistory.FieldVersion:     {Type: field.TypeString, Column: entitlementplanhistory.FieldVersion},
-			entitlementplanhistory.FieldMetadata:    {Type: field.TypeJSON, Column: entitlementplanhistory.FieldMetadata},
-		},
-	}
-	graph.Nodes[10] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
 			Table:   entitlementplanfeature.Table,
 			Columns: entitlementplanfeature.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -377,7 +347,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			entitlementplanfeature.FieldFeatureID: {Type: field.TypeString, Column: entitlementplanfeature.FieldFeatureID},
 		},
 	}
-	graph.Nodes[11] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   entitlementplanfeaturehistory.Table,
 			Columns: entitlementplanfeaturehistory.Columns,
@@ -389,8 +359,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "EntitlementPlanFeatureHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			entitlementplanfeaturehistory.FieldHistoryTime: {Type: field.TypeTime, Column: entitlementplanfeaturehistory.FieldHistoryTime},
-			entitlementplanfeaturehistory.FieldOperation:   {Type: field.TypeEnum, Column: entitlementplanfeaturehistory.FieldOperation},
 			entitlementplanfeaturehistory.FieldRef:         {Type: field.TypeString, Column: entitlementplanfeaturehistory.FieldRef},
+			entitlementplanfeaturehistory.FieldOperation:   {Type: field.TypeEnum, Column: entitlementplanfeaturehistory.FieldOperation},
 			entitlementplanfeaturehistory.FieldCreatedAt:   {Type: field.TypeTime, Column: entitlementplanfeaturehistory.FieldCreatedAt},
 			entitlementplanfeaturehistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: entitlementplanfeaturehistory.FieldUpdatedAt},
 			entitlementplanfeaturehistory.FieldCreatedBy:   {Type: field.TypeString, Column: entitlementplanfeaturehistory.FieldCreatedBy},
@@ -403,6 +373,36 @@ var schemaGraph = func() *sqlgraph.Schema {
 			entitlementplanfeaturehistory.FieldMetadata:    {Type: field.TypeJSON, Column: entitlementplanfeaturehistory.FieldMetadata},
 			entitlementplanfeaturehistory.FieldPlanID:      {Type: field.TypeString, Column: entitlementplanfeaturehistory.FieldPlanID},
 			entitlementplanfeaturehistory.FieldFeatureID:   {Type: field.TypeString, Column: entitlementplanfeaturehistory.FieldFeatureID},
+		},
+	}
+	graph.Nodes[11] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   entitlementplanhistory.Table,
+			Columns: entitlementplanhistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: entitlementplanhistory.FieldID,
+			},
+		},
+		Type: "EntitlementPlanHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			entitlementplanhistory.FieldHistoryTime: {Type: field.TypeTime, Column: entitlementplanhistory.FieldHistoryTime},
+			entitlementplanhistory.FieldRef:         {Type: field.TypeString, Column: entitlementplanhistory.FieldRef},
+			entitlementplanhistory.FieldOperation:   {Type: field.TypeEnum, Column: entitlementplanhistory.FieldOperation},
+			entitlementplanhistory.FieldCreatedAt:   {Type: field.TypeTime, Column: entitlementplanhistory.FieldCreatedAt},
+			entitlementplanhistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: entitlementplanhistory.FieldUpdatedAt},
+			entitlementplanhistory.FieldCreatedBy:   {Type: field.TypeString, Column: entitlementplanhistory.FieldCreatedBy},
+			entitlementplanhistory.FieldUpdatedBy:   {Type: field.TypeString, Column: entitlementplanhistory.FieldUpdatedBy},
+			entitlementplanhistory.FieldMappingID:   {Type: field.TypeString, Column: entitlementplanhistory.FieldMappingID},
+			entitlementplanhistory.FieldDeletedAt:   {Type: field.TypeTime, Column: entitlementplanhistory.FieldDeletedAt},
+			entitlementplanhistory.FieldDeletedBy:   {Type: field.TypeString, Column: entitlementplanhistory.FieldDeletedBy},
+			entitlementplanhistory.FieldTags:        {Type: field.TypeJSON, Column: entitlementplanhistory.FieldTags},
+			entitlementplanhistory.FieldOwnerID:     {Type: field.TypeString, Column: entitlementplanhistory.FieldOwnerID},
+			entitlementplanhistory.FieldDisplayName: {Type: field.TypeString, Column: entitlementplanhistory.FieldDisplayName},
+			entitlementplanhistory.FieldName:        {Type: field.TypeString, Column: entitlementplanhistory.FieldName},
+			entitlementplanhistory.FieldDescription: {Type: field.TypeString, Column: entitlementplanhistory.FieldDescription},
+			entitlementplanhistory.FieldVersion:     {Type: field.TypeString, Column: entitlementplanhistory.FieldVersion},
+			entitlementplanhistory.FieldMetadata:    {Type: field.TypeJSON, Column: entitlementplanhistory.FieldMetadata},
 		},
 	}
 	graph.Nodes[12] = &sqlgraph.Node{
@@ -443,8 +443,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "EntityHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			entityhistory.FieldHistoryTime:  {Type: field.TypeTime, Column: entityhistory.FieldHistoryTime},
-			entityhistory.FieldOperation:    {Type: field.TypeEnum, Column: entityhistory.FieldOperation},
 			entityhistory.FieldRef:          {Type: field.TypeString, Column: entityhistory.FieldRef},
+			entityhistory.FieldOperation:    {Type: field.TypeEnum, Column: entityhistory.FieldOperation},
 			entityhistory.FieldCreatedAt:    {Type: field.TypeTime, Column: entityhistory.FieldCreatedAt},
 			entityhistory.FieldUpdatedAt:    {Type: field.TypeTime, Column: entityhistory.FieldUpdatedAt},
 			entityhistory.FieldCreatedBy:    {Type: field.TypeString, Column: entityhistory.FieldCreatedBy},
@@ -495,8 +495,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "EntityTypeHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			entitytypehistory.FieldHistoryTime: {Type: field.TypeTime, Column: entitytypehistory.FieldHistoryTime},
-			entitytypehistory.FieldOperation:   {Type: field.TypeEnum, Column: entitytypehistory.FieldOperation},
 			entitytypehistory.FieldRef:         {Type: field.TypeString, Column: entitytypehistory.FieldRef},
+			entitytypehistory.FieldOperation:   {Type: field.TypeEnum, Column: entitytypehistory.FieldOperation},
 			entitytypehistory.FieldCreatedAt:   {Type: field.TypeTime, Column: entitytypehistory.FieldCreatedAt},
 			entitytypehistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: entitytypehistory.FieldUpdatedAt},
 			entitytypehistory.FieldCreatedBy:   {Type: field.TypeString, Column: entitytypehistory.FieldCreatedBy},
@@ -544,8 +544,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "EventHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			eventhistory.FieldHistoryTime:   {Type: field.TypeTime, Column: eventhistory.FieldHistoryTime},
-			eventhistory.FieldOperation:     {Type: field.TypeEnum, Column: eventhistory.FieldOperation},
 			eventhistory.FieldRef:           {Type: field.TypeString, Column: eventhistory.FieldRef},
+			eventhistory.FieldOperation:     {Type: field.TypeEnum, Column: eventhistory.FieldOperation},
 			eventhistory.FieldCreatedAt:     {Type: field.TypeTime, Column: eventhistory.FieldCreatedAt},
 			eventhistory.FieldUpdatedAt:     {Type: field.TypeTime, Column: eventhistory.FieldUpdatedAt},
 			eventhistory.FieldCreatedBy:     {Type: field.TypeString, Column: eventhistory.FieldCreatedBy},
@@ -597,8 +597,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "FeatureHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			featurehistory.FieldHistoryTime: {Type: field.TypeTime, Column: featurehistory.FieldHistoryTime},
-			featurehistory.FieldOperation:   {Type: field.TypeEnum, Column: featurehistory.FieldOperation},
 			featurehistory.FieldRef:         {Type: field.TypeString, Column: featurehistory.FieldRef},
+			featurehistory.FieldOperation:   {Type: field.TypeEnum, Column: featurehistory.FieldOperation},
 			featurehistory.FieldCreatedAt:   {Type: field.TypeTime, Column: featurehistory.FieldCreatedAt},
 			featurehistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: featurehistory.FieldUpdatedAt},
 			featurehistory.FieldCreatedBy:   {Type: field.TypeString, Column: featurehistory.FieldCreatedBy},
@@ -655,8 +655,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "FileHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			filehistory.FieldHistoryTime:   {Type: field.TypeTime, Column: filehistory.FieldHistoryTime},
-			filehistory.FieldOperation:     {Type: field.TypeEnum, Column: filehistory.FieldOperation},
 			filehistory.FieldRef:           {Type: field.TypeString, Column: filehistory.FieldRef},
+			filehistory.FieldOperation:     {Type: field.TypeEnum, Column: filehistory.FieldOperation},
 			filehistory.FieldCreatedAt:     {Type: field.TypeTime, Column: filehistory.FieldCreatedAt},
 			filehistory.FieldUpdatedAt:     {Type: field.TypeTime, Column: filehistory.FieldUpdatedAt},
 			filehistory.FieldCreatedBy:     {Type: field.TypeString, Column: filehistory.FieldCreatedBy},
@@ -713,8 +713,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "GroupHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			grouphistory.FieldHistoryTime:     {Type: field.TypeTime, Column: grouphistory.FieldHistoryTime},
-			grouphistory.FieldOperation:       {Type: field.TypeEnum, Column: grouphistory.FieldOperation},
 			grouphistory.FieldRef:             {Type: field.TypeString, Column: grouphistory.FieldRef},
+			grouphistory.FieldOperation:       {Type: field.TypeEnum, Column: grouphistory.FieldOperation},
 			grouphistory.FieldCreatedAt:       {Type: field.TypeTime, Column: grouphistory.FieldCreatedAt},
 			grouphistory.FieldUpdatedAt:       {Type: field.TypeTime, Column: grouphistory.FieldUpdatedAt},
 			grouphistory.FieldCreatedBy:       {Type: field.TypeString, Column: grouphistory.FieldCreatedBy},
@@ -766,8 +766,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "GroupMembershipHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			groupmembershiphistory.FieldHistoryTime: {Type: field.TypeTime, Column: groupmembershiphistory.FieldHistoryTime},
-			groupmembershiphistory.FieldOperation:   {Type: field.TypeEnum, Column: groupmembershiphistory.FieldOperation},
 			groupmembershiphistory.FieldRef:         {Type: field.TypeString, Column: groupmembershiphistory.FieldRef},
+			groupmembershiphistory.FieldOperation:   {Type: field.TypeEnum, Column: groupmembershiphistory.FieldOperation},
 			groupmembershiphistory.FieldCreatedAt:   {Type: field.TypeTime, Column: groupmembershiphistory.FieldCreatedAt},
 			groupmembershiphistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: groupmembershiphistory.FieldUpdatedAt},
 			groupmembershiphistory.FieldCreatedBy:   {Type: field.TypeString, Column: groupmembershiphistory.FieldCreatedBy},
@@ -818,8 +818,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "GroupSettingHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			groupsettinghistory.FieldHistoryTime:  {Type: field.TypeTime, Column: groupsettinghistory.FieldHistoryTime},
-			groupsettinghistory.FieldOperation:    {Type: field.TypeEnum, Column: groupsettinghistory.FieldOperation},
 			groupsettinghistory.FieldRef:          {Type: field.TypeString, Column: groupsettinghistory.FieldRef},
+			groupsettinghistory.FieldOperation:    {Type: field.TypeEnum, Column: groupsettinghistory.FieldOperation},
 			groupsettinghistory.FieldCreatedAt:    {Type: field.TypeTime, Column: groupsettinghistory.FieldCreatedAt},
 			groupsettinghistory.FieldUpdatedAt:    {Type: field.TypeTime, Column: groupsettinghistory.FieldUpdatedAt},
 			groupsettinghistory.FieldCreatedBy:    {Type: field.TypeString, Column: groupsettinghistory.FieldCreatedBy},
@@ -872,8 +872,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "HushHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			hushhistory.FieldHistoryTime: {Type: field.TypeTime, Column: hushhistory.FieldHistoryTime},
-			hushhistory.FieldOperation:   {Type: field.TypeEnum, Column: hushhistory.FieldOperation},
 			hushhistory.FieldRef:         {Type: field.TypeString, Column: hushhistory.FieldRef},
+			hushhistory.FieldOperation:   {Type: field.TypeEnum, Column: hushhistory.FieldOperation},
 			hushhistory.FieldCreatedAt:   {Type: field.TypeTime, Column: hushhistory.FieldCreatedAt},
 			hushhistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: hushhistory.FieldUpdatedAt},
 			hushhistory.FieldCreatedBy:   {Type: field.TypeString, Column: hushhistory.FieldCreatedBy},
@@ -925,8 +925,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "IntegrationHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			integrationhistory.FieldHistoryTime: {Type: field.TypeTime, Column: integrationhistory.FieldHistoryTime},
-			integrationhistory.FieldOperation:   {Type: field.TypeEnum, Column: integrationhistory.FieldOperation},
 			integrationhistory.FieldRef:         {Type: field.TypeString, Column: integrationhistory.FieldRef},
+			integrationhistory.FieldOperation:   {Type: field.TypeEnum, Column: integrationhistory.FieldOperation},
 			integrationhistory.FieldCreatedAt:   {Type: field.TypeTime, Column: integrationhistory.FieldCreatedAt},
 			integrationhistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: integrationhistory.FieldUpdatedAt},
 			integrationhistory.FieldCreatedBy:   {Type: field.TypeString, Column: integrationhistory.FieldCreatedBy},
@@ -1013,8 +1013,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "OauthProviderHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			oauthproviderhistory.FieldHistoryTime:  {Type: field.TypeTime, Column: oauthproviderhistory.FieldHistoryTime},
-			oauthproviderhistory.FieldOperation:    {Type: field.TypeEnum, Column: oauthproviderhistory.FieldOperation},
 			oauthproviderhistory.FieldRef:          {Type: field.TypeString, Column: oauthproviderhistory.FieldRef},
+			oauthproviderhistory.FieldOperation:    {Type: field.TypeEnum, Column: oauthproviderhistory.FieldOperation},
 			oauthproviderhistory.FieldCreatedAt:    {Type: field.TypeTime, Column: oauthproviderhistory.FieldCreatedAt},
 			oauthproviderhistory.FieldUpdatedAt:    {Type: field.TypeTime, Column: oauthproviderhistory.FieldUpdatedAt},
 			oauthproviderhistory.FieldCreatedBy:    {Type: field.TypeString, Column: oauthproviderhistory.FieldCreatedBy},
@@ -1097,8 +1097,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "OrgMembershipHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			orgmembershiphistory.FieldHistoryTime:    {Type: field.TypeTime, Column: orgmembershiphistory.FieldHistoryTime},
-			orgmembershiphistory.FieldOperation:      {Type: field.TypeEnum, Column: orgmembershiphistory.FieldOperation},
 			orgmembershiphistory.FieldRef:            {Type: field.TypeString, Column: orgmembershiphistory.FieldRef},
+			orgmembershiphistory.FieldOperation:      {Type: field.TypeEnum, Column: orgmembershiphistory.FieldOperation},
 			orgmembershiphistory.FieldCreatedAt:      {Type: field.TypeTime, Column: orgmembershiphistory.FieldCreatedAt},
 			orgmembershiphistory.FieldUpdatedAt:      {Type: field.TypeTime, Column: orgmembershiphistory.FieldUpdatedAt},
 			orgmembershiphistory.FieldCreatedBy:      {Type: field.TypeString, Column: orgmembershiphistory.FieldCreatedBy},
@@ -1151,8 +1151,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "OrganizationHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			organizationhistory.FieldHistoryTime:          {Type: field.TypeTime, Column: organizationhistory.FieldHistoryTime},
-			organizationhistory.FieldOperation:            {Type: field.TypeEnum, Column: organizationhistory.FieldOperation},
 			organizationhistory.FieldRef:                  {Type: field.TypeString, Column: organizationhistory.FieldRef},
+			organizationhistory.FieldOperation:            {Type: field.TypeEnum, Column: organizationhistory.FieldOperation},
 			organizationhistory.FieldCreatedAt:            {Type: field.TypeTime, Column: organizationhistory.FieldCreatedAt},
 			organizationhistory.FieldUpdatedAt:            {Type: field.TypeTime, Column: organizationhistory.FieldUpdatedAt},
 			organizationhistory.FieldCreatedBy:            {Type: field.TypeString, Column: organizationhistory.FieldCreatedBy},
@@ -1211,8 +1211,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "OrganizationSettingHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			organizationsettinghistory.FieldHistoryTime:    {Type: field.TypeTime, Column: organizationsettinghistory.FieldHistoryTime},
-			organizationsettinghistory.FieldOperation:      {Type: field.TypeEnum, Column: organizationsettinghistory.FieldOperation},
 			organizationsettinghistory.FieldRef:            {Type: field.TypeString, Column: organizationsettinghistory.FieldRef},
+			organizationsettinghistory.FieldOperation:      {Type: field.TypeEnum, Column: organizationsettinghistory.FieldOperation},
 			organizationsettinghistory.FieldCreatedAt:      {Type: field.TypeTime, Column: organizationsettinghistory.FieldCreatedAt},
 			organizationsettinghistory.FieldUpdatedAt:      {Type: field.TypeTime, Column: organizationsettinghistory.FieldUpdatedAt},
 			organizationsettinghistory.FieldCreatedBy:      {Type: field.TypeString, Column: organizationsettinghistory.FieldCreatedBy},
@@ -1381,8 +1381,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "TemplateHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			templatehistory.FieldHistoryTime:  {Type: field.TypeTime, Column: templatehistory.FieldHistoryTime},
-			templatehistory.FieldOperation:    {Type: field.TypeEnum, Column: templatehistory.FieldOperation},
 			templatehistory.FieldRef:          {Type: field.TypeString, Column: templatehistory.FieldRef},
+			templatehistory.FieldOperation:    {Type: field.TypeEnum, Column: templatehistory.FieldOperation},
 			templatehistory.FieldCreatedAt:    {Type: field.TypeTime, Column: templatehistory.FieldCreatedAt},
 			templatehistory.FieldUpdatedAt:    {Type: field.TypeTime, Column: templatehistory.FieldUpdatedAt},
 			templatehistory.FieldCreatedBy:    {Type: field.TypeString, Column: templatehistory.FieldCreatedBy},
@@ -1444,8 +1444,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "UserHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			userhistory.FieldHistoryTime:     {Type: field.TypeTime, Column: userhistory.FieldHistoryTime},
-			userhistory.FieldOperation:       {Type: field.TypeEnum, Column: userhistory.FieldOperation},
 			userhistory.FieldRef:             {Type: field.TypeString, Column: userhistory.FieldRef},
+			userhistory.FieldOperation:       {Type: field.TypeEnum, Column: userhistory.FieldOperation},
 			userhistory.FieldCreatedAt:       {Type: field.TypeTime, Column: userhistory.FieldCreatedAt},
 			userhistory.FieldUpdatedAt:       {Type: field.TypeTime, Column: userhistory.FieldUpdatedAt},
 			userhistory.FieldCreatedBy:       {Type: field.TypeString, Column: userhistory.FieldCreatedBy},
@@ -1510,8 +1510,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "UserSettingHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			usersettinghistory.FieldHistoryTime:       {Type: field.TypeTime, Column: usersettinghistory.FieldHistoryTime},
-			usersettinghistory.FieldOperation:         {Type: field.TypeEnum, Column: usersettinghistory.FieldOperation},
 			usersettinghistory.FieldRef:               {Type: field.TypeString, Column: usersettinghistory.FieldRef},
+			usersettinghistory.FieldOperation:         {Type: field.TypeEnum, Column: usersettinghistory.FieldOperation},
 			usersettinghistory.FieldCreatedAt:         {Type: field.TypeTime, Column: usersettinghistory.FieldCreatedAt},
 			usersettinghistory.FieldUpdatedAt:         {Type: field.TypeTime, Column: usersettinghistory.FieldUpdatedAt},
 			usersettinghistory.FieldCreatedBy:         {Type: field.TypeString, Column: usersettinghistory.FieldCreatedBy},
@@ -1605,8 +1605,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "WebhookHistory",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			webhookhistory.FieldHistoryTime:    {Type: field.TypeTime, Column: webhookhistory.FieldHistoryTime},
-			webhookhistory.FieldOperation:      {Type: field.TypeEnum, Column: webhookhistory.FieldOperation},
 			webhookhistory.FieldRef:            {Type: field.TypeString, Column: webhookhistory.FieldRef},
+			webhookhistory.FieldOperation:      {Type: field.TypeEnum, Column: webhookhistory.FieldOperation},
 			webhookhistory.FieldCreatedAt:      {Type: field.TypeTime, Column: webhookhistory.FieldCreatedAt},
 			webhookhistory.FieldUpdatedAt:      {Type: field.TypeTime, Column: webhookhistory.FieldUpdatedAt},
 			webhookhistory.FieldCreatedBy:      {Type: field.TypeString, Column: webhookhistory.FieldCreatedBy},
@@ -3519,14 +3519,14 @@ func (f *ContactHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(contacthistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *ContactHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(contacthistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *ContactHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(contacthistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *ContactHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(contacthistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -3791,14 +3791,14 @@ func (f *DocumentDataHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(documentdatahistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *DocumentDataHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(documentdatahistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *DocumentDataHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(documentdatahistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *DocumentDataHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(documentdatahistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -4191,14 +4191,14 @@ func (f *EntitlementHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(entitlementhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *EntitlementHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(entitlementhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *EntitlementHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(entitlementhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *EntitlementHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -4462,131 +4462,6 @@ func (f *EntitlementPlanFilter) WhereHasFeaturesWith(preds ...predicate.Entitlem
 }
 
 // addPredicate implements the predicateAdder interface.
-func (ephq *EntitlementPlanHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
-	ephq.predicates = append(ephq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the EntitlementPlanHistoryQuery builder.
-func (ephq *EntitlementPlanHistoryQuery) Filter() *EntitlementPlanHistoryFilter {
-	return &EntitlementPlanHistoryFilter{config: ephq.config, predicateAdder: ephq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *EntitlementPlanHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the EntitlementPlanHistoryMutation builder.
-func (m *EntitlementPlanHistoryMutation) Filter() *EntitlementPlanHistoryFilter {
-	return &EntitlementPlanHistoryFilter{config: m.config, predicateAdder: m}
-}
-
-// EntitlementPlanHistoryFilter provides a generic filtering capability at runtime for EntitlementPlanHistoryQuery.
-type EntitlementPlanHistoryFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *EntitlementPlanHistoryFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql string predicate on the id field.
-func (f *EntitlementPlanHistoryFilter) WhereID(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldID))
-}
-
-// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
-func (f *EntitlementPlanHistoryFilter) WhereHistoryTime(p entql.TimeP) {
-	f.Where(p.Field(entitlementplanhistory.FieldHistoryTime))
-}
-
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *EntitlementPlanHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldOperation))
-}
-
-// WhereRef applies the entql string predicate on the ref field.
-func (f *EntitlementPlanHistoryFilter) WhereRef(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldRef))
-}
-
-// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *EntitlementPlanHistoryFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(entitlementplanhistory.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *EntitlementPlanHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(entitlementplanhistory.FieldUpdatedAt))
-}
-
-// WhereCreatedBy applies the entql string predicate on the created_by field.
-func (f *EntitlementPlanHistoryFilter) WhereCreatedBy(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldCreatedBy))
-}
-
-// WhereUpdatedBy applies the entql string predicate on the updated_by field.
-func (f *EntitlementPlanHistoryFilter) WhereUpdatedBy(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldUpdatedBy))
-}
-
-// WhereMappingID applies the entql string predicate on the mapping_id field.
-func (f *EntitlementPlanHistoryFilter) WhereMappingID(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldMappingID))
-}
-
-// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
-func (f *EntitlementPlanHistoryFilter) WhereDeletedAt(p entql.TimeP) {
-	f.Where(p.Field(entitlementplanhistory.FieldDeletedAt))
-}
-
-// WhereDeletedBy applies the entql string predicate on the deleted_by field.
-func (f *EntitlementPlanHistoryFilter) WhereDeletedBy(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldDeletedBy))
-}
-
-// WhereTags applies the entql json.RawMessage predicate on the tags field.
-func (f *EntitlementPlanHistoryFilter) WhereTags(p entql.BytesP) {
-	f.Where(p.Field(entitlementplanhistory.FieldTags))
-}
-
-// WhereOwnerID applies the entql string predicate on the owner_id field.
-func (f *EntitlementPlanHistoryFilter) WhereOwnerID(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldOwnerID))
-}
-
-// WhereDisplayName applies the entql string predicate on the display_name field.
-func (f *EntitlementPlanHistoryFilter) WhereDisplayName(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldDisplayName))
-}
-
-// WhereName applies the entql string predicate on the name field.
-func (f *EntitlementPlanHistoryFilter) WhereName(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldName))
-}
-
-// WhereDescription applies the entql string predicate on the description field.
-func (f *EntitlementPlanHistoryFilter) WhereDescription(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldDescription))
-}
-
-// WhereVersion applies the entql string predicate on the version field.
-func (f *EntitlementPlanHistoryFilter) WhereVersion(p entql.StringP) {
-	f.Where(p.Field(entitlementplanhistory.FieldVersion))
-}
-
-// WhereMetadata applies the entql json.RawMessage predicate on the metadata field.
-func (f *EntitlementPlanHistoryFilter) WhereMetadata(p entql.BytesP) {
-	f.Where(p.Field(entitlementplanhistory.FieldMetadata))
-}
-
-// addPredicate implements the predicateAdder interface.
 func (epfq *EntitlementPlanFeatureQuery) addPredicate(pred func(s *sql.Selector)) {
 	epfq.predicates = append(epfq.predicates, pred)
 }
@@ -4615,7 +4490,7 @@ type EntitlementPlanFeatureFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *EntitlementPlanFeatureFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -4771,7 +4646,7 @@ type EntitlementPlanFeatureHistoryFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *EntitlementPlanFeatureHistoryFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -4787,14 +4662,14 @@ func (f *EntitlementPlanFeatureHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(entitlementplanfeaturehistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *EntitlementPlanFeatureHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(entitlementplanfeaturehistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *EntitlementPlanFeatureHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(entitlementplanfeaturehistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *EntitlementPlanFeatureHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(entitlementplanfeaturehistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -4855,6 +4730,131 @@ func (f *EntitlementPlanFeatureHistoryFilter) WherePlanID(p entql.StringP) {
 // WhereFeatureID applies the entql string predicate on the feature_id field.
 func (f *EntitlementPlanFeatureHistoryFilter) WhereFeatureID(p entql.StringP) {
 	f.Where(p.Field(entitlementplanfeaturehistory.FieldFeatureID))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (ephq *EntitlementPlanHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	ephq.predicates = append(ephq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the EntitlementPlanHistoryQuery builder.
+func (ephq *EntitlementPlanHistoryQuery) Filter() *EntitlementPlanHistoryFilter {
+	return &EntitlementPlanHistoryFilter{config: ephq.config, predicateAdder: ephq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *EntitlementPlanHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the EntitlementPlanHistoryMutation builder.
+func (m *EntitlementPlanHistoryMutation) Filter() *EntitlementPlanHistoryFilter {
+	return &EntitlementPlanHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// EntitlementPlanHistoryFilter provides a generic filtering capability at runtime for EntitlementPlanHistoryQuery.
+type EntitlementPlanHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *EntitlementPlanHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *EntitlementPlanHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *EntitlementPlanHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(entitlementplanhistory.FieldHistoryTime))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *EntitlementPlanHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *EntitlementPlanHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldOperation))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *EntitlementPlanHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlementplanhistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *EntitlementPlanHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlementplanhistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *EntitlementPlanHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *EntitlementPlanHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldUpdatedBy))
+}
+
+// WhereMappingID applies the entql string predicate on the mapping_id field.
+func (f *EntitlementPlanHistoryFilter) WhereMappingID(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldMappingID))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *EntitlementPlanHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlementplanhistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *EntitlementPlanHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldDeletedBy))
+}
+
+// WhereTags applies the entql json.RawMessage predicate on the tags field.
+func (f *EntitlementPlanHistoryFilter) WhereTags(p entql.BytesP) {
+	f.Where(p.Field(entitlementplanhistory.FieldTags))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *EntitlementPlanHistoryFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldOwnerID))
+}
+
+// WhereDisplayName applies the entql string predicate on the display_name field.
+func (f *EntitlementPlanHistoryFilter) WhereDisplayName(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldDisplayName))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *EntitlementPlanHistoryFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldName))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *EntitlementPlanHistoryFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldDescription))
+}
+
+// WhereVersion applies the entql string predicate on the version field.
+func (f *EntitlementPlanHistoryFilter) WhereVersion(p entql.StringP) {
+	f.Where(p.Field(entitlementplanhistory.FieldVersion))
+}
+
+// WhereMetadata applies the entql json.RawMessage predicate on the metadata field.
+func (f *EntitlementPlanHistoryFilter) WhereMetadata(p entql.BytesP) {
+	f.Where(p.Field(entitlementplanhistory.FieldMetadata))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -5063,14 +5063,14 @@ func (f *EntityHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(entityhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *EntityHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(entityhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *EntityHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(entityhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *EntityHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(entityhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -5301,14 +5301,14 @@ func (f *EntityTypeHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(entitytypehistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *EntityTypeHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(entitytypehistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *EntityTypeHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(entitytypehistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *EntityTypeHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(entitytypehistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -5720,14 +5720,14 @@ func (f *EventHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(eventhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *EventHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(eventhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *EventHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(eventhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *EventHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(eventhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -5991,14 +5991,14 @@ func (f *FeatureHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(featurehistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *FeatureHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(featurehistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *FeatureHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(featurehistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *FeatureHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(featurehistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -6273,14 +6273,14 @@ func (f *FileHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(filehistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *FileHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(filehistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *FileHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(filehistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *FileHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(filehistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -6611,14 +6611,14 @@ func (f *GroupHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(grouphistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *GroupHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(grouphistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *GroupHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(grouphistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *GroupHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -6868,14 +6868,14 @@ func (f *GroupMembershipHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(groupmembershiphistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *GroupMembershipHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(groupmembershiphistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *GroupMembershipHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(groupmembershiphistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *GroupMembershipHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -7092,14 +7092,14 @@ func (f *GroupSettingHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(groupsettinghistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *GroupSettingHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(groupsettinghistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *GroupSettingHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(groupsettinghistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *GroupSettingHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -7354,14 +7354,14 @@ func (f *HushHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(hushhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *HushHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(hushhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *HushHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(hushhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *HushHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(hushhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -7639,14 +7639,14 @@ func (f *IntegrationHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(integrationhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *IntegrationHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(integrationhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *IntegrationHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(integrationhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *IntegrationHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -8046,14 +8046,14 @@ func (f *OauthProviderHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(oauthproviderhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *OauthProviderHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(oauthproviderhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *OauthProviderHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(oauthproviderhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *OauthProviderHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -8461,14 +8461,14 @@ func (f *OrgMembershipHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(orgmembershiphistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *OrgMembershipHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(orgmembershiphistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *OrgMembershipHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(orgmembershiphistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *OrgMembershipHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -9045,14 +9045,14 @@ func (f *OrganizationHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(organizationhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *OrganizationHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(organizationhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *OrganizationHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(organizationhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *OrganizationHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -9309,14 +9309,14 @@ func (f *OrganizationSettingHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(organizationsettinghistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *OrganizationSettingHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(organizationsettinghistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *OrganizationSettingHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(organizationsettinghistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *OrganizationSettingHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -10135,14 +10135,14 @@ func (f *TemplateHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(templatehistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *TemplateHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(templatehistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *TemplateHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(templatehistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *TemplateHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -10568,14 +10568,14 @@ func (f *UserHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(userhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *UserHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(userhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *UserHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(userhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *UserHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -10876,14 +10876,14 @@ func (f *UserSettingHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(usersettinghistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *UserSettingHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(usersettinghistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *UserSettingHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(usersettinghistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *UserSettingHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
@@ -11332,14 +11332,14 @@ func (f *WebhookHistoryFilter) WhereHistoryTime(p entql.TimeP) {
 	f.Where(p.Field(webhookhistory.FieldHistoryTime))
 }
 
-// WhereOperation applies the entql string predicate on the operation field.
-func (f *WebhookHistoryFilter) WhereOperation(p entql.StringP) {
-	f.Where(p.Field(webhookhistory.FieldOperation))
-}
-
 // WhereRef applies the entql string predicate on the ref field.
 func (f *WebhookHistoryFilter) WhereRef(p entql.StringP) {
 	f.Where(p.Field(webhookhistory.FieldRef))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *WebhookHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(webhookhistory.FieldOperation))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.

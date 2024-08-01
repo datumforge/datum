@@ -29,6 +29,7 @@ var (
 	ErrInvalidUserClaims         = errors.New("user claims invalid or unavailable")
 	ErrUnparsable                = errors.New("could not parse request")
 	ErrUnknownUserRole           = errors.New("unknown user role")
+	ErrPermissionDenied          = errors.New("you are not authorized to perform this action")
 	ErrTryLoginAgain             = response("Unable to login with those details - please try again!")
 	ErrTryRegisterAgain          = response("Unable to register with those details - please try again!")
 	ErrTryOrganizationAgain      = response("Unable to create or access that organization - please try again!")

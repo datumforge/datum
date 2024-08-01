@@ -37,14 +37,6 @@ func (ghu *GroupHistoryUpdate) SetUpdatedAt(t time.Time) *GroupHistoryUpdate {
 	return ghu
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ghu *GroupHistoryUpdate) SetNillableUpdatedAt(t *time.Time) *GroupHistoryUpdate {
-	if t != nil {
-		ghu.SetUpdatedAt(*t)
-	}
-	return ghu
-}
-
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ghu *GroupHistoryUpdate) ClearUpdatedAt() *GroupHistoryUpdate {
 	ghu.mutation.ClearUpdatedAt()
@@ -244,6 +236,9 @@ func (ghu *GroupHistoryUpdate) Mutation() *GroupHistoryMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ghu *GroupHistoryUpdate) Save(ctx context.Context) (int, error) {
+	if err := ghu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ghu.sqlSave, ghu.mutation, ghu.hooks)
 }
 
@@ -267,6 +262,18 @@ func (ghu *GroupHistoryUpdate) ExecX(ctx context.Context) {
 	if err := ghu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ghu *GroupHistoryUpdate) defaults() error {
+	if _, ok := ghu.mutation.UpdatedAt(); !ok && !ghu.mutation.UpdatedAtCleared() {
+		if grouphistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized grouphistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := grouphistory.UpdateDefaultUpdatedAt()
+		ghu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ghu *GroupHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -377,14 +384,6 @@ type GroupHistoryUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ghuo *GroupHistoryUpdateOne) SetUpdatedAt(t time.Time) *GroupHistoryUpdateOne {
 	ghuo.mutation.SetUpdatedAt(t)
-	return ghuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ghuo *GroupHistoryUpdateOne) SetNillableUpdatedAt(t *time.Time) *GroupHistoryUpdateOne {
-	if t != nil {
-		ghuo.SetUpdatedAt(*t)
-	}
 	return ghuo
 }
 
@@ -600,6 +599,9 @@ func (ghuo *GroupHistoryUpdateOne) Select(field string, fields ...string) *Group
 
 // Save executes the query and returns the updated GroupHistory entity.
 func (ghuo *GroupHistoryUpdateOne) Save(ctx context.Context) (*GroupHistory, error) {
+	if err := ghuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ghuo.sqlSave, ghuo.mutation, ghuo.hooks)
 }
 
@@ -623,6 +625,18 @@ func (ghuo *GroupHistoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ghuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ghuo *GroupHistoryUpdateOne) defaults() error {
+	if _, ok := ghuo.mutation.UpdatedAt(); !ok && !ghuo.mutation.UpdatedAtCleared() {
+		if grouphistory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized grouphistory.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := grouphistory.UpdateDefaultUpdatedAt()
+		ghuo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ghuo *GroupHistoryUpdateOne) sqlSave(ctx context.Context) (_node *GroupHistory, err error) {

@@ -35,12 +35,6 @@ func (ehc *EventHistoryCreate) SetNillableHistoryTime(t *time.Time) *EventHistor
 	return ehc
 }
 
-// SetOperation sets the "operation" field.
-func (ehc *EventHistoryCreate) SetOperation(et enthistory.OpType) *EventHistoryCreate {
-	ehc.mutation.SetOperation(et)
-	return ehc
-}
-
 // SetRef sets the "ref" field.
 func (ehc *EventHistoryCreate) SetRef(s string) *EventHistoryCreate {
 	ehc.mutation.SetRef(s)
@@ -52,6 +46,12 @@ func (ehc *EventHistoryCreate) SetNillableRef(s *string) *EventHistoryCreate {
 	if s != nil {
 		ehc.SetRef(*s)
 	}
+	return ehc
+}
+
+// SetOperation sets the "operation" field.
+func (ehc *EventHistoryCreate) SetOperation(et enthistory.OpType) *EventHistoryCreate {
+	ehc.mutation.SetOperation(et)
 	return ehc
 }
 
@@ -305,13 +305,13 @@ func (ehc *EventHistoryCreate) createSpec() (*EventHistory, *sqlgraph.CreateSpec
 		_spec.SetField(eventhistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := ehc.mutation.Operation(); ok {
-		_spec.SetField(eventhistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := ehc.mutation.Ref(); ok {
 		_spec.SetField(eventhistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := ehc.mutation.Operation(); ok {
+		_spec.SetField(eventhistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := ehc.mutation.CreatedAt(); ok {
 		_spec.SetField(eventhistory.FieldCreatedAt, field.TypeTime, value)

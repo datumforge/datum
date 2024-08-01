@@ -36,12 +36,6 @@ func (gshc *GroupSettingHistoryCreate) SetNillableHistoryTime(t *time.Time) *Gro
 	return gshc
 }
 
-// SetOperation sets the "operation" field.
-func (gshc *GroupSettingHistoryCreate) SetOperation(et enthistory.OpType) *GroupSettingHistoryCreate {
-	gshc.mutation.SetOperation(et)
-	return gshc
-}
-
 // SetRef sets the "ref" field.
 func (gshc *GroupSettingHistoryCreate) SetRef(s string) *GroupSettingHistoryCreate {
 	gshc.mutation.SetRef(s)
@@ -53,6 +47,12 @@ func (gshc *GroupSettingHistoryCreate) SetNillableRef(s *string) *GroupSettingHi
 	if s != nil {
 		gshc.SetRef(*s)
 	}
+	return gshc
+}
+
+// SetOperation sets the "operation" field.
+func (gshc *GroupSettingHistoryCreate) SetOperation(et enthistory.OpType) *GroupSettingHistoryCreate {
+	gshc.mutation.SetOperation(et)
 	return gshc
 }
 
@@ -251,7 +251,9 @@ func (gshc *GroupSettingHistoryCreate) Mutation() *GroupSettingHistoryMutation {
 
 // Save creates the GroupSettingHistory in the database.
 func (gshc *GroupSettingHistoryCreate) Save(ctx context.Context) (*GroupSettingHistory, error) {
-	gshc.defaults()
+	if err := gshc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, gshc.sqlSave, gshc.mutation, gshc.hooks)
 }
 
@@ -278,20 +280,32 @@ func (gshc *GroupSettingHistoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (gshc *GroupSettingHistoryCreate) defaults() {
+func (gshc *GroupSettingHistoryCreate) defaults() error {
 	if _, ok := gshc.mutation.HistoryTime(); !ok {
+		if groupsettinghistory.DefaultHistoryTime == nil {
+			return fmt.Errorf("generated: uninitialized groupsettinghistory.DefaultHistoryTime (forgotten import generated/runtime?)")
+		}
 		v := groupsettinghistory.DefaultHistoryTime()
 		gshc.mutation.SetHistoryTime(v)
 	}
 	if _, ok := gshc.mutation.CreatedAt(); !ok {
+		if groupsettinghistory.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized groupsettinghistory.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := groupsettinghistory.DefaultCreatedAt()
 		gshc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := gshc.mutation.UpdatedAt(); !ok {
+		if groupsettinghistory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized groupsettinghistory.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := groupsettinghistory.DefaultUpdatedAt()
 		gshc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := gshc.mutation.MappingID(); !ok {
+		if groupsettinghistory.DefaultMappingID == nil {
+			return fmt.Errorf("generated: uninitialized groupsettinghistory.DefaultMappingID (forgotten import generated/runtime?)")
+		}
 		v := groupsettinghistory.DefaultMappingID()
 		gshc.mutation.SetMappingID(v)
 	}
@@ -316,9 +330,13 @@ func (gshc *GroupSettingHistoryCreate) defaults() {
 		gshc.mutation.SetSyncToGithub(v)
 	}
 	if _, ok := gshc.mutation.ID(); !ok {
+		if groupsettinghistory.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized groupsettinghistory.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := groupsettinghistory.DefaultID()
 		gshc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -393,13 +411,13 @@ func (gshc *GroupSettingHistoryCreate) createSpec() (*GroupSettingHistory, *sqlg
 		_spec.SetField(groupsettinghistory.FieldHistoryTime, field.TypeTime, value)
 		_node.HistoryTime = value
 	}
-	if value, ok := gshc.mutation.Operation(); ok {
-		_spec.SetField(groupsettinghistory.FieldOperation, field.TypeEnum, value)
-		_node.Operation = value
-	}
 	if value, ok := gshc.mutation.Ref(); ok {
 		_spec.SetField(groupsettinghistory.FieldRef, field.TypeString, value)
 		_node.Ref = value
+	}
+	if value, ok := gshc.mutation.Operation(); ok {
+		_spec.SetField(groupsettinghistory.FieldOperation, field.TypeEnum, value)
+		_node.Operation = value
 	}
 	if value, ok := gshc.mutation.CreatedAt(); ok {
 		_spec.SetField(groupsettinghistory.FieldCreatedAt, field.TypeTime, value)

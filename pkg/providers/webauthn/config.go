@@ -20,9 +20,9 @@ type ProviderConfig struct {
 	// RelyingPartyID is the relying party identifier
 	// set to localhost for development, no port
 	RelyingPartyID string `json:"relyingPartyId" koanf:"relyingPartyId" jsonschema:"required" default:"localhost"`
-	// RequestOrigin the origin domain for authentication requests
+	// RequestOrigins the origin domain(s) for authentication requests
 	// include the scheme and port
-	RequestOrigin string `json:"requestOrigin" koanf:"requestOrigin" jsonschema:"required"  default:"http://localhost:3001"`
+	RequestOrigins []string `json:"requestOrigins" koanf:"requestOrigins" jsonschema:"required"  default:"[http://localhost:3001]"`
 	// MaxDevices is the maximum number of devices that can be associated with a user
 	MaxDevices int `json:"maxDevices" koanf:"maxDevices" default:"10"`
 	// EnforceTimeout at the Relying Party / Server. This means if enabled and the user takes too long that even if the browser does not
@@ -42,7 +42,7 @@ func NewWithConfig(config ProviderConfig) *webauthn.WebAuthn {
 
 	cfg := &webauthn.Config{
 		RPID:          config.RelyingPartyID,
-		RPOrigin:      config.RequestOrigin,
+		RPOrigins:     config.RequestOrigins,
 		RPDisplayName: config.DisplayName,
 		Debug:         config.Debug,
 		Timeouts: webauthn.TimeoutsConfig{

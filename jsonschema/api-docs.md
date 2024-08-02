@@ -356,13 +356,19 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**enabled**|`boolean`|Enabled is the provider enabled<br/>|no|
 |**displayName**|`string`|DisplayName is the site display name<br/>|yes|
 |**relyingPartyId**|`string`|RelyingPartyID is the relying party identifier<br/>set to localhost for development, no port<br/>|yes|
-|**requestOrigin**|`string`|RequestOrigin the origin domain for authentication requests<br/>include the scheme and port<br/>|yes|
+|[**requestOrigins**](#authproviderswebauthnrequestorigins)|`string[]`||yes|
 |**maxDevices**|`integer`|MaxDevices is the maximum number of devices that can be associated with a user<br/>|no|
 |**enforceTimeout**|`boolean`|EnforceTimeout at the Relying Party / Server. This means if enabled and the user takes too long that even if the browser does not<br/>enforce a timeout, the server will<br/>|no|
 |**timeout**|`integer`|Timeout is the timeout in seconds<br/>|no|
 |**debug**|`boolean`|Debug enables debug mode<br/>|no|
 
 **Additional Properties:** not allowed  
+<a name="authproviderswebauthnrequestorigins"></a>
+##### auth\.providers\.webauthn\.requestOrigins: array
+
+**Items**
+
+**Item Type:** `string`  
 <a name="authz"></a>
 ## authz: object
 

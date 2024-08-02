@@ -1040,9 +1040,9 @@
           "type": "string",
           "description": "RelyingPartyID is the relying party identifier\nset to localhost for development, no port"
         },
-        "requestOrigin": {
-          "type": "string",
-          "description": "RequestOrigin the origin domain for authentication requests\ninclude the scheme and port"
+        "requestOrigins": {
+          "$ref": "#/$defs/[]string",
+          "description": "RequestOrigins the origin domain(s) for authentication requests\ninclude the scheme and port"
         },
         "maxDevices": {
           "type": "integer",
@@ -1066,7 +1066,7 @@
       "required": [
         "displayName",
         "relyingPartyId",
-        "requestOrigin"
+        "requestOrigins"
       ],
       "description": "ProviderConfig represents the configuration settings for a Webauthn Provider"
     }

@@ -21,7 +21,8 @@ auth:
             enforceTimeout: true
             maxDevices: 10
             relyingPartyId: localhost
-            requestOrigin: http://localhost:3001
+            requestOrigins:
+                - http://localhost:3001
             timeout: 60000000000
     supportedProviders: null
     token:

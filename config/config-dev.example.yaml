@@ -46,7 +46,8 @@ auth:
       debug: false
       enabled: true
       relyingPartyId: "localhost"
-      requestOrigin: "http://localhost:3001"
+      requestOrigins:
+        - "http://localhost:3001"
 # authz settings
 authz:
   enabled: true

@@ -36,10 +36,6 @@ email:
   consoleUrl:
     consoleBase: "https://console.datum.net"
 
-# sentry settings
-sentry:
-  enabled: true
-
 # analytics settings
 posthog:
   enabled: true

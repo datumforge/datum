@@ -104,7 +104,6 @@ func CreateEvent(ctx context.Context, c *ent.Client, m ent.Mutation, v ent.Value
 	e.Emit(event, payload)
 
 	c.Analytics.Event(event, props)
-	c.Analytics.Properties(i, obj, props)
 
 	// debug log the event
 	c.Logger.Debugw("event tracked", "event", event, "props", props)

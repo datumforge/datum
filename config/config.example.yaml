@@ -79,22 +79,6 @@ geodetic:
     debug: false
     enabled: true
     endpoint: query
-objstorage:
-    fs:
-        enabled: false
-        root: ./storage
-    gcs:
-        bucket: yourbucketname
-        credentialsFile: ./credentials.json
-        enabled: false
-    s3:
-        accessKeyID: ""
-        bucket: yourbucketname
-        enabled: false
-        endpoint: ""
-        region: us-region-a
-        secretAccessKey: ""
-        uploadConcurrency: null
 posthog:
     apiKey: ""
     enabled: false
@@ -126,19 +110,6 @@ redis:
     username: ""
     writeTimeout: 0
 refreshInterval: 600000000000
-sentry:
-    attachStacktrace: true
-    debug: false
-    dsn: ""
-    enableTracing: false
-    enabled: false
-    environment: development
-    profileSampleRate: 0.2
-    repanic: false
-    sampleRate: 0.2
-    serverName: ""
-    traceSampleRate: 0.2
-    traceSampler: 1
 server:
     cacheControl:
         enabled: true

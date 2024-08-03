@@ -31,6 +31,8 @@ pre-commit run --all-files
    cp ./config/config-dev.example.yaml ./config/.config.yaml
    ```
 
+1. Update the configuration with whatever respective settings you desire; the defaults inside should allow you to run the server without a problem
+
 1. Use the task commands to start the server
 
    Run the Datum server in development mode with dependencies in docker
@@ -45,11 +47,13 @@ pre-commit run --all-files
    task docker:all:up
    ```
 
-1. Create a verified test user
+1. In a separate terminal, with the server running, you can create a verified test user by running:
 
    ```bash
    task cli:user:all
    ```
+
+1. Once this command has finished ^, you can login and perform actions as user `mitb@datum.net` with password `mattisthebest1234!`
 
 ## Creating Queries in GraphQL
 
@@ -72,7 +76,7 @@ You can load up a local openFGA environment with the compose setup in this repos
 
 To ease the effort required to add additional schemas into the system a template + task function has been created. This isn't doing anything terribly complex, but it's attempting to ensure you have the _minimum_ set of required things needed to create a schema - most notably: you need to ensure the IDMixin is present (otherwise you will get ID type conflicts) and a standard set of schema annotations.
 
-\*\*NOTE: you still have to make intelligent decisions around things like the presence / integration of hooks, interceptors, policies, etc. This is saving you about 10 seconds of copy-paste, so don't over estimate the automation, here.
+NOTE: you still have to make intelligent decisions around things like the presence / integration of hooks, interceptors, policies, etc. This is saving you about 10 seconds of copy-paste, so don't over estimate the automation, here.
 
 To generate a new schema, you can run `task newschema -- [yourschemaname]` where you replace the name within `[]`. Please be sure to note that this isn't a command line flag so there's a space between `--` and the name.
 

@@ -60,7 +60,6 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 		Set("auth_provider", in.AuthProvider)
 
 	h.AnalyticsClient.Event("user_authenticated", props)
-	h.AnalyticsClient.UserProperties(user.ID, props)
 
 	out := models.LoginReply{
 		Reply:    rout.Reply{Success: true},

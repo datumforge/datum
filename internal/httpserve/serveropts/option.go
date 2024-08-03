@@ -14,7 +14,6 @@ import (
 	"github.com/datumforge/echozap"
 	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
-	sentrygo "github.com/getsentry/sentry-go"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 
@@ -34,7 +33,6 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
 	"github.com/datumforge/datum/pkg/middleware/redirect"
 	"github.com/datumforge/datum/pkg/middleware/secure"
-	"github.com/datumforge/datum/pkg/middleware/sentry"
 	"github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -360,20 +358,6 @@ func WithSessionMiddleware() ServerOption {
 		s.Config.GraphMiddleware = append(s.Config.GraphMiddleware,
 			sessions.LoadAndSaveWithConfig(*s.Config.SessionConfig),
 		)
-	})
-}
-
-// WithSentry sets up the sentry middleware for error tracking
-func WithSentry() ServerOption {
-	return newApplyFunc(func(s *ServerOptions) {
-		if s.Config.Settings.Sentry.Enabled {
-			if err := sentrygo.Init(s.Config.Settings.Sentry.ClientOptions()); err != nil {
-				s.Config.Logger.Fatalw("failed to initialize sentry", "error", err)
-			}
-
-			// add sentry middleware
-			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, sentry.New())
-		}
 	})
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
@@ -48,9 +49,32 @@ func initConfig() {
 	if err := initCmdFlags(rootCmd); err != nil {
 		log.Fatalf("error loading config: %v", err)
 	}
+
+	setupLogging()
 }
 
 // initCmdFlags loads the flags from the command line into the koanf instance
 func initCmdFlags(cmd *cobra.Command) error {
 	return k.Load(posflag.Provider(cmd.Flags(), k.Delim(), k), nil)
+}
+
+func setupLogging() {
+	cfg := zap.NewProductionConfig()
+	if viper.GetBool("pretty") {
+		cfg = zap.NewDevelopmentConfig()
+	}
+
+	if viper.GetBool("debug") {
+		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	} else {
+		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
+	}
+
+	l, err := cfg.Build()
+	if err != nil {
+		panic(err)
+	}
+
+	logger = l.Sugar().With("app", appName)
+	defer logger.Sync() //nolint:errcheck
 }

@@ -64,7 +64,7 @@ func setupLogging() {
 		cfg = zap.NewDevelopmentConfig()
 	}
 
-	if viper.GetBool("debug") {
+	if k.Bool("debug") {
 		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	} else {
 		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)

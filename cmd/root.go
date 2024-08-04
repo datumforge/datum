@@ -60,7 +60,7 @@ func initCmdFlags(cmd *cobra.Command) error {
 
 func setupLogging() {
 	cfg := zap.NewProductionConfig()
-	if viper.GetBool("pretty") {
+	if k.Bool("pretty") {
 		cfg = zap.NewDevelopmentConfig()
 	}
 

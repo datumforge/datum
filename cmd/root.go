@@ -6,7 +6,6 @@ import (
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/v2"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 

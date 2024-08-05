@@ -87,7 +87,7 @@ func (suite *GraphTestSuite) TestQueryAPITokens() {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("List "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			resp, err := suite.client.datum.GetAllAPITokens(reqCtx)
@@ -194,8 +194,10 @@ func (suite *GraphTestSuite) TestMutationCreateAPIToken() {
 			assert.Equal(t, tc.input.Scopes, resp.CreateAPIToken.APIToken.Scopes)
 
 			// check expiration if set
-			if tc.input.ExpiresAt != nil {
-				assert.Equal(t, &expiration30Days, tc.input.ExpiresAt)
+			if tc.input.ExpiresAt == nil {
+				assert.Empty(t, resp.CreateAPIToken.APIToken.ExpiresAt)
+			} else {
+				assert.True(t, tc.input.ExpiresAt.Equal(*resp.CreateAPIToken.APIToken.ExpiresAt))
 			}
 
 			// ensure the owner is the org set in the request

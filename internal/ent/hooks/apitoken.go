@@ -13,7 +13,7 @@ import (
 	sliceutil "github.com/datumforge/datum/pkg/utils/slice"
 )
 
-// HookCreateAPIToken runs on api token mutations and sets expires and owner id
+// HookCreateAPIToken runs on api token mutations and sets the owner id
 func HookCreateAPIToken() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.APITokenFunc(func(ctx context.Context, mutation *generated.APITokenMutation) (generated.Value, error) {

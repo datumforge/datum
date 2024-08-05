@@ -1293,7 +1293,7 @@ type CreatePersonalAccessTokenInput struct {
 	// the name associated with the token
 	Name string `json:"name"`
 	// when the token expires
-	ExpiresAt time.Time `json:"expiresAt"`
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// a description of the token's purpose
 	Description     *string    `json:"description,omitempty"`
 	Scopes          []string   `json:"scopes,omitempty"`
@@ -10468,7 +10468,7 @@ type PersonalAccessToken struct {
 	Name  string `json:"name"`
 	Token string `json:"token"`
 	// when the token expires
-	ExpiresAt time.Time `json:"expiresAt"`
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// a description of the token's purpose
 	Description *string    `json:"description,omitempty"`
 	Scopes      []string   `json:"scopes,omitempty"`
@@ -10636,14 +10636,16 @@ type PersonalAccessTokenWhereInput struct {
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 	// expires_at field predicates
-	ExpiresAt      *time.Time   `json:"expiresAt,omitempty"`
-	ExpiresAtNeq   *time.Time   `json:"expiresAtNEQ,omitempty"`
-	ExpiresAtIn    []*time.Time `json:"expiresAtIn,omitempty"`
-	ExpiresAtNotIn []*time.Time `json:"expiresAtNotIn,omitempty"`
-	ExpiresAtGt    *time.Time   `json:"expiresAtGT,omitempty"`
-	ExpiresAtGte   *time.Time   `json:"expiresAtGTE,omitempty"`
-	ExpiresAtLt    *time.Time   `json:"expiresAtLT,omitempty"`
-	ExpiresAtLte   *time.Time   `json:"expiresAtLTE,omitempty"`
+	ExpiresAt       *time.Time   `json:"expiresAt,omitempty"`
+	ExpiresAtNeq    *time.Time   `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn     []*time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn  []*time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGt     *time.Time   `json:"expiresAtGT,omitempty"`
+	ExpiresAtGte    *time.Time   `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLt     *time.Time   `json:"expiresAtLT,omitempty"`
+	ExpiresAtLte    *time.Time   `json:"expiresAtLTE,omitempty"`
+	ExpiresAtIsNil  *bool        `json:"expiresAtIsNil,omitempty"`
+	ExpiresAtNotNil *bool        `json:"expiresAtNotNil,omitempty"`
 	// last_used_at field predicates
 	LastUsedAt       *time.Time   `json:"lastUsedAt,omitempty"`
 	LastUsedAtNeq    *time.Time   `json:"lastUsedAtNEQ,omitempty"`

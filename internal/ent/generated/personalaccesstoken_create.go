@@ -159,6 +159,14 @@ func (patc *PersonalAccessTokenCreate) SetExpiresAt(t time.Time) *PersonalAccess
 	return patc
 }
 
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (patc *PersonalAccessTokenCreate) SetNillableExpiresAt(t *time.Time) *PersonalAccessTokenCreate {
+	if t != nil {
+		patc.SetExpiresAt(*t)
+	}
+	return patc
+}
+
 // SetDescription sets the "description" field.
 func (patc *PersonalAccessTokenCreate) SetDescription(s string) *PersonalAccessTokenCreate {
 	patc.mutation.SetDescription(s)
@@ -339,9 +347,6 @@ func (patc *PersonalAccessTokenCreate) check() error {
 	}
 	if _, ok := patc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "PersonalAccessToken.token"`)}
-	}
-	if _, ok := patc.mutation.ExpiresAt(); !ok {
-		return &ValidationError{Name: "expires_at", err: errors.New(`generated: missing required field "PersonalAccessToken.expires_at"`)}
 	}
 	if len(patc.mutation.OwnerIDs()) == 0 {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "PersonalAccessToken.owner"`)}

@@ -86,7 +86,12 @@ func tableOutput(out []datumclient.APIToken) {
 			lastUsed = i.LastUsedAt.String()
 		}
 
-		writer.AddRow(i.ID, i.Name, i.Token, strings.Join(i.Scopes, ", "), lastUsed, i.ExpiresAt)
+		expiresAt := "never"
+		if i.ExpiresAt != nil {
+			expiresAt = i.ExpiresAt.String()
+		}
+
+		writer.AddRow(i.ID, i.Name, i.Token, strings.Join(i.Scopes, ", "), lastUsed, expiresAt)
 	}
 
 	writer.Render()

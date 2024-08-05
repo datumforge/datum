@@ -125,7 +125,7 @@ type PersonalAccessTokenBuilder struct {
 	Token           string
 	Abilities       []string
 	Description     string
-	ExpiresAt       time.Time
+	ExpiresAt       *time.Time
 	OwnerID         string
 	OrganizationIDs []string
 }
@@ -138,6 +138,7 @@ type APITokenBuilder struct {
 	Token       string
 	Scopes      []string
 	Description string
+	ExpiresAt   *time.Time
 	OwnerID     string
 }
 
@@ -563,13 +564,17 @@ func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T
 		pat.OrganizationIDs = []string{org.ID}
 	}
 
-	token := pat.client.db.PersonalAccessToken.Create().
+	request := pat.client.db.PersonalAccessToken.Create().
 		SetName(pat.Name).
 		SetOwnerID(pat.OwnerID).
 		SetDescription(pat.Description).
-		SetExpiresAt(pat.ExpiresAt).
-		AddOrganizationIDs(pat.OrganizationIDs...).
-		SaveX(ctx)
+		AddOrganizationIDs(pat.OrganizationIDs...)
+
+	if pat.ExpiresAt != nil {
+		request.SetExpiresAt(*pat.ExpiresAt)
+	}
+
+	token := request.SaveX(ctx)
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(pat.client.fga)
@@ -601,6 +606,10 @@ func (at *APITokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.APITo
 
 	if at.OwnerID != "" {
 		request.SetOwnerID(at.OwnerID)
+	}
+
+	if at.ExpiresAt != nil {
+		request.SetExpiresAt(*at.ExpiresAt)
 	}
 
 	token := request.SaveX(ctx)

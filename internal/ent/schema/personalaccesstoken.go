@@ -45,6 +45,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 			Annotations(
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
+			Optional().
 			Nillable(),
 		field.String("description").
 			Comment("a description of the token's purpose").

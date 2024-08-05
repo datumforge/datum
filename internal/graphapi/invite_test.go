@@ -95,6 +95,11 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 	existingUser2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 	_ = (&OrgMemberBuilder{client: suite.client, OrgID: testOrgID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
 
+	// Org member context
+	orgMember := (&OrgMemberBuilder{client: suite.client, OrgID: testOrgID}).MustNew(reqCtx, t)
+	orgMemberCtx, err := auth.NewTestContextWithOrgID(orgMember.UserID, testOrgID)
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name             string
 		recipient        string
@@ -103,6 +108,8 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 		client           *datumclient.DatumClient
 		ctx              context.Context
 		accessAllowed    bool
+		skipMockCheck    bool
+		requestorID      string
 		expectedStatus   enums.InviteStatus
 		expectedAttempts int64
 		wantErr          bool
@@ -115,6 +122,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			client:           suite.client.datum,
 			ctx:              reqCtx,
 			accessAllowed:    true,
+			requestorID:      testUser.ID,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
 			wantErr:          false,
@@ -127,6 +135,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			client:           suite.client.datumWithAPIToken,
 			ctx:              context.Background(),
 			accessAllowed:    true,
+			requestorID:      testUser.ID,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 1,
 			wantErr:          false,
@@ -139,22 +148,45 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			client:           suite.client.datumWithPAT,
 			ctx:              context.Background(),
 			accessAllowed:    true,
+			requestorID:      testUser.ID,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
 			wantErr:          false,
 		},
-		// TODO: uncomment with https://github.com/datumforge/datum/issues/405
-		// {
-		// 	name:         "new user as owner should fail",
-		// 	existingUser: false,
-		// 	recipient:    "woof@datum.net",
-		// 	orgID:        testOrgID,
-		// 	role:         enums.RoleOwner,
-		//  client:      suite.client.datum,
-		//  ctx:         reqCtx,
-		//  accessAllowed: true,
-		// 	wantErr:      true,
-		// },
+		{
+			name:             "happy path, new user as member, by member",
+			recipient:        "meow-meow@datum.net",
+			orgID:            testOrgID,
+			role:             enums.RoleMember,
+			client:           suite.client.datum,
+			ctx:              orgMemberCtx,
+			requestorID:      orgMember.UserID,
+			accessAllowed:    true,
+			expectedStatus:   enums.InvitationSent,
+			expectedAttempts: 0,
+			wantErr:          false,
+		},
+		{
+			name:          "new user as admin, by member, not allowed",
+			recipient:     "meow-meow@datum.net",
+			orgID:         testOrgID,
+			role:          enums.RoleAdmin,
+			client:        suite.client.datum,
+			ctx:           orgMemberCtx,
+			requestorID:   orgMember.UserID,
+			accessAllowed: false, // member cannot invite admins
+			wantErr:       true,
+		},
+		{
+			name:          "new user as owner should fail",
+			recipient:     "woof@datum.net",
+			orgID:         testOrgID,
+			role:          enums.RoleOwner,
+			client:        suite.client.datum,
+			ctx:           reqCtx,
+			skipMockCheck: true, // this request will fail before ever reaching the FGA check
+			wantErr:       true,
+		},
 		{
 			name:          "user not allowed to add to org",
 			recipient:     "oink@datum.net",
@@ -173,6 +205,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			client:           suite.client.datum,
 			ctx:              reqCtx,
 			accessAllowed:    true,
+			requestorID:      testUser.ID,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
 			wantErr:          false,
@@ -185,6 +218,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			client:           suite.client.datum,
 			ctx:              reqCtx,
 			accessAllowed:    true,
+			requestorID:      testUser.ID,
 			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
 			wantErr:          false,
@@ -202,10 +236,12 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Create "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
+			if !tc.skipMockCheck {
+				mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
+			}
 
 			role := tc.role
 			input := datumclient.CreateInviteInput{
@@ -229,7 +265,7 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 			// Assert matching fields
 			assert.Equal(t, tc.orgID, resp.CreateInvite.Invite.Owner.ID)
 			assert.Equal(t, tc.role, resp.CreateInvite.Invite.Role)
-			assert.Equal(t, testUser.ID, *resp.CreateInvite.Invite.RequestorID)
+			assert.Equal(t, tc.requestorID, *resp.CreateInvite.Invite.RequestorID)
 			assert.Equal(t, tc.expectedStatus, resp.CreateInvite.Invite.Status)
 			assert.Equal(t, tc.expectedAttempts, resp.CreateInvite.Invite.SendAttempts)
 			assert.WithinDuration(t, time.Now().UTC().AddDate(0, 0, 14), *resp.CreateInvite.Invite.Expires, time.Minute)

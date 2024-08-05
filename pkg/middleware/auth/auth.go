@@ -218,7 +218,8 @@ func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client,
 		return nil, "", err
 	}
 
-	if pat.ExpiresAt.Before(time.Now()) {
+	// check if the token has expired
+	if pat.ExpiresAt != nil && pat.ExpiresAt.Before(time.Now()) {
 		return nil, "", rout.ErrExpiredCredentials
 	}
 
@@ -251,7 +252,8 @@ func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token stri
 		return nil, "", err
 	}
 
-	if !t.ExpiresAt.IsZero() && t.ExpiresAt.Before(time.Now()) {
+	// check if the token has expired
+	if t.ExpiresAt != nil && t.ExpiresAt.Before(time.Now()) {
 		return nil, "", rout.ErrExpiredCredentials
 	}
 

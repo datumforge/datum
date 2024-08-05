@@ -2,7 +2,6 @@ package hooks
 
 import (
 	"context"
-	"time"
 
 	"entgo.io/ent"
 
@@ -19,12 +18,6 @@ const (
 func HookCreatePersonalAccessToken() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.PersonalAccessTokenFunc(func(ctx context.Context, mutation *generated.PersonalAccessTokenMutation) (generated.Value, error) {
-			// default the expiration to 7 days
-			expires, ok := mutation.ExpiresAt()
-			if !ok || expires.IsZero() {
-				mutation.SetExpiresAt(time.Now().Add(time.Hour * 24 * 7)) //nolint:mnd
-			}
-
 			userID, err := auth.GetUserIDFromContext(ctx)
 			if err != nil {
 				return nil, err
@@ -38,7 +31,7 @@ func HookCreatePersonalAccessToken() ent.Hook {
 	}, ent.OpCreate)
 }
 
-// HookUpdatePersonalAccessToken runs on accesstoken update and redacts the token
+// HookUpdatePersonalAccessToken runs on access token update and redacts the token
 func HookUpdatePersonalAccessToken() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.PersonalAccessTokenFunc(func(ctx context.Context, mutation *generated.PersonalAccessTokenMutation) (generated.Value, error) {

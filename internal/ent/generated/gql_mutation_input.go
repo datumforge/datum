@@ -3237,7 +3237,7 @@ func (c *OrganizationSettingUpdateOne) SetInput(i UpdateOrganizationSettingInput
 type CreatePersonalAccessTokenInput struct {
 	Tags            []string
 	Name            string
-	ExpiresAt       time.Time
+	ExpiresAt       *time.Time
 	Description     *string
 	Scopes          []string
 	LastUsedAt      *time.Time
@@ -3252,7 +3252,9 @@ func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 		m.SetTags(v)
 	}
 	m.SetName(i.Name)
-	m.SetExpiresAt(i.ExpiresAt)
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
+	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}

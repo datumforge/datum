@@ -21223,7 +21223,7 @@ func (t *CreateBulkCSVPersonalAccessToken_CreateBulkCSVPersonalAccessToken_Perso
 
 type CreateBulkCSVPersonalAccessToken_CreateBulkCSVPersonalAccessToken_PersonalAccessTokens struct {
 	Description   *string                                                                                                 "json:\"description,omitempty\" graphql:\"description\""
-	ExpiresAt     time.Time                                                                                               "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt     *time.Time                                                                                              "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	ID            string                                                                                                  "json:\"id\" graphql:\"id\""
 	LastUsedAt    *time.Time                                                                                              "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 	Name          string                                                                                                  "json:\"name\" graphql:\"name\""
@@ -21244,7 +21244,7 @@ func (t *CreateBulkCSVPersonalAccessToken_CreateBulkCSVPersonalAccessToken_Perso
 	if t == nil {
 		t = &CreateBulkCSVPersonalAccessToken_CreateBulkCSVPersonalAccessToken_PersonalAccessTokens{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *CreateBulkCSVPersonalAccessToken_CreateBulkCSVPersonalAccessToken_PersonalAccessTokens) GetID() string {
 	if t == nil {
@@ -21326,7 +21326,7 @@ func (t *CreateBulkPersonalAccessToken_CreateBulkPersonalAccessToken_PersonalAcc
 
 type CreateBulkPersonalAccessToken_CreateBulkPersonalAccessToken_PersonalAccessTokens struct {
 	Description   *string                                                                                           "json:\"description,omitempty\" graphql:\"description\""
-	ExpiresAt     time.Time                                                                                         "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt     *time.Time                                                                                        "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	ID            string                                                                                            "json:\"id\" graphql:\"id\""
 	LastUsedAt    *time.Time                                                                                        "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 	Name          string                                                                                            "json:\"name\" graphql:\"name\""
@@ -21347,7 +21347,7 @@ func (t *CreateBulkPersonalAccessToken_CreateBulkPersonalAccessToken_PersonalAcc
 	if t == nil {
 		t = &CreateBulkPersonalAccessToken_CreateBulkPersonalAccessToken_PersonalAccessTokens{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *CreateBulkPersonalAccessToken_CreateBulkPersonalAccessToken_PersonalAccessTokens) GetID() string {
 	if t == nil {
@@ -21440,7 +21440,7 @@ func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken
 
 type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken struct {
 	Description   *string                                                                                  "json:\"description,omitempty\" graphql:\"description\""
-	ExpiresAt     time.Time                                                                                "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt     *time.Time                                                                               "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	ID            string                                                                                   "json:\"id\" graphql:\"id\""
 	LastUsedAt    *time.Time                                                                               "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 	Name          string                                                                                   "json:\"name\" graphql:\"name\""
@@ -21462,7 +21462,7 @@ func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken
 	if t == nil {
 		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetID() string {
 	if t == nil {
@@ -21561,7 +21561,7 @@ func (t *GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node_Organization
 
 type GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node struct {
 	Description   *string                                                                     "json:\"description,omitempty\" graphql:\"description\""
-	ExpiresAt     time.Time                                                                   "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt     *time.Time                                                                  "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	ID            string                                                                      "json:\"id\" graphql:\"id\""
 	LastUsedAt    *time.Time                                                                  "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 	Name          string                                                                      "json:\"name\" graphql:\"name\""
@@ -21582,7 +21582,7 @@ func (t *GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node) GetExpiresA
 	if t == nil {
 		t = &GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node) GetID() string {
 	if t == nil {
@@ -21675,7 +21675,7 @@ func (t *GetPersonalAccessTokenByID_PersonalAccessToken_Organizations) GetName()
 
 type GetPersonalAccessTokenByID_PersonalAccessToken struct {
 	Description   *string                                                         "json:\"description,omitempty\" graphql:\"description\""
-	ExpiresAt     time.Time                                                       "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt     *time.Time                                                      "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	ID            string                                                          "json:\"id\" graphql:\"id\""
 	LastUsedAt    *time.Time                                                      "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 	Name          string                                                          "json:\"name\" graphql:\"name\""
@@ -21696,7 +21696,7 @@ func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetExpiresAt() *time.Ti
 	if t == nil {
 		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetID() string {
 	if t == nil {
@@ -21778,7 +21778,7 @@ func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken
 
 type UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken struct {
 	Description   *string                                                                                  "json:\"description,omitempty\" graphql:\"description\""
-	ExpiresAt     time.Time                                                                                "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt     *time.Time                                                                               "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	ID            string                                                                                   "json:\"id\" graphql:\"id\""
 	LastUsedAt    *time.Time                                                                               "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 	Name          string                                                                                   "json:\"name\" graphql:\"name\""
@@ -21800,7 +21800,7 @@ func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken
 	if t == nil {
 		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetID() string {
 	if t == nil {

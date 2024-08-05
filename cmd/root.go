@@ -7,8 +7,6 @@ import (
 	"github.com/knadh/koanf/v2"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
-
-	"github.com/datumforge/datum/pkg/utils/sentry"
 )
 
 const appName = "datum"
@@ -47,19 +45,35 @@ func init() {
 // all other configuration is done by the server with koanf
 // refer to the README.md for more information
 func initConfig() {
-	// Load config from flags, including defaults
 	if err := initCmdFlags(rootCmd); err != nil {
 		log.Fatalf("error loading config: %v", err)
 	}
 
-	c := sentry.LoggerConfig{
-		Debug:  k.Bool("debug"),
-		Pretty: k.Bool("pretty"),
-	}
-
-	logger = c.NewLogger()
+	setupLogging()
 }
 
+// initCmdFlags loads the flags from the command line into the koanf instance
 func initCmdFlags(cmd *cobra.Command) error {
 	return k.Load(posflag.Provider(cmd.Flags(), k.Delim(), k), nil)
+}
+
+func setupLogging() {
+	cfg := zap.NewProductionConfig()
+	if k.Bool("pretty") {
+		cfg = zap.NewDevelopmentConfig()
+	}
+
+	if k.Bool("debug") {
+		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	} else {
+		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
+	}
+
+	l, err := cfg.Build()
+	if err != nil {
+		panic(err)
+	}
+
+	logger = l.Sugar().With("app", appName)
+	defer logger.Sync() //nolint:errcheck
 }

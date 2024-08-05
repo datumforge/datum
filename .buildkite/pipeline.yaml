@@ -13,7 +13,7 @@ steps:
         cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
-              image: "ghcr.io/datumforge/base-ci-image:v1.1.6"
+              image: "ghcr.io/datumforge/base-ci-image:v1.1.8"
               command: ["task", "ci"]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -22,7 +22,7 @@ steps:
         cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
-              image: "ghcr.io/datumforge/base-ci-image:v1.1.6"
+              image: "ghcr.io/datumforge/base-ci-image:v1.1.8"
               command: ["task", "config:ci"]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -34,8 +34,8 @@ steps:
         key: "lint"
         plugins:
           - docker#v5.11.0:
-              image: "registry.hub.docker.com/golangci/golangci-lint:v1.59.0"
-              command: ["golangci-lint", "run", "-v", "--timeout", "10m", "--config", ".golangci.yaml", "--concurrency", "32"]
+              image: "registry.hub.docker.com/golangci/golangci-lint:v1.59.1"
+              command: ["golangci-lint", "run", "-v", "--timeout", "10m", "--config", ".golangci.yaml", "--concurrency", "0"]
               environment:
                 - "GOTOOLCHAIN=auto"
       - label: ":golang: go test - libsql"

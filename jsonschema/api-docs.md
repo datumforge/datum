@@ -18,11 +18,9 @@ Config contains the configuration for the datum server
 |[**tracer**](#tracer)|`object`|Config defines the configuration settings for opentelemetry tracing<br/>||
 |[**email**](#email)|`object`|Config for sending emails via SendGrid and managing marketing contacts<br/>||
 |[**sessions**](#sessions)|`object`|Config contains the configuration for the session store<br/>||
-|[**sentry**](#sentry)|`object`|Config settings for the Sentry client<br/>||
 |[**posthog**](#posthog)|`object`|Config is the configuration for PostHog<br/>||
 |[**totp**](#totp)|`object`|||
 |[**ratelimit**](#ratelimit)|`object`|Config defines the configuration settings for the default rate limiter<br/>||
-|[**objstorage**](#objstorage)|`object`|ObjectStorage contains the configuration for the object storage provider<br/>||
 |[**publisherConfig**](#publisherconfig)|`object`|Config is the configuration for the Kafka event source<br/>||
 
 **Additional Properties:** not allowed  
@@ -562,30 +560,6 @@ Config contains the configuration for the session store
 |**domain**|`string`|Domain is the domain for the cookie, leave empty to use the default value of the server<br/>||
 
 **Additional Properties:** not allowed  
-<a name="sentry"></a>
-## sentry: object
-
-Config settings for the Sentry client
-
-
-**Properties**
-
-|Name|Type|Description|Required|
-|----|----|-----------|--------|
-|**enabled**|`boolean`|Enabled indicates whether the Sentry client is enabled<br/>||
-|**dsn**|`string`|DSN is the Data Source Name for the Sentry client<br/>||
-|**environment**|`string`|Environment is the environment in which the Sentry client is running<br/>||
-|**enableTracing**|`boolean`|EnableTracing indicates whether tracing is enabled for the Sentry client<br/>||
-|**traceSampler**|`number`|TracesSampler is the sampling rate for tracing in the Sentry client<br/>||
-|**attachStacktrace**|`boolean`|AttachStacktrace indicates whether to attach stack traces to events in the Sentry client<br/>||
-|**sampleRate**|`number`|SampleRate is the sampling rate for events in the Sentry client<br/>||
-|**traceSampleRate**|`number`|TracesSampleRate is the sampling rate for tracing events in the Sentry client<br/>||
-|**profileSampleRate**|`number`|ProfilesSampleRate is the sampling rate for profiling events in the Sentry client<br/>||
-|**repanic**|`boolean`|Repanic indicates whether to repanic after capturing an event in the Sentry client<br/>||
-|**debug**|`boolean`|Debug indicates whether debug mode is enabled for the Sentry client<br/>||
-|**serverName**|`string`|ServerName is the name of the server running the Sentry client<br/>||
-
-**Additional Properties:** not allowed  
 <a name="posthog"></a>
 ## posthog: object
 
@@ -631,69 +605,6 @@ Config defines the configuration settings for the default rate limiter
 |**limit**|`number`|||
 |**burst**|`integer`|||
 |**expires**|`integer`|||
-
-**Additional Properties:** not allowed  
-<a name="objstorage"></a>
-## objstorage: object
-
-ObjectStorage contains the configuration for the object storage provider
-
-
-**Properties**
-
-|Name|Type|Description|Required|
-|----|----|-----------|--------|
-|[**s3**](#objstorages3)|`object`|Config is the configuration for Storage<br/>||
-|[**gcs**](#objstoragegcs)|`object`|Config is the configuration for Storage - need to blow this out but initial focus was on s3<br/>||
-|[**fs**](#objstoragefs)|`object`|Config is the configuration for Storage<br/>||
-
-**Additional Properties:** not allowed  
-<a name="objstorages3"></a>
-### objstorage\.s3: object
-
-Config is the configuration for Storage
-
-
-**Properties**
-
-|Name|Type|Description|Required|
-|----|----|-----------|--------|
-|**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
-|**accessKeyID**|`string`|AccessKeyID is the access key id<br/>||
-|**bucket**|`string`|Bucket is the name of the bucket<br/>||
-|**endpoint**|`string`|Endpoint is the endpoint to use for the s3 client<br/>||
-|**region**|`string`|Region is the region to use for the s3 client<br/>||
-|**secretAccessKey**|`string`|SecretAccessKey is the secret access key<br/>||
-|**uploadConcurrency**|`integer`|UploadConcurrency is the number of goroutines to spin up when uploading parts<br/>||
-
-**Additional Properties:** not allowed  
-<a name="objstoragegcs"></a>
-### objstorage\.gcs: object
-
-Config is the configuration for Storage - need to blow this out but initial focus was on s3
-
-
-**Properties**
-
-|Name|Type|Description|Required|
-|----|----|-----------|--------|
-|**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
-|**credentialsFile**|`string`|CredentialsFile is the path to the credentials file<br/>||
-|**bucket**|`string`|Bucket is the name of the bucket<br/>||
-
-**Additional Properties:** not allowed  
-<a name="objstoragefs"></a>
-### objstorage\.fs: object
-
-Config is the configuration for Storage
-
-
-**Properties**
-
-|Name|Type|Description|Required|
-|----|----|-----------|--------|
-|**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
-|**root**|`string`|Root is the root directory for the filesystem storage<br/>||
 
 **Additional Properties:** not allowed  
 <a name="publisherconfig"></a>

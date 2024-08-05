@@ -233,8 +233,8 @@ type DatumGraphClient interface {
 	UpdateUser(ctx context.Context, updateUserID string, input UpdateUserInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUser, error)
 	GetAllUserHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUserHistories, error)
 	GetUserHistories(ctx context.Context, where *UserHistoryWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetUserHistories, error)
-	GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error)
 	GetAllUserSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUserSettings, error)
+	GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error)
 	GetUserSettings(ctx context.Context, where UserSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetUserSettings, error)
 	UpdateUserSetting(ctx context.Context, updateUserSettingID string, input UpdateUserSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserSetting, error)
 	GetAllUserSettingHistories(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUserSettingHistories, error)
@@ -25069,133 +25069,6 @@ func (t *GetUserHistories_UserHistories) GetEdges() []*GetUserHistories_UserHist
 	return t.Edges
 }
 
-type GetUserSettingByID_UserSetting_DefaultOrg struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	Name        string "json:\"name\" graphql:\"name\""
-	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
-}
-
-func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetID() string {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
-	}
-	return t.ID
-}
-func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetName() string {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
-	}
-	return t.Name
-}
-func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetPersonalOrg() *bool {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
-	}
-	return t.PersonalOrg
-}
-
-type GetUserSettingByID_UserSetting struct {
-	ID             string                                     "json:\"id\" graphql:\"id\""
-	SilencedAt     *time.Time                                 "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
-	Status         enums.UserStatus                           "json:\"status\" graphql:\"status\""
-	DefaultOrg     *GetUserSettingByID_UserSetting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Tags           []string                                   "json:\"tags,omitempty\" graphql:\"tags\""
-	Locked         bool                                       "json:\"locked\" graphql:\"locked\""
-	IsTfaEnabled   *bool                                      "json:\"isTfaEnabled,omitempty\" graphql:\"isTfaEnabled\""
-	EmailConfirmed bool                                       "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	CreatedAt      *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	DeletedAt      *time.Time                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy      *string                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	UpdatedAt      *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-}
-
-func (t *GetUserSettingByID_UserSetting) GetID() string {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.ID
-}
-func (t *GetUserSettingByID_UserSetting) GetSilencedAt() *time.Time {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.SilencedAt
-}
-func (t *GetUserSettingByID_UserSetting) GetStatus() *enums.UserStatus {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return &t.Status
-}
-func (t *GetUserSettingByID_UserSetting) GetDefaultOrg() *GetUserSettingByID_UserSetting_DefaultOrg {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.DefaultOrg
-}
-func (t *GetUserSettingByID_UserSetting) GetTags() []string {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.Tags
-}
-func (t *GetUserSettingByID_UserSetting) GetLocked() bool {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.Locked
-}
-func (t *GetUserSettingByID_UserSetting) GetIsTfaEnabled() *bool {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.IsTfaEnabled
-}
-func (t *GetUserSettingByID_UserSetting) GetEmailConfirmed() bool {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.EmailConfirmed
-}
-func (t *GetUserSettingByID_UserSetting) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.CreatedAt
-}
-func (t *GetUserSettingByID_UserSetting) GetCreatedBy() *string {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.CreatedBy
-}
-func (t *GetUserSettingByID_UserSetting) GetDeletedAt() *time.Time {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.DeletedAt
-}
-func (t *GetUserSettingByID_UserSetting) GetDeletedBy() *string {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.DeletedBy
-}
-func (t *GetUserSettingByID_UserSetting) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.UpdatedAt
-}
-func (t *GetUserSettingByID_UserSetting) GetUpdatedBy() *string {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.UpdatedBy
-}
-
 type GetAllUserSettings_UserSettings_Edges_Node_DefaultOrg struct {
 	ID          string "json:\"id\" graphql:\"id\""
 	Name        string "json:\"name\" graphql:\"name\""
@@ -25343,6 +25216,133 @@ func (t *GetAllUserSettings_UserSettings) GetEdges() []*GetAllUserSettings_UserS
 		t = &GetAllUserSettings_UserSettings{}
 	}
 	return t.Edges
+}
+
+type GetUserSettingByID_UserSetting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
+type GetUserSettingByID_UserSetting struct {
+	ID             string                                     "json:\"id\" graphql:\"id\""
+	SilencedAt     *time.Time                                 "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         enums.UserStatus                           "json:\"status\" graphql:\"status\""
+	DefaultOrg     *GetUserSettingByID_UserSetting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                   "json:\"tags,omitempty\" graphql:\"tags\""
+	Locked         bool                                       "json:\"locked\" graphql:\"locked\""
+	IsTfaEnabled   *bool                                      "json:\"isTfaEnabled,omitempty\" graphql:\"isTfaEnabled\""
+	EmailConfirmed bool                                       "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	CreatedAt      *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	DeletedAt      *time.Time                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	UpdatedAt      *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetUserSettingByID_UserSetting) GetID() string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.ID
+}
+func (t *GetUserSettingByID_UserSetting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.SilencedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return &t.Status
+}
+func (t *GetUserSettingByID_UserSetting) GetDefaultOrg() *GetUserSettingByID_UserSetting_DefaultOrg {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.DefaultOrg
+}
+func (t *GetUserSettingByID_UserSetting) GetTags() []string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.Tags
+}
+func (t *GetUserSettingByID_UserSetting) GetLocked() bool {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.Locked
+}
+func (t *GetUserSettingByID_UserSetting) GetIsTfaEnabled() *bool {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.IsTfaEnabled
+}
+func (t *GetUserSettingByID_UserSetting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.EmailConfirmed
+}
+func (t *GetUserSettingByID_UserSetting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.CreatedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetUserSettingByID_UserSetting) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.DeletedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.DeletedBy
+}
+func (t *GetUserSettingByID_UserSetting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.UpdatedBy
 }
 
 type GetUserSettings_UserSettings_Edges_Node_DefaultOrg struct {
@@ -29245,17 +29245,6 @@ func (t *GetUserHistories) GetUserHistories() *GetUserHistories_UserHistories {
 	return &t.UserHistories
 }
 
-type GetUserSettingByID struct {
-	UserSetting GetUserSettingByID_UserSetting "json:\"userSetting\" graphql:\"userSetting\""
-}
-
-func (t *GetUserSettingByID) GetUserSetting() *GetUserSettingByID_UserSetting {
-	if t == nil {
-		t = &GetUserSettingByID{}
-	}
-	return &t.UserSetting
-}
-
 type GetAllUserSettings struct {
 	UserSettings GetAllUserSettings_UserSettings "json:\"userSettings\" graphql:\"userSettings\""
 }
@@ -29265,6 +29254,17 @@ func (t *GetAllUserSettings) GetUserSettings() *GetAllUserSettings_UserSettings 
 		t = &GetAllUserSettings{}
 	}
 	return &t.UserSettings
+}
+
+type GetUserSettingByID struct {
+	UserSetting GetUserSettingByID_UserSetting "json:\"userSetting\" graphql:\"userSetting\""
+}
+
+func (t *GetUserSettingByID) GetUserSetting() *GetUserSettingByID_UserSetting {
+	if t == nil {
+		t = &GetUserSettingByID{}
+	}
+	return &t.UserSetting
 }
 
 type GetUserSettings struct {
@@ -38035,47 +38035,6 @@ func (c *Client) GetUserHistories(ctx context.Context, where *UserHistoryWhereIn
 	return &res, nil
 }
 
-const GetUserSettingByIDDocument = `query GetUserSettingByID ($userSettingId: ID!) {
-	userSetting(id: $userSettingId) {
-		id
-		silencedAt
-		status
-		defaultOrg {
-			id
-			name
-			personalOrg
-		}
-		tags
-		locked
-		isTfaEnabled
-		emailConfirmed
-		createdAt
-		createdBy
-		deletedAt
-		deletedBy
-		updatedAt
-		updatedBy
-	}
-}
-`
-
-func (c *Client) GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error) {
-	vars := map[string]any{
-		"userSettingId": userSettingID,
-	}
-
-	var res GetUserSettingByID
-	if err := c.Client.Post(ctx, "GetUserSettingByID", GetUserSettingByIDDocument, &res, vars, interceptors...); err != nil {
-		if c.Client.ParseDataWhenErrors {
-			return &res, err
-		}
-
-		return nil, err
-	}
-
-	return &res, nil
-}
-
 const GetAllUserSettingsDocument = `query GetAllUserSettings {
 	userSettings {
 		edges {
@@ -38109,6 +38068,47 @@ func (c *Client) GetAllUserSettings(ctx context.Context, interceptors ...clientv
 
 	var res GetAllUserSettings
 	if err := c.Client.Post(ctx, "GetAllUserSettings", GetAllUserSettingsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetUserSettingByIDDocument = `query GetUserSettingByID ($userSettingId: ID!) {
+	userSetting(id: $userSettingId) {
+		id
+		silencedAt
+		status
+		defaultOrg {
+			id
+			name
+			personalOrg
+		}
+		tags
+		locked
+		isTfaEnabled
+		emailConfirmed
+		createdAt
+		createdBy
+		deletedAt
+		deletedBy
+		updatedAt
+		updatedBy
+	}
+}
+`
+
+func (c *Client) GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error) {
+	vars := map[string]any{
+		"userSettingId": userSettingID,
+	}
+
+	var res GetUserSettingByID
+	if err := c.Client.Post(ctx, "GetUserSettingByID", GetUserSettingByIDDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -38850,8 +38850,8 @@ var DocumentOperationNames = map[string]string{
 	UpdateUserDocument:                            "UpdateUser",
 	GetAllUserHistoriesDocument:                   "GetAllUserHistories",
 	GetUserHistoriesDocument:                      "GetUserHistories",
-	GetUserSettingByIDDocument:                    "GetUserSettingByID",
 	GetAllUserSettingsDocument:                    "GetAllUserSettings",
+	GetUserSettingByIDDocument:                    "GetUserSettingByID",
 	GetUserSettingsDocument:                       "GetUserSettings",
 	UpdateUserSettingDocument:                     "UpdateUserSetting",
 	GetAllUserSettingHistoriesDocument:            "GetAllUserSettingHistories",

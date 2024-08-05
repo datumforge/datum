@@ -123,12 +123,6 @@ type DocumentDataUpdatePayload struct {
 	DocumentData *generated.DocumentData `json:"documentData"`
 }
 
-type Dummy struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-}
-
 // Return response for createBulkEntitlement mutation
 type EntitlementBulkCreatePayload struct {
 	// Created entitlements
@@ -654,9 +648,6 @@ func (SubscriberSearchResult) IsGlobalSearchResult() {}
 type SubscriberUpdatePayload struct {
 	// Updated subscriber
 	Subscriber *generated.Subscriber `json:"subscriber"`
-}
-
-type Subscription struct {
 }
 
 // Return response for createTFASetting mutation

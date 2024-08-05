@@ -76,7 +76,6 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		Set("auth_provider", user.AuthProvider)
 
 	h.AnalyticsClient.Event("user_authenticated", props)
-	h.AnalyticsClient.UserProperties(user.ID, props)
 
 	out := models.LoginReply{
 		Reply:    rout.Reply{Success: true},

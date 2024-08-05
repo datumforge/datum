@@ -29,10 +29,6 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
-	"github.com/datumforge/datum/pkg/utils/sentry"
-	"github.com/datumforge/datum/pkg/utils/storage/fs"
-	"github.com/datumforge/datum/pkg/utils/storage/gcs"
-	"github.com/datumforge/datum/pkg/utils/storage/s3"
 	"github.com/datumforge/datum/pkg/utils/totp"
 )
 
@@ -44,64 +40,34 @@ var (
 type Config struct {
 	// RefreshInterval determines how often to reload the config
 	RefreshInterval time.Duration `json:"refreshInterval" koanf:"refreshInterval" default:"10m"`
-
 	// Server contains the echo server settings
 	Server Server `json:"server" koanf:"server"`
-
 	// EntConfig contains the ent configuration used by the ent middleware
 	EntConfig entconfig.Config `json:"entConfig" koanf:"entConfig"`
-
 	// Auth contains the authentication token settings and provider(s)
 	Auth Auth `json:"auth" koanf:"auth"`
-
 	// Authz contains the authorization settings for fine grained access control
 	Authz fgax.Config `json:"authz" koanf:"authz"`
-
 	// DB contains the database configuration for the ent client
 	DB entx.Config `json:"db" koanf:"db"`
-
 	// Geodetic contains the geodetic client configuration
 	Geodetic geodeticclient.Config `json:"geodetic" koanf:"geodetic"`
-
 	// Redis contains the redis configuration for the key-value store
 	Redis cache.Config `json:"redis" koanf:"redis"`
-
 	// Tracer contains the tracing config for opentelemetry
 	Tracer otelx.Config `json:"tracer" koanf:"tracer"`
-
 	// Email contains email sending configuration for the server
 	Email emails.Config `json:"email" koanf:"email"`
-
 	// Sessions config for user sessions and cookies
 	Sessions sessions.Config `json:"sessions" koanf:"sessions"`
-
-	// Sentry contains the sentry configuration for error tracking
-	Sentry sentry.Config `json:"sentry" koanf:"sentry"`
-
 	// PostHog contains the configuration for the PostHog analytics
 	PostHog posthog.Config `json:"posthog" koanf:"posthog"`
-
 	// TOTP contains the configuration for the TOTP provider
 	TOTP totp.Config `json:"totp" koanf:"totp"`
-
 	// Ratelimit contains the configuration for the rate limiter
 	Ratelimit ratelimit.Config `json:"ratelimit" koanf:"ratelimit"`
-
-	// Storage contains the configuration for the storage provider
-	ObjStorage ObjectStorage `json:"objstorage" koanf:"objstorage"`
-
 	// EventPublisher contains the configuration for the event publisher
 	Events kafkaconfig.Config `json:"publisherConfig" koanf:"publisherConfig"`
-}
-
-// ObjectStorage contains the configuration for the object storage provider
-type ObjectStorage struct {
-	// S3 contains the s3 configuration for the object storage
-	S3 s3.Config `json:"s3" koanf:"s3"`
-	// GCS contains the gcs configuration for the object storage
-	GCS gcs.Config `json:"gcs" koanf:"gcs"`
-	// FS contains the fs configuration for the object storage
-	FS fs.Config `json:"fs" koanf:"fs"`
 }
 
 // Server settings for the echo server

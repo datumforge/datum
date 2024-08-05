@@ -1835,12 +1835,6 @@ type DocumentDataWhereInput struct {
 	HasEntityWith []*EntityWhereInput `json:"hasEntityWith,omitempty"`
 }
 
-type Dummy struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-}
-
 type Entitlement struct {
 	ID        string     `json:"id"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -10910,9 +10904,6 @@ type SubscriberWhereInput struct {
 	// events edge predicates
 	HasEvents     *bool              `json:"hasEvents,omitempty"`
 	HasEventsWith []*EventWhereInput `json:"hasEventsWith,omitempty"`
-}
-
-type Subscription struct {
 }
 
 type TFASetting struct {

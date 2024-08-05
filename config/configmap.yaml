@@ -141,18 +141,6 @@ data:
   DATUM_SESSIONS_SIGNINGKEY: {{ .Values.datum.sessions.signingKey | default "my-signing-secret" }}
   DATUM_SESSIONS_ENCRYPTIONKEY: {{ .Values.datum.sessions.encryptionKey | default "encryptionsecret" }}
   DATUM_SESSIONS_DOMAIN: {{ .Values.datum.sessions.domain }}
-  DATUM_SENTRY_ENABLED: {{ .Values.datum.sentry.enabled | default false }}
-  DATUM_SENTRY_DSN: {{ .Values.datum.sentry.dsn }}
-  DATUM_SENTRY_ENVIRONMENT: {{ .Values.datum.sentry.environment | default "development" }}
-  DATUM_SENTRY_ENABLETRACING: {{ .Values.datum.sentry.enableTracing | default false }}
-  DATUM_SENTRY_TRACESAMPLER: {{ .Values.datum.sentry.traceSampler | default 1.0 }}
-  DATUM_SENTRY_ATTACHSTACKTRACE: {{ .Values.datum.sentry.attachStacktrace | default true }}
-  DATUM_SENTRY_SAMPLERATE: {{ .Values.datum.sentry.sampleRate | default 0.2 }}
-  DATUM_SENTRY_TRACESAMPLERATE: {{ .Values.datum.sentry.traceSampleRate | default 0.2 }}
-  DATUM_SENTRY_PROFILESAMPLERATE: {{ .Values.datum.sentry.profileSampleRate | default 0.2 }}
-  DATUM_SENTRY_REPANIC: {{ .Values.datum.sentry.repanic }}
-  DATUM_SENTRY_DEBUG: {{ .Values.datum.sentry.debug | default false }}
-  DATUM_SENTRY_SERVERNAME: {{ .Values.datum.sentry.serverName }}
   DATUM_POSTHOG_ENABLED: {{ .Values.datum.posthog.enabled | default false }}
   DATUM_POSTHOG_APIKEY: {{ .Values.datum.posthog.apiKey }}
   DATUM_POSTHOG_HOST: {{ .Values.datum.posthog.host | default "https://app.posthog.com" }}
@@ -167,18 +155,6 @@ data:
   DATUM_RATELIMIT_LIMIT: {{ .Values.datum.ratelimit.limit | default 10 }}
   DATUM_RATELIMIT_BURST: {{ .Values.datum.ratelimit.burst | default 30 }}
   DATUM_RATELIMIT_EXPIRES: {{ .Values.datum.ratelimit.expires | default "10m" }}
-  DATUM_OBJSTORAGE_S3_ENABLED: {{ .Values.datum.objstorage.s3.enabled | default false }}
-  DATUM_OBJSTORAGE_S3_ACCESSKEYID: {{ .Values.datum.objstorage.s3.accessKeyID }}
-  DATUM_OBJSTORAGE_S3_BUCKET: {{ .Values.datum.objstorage.s3.bucket | default "yourbucketname" }}
-  DATUM_OBJSTORAGE_S3_ENDPOINT: {{ .Values.datum.objstorage.s3.endpoint }}
-  DATUM_OBJSTORAGE_S3_REGION: {{ .Values.datum.objstorage.s3.region | default "us-region-a" }}
-  DATUM_OBJSTORAGE_S3_SECRETACCESSKEY: {{ .Values.datum.objstorage.s3.secretAccessKey }}
-  DATUM_OBJSTORAGE_S3_UPLOADCONCURRENCY: {{ .Values.datum.objstorage.s3.uploadConcurrency | default 5 }}
-  DATUM_OBJSTORAGE_GCS_ENABLED: {{ .Values.datum.objstorage.gcs.enabled | default false }}
-  DATUM_OBJSTORAGE_GCS_CREDENTIALSFILE: {{ .Values.datum.objstorage.gcs.credentialsFile | default "./credentials.json" }}
-  DATUM_OBJSTORAGE_GCS_BUCKET: {{ .Values.datum.objstorage.gcs.bucket | default "yourbucketname" }}
-  DATUM_OBJSTORAGE_FS_ENABLED: {{ .Values.datum.objstorage.fs.enabled | default false }}
-  DATUM_OBJSTORAGE_FS_ROOT: {{ .Values.datum.objstorage.fs.root | default "./storage" }}
   DATUM_PUBLISHERCONFIG_ENABLED: {{ .Values.datum.publisherConfig.enabled | default false }}
   DATUM_PUBLISHERCONFIG_APPNAME: {{ .Values.datum.publisherConfig.appName | default "datum" }}
   DATUM_PUBLISHERCONFIG_ADDRESS: {{ .Values.datum.publisherConfig.address | default "localhost:10000" }}

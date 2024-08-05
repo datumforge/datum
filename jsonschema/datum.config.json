@@ -111,25 +111,6 @@
       ],
       "description": "Auth settings including oauth2 providers and datum token configuration"
     },
-    "config.ObjectStorage": {
-      "properties": {
-        "s3": {
-          "$ref": "#/$defs/s3.Config",
-          "description": "S3 contains the s3 configuration for the object storage"
-        },
-        "gcs": {
-          "$ref": "#/$defs/gcs.Config",
-          "description": "GCS contains the gcs configuration for the object storage"
-        },
-        "fs": {
-          "$ref": "#/$defs/fs.Config",
-          "description": "FS contains the fs configuration for the object storage"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "ObjectStorage contains the configuration for the object storage provider"
-    },
     "config.PondPool": {
       "properties": {
         "maxWorkers": {
@@ -454,40 +435,6 @@
         "hostUrl"
       ]
     },
-    "fs.Config": {
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "description": "Enabled is a flag to enable or disable the storage"
-        },
-        "root": {
-          "type": "string",
-          "description": "Root is the root directory for the filesystem storage"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "Config is the configuration for Storage"
-    },
-    "gcs.Config": {
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "description": "Enabled is a flag to enable or disable the storage"
-        },
-        "credentialsFile": {
-          "type": "string",
-          "description": "CredentialsFile is the path to the credentials file"
-        },
-        "bucket": {
-          "type": "string",
-          "description": "Bucket is the name of the bucket"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "Config is the configuration for Storage - need to blow this out but initial focus was on s3"
-    },
     "geodeticclient.Config": {
       "properties": {
         "enabled": {
@@ -787,41 +734,6 @@
       "type": "object",
       "description": "Config contains the types used in executing redirects via the redirect middleware"
     },
-    "s3.Config": {
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "description": "Enabled is a flag to enable or disable the storage"
-        },
-        "accessKeyID": {
-          "type": "string",
-          "description": "AccessKeyID is the access key id"
-        },
-        "bucket": {
-          "type": "string",
-          "description": "Bucket is the name of the bucket"
-        },
-        "endpoint": {
-          "type": "string",
-          "description": "Endpoint is the endpoint to use for the s3 client"
-        },
-        "region": {
-          "type": "string",
-          "description": "Region is the region to use for the s3 client"
-        },
-        "secretAccessKey": {
-          "type": "string",
-          "description": "SecretAccessKey is the secret access key"
-        },
-        "uploadConcurrency": {
-          "type": "integer",
-          "description": "UploadConcurrency is the number of goroutines to spin up when uploading parts"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "Config is the configuration for Storage"
-    },
     "secure.Config": {
       "properties": {
         "enabled": {
@@ -864,61 +776,6 @@
       "additionalProperties": false,
       "type": "object",
       "description": "Config contains the types used in the mw middleware"
-    },
-    "sentry.Config": {
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "description": "Enabled indicates whether the Sentry client is enabled"
-        },
-        "dsn": {
-          "type": "string",
-          "description": "DSN is the Data Source Name for the Sentry client"
-        },
-        "environment": {
-          "type": "string",
-          "description": "Environment is the environment in which the Sentry client is running"
-        },
-        "enableTracing": {
-          "type": "boolean",
-          "description": "EnableTracing indicates whether tracing is enabled for the Sentry client"
-        },
-        "traceSampler": {
-          "type": "number",
-          "description": "TracesSampler is the sampling rate for tracing in the Sentry client"
-        },
-        "attachStacktrace": {
-          "type": "boolean",
-          "description": "AttachStacktrace indicates whether to attach stack traces to events in the Sentry client"
-        },
-        "sampleRate": {
-          "type": "number",
-          "description": "SampleRate is the sampling rate for events in the Sentry client"
-        },
-        "traceSampleRate": {
-          "type": "number",
-          "description": "TracesSampleRate is the sampling rate for tracing events in the Sentry client"
-        },
-        "profileSampleRate": {
-          "type": "number",
-          "description": "ProfilesSampleRate is the sampling rate for profiling events in the Sentry client"
-        },
-        "repanic": {
-          "type": "boolean",
-          "description": "Repanic indicates whether to repanic after capturing an event in the Sentry client"
-        },
-        "debug": {
-          "type": "boolean",
-          "description": "Debug indicates whether debug mode is enabled for the Sentry client"
-        },
-        "serverName": {
-          "type": "string",
-          "description": "ServerName is the name of the server running the Sentry client"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "description": "Config settings for the Sentry client"
     },
     "sessions.Config": {
       "properties": {
@@ -1116,10 +973,6 @@
       "$ref": "#/$defs/sessions.Config",
       "description": "Sessions config for user sessions and cookies"
     },
-    "sentry": {
-      "$ref": "#/$defs/sentry.Config",
-      "description": "Sentry contains the sentry configuration for error tracking"
-    },
     "posthog": {
       "$ref": "#/$defs/posthog.Config",
       "description": "PostHog contains the configuration for the PostHog analytics"
@@ -1131,10 +984,6 @@
     "ratelimit": {
       "$ref": "#/$defs/ratelimit.Config",
       "description": "Ratelimit contains the configuration for the rate limiter"
-    },
-    "objstorage": {
-      "$ref": "#/$defs/config.ObjectStorage",
-      "description": "Storage contains the configuration for the storage provider"
     },
     "publisherConfig": {
       "$ref": "#/$defs/kafkaconfig.Config",

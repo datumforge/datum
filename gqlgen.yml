@@ -1,26 +1,19 @@
-# Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
   - schema/*.graphql
-  - subscriptions/*.graphql
-# Where should the generated server code go?
 exec:
   filename: internal/graphapi/gen_server.go
   package: graphapi
-# Where should any generated models go?
+
 model:
   filename: internal/graphapi/gen_models.go
   package: graphapi
-# Where should the resolver implementations go?
 resolver:
   layout: follow-schema
   dir: internal/graphapi
   package: graphapi
   filename_template: "{name}.resolvers.go"
-  # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false
-# Optional: turn on use ` + "`" + `gqlgen:"fieldName"` + "`" + ` tags in your models
 struct_tag: json
-
 # Optional: turn on to use []Thing instead of []*Thing
 # omit_slice_element_pointers: false
 

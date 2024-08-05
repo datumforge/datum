@@ -2450,11 +2450,6 @@ input DocumentDataWhereInput {
 	hasEntity: Boolean
 	hasEntityWith: [EntityWhereInput!]
 }
-type Dummy {
-	id: ID!
-	text: String!
-	done: Boolean!
-}
 type Entitlement implements Node {
 	id: ID!
 	createdAt: Time
@@ -11875,7 +11870,6 @@ type Mutation {
 		"""
 		id: ID!
 	): WebhookDeletePayload!
-	postMessageTo(subscriber: String!, content: String!): ID!
 }
 """
 An object with an ID.
@@ -17274,9 +17268,6 @@ input SubscriberWhereInput {
 	"""
 	hasEvents: Boolean
 	hasEventsWith: [EventWhereInput!]
-}
-type Subscription {
-	subscribe(subscriber: String!): String!
 }
 type TFASetting implements Node {
 	id: ID!

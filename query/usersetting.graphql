@@ -1,26 +1,3 @@
-query GetUserSettingByID($userSettingId: ID!) {
-  userSetting(id: $userSettingId) {
-    id
-    silencedAt
-    status
-    defaultOrg {
-      id
-      name
-      personalOrg
-    }
-    tags
-    locked
-    isTfaEnabled
-    emailConfirmed
-    createdAt
-    createdBy
-    deletedAt
-    deletedBy
-    updatedAt
-    updatedBy
-  }
-}
-
 query GetAllUserSettings {
   userSettings {
     edges {
@@ -45,6 +22,29 @@ query GetAllUserSettings {
         updatedBy
       }
     }
+  }
+}
+
+query GetUserSettingByID($userSettingId: ID!) {
+  userSetting(id: $userSettingId) {
+    id
+    silencedAt
+    status
+    defaultOrg {
+      id
+      name
+      personalOrg
+    }
+    tags
+    locked
+    isTfaEnabled
+    emailConfirmed
+    createdAt
+    createdBy
+    deletedAt
+    deletedBy
+    updatedAt
+    updatedBy
   }
 }
 

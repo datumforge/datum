@@ -65,10 +65,6 @@ email:
   sendGridApiKey: "SG.FakeAPIKey"
   consoleUrl:
     consoleBase: "http://localhost:17608/"
-# sentry settings
-sentry:
-  enabled: false
-  dsn: "https://fake.ingest.sentry.io/fake"
 # analytics settings
 posthog:
   enabled: false

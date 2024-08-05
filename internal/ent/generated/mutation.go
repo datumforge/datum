@@ -805,7 +805,7 @@ func (m *APITokenMutation) ExpiresAt() (r time.Time, exists bool) {
 // OldExpiresAt returns the old "expires_at" field's value of the APIToken entity.
 // If the APIToken object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APITokenMutation) OldExpiresAt(ctx context.Context) (v time.Time, err error) {
+func (m *APITokenMutation) OldExpiresAt(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldExpiresAt is only allowed on UpdateOne operations")
 	}
@@ -63566,9 +63566,22 @@ func (m *PersonalAccessTokenMutation) OldExpiresAt(ctx context.Context) (v *time
 	return oldValue.ExpiresAt, nil
 }
 
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (m *PersonalAccessTokenMutation) ClearExpiresAt() {
+	m.expires_at = nil
+	m.clearedFields[personalaccesstoken.FieldExpiresAt] = struct{}{}
+}
+
+// ExpiresAtCleared returns if the "expires_at" field was cleared in this mutation.
+func (m *PersonalAccessTokenMutation) ExpiresAtCleared() bool {
+	_, ok := m.clearedFields[personalaccesstoken.FieldExpiresAt]
+	return ok
+}
+
 // ResetExpiresAt resets all changes to the "expires_at" field.
 func (m *PersonalAccessTokenMutation) ResetExpiresAt() {
 	m.expires_at = nil
+	delete(m.clearedFields, personalaccesstoken.FieldExpiresAt)
 }
 
 // SetDescription sets the "description" field.
@@ -64191,6 +64204,9 @@ func (m *PersonalAccessTokenMutation) ClearedFields() []string {
 	if m.FieldCleared(personalaccesstoken.FieldTags) {
 		fields = append(fields, personalaccesstoken.FieldTags)
 	}
+	if m.FieldCleared(personalaccesstoken.FieldExpiresAt) {
+		fields = append(fields, personalaccesstoken.FieldExpiresAt)
+	}
 	if m.FieldCleared(personalaccesstoken.FieldDescription) {
 		fields = append(fields, personalaccesstoken.FieldDescription)
 	}
@@ -64234,6 +64250,9 @@ func (m *PersonalAccessTokenMutation) ClearField(name string) error {
 		return nil
 	case personalaccesstoken.FieldTags:
 		m.ClearTags()
+		return nil
+	case personalaccesstoken.FieldExpiresAt:
+		m.ClearExpiresAt()
 		return nil
 	case personalaccesstoken.FieldDescription:
 		m.ClearDescription()

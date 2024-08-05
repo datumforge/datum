@@ -1718,7 +1718,7 @@ input CreatePersonalAccessTokenInput {
 	"""
 	when the token expires
 	"""
-	expiresAt: Time!
+	expiresAt: Time
 	"""
 	a description of the token's purpose
 	"""
@@ -14961,7 +14961,7 @@ type PersonalAccessToken implements Node {
 	"""
 	when the token expires
 	"""
-	expiresAt: Time!
+	expiresAt: Time
 	"""
 	a description of the token's purpose
 	"""
@@ -15182,6 +15182,8 @@ input PersonalAccessTokenWhereInput {
 	expiresAtGTE: Time
 	expiresAtLT: Time
 	expiresAtLTE: Time
+	expiresAtIsNil: Boolean
+	expiresAtNotNil: Boolean
 	"""
 	last_used_at field predicates
 	"""

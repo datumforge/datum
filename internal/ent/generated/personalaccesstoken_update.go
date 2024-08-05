@@ -166,6 +166,12 @@ func (patu *PersonalAccessTokenUpdate) SetNillableExpiresAt(t *time.Time) *Perso
 	return patu
 }
 
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (patu *PersonalAccessTokenUpdate) ClearExpiresAt() *PersonalAccessTokenUpdate {
+	patu.mutation.ClearExpiresAt()
+	return patu
+}
+
 // SetDescription sets the "description" field.
 func (patu *PersonalAccessTokenUpdate) SetDescription(s string) *PersonalAccessTokenUpdate {
 	patu.mutation.SetDescription(s)
@@ -425,6 +431,9 @@ func (patu *PersonalAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err 
 	}
 	if value, ok := patu.mutation.ExpiresAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldExpiresAt, field.TypeTime, value)
+	}
+	if patu.mutation.ExpiresAtCleared() {
+		_spec.ClearField(personalaccesstoken.FieldExpiresAt, field.TypeTime)
 	}
 	if value, ok := patu.mutation.Description(); ok {
 		_spec.SetField(personalaccesstoken.FieldDescription, field.TypeString, value)
@@ -730,6 +739,12 @@ func (patuo *PersonalAccessTokenUpdateOne) SetNillableExpiresAt(t *time.Time) *P
 	return patuo
 }
 
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (patuo *PersonalAccessTokenUpdateOne) ClearExpiresAt() *PersonalAccessTokenUpdateOne {
+	patuo.mutation.ClearExpiresAt()
+	return patuo
+}
+
 // SetDescription sets the "description" field.
 func (patuo *PersonalAccessTokenUpdateOne) SetDescription(s string) *PersonalAccessTokenUpdateOne {
 	patuo.mutation.SetDescription(s)
@@ -1019,6 +1034,9 @@ func (patuo *PersonalAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if value, ok := patuo.mutation.ExpiresAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldExpiresAt, field.TypeTime, value)
+	}
+	if patuo.mutation.ExpiresAtCleared() {
+		_spec.ClearField(personalaccesstoken.FieldExpiresAt, field.TypeTime)
 	}
 	if value, ok := patuo.mutation.Description(); ok {
 		_spec.SetField(personalaccesstoken.FieldDescription, field.TypeString, value)

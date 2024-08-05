@@ -47,7 +47,8 @@ func (APIToken) Fields() []ent.Field {
 			Annotations(
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("description").
 			Comment("a description of the token's purpose").
 			Optional().

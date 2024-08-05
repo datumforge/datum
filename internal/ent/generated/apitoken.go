@@ -42,7 +42,7 @@ type APIToken struct {
 	// Token holds the value of the "token" field.
 	Token string `json:"token,omitempty"`
 	// when the token expires
-	ExpiresAt time.Time `json:"expires_at,omitempty"`
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 	// a description of the token's purpose
 	Description *string `json:"description,omitempty"`
 	// Scopes holds the value of the "scopes" field.
@@ -181,7 +181,8 @@ func (at *APIToken) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
 			} else if value.Valid {
-				at.ExpiresAt = value.Time
+				at.ExpiresAt = new(time.Time)
+				*at.ExpiresAt = value.Time
 			}
 		case apitoken.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -279,8 +280,10 @@ func (at *APIToken) String() string {
 	builder.WriteString("token=")
 	builder.WriteString(at.Token)
 	builder.WriteString(", ")
-	builder.WriteString("expires_at=")
-	builder.WriteString(at.ExpiresAt.Format(time.ANSIC))
+	if v := at.ExpiresAt; v != nil {
+		builder.WriteString("expires_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := at.Description; v != nil {
 		builder.WriteString("description=")

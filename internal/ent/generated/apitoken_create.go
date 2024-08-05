@@ -404,7 +404,7 @@ func (atc *APITokenCreate) createSpec() (*APIToken, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := atc.mutation.ExpiresAt(); ok {
 		_spec.SetField(apitoken.FieldExpiresAt, field.TypeTime, value)
-		_node.ExpiresAt = value
+		_node.ExpiresAt = &value
 	}
 	if value, ok := atc.mutation.Description(); ok {
 		_spec.SetField(apitoken.FieldDescription, field.TypeString, value)

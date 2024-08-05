@@ -7,6 +7,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	mock_fga "github.com/datumforge/fgax/mockery"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -101,7 +102,7 @@ func (suite *GraphTestSuite) TestQueryPersonalAccessTokens() {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("List "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			resp, err := suite.client.datum.GetAllPersonalAccessTokens(reqCtx)
@@ -154,7 +155,7 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 			input: datumclient.CreatePersonalAccessTokenInput{
 				Name:        "forthethingz",
 				Description: &tokenDescription,
-				ExpiresAt:   expiration30Days,
+				ExpiresAt:   &expiration30Days,
 			},
 		},
 		{
@@ -162,7 +163,7 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 			input: datumclient.CreatePersonalAccessTokenInput{
 				Name:            "forthethingz",
 				Description:     &tokenDescription,
-				ExpiresAt:       expiration30Days,
+				ExpiresAt:       &expiration30Days,
 				OrganizationIDs: []string{org.ID, testPersonalOrgID},
 			},
 		},
@@ -190,7 +191,7 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Create "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			resp, err := suite.client.datum.CreatePersonalAccessToken(reqCtx, tc.input)
@@ -210,8 +211,10 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 			assert.Equal(t, resp.CreatePersonalAccessToken.PersonalAccessToken.Description, tc.input.Description)
 
 			// check expiration if set
-			if !tc.input.ExpiresAt.IsZero() {
-				assert.Equal(t, expiration30Days, tc.input.ExpiresAt)
+			if tc.input.ExpiresAt == nil {
+				assert.Empty(t, resp.CreatePersonalAccessToken.PersonalAccessToken.ExpiresAt)
+			} else {
+				assert.True(t, tc.input.ExpiresAt.Equal(*resp.CreatePersonalAccessToken.PersonalAccessToken.ExpiresAt))
 			}
 
 			// check organization is set if provided
@@ -258,7 +261,8 @@ func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
 	token := (&PersonalAccessTokenBuilder{
 		client:          suite.client,
 		OwnerID:         testUser.ID,
-		OrganizationIDs: []string{testPersonalOrgID}}).
+		OrganizationIDs: []string{testPersonalOrgID},
+		ExpiresAt:       lo.ToPtr(time.Now().Add(time.Hour * 24 * 30))}).
 		MustNew(reqCtx, t)
 
 	tokenDescription := gofakeit.Sentence(5)
@@ -317,7 +321,7 @@ func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Update "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			resp, err := suite.client.datum.UpdatePersonalAccessToken(reqCtx, tc.tokenID, tc.input)
@@ -343,7 +347,12 @@ func (suite *GraphTestSuite) TestMutationUpdatePersonalAccessToken() {
 			}
 
 			// make sure these fields did not get updated
-			assert.WithinDuration(t, *token.ExpiresAt, resp.UpdatePersonalAccessToken.PersonalAccessToken.ExpiresAt, 1*time.Second)
+			if token.ExpiresAt != nil {
+				assert.WithinDuration(t, *token.ExpiresAt, *resp.UpdatePersonalAccessToken.PersonalAccessToken.ExpiresAt, 1*time.Second)
+			} else {
+				assert.Empty(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.ExpiresAt)
+			}
+
 			assert.Len(t, resp.UpdatePersonalAccessToken.PersonalAccessToken.Organizations, len(tc.input.AddOrganizationIDs)+1)
 
 			// Ensure its removed
@@ -394,7 +403,7 @@ func (suite *GraphTestSuite) TestMutationDeletePersonalAccessToken() {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Delete "+tc.name, func(t *testing.T) {
 			resp, err := suite.client.datum.DeletePersonalAccessToken(reqCtx, tc.tokenID)
 
 			if tc.errorMsg != "" {

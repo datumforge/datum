@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
@@ -25,7 +26,7 @@ func init() {
 	createCmd.Flags().StringP("name", "n", "", "name of the personal access token")
 	createCmd.Flags().StringP("description", "d", "", "description of the pat")
 	createCmd.Flags().StringSliceP("organizations", "o", []string{}, "organization(s) id to associate the pat with")
-	createCmd.Flags().DurationP("expiration", "e", 0, "duration of the pat to be valid, defaults to 7 days")
+	createCmd.Flags().DurationP("expiration", "e", 0, "duration of the pat to be valid, leave empty to never expire")
 }
 
 // createValidation validates the required fields for the command
@@ -47,7 +48,7 @@ func createValidation() (input datumclient.CreatePersonalAccessTokenInput, err e
 
 	expiration := datum.Config.Duration("expiration")
 	if expiration != 0 {
-		input.ExpiresAt = time.Now().Add(expiration)
+		input.ExpiresAt = lo.ToPtr(time.Now().Add(expiration))
 	}
 
 	return input, nil

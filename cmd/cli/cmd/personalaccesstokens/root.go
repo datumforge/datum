@@ -2,6 +2,7 @@ package datumtokens
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -77,7 +78,7 @@ func jsonOutput(out any) error {
 
 // tableOutput prints the output in a table format
 func tableOutput(out []datumclient.PersonalAccessToken) {
-	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "Name", "Token", "LastUsedAt", "ExpiresAt")
+	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "Name", "Token", "Authorized Organizations", "LastUsedAt", "ExpiresAt")
 
 	for _, i := range out {
 		lastUsed := "never"
@@ -85,7 +86,19 @@ func tableOutput(out []datumclient.PersonalAccessToken) {
 			lastUsed = i.LastUsedAt.String()
 		}
 
-		writer.AddRow(i.ID, i.Name, i.Token, lastUsed, i.ExpiresAt)
+		expiresAt := "never"
+		if i.ExpiresAt != nil {
+			expiresAt = i.ExpiresAt.String()
+		}
+
+		orgs := []string{}
+		for _, o := range i.Organizations {
+			orgs = append(orgs, o.Name)
+		}
+
+		authorizedOrgs := strings.Join(orgs, ", ")
+
+		writer.AddRow(i.ID, i.Name, i.Token, authorizedOrgs, lastUsed, expiresAt)
 	}
 
 	writer.Render()

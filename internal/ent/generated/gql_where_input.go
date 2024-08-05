@@ -32337,14 +32337,16 @@ type PersonalAccessTokenWhereInput struct {
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 
 	// "expires_at" field predicates.
-	ExpiresAt      *time.Time  `json:"expiresAt,omitempty"`
-	ExpiresAtNEQ   *time.Time  `json:"expiresAtNEQ,omitempty"`
-	ExpiresAtIn    []time.Time `json:"expiresAtIn,omitempty"`
-	ExpiresAtNotIn []time.Time `json:"expiresAtNotIn,omitempty"`
-	ExpiresAtGT    *time.Time  `json:"expiresAtGT,omitempty"`
-	ExpiresAtGTE   *time.Time  `json:"expiresAtGTE,omitempty"`
-	ExpiresAtLT    *time.Time  `json:"expiresAtLT,omitempty"`
-	ExpiresAtLTE   *time.Time  `json:"expiresAtLTE,omitempty"`
+	ExpiresAt       *time.Time  `json:"expiresAt,omitempty"`
+	ExpiresAtNEQ    *time.Time  `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn     []time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn  []time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGT     *time.Time  `json:"expiresAtGT,omitempty"`
+	ExpiresAtGTE    *time.Time  `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLT     *time.Time  `json:"expiresAtLT,omitempty"`
+	ExpiresAtLTE    *time.Time  `json:"expiresAtLTE,omitempty"`
+	ExpiresAtIsNil  bool        `json:"expiresAtIsNil,omitempty"`
+	ExpiresAtNotNil bool        `json:"expiresAtNotNil,omitempty"`
 
 	// "last_used_at" field predicates.
 	LastUsedAt       *time.Time  `json:"lastUsedAt,omitempty"`
@@ -32759,6 +32761,12 @@ func (i *PersonalAccessTokenWhereInput) P() (predicate.PersonalAccessToken, erro
 	}
 	if i.ExpiresAtLTE != nil {
 		predicates = append(predicates, personalaccesstoken.ExpiresAtLTE(*i.ExpiresAtLTE))
+	}
+	if i.ExpiresAtIsNil {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtIsNil())
+	}
+	if i.ExpiresAtNotNil {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtNotNil())
 	}
 	if i.LastUsedAt != nil {
 		predicates = append(predicates, personalaccesstoken.LastUsedAtEQ(*i.LastUsedAt))

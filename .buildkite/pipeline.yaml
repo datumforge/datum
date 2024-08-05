@@ -101,9 +101,9 @@ steps:
         if: build.pull_request.id != null
         depends_on: ["gosec", "go_test_libsql"]
         plugins:
-          - artifacts#v1.9.3:
+          - artifacts#v1.9.4:
               download: "results.txt"
-          - artifacts#v1.9.3:
+          - artifacts#v1.9.4:
               download: "coverage.out"
               step: "go_test_libsql"
           - docker#v5.11.0:
@@ -117,9 +117,9 @@ steps:
         if: build.branch == "main"
         depends_on: ["gosec", "go_test_libsql"]
         plugins:
-          - artifacts#v1.9.3:
+          - artifacts#v1.9.4:
               download: results.txt
-          - artifacts#v1.9.3:
+          - artifacts#v1.9.4:
               download: coverage.out
               step: "go_test_libsql"
           - docker#v5.11.0:

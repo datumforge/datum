@@ -81,7 +81,7 @@ steps:
         key: "fga_test"
         plugins:
           - docker#v5.11.0:
-              image: openfga/cli
+              image: openfga/cli:v0.5.1
               command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
   - group: ":closed_lock_with_key: Security Checks"
     depends_on: "go_test_libsql"

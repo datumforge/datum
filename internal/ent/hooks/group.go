@@ -90,9 +90,9 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 
 	objType := strings.ToLower(m.Type())
 	object := fmt.Sprintf("%s:%s", objType, objID)
-	org, orgexists := m.OwnerID()
+	org, orgExists := m.OwnerID()
 
-	if exists && orgexists {
+	if exists && orgExists {
 		m.Logger.Debugw("creating parent relationship tuples", "relation", fgax.ParentRelation, "org", org, "object", object)
 
 		req := fgax.TupleRequest{

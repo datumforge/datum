@@ -14,7 +14,7 @@ const (
 	redacted = "*****************************"
 )
 
-// HookCreatePersonalAccessToken runs on accesstoken mutations and sets expires and owner id
+// HookCreatePersonalAccessToken runs on access token mutations and sets the owner id
 func HookCreatePersonalAccessToken() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.PersonalAccessTokenFunc(func(ctx context.Context, mutation *generated.PersonalAccessTokenMutation) (generated.Value, error) {

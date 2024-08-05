@@ -36,7 +36,7 @@ func CanInviteUsers() privacy.InviteMutationRuleFunc {
 			return err
 		}
 
-		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID, "user_id", userID)
+		m.Logger.Debugw("checking relationship tuples", "relation", relation, "organization_id", oID, "user_id", userID)
 
 		ac := fgax.AccessCheck{
 			SubjectID:   userID,

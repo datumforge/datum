@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/datumforge/fgax"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -88,14 +89,14 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	// Existing user to invite to org
+	// existing user to invite to org
 	existingUser := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	// Existing user already a member of org
+	// existing user already a member of org
 	existingUser2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 	_ = (&OrgMemberBuilder{client: suite.client, OrgID: testOrgID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
 
-	// Org member context
+	// org member context
 	orgMember := (&OrgMemberBuilder{client: suite.client, OrgID: testOrgID}).MustNew(reqCtx, t)
 	orgMemberCtx, err := auth.NewTestContextWithOrgID(orgMember.UserID, testOrgID)
 	require.NoError(t, err)
@@ -283,17 +284,25 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 	invite1 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 	invite2 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 	invite3 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
+	invite4 := (&InviteBuilder{client: suite.client, OrgID: testOrgID}).MustNew(reqCtx, t)
+	invite5 := (&InviteBuilder{client: suite.client, OrgID: testOrgID, Role: fgax.AdminRelation}).MustNew(reqCtx, t)
 
 	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, invite1.OwnerID)
 	require.NoError(t, err)
 
+	// Org member context
+	orgMember := (&OrgMemberBuilder{client: suite.client, OrgID: testOrgID}).MustNew(reqCtx, t)
+	orgMemberCtx, err := auth.NewTestContextWithOrgID(orgMember.UserID, testOrgID)
+	require.NoError(t, err)
+
 	testCases := []struct {
-		name    string
-		queryID string
-		client  *datumclient.DatumClient
-		ctx     context.Context
-		allowed bool
-		wantErr bool
+		name          string
+		queryID       string
+		client        *datumclient.DatumClient
+		ctx           context.Context
+		skipMockCheck bool
+		allowed       bool
+		wantErr       bool
 	}{
 		{
 			name:    "happy path",
@@ -320,20 +329,46 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 			wantErr: false,
 		},
 		{
-			name:    "invalid id",
-			queryID: "allthefooandbar",
+			name:    "happy path, org member deleting member invite",
+			queryID: invite4.ID,
+			client:  suite.client.datum,
+			ctx:     orgMemberCtx,
+			allowed: true,
+			wantErr: false,
+		},
+		{
+			name:    "org member deleting admin invite",
+			queryID: invite5.ID,
+			client:  suite.client.datum,
+			ctx:     orgMemberCtx,
+			allowed: false,
+			wantErr: true,
+		},
+		{
+			name:    "org owner deleting admin invite",
+			queryID: invite5.ID,
 			client:  suite.client.datum,
 			ctx:     reqCtx,
 			allowed: true,
-			wantErr: true,
+			wantErr: false,
+		},
+		{
+			name:          "invalid id",
+			queryID:       "allthefooandbar",
+			client:        suite.client.datum,
+			ctx:           reqCtx,
+			skipMockCheck: true,
+			wantErr:       true,
 		},
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Delete "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			mock_fga.CheckAny(t, suite.client.fga, true)
+			if !tc.skipMockCheck {
+				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
+			}
 
 			resp, err := tc.client.DeleteInvite(tc.ctx, tc.queryID)
 

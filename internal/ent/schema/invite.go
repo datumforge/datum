@@ -146,7 +146,7 @@ func (Invite) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
 			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
-			rule.CanInviteMembers(),
+			rule.CanInviteUsers(),
 			privacy.InviteMutationRuleFunc(func(ctx context.Context, m *generated.InviteMutation) error {
 				return m.CheckAccessForEdit(ctx)
 			}),

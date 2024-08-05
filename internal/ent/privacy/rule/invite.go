@@ -16,27 +16,12 @@ const (
 	inviteAdminRelation  = "can_invite_admins"
 )
 
-// CanInviteMembers is a rule that returns allow decision if user has access to invite members to the organization
-func CanInviteMembers() privacy.InviteMutationRuleFunc {
+// CanInviteUsers is a rule that returns allow decision if user has access to invite members or admins to the organization
+func CanInviteUsers() privacy.InviteMutationRuleFunc {
 	return privacy.InviteMutationRuleFunc(func(ctx context.Context, m *generated.InviteMutation) error {
-		oID, ok := m.OwnerID()
-		if !ok || oID == "" {
-			// get organization from the auth context
-			var err error
-
-			oID, err = auth.GetOrganizationIDFromContext(ctx)
-			if err != nil || oID == "" {
-				return privacy.Skipf("no owner set on request, cannot check access")
-			}
-		}
-
-		m.Logger.Debugw("checking mutation access")
-
-		relation := inviteMemberRelation
-
-		role, ok := m.Role()
-		if ok && !strings.EqualFold(role.String(), fgax.MemberRelation) {
-			relation = inviteAdminRelation
+		oID, err := getInviteOwnerID(ctx, m)
+		if err != nil || oID == "" {
+			return privacy.Skipf("no owner set on request, cannot check access")
 		}
 
 		userID, err := auth.GetUserIDFromContext(ctx)
@@ -44,7 +29,14 @@ func CanInviteMembers() privacy.InviteMutationRuleFunc {
 			return err
 		}
 
-		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID)
+		relation, err := getRelationToCheck(ctx, m)
+		if err != nil {
+			m.Logger.Errorw("unable to determine relation to check", "error", err)
+
+			return err
+		}
+
+		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID, "user_id", userID)
 
 		ac := fgax.AccessCheck{
 			SubjectID:   userID,
@@ -64,7 +56,47 @@ func CanInviteMembers() privacy.InviteMutationRuleFunc {
 			return privacy.Allow
 		}
 
-		// deny if it was a mutation is not allowed
-		return privacy.Deny
+		// proceed to next rule
+		return nil
 	})
+}
+
+// getInviteOwnerID returns the owner id from the mutation or the context
+func getInviteOwnerID(ctx context.Context, m *generated.InviteMutation) (string, error) {
+	oID, ok := m.OwnerID()
+	if ok && oID != "" {
+		return oID, nil
+	}
+
+	return auth.GetOrganizationIDFromContext(ctx)
+}
+
+// getRelationToCheck returns the relation to check based on the role on the mutation
+func getRelationToCheck(ctx context.Context, m *generated.InviteMutation) (string, error) {
+	role, ok := m.Role()
+	if !ok {
+		// if it is not a create operation, we need to to check the existing invite for the role
+		if m.Op() != generated.OpCreate {
+			id, ok := m.ID()
+			if !ok {
+				return "", privacy.Skipf("unable to determine invite, cannot check access")
+			}
+
+			// get the role from the existing invite
+			invite, err := generated.FromContext(ctx).Invite.Get(ctx, id)
+			if err != nil {
+				return "", err
+			}
+
+			role = invite.Role
+		}
+	}
+
+	// allow member to invite members
+	if strings.EqualFold(role.String(), fgax.MemberRelation) {
+		return inviteMemberRelation, nil
+	}
+
+	// default to admin
+	return inviteAdminRelation, nil
 }

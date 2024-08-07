@@ -589,12 +589,13 @@ type CheckAccessRequest struct {
 	Relation    string `json:"relation"`
 }
 
+// CheckAccessReply holds the fields that are sent on a response to the `/check-access` endpoint
 type CheckAccessReply struct {
 	rout.Reply
 	Allowed bool `json:"allowed"`
 }
 
-// Validate ensures the required fields are set on the InviteRequest request
+// Validate ensures the required fields are set on the CheckAccessRequest
 func (r *CheckAccessRequest) Validate() error {
 	if r.ObjectID == "" {
 		return rout.NewMissingRequiredFieldError("objectId")
@@ -616,14 +617,14 @@ func (r *CheckAccessRequest) Validate() error {
 	return nil
 }
 
-// ExampleCheckAccessRequest is an example of a successful invite request for OpenAPI documentation
+// ExampleCheckAccessRequest is an example of a successful check-access request for OpenAPI documentation
 var ExampleCheckAccessRequest = CheckAccessRequest{
 	Relation:   "can_view",
 	ObjectType: "organization",
 	ObjectID:   "01J4EXD5MM60CX4YNYN0DEE3Y1",
 }
 
-// ExampleInviteResponse is an example of a successful invite response for OpenAPI documentation
+// ExampleInviteResponse is an example of a successful check-access response for OpenAPI documentation
 var ExampleCheckAccessReply = CheckAccessReply{
 	Reply:   rout.Reply{Success: true},
 	Allowed: true,

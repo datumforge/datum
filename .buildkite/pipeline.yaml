@@ -13,7 +13,7 @@ steps:
         cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
-              image: "ghcr.io/datumforge/base-ci-image:v1.1.8"
+              image: "ghcr.io/datumforge/base-ci-image:v1.1.9"
               command: ["task", "ci"]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -22,7 +22,7 @@ steps:
         cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
-              image: "ghcr.io/datumforge/base-ci-image:v1.1.8"
+              image: "ghcr.io/datumforge/base-ci-image:v1.1.9"
               command: ["task", "config:ci"]
               environment:
                 - "GOTOOLCHAIN=auto"

@@ -575,3 +575,56 @@ type OauthTokenRequest struct {
 	ClientToken      string `json:"clientToken"`
 	Image            string `json:"image,omitempty"`
 }
+
+// =========
+// CHECK-ACCESS
+// =========
+
+// CheckAccessRequest holds the fields that should be included on a request to the `/check-access` endpoint
+type CheckAccessRequest struct {
+	ObjectID    string `json:"objectId"`
+	ObjectType  string `json:"objectType"`
+	SubjectID   string `json:"subjectId"`
+	SubjectType string `json:"subjectType"`
+	Relation    string `json:"relation"`
+}
+
+type CheckAccessReply struct {
+	rout.Reply
+	Allowed bool `json:"allowed"`
+}
+
+// Validate ensures the required fields are set on the InviteRequest request
+func (r *CheckAccessRequest) Validate() error {
+	if r.ObjectID == "" {
+		return rout.NewMissingRequiredFieldError("objectId")
+	}
+
+	if r.ObjectType == "" {
+		return rout.NewMissingRequiredFieldError("objectType")
+	}
+
+	if r.Relation == "" {
+		return rout.NewMissingRequiredFieldError("relation")
+	}
+
+	// Default to user if not set, only when using an API token should this be overwritten and set to service
+	if r.SubjectType == "" {
+		r.SubjectType = "user"
+	}
+
+	return nil
+}
+
+// ExampleCheckAccessRequest is an example of a successful invite request for OpenAPI documentation
+var ExampleCheckAccessRequest = CheckAccessRequest{
+	Relation:   "can_view",
+	ObjectType: "organization",
+	ObjectID:   "01J4EXD5MM60CX4YNYN0DEE3Y1",
+}
+
+// ExampleInviteResponse is an example of a successful invite response for OpenAPI documentation
+var ExampleCheckAccessReply = CheckAccessReply{
+	Reply:   rout.Reply{Success: true},
+	Allowed: true,
+}

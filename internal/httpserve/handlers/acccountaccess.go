@@ -52,7 +52,7 @@ func (h *Handler) AccountAccessHandler(ctx echo.Context) error {
 	})
 }
 
-// BindCheckAccess returns the OpenAPI3 operation for accepting an check access request
+// BindCheckAccess returns the OpenAPI3 operation for accepting an account access request
 func (h *Handler) BindCheckAccess() *openapi3.Operation {
 	checkAccess := openapi3.NewOperation()
 	checkAccess.Description = "Check Subject Access to Object"

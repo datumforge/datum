@@ -22,7 +22,7 @@ func (suite *HandlerTestSuite) TestCheckAccessHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.e.POST("check-access", suite.h.CheckAccessHandler)
+	suite.e.POST("account/access", suite.h.AccountAccessHandler)
 
 	// bypass auth
 	ctx := context.Background()
@@ -44,14 +44,14 @@ func (suite *HandlerTestSuite) TestCheckAccessHandler() {
 
 	testCases := []struct {
 		name      string
-		request   models.CheckAccessRequest
+		request   models.AccountAccessRequest
 		mockAllow bool
 		errMsg    string
 	}{
 		{
 			name:      "happy path, allow access",
 			mockAllow: true,
-			request: models.CheckAccessRequest{
+			request: models.AccountAccessRequest{
 				ObjectID:   "org-id",
 				ObjectType: "organization",
 				Relation:   "can_view",
@@ -60,7 +60,7 @@ func (suite *HandlerTestSuite) TestCheckAccessHandler() {
 		{
 			name:      "access denied",
 			mockAllow: false,
-			request: models.CheckAccessRequest{
+			request: models.AccountAccessRequest{
 				ObjectID:   "another-org-id",
 				ObjectType: "organization",
 				Relation:   "can_delete",
@@ -68,7 +68,7 @@ func (suite *HandlerTestSuite) TestCheckAccessHandler() {
 		},
 		{
 			name: "missing object id",
-			request: models.CheckAccessRequest{
+			request: models.AccountAccessRequest{
 				ObjectType: "organization",
 				Relation:   "can_delete",
 			},
@@ -76,7 +76,7 @@ func (suite *HandlerTestSuite) TestCheckAccessHandler() {
 		},
 		{
 			name: "missing object type",
-			request: models.CheckAccessRequest{
+			request: models.AccountAccessRequest{
 				ObjectID: "org-id",
 				Relation: "can_delete",
 			},
@@ -84,7 +84,7 @@ func (suite *HandlerTestSuite) TestCheckAccessHandler() {
 		},
 		{
 			name: "missing relation",
-			request: models.CheckAccessRequest{
+			request: models.AccountAccessRequest{
 				ObjectID:   "org-id",
 				ObjectType: "organization",
 			},
@@ -100,7 +100,7 @@ func (suite *HandlerTestSuite) TestCheckAccessHandler() {
 				mock_fga.CheckAny(t, suite.fga, tc.mockAllow)
 			}
 
-			target := "/check-access"
+			target := "/account/access"
 
 			body, err := json.Marshal(tc.request)
 			if err != nil {
@@ -119,7 +119,7 @@ func (suite *HandlerTestSuite) TestCheckAccessHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *models.CheckAccessReply
+			var out *models.AccountAccessReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

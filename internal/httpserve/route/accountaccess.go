@@ -6,11 +6,11 @@ import (
 	echo "github.com/datumforge/echox"
 )
 
-// registerCheckAccessHandler registers the check-access handler
-func registerCheckAccessHandler(router *Router) (err error) {
-	path := "/check-access"
+// registerAccountAccessHandler registers the /account/access handler
+func registerAccountAccessHandler(router *Router) (err error) {
+	path := "/account/access"
 	method := http.MethodPost
-	name := "CheckAccess"
+	name := "AccountAccess"
 
 	route := echo.Route{
 		Name:        name,
@@ -18,7 +18,7 @@ func registerCheckAccessHandler(router *Router) (err error) {
 		Path:        path,
 		Middlewares: authMW,
 		Handler: func(c echo.Context) error {
-			return router.Handler.CheckAccessHandler(c)
+			return router.Handler.AccountAccessHandler(c)
 		},
 	}
 

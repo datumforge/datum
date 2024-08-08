@@ -12,9 +12,9 @@ import (
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// CheckAccessHandler checks if a subject has access to an object
-func (h *Handler) CheckAccessHandler(ctx echo.Context) error {
-	var in models.CheckAccessRequest
+// AccountAccessHandler checks if a subject has access to an object
+func (h *Handler) AccountAccessHandler(ctx echo.Context) error {
+	var in models.AccountAccessRequest
 	if err := ctx.Bind(&in); err != nil {
 		return h.InvalidInput(ctx, err)
 	}
@@ -46,7 +46,7 @@ func (h *Handler) CheckAccessHandler(ctx echo.Context) error {
 		return h.InternalServerError(ctx, err)
 	}
 
-	return h.Success(ctx, models.CheckAccessReply{
+	return h.Success(ctx, models.AccountAccessReply{
 		Reply:   rout.Reply{Success: true},
 		Allowed: allow,
 	})
@@ -56,11 +56,11 @@ func (h *Handler) CheckAccessHandler(ctx echo.Context) error {
 func (h *Handler) BindCheckAccess() *openapi3.Operation {
 	checkAccess := openapi3.NewOperation()
 	checkAccess.Description = "Check Subject Access to Object"
-	checkAccess.OperationID = "CheckAccess"
+	checkAccess.OperationID = "AccountAccess"
 	checkAccess.Security = &openapi3.SecurityRequirements{}
 
-	h.AddRequestBody("CheckAccessRequest", models.ExampleInviteRequest, checkAccess)
-	h.AddResponse("CheckAccessReply", "success", models.ExampleInviteResponse, checkAccess, http.StatusOK)
+	h.AddRequestBody("AccountAccessRequest", models.ExampleInviteRequest, checkAccess)
+	h.AddResponse("AccountAccessReply", "success", models.ExampleInviteResponse, checkAccess, http.StatusOK)
 	checkAccess.AddResponse(http.StatusInternalServerError, internalServerError())
 	checkAccess.AddResponse(http.StatusBadRequest, badRequest())
 	checkAccess.AddResponse(http.StatusUnauthorized, unauthorized())

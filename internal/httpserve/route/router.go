@@ -143,7 +143,7 @@ func RegisterRoutes(router *Router) error {
 		registerFaviconHandler,
 		registerOpenAPIHandler,
 		registerLoginHandler,
-		registerCheckAccessHandler,
+		registerAccountAccessHandler,
 	}
 
 	for _, route := range routeHandlers {

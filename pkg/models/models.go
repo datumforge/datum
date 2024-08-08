@@ -575,3 +575,56 @@ type OauthTokenRequest struct {
 	ClientToken      string `json:"clientToken"`
 	Image            string `json:"image,omitempty"`
 }
+
+// =========
+// ACCOUNT/ACCESS
+// =========
+
+// AccountAccessRequest holds the fields that should be included on a request to the `/account/access` endpoint
+type AccountAccessRequest struct {
+	ObjectID    string `json:"objectId"`
+	ObjectType  string `json:"objectType"`
+	Relation    string `json:"relation"`
+	SubjectType string `json:"subjectType,omitempty"`
+}
+
+// AccountAccessReply holds the fields that are sent on a response to the `/account/access` endpoint
+type AccountAccessReply struct {
+	rout.Reply
+	Allowed bool `json:"allowed"`
+}
+
+// Validate ensures the required fields are set on the AccountAccessRequest
+func (r *AccountAccessRequest) Validate() error {
+	if r.ObjectID == "" {
+		return rout.NewMissingRequiredFieldError("objectId")
+	}
+
+	if r.ObjectType == "" {
+		return rout.NewMissingRequiredFieldError("objectType")
+	}
+
+	if r.Relation == "" {
+		return rout.NewMissingRequiredFieldError("relation")
+	}
+
+	// Default to user if not set, only when using an API token should this be overwritten and set to service
+	if r.SubjectType == "" {
+		r.SubjectType = "user"
+	}
+
+	return nil
+}
+
+// ExampleAccountAccessRequest is an example of a successful `/account/access` request for OpenAPI documentation
+var ExampleAccountAccessRequest = AccountAccessRequest{
+	Relation:   "can_view",
+	ObjectType: "organization",
+	ObjectID:   "01J4EXD5MM60CX4YNYN0DEE3Y1",
+}
+
+// ExampleInviteResponse is an example of a successful `/account/access` response for OpenAPI documentation
+var ExampleAccountAccessReply = AccountAccessReply{
+	Reply:   rout.Reply{Success: true},
+	Allowed: true,
+}

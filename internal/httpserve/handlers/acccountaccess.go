@@ -52,15 +52,19 @@ func (h *Handler) AccountAccessHandler(ctx echo.Context) error {
 	})
 }
 
-// BindCheckAccess returns the OpenAPI3 operation for accepting an account access request
-func (h *Handler) BindCheckAccess() *openapi3.Operation {
+// BindAccountAccess returns the OpenAPI3 operation for accepting an account access request
+func (h *Handler) BindAccountAccess() *openapi3.Operation {
 	checkAccess := openapi3.NewOperation()
 	checkAccess.Description = "Check Subject Access to Object"
 	checkAccess.OperationID = "AccountAccess"
-	checkAccess.Security = &openapi3.SecurityRequirements{}
+	checkAccess.Security = &openapi3.SecurityRequirements{
+		openapi3.SecurityRequirement{
+			"bearerAuth": []string{},
+		},
+	}
 
-	h.AddRequestBody("AccountAccessRequest", models.ExampleInviteRequest, checkAccess)
-	h.AddResponse("AccountAccessReply", "success", models.ExampleInviteResponse, checkAccess, http.StatusOK)
+	h.AddRequestBody("AccountAccessRequest", models.ExampleAccountAccessRequest, checkAccess)
+	h.AddResponse("AccountAccessReply", "success", models.ExampleAccountAccessReply, checkAccess, http.StatusOK)
 	checkAccess.AddResponse(http.StatusInternalServerError, internalServerError())
 	checkAccess.AddResponse(http.StatusBadRequest, badRequest())
 	checkAccess.AddResponse(http.StatusUnauthorized, unauthorized())

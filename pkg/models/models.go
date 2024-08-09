@@ -709,6 +709,7 @@ var ExampleAccountRolesOrganizationRequest = AccountRolesOrganizationRequest{
 
 // ExampleAccountRolesOrganizationReply is an example of a successful `/account/roles/organization` response for OpenAPI documentation
 var ExampleAccountRolesOrganizationReply = AccountRolesOrganizationReply{
-	Reply: rout.Reply{Success: true},
-	Roles: []string{"can_view", "can_edit", "audit_log_viewer"},
+	Reply:          rout.Reply{Success: true},
+	Roles:          []string{"can_view", "can_edit", "audit_log_viewer"},
+	OrganizationID: "01J4HMNDSZCCQBTY93BF9CBF5D",
 }

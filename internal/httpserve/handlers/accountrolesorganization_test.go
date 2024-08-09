@@ -32,8 +32,8 @@ func (suite *HandlerTestSuite) TestAccountRolesOrganizationHandler() {
 
 	// setup test data
 	requestor := suite.db.User.Create().
-		SetEmail("milione@datum.net").
-		SetFirstName("Milione").
+		SetEmail("mp@datum.net").
+		SetFirstName("Mikey").
 		SetLastName("Polo").
 		SaveX(ctx)
 

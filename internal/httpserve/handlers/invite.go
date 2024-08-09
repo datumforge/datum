@@ -259,7 +259,11 @@ func (h *Handler) BindOrganizationInviteAccept() *openapi3.Operation {
 	inviteAccept := openapi3.NewOperation()
 	inviteAccept.Description = "Accept an Organization Invite"
 	inviteAccept.OperationID = "OrganizationInviteAccept"
-	inviteAccept.Security = &openapi3.SecurityRequirements{}
+	inviteAccept.Security = &openapi3.SecurityRequirements{
+		openapi3.SecurityRequirement{
+			"bearerAuth": []string{},
+		},
+	}
 
 	h.AddRequestBody("InviteRequest", models.ExampleInviteRequest, inviteAccept)
 	h.AddResponse("InviteReply", "success", models.ExampleInviteResponse, inviteAccept, http.StatusCreated)

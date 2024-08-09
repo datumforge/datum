@@ -22,9 +22,9 @@ func registerAccountAccessHandler(router *Router) (err error) {
 		},
 	}
 
-	checkAccessOperation := router.Handler.BindCheckAccess()
+	accountAccessOperation := router.Handler.BindAccountAccess()
 
-	if err := router.Addv1Route(path, method, checkAccessOperation, route); err != nil {
+	if err := router.Addv1Route(path, method, accountAccessOperation, route); err != nil {
 		return err
 	}
 

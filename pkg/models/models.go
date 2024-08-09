@@ -623,8 +623,56 @@ var ExampleAccountAccessRequest = AccountAccessRequest{
 	ObjectID:   "01J4EXD5MM60CX4YNYN0DEE3Y1",
 }
 
-// ExampleInviteResponse is an example of a successful `/account/access` response for OpenAPI documentation
+// ExampleAccountAccessReply is an example of a successful `/account/access` response for OpenAPI documentation
 var ExampleAccountAccessReply = AccountAccessReply{
 	Reply:   rout.Reply{Success: true},
 	Allowed: true,
+}
+
+// =========
+// ACCOUNT/LIST-ROLES
+// =========
+
+// AccountListRolesRequest holds the fields that should be included on a request to the `/account/list-roles` endpoint
+type AccountListRolesRequest struct {
+	ObjectID    string   `json:"objectId"`
+	ObjectType  string   `json:"objectType"`
+	SubjectType string   `json:"subjectType,omitempty"`
+	Relations   []string `json:"relations,omitempty"`
+}
+
+// AccountListRole holds the fields that are sent on a response to the `/account/list-roles` endpoint
+type AccountListRolesReply struct {
+	rout.Reply
+	Roles []string `json:"roles"`
+}
+
+// Validate ensures the required fields are set on the AccountAccessRequest
+func (r *AccountListRolesRequest) Validate() error {
+	if r.ObjectID == "" {
+		return rout.NewMissingRequiredFieldError("objectId")
+	}
+
+	if r.ObjectType == "" {
+		return rout.NewMissingRequiredFieldError("objectType")
+	}
+
+	// Default to user if not set, only when using an API token should this be overwritten and set to service
+	if r.SubjectType == "" {
+		r.SubjectType = "user"
+	}
+
+	return nil
+}
+
+// ExampleAccountListRolesRequest is an example of a successful `/account/list-roles` request for OpenAPI documentation
+var ExampleAccountListRolesRequest = AccountListRolesRequest{
+	ObjectType: "organization",
+	ObjectID:   "01J4EXD5MM60CX4YNYN0DEE3Y1",
+}
+
+// ExampleAccountListRolesReply is an example of a successful `/account/list-roles` response for OpenAPI documentation
+var ExampleAccountListRolesReply = AccountListRolesReply{
+	Reply: rout.Reply{Success: true},
+	Roles: []string{"can_view", "can_edit", "audit_log_viewer"},
 }

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
@@ -15,15 +14,15 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/models"
 )
 
-func (suite *HandlerTestSuite) TestAccountListRolesHandler() {
+func (suite *HandlerTestSuite) TestAccountRolesOrganizationHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.e.POST("account/list-roles", suite.h.AccountListRolesHandler)
+	suite.e.GET("account/roles/organization", suite.h.AccountRolesOrganizationHandler)
+	suite.e.GET("account/roles/organization/:id", suite.h.AccountRolesOrganizationHandler)
 
 	// bypass auth
 	ctx := context.Background()
@@ -45,40 +44,25 @@ func (suite *HandlerTestSuite) TestAccountListRolesHandler() {
 
 	testCases := []struct {
 		name      string
-		request   models.AccountListRolesRequest
+		id        string
+		target    string
 		mockRoles []string
 		errMsg    string
 	}{
 		{
-			name:      "happy path, default roles access",
+			name:      "happy path, no id provided",
+			target:    "/account/roles/organization",
 			mockRoles: []string{"can_view"},
-			request: models.AccountListRolesRequest{
-				ObjectID:   "org-id",
-				ObjectType: "organization",
-			},
 		},
 		{
-			name:      "happy path, provide roles",
-			mockRoles: []string{"meow"},
-			request: models.AccountListRolesRequest{
-				ObjectID:   "org-id",
-				ObjectType: "organization",
-				Relations:  []string{"meow", "woof"},
-			},
+			name:      "happy path, id provided",
+			target:    "/account/roles/organization/ulid_id_of_org",
+			mockRoles: []string{"can_view"},
 		},
 		{
-			name: "missing object id",
-			request: models.AccountListRolesRequest{
-				ObjectType: "organization",
-			},
-			errMsg: "objectId is required",
-		},
-		{
-			name: "missing object type",
-			request: models.AccountListRolesRequest{
-				ObjectID: "org-id",
-			},
-			errMsg: "objectType is required",
+			name:   "org not authorized",
+			target: "/account/roles/organization/another_ulid_id_of_org",
+			errMsg: "invalid input",
 		},
 	}
 
@@ -87,22 +71,10 @@ func (suite *HandlerTestSuite) TestAccountListRolesHandler() {
 			defer mock_fga.ClearMocks(suite.fga)
 
 			if tc.errMsg == "" {
-				if len(tc.request.Relations) == 0 {
-					tc.request.Relations = handlers.DefaultAllRelations
-				}
-
-				mock_fga.BatchCheck(t, suite.fga, tc.mockRoles, tc.request.Relations)
+				mock_fga.BatchCheck(t, suite.fga, tc.mockRoles, handlers.DefaultAllRelations)
 			}
 
-			target := "/account/list-roles"
-
-			body, err := json.Marshal(tc.request)
-			if err != nil {
-				require.NoError(t, err)
-			}
-
-			req := httptest.NewRequest(http.MethodPost, target, strings.NewReader(string(body)))
-			req.Header.Set(httpsling.HeaderContentType, httpsling.ContentTypeJSONUTF8)
+			req := httptest.NewRequest(http.MethodGet, tc.target, nil)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
@@ -113,7 +85,7 @@ func (suite *HandlerTestSuite) TestAccountListRolesHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *models.AccountListRolesReply
+			var out *models.AccountRolesOrganizationReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
@@ -131,6 +103,7 @@ func (suite *HandlerTestSuite) TestAccountListRolesHandler() {
 			assert.Equal(t, http.StatusOK, recorder.Code)
 			assert.True(t, out.Success)
 			assert.Equal(t, tc.mockRoles, out.Roles)
+			assert.Equal(t, "ulid_id_of_org", out.OrganizationID)
 		})
 	}
 }

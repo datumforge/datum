@@ -14,6 +14,7 @@ import (
 
 // DefaultAllRelations is the default list of relations to check
 // these come from the fga/model/datum.fga file relations
+// TODO (sfunk): look into a way to get this from the fga model
 var DefaultAllRelations = []string{
 	"can_view",
 	"can_edit",
@@ -23,9 +24,9 @@ var DefaultAllRelations = []string{
 	"can_invite_members",
 }
 
-// AccountAccessHandler checks if a subject has access to an object
-func (h *Handler) AccountListRolesHandler(ctx echo.Context) error {
-	var in models.AccountListRolesRequest
+// AccountAccessHandler list roles a subject has access to in relation an object
+func (h *Handler) AccountRolesHandler(ctx echo.Context) error {
+	var in models.AccountRolesRequest
 	if err := ctx.Bind(&in); err != nil {
 		return h.InvalidInput(ctx, err)
 	}
@@ -48,7 +49,7 @@ func (h *Handler) AccountListRolesHandler(ctx echo.Context) error {
 
 	subjectID, err := auth.GetUserIDFromContext(ctx.Request().Context())
 	if err != nil {
-		h.Logger.Error("error getting user id from context", "error", err)
+		h.Logger.Errorw("error getting user id from context", "error", err)
 
 		return h.InternalServerError(ctx, err)
 	}
@@ -62,28 +63,28 @@ func (h *Handler) AccountListRolesHandler(ctx echo.Context) error {
 		return h.InternalServerError(ctx, err)
 	}
 
-	return h.Success(ctx, models.AccountListRolesReply{
+	return h.Success(ctx, models.AccountRolesReply{
 		Reply: rout.Reply{Success: true},
 		Roles: roles,
 	})
 }
 
-// BindAccountListRoles returns the OpenAPI3 operation for accepting an account list roles request
-func (h *Handler) BindAccountListRoles() *openapi3.Operation {
-	listRoles := openapi3.NewOperation()
-	listRoles.Description = "List roles a subject has in relation to an object"
-	listRoles.OperationID = "AccountListRoles"
-	listRoles.Security = &openapi3.SecurityRequirements{
+// BindAccountRoles returns the OpenAPI3 operation for accepting an account roles request
+func (h *Handler) BindAccountRoles() *openapi3.Operation {
+	roles := openapi3.NewOperation()
+	roles.Description = "List roles a subject has in relation to an object"
+	roles.OperationID = "AccountRoles"
+	roles.Security = &openapi3.SecurityRequirements{
 		openapi3.SecurityRequirement{
 			"bearerAuth": []string{},
 		},
 	}
 
-	h.AddRequestBody("AccountListRolesRequest", models.ExampleAccountListRolesRequest, listRoles)
-	h.AddResponse("AccountListRolesReply", "success", models.ExampleAccountListRolesReply, listRoles, http.StatusOK)
-	listRoles.AddResponse(http.StatusInternalServerError, internalServerError())
-	listRoles.AddResponse(http.StatusBadRequest, badRequest())
-	listRoles.AddResponse(http.StatusUnauthorized, unauthorized())
+	h.AddRequestBody("AccountRolesRequest", models.ExampleAccountRolesRequest, roles)
+	h.AddResponse("AccountRolesReply", "success", models.ExampleAccountRolesReply, roles, http.StatusOK)
+	roles.AddResponse(http.StatusInternalServerError, internalServerError())
+	roles.AddResponse(http.StatusBadRequest, badRequest())
+	roles.AddResponse(http.StatusUnauthorized, unauthorized())
 
-	return listRoles
+	return roles
 }

@@ -32,7 +32,7 @@ func (h *Handler) AccountAccessHandler(ctx echo.Context) error {
 
 	subjectID, err := auth.GetUserIDFromContext(ctx.Request().Context())
 	if err != nil {
-		h.Logger.Error("error getting user id from context", "error", err)
+		h.Logger.Errorw("error getting user id from context", "error", err)
 
 		return h.InternalServerError(ctx, err)
 	}
@@ -41,7 +41,7 @@ func (h *Handler) AccountAccessHandler(ctx echo.Context) error {
 
 	allow, err := h.DBClient.Authz.CheckAccess(ctx.Request().Context(), req)
 	if err != nil {
-		h.Logger.Error("error checking access", "error", err)
+		h.Logger.Errorw("error checking access", "error", err)
 
 		return h.InternalServerError(ctx, err)
 	}

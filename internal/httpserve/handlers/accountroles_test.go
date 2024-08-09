@@ -14,15 +14,16 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/httpsling"
 	"github.com/datumforge/datum/pkg/models"
 )
 
-func (suite *HandlerTestSuite) TestAccountAccessHandler() {
+func (suite *HandlerTestSuite) TestAccountRolesHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.e.POST("account/access", suite.h.AccountAccessHandler)
+	suite.e.POST("account/roles", suite.h.AccountRolesHandler)
 
 	// bypass auth
 	ctx := context.Background()
@@ -32,8 +33,8 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 
 	// setup test data
 	requestor := suite.db.User.Create().
-		SetEmail("marco@datum.net").
-		SetFirstName("Marco").
+		SetEmail("milione@datum.net").
+		SetFirstName("Milione").
 		SetLastName("Polo").
 		SaveX(ctx)
 
@@ -44,51 +45,40 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 
 	testCases := []struct {
 		name      string
-		request   models.AccountAccessRequest
-		mockAllow bool
+		request   models.AccountRolesRequest
+		mockRoles []string
 		errMsg    string
 	}{
 		{
-			name:      "happy path, allow access",
-			mockAllow: true,
-			request: models.AccountAccessRequest{
+			name:      "happy path, default roles access",
+			mockRoles: []string{"can_view"},
+			request: models.AccountRolesRequest{
 				ObjectID:   "org-id",
 				ObjectType: "organization",
-				Relation:   "can_view",
 			},
 		},
 		{
-			name:      "access denied",
-			mockAllow: false,
-			request: models.AccountAccessRequest{
-				ObjectID:   "another-org-id",
+			name:      "happy path, provide roles",
+			mockRoles: []string{"meow"},
+			request: models.AccountRolesRequest{
+				ObjectID:   "org-id",
 				ObjectType: "organization",
-				Relation:   "can_delete",
+				Relations:  []string{"meow", "woof"},
 			},
 		},
 		{
 			name: "missing object id",
-			request: models.AccountAccessRequest{
+			request: models.AccountRolesRequest{
 				ObjectType: "organization",
-				Relation:   "can_delete",
 			},
 			errMsg: "objectId is required",
 		},
 		{
 			name: "missing object type",
-			request: models.AccountAccessRequest{
+			request: models.AccountRolesRequest{
 				ObjectID: "org-id",
-				Relation: "can_delete",
 			},
 			errMsg: "objectType is required",
-		},
-		{
-			name: "missing relation",
-			request: models.AccountAccessRequest{
-				ObjectID:   "org-id",
-				ObjectType: "organization",
-			},
-			errMsg: "relation is required",
 		},
 	}
 
@@ -97,10 +87,14 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 			defer mock_fga.ClearMocks(suite.fga)
 
 			if tc.errMsg == "" {
-				mock_fga.CheckAny(t, suite.fga, tc.mockAllow)
+				if len(tc.request.Relations) == 0 {
+					tc.request.Relations = handlers.DefaultAllRelations
+				}
+
+				mock_fga.BatchCheck(t, suite.fga, tc.mockRoles, tc.request.Relations)
 			}
 
-			target := "/account/access"
+			target := "/account/roles"
 
 			body, err := json.Marshal(tc.request)
 			if err != nil {
@@ -119,7 +113,7 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *models.AccountAccessReply
+			var out *models.AccountRolesReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
@@ -136,7 +130,7 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 
 			assert.Equal(t, http.StatusOK, recorder.Code)
 			assert.True(t, out.Success)
-			assert.Equal(t, tc.mockAllow, out.Allowed)
+			assert.Equal(t, tc.mockRoles, out.Roles)
 		})
 	}
 }

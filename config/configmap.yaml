@@ -88,6 +88,12 @@ data:
   DATUM_AUTHZ_MODELID: {{ .Values.datum.authz.modelId }}
   DATUM_AUTHZ_CREATENEWMODEL: {{ .Values.datum.authz.createNewModel | default false }}
   DATUM_AUTHZ_MODELFILE: {{ .Values.datum.authz.modelFile | default "fga/model/datum.fga" }}
+  DATUM_AUTHZ_CREDENTIALS_APITOKEN: {{ .Values.datum.authz.credentials.apiToken }}
+  DATUM_AUTHZ_CREDENTIALS_CLIENTID: {{ .Values.datum.authz.credentials.clientId }}
+  DATUM_AUTHZ_CREDENTIALS_CLIENTSECRET: {{ .Values.datum.authz.credentials.clientSecret }}
+  DATUM_AUTHZ_CREDENTIALS_AUDIENCE: {{ .Values.datum.authz.credentials.audience }}
+  DATUM_AUTHZ_CREDENTIALS_ISSUER: {{ .Values.datum.authz.credentials.issuer }}
+  DATUM_AUTHZ_CREDENTIALS_SCOPES: {{ .Values.datum.authz.credentials.scopes }}
   DATUM_DB_DEBUG: {{ .Values.datum.db.debug | default false }}
   DATUM_DB_DATABASENAME: {{ .Values.datum.db.databaseName | default "datum" }}
   DATUM_DB_DRIVERNAME: {{ .Values.datum.db.driverName | default "libsql" }}

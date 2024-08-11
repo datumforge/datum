@@ -26,7 +26,7 @@ func newValidClaims(subject string) *tokens.Claims {
 			ExpiresAt: jwt.NewNumericDate(exp),
 		},
 		UserID: subject,
-		OrgID:  "nano_id_of_org",
+		OrgID:  "ulid_id_of_org",
 	}
 
 	return claims

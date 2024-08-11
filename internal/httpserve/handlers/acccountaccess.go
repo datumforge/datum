@@ -32,7 +32,7 @@ func (h *Handler) AccountAccessHandler(ctx echo.Context) error {
 
 	subjectID, err := auth.GetUserIDFromContext(ctx.Request().Context())
 	if err != nil {
-		h.Logger.Error("error getting user id from context", "error", err)
+		h.Logger.Errorw("error getting user id from context", "error", err)
 
 		return h.InternalServerError(ctx, err)
 	}
@@ -41,7 +41,7 @@ func (h *Handler) AccountAccessHandler(ctx echo.Context) error {
 
 	allow, err := h.DBClient.Authz.CheckAccess(ctx.Request().Context(), req)
 	if err != nil {
-		h.Logger.Error("error checking access", "error", err)
+		h.Logger.Errorw("error checking access", "error", err)
 
 		return h.InternalServerError(ctx, err)
 	}
@@ -52,15 +52,19 @@ func (h *Handler) AccountAccessHandler(ctx echo.Context) error {
 	})
 }
 
-// BindCheckAccess returns the OpenAPI3 operation for accepting an account access request
-func (h *Handler) BindCheckAccess() *openapi3.Operation {
+// BindAccountAccess returns the OpenAPI3 operation for accepting an account access request
+func (h *Handler) BindAccountAccess() *openapi3.Operation {
 	checkAccess := openapi3.NewOperation()
 	checkAccess.Description = "Check Subject Access to Object"
 	checkAccess.OperationID = "AccountAccess"
-	checkAccess.Security = &openapi3.SecurityRequirements{}
+	checkAccess.Security = &openapi3.SecurityRequirements{
+		openapi3.SecurityRequirement{
+			"bearerAuth": []string{},
+		},
+	}
 
-	h.AddRequestBody("AccountAccessRequest", models.ExampleInviteRequest, checkAccess)
-	h.AddResponse("AccountAccessReply", "success", models.ExampleInviteResponse, checkAccess, http.StatusOK)
+	h.AddRequestBody("AccountAccessRequest", models.ExampleAccountAccessRequest, checkAccess)
+	h.AddResponse("AccountAccessReply", "success", models.ExampleAccountAccessReply, checkAccess, http.StatusOK)
 	checkAccess.AddResponse(http.StatusInternalServerError, internalServerError())
 	checkAccess.AddResponse(http.StatusBadRequest, badRequest())
 	checkAccess.AddResponse(http.StatusUnauthorized, unauthorized())

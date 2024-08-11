@@ -623,8 +623,93 @@ var ExampleAccountAccessRequest = AccountAccessRequest{
 	ObjectID:   "01J4EXD5MM60CX4YNYN0DEE3Y1",
 }
 
-// ExampleInviteResponse is an example of a successful `/account/access` response for OpenAPI documentation
+// ExampleAccountAccessReply is an example of a successful `/account/access` response for OpenAPI documentation
 var ExampleAccountAccessReply = AccountAccessReply{
 	Reply:   rout.Reply{Success: true},
 	Allowed: true,
+}
+
+// =========
+// ACCOUNT/ROLES
+// =========
+
+// AccountRolesRequest holds the fields that should be included on a request to the `/account/roles` endpoint
+type AccountRolesRequest struct {
+	ObjectID    string   `json:"objectId"`
+	ObjectType  string   `json:"objectType"`
+	SubjectType string   `json:"subjectType,omitempty"`
+	Relations   []string `json:"relations,omitempty"`
+}
+
+// AccountRolesReply holds the fields that are sent on a response to the `/account/roles` endpoint
+type AccountRolesReply struct {
+	rout.Reply
+	Roles []string `json:"roles"`
+}
+
+// Validate ensures the required fields are set on the AccountAccessRequest
+func (r *AccountRolesRequest) Validate() error {
+	if r.ObjectID == "" {
+		return rout.NewMissingRequiredFieldError("objectId")
+	}
+
+	if r.ObjectType == "" {
+		return rout.NewMissingRequiredFieldError("objectType")
+	}
+
+	// Default to user if not set, only when using an API token should this be overwritten and set to service
+	if r.SubjectType == "" {
+		r.SubjectType = "user"
+	}
+
+	return nil
+}
+
+// ExampleAccountRolesRequest is an example of a successful `/account/roles` request for OpenAPI documentation
+var ExampleAccountRolesRequest = AccountRolesRequest{
+	ObjectType: "organization",
+	ObjectID:   "01J4EXD5MM60CX4YNYN0DEE3Y1",
+}
+
+// ExampleAccountRolesReply is an example of a successful `/account/roles` response for OpenAPI documentation
+var ExampleAccountRolesReply = AccountRolesReply{
+	Reply: rout.Reply{Success: true},
+	Roles: []string{"can_view", "can_edit", "audit_log_viewer"},
+}
+
+// =========
+// ACCOUNT/ROLES/ORGANIZATION
+// =========
+
+// AccountRolesOrganizationRequest holds the fields that should be included on a request to the `/account/roles/organization` endpoint
+type AccountRolesOrganizationRequest struct {
+	ID string `param:"id"`
+}
+
+// AccountRolesOrganizationReply holds the fields that are sent on a response to the `/account/roles/organization` endpoint
+type AccountRolesOrganizationReply struct {
+	rout.Reply
+	Roles          []string `json:"roles"`
+	OrganizationID string   `json:"organization_id"`
+}
+
+// Validate ensures the required fields are set on the AccountAccessRequest
+func (r *AccountRolesOrganizationRequest) Validate() error {
+	if r.ID == "" {
+		return rout.NewMissingRequiredFieldError("organization id")
+	}
+
+	return nil
+}
+
+// ExampleAccountRolesOrganizationRequest is an example of a successful `/account/roles/organization` request for OpenAPI documentation
+var ExampleAccountRolesOrganizationRequest = AccountRolesOrganizationRequest{
+	ID: "01J4HMNDSZCCQBTY93BF9CBF5D",
+}
+
+// ExampleAccountRolesOrganizationReply is an example of a successful `/account/roles/organization` response for OpenAPI documentation
+var ExampleAccountRolesOrganizationReply = AccountRolesOrganizationReply{
+	Reply:          rout.Reply{Success: true},
+	Roles:          []string{"can_view", "can_edit", "audit_log_viewer"},
+	OrganizationID: "01J4HMNDSZCCQBTY93BF9CBF5D",
 }

@@ -105,6 +105,12 @@ tasks:
       - task: compose:redis
       - task: compose:fga
       - task: compose:kafka
+      - task: run-api
+
+  run-api:
+    dotenv: ["{{.ENV}}/.env-dev"]
+    desc: runs the datum server in dev mode, assumes all other dependencies are running
+    cmds:
       - go run main.go serve --debug --pretty
 
   pr:

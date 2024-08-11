@@ -31,6 +31,8 @@ services:
       - --check-query-cache-enabled
       - --metrics-enabled
       - --datastore-metrics-enabled
+      - --authn-method=preshared
+      - --authn-preshared-keys="QKwHEmWX99RnFh28eSRJ3GWlfb2FQkL7toh1GJpzch1mMkVeMg"
     healthcheck:
       test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=openfga:8081"]
       interval: 5s

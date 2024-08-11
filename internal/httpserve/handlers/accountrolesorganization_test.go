@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
@@ -14,15 +13,16 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/pkg/httpsling"
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/models"
 )
 
-func (suite *HandlerTestSuite) TestAccountAccessHandler() {
+func (suite *HandlerTestSuite) TestAccountRolesOrganizationHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.e.POST("account/access", suite.h.AccountAccessHandler)
+	suite.e.GET("account/roles/organization", suite.h.AccountRolesOrganizationHandler)
+	suite.e.GET("account/roles/organization/:id", suite.h.AccountRolesOrganizationHandler)
 
 	// bypass auth
 	ctx := context.Background()
@@ -32,8 +32,8 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 
 	// setup test data
 	requestor := suite.db.User.Create().
-		SetEmail("marco@datum.net").
-		SetFirstName("Marco").
+		SetEmail("mp@datum.net").
+		SetFirstName("Mikey").
 		SetLastName("Polo").
 		SaveX(ctx)
 
@@ -44,51 +44,25 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 
 	testCases := []struct {
 		name      string
-		request   models.AccountAccessRequest
-		mockAllow bool
+		id        string
+		target    string
+		mockRoles []string
 		errMsg    string
 	}{
 		{
-			name:      "happy path, allow access",
-			mockAllow: true,
-			request: models.AccountAccessRequest{
-				ObjectID:   "org-id",
-				ObjectType: "organization",
-				Relation:   "can_view",
-			},
+			name:      "happy path, no id provided",
+			target:    "/account/roles/organization",
+			mockRoles: []string{"can_view"},
 		},
 		{
-			name:      "access denied",
-			mockAllow: false,
-			request: models.AccountAccessRequest{
-				ObjectID:   "another-org-id",
-				ObjectType: "organization",
-				Relation:   "can_delete",
-			},
+			name:      "happy path, id provided",
+			target:    "/account/roles/organization/ulid_id_of_org",
+			mockRoles: []string{"can_view"},
 		},
 		{
-			name: "missing object id",
-			request: models.AccountAccessRequest{
-				ObjectType: "organization",
-				Relation:   "can_delete",
-			},
-			errMsg: "objectId is required",
-		},
-		{
-			name: "missing object type",
-			request: models.AccountAccessRequest{
-				ObjectID: "org-id",
-				Relation: "can_delete",
-			},
-			errMsg: "objectType is required",
-		},
-		{
-			name: "missing relation",
-			request: models.AccountAccessRequest{
-				ObjectID:   "org-id",
-				ObjectType: "organization",
-			},
-			errMsg: "relation is required",
+			name:   "org not authorized",
+			target: "/account/roles/organization/another_ulid_id_of_org",
+			errMsg: "invalid input",
 		},
 	}
 
@@ -97,18 +71,10 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 			defer mock_fga.ClearMocks(suite.fga)
 
 			if tc.errMsg == "" {
-				mock_fga.CheckAny(t, suite.fga, tc.mockAllow)
+				mock_fga.BatchCheck(t, suite.fga, tc.mockRoles, handlers.DefaultAllRelations)
 			}
 
-			target := "/account/access"
-
-			body, err := json.Marshal(tc.request)
-			if err != nil {
-				require.NoError(t, err)
-			}
-
-			req := httptest.NewRequest(http.MethodPost, target, strings.NewReader(string(body)))
-			req.Header.Set(httpsling.HeaderContentType, httpsling.ContentTypeJSONUTF8)
+			req := httptest.NewRequest(http.MethodGet, tc.target, nil)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
@@ -119,7 +85,7 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *models.AccountAccessReply
+			var out *models.AccountRolesOrganizationReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
@@ -136,7 +102,8 @@ func (suite *HandlerTestSuite) TestAccountAccessHandler() {
 
 			assert.Equal(t, http.StatusOK, recorder.Code)
 			assert.True(t, out.Success)
-			assert.Equal(t, tc.mockAllow, out.Allowed)
+			assert.Equal(t, tc.mockRoles, out.Roles)
+			assert.Equal(t, "ulid_id_of_org", out.OrganizationID)
 		})
 	}
 }

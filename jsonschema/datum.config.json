@@ -427,6 +427,10 @@
         "modelFile": {
           "type": "string",
           "description": "path to the fga model file"
+        },
+        "credentials": {
+          "$ref": "#/$defs/fgax.Credentials",
+          "description": "credentials for the openFGA client"
         }
       },
       "additionalProperties": false,
@@ -434,6 +438,36 @@
       "required": [
         "hostUrl"
       ]
+    },
+    "fgax.Credentials": {
+      "properties": {
+        "apiToken": {
+          "type": "string",
+          "description": "api token for the openFGA client"
+        },
+        "clientId": {
+          "type": "string",
+          "description": "client id for the openFGA client"
+        },
+        "clientSecret": {
+          "type": "string",
+          "description": "client secret for the openFGA client"
+        },
+        "audience": {
+          "type": "string",
+          "description": "audience for the openFGA client"
+        },
+        "issuer": {
+          "type": "string",
+          "description": "issuer for the openFGA client"
+        },
+        "scopes": {
+          "type": "string",
+          "description": "scopes for the openFGA client"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "geodeticclient.Config": {
       "properties": {

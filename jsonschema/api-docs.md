@@ -381,6 +381,22 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**modelId**|`string`|id of openFGA model<br/>|no|
 |**createNewModel**|`boolean`|force create a new model<br/>|no|
 |**modelFile**|`string`|path to the fga model file<br/>|no|
+|[**credentials**](#authzcredentials)|`object`||no|
+
+**Additional Properties:** not allowed  
+<a name="authzcredentials"></a>
+### authz\.credentials: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**apiToken**|`string`|api token for the openFGA client<br/>||
+|**clientId**|`string`|client id for the openFGA client<br/>||
+|**clientSecret**|`string`|client secret for the openFGA client<br/>||
+|**audience**|`string`|audience for the openFGA client<br/>||
+|**issuer**|`string`|issuer for the openFGA client<br/>||
+|**scopes**|`string`|scopes for the openFGA client<br/>||
 
 **Additional Properties:** not allowed  
 <a name="db"></a>

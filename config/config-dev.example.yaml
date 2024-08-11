@@ -54,6 +54,9 @@ authz:
   storeName: datum
   hostUrl: http://localhost:8080
   createNewModel: false
+  credentials:
+    apiToken: "QKwHEmWX99RnFh28eSRJ3GWlfb2FQkL7toh1GJpzch1mMkVeMg"
+
 # session settings
 sessions:
   encryptionKey: encryptionsecret

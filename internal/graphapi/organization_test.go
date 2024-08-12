@@ -237,7 +237,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			name:           "empty organization name",
 			orgName:        "",
 			orgDescription: gofakeit.HipsterSentence(10),
-			errorMsg:       "value is less than the required length",
+			errorMsg:       "recipient name or display name required but not provided",
 			client:         suite.client.datum,
 			ctx:            reqCtx,
 		},
@@ -338,7 +338,7 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 			require.NotNil(t, resp.CreateOrganization.Organization)
 
 			// Make sure provided values match
-			assert.Equal(t, &tc.orgName, resp.CreateOrganization.Organization.Name)
+			assert.Equal(t, tc.orgName, *resp.CreateOrganization.Organization.Name)
 			assert.Equal(t, tc.orgDescription, *resp.CreateOrganization.Organization.Description)
 
 			if tc.parentOrgID == "" {
@@ -522,8 +522,8 @@ func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
 
 			// Make sure provided values match
 			updatedOrg := resp.GetUpdateOrganization().Organization
-			assert.Equal(t, tc.expectedRes.Name, updatedOrg.Name)
-			assert.Equal(t, tc.expectedRes.DisplayName, updatedOrg.DisplayName)
+			assert.Equal(t, *tc.expectedRes.Name, *updatedOrg.Name)
+			assert.Equal(t, *tc.expectedRes.DisplayName, *updatedOrg.DisplayName)
 			assert.Equal(t, tc.expectedRes.Description, updatedOrg.Description)
 
 			if tc.updateInput.AddOrgMembers != nil {

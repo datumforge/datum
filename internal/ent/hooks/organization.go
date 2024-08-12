@@ -41,11 +41,11 @@ func HookOrganization() ent.Hook {
 				if err := personalOrgNoChildren(ctx, mutation); err != nil {
 					return nil, err
 				}
-			}
 
-			// set default display name and avatar if not provided
-			if err := setDefaultsOnMutations(mutation); err != nil {
-				return nil, err
+				// set default display name and avatar if not provided
+				if err := setDefaultsOnMutations(mutation); err != nil {
+					return nil, err
+				}
 			}
 
 			v, err := next.Mutate(ctx, mutation)

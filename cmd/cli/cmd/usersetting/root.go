@@ -84,6 +84,7 @@ func tableOutput(out []datumclient.UserSetting) {
 			if orgName != nil {
 				defaultOrgName = *orgName
 			}
+
 			defaultOrgID = i.DefaultOrg.ID
 		}
 

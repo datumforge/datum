@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/pkg/enums"
 	"github.com/datumforge/datum/pkg/utils/gravatar"
 	"github.com/datumforge/datum/pkg/utils/marionette"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 // HookOrganization runs on org mutations to set default values that are not provided
@@ -43,7 +44,9 @@ func HookOrganization() ent.Hook {
 			}
 
 			// set default display name and avatar if not provided
-			setDefaultsOnMutations(mutation)
+			if err := setDefaultsOnMutations(mutation); err != nil {
+				return nil, err
+			}
 
 			v, err := next.Mutate(ctx, mutation)
 			if err != nil {
@@ -144,17 +147,31 @@ func HookOrganizationDelete() ent.Hook {
 }
 
 // setDefaultsOnMutations sets default values on mutations that are not provided
-func setDefaultsOnMutations(mutation *generated.OrganizationMutation) {
-	if displayName, ok := mutation.DisplayName(); ok && displayName != "" {
-		if displayName, ok := mutation.DisplayName(); ok {
-			if displayName == "" {
-				mutation.SetDisplayName(displayName)
-			}
-		}
+func setDefaultsOnMutations(mutation *generated.OrganizationMutation) error {
+	displayName, _ := mutation.DisplayName()
+	name, _ := mutation.Name()
 
-		url := gravatar.New(displayName, nil)
-		mutation.SetAvatarRemoteURL(url)
+	// exit early if we have no name
+	if displayName == "" && name == "" {
+		return ErrMissingRequiredName // you'd need to define this error probably in errors.go
 	}
+
+	// set display name based on name if it isn't set
+	if displayName == "" {
+		mutation.SetDisplayName(name)
+	}
+
+	// set unique name based on display name if it isn't set
+	if name == "" {
+		uniqueName := fmt.Sprintf("%s-%s", displayName, ulids.New().String())
+		mutation.SetName(uniqueName)
+	}
+
+	// now we should have a non empty name and display name
+	url := gravatar.New(displayName, nil)
+	mutation.SetAvatarRemoteURL(url)
+
+	return nil
 }
 
 // createOrgSettings creates the default organization settings for a new org

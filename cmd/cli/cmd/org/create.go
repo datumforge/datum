@@ -37,6 +37,7 @@ func createValidation() (input datumclient.CreateOrganizationInput, err error) {
 	if name != "" {
 		input.Name = &name
 	}
+
 	if input.Name == nil {
 		return input, datum.NewRequiredFieldMissingError("organization name")
 	}

@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -71,6 +72,9 @@ func (Note) Annotations() []schema.Annotation {
 			OrgOwnedField:   true,
 			IDField:         "OwnerID",
 		},
+		// skip generating the schema for this type, this schema is used through extended types
+		entx.SchemaGenSkip(true),
+		entx.QueryGenSkip(true),
 	}
 }
 

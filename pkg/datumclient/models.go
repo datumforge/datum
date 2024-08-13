@@ -8201,12 +8201,6 @@ type Note struct {
 
 func (Note) IsNode() {}
 
-// Return response for createBulkNote mutation
-type NoteBulkCreatePayload struct {
-	// Created notes
-	Notes []*Note `json:"notes,omitempty"`
-}
-
 // A connection to a list of items.
 type NoteConnection struct {
 	// A list of edges.
@@ -8215,18 +8209,6 @@ type NoteConnection struct {
 	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
-}
-
-// Return response for createNote mutation
-type NoteCreatePayload struct {
-	// Created note
-	Note *Note `json:"note"`
-}
-
-// Return response for deleteNote mutation
-type NoteDeletePayload struct {
-	// Deleted note ID
-	DeletedID string `json:"deletedID"`
 }
 
 // An edge in a connection.
@@ -8434,12 +8416,6 @@ type NoteHistoryWhereInput struct {
 	TextHasSuffix    *string  `json:"textHasSuffix,omitempty"`
 	TextEqualFold    *string  `json:"textEqualFold,omitempty"`
 	TextContainsFold *string  `json:"textContainsFold,omitempty"`
-}
-
-// Return response for updateNote mutation
-type NoteUpdatePayload struct {
-	// Updated note
-	Note *Note `json:"note"`
 }
 
 // NoteWhereInput is used for filtering Note objects.

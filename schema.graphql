@@ -11432,56 +11432,6 @@ type Mutation {
 		id: ID!
 	): InviteDeletePayload!
 	"""
-	Create a new note
-	"""
-	createNote(
-		"""
-		values of the note
-		"""
-		input: CreateNoteInput!
-	): NoteCreatePayload!
-	"""
-	Create multiple new notes
-	"""
-	createBulkNote(
-		"""
-		values of the note
-		"""
-		input: [CreateNoteInput!]
-	): NoteBulkCreatePayload!
-	"""
-	Create multiple new notes via file upload
-	"""
-	createBulkCSVNote(
-		"""
-		csv file containing values of the note
-		"""
-		input: Upload!
-	): NoteBulkCreatePayload!
-	"""
-	Update an existing note
-	"""
-	updateNote(
-		"""
-		ID of the note
-		"""
-		id: ID!
-
-		"""
-		New values for the note
-		"""
-		input: UpdateNoteInput!
-	): NoteUpdatePayload!
-	"""
-	Delete an existing note
-	"""
-	deleteNote(
-		"""
-		ID of the note
-		"""
-		id: ID!
-	): NoteDeletePayload!
-	"""
 	Create a new oauthProvider
 	"""
 	createOauthProvider(
@@ -12062,15 +12012,6 @@ type Note implements Node {
 	entity: Entity
 }
 """
-Return response for createBulkNote mutation
-"""
-type NoteBulkCreatePayload {
-	"""
-	Created notes
-	"""
-	notes: [Note!]
-}
-"""
 A connection to a list of items.
 """
 type NoteConnection {
@@ -12086,24 +12027,6 @@ type NoteConnection {
 	Identifies the total count of items in the connection.
 	"""
 	totalCount: Int!
-}
-"""
-Return response for createNote mutation
-"""
-type NoteCreatePayload {
-	"""
-	Created note
-	"""
-	note: Note!
-}
-"""
-Return response for deleteNote mutation
-"""
-type NoteDeletePayload {
-	"""
-	Deleted note ID
-	"""
-	deletedID: ID!
 }
 """
 An edge in a connection.
@@ -12364,15 +12287,6 @@ input NoteHistoryWhereInput {
 	textHasSuffix: String
 	textEqualFold: String
 	textContainsFold: String
-}
-"""
-Return response for updateNote mutation
-"""
-type NoteUpdatePayload {
-	"""
-	Updated note
-	"""
-	note: Note!
 }
 """
 NoteWhereInput is used for filtering Note objects.
@@ -17563,15 +17477,6 @@ type Query {
 		"""
 		id: ID!
 	): Invite!
-	"""
-	Look up note by ID
-	"""
-	note(
-		"""
-		ID of the note
-		"""
-		id: ID!
-	): Note!
 	"""
 	Look up oauthProvider by ID
 	"""

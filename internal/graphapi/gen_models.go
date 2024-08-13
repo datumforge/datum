@@ -470,30 +470,6 @@ type InviteUpdatePayload struct {
 	Invite *generated.Invite `json:"invite"`
 }
 
-// Return response for createBulkNote mutation
-type NoteBulkCreatePayload struct {
-	// Created notes
-	Notes []*generated.Note `json:"notes,omitempty"`
-}
-
-// Return response for createNote mutation
-type NoteCreatePayload struct {
-	// Created note
-	Note *generated.Note `json:"note"`
-}
-
-// Return response for deleteNote mutation
-type NoteDeletePayload struct {
-	// Deleted note ID
-	DeletedID string `json:"deletedID"`
-}
-
-// Return response for updateNote mutation
-type NoteUpdatePayload struct {
-	// Updated note
-	Note *generated.Note `json:"note"`
-}
-
 // Return response for createBulkOauthProvider mutation
 type OauthProviderBulkCreatePayload struct {
 	// Created oauthProviders

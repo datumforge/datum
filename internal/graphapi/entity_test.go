@@ -319,6 +319,7 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 	require.NoError(t, err)
 
 	entity := (&EntityBuilder{client: suite.client}).MustNew(reqCtx, t)
+	numNotes := 0
 	numDomains := 0
 
 	testCases := []struct {
@@ -425,6 +426,12 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 				numDomains++
 				assert.Contains(t, resp.UpdateEntity.Entity.Domains, tc.request.AppendDomains[0])
 				assert.Len(t, resp.UpdateEntity.Entity.Domains, numDomains)
+			}
+
+			if tc.request.Note != nil {
+				numNotes++
+				require.Len(t, resp.UpdateEntity.Entity.Notes, numNotes)
+				assert.Equal(t, tc.request.Note.Text, resp.UpdateEntity.Entity.Notes[0].Text)
 			}
 		})
 	}

@@ -1697,6 +1697,35 @@ func HasContactsWith(preds ...predicate.Contact) predicate.Organization {
 	})
 }
 
+// HasNotes applies the HasEdge predicate on the "notes" edge.
+func HasNotes() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, NotesTable, NotesColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Note
+		step.Edge.Schema = schemaConfig.Note
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNotesWith applies the HasEdge predicate on the "notes" edge with a given conditions (other predicates).
+func HasNotesWith(preds ...predicate.Note) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newNotesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Note
+		step.Edge.Schema = schemaConfig.Note
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMembers applies the HasEdge predicate on the "members" edge.
 func HasMembers() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

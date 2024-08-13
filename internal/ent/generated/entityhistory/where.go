@@ -135,6 +135,11 @@ func EntityTypeID(v string) predicate.EntityHistory {
 	return predicate.EntityHistory(sql.FieldEQ(FieldEntityTypeID, v))
 }
 
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldEQ(FieldStatus, v))
+}
+
 // HistoryTimeEQ applies the EQ predicate on the "history_time" field.
 func HistoryTimeEQ(v time.Time) predicate.EntityHistory {
 	return predicate.EntityHistory(sql.FieldEQ(FieldHistoryTime, v))
@@ -850,6 +855,16 @@ func NameHasSuffix(v string) predicate.EntityHistory {
 	return predicate.EntityHistory(sql.FieldHasSuffix(FieldName, v))
 }
 
+// NameIsNil applies the IsNil predicate on the "name" field.
+func NameIsNil() predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldIsNull(FieldName))
+}
+
+// NameNotNil applies the NotNil predicate on the "name" field.
+func NameNotNil() predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldNotNull(FieldName))
+}
+
 // NameEqualFold applies the EqualFold predicate on the "name" field.
 func NameEqualFold(v string) predicate.EntityHistory {
 	return predicate.EntityHistory(sql.FieldEqualFold(FieldName, v))
@@ -913,6 +928,16 @@ func DisplayNameHasPrefix(v string) predicate.EntityHistory {
 // DisplayNameHasSuffix applies the HasSuffix predicate on the "display_name" field.
 func DisplayNameHasSuffix(v string) predicate.EntityHistory {
 	return predicate.EntityHistory(sql.FieldHasSuffix(FieldDisplayName, v))
+}
+
+// DisplayNameIsNil applies the IsNil predicate on the "display_name" field.
+func DisplayNameIsNil() predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldIsNull(FieldDisplayName))
+}
+
+// DisplayNameNotNil applies the NotNil predicate on the "display_name" field.
+func DisplayNameNotNil() predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldNotNull(FieldDisplayName))
 }
 
 // DisplayNameEqualFold applies the EqualFold predicate on the "display_name" field.
@@ -1000,6 +1025,16 @@ func DescriptionContainsFold(v string) predicate.EntityHistory {
 	return predicate.EntityHistory(sql.FieldContainsFold(FieldDescription, v))
 }
 
+// DomainsIsNil applies the IsNil predicate on the "domains" field.
+func DomainsIsNil() predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldIsNull(FieldDomains))
+}
+
+// DomainsNotNil applies the NotNil predicate on the "domains" field.
+func DomainsNotNil() predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldNotNull(FieldDomains))
+}
+
 // EntityTypeIDEQ applies the EQ predicate on the "entity_type_id" field.
 func EntityTypeIDEQ(v string) predicate.EntityHistory {
 	return predicate.EntityHistory(sql.FieldEQ(FieldEntityTypeID, v))
@@ -1073,6 +1108,81 @@ func EntityTypeIDEqualFold(v string) predicate.EntityHistory {
 // EntityTypeIDContainsFold applies the ContainsFold predicate on the "entity_type_id" field.
 func EntityTypeIDContainsFold(v string) predicate.EntityHistory {
 	return predicate.EntityHistory(sql.FieldContainsFold(FieldEntityTypeID, v))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusGT applies the GT predicate on the "status" field.
+func StatusGT(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldGT(FieldStatus, v))
+}
+
+// StatusGTE applies the GTE predicate on the "status" field.
+func StatusGTE(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldGTE(FieldStatus, v))
+}
+
+// StatusLT applies the LT predicate on the "status" field.
+func StatusLT(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldLT(FieldStatus, v))
+}
+
+// StatusLTE applies the LTE predicate on the "status" field.
+func StatusLTE(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldLTE(FieldStatus, v))
+}
+
+// StatusContains applies the Contains predicate on the "status" field.
+func StatusContains(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldContains(FieldStatus, v))
+}
+
+// StatusHasPrefix applies the HasPrefix predicate on the "status" field.
+func StatusHasPrefix(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldHasPrefix(FieldStatus, v))
+}
+
+// StatusHasSuffix applies the HasSuffix predicate on the "status" field.
+func StatusHasSuffix(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldHasSuffix(FieldStatus, v))
+}
+
+// StatusIsNil applies the IsNil predicate on the "status" field.
+func StatusIsNil() predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldIsNull(FieldStatus))
+}
+
+// StatusNotNil applies the NotNil predicate on the "status" field.
+func StatusNotNil() predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldNotNull(FieldStatus))
+}
+
+// StatusEqualFold applies the EqualFold predicate on the "status" field.
+func StatusEqualFold(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldEqualFold(FieldStatus, v))
+}
+
+// StatusContainsFold applies the ContainsFold predicate on the "status" field.
+func StatusContainsFold(v string) predicate.EntityHistory {
+	return predicate.EntityHistory(sql.FieldContainsFold(FieldStatus, v))
 }
 
 // And groups predicates with the AND operator between them.

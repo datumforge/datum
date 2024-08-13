@@ -41,6 +41,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
+	"github.com/datumforge/datum/internal/ent/generated/notehistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
@@ -1013,6 +1015,60 @@ func (f TraverseInvite) Traverse(ctx context.Context, q generated.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *generated.InviteQuery", q)
 }
 
+// The NoteFunc type is an adapter to allow the use of ordinary function as a Querier.
+type NoteFunc func(context.Context, *generated.NoteQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f NoteFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.NoteQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.NoteQuery", q)
+}
+
+// The TraverseNote type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseNote func(context.Context, *generated.NoteQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseNote) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseNote) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.NoteQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.NoteQuery", q)
+}
+
+// The NoteHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type NoteHistoryFunc func(context.Context, *generated.NoteHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f NoteHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.NoteHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.NoteHistoryQuery", q)
+}
+
+// The TraverseNoteHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseNoteHistory func(context.Context, *generated.NoteHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseNoteHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseNoteHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.NoteHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.NoteHistoryQuery", q)
+}
+
 // The OauthProviderFunc type is an adapter to allow the use of ordinary function as a Querier.
 type OauthProviderFunc func(context.Context, *generated.OauthProviderQuery) (generated.Value, error)
 
@@ -1676,6 +1732,10 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.IntegrationHistoryQuery, predicate.IntegrationHistory, integrationhistory.OrderOption]{typ: generated.TypeIntegrationHistory, tq: q}, nil
 	case *generated.InviteQuery:
 		return &query[*generated.InviteQuery, predicate.Invite, invite.OrderOption]{typ: generated.TypeInvite, tq: q}, nil
+	case *generated.NoteQuery:
+		return &query[*generated.NoteQuery, predicate.Note, note.OrderOption]{typ: generated.TypeNote, tq: q}, nil
+	case *generated.NoteHistoryQuery:
+		return &query[*generated.NoteHistoryQuery, predicate.NoteHistory, notehistory.OrderOption]{typ: generated.TypeNoteHistory, tq: q}, nil
 	case *generated.OauthProviderQuery:
 		return &query[*generated.OauthProviderQuery, predicate.OauthProvider, oauthprovider.OrderOption]{typ: generated.TypeOauthProvider, tq: q}, nil
 	case *generated.OauthProviderHistoryQuery:

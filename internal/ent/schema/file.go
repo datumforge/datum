@@ -41,6 +41,8 @@ func (File) Edges() []ent.Edge {
 			Unique(),
 		edge.From("organization", Organization.Type).
 			Ref("files"),
+		edge.From("entity", Entity.Type).
+			Ref("files"),
 		edge.From("group", Group.Type).
 			Ref("files"),
 	}

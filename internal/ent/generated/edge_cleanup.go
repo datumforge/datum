@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
@@ -278,6 +279,20 @@ func InviteEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func NoteEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup note edge"))
+
+	return nil
+}
+
+func NoteHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup notehistory edge"))
+
+	return nil
+}
+
 func OauthProviderEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup oauthprovider edge"))
@@ -418,6 +433,13 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	if exists, err := FromContext(ctx).Contact.Query().Where((contact.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
 		if contactCount, err := FromContext(ctx).Contact.Delete().Where(contact.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting contact", "count", contactCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).Note.Query().Where((note.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if noteCount, err := FromContext(ctx).Note.Delete().Where(note.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting note", "count", noteCount, "err", err)
 			return err
 		}
 	}

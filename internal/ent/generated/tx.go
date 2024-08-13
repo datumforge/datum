@@ -78,6 +78,10 @@ type Tx struct {
 	IntegrationHistory *IntegrationHistoryClient
 	// Invite is the client for interacting with the Invite builders.
 	Invite *InviteClient
+	// Note is the client for interacting with the Note builders.
+	Note *NoteClient
+	// NoteHistory is the client for interacting with the NoteHistory builders.
+	NoteHistory *NoteHistoryClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
 	// OauthProviderHistory is the client for interacting with the OauthProviderHistory builders.
@@ -286,6 +290,8 @@ func (tx *Tx) init() {
 	tx.Integration = NewIntegrationClient(tx.config)
 	tx.IntegrationHistory = NewIntegrationHistoryClient(tx.config)
 	tx.Invite = NewInviteClient(tx.config)
+	tx.Note = NewNoteClient(tx.config)
+	tx.NoteHistory = NewNoteHistoryClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
 	tx.OauthProviderHistory = NewOauthProviderHistoryClient(tx.config)
 	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)

@@ -245,6 +245,28 @@ func (r *queryResolver) Invites(ctx context.Context, after *entgql.Cursor[string
 	return r.client.Invite.Query().Paginate(ctx, after, first, before, last, generated.WithInviteFilter(where.Filter))
 }
 
+// Notes is the resolver for the notes field.
+func (r *queryResolver) Notes(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.NoteWhereInput) (*generated.NoteConnection, error) {
+	return withTransactionalMutation(ctx).Note.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithNoteFilter(where.Filter))
+}
+
+// NoteHistories is the resolver for the noteHistories field.
+func (r *queryResolver) NoteHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.NoteHistoryWhereInput) (*generated.NoteHistoryConnection, error) {
+	return withTransactionalMutation(ctx).NoteHistory.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		generated.WithNoteHistoryFilter(where.Filter))
+}
+
 // OauthProviders is the resolver for the oauthProviders field.
 func (r *queryResolver) OauthProviders(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) (*generated.OauthProviderConnection, error) {
 	return withTransactionalMutation(ctx).OauthProvider.Query().Paginate(
@@ -360,12 +382,22 @@ func (r *queryResolver) WebhookHistories(ctx context.Context, after *entgql.Curs
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// CreateEntityInput returns CreateEntityInputResolver implementation.
+func (r *Resolver) CreateEntityInput() CreateEntityInputResolver {
+	return &createEntityInputResolver{r}
+}
+
 // CreateGroupInput returns CreateGroupInputResolver implementation.
 func (r *Resolver) CreateGroupInput() CreateGroupInputResolver { return &createGroupInputResolver{r} }
 
 // CreateOrganizationInput returns CreateOrganizationInputResolver implementation.
 func (r *Resolver) CreateOrganizationInput() CreateOrganizationInputResolver {
 	return &createOrganizationInputResolver{r}
+}
+
+// UpdateEntityInput returns UpdateEntityInputResolver implementation.
+func (r *Resolver) UpdateEntityInput() UpdateEntityInputResolver {
+	return &updateEntityInputResolver{r}
 }
 
 // UpdateGroupInput returns UpdateGroupInputResolver implementation.
@@ -382,8 +414,10 @@ func (r *Resolver) UpdateTFASettingInput() UpdateTFASettingInputResolver {
 }
 
 type queryResolver struct{ *Resolver }
+type createEntityInputResolver struct{ *Resolver }
 type createGroupInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
+type updateEntityInputResolver struct{ *Resolver }
 type updateGroupInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }
 type updateTFASettingInputResolver struct{ *Resolver }

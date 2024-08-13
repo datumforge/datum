@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -239,6 +240,21 @@ func (fc *FileCreate) AddOrganization(o ...*Organization) *FileCreate {
 		ids[i] = o[i].ID
 	}
 	return fc.AddOrganizationIDs(ids...)
+}
+
+// AddEntityIDs adds the "entity" edge to the Entity entity by IDs.
+func (fc *FileCreate) AddEntityIDs(ids ...string) *FileCreate {
+	fc.mutation.AddEntityIDs(ids...)
+	return fc
+}
+
+// AddEntity adds the "entity" edges to the Entity entity.
+func (fc *FileCreate) AddEntity(e ...*Entity) *FileCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return fc.AddEntityIDs(ids...)
 }
 
 // AddGroupIDs adds the "group" edge to the Group entity by IDs.
@@ -476,6 +492,23 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = fc.schemaConfig.OrganizationFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.EntityIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   file.EntityTable,
+			Columns: file.EntityPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fc.schemaConfig.EntityFiles
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

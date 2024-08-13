@@ -903,6 +903,54 @@ func (f InviteMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mu
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.InviteMutation", m)
 }
 
+// The NoteQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NoteQueryRuleFunc func(context.Context, *generated.NoteQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NoteQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.NoteQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.NoteQuery", q)
+}
+
+// The NoteMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NoteMutationRuleFunc func(context.Context, *generated.NoteMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NoteMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.NoteMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.NoteMutation", m)
+}
+
+// The NoteHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NoteHistoryQueryRuleFunc func(context.Context, *generated.NoteHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NoteHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.NoteHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.NoteHistoryQuery", q)
+}
+
+// The NoteHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NoteHistoryMutationRuleFunc func(context.Context, *generated.NoteHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NoteHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.NoteHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.NoteHistoryMutation", m)
+}
+
 // The OauthProviderQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OauthProviderQueryRuleFunc func(context.Context, *generated.OauthProviderQuery) error
@@ -1532,6 +1580,10 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.InviteQuery:
 		return q.Filter(), nil
+	case *generated.NoteQuery:
+		return q.Filter(), nil
+	case *generated.NoteHistoryQuery:
+		return q.Filter(), nil
 	case *generated.OauthProviderQuery:
 		return q.Filter(), nil
 	case *generated.OauthProviderHistoryQuery:
@@ -1648,6 +1700,10 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.IntegrationHistoryMutation:
 		return m.Filter(), nil
 	case *generated.InviteMutation:
+		return m.Filter(), nil
+	case *generated.NoteMutation:
+		return m.Filter(), nil
+	case *generated.NoteHistoryMutation:
 		return m.Filter(), nil
 	case *generated.OauthProviderMutation:
 		return m.Filter(), nil

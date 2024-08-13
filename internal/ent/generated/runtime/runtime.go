@@ -39,6 +39,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
+	"github.com/datumforge/datum/internal/ent/generated/notehistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
@@ -861,10 +863,30 @@ func init() {
 	}()
 	// entityDescDisplayName is the schema descriptor for display_name field.
 	entityDescDisplayName := entityFields[1].Descriptor()
-	// entity.DefaultDisplayName holds the default value on creation for the display_name field.
-	entity.DefaultDisplayName = entityDescDisplayName.Default.(string)
 	// entity.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
-	entity.DisplayNameValidator = entityDescDisplayName.Validators[0].(func(string) error)
+	entity.DisplayNameValidator = func() func(string) error {
+		validators := entityDescDisplayName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(display_name string) error {
+			for _, fn := range fns {
+				if err := fn(display_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// entityDescDomains is the schema descriptor for domains field.
+	entityDescDomains := entityFields[3].Descriptor()
+	// entity.DomainsValidator is a validator for the "domains" field. It is called by the builders before save.
+	entity.DomainsValidator = entityDescDomains.Validators[0].(func([]string) error)
+	// entityDescStatus is the schema descriptor for status field.
+	entityDescStatus := entityFields[5].Descriptor()
+	// entity.DefaultStatus holds the default value on creation for the status field.
+	entity.DefaultStatus = entityDescStatus.Default.(string)
 	// entityDescID is the schema descriptor for id field.
 	entityDescID := entityMixinFields1[0].Descriptor()
 	// entity.DefaultID holds the default value on creation for the id field.
@@ -904,10 +926,10 @@ func init() {
 	entityhistoryDescTags := entityhistoryFields[11].Descriptor()
 	// entityhistory.DefaultTags holds the default value on creation for the tags field.
 	entityhistory.DefaultTags = entityhistoryDescTags.Default.([]string)
-	// entityhistoryDescDisplayName is the schema descriptor for display_name field.
-	entityhistoryDescDisplayName := entityhistoryFields[14].Descriptor()
-	// entityhistory.DefaultDisplayName holds the default value on creation for the display_name field.
-	entityhistory.DefaultDisplayName = entityhistoryDescDisplayName.Default.(string)
+	// entityhistoryDescStatus is the schema descriptor for status field.
+	entityhistoryDescStatus := entityhistoryFields[18].Descriptor()
+	// entityhistory.DefaultStatus holds the default value on creation for the status field.
+	entityhistory.DefaultStatus = entityhistoryDescStatus.Default.(string)
 	// entityhistoryDescID is the schema descriptor for id field.
 	entityhistoryDescID := entityhistoryFields[7].Descriptor()
 	// entityhistory.DefaultID holds the default value on creation for the id field.
@@ -1834,6 +1856,108 @@ func init() {
 	inviteDescID := inviteMixinFields1[0].Descriptor()
 	// invite.DefaultID holds the default value on creation for the id field.
 	invite.DefaultID = inviteDescID.Default.(func() string)
+	noteMixin := schema.Note{}.Mixin()
+	note.Policy = privacy.NewPolicies(schema.Note{})
+	note.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := note.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	noteMixinHooks0 := noteMixin[0].Hooks()
+	noteMixinHooks2 := noteMixin[2].Hooks()
+	noteMixinHooks4 := noteMixin[4].Hooks()
+
+	note.Hooks[1] = noteMixinHooks0[0]
+
+	note.Hooks[2] = noteMixinHooks2[0]
+
+	note.Hooks[3] = noteMixinHooks4[0]
+	noteMixinInters2 := noteMixin[2].Interceptors()
+	noteMixinInters4 := noteMixin[4].Interceptors()
+	note.Interceptors[0] = noteMixinInters2[0]
+	note.Interceptors[1] = noteMixinInters4[0]
+	noteMixinFields0 := noteMixin[0].Fields()
+	_ = noteMixinFields0
+	noteMixinFields1 := noteMixin[1].Fields()
+	_ = noteMixinFields1
+	noteMixinFields3 := noteMixin[3].Fields()
+	_ = noteMixinFields3
+	noteMixinFields4 := noteMixin[4].Fields()
+	_ = noteMixinFields4
+	noteFields := schema.Note{}.Fields()
+	_ = noteFields
+	// noteDescCreatedAt is the schema descriptor for created_at field.
+	noteDescCreatedAt := noteMixinFields0[0].Descriptor()
+	// note.DefaultCreatedAt holds the default value on creation for the created_at field.
+	note.DefaultCreatedAt = noteDescCreatedAt.Default.(func() time.Time)
+	// noteDescUpdatedAt is the schema descriptor for updated_at field.
+	noteDescUpdatedAt := noteMixinFields0[1].Descriptor()
+	// note.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	note.DefaultUpdatedAt = noteDescUpdatedAt.Default.(func() time.Time)
+	// note.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	note.UpdateDefaultUpdatedAt = noteDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// noteDescMappingID is the schema descriptor for mapping_id field.
+	noteDescMappingID := noteMixinFields1[1].Descriptor()
+	// note.DefaultMappingID holds the default value on creation for the mapping_id field.
+	note.DefaultMappingID = noteDescMappingID.Default.(func() string)
+	// noteDescTags is the schema descriptor for tags field.
+	noteDescTags := noteMixinFields3[0].Descriptor()
+	// note.DefaultTags holds the default value on creation for the tags field.
+	note.DefaultTags = noteDescTags.Default.([]string)
+	// noteDescOwnerID is the schema descriptor for owner_id field.
+	noteDescOwnerID := noteMixinFields4[0].Descriptor()
+	// note.OwnerIDValidator is a validator for the "owner_id" field. It is called by the builders before save.
+	note.OwnerIDValidator = noteDescOwnerID.Validators[0].(func(string) error)
+	// noteDescText is the schema descriptor for text field.
+	noteDescText := noteFields[0].Descriptor()
+	// note.TextValidator is a validator for the "text" field. It is called by the builders before save.
+	note.TextValidator = noteDescText.Validators[0].(func(string) error)
+	// noteDescID is the schema descriptor for id field.
+	noteDescID := noteMixinFields1[0].Descriptor()
+	// note.DefaultID holds the default value on creation for the id field.
+	note.DefaultID = noteDescID.Default.(func() string)
+	notehistory.Policy = privacy.NewPolicies(schema.NoteHistory{})
+	notehistory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := notehistory.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	notehistoryInters := schema.NoteHistory{}.Interceptors()
+	notehistory.Interceptors[0] = notehistoryInters[0]
+	notehistoryFields := schema.NoteHistory{}.Fields()
+	_ = notehistoryFields
+	// notehistoryDescHistoryTime is the schema descriptor for history_time field.
+	notehistoryDescHistoryTime := notehistoryFields[0].Descriptor()
+	// notehistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	notehistory.DefaultHistoryTime = notehistoryDescHistoryTime.Default.(func() time.Time)
+	// notehistoryDescCreatedAt is the schema descriptor for created_at field.
+	notehistoryDescCreatedAt := notehistoryFields[3].Descriptor()
+	// notehistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	notehistory.DefaultCreatedAt = notehistoryDescCreatedAt.Default.(func() time.Time)
+	// notehistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	notehistoryDescUpdatedAt := notehistoryFields[4].Descriptor()
+	// notehistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	notehistory.DefaultUpdatedAt = notehistoryDescUpdatedAt.Default.(func() time.Time)
+	// notehistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	notehistory.UpdateDefaultUpdatedAt = notehistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// notehistoryDescMappingID is the schema descriptor for mapping_id field.
+	notehistoryDescMappingID := notehistoryFields[8].Descriptor()
+	// notehistory.DefaultMappingID holds the default value on creation for the mapping_id field.
+	notehistory.DefaultMappingID = notehistoryDescMappingID.Default.(func() string)
+	// notehistoryDescTags is the schema descriptor for tags field.
+	notehistoryDescTags := notehistoryFields[11].Descriptor()
+	// notehistory.DefaultTags holds the default value on creation for the tags field.
+	notehistory.DefaultTags = notehistoryDescTags.Default.([]string)
+	// notehistoryDescID is the schema descriptor for id field.
+	notehistoryDescID := notehistoryFields[7].Descriptor()
+	// notehistory.DefaultID holds the default value on creation for the id field.
+	notehistory.DefaultID = notehistoryDescID.Default.(func() string)
 	oauthproviderMixin := schema.OauthProvider{}.Mixin()
 	oauthprovider.Policy = privacy.NewPolicies(schema.OauthProvider{})
 	oauthprovider.Hooks[0] = func(next ent.Mutator) ent.Mutator {

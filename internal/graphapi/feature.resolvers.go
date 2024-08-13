@@ -61,7 +61,10 @@ func (r *mutationResolver) UpdateFeature(ctx context.Context, id string, input g
 		return nil, ErrPermissionDenied
 	}
 
-	res, err = res.Update().SetInput(input).Save(ctx)
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "feature"}, r.logger)
 	}

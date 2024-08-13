@@ -19,11 +19,12 @@ var templates embed.FS
 
 // crudResolver is a struct to hold the field for the CRUD resolver
 type crudResolver struct {
-	Field *codegen.Field
+	Field        *codegen.Field
+	AppendFields []string
 }
 
 // renderTemplate renders the template with the given name
-func renderTemplate(templateName string, field *codegen.Field) string {
+func renderTemplate(templateName string, input *crudResolver) string {
 	t, err := template.New(templateName).Funcs(template.FuncMap{
 		"getEntityName": getEntityName,
 		"toLower":       strings.ToLower,
@@ -38,9 +39,7 @@ func renderTemplate(templateName string, field *codegen.Field) string {
 
 	var code bytes.Buffer
 
-	if err = t.Execute(&code, &crudResolver{
-		Field: field,
-	}); err != nil {
+	if err = t.Execute(&code, input); err != nil {
 		panic(err)
 	}
 
@@ -49,37 +48,56 @@ func renderTemplate(templateName string, field *codegen.Field) string {
 
 // renderCreate renders the create template
 func renderCreate(field *codegen.Field) string {
-	return renderTemplate("create.gotpl", field)
+	return renderTemplate("create.gotpl", &crudResolver{
+		Field: field,
+	})
 }
 
 // renderUpdate renders the update template
 func renderUpdate(field *codegen.Field) string {
-	return renderTemplate("update.gotpl", field)
+	appendFields := getAppendFields(field)
+
+	cr := &crudResolver{
+		Field:        field,
+		AppendFields: appendFields,
+	}
+
+	return renderTemplate("update.gotpl", cr)
 }
 
 // renderDelete renders the delete template
 func renderDelete(field *codegen.Field) string {
-	return renderTemplate("delete.gotpl", field)
+	return renderTemplate("delete.gotpl", &crudResolver{
+		Field: field,
+	})
 }
 
 // renderBulkUpload renders the bulk upload template
 func renderBulkUpload(field *codegen.Field) string {
-	return renderTemplate("upload.gotpl", field)
+	return renderTemplate("upload.gotpl", &crudResolver{
+		Field: field,
+	})
 }
 
 // renderBulk renders the bulk template
 func renderBulk(field *codegen.Field) string {
-	return renderTemplate("bulk.gotpl", field)
+	return renderTemplate("bulk.gotpl", &crudResolver{
+		Field: field,
+	})
 }
 
 // renderQuery renders the query template
 func renderQuery(field *codegen.Field) string {
-	return renderTemplate("get.gotpl", field)
+	return renderTemplate("get.gotpl", &crudResolver{
+		Field: field,
+	})
 }
 
 // renderList renders the list template
 func renderList(field *codegen.Field) string {
-	return renderTemplate("list.gotpl", field)
+	return renderTemplate("list.gotpl", &crudResolver{
+		Field: field,
+	})
 }
 
 // crudTypes is a list of CRUD operations that are included in the resolver name
@@ -118,4 +136,19 @@ func hasOwnerField(field *codegen.Field) bool {
 	}
 
 	return false
+}
+
+// getAppendFields returns the list of fields that are appendable in the update mutation
+func getAppendFields(field *codegen.Field) (appendFields []string) {
+	for _, arg := range field.Args {
+		if arg.TypeReference.Definition.Kind == gqlast.InputObject {
+			for _, f := range arg.TypeReference.Definition.Fields {
+				if strings.Contains(f.Name, "append") {
+					appendFields = append(appendFields, strcase.UpperCamelCase(f.Name))
+				}
+			}
+		}
+	}
+
+	return
 }

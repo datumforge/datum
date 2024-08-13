@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/validator"
 )
 
 // Entity holds the schema definition for the Entity entity
@@ -31,6 +32,7 @@ func (Entity) Fields() []ent.Field {
 		field.String("name").
 			Comment("the name of the entity").
 			MaxLen(orgNameMaxLen).
+			Optional().
 			NotEmpty().
 			Annotations(
 				entgql.OrderField("name"),
@@ -38,7 +40,8 @@ func (Entity) Fields() []ent.Field {
 		field.String("display_name").
 			Comment("The entity's displayed 'friendly' name").
 			MaxLen(nameMaxLen).
-			Default("").
+			Optional().
+			NotEmpty().
 			Annotations(
 				entgql.OrderField("display_name"),
 			),
@@ -48,8 +51,16 @@ func (Entity) Fields() []ent.Field {
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),
 			),
+		field.Strings("domains").
+			Comment("domains associated with the entity").
+			Validate(validator.ValidateDomains()).
+			Optional(),
 		field.String("entity_type_id").
 			Comment("The type of the entity").
+			Optional(),
+		field.String("status").
+			Comment("status of the entity").
+			Default("active").
 			Optional(),
 	}
 }
@@ -72,6 +83,8 @@ func (Entity) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("contacts", Contact.Type),
 		edge.To("documents", DocumentData.Type),
+		edge.To("notes", Note.Type),
+		edge.To("files", File.Type),
 		edge.To("entity_type", EntityType.Type).
 			Field("entity_type_id").
 			Unique(),
@@ -92,7 +105,7 @@ func (Entity) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),
-		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 		entfga.Annotations{
 			ObjectType:      "organization",
 			IncludeHooks:    false,

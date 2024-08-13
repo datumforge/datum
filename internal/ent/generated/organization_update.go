@@ -27,6 +27,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
@@ -590,6 +591,21 @@ func (ou *OrganizationUpdate) AddContacts(c ...*Contact) *OrganizationUpdate {
 	return ou.AddContactIDs(ids...)
 }
 
+// AddNoteIDs adds the "notes" edge to the Note entity by IDs.
+func (ou *OrganizationUpdate) AddNoteIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddNoteIDs(ids...)
+	return ou
+}
+
+// AddNotes adds the "notes" edges to the Note entity.
+func (ou *OrganizationUpdate) AddNotes(n ...*Note) *OrganizationUpdate {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ou.AddNoteIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
 func (ou *OrganizationUpdate) AddMemberIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddMemberIDs(ids...)
@@ -1097,6 +1113,27 @@ func (ou *OrganizationUpdate) RemoveContacts(c ...*Contact) *OrganizationUpdate 
 		ids[i] = c[i].ID
 	}
 	return ou.RemoveContactIDs(ids...)
+}
+
+// ClearNotes clears all "notes" edges to the Note entity.
+func (ou *OrganizationUpdate) ClearNotes() *OrganizationUpdate {
+	ou.mutation.ClearNotes()
+	return ou
+}
+
+// RemoveNoteIDs removes the "notes" edge to Note entities by IDs.
+func (ou *OrganizationUpdate) RemoveNoteIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveNoteIDs(ids...)
+	return ou
+}
+
+// RemoveNotes removes "notes" edges to Note entities.
+func (ou *OrganizationUpdate) RemoveNotes(n ...*Note) *OrganizationUpdate {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ou.RemoveNoteIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the OrgMembership entity.
@@ -2415,6 +2452,54 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.NotesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.NotesTable,
+			Columns: []string{organization.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Note
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedNotesIDs(); len(nodes) > 0 && !ou.mutation.NotesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.NotesTable,
+			Columns: []string{organization.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Note
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.NotesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.NotesTable,
+			Columns: []string{organization.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Note
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ou.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -3021,6 +3106,21 @@ func (ouo *OrganizationUpdateOne) AddContacts(c ...*Contact) *OrganizationUpdate
 	return ouo.AddContactIDs(ids...)
 }
 
+// AddNoteIDs adds the "notes" edge to the Note entity by IDs.
+func (ouo *OrganizationUpdateOne) AddNoteIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddNoteIDs(ids...)
+	return ouo
+}
+
+// AddNotes adds the "notes" edges to the Note entity.
+func (ouo *OrganizationUpdateOne) AddNotes(n ...*Note) *OrganizationUpdateOne {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ouo.AddNoteIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
 func (ouo *OrganizationUpdateOne) AddMemberIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddMemberIDs(ids...)
@@ -3528,6 +3628,27 @@ func (ouo *OrganizationUpdateOne) RemoveContacts(c ...*Contact) *OrganizationUpd
 		ids[i] = c[i].ID
 	}
 	return ouo.RemoveContactIDs(ids...)
+}
+
+// ClearNotes clears all "notes" edges to the Note entity.
+func (ouo *OrganizationUpdateOne) ClearNotes() *OrganizationUpdateOne {
+	ouo.mutation.ClearNotes()
+	return ouo
+}
+
+// RemoveNoteIDs removes the "notes" edge to Note entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveNoteIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveNoteIDs(ids...)
+	return ouo
+}
+
+// RemoveNotes removes "notes" edges to Note entities.
+func (ouo *OrganizationUpdateOne) RemoveNotes(n ...*Note) *OrganizationUpdateOne {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ouo.RemoveNoteIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the OrgMembership entity.
@@ -4871,6 +4992,54 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Contact
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.NotesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.NotesTable,
+			Columns: []string{organization.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Note
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedNotesIDs(); len(nodes) > 0 && !ouo.mutation.NotesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.NotesTable,
+			Columns: []string{organization.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Note
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.NotesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.NotesTable,
+			Columns: []string{organization.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Note
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

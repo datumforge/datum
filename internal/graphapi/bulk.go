@@ -331,6 +331,25 @@ func (r *mutationResolver) bulkCreateInvite(ctx context.Context, input []*genera
 	}, nil
 }
 
+// bulkCreateNote uses the CreateBulk function to create multiple Note entities
+func (r *mutationResolver) bulkCreateNote(ctx context.Context, input []*generated.CreateNoteInput) (*NoteBulkCreatePayload, error) {
+	c := withTransactionalMutation(ctx)
+	builders := make([]*generated.NoteCreate, len(input))
+	for i, data := range input {
+		builders[i] = c.Note.Create().SetInput(*data)
+	}
+
+	res, err := c.Note.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionCreate, object: "note"}, r.logger)
+	}
+
+	// return response
+	return &NoteBulkCreatePayload{
+		Notes: res,
+	}, nil
+}
+
 // bulkCreateOauthProvider uses the CreateBulk function to create multiple OauthProvider entities
 func (r *mutationResolver) bulkCreateOauthProvider(ctx context.Context, input []*generated.CreateOauthProviderInput) (*OauthProviderBulkCreatePayload, error) {
 	c := withTransactionalMutation(ctx)

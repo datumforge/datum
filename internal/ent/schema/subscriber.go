@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/enthistory"
+	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -23,6 +24,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 // Subscriber holds the schema definition for the Subscriber entity
@@ -35,6 +37,9 @@ func (Subscriber) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("email").
 			Comment("email address of the subscriber").
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			Validate(func(email string) error {
 				_, err := mail.ParseAddress(email)
 				return err
@@ -133,6 +138,7 @@ func (Subscriber) Annotations() []schema.Annotation {
 		enthistory.Annotations{
 			Exclude: true,
 		},
+		entx.SchemaSearchable(true),
 	}
 }
 

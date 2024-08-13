@@ -6,9 +6,11 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 // File defines the file schema.
@@ -19,7 +21,10 @@ type File struct {
 // Fields returns file fields.
 func (File) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("file_name"),
+		field.String("file_name").
+			Annotations(
+				searchgen.FieldSearchable(),
+			),
 		field.String("file_extension"),
 		field.Int("file_size").
 			NonNegative().
@@ -29,7 +34,10 @@ func (File) Fields() []ent.Field {
 		field.String("category").
 			Optional(),
 		field.String("annotation").
-			Optional(),
+			Optional().
+			Annotations(
+				searchgen.FieldSearchable(),
+			),
 	}
 }
 
@@ -62,5 +70,6 @@ func (File) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entx.SchemaSearchable(true),
 	}
 }

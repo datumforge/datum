@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -17,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 // Feature defines the feature schema
@@ -30,9 +32,15 @@ func (Feature) Fields() []ent.Field {
 		field.String("name").
 			Comment("the unique name of the feature").
 			NotEmpty().
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			Immutable(),
 		field.String("display_name").
 			Comment("the displayed 'friendly' name of the feature").
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			Optional(),
 		field.Bool("enabled").
 			Comment("enabled features are available for use").
@@ -90,6 +98,7 @@ func (Feature) Annotations() []schema.Annotation {
 			OrgOwnedField:   true,
 			IDField:         "OwnerID",
 		},
+		entx.SchemaSearchable(true),
 	}
 }
 

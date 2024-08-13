@@ -807,6 +807,9 @@ input ContactHistoryWhereInput {
 	statusIn: [ContactHistoryUserStatus!]
 	statusNotIn: [ContactHistoryUserStatus!]
 }
+type ContactSearchResult {
+	contacts: [Contact!]
+}
 """
 Return response for updateContact mutation
 """
@@ -2276,6 +2279,9 @@ input DocumentDataHistoryWhereInput {
 	templateIDHasSuffix: String
 	templateIDEqualFold: String
 	templateIDContainsFold: String
+}
+type DocumentDataSearchResult {
+	documentData: [DocumentData!]
 }
 """
 Return response for updateDocumentData mutation
@@ -4704,6 +4710,9 @@ enum EntityOrderField {
 	name
 	display_name
 }
+type EntitySearchResult {
+	entities: [Entity!]
+}
 type EntityType implements Node {
 	id: ID!
 	createdAt: Time
@@ -6392,6 +6401,9 @@ input FeatureHistoryWhereInput {
 	descriptionEqualFold: String
 	descriptionContainsFold: String
 }
+type FeatureSearchResult {
+	features: [Feature!]
+}
 """
 Return response for updateFeature mutation
 """
@@ -7016,6 +7028,9 @@ input FileHistoryWhereInput {
 	annotationEqualFold: String
 	annotationContainsFold: String
 }
+type FileSearchResult {
+	files: [File!]
+}
 """
 Return response for updateFile mutation
 """
@@ -7268,7 +7283,7 @@ input FileWhereInput {
 	hasGroup: Boolean
 	hasGroupWith: [GroupWhereInput!]
 }
-union GlobalSearchResult = OrganizationSearchResult | GroupSearchResult | UserSearchResult | SubscriberSearchResult
+union GlobalSearchResult = ContactSearchResult | DocumentDataSearchResult | EntitySearchResult | FeatureSearchResult | FileSearchResult | GroupSearchResult | GroupMembershipSearchResult | InviteSearchResult | OrgMembershipSearchResult | OrganizationSearchResult | SubscriberSearchResult | TemplateSearchResult | UserSearchResult
 type GlobalSearchResultConnection {
 	page: PageInfo!
 	nodes: [GlobalSearchResult!]!
@@ -8003,6 +8018,9 @@ enum GroupMembershipRole @goModel(model: "github.com/datumforge/datum/pkg/enums.
 	ADMIN
 	MEMBER
 	USER
+}
+type GroupMembershipSearchResult {
+	groupMemberships: [GroupMembership!]
 }
 """
 Return response for updateGroupMembership mutation
@@ -10240,6 +10258,9 @@ enum InviteRole @goModel(model: "github.com/datumforge/datum/pkg/enums.Role") {
 	ADMIN
 	MEMBER
 	USER
+}
+type InviteSearchResult {
+	invites: [Invite!]
 }
 """
 Return response for updateInvite mutation
@@ -13272,6 +13293,9 @@ enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/pkg/enums.Ro
 	MEMBER
 	USER
 	OWNER
+}
+type OrgMembershipSearchResult {
+	orgMemberships: [OrgMembership!]
 }
 """
 Return response for updateOrgMembership mutation
@@ -16908,7 +16932,7 @@ type Query {
 		id: ID!
 	): PersonalAccessToken!
 	"""
-	Search across organizations, groups, and users
+	Search across objects
 	"""
 	search(
 		"""
@@ -17934,6 +17958,9 @@ Properties by which Template connections can be ordered.
 """
 enum TemplateOrderField {
 	name
+}
+type TemplateSearchResult {
+	templates: [Template!]
 }
 """
 Return response for updateTemplate mutation

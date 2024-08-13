@@ -642,6 +642,12 @@ type ContactHistoryWhereInput struct {
 	StatusNotIn []enums.UserStatus `json:"statusNotIn,omitempty"`
 }
 
+type ContactSearchResult struct {
+	Contacts []*Contact `json:"contacts,omitempty"`
+}
+
+func (ContactSearchResult) IsGlobalSearchResult() {}
+
 // Return response for updateContact mutation
 type ContactUpdatePayload struct {
 	// Updated contact
@@ -1689,6 +1695,12 @@ type DocumentDataHistoryWhereInput struct {
 	TemplateIDEqualFold    *string  `json:"templateIDEqualFold,omitempty"`
 	TemplateIDContainsFold *string  `json:"templateIDContainsFold,omitempty"`
 }
+
+type DocumentDataSearchResult struct {
+	DocumentData []*DocumentData `json:"documentData,omitempty"`
+}
+
+func (DocumentDataSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateDocumentData mutation
 type DocumentDataUpdatePayload struct {
@@ -3603,6 +3615,12 @@ type EntityOrder struct {
 	Field EntityOrderField `json:"field"`
 }
 
+type EntitySearchResult struct {
+	Entities []*Entity `json:"entities,omitempty"`
+}
+
+func (EntitySearchResult) IsGlobalSearchResult() {}
+
 type EntityType struct {
 	ID        string     `json:"id"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -4929,6 +4947,12 @@ type FeatureHistoryWhereInput struct {
 	DescriptionContainsFold *string  `json:"descriptionContainsFold,omitempty"`
 }
 
+type FeatureSearchResult struct {
+	Features []*Feature `json:"features,omitempty"`
+}
+
+func (FeatureSearchResult) IsGlobalSearchResult() {}
+
 // Return response for updateFeature mutation
 type FeatureUpdatePayload struct {
 	// Updated feature
@@ -5442,6 +5466,12 @@ type FileHistoryWhereInput struct {
 	AnnotationEqualFold    *string  `json:"annotationEqualFold,omitempty"`
 	AnnotationContainsFold *string  `json:"annotationContainsFold,omitempty"`
 }
+
+type FileSearchResult struct {
+	Files []*File `json:"files,omitempty"`
+}
+
+func (FileSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateFile mutation
 type FileUpdatePayload struct {
@@ -6212,6 +6242,12 @@ type GroupMembershipHistoryWhereInput struct {
 	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
 	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
 }
+
+type GroupMembershipSearchResult struct {
+	GroupMemberships []*GroupMembership `json:"groupMemberships,omitempty"`
+}
+
+func (GroupMembershipSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateGroupMembership mutation
 type GroupMembershipUpdatePayload struct {
@@ -7910,6 +7946,12 @@ type InviteEdge struct {
 	Cursor string `json:"cursor"`
 }
 
+type InviteSearchResult struct {
+	Invites []*Invite `json:"invites,omitempty"`
+}
+
+func (InviteSearchResult) IsGlobalSearchResult() {}
+
 // Return response for updateInvite mutation
 type InviteUpdatePayload struct {
 	// Updated invite
@@ -9191,6 +9233,12 @@ type OrgMembershipHistoryWhereInput struct {
 	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
 	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
 }
+
+type OrgMembershipSearchResult struct {
+	OrgMemberships []*OrgMembership `json:"orgMemberships,omitempty"`
+}
+
+func (OrgMembershipSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateOrgMembership mutation
 type OrgMembershipUpdatePayload struct {
@@ -11395,6 +11443,12 @@ type TemplateOrder struct {
 	// The field by which to order Templates.
 	Field TemplateOrderField `json:"field"`
 }
+
+type TemplateSearchResult struct {
+	Templates []*Template `json:"templates,omitempty"`
+}
+
+func (TemplateSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateTemplate mutation
 type TemplateUpdatePayload struct {

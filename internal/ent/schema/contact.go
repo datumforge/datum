@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/validator"
 	"github.com/datumforge/datum/pkg/enums"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -32,6 +34,9 @@ func (Contact) Fields() []ent.Field {
 		field.String("full_name").
 			Comment("the full name of the contact").
 			MaxLen(nameMaxLen).
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			NotEmpty(),
 		field.String("title").
 			Comment("the title of the contact").
@@ -42,6 +47,9 @@ func (Contact) Fields() []ent.Field {
 		field.String("email").
 			Comment("the email of the contact").
 			Optional().
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			Validate(func(email string) error {
 				_, err := mail.ParseAddress(email)
 				return err
@@ -106,6 +114,7 @@ func (Contact) Annotations() []schema.Annotation {
 			OrgOwnedField:   true,
 			IDField:         "OwnerID",
 		},
+		entx.SchemaSearchable(true),
 	}
 }
 

@@ -93,6 +93,12 @@ type ContactDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+type ContactSearchResult struct {
+	Contacts []*generated.Contact `json:"contacts,omitempty"`
+}
+
+func (ContactSearchResult) IsGlobalSearchResult() {}
+
 // Return response for updateContact mutation
 type ContactUpdatePayload struct {
 	// Updated contact
@@ -213,6 +219,12 @@ type EntityDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+type EntitySearchResult struct {
+	Entities []*generated.Entity `json:"entities,omitempty"`
+}
+
+func (EntitySearchResult) IsGlobalSearchResult() {}
+
 // Return response for createBulkEntityType mutation
 type EntityTypeBulkCreatePayload struct {
 	// Created entityTypes
@@ -285,6 +297,12 @@ type FeatureDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+type FeatureSearchResult struct {
+	Features []*generated.Feature `json:"features,omitempty"`
+}
+
+func (FeatureSearchResult) IsGlobalSearchResult() {}
+
 // Return response for updateFeature mutation
 type FeatureUpdatePayload struct {
 	// Updated feature
@@ -308,6 +326,12 @@ type FileDeletePayload struct {
 	// Deleted file ID
 	DeletedID string `json:"deletedID"`
 }
+
+type FileSearchResult struct {
+	Files []*generated.File `json:"files,omitempty"`
+}
+
+func (FileSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateFile mutation
 type FileUpdatePayload struct {
@@ -463,6 +487,12 @@ type InviteDeletePayload struct {
 	// Deleted invite ID
 	DeletedID string `json:"deletedID"`
 }
+
+type InviteSearchResult struct {
+	Invites []*generated.Invite `json:"invites,omitempty"`
+}
+
+func (InviteSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateInvite mutation
 type InviteUpdatePayload struct {
@@ -679,6 +709,12 @@ type TemplateDeletePayload struct {
 	// Deleted template ID
 	DeletedID string `json:"deletedID"`
 }
+
+type TemplateSearchResult struct {
+	Templates []*generated.Template `json:"templates,omitempty"`
+}
+
+func (TemplateSearchResult) IsGlobalSearchResult() {}
 
 // Return response for updateTemplate mutation
 type TemplateUpdatePayload struct {

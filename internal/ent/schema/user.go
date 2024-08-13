@@ -24,6 +24,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/enums"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 const (
@@ -51,18 +52,27 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		// NOTE: the created_at and updated_at fields are automatically created by the AuditMixin, you do not need to re-declare / add them in these fields
 		field.String("email").
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			Validate(func(email string) error {
 				_, err := mail.ParseAddress(email)
 				return err
 			}),
 		field.String("first_name").
 			Optional().
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			MaxLen(nameMaxLen).
 			Annotations(
 				entgql.OrderField("first_name"),
 			),
 		field.String("last_name").
 			Optional().
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			MaxLen(nameMaxLen).
 			Annotations(
 				entgql.OrderField("last_name"),
@@ -72,6 +82,7 @@ func (User) Fields() []ent.Field {
 			MaxLen(nameMaxLen).
 			NotEmpty().
 			Annotations(
+				searchgen.FieldSearchable(),
 				entgql.OrderField("display_name"),
 			).
 			Validate(
@@ -188,6 +199,7 @@ func (User) Annotations() []schema.Annotation {
 				},
 			},
 		),
+		entx.SchemaSearchable(true),
 	}
 }
 

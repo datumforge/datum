@@ -37,7 +37,8 @@ func (OrgMembership) Fields() []ent.Field {
 			Values(string(enums.RoleOwner)). // adds owner to the allowed values
 			Default(string(enums.RoleMember)),
 		field.String("organization_id").Immutable(),
-		field.String("user_id").Immutable(),
+		field.String("user_id").
+			Immutable(),
 	}
 }
 

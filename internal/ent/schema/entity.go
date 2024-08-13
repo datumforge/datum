@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 // Entity holds the schema definition for the Entity entity
@@ -34,6 +36,7 @@ func (Entity) Fields() []ent.Field {
 			NotEmpty().
 			Annotations(
 				entgql.OrderField("name"),
+				searchgen.FieldSearchable(),
 			),
 		field.String("display_name").
 			Comment("The entity's displayed 'friendly' name").
@@ -41,6 +44,7 @@ func (Entity) Fields() []ent.Field {
 			Default("").
 			Annotations(
 				entgql.OrderField("display_name"),
+				searchgen.FieldSearchable(),
 			),
 		field.String("description").
 			Comment("An optional description of the entity").
@@ -100,6 +104,7 @@ func (Entity) Annotations() []schema.Annotation {
 			OrgOwnedField:   true,
 			IDField:         "OwnerID",
 		},
+		entx.SchemaSearchable(true),
 	}
 }
 

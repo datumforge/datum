@@ -1,25 +1,43 @@
 union GlobalSearchResult =
-  | OrganizationSearchResult
+  | ContactSearchResult
+  | EntitySearchResult
+  | FeatureSearchResult
+  | FileSearchResult
   | GroupSearchResult
-  | UserSearchResult
+  | InviteSearchResult
+  | OrganizationSearchResult
   | SubscriberSearchResult
-
-
-
-type OrganizationSearchResult {
-  organizations: [Organization!]
+  | TemplateSearchResult
+  | UserSearchResult
+type  ContactSearchResult {
+   contacts: [ Contact!]
 }
-
-type GroupSearchResult {
-  groups: [Group!]
+type  EntitySearchResult {
+   entities: [ Entity!]
 }
-
-type UserSearchResult {
-  users: [User!]
+type  FeatureSearchResult {
+   features: [ Feature!]
 }
-
-type SubscriberSearchResult {
-  subscribers: [Subscriber!]
+type  FileSearchResult {
+   files: [ File!]
+}
+type  GroupSearchResult {
+   groups: [ Group!]
+}
+type  InviteSearchResult {
+   invites: [ Invite!]
+}
+type  OrganizationSearchResult {
+   organizations: [ Organization!]
+}
+type  SubscriberSearchResult {
+   subscribers: [ Subscriber!]
+}
+type  TemplateSearchResult {
+   templates: [ Template!]
+}
+type  UserSearchResult {
+   users: [ User!]
 }
 
 type GlobalSearchResultConnection {
@@ -31,7 +49,7 @@ type GlobalSearchResultConnection {
 
 extend type Query{
     """
-    Search across organizations, groups, and users
+    Search across objects
     """
     search(
         """

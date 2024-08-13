@@ -23,6 +23,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 const (
@@ -44,6 +45,7 @@ func (Organization) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("name"),
 				entgql.Skip(entgql.SkipWhereInput),
+				searchgen.FieldSearchable(),
 			),
 		field.String("display_name").
 			Comment("The organization's displayed 'friendly' name").
@@ -51,6 +53,7 @@ func (Organization) Fields() []ent.Field {
 			Default("").
 			Annotations(
 				entgql.OrderField("display_name"),
+				searchgen.FieldSearchable(),
 			),
 		field.String("description").
 			Comment("An optional description of the organization").
@@ -191,6 +194,7 @@ func (Organization) Annotations() []schema.Annotation {
 			ObjectType:   "organization",
 			IncludeHooks: false,
 		},
+		entx.SchemaSearchable(true),
 	}
 }
 

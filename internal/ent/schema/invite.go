@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/enthistory"
+	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -24,6 +25,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/enums"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 const (
@@ -59,6 +61,9 @@ func (Invite) Fields() []ent.Field {
 				return err
 			}).
 			Immutable().
+			Annotations(
+				searchgen.FieldSearchable(),
+			).
 			NotEmpty(),
 		field.Enum("status").
 			Comment("the status of the invitation").
@@ -130,6 +135,7 @@ func (Invite) Annotations() []schema.Annotation {
 		enthistory.Annotations{
 			Exclude: true,
 		},
+		entx.SchemaSearchable(true),
 	}
 }
 

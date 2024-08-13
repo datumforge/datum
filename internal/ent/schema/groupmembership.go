@@ -33,7 +33,8 @@ func (GroupMembership) Fields() []ent.Field {
 			GoType(enums.Role("")).
 			Default(string(enums.RoleMember)),
 		field.String("group_id").Immutable(),
-		field.String("user_id").Immutable(),
+		field.String("user_id").
+			Immutable(),
 	}
 }
 

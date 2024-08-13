@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/pkg/enums"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 // Template holds the schema definition for the Template entity
@@ -46,6 +47,7 @@ func (Template) Fields() []ent.Field {
 			Comment("the name of the template").
 			NotEmpty().
 			Annotations(
+				searchgen.FieldSearchable(),
 				entgql.OrderField("name"),
 			),
 		field.Enum("template_type").
@@ -101,6 +103,7 @@ func (Template) Annotations() []schema.Annotation {
 			OrgOwnedField:   true,
 			IDField:         "OwnerID",
 		},
+		entx.SchemaSearchable(true),
 	}
 }
 

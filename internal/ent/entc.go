@@ -66,6 +66,7 @@ func main() {
 		Hooks: []gen.Hook{
 			genhooks.GenSchema(graphSchemaDir),
 			genhooks.GenQuery(graphQueryDir),
+			genhooks.GenSearchSchema(graphSchemaDir),
 		},
 		Package: "github.com/datumforge/datum/internal/ent/generated",
 		Features: []gen.Feature{

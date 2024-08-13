@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/pkg/gqlplugin/searchgen"
 )
 
 // Group holds the schema definition for the Group entity
@@ -49,6 +50,7 @@ func (Group) Fields() []ent.Field {
 			NotEmpty().
 			Annotations(
 				entgql.OrderField("name"),
+				searchgen.FieldSearchable(),
 			),
 		field.String("description").
 			Comment("the groups description").
@@ -74,6 +76,7 @@ func (Group) Fields() []ent.Field {
 			Default("").
 			Annotations(
 				entgql.OrderField("display_name"),
+				searchgen.FieldSearchable(),
 			),
 	}
 }
@@ -126,6 +129,7 @@ func (Group) Annotations() []schema.Annotation {
 			ObjectType:   "group",
 			IncludeHooks: false,
 		},
+		entx.SchemaSearchable(true),
 	}
 }
 

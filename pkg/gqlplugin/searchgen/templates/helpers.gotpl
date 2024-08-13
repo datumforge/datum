@@ -1,0 +1,34 @@
+{{reserveImport "context" }}
+{{reserveImport "time" }}
+
+{{reserveImport "github.com/datumforge/datum/internal/ent/generated" }}
+
+import (
+{{- range $object := $.Objects }}
+    "github.com/datumforge/datum/internal/ent/generated/{{ $object.Name | toLower }}"
+{{- end }}
+)
+
+var (
+	maxSearchTime = time.Duration(30 * time.Second)
+)
+
+// searchResult is a generic struct to hold the result of a search operation
+type searchResult[T any] struct {
+	result T
+	err    error
+}
+
+{{/* For each schema */}}
+{{- range $object := $.Objects }}
+// search{{ $object.Name  }} searches for {{ $object.Name  }} based on the query string looking for matches
+func search{{ $object.Name | toPlural }}(ctx context.Context, query string) ([]*generated.{{ $object.Name }}, error) {
+	return withTransactionalMutation(ctx).{{ $object.Name  }}.Query().Where(
+		{{ $object.Name  | toLower }}.Or(
+			{{- range $field := $object.Fields }}
+				{{ $object.Name | toLower }}.{{ $field }}Contains(query),        // search by {{ $field }}
+			{{- end }}
+		),
+	).All(ctx)
+}
+{{ end }}

@@ -50,6 +50,7 @@ data:
   DATUM_SERVER_ENABLEGRAPHEXTENSIONS: {{ .Values.datum.server.enableGraphExtensions | default true }}
   DATUM_ENTCONFIG_FLAGS_USELISTUSERSERVICE: {{ .Values.datum.entConfig.flags.useListUserService | default true }}
   DATUM_ENTCONFIG_FLAGS_USELISTOBJECTSERVICES: {{ .Values.datum.entConfig.flags.useListObjectServices | default false }}
+  DATUM_ENTCONFIG_ENTITYTYPES: {{ .Values.datum.entConfig.entityTypes }}
   DATUM_AUTH_ENABLED: {{ .Values.datum.auth.enabled | default true }}
   DATUM_AUTH_TOKEN_KID: {{ .Values.datum.auth.token.kid }}
   DATUM_AUTH_TOKEN_AUDIENCE: {{ .Values.datum.auth.token.audience | default "https://datum.net" }}

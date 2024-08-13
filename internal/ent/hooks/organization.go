@@ -62,6 +62,11 @@ func HookOrganization() ent.Hook {
 					return v, err
 				}
 
+				// create default entity types, if configured
+				if err := createEntityTypes(ctx, orgCreated.ID, mutation); err != nil {
+					return nil, err
+				}
+
 				// create the database, if the org has a dedicated db and geodetic is available
 				if orgCreated.DedicatedDb && mutation.Geodetic != nil {
 					settings, err := orgCreated.Setting(ctx)
@@ -171,6 +176,35 @@ func createOrgSettings(ctx context.Context, mutation *generated.OrganizationMuta
 
 		// add the org setting ID to the input
 		mutation.SetSettingID(orgSettingID)
+	}
+
+	return nil
+}
+
+// createEntityTypes creates the default entity types for a new org
+func createEntityTypes(ctx context.Context, orgID string, mutation *generated.OrganizationMutation) error {
+	if len(mutation.EntConfig.EntityTypes) == 0 {
+		return nil
+	}
+
+	// do not create entity types for personal orgs
+	personalOrg, _ := mutation.PersonalOrg()
+	if personalOrg {
+		return nil
+	}
+
+	builders := make([]*generated.EntityTypeCreate, 0, len(mutation.EntConfig.EntityTypes))
+	for _, entityType := range mutation.EntConfig.EntityTypes {
+		builders = append(builders, mutation.Client().EntityType.Create().
+			SetName(entityType).
+			SetOwnerID(orgID),
+		)
+	}
+
+	if err := mutation.Client().EntityType.CreateBulk(builders...).Exec(ctx); err != nil {
+		mutation.Logger.Errorw("error creating entity types", "error", err)
+
+		return err
 	}
 
 	return nil

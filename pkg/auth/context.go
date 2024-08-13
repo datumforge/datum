@@ -274,6 +274,27 @@ func GetAuthzSubjectType(ctx context.Context) string {
 	return subjectType
 }
 
+// SetOrganizationIDInAuthContext sets the organization ID in the auth context
+// this should only be used when creating a new organization and subsequent updates
+// need to happen in the context of the new organization
+func SetOrganizationIDInAuthContext(ctx context.Context, orgID string) error {
+	au, err := GetAuthenticatedUserContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	au.OrganizationID = orgID
+
+	ec, err := echocontext.EchoContextFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	SetAuthenticatedUserContext(ec, au)
+
+	return nil
+}
+
 // AddOrganizationIDToContext appends an authorized organization ID to the context.
 // This generally should not be used, as the authorized organization should be
 // determined by the claims or the token. This is only used in cases where the

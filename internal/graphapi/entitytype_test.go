@@ -116,19 +116,19 @@ func (suite *GraphTestSuite) TestQueryEntityTypes() {
 			name:            "happy path",
 			client:          suite.client.datum,
 			ctx:             reqCtx,
-			expectedResults: 2,
+			expectedResults: 3, // 1 is created in the setup
 		},
 		{
 			name:            "happy path, using api token",
 			client:          suite.client.datumWithAPIToken,
 			ctx:             context.Background(),
-			expectedResults: 2,
+			expectedResults: 3, // 1 is created in the setup
 		},
 		{
 			name:            "happy path, using pat",
 			client:          suite.client.datumWithPAT,
 			ctx:             context.Background(),
-			expectedResults: 2,
+			expectedResults: 3, // 1 is created in the setup
 		},
 		{
 			name:            "another user, no entities should be returned",

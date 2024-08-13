@@ -367,6 +367,19 @@ func (suite *GraphTestSuite) TestMutationCreateOrganization() {
 				}
 			}
 
+			// ensure entity types are created
+			newCtx, err := auth.NewTestContextWithOrgID(testUser.ID, resp.CreateOrganization.Organization.ID)
+			require.NoError(t, err)
+
+			et, err := suite.client.datum.GetEntityTypes(newCtx, &datumclient.EntityTypeWhereInput{
+				OwnerID: &resp.CreateOrganization.Organization.ID,
+			})
+			require.NoError(t, err)
+
+			require.Len(t, et.EntityTypes.Edges, 1)
+			assert.Equal(t, "vendor", et.EntityTypes.Edges[0].Node.Name)
+			assert.Equal(t, resp.CreateOrganization.Organization.ID, *et.EntityTypes.Edges[0].Node.OwnerID)
+
 			// cleanup org
 			(&OrganizationCleanup{client: suite.client, ID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx, t)
 		})

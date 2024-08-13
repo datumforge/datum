@@ -4,15 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-
-	"github.com/99designs/gqlgen/graphql"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
@@ -111,17 +108,6 @@ func (orgOwned OrgOwnerMixin) Hooks() []ent.Hook {
 
 				// set owner on create mutation
 				if m.Op() == ent.OpCreate {
-					// skip the hook if this is in the context of creating an organization
-					if graphql.HasOperationContext(ctx) {
-						gtx := graphql.GetOperationContext(ctx)
-						if gtx != nil {
-							// skip the hook if the operation is a create only
-							if strings.EqualFold(gtx.OperationName, "CreateOrganization") {
-								return next.Mutate(ctx, m)
-							}
-						}
-					}
-
 					orgID, err := auth.GetOrganizationIDFromContext(ctx)
 					if err != nil {
 						return nil, fmt.Errorf("failed to get organization id from context: %w", err)

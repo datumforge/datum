@@ -5,7 +5,14 @@ mutation CreateBulkCSVEntity($input: Upload!) {
       createdBy
       description
       displayName
-      entityType{
+      status
+      domains
+      notes {
+        text
+        updatedAt
+        updatedBy
+      }
+      entityType {
         name
       }
       id
@@ -25,7 +32,14 @@ mutation CreateBulkEntity($input: [CreateEntityInput!]) {
       createdBy
       description
       displayName
-      entityType{
+      status
+      domains
+      notes {
+        text
+        updatedAt
+        updatedBy
+      }
+      entityType {
         name
       }
       id
@@ -45,7 +59,14 @@ mutation CreateEntity($input: CreateEntityInput!) {
       createdBy
       description
       displayName
-      entityType{
+      status
+      domains
+      notes {
+        text
+        updatedAt
+        updatedBy
+      }
+      entityType {
         name
       }
       id
@@ -72,7 +93,14 @@ query GetAllEntities {
         createdBy
         description
         displayName
-        entityType{
+        status
+        domains
+        notes {
+          text
+          updatedAt
+          updatedBy
+        }
+        entityType {
           name
         }
         id
@@ -94,7 +122,14 @@ query GetEntities($where: EntityWhereInput) {
         createdBy
         description
         displayName
-        entityType{
+        status
+        domains
+        notes {
+          text
+          updatedAt
+          updatedBy
+        }
+        entityType {
           name
         }
         id
@@ -114,7 +149,14 @@ query GetEntityByID($entityId: ID!) {
     createdBy
     description
     displayName
-    entityType{
+    status
+    domains
+    notes {
+      text
+      updatedAt
+      updatedBy
+    }
+    entityType {
       name
     }
     id
@@ -142,7 +184,14 @@ mutation UpdateEntity($updateEntityId: ID!, $input: UpdateEntityInput!) {
       createdBy
       description
       displayName
-      entityType{
+      status
+      domains
+      notes {
+        text
+        updatedAt
+        updatedBy
+      }
+      entityType {
         name
       }
       id

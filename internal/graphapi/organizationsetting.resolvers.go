@@ -42,17 +42,22 @@ func (r *mutationResolver) CreateBulkCSVOrganizationSetting(ctx context.Context,
 
 // UpdateOrganizationSetting is the resolver for the updateOrganizationSetting field.
 func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id string, input generated.UpdateOrganizationSettingInput) (*OrganizationSettingUpdatePayload, error) {
-	organizationSetting, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "organizationsetting"}, r.logger)
 	}
 
-	organizationSetting, err = organizationSetting.Update().SetInput(input).Save(ctx)
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags).AppendDomains(input.AppendDomains)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "organizationsetting"}, r.logger)
 	}
 
-	return &OrganizationSettingUpdatePayload{OrganizationSetting: organizationSetting}, nil
+	return &OrganizationSettingUpdatePayload{
+		OrganizationSetting: res,
+	}, nil
 }
 
 // DeleteOrganizationSetting is the resolver for the deleteOrganizationSetting field.
@@ -72,10 +77,10 @@ func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id str
 
 // OrganizationSetting is the resolver for the organizationSetting field.
 func (r *queryResolver) OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error) {
-	org, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "organizationsetting"}, r.logger)
 	}
 
-	return org, nil
+	return res, nil
 }

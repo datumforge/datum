@@ -738,12 +738,16 @@ func (c *EntitlementPlanFeatureUpdateOne) SetInput(i UpdateEntitlementPlanFeatur
 // CreateEntityInput represents a mutation input for creating entities.
 type CreateEntityInput struct {
 	Tags         []string
-	Name         string
+	Name         *string
 	DisplayName  *string
 	Description  *string
+	Domains      []string
+	Status       *string
 	OwnerID      *string
 	ContactIDs   []string
 	DocumentIDs  []string
+	NoteIDs      []string
+	FileIDs      []string
 	EntityTypeID *string
 }
 
@@ -752,12 +756,20 @@ func (i *CreateEntityInput) Mutate(m *EntityMutation) {
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
-	m.SetName(i.Name)
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if v := i.Domains; v != nil {
+		m.SetDomains(v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
@@ -767,6 +779,12 @@ func (i *CreateEntityInput) Mutate(m *EntityMutation) {
 	}
 	if v := i.DocumentIDs; len(v) > 0 {
 		m.AddDocumentIDs(v...)
+	}
+	if v := i.NoteIDs; len(v) > 0 {
+		m.AddNoteIDs(v...)
+	}
+	if v := i.FileIDs; len(v) > 0 {
+		m.AddFileIDs(v...)
 	}
 	if v := i.EntityTypeID; v != nil {
 		m.SetEntityTypeID(*v)
@@ -784,10 +802,17 @@ type UpdateEntityInput struct {
 	ClearTags         bool
 	Tags              []string
 	AppendTags        []string
+	ClearName         bool
 	Name              *string
+	ClearDisplayName  bool
 	DisplayName       *string
 	ClearDescription  bool
 	Description       *string
+	ClearDomains      bool
+	Domains           []string
+	AppendDomains     []string
+	ClearStatus       bool
+	Status            *string
 	ClearOwner        bool
 	OwnerID           *string
 	ClearContacts     bool
@@ -796,6 +821,12 @@ type UpdateEntityInput struct {
 	ClearDocuments    bool
 	AddDocumentIDs    []string
 	RemoveDocumentIDs []string
+	ClearNotes        bool
+	AddNoteIDs        []string
+	RemoveNoteIDs     []string
+	ClearFiles        bool
+	AddFileIDs        []string
+	RemoveFileIDs     []string
 	ClearEntityType   bool
 	EntityTypeID      *string
 }
@@ -811,8 +842,14 @@ func (i *UpdateEntityInput) Mutate(m *EntityMutation) {
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
+	if i.ClearName {
+		m.ClearName()
+	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
+	}
+	if i.ClearDisplayName {
+		m.ClearDisplayName()
 	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
@@ -822,6 +859,21 @@ func (i *UpdateEntityInput) Mutate(m *EntityMutation) {
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if i.ClearDomains {
+		m.ClearDomains()
+	}
+	if v := i.Domains; v != nil {
+		m.SetDomains(v)
+	}
+	if i.AppendDomains != nil {
+		m.AppendDomains(i.Domains)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
 	}
 	if i.ClearOwner {
 		m.ClearOwner()
@@ -846,6 +898,24 @@ func (i *UpdateEntityInput) Mutate(m *EntityMutation) {
 	}
 	if v := i.RemoveDocumentIDs; len(v) > 0 {
 		m.RemoveDocumentIDs(v...)
+	}
+	if i.ClearNotes {
+		m.ClearNotes()
+	}
+	if v := i.AddNoteIDs; len(v) > 0 {
+		m.AddNoteIDs(v...)
+	}
+	if v := i.RemoveNoteIDs; len(v) > 0 {
+		m.RemoveNoteIDs(v...)
+	}
+	if i.ClearFiles {
+		m.ClearFiles()
+	}
+	if v := i.AddFileIDs; len(v) > 0 {
+		m.AddFileIDs(v...)
+	}
+	if v := i.RemoveFileIDs; len(v) > 0 {
+		m.RemoveFileIDs(v...)
 	}
 	if i.ClearEntityType {
 		m.ClearEntityType()
@@ -1403,6 +1473,7 @@ type CreateFileInput struct {
 	Annotation      *string
 	UserID          *string
 	OrganizationIDs []string
+	EntityIDs       []string
 	GroupIDs        []string
 }
 
@@ -1429,6 +1500,9 @@ func (i *CreateFileInput) Mutate(m *FileMutation) {
 	}
 	if v := i.OrganizationIDs; len(v) > 0 {
 		m.AddOrganizationIDs(v...)
+	}
+	if v := i.EntityIDs; len(v) > 0 {
+		m.AddEntityIDs(v...)
 	}
 	if v := i.GroupIDs; len(v) > 0 {
 		m.AddGroupIDs(v...)
@@ -1461,6 +1535,9 @@ type UpdateFileInput struct {
 	ClearOrganization     bool
 	AddOrganizationIDs    []string
 	RemoveOrganizationIDs []string
+	ClearEntity           bool
+	AddEntityIDs          []string
+	RemoveEntityIDs       []string
 	ClearGroup            bool
 	AddGroupIDs           []string
 	RemoveGroupIDs        []string
@@ -1521,6 +1598,15 @@ func (i *UpdateFileInput) Mutate(m *FileMutation) {
 	}
 	if v := i.RemoveOrganizationIDs; len(v) > 0 {
 		m.RemoveOrganizationIDs(v...)
+	}
+	if i.ClearEntity {
+		m.ClearEntity()
+	}
+	if v := i.AddEntityIDs; len(v) > 0 {
+		m.AddEntityIDs(v...)
+	}
+	if v := i.RemoveEntityIDs; len(v) > 0 {
+		m.RemoveEntityIDs(v...)
 	}
 	if i.ClearGroup {
 		m.ClearGroup()
@@ -2271,6 +2357,86 @@ func (c *InviteUpdateOne) SetInput(i UpdateInviteInput) *InviteUpdateOne {
 	return c
 }
 
+// CreateNoteInput represents a mutation input for creating notes.
+type CreateNoteInput struct {
+	Tags     []string
+	Text     string
+	OwnerID  *string
+	EntityID *string
+}
+
+// Mutate applies the CreateNoteInput on the NoteMutation builder.
+func (i *CreateNoteInput) Mutate(m *NoteMutation) {
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	m.SetText(i.Text)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if v := i.EntityID; v != nil {
+		m.SetEntityID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateNoteInput on the NoteCreate builder.
+func (c *NoteCreate) SetInput(i CreateNoteInput) *NoteCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateNoteInput represents a mutation input for updating notes.
+type UpdateNoteInput struct {
+	ClearTags   bool
+	Tags        []string
+	AppendTags  []string
+	Text        *string
+	ClearOwner  bool
+	OwnerID     *string
+	ClearEntity bool
+	EntityID    *string
+}
+
+// Mutate applies the UpdateNoteInput on the NoteMutation builder.
+func (i *UpdateNoteInput) Mutate(m *NoteMutation) {
+	if i.ClearTags {
+		m.ClearTags()
+	}
+	if v := i.Tags; v != nil {
+		m.SetTags(v)
+	}
+	if i.AppendTags != nil {
+		m.AppendTags(i.Tags)
+	}
+	if v := i.Text; v != nil {
+		m.SetText(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+	if i.ClearEntity {
+		m.ClearEntity()
+	}
+	if v := i.EntityID; v != nil {
+		m.SetEntityID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateNoteInput on the NoteUpdate builder.
+func (c *NoteUpdate) SetInput(i UpdateNoteInput) *NoteUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateNoteInput on the NoteUpdateOne builder.
+func (c *NoteUpdateOne) SetInput(i UpdateNoteInput) *NoteUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateOauthProviderInput represents a mutation input for creating oauthproviders.
 type CreateOauthProviderInput struct {
 	Tags         []string
@@ -2667,6 +2833,7 @@ type CreateOrganizationInput struct {
 	EntityIDs                  []string
 	EntitytypeIDs              []string
 	ContactIDs                 []string
+	NoteIDs                    []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -2759,6 +2926,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.ContactIDs; len(v) > 0 {
 		m.AddContactIDs(v...)
 	}
+	if v := i.NoteIDs; len(v) > 0 {
+		m.AddNoteIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -2843,6 +3013,9 @@ type UpdateOrganizationInput struct {
 	ClearContacts                    bool
 	AddContactIDs                    []string
 	RemoveContactIDs                 []string
+	ClearNotes                       bool
+	AddNoteIDs                       []string
+	RemoveNoteIDs                    []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -3068,6 +3241,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveContactIDs; len(v) > 0 {
 		m.RemoveContactIDs(v...)
+	}
+	if i.ClearNotes {
+		m.ClearNotes()
+	}
+	if v := i.AddNoteIDs; len(v) > 0 {
+		m.AddNoteIDs(v...)
+	}
+	if v := i.RemoveNoteIDs; len(v) > 0 {
+		m.RemoveNoteIDs(v...)
 	}
 }
 

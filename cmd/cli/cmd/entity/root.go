@@ -2,6 +2,7 @@ package datumentity
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -86,7 +87,7 @@ func jsonOutput(out any) error {
 // tableOutput prints the output in a table format
 func tableOutput(out []datumclient.Entity) {
 	// create a table writer
-	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "Name", "DisplayName", "Description", "EntityType")
+	writer := tables.NewTableWriter(cmd.OutOrStdout(), "ID", "Name", "DisplayName", "Description", "EntityType", "Status", "Domains")
 
 	for _, i := range out {
 		entityTypeName := ""
@@ -94,7 +95,7 @@ func tableOutput(out []datumclient.Entity) {
 			entityTypeName = i.EntityType.Name
 		}
 
-		writer.AddRow(i.ID, i.Name, i.DisplayName, *i.Description, entityTypeName)
+		writer.AddRow(i.ID, *i.Name, *i.DisplayName, *i.Description, entityTypeName, *i.Status, strings.Join(i.Domains, ", "))
 	}
 
 	writer.Render()

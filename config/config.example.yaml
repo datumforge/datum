@@ -78,6 +78,7 @@ email:
     sendGridApiKey: ""
     testing: true
 entConfig:
+    entityTypes: null
     flags:
         useListObjectServices: false
         useListUserService: true

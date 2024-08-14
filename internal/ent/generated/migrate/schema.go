@@ -488,9 +488,11 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "name", Type: field.TypeString, Size: 160},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+		{Name: "name", Type: field.TypeString, Nullable: true, Size: 160},
+		{Name: "display_name", Type: field.TypeString, Nullable: true, Size: 64},
 		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "domains", Type: field.TypeJSON, Nullable: true},
+		{Name: "status", Type: field.TypeString, Nullable: true, Default: "active"},
 		{Name: "entity_type_id", Type: field.TypeString, Nullable: true},
 		{Name: "entity_type_entities", Type: field.TypeString, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString, Nullable: true},
@@ -503,19 +505,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "entities_entity_types_entity_type",
-				Columns:    []*schema.Column{EntitiesColumns[12]},
+				Columns:    []*schema.Column{EntitiesColumns[14]},
 				RefColumns: []*schema.Column{EntityTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "entities_entity_types_entities",
-				Columns:    []*schema.Column{EntitiesColumns[13]},
+				Columns:    []*schema.Column{EntitiesColumns[15]},
 				RefColumns: []*schema.Column{EntityTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "entities_organizations_entities",
-				Columns:    []*schema.Column{EntitiesColumns[14]},
+				Columns:    []*schema.Column{EntitiesColumns[16]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -524,7 +526,7 @@ var (
 			{
 				Name:    "entity_name_owner_id",
 				Unique:  true,
-				Columns: []*schema.Column{EntitiesColumns[9], EntitiesColumns[14]},
+				Columns: []*schema.Column{EntitiesColumns[9], EntitiesColumns[16]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
@@ -546,10 +548,12 @@ var (
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString, Size: 160},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+		{Name: "name", Type: field.TypeString, Nullable: true, Size: 160},
+		{Name: "display_name", Type: field.TypeString, Nullable: true, Size: 64},
 		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "domains", Type: field.TypeJSON, Nullable: true},
 		{Name: "entity_type_id", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeString, Nullable: true, Default: "active"},
 	}
 	// EntityHistoryTable holds the schema information for the "entity_history" table.
 	EntityHistoryTable = &schema.Table{
@@ -1205,6 +1209,71 @@ var (
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
+			},
+		},
+	}
+	// NotesColumns holds the columns for the "notes" table.
+	NotesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString, Unique: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "text", Type: field.TypeString},
+		{Name: "entity_notes", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// NotesTable holds the schema information for the "notes" table.
+	NotesTable = &schema.Table{
+		Name:       "notes",
+		Columns:    NotesColumns,
+		PrimaryKey: []*schema.Column{NotesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "notes_entities_notes",
+				Columns:    []*schema.Column{NotesColumns[10]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "notes_organizations_notes",
+				Columns:    []*schema.Column{NotesColumns[11]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// NoteHistoryColumns holds the columns for the "note_history" table.
+	NoteHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "mapping_id", Type: field.TypeString},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "text", Type: field.TypeString},
+	}
+	// NoteHistoryTable holds the schema information for the "note_history" table.
+	NoteHistoryTable = &schema.Table{
+		Name:       "note_history",
+		Columns:    NoteHistoryColumns,
+		PrimaryKey: []*schema.Column{NoteHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "notehistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{NoteHistoryColumns[1]},
 			},
 		},
 	}
@@ -2182,6 +2251,31 @@ var (
 			},
 		},
 	}
+	// EntityFilesColumns holds the columns for the "entity_files" table.
+	EntityFilesColumns = []*schema.Column{
+		{Name: "entity_id", Type: field.TypeString},
+		{Name: "file_id", Type: field.TypeString},
+	}
+	// EntityFilesTable holds the schema information for the "entity_files" table.
+	EntityFilesTable = &schema.Table{
+		Name:       "entity_files",
+		Columns:    EntityFilesColumns,
+		PrimaryKey: []*schema.Column{EntityFilesColumns[0], EntityFilesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entity_files_entity_id",
+				Columns:    []*schema.Column{EntityFilesColumns[0]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "entity_files_file_id",
+				Columns:    []*schema.Column{EntityFilesColumns[1]},
+				RefColumns: []*schema.Column{FilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// FeatureEventsColumns holds the columns for the "feature_events" table.
 	FeatureEventsColumns = []*schema.Column{
 		{Name: "feature_id", Type: field.TypeString},
@@ -2717,6 +2811,8 @@ var (
 		IntegrationsTable,
 		IntegrationHistoryTable,
 		InvitesTable,
+		NotesTable,
+		NoteHistoryTable,
 		OauthProvidersTable,
 		OauthProviderHistoryTable,
 		OhAuthTooTokensTable,
@@ -2744,6 +2840,7 @@ var (
 		EntitlementPlanFeatureEventsTable,
 		EntityContactsTable,
 		EntityDocumentsTable,
+		EntityFilesTable,
 		FeatureEventsTable,
 		GroupEventsTable,
 		GroupFilesTable,
@@ -2838,6 +2935,11 @@ func init() {
 		Table: "integration_history",
 	}
 	InvitesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	NotesTable.ForeignKeys[0].RefTable = EntitiesTable
+	NotesTable.ForeignKeys[1].RefTable = OrganizationsTable
+	NoteHistoryTable.Annotation = &entsql.Annotation{
+		Table: "note_history",
+	}
 	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OauthProviderHistoryTable.Annotation = &entsql.Annotation{
 		Table: "oauth_provider_history",
@@ -2886,6 +2988,8 @@ func init() {
 	EntityContactsTable.ForeignKeys[1].RefTable = ContactsTable
 	EntityDocumentsTable.ForeignKeys[0].RefTable = EntitiesTable
 	EntityDocumentsTable.ForeignKeys[1].RefTable = DocumentDataTable
+	EntityFilesTable.ForeignKeys[0].RefTable = EntitiesTable
+	EntityFilesTable.ForeignKeys[1].RefTable = FilesTable
 	FeatureEventsTable.ForeignKeys[0].RefTable = FeaturesTable
 	FeatureEventsTable.ForeignKeys[1].RefTable = EventsTable
 	GroupEventsTable.ForeignKeys[0].RefTable = GroupsTable

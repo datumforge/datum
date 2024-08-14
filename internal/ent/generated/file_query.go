@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -30,11 +31,13 @@ type FileQuery struct {
 	predicates            []predicate.File
 	withUser              *UserQuery
 	withOrganization      *OrganizationQuery
+	withEntity            *EntityQuery
 	withGroup             *GroupQuery
 	withFKs               bool
 	modifiers             []func(*sql.Selector)
 	loadTotal             []func(context.Context, []*File) error
 	withNamedOrganization map[string]*OrganizationQuery
+	withNamedEntity       map[string]*EntityQuery
 	withNamedGroup        map[string]*GroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -116,6 +119,31 @@ func (fq *FileQuery) QueryOrganization() *OrganizationQuery {
 		schemaConfig := fq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OrganizationFiles
+		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntity chains the current query on the "entity" edge.
+func (fq *FileQuery) QueryEntity() *EntityQuery {
+	query := (&EntityClient{config: fq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, selector),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, file.EntityTable, file.EntityPrimaryKey...),
+		)
+		schemaConfig := fq.schemaConfig
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.EntityFiles
 		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -341,6 +369,7 @@ func (fq *FileQuery) Clone() *FileQuery {
 		predicates:       append([]predicate.File{}, fq.predicates...),
 		withUser:         fq.withUser.Clone(),
 		withOrganization: fq.withOrganization.Clone(),
+		withEntity:       fq.withEntity.Clone(),
 		withGroup:        fq.withGroup.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
@@ -367,6 +396,17 @@ func (fq *FileQuery) WithOrganization(opts ...func(*OrganizationQuery)) *FileQue
 		opt(query)
 	}
 	fq.withOrganization = query
+	return fq
+}
+
+// WithEntity tells the query-builder to eager-load the nodes that are connected to
+// the "entity" edge. The optional arguments are used to configure the query builder of the edge.
+func (fq *FileQuery) WithEntity(opts ...func(*EntityQuery)) *FileQuery {
+	query := (&EntityClient{config: fq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	fq.withEntity = query
 	return fq
 }
 
@@ -460,9 +500,10 @@ func (fq *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 		nodes       = []*File{}
 		withFKs     = fq.withFKs
 		_spec       = fq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			fq.withUser != nil,
 			fq.withOrganization != nil,
+			fq.withEntity != nil,
 			fq.withGroup != nil,
 		}
 	)
@@ -508,6 +549,13 @@ func (fq *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 			return nil, err
 		}
 	}
+	if query := fq.withEntity; query != nil {
+		if err := fq.loadEntity(ctx, query, nodes,
+			func(n *File) { n.Edges.Entity = []*Entity{} },
+			func(n *File, e *Entity) { n.Edges.Entity = append(n.Edges.Entity, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := fq.withGroup; query != nil {
 		if err := fq.loadGroup(ctx, query, nodes,
 			func(n *File) { n.Edges.Group = []*Group{} },
@@ -519,6 +567,13 @@ func (fq *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 		if err := fq.loadOrganization(ctx, query, nodes,
 			func(n *File) { n.appendNamedOrganization(name) },
 			func(n *File, e *Organization) { n.appendNamedOrganization(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range fq.withNamedEntity {
+		if err := fq.loadEntity(ctx, query, nodes,
+			func(n *File) { n.appendNamedEntity(name) },
+			func(n *File, e *Entity) { n.appendNamedEntity(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -624,6 +679,68 @@ func (fq *FileQuery) loadOrganization(ctx context.Context, query *OrganizationQu
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "organization" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (fq *FileQuery) loadEntity(ctx context.Context, query *EntityQuery, nodes []*File, init func(*File), assign func(*File, *Entity)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*File)
+	nids := make(map[string]map[*File]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(file.EntityTable)
+		joinT.Schema(fq.schemaConfig.EntityFiles)
+		s.Join(joinT).On(s.C(entity.FieldID), joinT.C(file.EntityPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(file.EntityPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(file.EntityPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*File]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Entity](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "entity" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
@@ -794,6 +911,20 @@ func (fq *FileQuery) WithNamedOrganization(name string, opts ...func(*Organizati
 		fq.withNamedOrganization = make(map[string]*OrganizationQuery)
 	}
 	fq.withNamedOrganization[name] = query
+	return fq
+}
+
+// WithNamedEntity tells the query-builder to eager-load the nodes that are connected to the "entity"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (fq *FileQuery) WithNamedEntity(name string, opts ...func(*EntityQuery)) *FileQuery {
+	query := (&EntityClient{config: fq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if fq.withNamedEntity == nil {
+		fq.withNamedEntity = make(map[string]*EntityQuery)
+	}
+	fq.withNamedEntity[name] = query
 	return fq
 }
 

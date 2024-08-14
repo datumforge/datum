@@ -1105,6 +1105,35 @@ func HasOrganizationWith(preds ...predicate.Organization) predicate.File {
 	})
 }
 
+// HasEntity applies the HasEdge predicate on the "entity" edge.
+func HasEntity() predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, EntityTable, EntityPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.EntityFiles
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntityWith applies the HasEdge predicate on the "entity" edge with a given conditions (other predicates).
+func HasEntityWith(preds ...predicate.Entity) predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := newEntityStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.EntityFiles
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasGroup applies the HasEdge predicate on the "group" edge.
 func HasGroup() predicate.File {
 	return predicate.File(func(s *sql.Selector) {

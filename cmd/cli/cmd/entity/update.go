@@ -28,7 +28,10 @@ func init() {
 	updateCmd.Flags().StringP("display-name", "s", "", "human friendly name of the entity")
 	updateCmd.Flags().StringP("type", "t", "", "type of the entity")
 	updateCmd.Flags().StringP("description", "d", "", "description of the entity")
-	updateCmd.Flags().StringSliceP("contacts", "c", []string{}, "contacts to associate with the entity")
+	updateCmd.Flags().StringSliceP("contacts", "c", []string{}, "contact IDs to associate with the entity")
+	updateCmd.Flags().StringSlice("domains", []string{}, "domains associated with the entity")
+	updateCmd.Flags().String("note", "", "add note about the entity")
+	updateCmd.Flags().String("status", "", "status of the entity")
 }
 
 // updateValidation validates the required fields for the command
@@ -62,8 +65,26 @@ func updateValidation(ctx context.Context) (id string, input datumclient.UpdateE
 		input.Description = &description
 	}
 
-	if len(datum.Config.Strings("contacts")) > 0 {
-		input.AddContactIDs = datum.Config.Strings("contacts")
+	contacts := datum.Config.Strings("contacts")
+	if len(contacts) > 0 {
+		input.AddContactIDs = contacts
+	}
+
+	domains := datum.Config.Strings("domains")
+	if len(domains) > 0 {
+		input.AppendDomains = domains
+	}
+
+	note := datum.Config.String("note")
+	if note != "" {
+		input.Note = &datumclient.CreateNoteInput{
+			Text: note,
+		}
+	}
+
+	status := datum.Config.String("status")
+	if status != "" {
+		input.Status = &status
 	}
 
 	return id, input, nil

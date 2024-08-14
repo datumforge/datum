@@ -169,7 +169,7 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 		{
 			name: "happy path, minimal input",
 			request: datumclient.CreateEntityInput{
-				Name: "fraser fir",
+				Name: lo.ToPtr("fraser fir"),
 			},
 			client:  suite.client.datum,
 			ctx:     reqCtx,
@@ -178,9 +178,15 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 		{
 			name: "happy path, all input",
 			request: datumclient.CreateEntityInput{
-				Name:        "mitb",
+				Name:        lo.ToPtr("mitb"),
 				DisplayName: lo.ToPtr("fraser fir"),
 				Description: lo.ToPtr("the pine trees of appalachia"),
+				Domains:     []string{"https://appalachiatrees.com"},
+				Status:      lo.ToPtr("Onboarding"),
+				Note: &datumclient.CreateNoteInput{
+					Text:    "matt is the best",
+					OwnerID: &testOrgID,
+				},
 			},
 			client:  suite.client.datum,
 			ctx:     reqCtx,
@@ -189,7 +195,7 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 		{
 			name: "happy path, using api token",
 			request: datumclient.CreateEntityInput{
-				Name: "douglas fir",
+				Name: lo.ToPtr("douglas fir"),
 			},
 			client:  suite.client.datumWithAPIToken,
 			ctx:     context.Background(),
@@ -198,7 +204,7 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 		{
 			name: "happy path, using pat",
 			request: datumclient.CreateEntityInput{
-				Name:    "blue spruce",
+				Name:    lo.ToPtr("blue spruce"),
 				OwnerID: &testOrgID,
 			},
 			client:  suite.client.datumWithPAT,
@@ -208,7 +214,7 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 		{
 			name: "do not create if not allowed",
 			request: datumclient.CreateEntityInput{
-				Name: "test-entity",
+				Name: lo.ToPtr("test-entity"),
 			},
 			client:      suite.client.datum,
 			ctx:         reqCtx,
@@ -216,24 +222,34 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 			expectedErr: "you are not authorized to perform this action: create on entity",
 		},
 		{
-			name: "missing required field, name",
+			name: "missing name, but display name provided",
 			request: datumclient.CreateEntityInput{
 				DisplayName: lo.ToPtr("fraser firs"),
 			},
-			client:      suite.client.datum,
-			ctx:         reqCtx,
-			allowed:     true,
-			expectedErr: "value is less than the required length",
+			client:  suite.client.datum,
+			ctx:     reqCtx,
+			allowed: true,
 		},
 		{
 			name: "name already exists",
 			request: datumclient.CreateEntityInput{
-				Name: "blue spruce",
+				Name: lo.ToPtr("blue spruce"),
 			},
 			client:      suite.client.datum,
 			ctx:         reqCtx,
 			allowed:     true,
 			expectedErr: "entity already exists",
+		},
+		{
+			name: "invalid domain(s)",
+			request: datumclient.CreateEntityInput{
+				Name:    lo.ToPtr("stone pines"),
+				Domains: []string{"appalachiatrees"},
+			},
+			client:      suite.client.datum,
+			ctx:         reqCtx,
+			allowed:     true,
+			expectedErr: "invalid or unparsable field: domains",
 		},
 	}
 
@@ -256,7 +272,19 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 
-			assert.Equal(t, tc.request.Name, resp.CreateEntity.Entity.Name)
+			// Name is set to the Display Name if not provided
+			if tc.request.Name == nil {
+				assert.Contains(t, *resp.CreateEntity.Entity.Name, *tc.request.DisplayName)
+			} else {
+				assert.Equal(t, *tc.request.Name, *resp.CreateEntity.Entity.Name)
+			}
+
+			// Display Name is set to the Name if not provided
+			if tc.request.DisplayName == nil {
+				assert.Equal(t, *tc.request.Name, *resp.CreateEntity.Entity.DisplayName)
+			} else {
+				assert.Equal(t, *tc.request.DisplayName, *resp.CreateEntity.Entity.DisplayName)
+			}
 
 			if tc.request.Description == nil {
 				assert.Empty(t, resp.CreateEntity.Entity.Description)
@@ -264,11 +292,20 @@ func (suite *GraphTestSuite) TestMutationCreateEntity() {
 				assert.Equal(t, *tc.request.Description, *resp.CreateEntity.Entity.Description)
 			}
 
-			// Display Name is set to the Name if not provided
-			if tc.request.DisplayName == nil {
-				assert.Equal(t, tc.request.Name, resp.CreateEntity.Entity.DisplayName)
+			if tc.request.Domains != nil {
+				assert.Equal(t, tc.request.Domains, resp.CreateEntity.Entity.Domains)
+			}
+
+			if tc.request.Status != nil {
+				assert.Equal(t, tc.request.Status, resp.CreateEntity.Entity.Status)
 			} else {
-				assert.Equal(t, *tc.request.DisplayName, resp.CreateEntity.Entity.DisplayName)
+				// default status is active
+				assert.Equal(t, "active", *resp.CreateEntity.Entity.Status)
+			}
+
+			if tc.request.Note != nil {
+				require.Len(t, resp.CreateEntity.Entity.Notes, 1)
+				assert.Equal(t, tc.request.Note.Text, resp.CreateEntity.Entity.Notes[0].Text)
 			}
 		})
 	}
@@ -282,6 +319,8 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 	require.NoError(t, err)
 
 	entity := (&EntityBuilder{client: suite.client}).MustNew(reqCtx, t)
+	numNotes := 0
+	numDomains := 0
 
 	testCases := []struct {
 		name        string
@@ -295,6 +334,9 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 			name: "happy path, update display name",
 			request: datumclient.UpdateEntityInput{
 				DisplayName: lo.ToPtr("blue spruce"),
+				Note: &datumclient.CreateNoteInput{
+					Text: "the pine tree with blue-green colored needles",
+				},
 			},
 			client:  suite.client.datum,
 			ctx:     reqCtx,
@@ -310,12 +352,25 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 			allowed: true,
 		},
 		{
-			name: "update description again using personal access token",
+			name: "update notes, domains using personal access token",
 			request: datumclient.UpdateEntityInput{
-				Description: lo.ToPtr("a pine tree with blue-green colored needles"),
+				Note: &datumclient.CreateNoteInput{
+					Text: "the pine tree with blue-green colored needles",
+				},
+				Domains: []string{"https://appalachiatrees.com"},
 			},
 			client:  suite.client.datumWithPAT,
 			ctx:     context.Background(),
+			allowed: true,
+		},
+		{
+			name: "update status and domain",
+			request: datumclient.UpdateEntityInput{
+				Status:        lo.ToPtr("Onboarding"),
+				AppendDomains: []string{"example.com"},
+			},
+			client:  suite.client.datum,
+			ctx:     reqCtx,
 			allowed: true,
 		},
 		{
@@ -354,7 +409,29 @@ func (suite *GraphTestSuite) TestMutationUpdateEntity() {
 			}
 
 			if tc.request.DisplayName != nil {
-				assert.Equal(t, *tc.request.DisplayName, resp.UpdateEntity.Entity.DisplayName)
+				assert.Equal(t, *tc.request.DisplayName, *resp.UpdateEntity.Entity.DisplayName)
+			}
+
+			if tc.request.Status != nil {
+				assert.Equal(t, *tc.request.Status, *resp.UpdateEntity.Entity.Status)
+			}
+
+			if tc.request.Domains != nil {
+				numDomains++
+				assert.Contains(t, resp.UpdateEntity.Entity.Domains, tc.request.Domains[0])
+				assert.Len(t, resp.UpdateEntity.Entity.Domains, numDomains)
+			}
+
+			if tc.request.AppendDomains != nil {
+				numDomains++
+				assert.Contains(t, resp.UpdateEntity.Entity.Domains, tc.request.AppendDomains[0])
+				assert.Len(t, resp.UpdateEntity.Entity.Domains, numDomains)
+			}
+
+			if tc.request.Note != nil {
+				numNotes++
+				require.Len(t, resp.UpdateEntity.Entity.Notes, numNotes)
+				assert.Equal(t, tc.request.Note.Text, resp.UpdateEntity.Entity.Notes[0].Text)
 			}
 		})
 	}

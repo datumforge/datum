@@ -224,6 +224,30 @@ func (e *Entity) Documents(ctx context.Context) (result []*DocumentData, err err
 	return result, err
 }
 
+func (e *Entity) Notes(ctx context.Context) (result []*Note, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = e.NamedNotes(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = e.Edges.NotesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = e.QueryNotes().All(ctx)
+	}
+	return result, err
+}
+
+func (e *Entity) Files(ctx context.Context) (result []*File, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = e.NamedFiles(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = e.Edges.FilesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = e.QueryFiles().All(ctx)
+	}
+	return result, err
+}
+
 func (e *Entity) EntityType(ctx context.Context) (*EntityType, error) {
 	result, err := e.Edges.EntityTypeOrErr()
 	if IsNotLoaded(err) {
@@ -508,6 +532,18 @@ func (f *File) Organization(ctx context.Context) (result []*Organization, err er
 	return result, err
 }
 
+func (f *File) Entity(ctx context.Context) (result []*Entity, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = f.NamedEntity(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = f.Edges.EntityOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = f.QueryEntity().All(ctx)
+	}
+	return result, err
+}
+
 func (f *File) Group(ctx context.Context) (result []*Group, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = f.NamedGroup(graphql.GetFieldContext(ctx).Field.Alias)
@@ -742,6 +778,22 @@ func (i *Invite) Events(ctx context.Context) (result []*Event, err error) {
 		result, err = i.QueryEvents().All(ctx)
 	}
 	return result, err
+}
+
+func (n *Note) Owner(ctx context.Context) (*Organization, error) {
+	result, err := n.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = n.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (n *Note) Entity(ctx context.Context) (*Entity, error) {
+	result, err := n.Edges.EntityOrErr()
+	if IsNotLoaded(err) {
+		result, err = n.QueryEntity().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (op *OauthProvider) Owner(ctx context.Context) (*Organization, error) {
@@ -1101,6 +1153,18 @@ func (o *Organization) Contacts(ctx context.Context) (result []*Contact, err err
 	}
 	if IsNotLoaded(err) {
 		result, err = o.QueryContacts().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Notes(ctx context.Context) (result []*Note, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedNotes(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.NotesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryNotes().All(ctx)
 	}
 	return result, err
 }

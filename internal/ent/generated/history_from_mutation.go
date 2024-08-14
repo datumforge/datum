@@ -1282,8 +1282,16 @@ func (m *EntityMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetDescription(description)
 	}
 
+	if domains, exists := m.Domains(); exists {
+		create = create.SetDomains(domains)
+	}
+
 	if entityTypeID, exists := m.EntityTypeID(); exists {
 		create = create.SetEntityTypeID(entityTypeID)
+	}
+
+	if status, exists := m.Status(); exists {
+		create = create.SetStatus(status)
 	}
 
 	_, err := create.Save(ctx)
@@ -1388,10 +1396,22 @@ func (m *EntityMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 			create = create.SetDescription(entity.Description)
 		}
 
+		if domains, exists := m.Domains(); exists {
+			create = create.SetDomains(domains)
+		} else {
+			create = create.SetDomains(entity.Domains)
+		}
+
 		if entityTypeID, exists := m.EntityTypeID(); exists {
 			create = create.SetEntityTypeID(entityTypeID)
 		} else {
 			create = create.SetEntityTypeID(entity.EntityTypeID)
+		}
+
+		if status, exists := m.Status(); exists {
+			create = create.SetStatus(status)
+		} else {
+			create = create.SetStatus(entity.Status)
 		}
 
 		if _, err := create.Save(ctx); err != nil {
@@ -1438,7 +1458,9 @@ func (m *EntityMutation) CreateHistoryFromDelete(ctx context.Context) error {
 			SetName(entity.Name).
 			SetDisplayName(entity.DisplayName).
 			SetDescription(entity.Description).
+			SetDomains(entity.Domains).
 			SetEntityTypeID(entity.EntityTypeID).
+			SetStatus(entity.Status).
 			Save(ctx)
 		if err != nil {
 			return err
@@ -3423,6 +3445,202 @@ func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error
 			SetName(integration.Name).
 			SetDescription(integration.Description).
 			SetKind(integration.Kind).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *NoteMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.NoteHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if mappingID, exists := m.MappingID(); exists {
+		create = create.SetMappingID(mappingID)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if text, exists := m.Text(); exists {
+		create = create.SetText(text)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *NoteMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		note, err := client.Note.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.NoteHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(note.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(note.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(note.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(note.UpdatedBy)
+		}
+
+		if mappingID, exists := m.MappingID(); exists {
+			create = create.SetMappingID(mappingID)
+		} else {
+			create = create.SetMappingID(note.MappingID)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(note.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(note.DeletedBy)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(note.Tags)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(note.OwnerID)
+		}
+
+		if text, exists := m.Text(); exists {
+			create = create.SetText(text)
+		} else {
+			create = create.SetText(note.Text)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *NoteMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		note, err := client.Note.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.NoteHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(note.CreatedAt).
+			SetUpdatedAt(note.UpdatedAt).
+			SetCreatedBy(note.CreatedBy).
+			SetUpdatedBy(note.UpdatedBy).
+			SetMappingID(note.MappingID).
+			SetDeletedAt(note.DeletedAt).
+			SetDeletedBy(note.DeletedBy).
+			SetTags(note.Tags).
+			SetOwnerID(note.OwnerID).
+			SetText(note.Text).
 			Save(ctx)
 		if err != nil {
 			return err

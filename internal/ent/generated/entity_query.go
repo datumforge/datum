@@ -17,6 +17,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/file"
+	"github.com/datumforge/datum/internal/ent/generated/note"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
@@ -33,12 +35,16 @@ type EntityQuery struct {
 	withOwner          *OrganizationQuery
 	withContacts       *ContactQuery
 	withDocuments      *DocumentDataQuery
+	withNotes          *NoteQuery
+	withFiles          *FileQuery
 	withEntityType     *EntityTypeQuery
 	withFKs            bool
 	modifiers          []func(*sql.Selector)
 	loadTotal          []func(context.Context, []*Entity) error
 	withNamedContacts  map[string]*ContactQuery
 	withNamedDocuments map[string]*DocumentDataQuery
+	withNamedNotes     map[string]*NoteQuery
+	withNamedFiles     map[string]*FileQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -144,6 +150,56 @@ func (eq *EntityQuery) QueryDocuments() *DocumentDataQuery {
 		schemaConfig := eq.schemaConfig
 		step.To.Schema = schemaConfig.DocumentData
 		step.Edge.Schema = schemaConfig.EntityDocuments
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryNotes chains the current query on the "notes" edge.
+func (eq *EntityQuery) QueryNotes() *NoteQuery {
+	query := (&NoteClient{config: eq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, selector),
+			sqlgraph.To(note.Table, note.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, entity.NotesTable, entity.NotesColumn),
+		)
+		schemaConfig := eq.schemaConfig
+		step.To.Schema = schemaConfig.Note
+		step.Edge.Schema = schemaConfig.Note
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFiles chains the current query on the "files" edge.
+func (eq *EntityQuery) QueryFiles() *FileQuery {
+	query := (&FileClient{config: eq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, selector),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, entity.FilesTable, entity.FilesPrimaryKey...),
+		)
+		schemaConfig := eq.schemaConfig
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.EntityFiles
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -370,6 +426,8 @@ func (eq *EntityQuery) Clone() *EntityQuery {
 		withOwner:      eq.withOwner.Clone(),
 		withContacts:   eq.withContacts.Clone(),
 		withDocuments:  eq.withDocuments.Clone(),
+		withNotes:      eq.withNotes.Clone(),
+		withFiles:      eq.withFiles.Clone(),
 		withEntityType: eq.withEntityType.Clone(),
 		// clone intermediate query.
 		sql:  eq.sql.Clone(),
@@ -407,6 +465,28 @@ func (eq *EntityQuery) WithDocuments(opts ...func(*DocumentDataQuery)) *EntityQu
 		opt(query)
 	}
 	eq.withDocuments = query
+	return eq
+}
+
+// WithNotes tells the query-builder to eager-load the nodes that are connected to
+// the "notes" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EntityQuery) WithNotes(opts ...func(*NoteQuery)) *EntityQuery {
+	query := (&NoteClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withNotes = query
+	return eq
+}
+
+// WithFiles tells the query-builder to eager-load the nodes that are connected to
+// the "files" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EntityQuery) WithFiles(opts ...func(*FileQuery)) *EntityQuery {
+	query := (&FileClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withFiles = query
 	return eq
 }
 
@@ -506,10 +586,12 @@ func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 		nodes       = []*Entity{}
 		withFKs     = eq.withFKs
 		_spec       = eq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [6]bool{
 			eq.withOwner != nil,
 			eq.withContacts != nil,
 			eq.withDocuments != nil,
+			eq.withNotes != nil,
+			eq.withFiles != nil,
 			eq.withEntityType != nil,
 		}
 	)
@@ -559,6 +641,20 @@ func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 			return nil, err
 		}
 	}
+	if query := eq.withNotes; query != nil {
+		if err := eq.loadNotes(ctx, query, nodes,
+			func(n *Entity) { n.Edges.Notes = []*Note{} },
+			func(n *Entity, e *Note) { n.Edges.Notes = append(n.Edges.Notes, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := eq.withFiles; query != nil {
+		if err := eq.loadFiles(ctx, query, nodes,
+			func(n *Entity) { n.Edges.Files = []*File{} },
+			func(n *Entity, e *File) { n.Edges.Files = append(n.Edges.Files, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := eq.withEntityType; query != nil {
 		if err := eq.loadEntityType(ctx, query, nodes, nil,
 			func(n *Entity, e *EntityType) { n.Edges.EntityType = e }); err != nil {
@@ -576,6 +672,20 @@ func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 		if err := eq.loadDocuments(ctx, query, nodes,
 			func(n *Entity) { n.appendNamedDocuments(name) },
 			func(n *Entity, e *DocumentData) { n.appendNamedDocuments(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range eq.withNamedNotes {
+		if err := eq.loadNotes(ctx, query, nodes,
+			func(n *Entity) { n.appendNamedNotes(name) },
+			func(n *Entity, e *Note) { n.appendNamedNotes(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range eq.withNamedFiles {
+		if err := eq.loadFiles(ctx, query, nodes,
+			func(n *Entity) { n.appendNamedFiles(name) },
+			func(n *Entity, e *File) { n.appendNamedFiles(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -740,6 +850,99 @@ func (eq *EntityQuery) loadDocuments(ctx context.Context, query *DocumentDataQue
 	}
 	return nil
 }
+func (eq *EntityQuery) loadNotes(ctx context.Context, query *NoteQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *Note)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Entity)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(entity.NotesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.entity_notes
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "entity_notes" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "entity_notes" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (eq *EntityQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *File)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Entity)
+	nids := make(map[string]map[*Entity]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(entity.FilesTable)
+		joinT.Schema(eq.schemaConfig.EntityFiles)
+		s.Join(joinT).On(s.C(file.FieldID), joinT.C(entity.FilesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(entity.FilesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(entity.FilesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Entity]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*File](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "files" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
 func (eq *EntityQuery) loadEntityType(ctx context.Context, query *EntityTypeQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *EntityType)) error {
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Entity)
@@ -890,6 +1093,34 @@ func (eq *EntityQuery) WithNamedDocuments(name string, opts ...func(*DocumentDat
 		eq.withNamedDocuments = make(map[string]*DocumentDataQuery)
 	}
 	eq.withNamedDocuments[name] = query
+	return eq
+}
+
+// WithNamedNotes tells the query-builder to eager-load the nodes that are connected to the "notes"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (eq *EntityQuery) WithNamedNotes(name string, opts ...func(*NoteQuery)) *EntityQuery {
+	query := (&NoteClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if eq.withNamedNotes == nil {
+		eq.withNamedNotes = make(map[string]*NoteQuery)
+	}
+	eq.withNamedNotes[name] = query
+	return eq
+}
+
+// WithNamedFiles tells the query-builder to eager-load the nodes that are connected to the "files"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (eq *EntityQuery) WithNamedFiles(name string, opts ...func(*FileQuery)) *EntityQuery {
+	query := (&FileClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if eq.withNamedFiles == nil {
+		eq.withNamedFiles = make(map[string]*FileQuery)
+	}
+	eq.withNamedFiles[name] = query
 	return eq
 }
 

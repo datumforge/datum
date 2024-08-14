@@ -2,24 +2,37 @@ package hooks
 
 import (
 	"context"
+	"fmt"
 
 	"entgo.io/ent"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 // HookEntityCreate runs on entity mutations to set default values that are not provided
 func HookEntityCreate() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.EntityFunc(func(ctx context.Context, mutation *generated.EntityMutation) (generated.Value, error) {
-			// set the display name if its not set
-			if name, ok := mutation.Name(); ok {
-				displayName, _ := mutation.DisplayName()
+			// require either a display name or a name
+			displayName, _ := mutation.DisplayName()
+			name, _ := mutation.Name()
 
-				if displayName == "" {
-					mutation.SetDisplayName(name)
-				}
+			// exit early if we have no name
+			if displayName == "" && name == "" {
+				return nil, ErrMissingRequiredName
+			}
+
+			// set display name based on name if it isn't set
+			if displayName == "" {
+				mutation.SetDisplayName(name)
+			}
+
+			// set unique name based on display name if it isn't set
+			if name == "" {
+				uniqueName := fmt.Sprintf("%s-%s", displayName, ulids.New().String())
+				mutation.SetName(uniqueName)
 			}
 
 			return next.Mutate(ctx, mutation)

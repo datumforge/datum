@@ -405,6 +405,30 @@ func (f InviteFunc) Mutate(ctx context.Context, m generated.Mutation) (generated
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.InviteMutation", m)
 }
 
+// The NoteFunc type is an adapter to allow the use of ordinary
+// function as Note mutator.
+type NoteFunc func(context.Context, *generated.NoteMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NoteFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.NoteMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.NoteMutation", m)
+}
+
+// The NoteHistoryFunc type is an adapter to allow the use of ordinary
+// function as NoteHistory mutator.
+type NoteHistoryFunc func(context.Context, *generated.NoteHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NoteHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.NoteHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.NoteHistoryMutation", m)
+}
+
 // The OauthProviderFunc type is an adapter to allow the use of ordinary
 // function as OauthProvider mutator.
 type OauthProviderFunc func(context.Context, *generated.OauthProviderMutation) (generated.Value, error)

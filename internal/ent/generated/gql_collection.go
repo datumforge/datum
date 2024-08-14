@@ -42,6 +42,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
+	"github.com/datumforge/datum/internal/ent/generated/notehistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
@@ -1863,6 +1865,32 @@ func (e *EntityQuery) collectField(ctx context.Context, oneNode bool, opCtx *gra
 				*wq = *query
 			})
 
+		case "notes":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&NoteClient{config: e.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, noteImplementors)...); err != nil {
+				return err
+			}
+			e.WithNamedNotes(alias, func(wq *NoteQuery) {
+				*wq = *query
+			})
+
+		case "files":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&FileClient{config: e.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, fileImplementors)...); err != nil {
+				return err
+			}
+			e.WithNamedFiles(alias, func(wq *FileQuery) {
+				*wq = *query
+			})
+
 		case "entityType":
 			var (
 				alias = field.Alias
@@ -1932,10 +1960,20 @@ func (e *EntityQuery) collectField(ctx context.Context, oneNode bool, opCtx *gra
 				selectedFields = append(selectedFields, entity.FieldDescription)
 				fieldSeen[entity.FieldDescription] = struct{}{}
 			}
+		case "domains":
+			if _, ok := fieldSeen[entity.FieldDomains]; !ok {
+				selectedFields = append(selectedFields, entity.FieldDomains)
+				fieldSeen[entity.FieldDomains] = struct{}{}
+			}
 		case "entityTypeID":
 			if _, ok := fieldSeen[entity.FieldEntityTypeID]; !ok {
 				selectedFields = append(selectedFields, entity.FieldEntityTypeID)
 				fieldSeen[entity.FieldEntityTypeID] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[entity.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, entity.FieldStatus)
+				fieldSeen[entity.FieldStatus] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -2091,10 +2129,20 @@ func (eh *EntityHistoryQuery) collectField(ctx context.Context, oneNode bool, op
 				selectedFields = append(selectedFields, entityhistory.FieldDescription)
 				fieldSeen[entityhistory.FieldDescription] = struct{}{}
 			}
+		case "domains":
+			if _, ok := fieldSeen[entityhistory.FieldDomains]; !ok {
+				selectedFields = append(selectedFields, entityhistory.FieldDomains)
+				fieldSeen[entityhistory.FieldDomains] = struct{}{}
+			}
 		case "entityTypeID":
 			if _, ok := fieldSeen[entityhistory.FieldEntityTypeID]; !ok {
 				selectedFields = append(selectedFields, entityhistory.FieldEntityTypeID)
 				fieldSeen[entityhistory.FieldEntityTypeID] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[entityhistory.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, entityhistory.FieldStatus)
+				fieldSeen[entityhistory.FieldStatus] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -3263,6 +3311,19 @@ func (f *FileQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 				return err
 			}
 			f.WithNamedOrganization(alias, func(wq *OrganizationQuery) {
+				*wq = *query
+			})
+
+		case "entity":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntityClient{config: f.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entityImplementors)...); err != nil {
+				return err
+			}
+			f.WithNamedEntity(alias, func(wq *EntityQuery) {
 				*wq = *query
 			})
 
@@ -5324,6 +5385,261 @@ func newInvitePaginateArgs(rv map[string]any) *invitePaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (n *NoteQuery) CollectFields(ctx context.Context, satisfies ...string) (*NoteQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return n, nil
+	}
+	if err := n.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return n, nil
+}
+
+func (n *NoteQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(note.Columns))
+		selectedFields = []string{note.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: n.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+				return err
+			}
+			n.withOwner = query
+			if _, ok := fieldSeen[note.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, note.FieldOwnerID)
+				fieldSeen[note.FieldOwnerID] = struct{}{}
+			}
+
+		case "entity":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntityClient{config: n.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, entityImplementors)...); err != nil {
+				return err
+			}
+			n.withEntity = query
+		case "createdAt":
+			if _, ok := fieldSeen[note.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, note.FieldCreatedAt)
+				fieldSeen[note.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[note.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, note.FieldUpdatedAt)
+				fieldSeen[note.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[note.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, note.FieldCreatedBy)
+				fieldSeen[note.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[note.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, note.FieldUpdatedBy)
+				fieldSeen[note.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[note.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, note.FieldDeletedAt)
+				fieldSeen[note.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[note.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, note.FieldDeletedBy)
+				fieldSeen[note.FieldDeletedBy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[note.FieldTags]; !ok {
+				selectedFields = append(selectedFields, note.FieldTags)
+				fieldSeen[note.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[note.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, note.FieldOwnerID)
+				fieldSeen[note.FieldOwnerID] = struct{}{}
+			}
+		case "text":
+			if _, ok := fieldSeen[note.FieldText]; !ok {
+				selectedFields = append(selectedFields, note.FieldText)
+				fieldSeen[note.FieldText] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		n.Select(selectedFields...)
+	}
+	return nil
+}
+
+type notePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []NotePaginateOption
+}
+
+func newNotePaginateArgs(rv map[string]any) *notePaginateArgs {
+	args := &notePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*NoteWhereInput); ok {
+		args.opts = append(args.opts, WithNoteFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (nh *NoteHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*NoteHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return nh, nil
+	}
+	if err := nh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return nh, nil
+}
+
+func (nh *NoteHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(notehistory.Columns))
+		selectedFields = []string{notehistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[notehistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldHistoryTime)
+				fieldSeen[notehistory.FieldHistoryTime] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[notehistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldRef)
+				fieldSeen[notehistory.FieldRef] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[notehistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldOperation)
+				fieldSeen[notehistory.FieldOperation] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[notehistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldCreatedAt)
+				fieldSeen[notehistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[notehistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldUpdatedAt)
+				fieldSeen[notehistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[notehistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldCreatedBy)
+				fieldSeen[notehistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[notehistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldUpdatedBy)
+				fieldSeen[notehistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[notehistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldDeletedAt)
+				fieldSeen[notehistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[notehistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldDeletedBy)
+				fieldSeen[notehistory.FieldDeletedBy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[notehistory.FieldTags]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldTags)
+				fieldSeen[notehistory.FieldTags] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[notehistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldOwnerID)
+				fieldSeen[notehistory.FieldOwnerID] = struct{}{}
+			}
+		case "text":
+			if _, ok := fieldSeen[notehistory.FieldText]; !ok {
+				selectedFields = append(selectedFields, notehistory.FieldText)
+				fieldSeen[notehistory.FieldText] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		nh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type notehistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []NoteHistoryPaginateOption
+}
+
+func newNoteHistoryPaginateArgs(rv map[string]any) *notehistoryPaginateArgs {
+	args := &notehistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*NoteHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithNoteHistoryFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (op *OauthProviderQuery) CollectFields(ctx context.Context, satisfies ...string) (*OauthProviderQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -6492,6 +6808,19 @@ func (o *OrganizationQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			o.WithNamedContacts(alias, func(wq *ContactQuery) {
+				*wq = *query
+			})
+
+		case "notes":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&NoteClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, noteImplementors)...); err != nil {
+				return err
+			}
+			o.WithNamedNotes(alias, func(wq *NoteQuery) {
 				*wq = *query
 			})
 

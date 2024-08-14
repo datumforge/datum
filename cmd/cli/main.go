@@ -38,6 +38,8 @@ import (
 	// history commands
 	_ "github.com/datumforge/datum/cmd/cli/cmd/documentdatahistory"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/entitlementhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/entityhistory"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/entitytypehistory"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/eventhistory"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/featurehistory"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/filehistory"

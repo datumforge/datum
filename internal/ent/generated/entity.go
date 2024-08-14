@@ -44,8 +44,12 @@ type Entity struct {
 	DisplayName string `json:"display_name,omitempty"`
 	// An optional description of the entity
 	Description string `json:"description,omitempty"`
+	// domains associated with the entity
+	Domains []string `json:"domains,omitempty"`
 	// The type of the entity
 	EntityTypeID string `json:"entity_type_id,omitempty"`
+	// status of the entity
+	Status string `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntityQuery when eager-loading is set.
 	Edges                EntityEdges `json:"edges"`
@@ -61,16 +65,22 @@ type EntityEdges struct {
 	Contacts []*Contact `json:"contacts,omitempty"`
 	// Documents holds the value of the documents edge.
 	Documents []*DocumentData `json:"documents,omitempty"`
+	// Notes holds the value of the notes edge.
+	Notes []*Note `json:"notes,omitempty"`
+	// Files holds the value of the files edge.
+	Files []*File `json:"files,omitempty"`
 	// EntityType holds the value of the entity_type edge.
 	EntityType *EntityType `json:"entity_type,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [6]map[string]int
 
 	namedContacts  map[string][]*Contact
 	namedDocuments map[string][]*DocumentData
+	namedNotes     map[string][]*Note
+	namedFiles     map[string][]*File
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -102,12 +112,30 @@ func (e EntityEdges) DocumentsOrErr() ([]*DocumentData, error) {
 	return nil, &NotLoadedError{edge: "documents"}
 }
 
+// NotesOrErr returns the Notes value or an error if the edge
+// was not loaded in eager-loading.
+func (e EntityEdges) NotesOrErr() ([]*Note, error) {
+	if e.loadedTypes[3] {
+		return e.Notes, nil
+	}
+	return nil, &NotLoadedError{edge: "notes"}
+}
+
+// FilesOrErr returns the Files value or an error if the edge
+// was not loaded in eager-loading.
+func (e EntityEdges) FilesOrErr() ([]*File, error) {
+	if e.loadedTypes[4] {
+		return e.Files, nil
+	}
+	return nil, &NotLoadedError{edge: "files"}
+}
+
 // EntityTypeOrErr returns the EntityType value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e EntityEdges) EntityTypeOrErr() (*EntityType, error) {
 	if e.EntityType != nil {
 		return e.EntityType, nil
-	} else if e.loadedTypes[3] {
+	} else if e.loadedTypes[5] {
 		return nil, &NotFoundError{label: entitytype.Label}
 	}
 	return nil, &NotLoadedError{edge: "entity_type"}
@@ -118,9 +146,9 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entity.FieldTags:
+		case entity.FieldTags, entity.FieldDomains:
 			values[i] = new([]byte)
-		case entity.FieldID, entity.FieldCreatedBy, entity.FieldUpdatedBy, entity.FieldMappingID, entity.FieldDeletedBy, entity.FieldOwnerID, entity.FieldName, entity.FieldDisplayName, entity.FieldDescription, entity.FieldEntityTypeID:
+		case entity.FieldID, entity.FieldCreatedBy, entity.FieldUpdatedBy, entity.FieldMappingID, entity.FieldDeletedBy, entity.FieldOwnerID, entity.FieldName, entity.FieldDisplayName, entity.FieldDescription, entity.FieldEntityTypeID, entity.FieldStatus:
 			values[i] = new(sql.NullString)
 		case entity.FieldCreatedAt, entity.FieldUpdatedAt, entity.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -221,11 +249,25 @@ func (e *Entity) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.Description = value.String
 			}
+		case entity.FieldDomains:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field domains", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &e.Domains); err != nil {
+					return fmt.Errorf("unmarshal field domains: %w", err)
+				}
+			}
 		case entity.FieldEntityTypeID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field entity_type_id", values[i])
 			} else if value.Valid {
 				e.EntityTypeID = value.String
+			}
+		case entity.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				e.Status = value.String
 			}
 		case entity.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -260,6 +302,16 @@ func (e *Entity) QueryContacts() *ContactQuery {
 // QueryDocuments queries the "documents" edge of the Entity entity.
 func (e *Entity) QueryDocuments() *DocumentDataQuery {
 	return NewEntityClient(e.config).QueryDocuments(e)
+}
+
+// QueryNotes queries the "notes" edge of the Entity entity.
+func (e *Entity) QueryNotes() *NoteQuery {
+	return NewEntityClient(e.config).QueryNotes(e)
+}
+
+// QueryFiles queries the "files" edge of the Entity entity.
+func (e *Entity) QueryFiles() *FileQuery {
+	return NewEntityClient(e.config).QueryFiles(e)
 }
 
 // QueryEntityType queries the "entity_type" edge of the Entity entity.
@@ -326,8 +378,14 @@ func (e *Entity) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(e.Description)
 	builder.WriteString(", ")
+	builder.WriteString("domains=")
+	builder.WriteString(fmt.Sprintf("%v", e.Domains))
+	builder.WriteString(", ")
 	builder.WriteString("entity_type_id=")
 	builder.WriteString(e.EntityTypeID)
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(e.Status)
 	builder.WriteByte(')')
 	return builder.String()
 }
@@ -377,6 +435,54 @@ func (e *Entity) appendNamedDocuments(name string, edges ...*DocumentData) {
 		e.Edges.namedDocuments[name] = []*DocumentData{}
 	} else {
 		e.Edges.namedDocuments[name] = append(e.Edges.namedDocuments[name], edges...)
+	}
+}
+
+// NamedNotes returns the Notes named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (e *Entity) NamedNotes(name string) ([]*Note, error) {
+	if e.Edges.namedNotes == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := e.Edges.namedNotes[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (e *Entity) appendNamedNotes(name string, edges ...*Note) {
+	if e.Edges.namedNotes == nil {
+		e.Edges.namedNotes = make(map[string][]*Note)
+	}
+	if len(edges) == 0 {
+		e.Edges.namedNotes[name] = []*Note{}
+	} else {
+		e.Edges.namedNotes[name] = append(e.Edges.namedNotes[name], edges...)
+	}
+}
+
+// NamedFiles returns the Files named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (e *Entity) NamedFiles(name string) ([]*File, error) {
+	if e.Edges.namedFiles == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := e.Edges.namedFiles[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (e *Entity) appendNamedFiles(name string, edges ...*File) {
+	if e.Edges.namedFiles == nil {
+		e.Edges.namedFiles = make(map[string][]*File)
+	}
+	if len(edges) == 0 {
+		e.Edges.namedFiles[name] = []*File{}
+	} else {
+		e.Edges.namedFiles[name] = append(e.Edges.namedFiles[name], edges...)
 	}
 }
 

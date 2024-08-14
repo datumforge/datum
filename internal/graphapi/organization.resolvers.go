@@ -9,17 +9,18 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 )
 
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
-	org, err := withTransactionalMutation(ctx).Organization.Create().SetInput(input).Save(ctx)
+	res, err := withTransactionalMutation(ctx).Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "organization"}, r.logger)
 	}
 
-	return &OrganizationCreatePayload{Organization: org}, nil
+	return &OrganizationCreatePayload{
+		Organization: res,
+	}, nil
 }
 
 // CreateBulkOrganization is the resolver for the createBulkOrganization field.
@@ -41,17 +42,22 @@ func (r *mutationResolver) CreateBulkCSVOrganization(ctx context.Context, input 
 
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
-	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "organization"}, r.logger)
 	}
 
-	org, err = org.Update().SetInput(input).Save(ctx)
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "organization"}, r.logger)
 	}
 
-	return &OrganizationUpdatePayload{Organization: org}, nil
+	return &OrganizationUpdatePayload{
+		Organization: res,
+	}, nil
 }
 
 // DeleteOrganization is the resolver for the deleteOrganization field.
@@ -64,15 +70,17 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &OrganizationDeletePayload{DeletedID: id}, nil
+	return &OrganizationDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // Organization is the resolver for the organization field.
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
-	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "organization"}, r.logger)
 	}
 
-	return org, nil
+	return res, nil
 }

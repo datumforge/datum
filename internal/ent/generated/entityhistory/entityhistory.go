@@ -47,8 +47,12 @@ const (
 	FieldDisplayName = "display_name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldDomains holds the string denoting the domains field in the database.
+	FieldDomains = "domains"
 	// FieldEntityTypeID holds the string denoting the entity_type_id field in the database.
 	FieldEntityTypeID = "entity_type_id"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// Table holds the table name of the entityhistory in the database.
 	Table = "entity_history"
 )
@@ -71,7 +75,9 @@ var Columns = []string{
 	FieldName,
 	FieldDisplayName,
 	FieldDescription,
+	FieldDomains,
 	FieldEntityTypeID,
+	FieldStatus,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -105,8 +111,8 @@ var (
 	DefaultMappingID func() string
 	// DefaultTags holds the default value on creation for the "tags" field.
 	DefaultTags []string
-	// DefaultDisplayName holds the default value on creation for the "display_name" field.
-	DefaultDisplayName string
+	// DefaultStatus holds the default value on creation for the "status" field.
+	DefaultStatus string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -202,6 +208,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByEntityTypeID orders the results by the entity_type_id field.
 func ByEntityTypeID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEntityTypeID, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
 var (

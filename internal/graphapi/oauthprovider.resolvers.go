@@ -9,10 +9,18 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateOauthProvider is the resolver for the createOauthProvider field.
 func (r *mutationResolver) CreateOauthProvider(ctx context.Context, input generated.CreateOauthProviderInput) (*OauthProviderCreatePayload, error) {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
 	res, err := withTransactionalMutation(ctx).OauthProvider.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "oauthprovider"}, r.logger)
@@ -46,8 +54,17 @@ func (r *mutationResolver) UpdateOauthProvider(ctx context.Context, id string, i
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "oauthprovider"}, r.logger)
 	}
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
 
-	res, err = res.Update().SetInput(input).Save(ctx)
+		return nil, ErrPermissionDenied
+	}
+
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "oauthprovider"}, r.logger)
 	}

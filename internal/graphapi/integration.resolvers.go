@@ -9,7 +9,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -22,12 +21,14 @@ func (r *mutationResolver) CreateIntegration(ctx context.Context, input generate
 		return nil, rout.NewMissingRequiredFieldError("owner_id")
 	}
 
-	i, err := withTransactionalMutation(ctx).Integration.Create().SetInput(input).Save(ctx)
+	res, err := withTransactionalMutation(ctx).Integration.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "integration"}, r.logger)
 	}
 
-	return &IntegrationCreatePayload{Integration: i}, nil
+	return &IntegrationCreatePayload{
+		Integration: res,
+	}, nil
 }
 
 // CreateBulkIntegration is the resolver for the createBulkIntegration field.
@@ -49,23 +50,28 @@ func (r *mutationResolver) CreateBulkCSVIntegration(ctx context.Context, input g
 
 // UpdateIntegration is the resolver for the updateIntegration field.
 func (r *mutationResolver) UpdateIntegration(ctx context.Context, id string, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error) {
-	i, err := withTransactionalMutation(ctx).Integration.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Integration.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "integration"}, r.logger)
 	}
-
-	if err := setOrganizationInAuthContext(ctx, &i.OwnerID); err != nil {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
 		r.logger.Errorw("failed to set organization in auth context", "error", err)
 
 		return nil, ErrPermissionDenied
 	}
 
-	i, err = i.Update().SetInput(input).Save(ctx)
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "integration"}, r.logger)
 	}
 
-	return &IntegrationUpdatePayload{Integration: i}, nil
+	return &IntegrationUpdatePayload{
+		Integration: res,
+	}, nil
 }
 
 // DeleteIntegration is the resolver for the deleteIntegration field.
@@ -78,15 +84,17 @@ func (r *mutationResolver) DeleteIntegration(ctx context.Context, id string) (*I
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &IntegrationDeletePayload{DeletedID: id}, nil
+	return &IntegrationDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // Integration is the resolver for the integration field.
 func (r *queryResolver) Integration(ctx context.Context, id string) (*generated.Integration, error) {
-	i, err := withTransactionalMutation(ctx).Integration.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Integration.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "integration"}, r.logger)
 	}
 
-	return i, nil
+	return res, nil
 }

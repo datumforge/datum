@@ -23,6 +23,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
+	"github.com/datumforge/datum/internal/ent/generated/notehistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
@@ -720,6 +721,52 @@ func (ihq *IntegrationHistoryQuery) AsOf(ctx context.Context, time time.Time) (*
 	return ihq.
 		Where(integrationhistory.HistoryTimeLTE(time)).
 		Order(integrationhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (n *Note) History() *NoteHistoryQuery {
+	historyClient := NewNoteHistoryClient(n.config)
+	return historyClient.Query().Where(notehistory.Ref(n.ID))
+}
+
+func (nh *NoteHistory) Next(ctx context.Context) (*NoteHistory, error) {
+	client := NewNoteHistoryClient(nh.config)
+	return client.Query().
+		Where(
+			notehistory.Ref(nh.Ref),
+			notehistory.HistoryTimeGT(nh.HistoryTime),
+		).
+		Order(notehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (nh *NoteHistory) Prev(ctx context.Context) (*NoteHistory, error) {
+	client := NewNoteHistoryClient(nh.config)
+	return client.Query().
+		Where(
+			notehistory.Ref(nh.Ref),
+			notehistory.HistoryTimeLT(nh.HistoryTime),
+		).
+		Order(notehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (nhq *NoteHistoryQuery) Earliest(ctx context.Context) (*NoteHistory, error) {
+	return nhq.
+		Order(notehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (nhq *NoteHistoryQuery) Latest(ctx context.Context) (*NoteHistory, error) {
+	return nhq.
+		Order(notehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (nhq *NoteHistoryQuery) AsOf(ctx context.Context, time time.Time) (*NoteHistory, error) {
+	return nhq.
+		Where(notehistory.HistoryTimeLTE(time)).
+		Order(notehistory.ByHistoryTime(sql.OrderDesc())).
 		First(ctx)
 }
 

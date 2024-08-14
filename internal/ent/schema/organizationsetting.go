@@ -2,9 +2,7 @@ package schema
 
 import (
 	"context"
-	"fmt"
 	"net/mail"
-	"net/url"
 	"regexp"
 
 	"entgo.io/contrib/entgql"
@@ -20,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/validator"
 	"github.com/datumforge/datum/pkg/enums"
 )
 
@@ -33,15 +32,7 @@ func (OrganizationSetting) Fields() []ent.Field {
 	return []ent.Field{
 		field.Strings("domains").
 			Comment("domains associated with the organization").
-			Validate(func(domains []string) error {
-				for _, domain := range domains {
-					u, err := url.Parse("http://" + domain)
-					if err != nil || u.Scheme == "" || u.Host == "" {
-						return fmt.Errorf("invalid domain: %s", domain) // nolint: goerr113
-					}
-				}
-				return nil
-			}).
+			Validate(validator.ValidateDomains()).
 			Optional(),
 		field.String("billing_contact").
 			Comment("Name of the person to contact for billing").

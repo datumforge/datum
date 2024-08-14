@@ -62,15 +62,18 @@ type FileEdges struct {
 	User *User `json:"user,omitempty"`
 	// Organization holds the value of the organization edge.
 	Organization []*Organization `json:"organization,omitempty"`
+	// Entity holds the value of the entity edge.
+	Entity []*Entity `json:"entity,omitempty"`
 	// Group holds the value of the group edge.
 	Group []*Group `json:"group,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
 	namedOrganization map[string][]*Organization
+	namedEntity       map[string][]*Entity
 	namedGroup        map[string][]*Group
 }
 
@@ -94,10 +97,19 @@ func (e FileEdges) OrganizationOrErr() ([]*Organization, error) {
 	return nil, &NotLoadedError{edge: "organization"}
 }
 
+// EntityOrErr returns the Entity value or an error if the edge
+// was not loaded in eager-loading.
+func (e FileEdges) EntityOrErr() ([]*Entity, error) {
+	if e.loadedTypes[2] {
+		return e.Entity, nil
+	}
+	return nil, &NotLoadedError{edge: "entity"}
+}
+
 // GroupOrErr returns the Group value or an error if the edge
 // was not loaded in eager-loading.
 func (e FileEdges) GroupOrErr() ([]*Group, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Group, nil
 	}
 	return nil, &NotLoadedError{edge: "group"}
@@ -261,6 +273,11 @@ func (f *File) QueryOrganization() *OrganizationQuery {
 	return NewFileClient(f.config).QueryOrganization(f)
 }
 
+// QueryEntity queries the "entity" edge of the File entity.
+func (f *File) QueryEntity() *EntityQuery {
+	return NewFileClient(f.config).QueryEntity(f)
+}
+
 // QueryGroup queries the "group" edge of the File entity.
 func (f *File) QueryGroup() *GroupQuery {
 	return NewFileClient(f.config).QueryGroup(f)
@@ -358,6 +375,30 @@ func (f *File) appendNamedOrganization(name string, edges ...*Organization) {
 		f.Edges.namedOrganization[name] = []*Organization{}
 	} else {
 		f.Edges.namedOrganization[name] = append(f.Edges.namedOrganization[name], edges...)
+	}
+}
+
+// NamedEntity returns the Entity named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (f *File) NamedEntity(name string) ([]*Entity, error) {
+	if f.Edges.namedEntity == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := f.Edges.namedEntity[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (f *File) appendNamedEntity(name string, edges ...*Entity) {
+	if f.Edges.namedEntity == nil {
+		f.Edges.namedEntity = make(map[string][]*Entity)
+	}
+	if len(edges) == 0 {
+		f.Edges.namedEntity[name] = []*Entity{}
+	} else {
+		f.Edges.namedEntity[name] = append(f.Edges.namedEntity[name], edges...)
 	}
 }
 

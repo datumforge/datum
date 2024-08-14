@@ -16,6 +16,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/file"
+	"github.com/datumforge/datum/internal/ent/generated/note"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
@@ -159,6 +161,12 @@ func (eu *EntityUpdate) SetNillableName(s *string) *EntityUpdate {
 	return eu
 }
 
+// ClearName clears the value of the "name" field.
+func (eu *EntityUpdate) ClearName() *EntityUpdate {
+	eu.mutation.ClearName()
+	return eu
+}
+
 // SetDisplayName sets the "display_name" field.
 func (eu *EntityUpdate) SetDisplayName(s string) *EntityUpdate {
 	eu.mutation.SetDisplayName(s)
@@ -170,6 +178,12 @@ func (eu *EntityUpdate) SetNillableDisplayName(s *string) *EntityUpdate {
 	if s != nil {
 		eu.SetDisplayName(*s)
 	}
+	return eu
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (eu *EntityUpdate) ClearDisplayName() *EntityUpdate {
+	eu.mutation.ClearDisplayName()
 	return eu
 }
 
@@ -193,6 +207,24 @@ func (eu *EntityUpdate) ClearDescription() *EntityUpdate {
 	return eu
 }
 
+// SetDomains sets the "domains" field.
+func (eu *EntityUpdate) SetDomains(s []string) *EntityUpdate {
+	eu.mutation.SetDomains(s)
+	return eu
+}
+
+// AppendDomains appends s to the "domains" field.
+func (eu *EntityUpdate) AppendDomains(s []string) *EntityUpdate {
+	eu.mutation.AppendDomains(s)
+	return eu
+}
+
+// ClearDomains clears the value of the "domains" field.
+func (eu *EntityUpdate) ClearDomains() *EntityUpdate {
+	eu.mutation.ClearDomains()
+	return eu
+}
+
 // SetEntityTypeID sets the "entity_type_id" field.
 func (eu *EntityUpdate) SetEntityTypeID(s string) *EntityUpdate {
 	eu.mutation.SetEntityTypeID(s)
@@ -210,6 +242,26 @@ func (eu *EntityUpdate) SetNillableEntityTypeID(s *string) *EntityUpdate {
 // ClearEntityTypeID clears the value of the "entity_type_id" field.
 func (eu *EntityUpdate) ClearEntityTypeID() *EntityUpdate {
 	eu.mutation.ClearEntityTypeID()
+	return eu
+}
+
+// SetStatus sets the "status" field.
+func (eu *EntityUpdate) SetStatus(s string) *EntityUpdate {
+	eu.mutation.SetStatus(s)
+	return eu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (eu *EntityUpdate) SetNillableStatus(s *string) *EntityUpdate {
+	if s != nil {
+		eu.SetStatus(*s)
+	}
+	return eu
+}
+
+// ClearStatus clears the value of the "status" field.
+func (eu *EntityUpdate) ClearStatus() *EntityUpdate {
+	eu.mutation.ClearStatus()
 	return eu
 }
 
@@ -246,6 +298,36 @@ func (eu *EntityUpdate) AddDocuments(d ...*DocumentData) *EntityUpdate {
 		ids[i] = d[i].ID
 	}
 	return eu.AddDocumentIDs(ids...)
+}
+
+// AddNoteIDs adds the "notes" edge to the Note entity by IDs.
+func (eu *EntityUpdate) AddNoteIDs(ids ...string) *EntityUpdate {
+	eu.mutation.AddNoteIDs(ids...)
+	return eu
+}
+
+// AddNotes adds the "notes" edges to the Note entity.
+func (eu *EntityUpdate) AddNotes(n ...*Note) *EntityUpdate {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return eu.AddNoteIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (eu *EntityUpdate) AddFileIDs(ids ...string) *EntityUpdate {
+	eu.mutation.AddFileIDs(ids...)
+	return eu
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (eu *EntityUpdate) AddFiles(f ...*File) *EntityUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return eu.AddFileIDs(ids...)
 }
 
 // SetEntityType sets the "entity_type" edge to the EntityType entity.
@@ -304,6 +386,48 @@ func (eu *EntityUpdate) RemoveDocuments(d ...*DocumentData) *EntityUpdate {
 		ids[i] = d[i].ID
 	}
 	return eu.RemoveDocumentIDs(ids...)
+}
+
+// ClearNotes clears all "notes" edges to the Note entity.
+func (eu *EntityUpdate) ClearNotes() *EntityUpdate {
+	eu.mutation.ClearNotes()
+	return eu
+}
+
+// RemoveNoteIDs removes the "notes" edge to Note entities by IDs.
+func (eu *EntityUpdate) RemoveNoteIDs(ids ...string) *EntityUpdate {
+	eu.mutation.RemoveNoteIDs(ids...)
+	return eu
+}
+
+// RemoveNotes removes "notes" edges to Note entities.
+func (eu *EntityUpdate) RemoveNotes(n ...*Note) *EntityUpdate {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return eu.RemoveNoteIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (eu *EntityUpdate) ClearFiles() *EntityUpdate {
+	eu.mutation.ClearFiles()
+	return eu
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (eu *EntityUpdate) RemoveFileIDs(ids ...string) *EntityUpdate {
+	eu.mutation.RemoveFileIDs(ids...)
+	return eu
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (eu *EntityUpdate) RemoveFiles(f ...*File) *EntityUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return eu.RemoveFileIDs(ids...)
 }
 
 // ClearEntityType clears the "entity_type" edge to the EntityType entity.
@@ -371,6 +495,11 @@ func (eu *EntityUpdate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Entity.display_name": %w`, err)}
 		}
 	}
+	if v, ok := eu.mutation.Domains(); ok {
+		if err := entity.DomainsValidator(v); err != nil {
+			return &ValidationError{Name: "domains", err: fmt.Errorf(`generated: validator failed for field "Entity.domains": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -430,14 +559,37 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.Name(); ok {
 		_spec.SetField(entity.FieldName, field.TypeString, value)
 	}
+	if eu.mutation.NameCleared() {
+		_spec.ClearField(entity.FieldName, field.TypeString)
+	}
 	if value, ok := eu.mutation.DisplayName(); ok {
 		_spec.SetField(entity.FieldDisplayName, field.TypeString, value)
+	}
+	if eu.mutation.DisplayNameCleared() {
+		_spec.ClearField(entity.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := eu.mutation.Description(); ok {
 		_spec.SetField(entity.FieldDescription, field.TypeString, value)
 	}
 	if eu.mutation.DescriptionCleared() {
 		_spec.ClearField(entity.FieldDescription, field.TypeString)
+	}
+	if value, ok := eu.mutation.Domains(); ok {
+		_spec.SetField(entity.FieldDomains, field.TypeJSON, value)
+	}
+	if value, ok := eu.mutation.AppendedDomains(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, entity.FieldDomains, value)
+		})
+	}
+	if eu.mutation.DomainsCleared() {
+		_spec.ClearField(entity.FieldDomains, field.TypeJSON)
+	}
+	if value, ok := eu.mutation.Status(); ok {
+		_spec.SetField(entity.FieldStatus, field.TypeString, value)
+	}
+	if eu.mutation.StatusCleared() {
+		_spec.ClearField(entity.FieldStatus, field.TypeString)
 	}
 	if eu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -561,6 +713,102 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = eu.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.NotesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.NotesTable,
+			Columns: []string{entity.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.Note
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedNotesIDs(); len(nodes) > 0 && !eu.mutation.NotesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.NotesTable,
+			Columns: []string{entity.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.Note
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.NotesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.NotesTable,
+			Columns: []string{entity.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.Note
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entity.FilesTable,
+			Columns: entity.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntityFiles
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !eu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entity.FilesTable,
+			Columns: entity.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntityFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entity.FilesTable,
+			Columns: entity.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.EntityFiles
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -743,6 +991,12 @@ func (euo *EntityUpdateOne) SetNillableName(s *string) *EntityUpdateOne {
 	return euo
 }
 
+// ClearName clears the value of the "name" field.
+func (euo *EntityUpdateOne) ClearName() *EntityUpdateOne {
+	euo.mutation.ClearName()
+	return euo
+}
+
 // SetDisplayName sets the "display_name" field.
 func (euo *EntityUpdateOne) SetDisplayName(s string) *EntityUpdateOne {
 	euo.mutation.SetDisplayName(s)
@@ -754,6 +1008,12 @@ func (euo *EntityUpdateOne) SetNillableDisplayName(s *string) *EntityUpdateOne {
 	if s != nil {
 		euo.SetDisplayName(*s)
 	}
+	return euo
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (euo *EntityUpdateOne) ClearDisplayName() *EntityUpdateOne {
+	euo.mutation.ClearDisplayName()
 	return euo
 }
 
@@ -777,6 +1037,24 @@ func (euo *EntityUpdateOne) ClearDescription() *EntityUpdateOne {
 	return euo
 }
 
+// SetDomains sets the "domains" field.
+func (euo *EntityUpdateOne) SetDomains(s []string) *EntityUpdateOne {
+	euo.mutation.SetDomains(s)
+	return euo
+}
+
+// AppendDomains appends s to the "domains" field.
+func (euo *EntityUpdateOne) AppendDomains(s []string) *EntityUpdateOne {
+	euo.mutation.AppendDomains(s)
+	return euo
+}
+
+// ClearDomains clears the value of the "domains" field.
+func (euo *EntityUpdateOne) ClearDomains() *EntityUpdateOne {
+	euo.mutation.ClearDomains()
+	return euo
+}
+
 // SetEntityTypeID sets the "entity_type_id" field.
 func (euo *EntityUpdateOne) SetEntityTypeID(s string) *EntityUpdateOne {
 	euo.mutation.SetEntityTypeID(s)
@@ -794,6 +1072,26 @@ func (euo *EntityUpdateOne) SetNillableEntityTypeID(s *string) *EntityUpdateOne 
 // ClearEntityTypeID clears the value of the "entity_type_id" field.
 func (euo *EntityUpdateOne) ClearEntityTypeID() *EntityUpdateOne {
 	euo.mutation.ClearEntityTypeID()
+	return euo
+}
+
+// SetStatus sets the "status" field.
+func (euo *EntityUpdateOne) SetStatus(s string) *EntityUpdateOne {
+	euo.mutation.SetStatus(s)
+	return euo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (euo *EntityUpdateOne) SetNillableStatus(s *string) *EntityUpdateOne {
+	if s != nil {
+		euo.SetStatus(*s)
+	}
+	return euo
+}
+
+// ClearStatus clears the value of the "status" field.
+func (euo *EntityUpdateOne) ClearStatus() *EntityUpdateOne {
+	euo.mutation.ClearStatus()
 	return euo
 }
 
@@ -830,6 +1128,36 @@ func (euo *EntityUpdateOne) AddDocuments(d ...*DocumentData) *EntityUpdateOne {
 		ids[i] = d[i].ID
 	}
 	return euo.AddDocumentIDs(ids...)
+}
+
+// AddNoteIDs adds the "notes" edge to the Note entity by IDs.
+func (euo *EntityUpdateOne) AddNoteIDs(ids ...string) *EntityUpdateOne {
+	euo.mutation.AddNoteIDs(ids...)
+	return euo
+}
+
+// AddNotes adds the "notes" edges to the Note entity.
+func (euo *EntityUpdateOne) AddNotes(n ...*Note) *EntityUpdateOne {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return euo.AddNoteIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (euo *EntityUpdateOne) AddFileIDs(ids ...string) *EntityUpdateOne {
+	euo.mutation.AddFileIDs(ids...)
+	return euo
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (euo *EntityUpdateOne) AddFiles(f ...*File) *EntityUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return euo.AddFileIDs(ids...)
 }
 
 // SetEntityType sets the "entity_type" edge to the EntityType entity.
@@ -888,6 +1216,48 @@ func (euo *EntityUpdateOne) RemoveDocuments(d ...*DocumentData) *EntityUpdateOne
 		ids[i] = d[i].ID
 	}
 	return euo.RemoveDocumentIDs(ids...)
+}
+
+// ClearNotes clears all "notes" edges to the Note entity.
+func (euo *EntityUpdateOne) ClearNotes() *EntityUpdateOne {
+	euo.mutation.ClearNotes()
+	return euo
+}
+
+// RemoveNoteIDs removes the "notes" edge to Note entities by IDs.
+func (euo *EntityUpdateOne) RemoveNoteIDs(ids ...string) *EntityUpdateOne {
+	euo.mutation.RemoveNoteIDs(ids...)
+	return euo
+}
+
+// RemoveNotes removes "notes" edges to Note entities.
+func (euo *EntityUpdateOne) RemoveNotes(n ...*Note) *EntityUpdateOne {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return euo.RemoveNoteIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to the File entity.
+func (euo *EntityUpdateOne) ClearFiles() *EntityUpdateOne {
+	euo.mutation.ClearFiles()
+	return euo
+}
+
+// RemoveFileIDs removes the "files" edge to File entities by IDs.
+func (euo *EntityUpdateOne) RemoveFileIDs(ids ...string) *EntityUpdateOne {
+	euo.mutation.RemoveFileIDs(ids...)
+	return euo
+}
+
+// RemoveFiles removes "files" edges to File entities.
+func (euo *EntityUpdateOne) RemoveFiles(f ...*File) *EntityUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return euo.RemoveFileIDs(ids...)
 }
 
 // ClearEntityType clears the "entity_type" edge to the EntityType entity.
@@ -968,6 +1338,11 @@ func (euo *EntityUpdateOne) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Entity.display_name": %w`, err)}
 		}
 	}
+	if v, ok := euo.mutation.Domains(); ok {
+		if err := entity.DomainsValidator(v); err != nil {
+			return &ValidationError{Name: "domains", err: fmt.Errorf(`generated: validator failed for field "Entity.domains": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -1044,14 +1419,37 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	if value, ok := euo.mutation.Name(); ok {
 		_spec.SetField(entity.FieldName, field.TypeString, value)
 	}
+	if euo.mutation.NameCleared() {
+		_spec.ClearField(entity.FieldName, field.TypeString)
+	}
 	if value, ok := euo.mutation.DisplayName(); ok {
 		_spec.SetField(entity.FieldDisplayName, field.TypeString, value)
+	}
+	if euo.mutation.DisplayNameCleared() {
+		_spec.ClearField(entity.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := euo.mutation.Description(); ok {
 		_spec.SetField(entity.FieldDescription, field.TypeString, value)
 	}
 	if euo.mutation.DescriptionCleared() {
 		_spec.ClearField(entity.FieldDescription, field.TypeString)
+	}
+	if value, ok := euo.mutation.Domains(); ok {
+		_spec.SetField(entity.FieldDomains, field.TypeJSON, value)
+	}
+	if value, ok := euo.mutation.AppendedDomains(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, entity.FieldDomains, value)
+		})
+	}
+	if euo.mutation.DomainsCleared() {
+		_spec.ClearField(entity.FieldDomains, field.TypeJSON)
+	}
+	if value, ok := euo.mutation.Status(); ok {
+		_spec.SetField(entity.FieldStatus, field.TypeString, value)
+	}
+	if euo.mutation.StatusCleared() {
+		_spec.ClearField(entity.FieldStatus, field.TypeString)
 	}
 	if euo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1175,6 +1573,102 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 			},
 		}
 		edge.Schema = euo.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.NotesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.NotesTable,
+			Columns: []string{entity.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.Note
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedNotesIDs(); len(nodes) > 0 && !euo.mutation.NotesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.NotesTable,
+			Columns: []string{entity.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.Note
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.NotesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.NotesTable,
+			Columns: []string{entity.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.Note
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entity.FilesTable,
+			Columns: entity.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntityFiles
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !euo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entity.FilesTable,
+			Columns: entity.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntityFiles
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entity.FilesTable,
+			Columns: entity.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.EntityFiles
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

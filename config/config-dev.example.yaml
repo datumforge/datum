@@ -77,3 +77,11 @@ publisherConfig:
     addresses:
         - localhost:10000
     enabled: true
+
+entConfig:
+  entityTypes:
+    - vendor
+    - account
+  flags:
+    useListObjectServices: false
+    useListUserService: true

@@ -54,14 +54,17 @@ func (r *mutationResolver) UpdateContact(ctx context.Context, id string, input g
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "contact"}, r.logger)
 	}
-
+	// set the organization in the auth context if its not done for us
 	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
 		r.logger.Errorw("failed to set organization in auth context", "error", err)
 
 		return nil, ErrPermissionDenied
 	}
 
-	res, err = res.Update().SetInput(input).Save(ctx)
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "contact"}, r.logger)
 	}

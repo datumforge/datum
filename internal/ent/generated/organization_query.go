@@ -28,6 +28,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
@@ -74,6 +75,7 @@ type OrganizationQuery struct {
 	withEntities                     *EntityQuery
 	withEntitytypes                  *EntityTypeQuery
 	withContacts                     *ContactQuery
+	withNotes                        *NoteQuery
 	withMembers                      *OrgMembershipQuery
 	modifiers                        []func(*sql.Selector)
 	loadTotal                        []func(context.Context, []*Organization) error
@@ -100,6 +102,7 @@ type OrganizationQuery struct {
 	withNamedEntities                map[string]*EntityQuery
 	withNamedEntitytypes             map[string]*EntityTypeQuery
 	withNamedContacts                map[string]*ContactQuery
+	withNamedNotes                   map[string]*NoteQuery
 	withNamedMembers                 map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -762,6 +765,31 @@ func (oq *OrganizationQuery) QueryContacts() *ContactQuery {
 	return query
 }
 
+// QueryNotes chains the current query on the "notes" edge.
+func (oq *OrganizationQuery) QueryNotes() *NoteQuery {
+	query := (&NoteClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(note.Table, note.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.NotesTable, organization.NotesColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Note
+		step.Edge.Schema = schemaConfig.Note
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryMembers chains the current query on the "members" edge.
 func (oq *OrganizationQuery) QueryMembers() *OrgMembershipQuery {
 	query := (&OrgMembershipClient{config: oq.config}).Query()
@@ -1004,6 +1032,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withEntities:                oq.withEntities.Clone(),
 		withEntitytypes:             oq.withEntitytypes.Clone(),
 		withContacts:                oq.withContacts.Clone(),
+		withNotes:                   oq.withNotes.Clone(),
 		withMembers:                 oq.withMembers.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
@@ -1286,6 +1315,17 @@ func (oq *OrganizationQuery) WithContacts(opts ...func(*ContactQuery)) *Organiza
 	return oq
 }
 
+// WithNotes tells the query-builder to eager-load the nodes that are connected to
+// the "notes" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNotes(opts ...func(*NoteQuery)) *OrganizationQuery {
+	query := (&NoteClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withNotes = query
+	return oq
+}
+
 // WithMembers tells the query-builder to eager-load the nodes that are connected to
 // the "members" edge. The optional arguments are used to configure the query builder of the edge.
 func (oq *OrganizationQuery) WithMembers(opts ...func(*OrgMembershipQuery)) *OrganizationQuery {
@@ -1381,7 +1421,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [26]bool{
+		loadedTypes = [27]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
@@ -1407,6 +1447,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withEntities != nil,
 			oq.withEntitytypes != nil,
 			oq.withContacts != nil,
+			oq.withNotes != nil,
 			oq.withMembers != nil,
 		}
 	)
@@ -1614,6 +1655,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withNotes; query != nil {
+		if err := oq.loadNotes(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Notes = []*Note{} },
+			func(n *Organization, e *Note) { n.Edges.Notes = append(n.Edges.Notes, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := oq.withMembers; query != nil {
 		if err := oq.loadMembers(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Members = []*OrgMembership{} },
@@ -1779,6 +1827,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadContacts(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedContacts(name) },
 			func(n *Organization, e *Contact) { n.appendNamedContacts(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedNotes {
+		if err := oq.loadNotes(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedNotes(name) },
+			func(n *Organization, e *Note) { n.appendNamedNotes(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -2705,6 +2760,37 @@ func (oq *OrganizationQuery) loadContacts(ctx context.Context, query *ContactQue
 	}
 	return nil
 }
+func (oq *OrganizationQuery) loadNotes(ctx context.Context, query *NoteQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Note)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(note.FieldOwnerID)
+	}
+	query.Where(predicate.Note(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.NotesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 func (oq *OrganizationQuery) loadMembers(ctx context.Context, query *OrgMembershipQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OrgMembership)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Organization)
@@ -3147,6 +3233,20 @@ func (oq *OrganizationQuery) WithNamedContacts(name string, opts ...func(*Contac
 		oq.withNamedContacts = make(map[string]*ContactQuery)
 	}
 	oq.withNamedContacts[name] = query
+	return oq
+}
+
+// WithNamedNotes tells the query-builder to eager-load the nodes that are connected to the "notes"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedNotes(name string, opts ...func(*NoteQuery)) *OrganizationQuery {
+	query := (&NoteClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedNotes == nil {
+		oq.withNamedNotes = make(map[string]*NoteQuery)
+	}
+	oq.withNamedNotes[name] = query
 	return oq
 }
 

@@ -25,6 +25,7 @@ type SchemaConfig struct {
 	Entity                           string // Entity table.
 	EntityContacts                   string // Entity-contacts->Contact table.
 	EntityDocuments                  string // Entity-documents->DocumentData table.
+	EntityFiles                      string // Entity-files->File table.
 	EntityHistory                    string // EntityHistory table.
 	EntityType                       string // EntityType table.
 	EntityTypeHistory                string // EntityTypeHistory table.
@@ -55,6 +56,8 @@ type SchemaConfig struct {
 	IntegrationHistory               string // IntegrationHistory table.
 	Invite                           string // Invite table.
 	InviteEvents                     string // Invite-events->Event table.
+	Note                             string // Note table.
+	NoteHistory                      string // NoteHistory table.
 	OauthProvider                    string // OauthProvider table.
 	OauthProviderHistory             string // OauthProviderHistory table.
 	OhAuthTooToken                   string // OhAuthTooToken table.

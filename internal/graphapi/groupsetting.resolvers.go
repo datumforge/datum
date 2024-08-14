@@ -42,17 +42,22 @@ func (r *mutationResolver) CreateBulkCSVGroupSetting(ctx context.Context, input 
 
 // UpdateGroupSetting is the resolver for the updateGroupSetting field.
 func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, input generated.UpdateGroupSettingInput) (*GroupSettingUpdatePayload, error) {
-	groupSetting, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupsetting"}, r.logger)
 	}
 
-	groupSetting, err = groupSetting.Update().SetInput(input).Save(ctx)
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupsetting"}, r.logger)
 	}
 
-	return &GroupSettingUpdatePayload{GroupSetting: groupSetting}, nil
+	return &GroupSettingUpdatePayload{
+		GroupSetting: res,
+	}, nil
 }
 
 // DeleteGroupSetting is the resolver for the deleteGroupSetting field.
@@ -72,10 +77,10 @@ func (r *mutationResolver) DeleteGroupSetting(ctx context.Context, id string) (*
 
 // GroupSetting is the resolver for the groupSetting field.
 func (r *queryResolver) GroupSetting(ctx context.Context, id string) (*generated.GroupSetting, error) {
-	group, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "groupsetting"}, r.logger)
 	}
 
-	return group, nil
+	return res, nil
 }

@@ -179,6 +179,14 @@ func (ehc *EntityHistoryCreate) SetName(s string) *EntityHistoryCreate {
 	return ehc
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (ehc *EntityHistoryCreate) SetNillableName(s *string) *EntityHistoryCreate {
+	if s != nil {
+		ehc.SetName(*s)
+	}
+	return ehc
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ehc *EntityHistoryCreate) SetDisplayName(s string) *EntityHistoryCreate {
 	ehc.mutation.SetDisplayName(s)
@@ -207,6 +215,12 @@ func (ehc *EntityHistoryCreate) SetNillableDescription(s *string) *EntityHistory
 	return ehc
 }
 
+// SetDomains sets the "domains" field.
+func (ehc *EntityHistoryCreate) SetDomains(s []string) *EntityHistoryCreate {
+	ehc.mutation.SetDomains(s)
+	return ehc
+}
+
 // SetEntityTypeID sets the "entity_type_id" field.
 func (ehc *EntityHistoryCreate) SetEntityTypeID(s string) *EntityHistoryCreate {
 	ehc.mutation.SetEntityTypeID(s)
@@ -217,6 +231,20 @@ func (ehc *EntityHistoryCreate) SetEntityTypeID(s string) *EntityHistoryCreate {
 func (ehc *EntityHistoryCreate) SetNillableEntityTypeID(s *string) *EntityHistoryCreate {
 	if s != nil {
 		ehc.SetEntityTypeID(*s)
+	}
+	return ehc
+}
+
+// SetStatus sets the "status" field.
+func (ehc *EntityHistoryCreate) SetStatus(s string) *EntityHistoryCreate {
+	ehc.mutation.SetStatus(s)
+	return ehc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ehc *EntityHistoryCreate) SetNillableStatus(s *string) *EntityHistoryCreate {
+	if s != nil {
+		ehc.SetStatus(*s)
 	}
 	return ehc
 }
@@ -304,9 +332,9 @@ func (ehc *EntityHistoryCreate) defaults() error {
 		v := entityhistory.DefaultTags
 		ehc.mutation.SetTags(v)
 	}
-	if _, ok := ehc.mutation.DisplayName(); !ok {
-		v := entityhistory.DefaultDisplayName
-		ehc.mutation.SetDisplayName(v)
+	if _, ok := ehc.mutation.Status(); !ok {
+		v := entityhistory.DefaultStatus
+		ehc.mutation.SetStatus(v)
 	}
 	if _, ok := ehc.mutation.ID(); !ok {
 		if entityhistory.DefaultID == nil {
@@ -333,12 +361,6 @@ func (ehc *EntityHistoryCreate) check() error {
 	}
 	if _, ok := ehc.mutation.MappingID(); !ok {
 		return &ValidationError{Name: "mapping_id", err: errors.New(`generated: missing required field "EntityHistory.mapping_id"`)}
-	}
-	if _, ok := ehc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "EntityHistory.name"`)}
-	}
-	if _, ok := ehc.mutation.DisplayName(); !ok {
-		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "EntityHistory.display_name"`)}
 	}
 	return nil
 }
@@ -436,9 +458,17 @@ func (ehc *EntityHistoryCreate) createSpec() (*EntityHistory, *sqlgraph.CreateSp
 		_spec.SetField(entityhistory.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
+	if value, ok := ehc.mutation.Domains(); ok {
+		_spec.SetField(entityhistory.FieldDomains, field.TypeJSON, value)
+		_node.Domains = value
+	}
 	if value, ok := ehc.mutation.EntityTypeID(); ok {
 		_spec.SetField(entityhistory.FieldEntityTypeID, field.TypeString, value)
 		_node.EntityTypeID = value
+	}
+	if value, ok := ehc.mutation.Status(); ok {
+		_spec.SetField(entityhistory.FieldStatus, field.TypeString, value)
+		_node.Status = value
 	}
 	return _node, _spec
 }

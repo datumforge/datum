@@ -49,6 +49,8 @@ const (
 	EdgeUser = "user"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
 	EdgeOrganization = "organization"
+	// EdgeEntity holds the string denoting the entity edge name in mutations.
+	EdgeEntity = "entity"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// Table holds the table name of the file in the database.
@@ -65,6 +67,11 @@ const (
 	// OrganizationInverseTable is the table name for the Organization entity.
 	// It exists in this package in order to avoid circular dependency with the "organization" package.
 	OrganizationInverseTable = "organizations"
+	// EntityTable is the table that holds the entity relation/edge. The primary key declared below.
+	EntityTable = "entity_files"
+	// EntityInverseTable is the table name for the Entity entity.
+	// It exists in this package in order to avoid circular dependency with the "entity" package.
+	EntityInverseTable = "entities"
 	// GroupTable is the table that holds the group relation/edge. The primary key declared below.
 	GroupTable = "group_files"
 	// GroupInverseTable is the table name for the Group entity.
@@ -102,6 +109,9 @@ var (
 	// OrganizationPrimaryKey and OrganizationColumn2 are the table columns denoting the
 	// primary key for the organization relation (M2M).
 	OrganizationPrimaryKey = []string{"organization_id", "file_id"}
+	// EntityPrimaryKey and EntityColumn2 are the table columns denoting the
+	// primary key for the entity relation (M2M).
+	EntityPrimaryKey = []string{"entity_id", "file_id"}
 	// GroupPrimaryKey and GroupColumn2 are the table columns denoting the
 	// primary key for the group relation (M2M).
 	GroupPrimaryKey = []string{"group_id", "file_id"}
@@ -245,6 +255,20 @@ func ByOrganization(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByEntityCount orders the results by entity count.
+func ByEntityCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEntityStep(), opts...)
+	}
+}
+
+// ByEntity orders the results by entity terms.
+func ByEntity(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntityStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByGroupCount orders the results by group count.
 func ByGroupCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -270,6 +294,13 @@ func newOrganizationStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OrganizationInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, OrganizationTable, OrganizationPrimaryKey...),
+	)
+}
+func newEntityStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntityInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, EntityTable, EntityPrimaryKey...),
 	)
 }
 func newGroupStep() *sqlgraph.Step {

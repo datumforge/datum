@@ -13,12 +13,14 @@ import (
 
 // CreateGroupMembership is the resolver for the createGroupMembership field.
 func (r *mutationResolver) CreateGroupMembership(ctx context.Context, input generated.CreateGroupMembershipInput) (*GroupMembershipCreatePayload, error) {
-	om, err := withTransactionalMutation(ctx).GroupMembership.Create().SetInput(input).Save(ctx)
+	res, err := withTransactionalMutation(ctx).GroupMembership.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "groupmembership"}, r.logger)
 	}
 
-	return &GroupMembershipCreatePayload{GroupMembership: om}, nil
+	return &GroupMembershipCreatePayload{
+		GroupMembership: res,
+	}, nil
 }
 
 // CreateBulkGroupMembership is the resolver for the createBulkGroupMembership field.
@@ -40,17 +42,22 @@ func (r *mutationResolver) CreateBulkCSVGroupMembership(ctx context.Context, inp
 
 // UpdateGroupMembership is the resolver for the updateGroupMembership field.
 func (r *mutationResolver) UpdateGroupMembership(ctx context.Context, id string, input generated.UpdateGroupMembershipInput) (*GroupMembershipUpdatePayload, error) {
-	groupMember, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
-	if err != nil {
-		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupmember"}, r.logger)
-	}
-
-	groupMember, err = groupMember.Update().SetInput(input).Save(ctx)
+	res, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupmembership"}, r.logger)
 	}
 
-	return &GroupMembershipUpdatePayload{GroupMembership: groupMember}, nil
+	// setup update request
+	req := res.Update().SetInput(input)
+
+	res, err = req.Save(ctx)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "groupmembership"}, r.logger)
+	}
+
+	return &GroupMembershipUpdatePayload{
+		GroupMembership: res,
+	}, nil
 }
 
 // DeleteGroupMembership is the resolver for the deleteGroupMembership field.
@@ -63,15 +70,17 @@ func (r *mutationResolver) DeleteGroupMembership(ctx context.Context, id string)
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &GroupMembershipDeletePayload{DeletedID: id}, nil
+	return &GroupMembershipDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // GroupMembership is the resolver for the groupMembership field.
 func (r *queryResolver) GroupMembership(ctx context.Context, id string) (*generated.GroupMembership, error) {
-	gm, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "groupmembership"}, r.logger)
 	}
 
-	return gm, nil
+	return res, nil
 }

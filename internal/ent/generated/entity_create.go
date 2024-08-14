@@ -14,6 +14,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entity"
 	"github.com/datumforge/datum/internal/ent/generated/entitytype"
+	"github.com/datumforge/datum/internal/ent/generated/file"
+	"github.com/datumforge/datum/internal/ent/generated/note"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
@@ -148,6 +150,14 @@ func (ec *EntityCreate) SetName(s string) *EntityCreate {
 	return ec
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (ec *EntityCreate) SetNillableName(s *string) *EntityCreate {
+	if s != nil {
+		ec.SetName(*s)
+	}
+	return ec
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ec *EntityCreate) SetDisplayName(s string) *EntityCreate {
 	ec.mutation.SetDisplayName(s)
@@ -176,6 +186,12 @@ func (ec *EntityCreate) SetNillableDescription(s *string) *EntityCreate {
 	return ec
 }
 
+// SetDomains sets the "domains" field.
+func (ec *EntityCreate) SetDomains(s []string) *EntityCreate {
+	ec.mutation.SetDomains(s)
+	return ec
+}
+
 // SetEntityTypeID sets the "entity_type_id" field.
 func (ec *EntityCreate) SetEntityTypeID(s string) *EntityCreate {
 	ec.mutation.SetEntityTypeID(s)
@@ -186,6 +202,20 @@ func (ec *EntityCreate) SetEntityTypeID(s string) *EntityCreate {
 func (ec *EntityCreate) SetNillableEntityTypeID(s *string) *EntityCreate {
 	if s != nil {
 		ec.SetEntityTypeID(*s)
+	}
+	return ec
+}
+
+// SetStatus sets the "status" field.
+func (ec *EntityCreate) SetStatus(s string) *EntityCreate {
+	ec.mutation.SetStatus(s)
+	return ec
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ec *EntityCreate) SetNillableStatus(s *string) *EntityCreate {
+	if s != nil {
+		ec.SetStatus(*s)
 	}
 	return ec
 }
@@ -237,6 +267,36 @@ func (ec *EntityCreate) AddDocuments(d ...*DocumentData) *EntityCreate {
 		ids[i] = d[i].ID
 	}
 	return ec.AddDocumentIDs(ids...)
+}
+
+// AddNoteIDs adds the "notes" edge to the Note entity by IDs.
+func (ec *EntityCreate) AddNoteIDs(ids ...string) *EntityCreate {
+	ec.mutation.AddNoteIDs(ids...)
+	return ec
+}
+
+// AddNotes adds the "notes" edges to the Note entity.
+func (ec *EntityCreate) AddNotes(n ...*Note) *EntityCreate {
+	ids := make([]string, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ec.AddNoteIDs(ids...)
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (ec *EntityCreate) AddFileIDs(ids ...string) *EntityCreate {
+	ec.mutation.AddFileIDs(ids...)
+	return ec
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (ec *EntityCreate) AddFiles(f ...*File) *EntityCreate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ec.AddFileIDs(ids...)
 }
 
 // SetEntityType sets the "entity_type" edge to the EntityType entity.
@@ -306,9 +366,9 @@ func (ec *EntityCreate) defaults() error {
 		v := entity.DefaultTags
 		ec.mutation.SetTags(v)
 	}
-	if _, ok := ec.mutation.DisplayName(); !ok {
-		v := entity.DefaultDisplayName
-		ec.mutation.SetDisplayName(v)
+	if _, ok := ec.mutation.Status(); !ok {
+		v := entity.DefaultStatus
+		ec.mutation.SetStatus(v)
 	}
 	if _, ok := ec.mutation.ID(); !ok {
 		if entity.DefaultID == nil {
@@ -330,20 +390,19 @@ func (ec *EntityCreate) check() error {
 			return &ValidationError{Name: "owner_id", err: fmt.Errorf(`generated: validator failed for field "Entity.owner_id": %w`, err)}
 		}
 	}
-	if _, ok := ec.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Entity.name"`)}
-	}
 	if v, ok := ec.mutation.Name(); ok {
 		if err := entity.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Entity.name": %w`, err)}
 		}
 	}
-	if _, ok := ec.mutation.DisplayName(); !ok {
-		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "Entity.display_name"`)}
-	}
 	if v, ok := ec.mutation.DisplayName(); ok {
 		if err := entity.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Entity.display_name": %w`, err)}
+		}
+	}
+	if v, ok := ec.mutation.Domains(); ok {
+		if err := entity.DomainsValidator(v); err != nil {
+			return &ValidationError{Name: "domains", err: fmt.Errorf(`generated: validator failed for field "Entity.domains": %w`, err)}
 		}
 	}
 	return nil
@@ -426,6 +485,14 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_spec.SetField(entity.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
+	if value, ok := ec.mutation.Domains(); ok {
+		_spec.SetField(entity.FieldDomains, field.TypeJSON, value)
+		_node.Domains = value
+	}
+	if value, ok := ec.mutation.Status(); ok {
+		_spec.SetField(entity.FieldStatus, field.TypeString, value)
+		_node.Status = value
+	}
 	if nodes := ec.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -473,6 +540,40 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = ec.schemaConfig.EntityDocuments
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.NotesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.NotesTable,
+			Columns: []string{entity.NotesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(note.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ec.schemaConfig.Note
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   entity.FilesTable,
+			Columns: entity.FilesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ec.schemaConfig.EntityFiles
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

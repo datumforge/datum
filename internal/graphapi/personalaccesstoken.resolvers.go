@@ -47,7 +47,10 @@ func (r *mutationResolver) UpdatePersonalAccessToken(ctx context.Context, id str
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "personalaccesstoken"}, r.logger)
 	}
 
-	res, err = res.Update().SetInput(input).Save(ctx)
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags).AppendScopes(input.AppendScopes)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "personalaccesstoken"}, r.logger)
 	}

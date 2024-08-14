@@ -49,8 +49,12 @@ type EntityHistory struct {
 	DisplayName string `json:"display_name,omitempty"`
 	// An optional description of the entity
 	Description string `json:"description,omitempty"`
+	// domains associated with the entity
+	Domains []string `json:"domains,omitempty"`
 	// The type of the entity
 	EntityTypeID string `json:"entity_type_id,omitempty"`
+	// status of the entity
+	Status       string `json:"status,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -59,11 +63,11 @@ func (*EntityHistory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entityhistory.FieldTags:
+		case entityhistory.FieldTags, entityhistory.FieldDomains:
 			values[i] = new([]byte)
 		case entityhistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
-		case entityhistory.FieldID, entityhistory.FieldRef, entityhistory.FieldCreatedBy, entityhistory.FieldUpdatedBy, entityhistory.FieldMappingID, entityhistory.FieldDeletedBy, entityhistory.FieldOwnerID, entityhistory.FieldName, entityhistory.FieldDisplayName, entityhistory.FieldDescription, entityhistory.FieldEntityTypeID:
+		case entityhistory.FieldID, entityhistory.FieldRef, entityhistory.FieldCreatedBy, entityhistory.FieldUpdatedBy, entityhistory.FieldMappingID, entityhistory.FieldDeletedBy, entityhistory.FieldOwnerID, entityhistory.FieldName, entityhistory.FieldDisplayName, entityhistory.FieldDescription, entityhistory.FieldEntityTypeID, entityhistory.FieldStatus:
 			values[i] = new(sql.NullString)
 		case entityhistory.FieldHistoryTime, entityhistory.FieldCreatedAt, entityhistory.FieldUpdatedAt, entityhistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -180,11 +184,25 @@ func (eh *EntityHistory) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				eh.Description = value.String
 			}
+		case entityhistory.FieldDomains:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field domains", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &eh.Domains); err != nil {
+					return fmt.Errorf("unmarshal field domains: %w", err)
+				}
+			}
 		case entityhistory.FieldEntityTypeID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field entity_type_id", values[i])
 			} else if value.Valid {
 				eh.EntityTypeID = value.String
+			}
+		case entityhistory.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				eh.Status = value.String
 			}
 		default:
 			eh.selectValues.Set(columns[i], values[i])
@@ -267,8 +285,14 @@ func (eh *EntityHistory) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(eh.Description)
 	builder.WriteString(", ")
+	builder.WriteString("domains=")
+	builder.WriteString(fmt.Sprintf("%v", eh.Domains))
+	builder.WriteString(", ")
 	builder.WriteString("entity_type_id=")
 	builder.WriteString(eh.EntityTypeID)
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(eh.Status)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -27,6 +27,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
+	"github.com/datumforge/datum/internal/ent/generated/notehistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
@@ -440,8 +441,14 @@ func (eh *EntityHistory) changes(new *EntityHistory) []Change {
 	if !reflect.DeepEqual(eh.Description, new.Description) {
 		changes = append(changes, NewChange(entityhistory.FieldDescription, eh.Description, new.Description))
 	}
+	if !reflect.DeepEqual(eh.Domains, new.Domains) {
+		changes = append(changes, NewChange(entityhistory.FieldDomains, eh.Domains, new.Domains))
+	}
 	if !reflect.DeepEqual(eh.EntityTypeID, new.EntityTypeID) {
 		changes = append(changes, NewChange(entityhistory.FieldEntityTypeID, eh.EntityTypeID, new.EntityTypeID))
+	}
+	if !reflect.DeepEqual(eh.Status, new.Status) {
+		changes = append(changes, NewChange(entityhistory.FieldStatus, eh.Status, new.Status))
 	}
 	return changes
 }
@@ -1039,6 +1046,63 @@ func (ih *IntegrationHistory) Diff(history *IntegrationHistory) (*HistoryDiff[In
 			Old:     history,
 			New:     ih,
 			Changes: history.changes(ih),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
+func (nh *NoteHistory) changes(new *NoteHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(nh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(notehistory.FieldCreatedAt, nh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(nh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(notehistory.FieldUpdatedAt, nh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(nh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(notehistory.FieldCreatedBy, nh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(nh.MappingID, new.MappingID) {
+		changes = append(changes, NewChange(notehistory.FieldMappingID, nh.MappingID, new.MappingID))
+	}
+	if !reflect.DeepEqual(nh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(notehistory.FieldDeletedAt, nh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(nh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(notehistory.FieldDeletedBy, nh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(nh.Tags, new.Tags) {
+		changes = append(changes, NewChange(notehistory.FieldTags, nh.Tags, new.Tags))
+	}
+	if !reflect.DeepEqual(nh.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(notehistory.FieldOwnerID, nh.OwnerID, new.OwnerID))
+	}
+	if !reflect.DeepEqual(nh.Text, new.Text) {
+		changes = append(changes, NewChange(notehistory.FieldText, nh.Text, new.Text))
+	}
+	return changes
+}
+
+func (nh *NoteHistory) Diff(history *NoteHistory) (*HistoryDiff[NoteHistory], error) {
+	if nh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	nhUnix, historyUnix := nh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	nhOlder := nhUnix < historyUnix || (nhUnix == historyUnix && nh.ID < history.ID)
+	historyOlder := nhUnix > historyUnix || (nhUnix == historyUnix && nh.ID > history.ID)
+
+	if nhOlder {
+		return &HistoryDiff[NoteHistory]{
+			Old:     nh,
+			New:     history,
+			Changes: nh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[NoteHistory]{
+			Old:     history,
+			New:     nh,
+			Changes: history.changes(nh),
 		}, nil
 	}
 	return nil, IdenticalHistoryError
@@ -1771,6 +1835,12 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	}
 	records = append(records, record...)
 
+	record, err = auditNoteHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
 	record, err = auditOauthProviderHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
@@ -1957,6 +2027,15 @@ func (c *Client) AuditWithFilter(ctx context.Context, tableName string) ([][]str
 
 	if tableName == "" || tableName == strings.TrimSuffix("IntegrationHistory", "History") {
 		record, err = auditIntegrationHistory(ctx, c.config)
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record...)
+	}
+
+	if tableName == "" || tableName == strings.TrimSuffix("NoteHistory", "History") {
+		record, err = auditNoteHistory(ctx, c.config)
 		if err != nil {
 			return nil, err
 		}
@@ -2853,6 +2932,59 @@ func auditIntegrationHistory(ctx context.Context, config config) ([][]string, er
 			default:
 				if i == 0 {
 					record.Changes = (&IntegrationHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type notehistoryref struct {
+	Ref string
+}
+
+func auditNoteHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []notehistoryref
+	client := NewNoteHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(notehistory.ByRef()).
+		Select(notehistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(notehistory.Ref(currRef.Ref)).
+			Order(notehistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "NoteHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+				UpdatedBy:   curr.UpdatedBy,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&NoteHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&NoteHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&NoteHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}

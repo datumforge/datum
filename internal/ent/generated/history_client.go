@@ -53,6 +53,9 @@ func (c *Client) WithHistory() {
 	for _, hook := range enthistory.HistoryHooks[*IntegrationMutation]() {
 		c.Integration.Use(hook)
 	}
+	for _, hook := range enthistory.HistoryHooks[*NoteMutation]() {
+		c.Note.Use(hook)
+	}
 	for _, hook := range enthistory.HistoryHooks[*OauthProviderMutation]() {
 		c.OauthProvider.Use(hook)
 	}

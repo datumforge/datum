@@ -6,6 +6,7 @@ query GetAllEntityHistories {
         createdBy
         description
         displayName
+        domains
         entityTypeID
         historyTime
         id
@@ -13,6 +14,7 @@ query GetAllEntityHistories {
         operation
         ownerID
         ref
+        status
         tags
         updatedAt
         updatedBy
@@ -29,6 +31,7 @@ query GetEntityHistories($where: EntityHistoryWhereInput) {
         createdBy
         description
         displayName
+        domains
         entityTypeID
         historyTime
         id
@@ -36,6 +39,7 @@ query GetEntityHistories($where: EntityHistoryWhereInput) {
         operation
         ownerID
         ref
+        status
         tags
         updatedAt
         updatedBy

@@ -105,6 +105,12 @@ type IntegrationHistory func(*sql.Selector)
 // Invite is the predicate function for invite builders.
 type Invite func(*sql.Selector)
 
+// Note is the predicate function for note builders.
+type Note func(*sql.Selector)
+
+// NoteHistory is the predicate function for notehistory builders.
+type NoteHistory func(*sql.Selector)
+
 // OauthProvider is the predicate function for oauthprovider builders.
 type OauthProvider func(*sql.Selector)
 

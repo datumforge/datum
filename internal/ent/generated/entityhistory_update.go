@@ -155,6 +155,12 @@ func (ehu *EntityHistoryUpdate) SetNillableName(s *string) *EntityHistoryUpdate 
 	return ehu
 }
 
+// ClearName clears the value of the "name" field.
+func (ehu *EntityHistoryUpdate) ClearName() *EntityHistoryUpdate {
+	ehu.mutation.ClearName()
+	return ehu
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ehu *EntityHistoryUpdate) SetDisplayName(s string) *EntityHistoryUpdate {
 	ehu.mutation.SetDisplayName(s)
@@ -166,6 +172,12 @@ func (ehu *EntityHistoryUpdate) SetNillableDisplayName(s *string) *EntityHistory
 	if s != nil {
 		ehu.SetDisplayName(*s)
 	}
+	return ehu
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (ehu *EntityHistoryUpdate) ClearDisplayName() *EntityHistoryUpdate {
+	ehu.mutation.ClearDisplayName()
 	return ehu
 }
 
@@ -189,6 +201,24 @@ func (ehu *EntityHistoryUpdate) ClearDescription() *EntityHistoryUpdate {
 	return ehu
 }
 
+// SetDomains sets the "domains" field.
+func (ehu *EntityHistoryUpdate) SetDomains(s []string) *EntityHistoryUpdate {
+	ehu.mutation.SetDomains(s)
+	return ehu
+}
+
+// AppendDomains appends s to the "domains" field.
+func (ehu *EntityHistoryUpdate) AppendDomains(s []string) *EntityHistoryUpdate {
+	ehu.mutation.AppendDomains(s)
+	return ehu
+}
+
+// ClearDomains clears the value of the "domains" field.
+func (ehu *EntityHistoryUpdate) ClearDomains() *EntityHistoryUpdate {
+	ehu.mutation.ClearDomains()
+	return ehu
+}
+
 // SetEntityTypeID sets the "entity_type_id" field.
 func (ehu *EntityHistoryUpdate) SetEntityTypeID(s string) *EntityHistoryUpdate {
 	ehu.mutation.SetEntityTypeID(s)
@@ -206,6 +236,26 @@ func (ehu *EntityHistoryUpdate) SetNillableEntityTypeID(s *string) *EntityHistor
 // ClearEntityTypeID clears the value of the "entity_type_id" field.
 func (ehu *EntityHistoryUpdate) ClearEntityTypeID() *EntityHistoryUpdate {
 	ehu.mutation.ClearEntityTypeID()
+	return ehu
+}
+
+// SetStatus sets the "status" field.
+func (ehu *EntityHistoryUpdate) SetStatus(s string) *EntityHistoryUpdate {
+	ehu.mutation.SetStatus(s)
+	return ehu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ehu *EntityHistoryUpdate) SetNillableStatus(s *string) *EntityHistoryUpdate {
+	if s != nil {
+		ehu.SetStatus(*s)
+	}
+	return ehu
+}
+
+// ClearStatus clears the value of the "status" field.
+func (ehu *EntityHistoryUpdate) ClearStatus() *EntityHistoryUpdate {
+	ehu.mutation.ClearStatus()
 	return ehu
 }
 
@@ -318,8 +368,14 @@ func (ehu *EntityHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if value, ok := ehu.mutation.Name(); ok {
 		_spec.SetField(entityhistory.FieldName, field.TypeString, value)
 	}
+	if ehu.mutation.NameCleared() {
+		_spec.ClearField(entityhistory.FieldName, field.TypeString)
+	}
 	if value, ok := ehu.mutation.DisplayName(); ok {
 		_spec.SetField(entityhistory.FieldDisplayName, field.TypeString, value)
+	}
+	if ehu.mutation.DisplayNameCleared() {
+		_spec.ClearField(entityhistory.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := ehu.mutation.Description(); ok {
 		_spec.SetField(entityhistory.FieldDescription, field.TypeString, value)
@@ -327,11 +383,28 @@ func (ehu *EntityHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if ehu.mutation.DescriptionCleared() {
 		_spec.ClearField(entityhistory.FieldDescription, field.TypeString)
 	}
+	if value, ok := ehu.mutation.Domains(); ok {
+		_spec.SetField(entityhistory.FieldDomains, field.TypeJSON, value)
+	}
+	if value, ok := ehu.mutation.AppendedDomains(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, entityhistory.FieldDomains, value)
+		})
+	}
+	if ehu.mutation.DomainsCleared() {
+		_spec.ClearField(entityhistory.FieldDomains, field.TypeJSON)
+	}
 	if value, ok := ehu.mutation.EntityTypeID(); ok {
 		_spec.SetField(entityhistory.FieldEntityTypeID, field.TypeString, value)
 	}
 	if ehu.mutation.EntityTypeIDCleared() {
 		_spec.ClearField(entityhistory.FieldEntityTypeID, field.TypeString)
+	}
+	if value, ok := ehu.mutation.Status(); ok {
+		_spec.SetField(entityhistory.FieldStatus, field.TypeString, value)
+	}
+	if ehu.mutation.StatusCleared() {
+		_spec.ClearField(entityhistory.FieldStatus, field.TypeString)
 	}
 	_spec.Node.Schema = ehu.schemaConfig.EntityHistory
 	ctx = internal.NewSchemaConfigContext(ctx, ehu.schemaConfig)
@@ -479,6 +552,12 @@ func (ehuo *EntityHistoryUpdateOne) SetNillableName(s *string) *EntityHistoryUpd
 	return ehuo
 }
 
+// ClearName clears the value of the "name" field.
+func (ehuo *EntityHistoryUpdateOne) ClearName() *EntityHistoryUpdateOne {
+	ehuo.mutation.ClearName()
+	return ehuo
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ehuo *EntityHistoryUpdateOne) SetDisplayName(s string) *EntityHistoryUpdateOne {
 	ehuo.mutation.SetDisplayName(s)
@@ -490,6 +569,12 @@ func (ehuo *EntityHistoryUpdateOne) SetNillableDisplayName(s *string) *EntityHis
 	if s != nil {
 		ehuo.SetDisplayName(*s)
 	}
+	return ehuo
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (ehuo *EntityHistoryUpdateOne) ClearDisplayName() *EntityHistoryUpdateOne {
+	ehuo.mutation.ClearDisplayName()
 	return ehuo
 }
 
@@ -513,6 +598,24 @@ func (ehuo *EntityHistoryUpdateOne) ClearDescription() *EntityHistoryUpdateOne {
 	return ehuo
 }
 
+// SetDomains sets the "domains" field.
+func (ehuo *EntityHistoryUpdateOne) SetDomains(s []string) *EntityHistoryUpdateOne {
+	ehuo.mutation.SetDomains(s)
+	return ehuo
+}
+
+// AppendDomains appends s to the "domains" field.
+func (ehuo *EntityHistoryUpdateOne) AppendDomains(s []string) *EntityHistoryUpdateOne {
+	ehuo.mutation.AppendDomains(s)
+	return ehuo
+}
+
+// ClearDomains clears the value of the "domains" field.
+func (ehuo *EntityHistoryUpdateOne) ClearDomains() *EntityHistoryUpdateOne {
+	ehuo.mutation.ClearDomains()
+	return ehuo
+}
+
 // SetEntityTypeID sets the "entity_type_id" field.
 func (ehuo *EntityHistoryUpdateOne) SetEntityTypeID(s string) *EntityHistoryUpdateOne {
 	ehuo.mutation.SetEntityTypeID(s)
@@ -530,6 +633,26 @@ func (ehuo *EntityHistoryUpdateOne) SetNillableEntityTypeID(s *string) *EntityHi
 // ClearEntityTypeID clears the value of the "entity_type_id" field.
 func (ehuo *EntityHistoryUpdateOne) ClearEntityTypeID() *EntityHistoryUpdateOne {
 	ehuo.mutation.ClearEntityTypeID()
+	return ehuo
+}
+
+// SetStatus sets the "status" field.
+func (ehuo *EntityHistoryUpdateOne) SetStatus(s string) *EntityHistoryUpdateOne {
+	ehuo.mutation.SetStatus(s)
+	return ehuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ehuo *EntityHistoryUpdateOne) SetNillableStatus(s *string) *EntityHistoryUpdateOne {
+	if s != nil {
+		ehuo.SetStatus(*s)
+	}
+	return ehuo
+}
+
+// ClearStatus clears the value of the "status" field.
+func (ehuo *EntityHistoryUpdateOne) ClearStatus() *EntityHistoryUpdateOne {
+	ehuo.mutation.ClearStatus()
 	return ehuo
 }
 
@@ -672,8 +795,14 @@ func (ehuo *EntityHistoryUpdateOne) sqlSave(ctx context.Context) (_node *EntityH
 	if value, ok := ehuo.mutation.Name(); ok {
 		_spec.SetField(entityhistory.FieldName, field.TypeString, value)
 	}
+	if ehuo.mutation.NameCleared() {
+		_spec.ClearField(entityhistory.FieldName, field.TypeString)
+	}
 	if value, ok := ehuo.mutation.DisplayName(); ok {
 		_spec.SetField(entityhistory.FieldDisplayName, field.TypeString, value)
+	}
+	if ehuo.mutation.DisplayNameCleared() {
+		_spec.ClearField(entityhistory.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := ehuo.mutation.Description(); ok {
 		_spec.SetField(entityhistory.FieldDescription, field.TypeString, value)
@@ -681,11 +810,28 @@ func (ehuo *EntityHistoryUpdateOne) sqlSave(ctx context.Context) (_node *EntityH
 	if ehuo.mutation.DescriptionCleared() {
 		_spec.ClearField(entityhistory.FieldDescription, field.TypeString)
 	}
+	if value, ok := ehuo.mutation.Domains(); ok {
+		_spec.SetField(entityhistory.FieldDomains, field.TypeJSON, value)
+	}
+	if value, ok := ehuo.mutation.AppendedDomains(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, entityhistory.FieldDomains, value)
+		})
+	}
+	if ehuo.mutation.DomainsCleared() {
+		_spec.ClearField(entityhistory.FieldDomains, field.TypeJSON)
+	}
 	if value, ok := ehuo.mutation.EntityTypeID(); ok {
 		_spec.SetField(entityhistory.FieldEntityTypeID, field.TypeString, value)
 	}
 	if ehuo.mutation.EntityTypeIDCleared() {
 		_spec.ClearField(entityhistory.FieldEntityTypeID, field.TypeString)
+	}
+	if value, ok := ehuo.mutation.Status(); ok {
+		_spec.SetField(entityhistory.FieldStatus, field.TypeString, value)
+	}
+	if ehuo.mutation.StatusCleared() {
+		_spec.ClearField(entityhistory.FieldStatus, field.TypeString)
 	}
 	_spec.Node.Schema = ehuo.schemaConfig.EntityHistory
 	ctx = internal.NewSchemaConfigContext(ctx, ehuo.schemaConfig)

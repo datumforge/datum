@@ -50,6 +50,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
+	"github.com/datumforge/datum/internal/ent/generated/notehistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
@@ -157,6 +159,10 @@ type Client struct {
 	IntegrationHistory *IntegrationHistoryClient
 	// Invite is the client for interacting with the Invite builders.
 	Invite *InviteClient
+	// Note is the client for interacting with the Note builders.
+	Note *NoteClient
+	// NoteHistory is the client for interacting with the NoteHistory builders.
+	NoteHistory *NoteHistoryClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
 	// OauthProviderHistory is the client for interacting with the OauthProviderHistory builders.
@@ -250,6 +256,8 @@ func (c *Client) init() {
 	c.Integration = NewIntegrationClient(c.config)
 	c.IntegrationHistory = NewIntegrationHistoryClient(c.config)
 	c.Invite = NewInviteClient(c.config)
+	c.Note = NewNoteClient(c.config)
+	c.NoteHistory = NewNoteHistoryClient(c.config)
 	c.OauthProvider = NewOauthProviderClient(c.config)
 	c.OauthProviderHistory = NewOauthProviderHistoryClient(c.config)
 	c.OhAuthTooToken = NewOhAuthTooTokenClient(c.config)
@@ -503,6 +511,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Integration:                   NewIntegrationClient(cfg),
 		IntegrationHistory:            NewIntegrationHistoryClient(cfg),
 		Invite:                        NewInviteClient(cfg),
+		Note:                          NewNoteClient(cfg),
+		NoteHistory:                   NewNoteHistoryClient(cfg),
 		OauthProvider:                 NewOauthProviderClient(cfg),
 		OauthProviderHistory:          NewOauthProviderHistoryClient(cfg),
 		OhAuthTooToken:                NewOhAuthTooTokenClient(cfg),
@@ -577,6 +587,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Integration:                   NewIntegrationClient(cfg),
 		IntegrationHistory:            NewIntegrationHistoryClient(cfg),
 		Invite:                        NewInviteClient(cfg),
+		Note:                          NewNoteClient(cfg),
+		NoteHistory:                   NewNoteHistoryClient(cfg),
 		OauthProvider:                 NewOauthProviderClient(cfg),
 		OauthProviderHistory:          NewOauthProviderHistoryClient(cfg),
 		OhAuthTooToken:                NewOhAuthTooTokenClient(cfg),
@@ -635,9 +647,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.EntityTypeHistory, c.Event, c.EventHistory, c.Feature, c.FeatureHistory,
 		c.File, c.FileHistory, c.Group, c.GroupHistory, c.GroupMembership,
 		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Hush,
-		c.HushHistory, c.Integration, c.IntegrationHistory, c.Invite, c.OauthProvider,
-		c.OauthProviderHistory, c.OhAuthTooToken, c.OrgMembership,
-		c.OrgMembershipHistory, c.Organization, c.OrganizationHistory,
+		c.HushHistory, c.Integration, c.IntegrationHistory, c.Invite, c.Note,
+		c.NoteHistory, c.OauthProvider, c.OauthProviderHistory, c.OhAuthTooToken,
+		c.OrgMembership, c.OrgMembershipHistory, c.Organization, c.OrganizationHistory,
 		c.OrganizationSetting, c.OrganizationSettingHistory, c.PasswordResetToken,
 		c.PersonalAccessToken, c.Subscriber, c.TFASetting, c.Template,
 		c.TemplateHistory, c.User, c.UserHistory, c.UserSetting, c.UserSettingHistory,
@@ -658,9 +670,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.EntityTypeHistory, c.Event, c.EventHistory, c.Feature, c.FeatureHistory,
 		c.File, c.FileHistory, c.Group, c.GroupHistory, c.GroupMembership,
 		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Hush,
-		c.HushHistory, c.Integration, c.IntegrationHistory, c.Invite, c.OauthProvider,
-		c.OauthProviderHistory, c.OhAuthTooToken, c.OrgMembership,
-		c.OrgMembershipHistory, c.Organization, c.OrganizationHistory,
+		c.HushHistory, c.Integration, c.IntegrationHistory, c.Invite, c.Note,
+		c.NoteHistory, c.OauthProvider, c.OauthProviderHistory, c.OhAuthTooToken,
+		c.OrgMembership, c.OrgMembershipHistory, c.Organization, c.OrganizationHistory,
 		c.OrganizationSetting, c.OrganizationSettingHistory, c.PasswordResetToken,
 		c.PersonalAccessToken, c.Subscriber, c.TFASetting, c.Template,
 		c.TemplateHistory, c.User, c.UserHistory, c.UserSetting, c.UserSettingHistory,
@@ -739,6 +751,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.IntegrationHistory.mutate(ctx, m)
 	case *InviteMutation:
 		return c.Invite.mutate(ctx, m)
+	case *NoteMutation:
+		return c.Note.mutate(ctx, m)
+	case *NoteHistoryMutation:
+		return c.NoteHistory.mutate(ctx, m)
 	case *OauthProviderMutation:
 		return c.OauthProvider.mutate(ctx, m)
 	case *OauthProviderHistoryMutation:
@@ -2953,6 +2969,44 @@ func (c *EntityClient) QueryDocuments(e *Entity) *DocumentDataQuery {
 	return query
 }
 
+// QueryNotes queries the notes edge of a Entity.
+func (c *EntityClient) QueryNotes(e *Entity) *NoteQuery {
+	query := (&NoteClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, id),
+			sqlgraph.To(note.Table, note.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, entity.NotesTable, entity.NotesColumn),
+		)
+		schemaConfig := e.schemaConfig
+		step.To.Schema = schemaConfig.Note
+		step.Edge.Schema = schemaConfig.Note
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFiles queries the files edge of a Entity.
+func (c *EntityClient) QueryFiles(e *Entity) *FileQuery {
+	query := (&FileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, id),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, entity.FilesTable, entity.FilesPrimaryKey...),
+		)
+		schemaConfig := e.schemaConfig
+		step.To.Schema = schemaConfig.File
+		step.Edge.Schema = schemaConfig.EntityFiles
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryEntityType queries the entity_type edge of a Entity.
 func (c *EntityClient) QueryEntityType(e *Entity) *EntityTypeQuery {
 	query := (&EntityTypeClient{config: c.config}).Query()
@@ -4499,6 +4553,25 @@ func (c *FileClient) QueryOrganization(f *File) *OrganizationQuery {
 		schemaConfig := f.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OrganizationFiles
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntity queries the entity edge of a File.
+func (c *FileClient) QueryEntity(f *File) *EntityQuery {
+	query := (&EntityClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, id),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, file.EntityTable, file.EntityPrimaryKey...),
+		)
+		schemaConfig := f.schemaConfig
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.EntityFiles
 		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -6566,6 +6639,314 @@ func (c *InviteClient) mutate(ctx context.Context, m *InviteMutation) (Value, er
 	}
 }
 
+// NoteClient is a client for the Note schema.
+type NoteClient struct {
+	config
+}
+
+// NewNoteClient returns a client for the Note from the given config.
+func NewNoteClient(c config) *NoteClient {
+	return &NoteClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `note.Hooks(f(g(h())))`.
+func (c *NoteClient) Use(hooks ...Hook) {
+	c.hooks.Note = append(c.hooks.Note, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `note.Intercept(f(g(h())))`.
+func (c *NoteClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Note = append(c.inters.Note, interceptors...)
+}
+
+// Create returns a builder for creating a Note entity.
+func (c *NoteClient) Create() *NoteCreate {
+	mutation := newNoteMutation(c.config, OpCreate)
+	return &NoteCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Note entities.
+func (c *NoteClient) CreateBulk(builders ...*NoteCreate) *NoteCreateBulk {
+	return &NoteCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NoteClient) MapCreateBulk(slice any, setFunc func(*NoteCreate, int)) *NoteCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NoteCreateBulk{err: fmt.Errorf("calling to NoteClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NoteCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NoteCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Note.
+func (c *NoteClient) Update() *NoteUpdate {
+	mutation := newNoteMutation(c.config, OpUpdate)
+	return &NoteUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NoteClient) UpdateOne(n *Note) *NoteUpdateOne {
+	mutation := newNoteMutation(c.config, OpUpdateOne, withNote(n))
+	return &NoteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NoteClient) UpdateOneID(id string) *NoteUpdateOne {
+	mutation := newNoteMutation(c.config, OpUpdateOne, withNoteID(id))
+	return &NoteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Note.
+func (c *NoteClient) Delete() *NoteDelete {
+	mutation := newNoteMutation(c.config, OpDelete)
+	return &NoteDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NoteClient) DeleteOne(n *Note) *NoteDeleteOne {
+	return c.DeleteOneID(n.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NoteClient) DeleteOneID(id string) *NoteDeleteOne {
+	builder := c.Delete().Where(note.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NoteDeleteOne{builder}
+}
+
+// Query returns a query builder for Note.
+func (c *NoteClient) Query() *NoteQuery {
+	return &NoteQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNote},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Note entity by its id.
+func (c *NoteClient) Get(ctx context.Context, id string) (*Note, error) {
+	return c.Query().Where(note.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NoteClient) GetX(ctx context.Context, id string) *Note {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a Note.
+func (c *NoteClient) QueryOwner(n *Note) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := n.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(note.Table, note.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, note.OwnerTable, note.OwnerColumn),
+		)
+		schemaConfig := n.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Note
+		fromV = sqlgraph.Neighbors(n.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntity queries the entity edge of a Note.
+func (c *NoteClient) QueryEntity(n *Note) *EntityQuery {
+	query := (&EntityClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := n.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(note.Table, note.FieldID, id),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, note.EntityTable, note.EntityColumn),
+		)
+		schemaConfig := n.schemaConfig
+		step.To.Schema = schemaConfig.Entity
+		step.Edge.Schema = schemaConfig.Note
+		fromV = sqlgraph.Neighbors(n.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *NoteClient) Hooks() []Hook {
+	hooks := c.hooks.Note
+	return append(hooks[:len(hooks):len(hooks)], note.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *NoteClient) Interceptors() []Interceptor {
+	inters := c.inters.Note
+	return append(inters[:len(inters):len(inters)], note.Interceptors[:]...)
+}
+
+func (c *NoteClient) mutate(ctx context.Context, m *NoteMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NoteCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NoteUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NoteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NoteDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown Note mutation op: %q", m.Op())
+	}
+}
+
+// NoteHistoryClient is a client for the NoteHistory schema.
+type NoteHistoryClient struct {
+	config
+}
+
+// NewNoteHistoryClient returns a client for the NoteHistory from the given config.
+func NewNoteHistoryClient(c config) *NoteHistoryClient {
+	return &NoteHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `notehistory.Hooks(f(g(h())))`.
+func (c *NoteHistoryClient) Use(hooks ...Hook) {
+	c.hooks.NoteHistory = append(c.hooks.NoteHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `notehistory.Intercept(f(g(h())))`.
+func (c *NoteHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NoteHistory = append(c.inters.NoteHistory, interceptors...)
+}
+
+// Create returns a builder for creating a NoteHistory entity.
+func (c *NoteHistoryClient) Create() *NoteHistoryCreate {
+	mutation := newNoteHistoryMutation(c.config, OpCreate)
+	return &NoteHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NoteHistory entities.
+func (c *NoteHistoryClient) CreateBulk(builders ...*NoteHistoryCreate) *NoteHistoryCreateBulk {
+	return &NoteHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NoteHistoryClient) MapCreateBulk(slice any, setFunc func(*NoteHistoryCreate, int)) *NoteHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NoteHistoryCreateBulk{err: fmt.Errorf("calling to NoteHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NoteHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NoteHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NoteHistory.
+func (c *NoteHistoryClient) Update() *NoteHistoryUpdate {
+	mutation := newNoteHistoryMutation(c.config, OpUpdate)
+	return &NoteHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NoteHistoryClient) UpdateOne(nh *NoteHistory) *NoteHistoryUpdateOne {
+	mutation := newNoteHistoryMutation(c.config, OpUpdateOne, withNoteHistory(nh))
+	return &NoteHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NoteHistoryClient) UpdateOneID(id string) *NoteHistoryUpdateOne {
+	mutation := newNoteHistoryMutation(c.config, OpUpdateOne, withNoteHistoryID(id))
+	return &NoteHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NoteHistory.
+func (c *NoteHistoryClient) Delete() *NoteHistoryDelete {
+	mutation := newNoteHistoryMutation(c.config, OpDelete)
+	return &NoteHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NoteHistoryClient) DeleteOne(nh *NoteHistory) *NoteHistoryDeleteOne {
+	return c.DeleteOneID(nh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NoteHistoryClient) DeleteOneID(id string) *NoteHistoryDeleteOne {
+	builder := c.Delete().Where(notehistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NoteHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for NoteHistory.
+func (c *NoteHistoryClient) Query() *NoteHistoryQuery {
+	return &NoteHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNoteHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NoteHistory entity by its id.
+func (c *NoteHistoryClient) Get(ctx context.Context, id string) (*NoteHistory, error) {
+	return c.Query().Where(notehistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NoteHistoryClient) GetX(ctx context.Context, id string) *NoteHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *NoteHistoryClient) Hooks() []Hook {
+	hooks := c.hooks.NoteHistory
+	return append(hooks[:len(hooks):len(hooks)], notehistory.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *NoteHistoryClient) Interceptors() []Interceptor {
+	inters := c.inters.NoteHistory
+	return append(inters[:len(inters):len(inters)], notehistory.Interceptors[:]...)
+}
+
+func (c *NoteHistoryClient) mutate(ctx context.Context, m *NoteHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NoteHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NoteHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NoteHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NoteHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown NoteHistory mutation op: %q", m.Op())
+	}
+}
+
 // OauthProviderClient is a client for the OauthProvider schema.
 type OauthProviderClient struct {
 	config
@@ -7930,6 +8311,25 @@ func (c *OrganizationClient) QueryContacts(o *Organization) *ContactQuery {
 		schemaConfig := o.schemaConfig
 		step.To.Schema = schemaConfig.Contact
 		step.Edge.Schema = schemaConfig.Contact
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNotes queries the notes edge of a Organization.
+func (c *OrganizationClient) QueryNotes(o *Organization) *NoteQuery {
+	query := (&NoteClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(note.Table, note.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.NotesTable, organization.NotesColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Note
+		step.Edge.Schema = schemaConfig.Note
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -10681,9 +11081,9 @@ type (
 		Entity, EntityHistory, EntityType, EntityTypeHistory, Event, EventHistory,
 		Feature, FeatureHistory, File, FileHistory, Group, GroupHistory,
 		GroupMembership, GroupMembershipHistory, GroupSetting, GroupSettingHistory,
-		Hush, HushHistory, Integration, IntegrationHistory, Invite, OauthProvider,
-		OauthProviderHistory, OhAuthTooToken, OrgMembership, OrgMembershipHistory,
-		Organization, OrganizationHistory, OrganizationSetting,
+		Hush, HushHistory, Integration, IntegrationHistory, Invite, Note, NoteHistory,
+		OauthProvider, OauthProviderHistory, OhAuthTooToken, OrgMembership,
+		OrgMembershipHistory, Organization, OrganizationHistory, OrganizationSetting,
 		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
 		Subscriber, TFASetting, Template, TemplateHistory, User, UserHistory,
 		UserSetting, UserSettingHistory, Webauthn, Webhook, WebhookHistory []ent.Hook
@@ -10695,9 +11095,9 @@ type (
 		Entity, EntityHistory, EntityType, EntityTypeHistory, Event, EventHistory,
 		Feature, FeatureHistory, File, FileHistory, Group, GroupHistory,
 		GroupMembership, GroupMembershipHistory, GroupSetting, GroupSettingHistory,
-		Hush, HushHistory, Integration, IntegrationHistory, Invite, OauthProvider,
-		OauthProviderHistory, OhAuthTooToken, OrgMembership, OrgMembershipHistory,
-		Organization, OrganizationHistory, OrganizationSetting,
+		Hush, HushHistory, Integration, IntegrationHistory, Invite, Note, NoteHistory,
+		OauthProvider, OauthProviderHistory, OhAuthTooToken, OrgMembership,
+		OrgMembershipHistory, Organization, OrganizationHistory, OrganizationSetting,
 		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
 		Subscriber, TFASetting, Template, TemplateHistory, User, UserHistory,
 		UserSetting, UserSettingHistory, Webauthn, Webhook,

@@ -21,12 +21,14 @@ func (r *mutationResolver) CreateInvite(ctx context.Context, input generated.Cre
 		return nil, rout.NewMissingRequiredFieldError("owner_id")
 	}
 
-	om, err := withTransactionalMutation(ctx).Invite.Create().SetInput(input).Save(ctx)
+	res, err := withTransactionalMutation(ctx).Invite.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "invite"}, r.logger)
 	}
 
-	return &InviteCreatePayload{Invite: om}, nil
+	return &InviteCreatePayload{
+		Invite: res,
+	}, nil
 }
 
 // CreateBulkInvite is the resolver for the createBulkInvite field.
@@ -48,23 +50,28 @@ func (r *mutationResolver) CreateBulkCSVInvite(ctx context.Context, input graphq
 
 // UpdateInvite is the resolver for the updateInvite field.
 func (r *mutationResolver) UpdateInvite(ctx context.Context, id string, input generated.UpdateInviteInput) (*InviteUpdatePayload, error) {
-	invite, err := withTransactionalMutation(ctx).Invite.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Invite.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "invite"}, r.logger)
 	}
-
-	if err := setOrganizationInAuthContext(ctx, &invite.OwnerID); err != nil {
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
 		r.logger.Errorw("failed to set organization in auth context", "error", err)
 
 		return nil, ErrPermissionDenied
 	}
 
-	invite, err = invite.Update().SetInput(input).Save(ctx)
+	// setup update request
+	req := res.Update().SetInput(input)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "invite"}, r.logger)
 	}
 
-	return &InviteUpdatePayload{Invite: invite}, nil
+	return &InviteUpdatePayload{
+		Invite: res,
+	}, nil
 }
 
 // DeleteInvite is the resolver for the deleteInvite field.
@@ -77,15 +84,17 @@ func (r *mutationResolver) DeleteInvite(ctx context.Context, id string) (*Invite
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &InviteDeletePayload{DeletedID: id}, nil
+	return &InviteDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // Invite is the resolver for the invite field.
 func (r *queryResolver) Invite(ctx context.Context, id string) (*generated.Invite, error) {
-	inv, err := withTransactionalMutation(ctx).Invite.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Invite.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "invite"}, r.logger)
 	}
 
-	return inv, nil
+	return res, nil
 }

@@ -40,6 +40,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
+	"github.com/datumforge/datum/internal/ent/generated/notehistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
@@ -227,6 +229,16 @@ var inviteImplementors = []string{"Invite", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Invite) IsNode() {}
+
+var noteImplementors = []string{"Note", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Note) IsNode() {}
+
+var notehistoryImplementors = []string{"NoteHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*NoteHistory) IsNode() {}
 
 var oauthproviderImplementors = []string{"OauthProvider", "Node"}
 
@@ -670,6 +682,24 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(invite.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, inviteImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case note.Table:
+		query := c.Note.Query().
+			Where(note.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, noteImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case notehistory.Table:
+		query := c.NoteHistory.Query().
+			Where(notehistory.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, notehistoryImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -1427,6 +1457,38 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.Invite.Query().
 			Where(invite.IDIn(ids...))
 		query, err := query.CollectFields(ctx, inviteImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case note.Table:
+		query := c.Note.Query().
+			Where(note.IDIn(ids...))
+		query, err := query.CollectFields(ctx, noteImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case notehistory.Table:
+		query := c.NoteHistory.Query().
+			Where(notehistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, notehistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}

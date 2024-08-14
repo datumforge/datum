@@ -284,8 +284,8 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 	invite1 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 	invite2 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 	invite3 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
-	invite4 := (&InviteBuilder{client: suite.client, OrgID: testOrgID}).MustNew(reqCtx, t)
-	invite5 := (&InviteBuilder{client: suite.client, OrgID: testOrgID, Role: fgax.AdminRelation}).MustNew(reqCtx, t)
+	invite4 := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
+	invite5 := (&InviteBuilder{client: suite.client, Role: fgax.AdminRelation}).MustNew(reqCtx, t)
 
 	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, invite1.OwnerID)
 	require.NoError(t, err)

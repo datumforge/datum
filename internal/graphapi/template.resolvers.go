@@ -9,16 +9,26 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateTemplate is the resolver for the createTemplate field.
 func (r *mutationResolver) CreateTemplate(ctx context.Context, input generated.CreateTemplateInput) (*TemplateCreatePayload, error) {
-	t, err := withTransactionalMutation(ctx).Template.Create().SetInput(input).Save(ctx)
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
+	res, err := withTransactionalMutation(ctx).Template.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "template"}, r.logger)
 	}
 
-	return &TemplateCreatePayload{Template: t}, nil
+	return &TemplateCreatePayload{
+		Template: res,
+	}, nil
 }
 
 // CreateBulkTemplate is the resolver for the createBulkTemplate field.
@@ -40,17 +50,28 @@ func (r *mutationResolver) CreateBulkCSVTemplate(ctx context.Context, input grap
 
 // UpdateTemplate is the resolver for the updateTemplate field.
 func (r *mutationResolver) UpdateTemplate(ctx context.Context, id string, input generated.UpdateTemplateInput) (*TemplateUpdatePayload, error) {
-	template, err := withTransactionalMutation(ctx).Template.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Template.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "template"}, r.logger)
+	}
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
+	}
+
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "template"}, r.logger)
 	}
 
-	template, err = template.Update().SetInput(input).Save(ctx)
-	if err != nil {
-		return nil, parseRequestError(err, action{action: ActionUpdate, object: "template"}, r.logger)
-	}
-
-	return &TemplateUpdatePayload{Template: template}, nil
+	return &TemplateUpdatePayload{
+		Template: res,
+	}, nil
 }
 
 // DeleteTemplate is the resolver for the deleteTemplate field.
@@ -63,15 +84,17 @@ func (r *mutationResolver) DeleteTemplate(ctx context.Context, id string) (*Temp
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &TemplateDeletePayload{DeletedID: id}, nil
+	return &TemplateDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
 // Template is the resolver for the template field.
 func (r *queryResolver) Template(ctx context.Context, id string) (*generated.Template, error) {
-	template, err := withTransactionalMutation(ctx).Template.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Template.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "template"}, r.logger)
 	}
 
-	return template, nil
+	return res, nil
 }

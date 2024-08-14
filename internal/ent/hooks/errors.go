@@ -44,6 +44,9 @@ var (
 
 	// ErrMissingRecipientEmail is returned when an email is required but not provided
 	ErrMissingRecipientEmail = errors.New("recipient email is required but not provided")
+
+	// ErrMissingRequiredName is returned when a name is required but not provided
+	ErrMissingRequiredName = errors.New("name or display name is required but not provided")
 )
 
 // IsUniqueConstraintError reports if the error resulted from a DB uniqueness constraint violation.

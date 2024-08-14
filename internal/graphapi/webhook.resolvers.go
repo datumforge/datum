@@ -9,16 +9,26 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
-// CreateWebhook is the resolver for the createWebhook field
+// CreateWebhook is the resolver for the createWebhook field.
 func (r *mutationResolver) CreateWebhook(ctx context.Context, input generated.CreateWebhookInput) (*WebhookCreatePayload, error) {
-	webhook, err := withTransactionalMutation(ctx).Webhook.Create().SetInput(input).Save(ctx)
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, input.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, rout.NewMissingRequiredFieldError("owner_id")
+	}
+
+	res, err := withTransactionalMutation(ctx).Webhook.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionCreate, object: "webhook"}, r.logger)
 	}
 
-	return &WebhookCreatePayload{Webhook: webhook}, nil
+	return &WebhookCreatePayload{
+		Webhook: res,
+	}, nil
 }
 
 // CreateBulkWebhook is the resolver for the createBulkWebhook field.
@@ -38,22 +48,33 @@ func (r *mutationResolver) CreateBulkCSVWebhook(ctx context.Context, input graph
 	return r.bulkCreateWebhook(ctx, data)
 }
 
-// UpdateWebhook is the resolver for the updateWebhook field
+// UpdateWebhook is the resolver for the updateWebhook field.
 func (r *mutationResolver) UpdateWebhook(ctx context.Context, id string, input generated.UpdateWebhookInput) (*WebhookUpdatePayload, error) {
-	webhook, err := withTransactionalMutation(ctx).Webhook.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Webhook.Get(ctx, id)
+	if err != nil {
+		return nil, parseRequestError(err, action{action: ActionUpdate, object: "webhook"}, r.logger)
+	}
+	// set the organization in the auth context if its not done for us
+	if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
+		r.logger.Errorw("failed to set organization in auth context", "error", err)
+
+		return nil, ErrPermissionDenied
+	}
+
+	// setup update request
+	req := res.Update().SetInput(input).AppendTags(input.AppendTags)
+
+	res, err = req.Save(ctx)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionUpdate, object: "webhook"}, r.logger)
 	}
 
-	webhook, err = webhook.Update().SetInput(input).Save(ctx)
-	if err != nil {
-		return nil, parseRequestError(err, action{action: ActionUpdate, object: "webhook"}, r.logger)
-	}
-
-	return &WebhookUpdatePayload{Webhook: webhook}, nil
+	return &WebhookUpdatePayload{
+		Webhook: res,
+	}, nil
 }
 
-// DeleteWebhook is the resolver for the deleteWebhook field
+// DeleteWebhook is the resolver for the deleteWebhook field.
 func (r *mutationResolver) DeleteWebhook(ctx context.Context, id string) (*WebhookDeletePayload, error) {
 	if err := withTransactionalMutation(ctx).Webhook.DeleteOneID(id).Exec(ctx); err != nil {
 		return nil, parseRequestError(err, action{action: ActionDelete, object: "webhook"}, r.logger)
@@ -63,15 +84,17 @@ func (r *mutationResolver) DeleteWebhook(ctx context.Context, id string) (*Webho
 		return nil, newCascadeDeleteError(err)
 	}
 
-	return &WebhookDeletePayload{DeletedID: id}, nil
+	return &WebhookDeletePayload{
+		DeletedID: id,
+	}, nil
 }
 
-// Webhook is the resolver for the webhook field
+// Webhook is the resolver for the webhook field.
 func (r *queryResolver) Webhook(ctx context.Context, id string) (*generated.Webhook, error) {
-	webhook, err := withTransactionalMutation(ctx).Webhook.Get(ctx, id)
+	res, err := withTransactionalMutation(ctx).Webhook.Get(ctx, id)
 	if err != nil {
 		return nil, parseRequestError(err, action{action: ActionGet, object: "webhook"}, r.logger)
 	}
 
-	return webhook, nil
+	return res, nil
 }

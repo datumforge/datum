@@ -15,7 +15,10 @@ if err := setOrganizationInAuthContext(ctx, &res.OwnerID); err != nil {
 }
 {{- end }}
 
-res, err = res.Update().SetInput(input).Save(ctx)
+// setup update request
+req := res.Update().SetInput(input){{- range $appendField := .AppendFields }}.{{ $appendField }}(input.{{ $appendField }}){{- end }}
+
+res, err = req.Save(ctx)
 if err != nil {
 	return nil, parseRequestError(err, action{action: ActionUpdate, object: "{{ $entity | toLower }}"}, r.logger)
 }

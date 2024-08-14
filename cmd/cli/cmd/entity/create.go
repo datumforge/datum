@@ -27,14 +27,27 @@ func init() {
 	createCmd.Flags().StringP("display-name", "s", "", "human friendly name of the entity")
 	createCmd.Flags().StringP("type", "t", "", "type of the entity")
 	createCmd.Flags().StringP("description", "d", "", "description of the entity")
+	createCmd.Flags().String("status", "", "status of the entity")
+	createCmd.Flags().StringSlice("domains", []string{}, "domains associated with the entity")
+	createCmd.Flags().String("note", "", "note about the entity")
 }
 
 // createValidation validates the required fields for the command
 func createValidation(ctx context.Context) (input datumclient.CreateEntityInput, err error) {
 	// validation of required fields for the create command
-	input.Name = datum.Config.String("name")
-	if input.Name == "" {
-		return input, datum.NewRequiredFieldMissingError("entity name")
+	name := datum.Config.String("name")
+	displayName := datum.Config.String("display-name")
+
+	if name == "" && displayName == "" {
+		return input, datum.NewRequiredFieldMissingError("entity name or display name")
+	}
+
+	if name != "" {
+		input.Name = &name
+	}
+
+	if displayName != "" {
+		input.DisplayName = &displayName
 	}
 
 	entityType := datum.Config.String("type")
@@ -48,14 +61,26 @@ func createValidation(ctx context.Context) (input datumclient.CreateEntityInput,
 		input.EntityTypeID = &id
 	}
 
-	displayName := datum.Config.String("display-name")
-	if displayName != "" {
-		input.DisplayName = &displayName
-	}
-
 	description := datum.Config.String("description")
 	if description != "" {
 		input.Description = &description
+	}
+
+	status := datum.Config.String("status")
+	if status != "" {
+		input.Status = &status
+	}
+
+	domains := datum.Config.Strings("domains")
+	if len(domains) > 0 {
+		input.Domains = domains
+	}
+
+	note := datum.Config.String("note")
+	if note != "" {
+		input.Note = &datumclient.CreateNoteInput{
+			Text: note,
+		}
 	}
 
 	return input, nil

@@ -45,6 +45,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
+	"github.com/datumforge/datum/internal/ent/generated/note"
+	"github.com/datumforge/datum/internal/ent/generated/notehistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
@@ -160,6 +162,8 @@ func checkColumn(table, column string) error {
 			integration.Table:                   integration.ValidColumn,
 			integrationhistory.Table:            integrationhistory.ValidColumn,
 			invite.Table:                        invite.ValidColumn,
+			note.Table:                          note.ValidColumn,
+			notehistory.Table:                   notehistory.ValidColumn,
 			oauthprovider.Table:                 oauthprovider.ValidColumn,
 			oauthproviderhistory.Table:          oauthproviderhistory.ValidColumn,
 			ohauthtootoken.Table:                ohauthtootoken.ValidColumn,

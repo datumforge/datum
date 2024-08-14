@@ -106,7 +106,6 @@ type InviteBuilder struct {
 
 	// Fields
 	Recipient string
-	OrgID     string
 	Role      string
 }
 
@@ -480,14 +479,6 @@ func (g *GroupCleanup) MustDelete(ctx context.Context, t *testing.T) {
 func (i *InviteBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Invite {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	// create owner if not provided
-	orgID := i.OrgID
-
-	if orgID == "" {
-		org := (&OrganizationBuilder{client: i.client}).MustNew(ctx, t)
-		orgID = org.ID
-	}
-
 	// create user if not provided
 	rec := i.Recipient
 
@@ -496,7 +487,6 @@ func (i *InviteBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Invite {
 	}
 
 	inviteQuery := i.client.db.Invite.Create().
-		SetOwnerID(orgID).
 		SetRecipient(rec)
 
 	if i.Role != "" {

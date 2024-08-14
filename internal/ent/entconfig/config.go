@@ -4,6 +4,8 @@ package entconfig
 type Config struct {
 	// Flags contains the flags for the server to allow use to test different code paths
 	Flags Flags `json:"flags" koanf:"flags" jsonschema:"description=flags for the server"`
+	// EntityTypes is the list of entity types to create by default for the organization
+	EntityTypes []string `json:"entityTypes" koanf:"entityTypes" default:"" description:"entity types to create for the organization"`
 }
 
 // Flags contains the flags for the server to allow use to test different code paths

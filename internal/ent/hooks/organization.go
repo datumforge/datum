@@ -90,6 +90,10 @@ func HookOrganization() ent.Hook {
 					if err := updateUserAuthSession(ctx, as, orgCreated.ID); err != nil {
 						return v, err
 					}
+
+					if err := postCreation(ctx, orgCreated, mutation); err != nil {
+						return v, err
+					}
 				}
 			}
 
@@ -171,6 +175,54 @@ func createOrgSettings(ctx context.Context, mutation *generated.OrganizationMuta
 
 		// add the org setting ID to the input
 		mutation.SetSettingID(orgSettingID)
+	}
+
+	return nil
+}
+
+// createEntityTypes creates the default entity types for a new org
+func createEntityTypes(ctx context.Context, orgID string, mutation *generated.OrganizationMutation) error {
+	if len(mutation.EntConfig.EntityTypes) == 0 {
+		return nil
+	}
+
+	builders := make([]*generated.EntityTypeCreate, 0, len(mutation.EntConfig.EntityTypes))
+	for _, entityType := range mutation.EntConfig.EntityTypes {
+		builders = append(builders, mutation.Client().EntityType.Create().
+			SetName(entityType).
+			SetOwnerID(orgID),
+		)
+	}
+
+	if err := mutation.Client().EntityType.CreateBulk(builders...).Exec(ctx); err != nil {
+		mutation.Logger.Errorw("error creating entity types", "error", err)
+
+		return err
+	}
+
+	return nil
+}
+
+// postCreation runs after an organization is created to perform additional setup
+func postCreation(ctx context.Context, orgCreated *generated.Organization, mutation *generated.OrganizationMutation) error {
+	// capture the original org id, ignore error as this will not be set in all cases
+	originalOrg, _ := auth.GetOrganizationIDFromContext(ctx) // nolint: errcheck
+
+	// set the new org id in the auth context to process the rest of the post creation steps
+	if err := auth.SetOrganizationIDInAuthContext(ctx, orgCreated.ID); err != nil {
+		return err
+	}
+
+	// create default entity types, if configured
+	if err := createEntityTypes(ctx, orgCreated.ID, mutation); err != nil {
+		return err
+	}
+
+	// reset the original org id in the auth context if it was previously set
+	if originalOrg != "" {
+		if err := auth.SetOrganizationIDInAuthContext(ctx, originalOrg); err != nil {
+			return err
+		}
 	}
 
 	return nil

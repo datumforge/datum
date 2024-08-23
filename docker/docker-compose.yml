@@ -17,6 +17,6 @@ services:
     restart: unless-stopped
     environment:
       - DATUM_REDIS_ADDRESS=redis:6379
-      - DATUM_AUTHZ_HOST_URL=openfga:8080
+      - DATUM_AUTHZ_HOSTURL=openfga:8080
     networks:
       - default

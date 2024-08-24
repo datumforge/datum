@@ -1,11 +1,11 @@
 module github.com/datumforge/datum
 
-go 1.22.6
+go 1.23.0
 
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.6.0
-	entgo.io/ent v0.14.0
+	entgo.io/ent v0.14.1
 	github.com/99designs/gqlgen v0.17.49
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2

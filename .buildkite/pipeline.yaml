@@ -1,6 +1,6 @@
 env:
   APP_NAME: ${BUILDKITE_PIPELINE_SLUG}
-  IMAGE_REPO: ghcr.io/datumforge/${APP_NAME}
+  IMAGE_REPO: ghcr.io/datum-cloud/${APP_NAME}
   GCR_REPO: us-central1-docker.pkg.dev/vernal-sunspot-397816/${APP_NAME}/${APP_NAME}
   IMAGE_TAG: ${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT:0:8}
   SONAR_HOST: "https://sonarcloud.io"
@@ -13,7 +13,7 @@ steps:
         cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
-              image: "ghcr.io/datumforge/base-ci-image:v1.1.9"
+              image: "ghcr.io/datum-cloud/base-ci-image:v1.1.9"
               command: ["task", "ci"]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -22,7 +22,7 @@ steps:
         cancel_on_build_failing: true
         plugins:
           - docker#v5.11.0:
-              image: "ghcr.io/datumforge/base-ci-image:v1.1.9"
+              image: "ghcr.io/datum-cloud/base-ci-image:v1.1.9"
               command: ["task", "config:ci"]
               environment:
                 - "GOTOOLCHAIN=auto"
@@ -156,7 +156,7 @@ steps:
       - label: ":postgres: atlas lint"
         key: "atlas_lint"
         plugins:
-          - datumforge/atlas#v0.0.3:
+          - datum-cloud/atlas#v0.0.3:
               project: datum
               dev-url: "docker://postgres/16/dev?search_path=public"
               dir: "file://db/migrations"
@@ -165,7 +165,7 @@ steps:
         if: build.branch == "main"
         key: "atlas_migrate"
         plugins:
-          - datumforge/atlas#v0.0.3:
+          - datum-cloud/atlas#v0.0.3:
               project: datum
               dev-url: "docker://postgres/16/dev?search_path=public"
               dir: "file://db/migrations"
@@ -182,12 +182,12 @@ steps:
           #!/bin/bash
           ls
         plugins:
-          - datumforge/docker-metadata#v1.0.0:
+          - datum-cloud/docker-metadata#v1.0.0:
               images:
                 - "${IMAGE_REPO}"
               extra_tags:
                 - "${IMAGE_TAG}"
-          - datumforge/container-build#v1.1.0:
+          - datum-cloud/container-build#v1.1.0:
               dockerfile: docker/Dockerfile
               push: false
               build-args:
@@ -209,12 +209,12 @@ steps:
               username: datum-bender
               password-env: SECRET_GHCR_PUBLISH_TOKEN
               server: ghcr.io
-          - datumforge/docker-metadata#v1.0.0:
+          - datum-cloud/docker-metadata#v1.0.0:
               images:
                 - "${IMAGE_REPO}"
               extra_tags:
                 - "${IMAGE_TAG}"
-          - datumforge/container-build#v1.1.0:
+          - datum-cloud/container-build#v1.1.0:
               dockerfile: docker/Dockerfile
               push: true
               build-args:
@@ -234,14 +234,14 @@ steps:
               username: _json_key_base64
               password-env: SECRET_GCR_PUBLISH_TOKEN
               server: us-central1-docker.pkg.dev
-          - datumforge/docker-metadata#v1.0.0:
+          - datum-cloud/docker-metadata#v1.0.0:
               tag_prefix: "aio-"
               debug: true
               images:
                 - "${GCR_REPO}"
               extra_tags:
                 - "${IMAGE_TAG}"
-          - datumforge/container-build#v1.1.0:
+          - datum-cloud/container-build#v1.1.0:
               dockerfile: docker/all-in-one/Dockerfile.all-in-one
               push: true
               build-args:
@@ -262,12 +262,12 @@ steps:
               username: datum-bender
               password-env: SECRET_GHCR_PUBLISH_TOKEN
               server: ghcr.io
-          - datumforge/docker-metadata#v1.0.0:
+          - datum-cloud/docker-metadata#v1.0.0:
               images:
                 - "${IMAGE_REPO}"
               extra_tags:
                 - "${BUILDKITE_TAG}"
-          - datumforge/container-build#v1.1.0:
+          - datum-cloud/container-build#v1.1.0:
               dockerfile: docker/Dockerfile
               push: true
               build-args:
@@ -287,14 +287,14 @@ steps:
               username: _json_key_base64
               password-env: SECRET_GCR_PUBLISH_TOKEN
               server: us-central1-docker.pkg.dev
-          - datumforge/docker-metadata#v1.0.0:
+          - datum-cloud/docker-metadata#v1.0.0:
               tag_prefix: "aio-"
               debug: true
               images:
                 - "${GCR_REPO}"
               extra_tags:
                 - "${BUILDKITE_TAG}"
-          - datumforge/container-build#v1.1.0:
+          - datum-cloud/container-build#v1.1.0:
               dockerfile: docker/all-in-one/Dockerfile.all-in-one
               push: true
               build-args:

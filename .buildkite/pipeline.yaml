@@ -152,10 +152,10 @@ steps:
               command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
   - group: ":database: atlas migrate"
     key: "database"
-    env:
-      BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
     steps:
       - label: ":postgres: atlas lint"
+        env:
+          BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
         key: "atlas_lint"
         plugins:
           - datum-cloud/atlas#aus/atlas-cloud-token-from-secret:

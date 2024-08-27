@@ -156,7 +156,7 @@ steps:
       - label: ":postgres: atlas lint"
         key: "atlas_lint"
         plugins:
-          - datum-cloud/atlas#v1.0:
+          - datum-cloud/atlas#005d634:
               project: datum
               dev-url: "docker://postgres/15/dev?search_path=public"
               dir: "file://db/migrations"

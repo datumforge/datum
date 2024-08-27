@@ -158,7 +158,7 @@ steps:
         plugins:
           - datum-cloud/atlas#v1.0:
               project: datum
-              dev-url: "docker://postgres/16/dev?search_path=public"
+              dev-url: "docker://postgres/15/dev?search_path=public"
               dir: "file://db/migrations"
               step: lint
       - label: ":rocket: atlas push"
@@ -167,7 +167,7 @@ steps:
         plugins:
           - datum-cloud/atlas#v1.0:
               project: datum
-              dev-url: "docker://postgres/16/dev?search_path=public"
+              dev-url: "docker://postgres/15/dev?search_path=public"
               dir: "file://db/migrations"
               step: migrate
   - group: ":docker: Image Build"
